@@ -36,80 +36,6 @@ public class XORDecryptor extends Decryptor implements Cloneable {
     private long _length = -1L;
     private int _chunkSize = 512;
 
-    private class XORCipherInputStream extends ChunkedCipherInputStream {
-        private final int _initialOffset;
-        private int _recordStart = 0;
-        private int _recordEnd = 0;
-        
-        @Override
-        protected Cipher initCipherForBlock(Cipher existing, int block)
-                throws GeneralSecurityException {
-            return XORDecryptor.this.initCipherForBlock(existing, block);
-        }
-
-        public XORCipherInputStream(InputStream stream, int initialPos)
-                throws GeneralSecurityException {
-            super(stream, Integer.MAX_VALUE, _chunkSize);
-            _initialOffset = initialPos;
-        }
-        
-        @Override
-        protected int invokeCipher(int totalBytes, boolean doFinal) {
-            final int pos = (int)getPos();
-            final byte xorArray[] = getEncryptionInfo().getDecryptor().getSecretKey().getEncoded();
-            final byte chunk[] = getChunk();
-            final byte plain[] = getPlain();
-            final int posInChunk = pos & getChunkMask();
-            
-            /*
-             * From: http://social.msdn.microsoft.com/Forums/en-US/3dadbed3-0e68-4f11-8b43-3a2328d9ebd5
-             * 
-             * The initial value for XorArrayIndex is as follows:
-             * XorArrayIndex = (FileOffset + Data.Length) % 16
-             * 
-             * The FileOffset variable in this context is the stream offset into the Workbook stream at
-             * the time we are about to write each of the bytes of the record data.
-             * This (the value) is then incremented after each byte is written. 
-             */
-            final int xorArrayIndex = _initialOffset+_recordEnd+(pos-_recordStart);
-            
-            for (int i=0; pos+i < _recordEnd && i < totalBytes; i++) {
-                // The following is taken from the Libre Office implementation
-                // It seems that the encrypt and decrypt method is mixed up
-                // in the MS-OFFCRYPTO docs
-                byte value = plain[posInChunk+i];
-                value = rotateLeft(value, 3);
-                value ^= xorArray[(xorArrayIndex+i) & 0x0F];
-                chunk[posInChunk+i] = value;
-            }
-
-            // the other bytes will be encoded, when setNextRecordSize is called the next time
-            return totalBytes;
-        }
-        
-        private byte rotateLeft(byte bits, int shift) {
-            return (byte)(((bits & 0xff) << shift) | ((bits & 0xff) >>> (8 - shift)));
-        }
-        
-        
-        /**
-         * Decrypts a xor obfuscated byte array.
-         * The data is decrypted in-place
-         * 
-         * @see <a href="http://msdn.microsoft.com/en-us/library/dd908506.aspx">2.3.7.3 Binary Document XOR Data Transformation Method 1</a>
-         */
-        @Override
-        public void setNextRecordSize(int recordSize) {
-            _recordStart = (int)getPos();
-            _recordEnd = _recordStart+recordSize;
-            int pos = (int)getPos();
-            byte chunk[] = getChunk();
-            int chunkMask = getChunkMask();
-            int nextBytes = Math.min(recordSize, chunk.length-(pos & chunkMask));
-            invokeCipher(nextBytes, true);
-        }
-    }
-
     protected XORDecryptor() {
     }
 
@@ -166,9 +92,83 @@ public class XORDecryptor extends Decryptor implements Cloneable {
     public void setChunkSize(int chunkSize) {
         _chunkSize = chunkSize;
     }
-
+    
     @Override
     public XORDecryptor clone() throws CloneNotSupportedException {
         return (XORDecryptor)super.clone();
+    }
+
+    private class XORCipherInputStream extends ChunkedCipherInputStream {
+        private final int _initialOffset;
+        private int _recordStart = 0;
+        private int _recordEnd = 0;
+        
+        public XORCipherInputStream(InputStream stream, int initialPos)
+                throws GeneralSecurityException {
+            super(stream, Integer.MAX_VALUE, _chunkSize);
+            _initialOffset = initialPos;
+        }
+        
+        @Override
+        protected Cipher initCipherForBlock(Cipher existing, int block)
+                throws GeneralSecurityException {
+            return XORDecryptor.this.initCipherForBlock(existing, block);
+        }
+
+        @Override
+        protected int invokeCipher(int totalBytes, boolean doFinal) {
+            final int pos = (int)getPos();
+            final byte xorArray[] = getEncryptionInfo().getDecryptor().getSecretKey().getEncoded();
+            final byte chunk[] = getChunk();
+            final byte plain[] = getPlain();
+            final int posInChunk = pos & getChunkMask();
+            
+            /*
+             * From: http://social.msdn.microsoft.com/Forums/en-US/3dadbed3-0e68-4f11-8b43-3a2328d9ebd5
+             * 
+             * The initial value for XorArrayIndex is as follows:
+             * XorArrayIndex = (FileOffset + Data.Length) % 16
+             * 
+             * The FileOffset variable in this context is the stream offset into the Workbook stream at
+             * the time we are about to write each of the bytes of the record data.
+             * This (the value) is then incremented after each byte is written. 
+             */
+            final int xorArrayIndex = _initialOffset+_recordEnd+(pos-_recordStart);
+            
+            for (int i=0; pos+i < _recordEnd && i < totalBytes; i++) {
+                // The following is taken from the Libre Office implementation
+                // It seems that the encrypt and decrypt method is mixed up
+                // in the MS-OFFCRYPTO docs
+                byte value = plain[posInChunk+i];
+                value = rotateLeft(value, 3);
+                value ^= xorArray[(xorArrayIndex+i) & 0x0F];
+                chunk[posInChunk+i] = value;
+            }
+
+            // the other bytes will be encoded, when setNextRecordSize is called the next time
+            return totalBytes;
+        }
+        
+        private byte rotateLeft(byte bits, int shift) {
+            return (byte)(((bits & 0xff) << shift) | ((bits & 0xff) >>> (8 - shift)));
+        }
+        
+        
+        /**
+         * Decrypts a xor obfuscated byte array.
+         * The data is decrypted in-place
+         * 
+         * @see <a href="http://msdn.microsoft.com/en-us/library/dd908506.aspx">2.3.7.3 Binary Document XOR Data Transformation Method 1</a>
+         */
+        @Override
+        public void setNextRecordSize(int recordSize) {
+            final int pos = (int)getPos();
+            final byte chunk[] = getChunk();
+            final int chunkMask = getChunkMask();
+            _recordStart = pos;
+            _recordEnd = _recordStart+recordSize;
+            int nextBytes = Math.min(recordSize, chunk.length-(pos & chunkMask));
+            invokeCipher(nextBytes, true);
+        }
     }
 }

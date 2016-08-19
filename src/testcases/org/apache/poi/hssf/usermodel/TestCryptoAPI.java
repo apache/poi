@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.apache.poi.POITestCase.assertContains;
 
 import java.io.IOException;
 
@@ -38,25 +37,34 @@ public class TestCryptoAPI {
 
     @Test
     public void bug59857() throws IOException {
-        Biff8EncryptionKey.setCurrentUserPassword("abc");
-        HSSFWorkbook wb1 = ssTests.openSampleWorkbook("xor-encryption-abc.xls");
-        String textExpected = "Sheet1\n1\n2\n3\n";
-        String textActual = new ExcelExtractor(wb1).getText();
-        assertEquals(textExpected, textActual);
-        wb1.close();
+        // XOR-Obfuscation
+        // TODO: XOR-Obfuscation is currently flawed - although the de-/obfuscation initially works,
+        // it suddenly differs from the result of encrypted files via Office ...
+        // and only very small files can be opened without file validation errors
+        validateContent("xor-encryption-abc.xls", "abc", "Sheet1\n1\n2\n3\n");
 
-        Biff8EncryptionKey.setCurrentUserPassword("password");
-        HSSFWorkbook wb2 = ssTests.openSampleWorkbook("password.xls");
-        textExpected = "A ZIP bomb is a variant of mail-bombing. After most commercial mail servers began checking mail with anti-virus software and filtering certain malicious file types, trojan horse viruses tried to send themselves compressed into archives, such as ZIP, RAR or 7-Zip. Mail server software was then configured to unpack archives and check their contents as well. That gave black hats the idea to compose a \"bomb\" consisting of an enormous text file, containing, for example, only the letter z repeated millions of times. Such a file compresses into a relatively small archive, but its unpacking (especially by early versions of mail servers) would use a high amount of processing power, RAM and swap space, which could result in denial of service. Modern mail server computers usually have sufficient intelligence to recognize such attacks as well as sufficient processing power and memory space to process malicious attachments without interruption of service, though some are still susceptible to this technique if the ZIP bomb is mass-mailed.";
-        textActual = new ExcelExtractor(wb2).getText();
-        assertTrue(textActual.contains(textExpected));
-        wb2.close();
+        // BinaryRC4
+        validateContent("password.xls", "password", "A ZIP bomb is a variant of mail-bombing. After most commercial mail servers began checking mail with anti-virus software and filtering certain malicious file types, trojan horse viruses tried to send themselves compressed into archives, such as ZIP, RAR or 7-Zip. Mail server software was then configured to unpack archives and check their contents as well. That gave black hats the idea to compose a \"bomb\" consisting of an enormous text file, containing, for example, only the letter z repeated millions of times. Such a file compresses into a relatively small archive, but its unpacking (especially by early versions of mail servers) would use a high amount of processing power, RAM and swap space, which could result in denial of service. Modern mail server computers usually have sufficient intelligence to recognize such attacks as well as sufficient processing power and memory space to process malicious attachments without interruption of service, though some are still susceptible to this technique if the ZIP bomb is mass-mailed.");
 
-        Biff8EncryptionKey.setCurrentUserPassword("freedom");
-        HSSFWorkbook wb3 = ssTests.openSampleWorkbook("35897-type4.xls");
-        textExpected = "Sheet1\nhello there!\n";
-        textActual = new ExcelExtractor(wb3).getText();
-        assertEquals(textExpected, textActual);
-        wb3.close();
+        // CryptoAPI
+        validateContent("35897-type4.xls", "freedom", "Sheet1\nhello there!\n");
+    }
+    
+    private void validateContent(String wbFile, String password, String textExpected) throws IOException {
+        Biff8EncryptionKey.setCurrentUserPassword(password);
+        HSSFWorkbook wb = ssTests.openSampleWorkbook(wbFile);
+        ExcelExtractor ee1 = new ExcelExtractor(wb);
+        String textActual = ee1.getText();
+        assertContains(textActual, textExpected);
+
+        Biff8EncryptionKey.setCurrentUserPassword("bla");
+        HSSFWorkbook wbBla = ssTests.writeOutAndReadBack(wb);
+        ExcelExtractor ee2 = new ExcelExtractor(wbBla);
+        textActual = ee2.getText();
+        assertContains(textActual, textExpected);
+        ee2.close();
+        ee1.close();
+        wbBla.close();
+        wb.close();
     }
 }

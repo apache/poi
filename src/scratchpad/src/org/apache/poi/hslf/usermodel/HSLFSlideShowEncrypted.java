@@ -169,7 +169,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
             if (cyos == null) {
                 enc.setChunkSize(-1);
-                cyos = enc.getDataStream(plainStream);
+                cyos = enc.getDataStream(plainStream, 0);
             }
             cyos.initCipherForBlock(persistId, false);
         } catch (Exception e) {
@@ -314,7 +314,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
         try {
             enc.setChunkSize(-1);
-            ccos = enc.getDataStream(los);
+            ccos = enc.getDataStream(los, 0);
             int recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
             int recType = LittleEndian.getUShort(pictstream, offset+2);
             final int rlen = (int)LittleEndian.getUInt(pictstream, offset+4);

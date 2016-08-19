@@ -54,28 +54,34 @@ public class ContinuableRecordInput implements LittleEndianInput {
     public ContinuableRecordInput(RecordInputStream in){
         _in = in;
     }
+    @Override
     public int available(){
         return _in.available();
     }
 
+    @Override
     public byte readByte(){
         return _in.readByte();
     }
 
+    @Override
     public int readUByte(){
         return _in.readUByte();
     }
 
+    @Override
     public short readShort(){
         return _in.readShort();
     }
 
+    @Override
     public int readUShort(){
         int ch1 = readUByte();
         int ch2 = readUByte();
         return (ch2 << 8) + (ch1 << 0);
     }
 
+    @Override
     public int readInt(){
         int ch1 = _in.readUByte();
         int ch2 = _in.readUByte();
@@ -84,6 +90,7 @@ public class ContinuableRecordInput implements LittleEndianInput {
         return (ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0);
     }
 
+    @Override
     public long readLong(){
         int b0 = _in.readUByte();
         int b1 = _in.readUByte();
@@ -103,14 +110,23 @@ public class ContinuableRecordInput implements LittleEndianInput {
                 (b0 <<  0));
     }
 
+    @Override
     public double readDouble(){
         return _in.readDouble();
     }
+
+    @Override
     public void readFully(byte[] buf){
         _in.readFully(buf);
     }
+
+    @Override
     public void readFully(byte[] buf, int off, int len){
         _in.readFully(buf, off, len);
     }
-
+    
+    @Override
+    public void readPlain(byte[] buf, int off, int len) {
+        readFully(buf, off, len);
+    }
 }

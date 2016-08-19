@@ -61,11 +61,16 @@ public abstract class Encryptor implements Cloneable {
         return getDataStream(fs.getRoot());
     }
 
+    public ChunkedCipherOutputStream getDataStream(OutputStream stream, int initialOffset)
+    throws IOException, GeneralSecurityException {
+        throw new RuntimeException("this decryptor doesn't support writing directly to a stream");
+    }
+    
     public SecretKey getSecretKey() {
         return secretKey;
     }
 
-    protected void setSecretKey(SecretKey secretKey) {
+    public void setSecretKey(SecretKey secretKey) {
         this.secretKey = secretKey;
     }
 
@@ -77,6 +82,17 @@ public abstract class Encryptor implements Cloneable {
         this.encryptionInfo = encryptionInfo;
     }
 
+    /**
+     * Sets the chunk size of the data stream.
+     * Needs to be set before the data stream is requested.
+     * When not set, the implementation uses method specific default values
+     *
+     * @param chunkSize the chunk size, i.e. the block size with the same encryption key
+     */
+    public void setChunkSize(int chunkSize) {
+        throw new RuntimeException("this decryptor doesn't support changing the chunk size");
+    }
+    
     @Override
     public Encryptor clone() throws CloneNotSupportedException {
         Encryptor other = (Encryptor)super.clone();

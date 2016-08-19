@@ -41,6 +41,8 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
 public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
 
+    private int _chunkSize = 512;
+    
     protected BinaryRC4Encryptor() {
     }
 
@@ -84,6 +86,12 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
         return countStream;
     }
 
+    @Override
+    public BinaryRC4CipherOutputStream getDataStream(OutputStream stream, int initialOffset)
+    throws IOException, GeneralSecurityException {
+        return new BinaryRC4CipherOutputStream(stream);
+    }
+    
     protected int getKeySizeInBytes() {
         return getEncryptionInfo().getHeader().getKeySize() / 8;
     }
@@ -106,18 +114,33 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
     }
 
     @Override
+    public void setChunkSize(int chunkSize) {
+        _chunkSize = chunkSize;
+    }
+    
+    @Override
     public BinaryRC4Encryptor clone() throws CloneNotSupportedException {
         return (BinaryRC4Encryptor)super.clone();
     }
 
     protected class BinaryRC4CipherOutputStream extends ChunkedCipherOutputStream {
 
+        public BinaryRC4CipherOutputStream(OutputStream stream)
+        throws IOException, GeneralSecurityException {
+            super(stream, BinaryRC4Encryptor.this._chunkSize);
+        }
+
+        public BinaryRC4CipherOutputStream(DirectoryNode dir)
+        throws IOException, GeneralSecurityException {
+            super(dir, BinaryRC4Encryptor.this._chunkSize);
+        }
+
         @Override
         protected Cipher initCipherForBlock(Cipher cipher, int block, boolean lastChunk)
         throws GeneralSecurityException {
             return BinaryRC4Decryptor.initCipherForBlock(cipher, block, getEncryptionInfo(), getSecretKey(), Cipher.ENCRYPT_MODE);
         }
-
+        
         @Override
         protected void calculateChecksum(File file, int i) {
         }
@@ -128,9 +151,10 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
             BinaryRC4Encryptor.this.createEncryptionInfoEntry(dir);
         }
 
-        public BinaryRC4CipherOutputStream(DirectoryNode dir)
-        throws IOException, GeneralSecurityException {
-            super(dir, 512);
+        @Override
+        public void flush() throws IOException {
+            writeChunk(false);
+            super.flush();
         }
     }
 }

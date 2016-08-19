@@ -56,6 +56,11 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
         }
 	}
 	
+	public FilePassRecord(EncryptionMode encryptionMode) {
+	    encryptionType = (encryptionMode == EncryptionMode.xor) ? ENCRYPTION_XOR : ENCRYPTION_OTHER;
+	    encryptionInfo = new EncryptionInfo(encryptionMode);
+	}
+	
 	public FilePassRecord(RecordInputStream in) {
 		encryptionType = in.readUShort();
 		

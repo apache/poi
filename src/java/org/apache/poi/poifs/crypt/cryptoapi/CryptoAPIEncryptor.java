@@ -111,7 +111,8 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         throw new IOException("not supported");
     }
     
-    public CryptoAPICipherOutputStream getDataStream(OutputStream stream)
+    @Override
+    public CryptoAPICipherOutputStream getDataStream(OutputStream stream, int initialOffset)
     throws IOException, GeneralSecurityException {
         return new CryptoAPICipherOutputStream(stream);
     }
@@ -212,6 +213,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         return getEncryptionInfo().getHeader().getKeySize() / 8;
     }
 
+    @Override
     public void setChunkSize(int chunkSize) {
         _chunkSize = chunkSize;
     }
@@ -268,6 +270,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         @Override
         public void flush() throws IOException {
             writeChunk(false);
+            super.flush();
         }
     }
 
