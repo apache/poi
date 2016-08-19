@@ -309,13 +309,22 @@ public final class RecordInputStream implements LittleEndianInput {
 		}
 		return result;
 	}
+	
+	public void readPlain(byte[] buf, int off, int len) {
+	    readFully(buf, 0, buf.length, true);
+	}
+	
 	@Override
     public void readFully(byte[] buf) {
-		readFully(buf, 0, buf.length);
+		readFully(buf, 0, buf.length, false);
 	}
 
-	@Override
+    @Override
     public void readFully(byte[] buf, int off, int len) {
+        readFully(buf, off, len, false);
+    }
+	
+    protected void readFully(byte[] buf, int off, int len, boolean isPlain) {
 	    int origLen = len;
 	    if (buf == null) {
 	        throw new NullPointerException();
@@ -335,7 +344,11 @@ public final class RecordInputStream implements LittleEndianInput {
 	            }
 	        }
 	        checkRecordPosition(nextChunk);
-	        _dataInput.readFully(buf, off, nextChunk);
+	        if (isPlain) {
+                _dataInput.readPlain(buf, off, nextChunk);
+	        } else {
+                _dataInput.readFully(buf, off, nextChunk);
+	        }
 	        _currentDataOffset+=nextChunk;
 	        off += nextChunk;
 	        len -= nextChunk;

@@ -58,4 +58,14 @@ public class XOREncryptionVerifier extends EncryptionVerifier implements Encrypt
     public XOREncryptionVerifier clone() throws CloneNotSupportedException {
         return (XOREncryptionVerifier)super.clone();
     }
+
+    @Override
+    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
+        super.setEncryptedVerifier(encryptedVerifier);
+    }
+
+    @Override
+    protected void setEncryptedKey(byte[] encryptedKey) {
+        super.setEncryptedKey(encryptedKey);
+    }
 }

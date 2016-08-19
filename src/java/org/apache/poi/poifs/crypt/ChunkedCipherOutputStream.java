@@ -25,6 +25,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.util.BitSet;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -48,14 +49,17 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private static final POILogger LOG = POILogFactory.getLogger(ChunkedCipherOutputStream.class);
     private static final int STREAMING = -1;
 
-    protected final int _chunkSize;
-    protected final int _chunkBits;
+    private final int _chunkSize;
+    private final int _chunkBits;
 
     private final byte[] _chunk;
+    private final BitSet _plainByteFlags;
     private final File _fileOut;
     private final DirectoryNode _dir;
 
     private long _pos = 0;
+    private long _totalPos = 0;
+    private long _written = 0;
     private Cipher _cipher;
 
     public ChunkedCipherOutputStream(DirectoryNode dir, int chunkSize) throws IOException, GeneralSecurityException {
@@ -63,6 +67,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this._chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
         _chunk = new byte[cs];
+        _plainByteFlags = new BitSet(cs);
         _chunkBits = Integer.bitCount(cs-1);
         _fileOut = TempFile.createTempFile("encrypted_package", "crypt");
         _fileOut.deleteOnExit();
@@ -76,6 +81,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this._chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
         _chunk = new byte[cs];
+        _plainByteFlags = new BitSet(cs);
         _chunkBits = Integer.bitCount(cs-1);
         _fileOut = null;
         _dir = null;
@@ -106,8 +112,15 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     }
 
     @Override
-    public void write(byte[] b, int off, int len)
-    throws IOException {
+    public void write(byte[] b, int off, int len) throws IOException {
+        write(b, off, len, false);
+    }
+
+    public void writePlain(byte[] b, int off, int len) throws IOException {
+        write(b, off, len, true);
+    }
+    
+    protected void write(byte[] b, int off, int len, boolean writePlain) throws IOException {
         if (len == 0) {
             return;
         }
@@ -121,7 +134,11 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             int posInChunk = (int)(_pos & chunkMask);
             int nextLen = Math.min(_chunk.length-posInChunk, len);
             System.arraycopy(b, off, _chunk, posInChunk, nextLen);
+            if (writePlain) {
+                _plainByteFlags.set(posInChunk, posInChunk+nextLen);
+            }
             _pos += nextLen;
+            _totalPos += nextLen;
             off += nextLen;
             len -= nextLen;
             if ((_pos & chunkMask) == 0) {
@@ -130,12 +147,12 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         }
     }
 
-    private int getChunkMask() {
+    protected int getChunkMask() {
         return _chunk.length-1;
     }
 
     protected void writeChunk(boolean continued) throws IOException {
-        if (_pos == 0) {
+        if (_pos == 0 || _totalPos == _written) {
             return;
         }
 
@@ -157,14 +174,18 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         int ciLen;
         try {
             boolean doFinal = true;
+            long oldPos = _pos;
+            // reset stream (not only) in case we were interrupted by plain stream parts
+            // this also needs to be set to prevent an endless loop
+            _pos = 0;
             if (_chunkSize == STREAMING) {
                 if (continued) {
                     doFinal = false;
                 }
-                // reset stream (not only) in case we were interrupted by plain stream parts
-                _pos = 0;
             } else {
                 _cipher = initCipherForBlock(_cipher, index, lastChunk);
+                // restore pos - only streaming chunks will be reset
+                _pos = oldPos;
             }
             ciLen = invokeCipher(posInChunk, doFinal);
         } catch (GeneralSecurityException e) {
@@ -172,6 +193,8 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         }
 
         out.write(_chunk, 0, ciLen);
+        _plainByteFlags.clear();
+        _written += ciLen;
     }
 
     /**
@@ -184,11 +207,17 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
      * @throws ShortBufferException 
      */
     protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException {
-        if (doFinal) {
-            return _cipher.doFinal(_chunk, 0, posInChunk, _chunk);
-        } else {
-            return _cipher.update(_chunk, 0, posInChunk, _chunk);
+        byte plain[] = (_plainByteFlags.isEmpty()) ? null : _chunk.clone();
+
+        int ciLen = (doFinal)
+            ? _cipher.doFinal(_chunk, 0, posInChunk, _chunk)
+            : _cipher.update(_chunk, 0, posInChunk, _chunk);
+        
+        for (int i = _plainByteFlags.nextSetBit(0); i >= 0 && i < posInChunk; i = _plainByteFlags.nextSetBit(i+1)) {
+            _chunk[i] = plain[i];
         }
+        
+        return ciLen;
     }
     
     @Override
@@ -208,7 +237,33 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             throw new IOException(e);
         }
     }
+    
+    protected byte[] getChunk() {
+        return _chunk;
+    }
 
+    protected BitSet getPlainByteFlags() {
+        return _plainByteFlags;
+    }
+
+    protected long getPos() {
+        return _pos;
+    }
+
+    protected long getTotalPos() {
+        return _totalPos;
+    }
+
+    /**
+     * Some ciphers (actually just XOR) are based on the record size,
+     * which needs to be set before encryption
+     *
+     * @param recordSize the size of the next record
+     * @param isPlain {@code true} if the record is unencrypted
+     */
+    public void setNextRecordSize(int recordSize, boolean isPlain) {
+    }
+    
     private class EncryptedPackageWriter implements POIFSWriterListener {
         @Override
         public void processPOIFSWriterEvent(POIFSWriterEvent event) {

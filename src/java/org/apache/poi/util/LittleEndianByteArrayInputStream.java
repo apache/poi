@@ -104,4 +104,9 @@ public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream
         checkPosition(buffer.length);
         read(buffer, 0, buffer.length);
 	}
+
+    @Override
+    public void readPlain(byte[] buf, int off, int len) {
+        readFully(buf, off, len);
+    }
 }

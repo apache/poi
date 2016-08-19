@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.crypto;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
@@ -35,7 +34,7 @@ import org.apache.poi.util.LittleEndianInput;
 
 public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndianInput {
 
-    private static final int RC4_REKEYING_INTERVAL = 1024;
+    public static final int RC4_REKEYING_INTERVAL = 1024;
 
     private final EncryptionInfo info;
     private ChunkedCipherInputStream ccis;
@@ -180,7 +179,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
      *
      * @return <code>true</code> if record type specified by <tt>sid</tt> is never encrypted
      */
-    private static boolean isNeverEncryptedRecord(int sid) {
+    public static boolean isNeverEncryptedRecord(int sid) {
         switch (sid) {
             case BOFRecord.sid:
                 // sheet BOFs for sure
@@ -204,15 +203,9 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
         }
     }
 
-    private void readPlain(byte b[], int off, int len) {
-        try {
-            int readBytes = ccis.readPlain(b, off, len);
-            if (readBytes < len) {
-                throw new RecordFormatException("buffer underrun");
-            }
-        } catch (IOException e) {
-            throw new RecordFormatException(e);
-        }
+    @Override
+    public void readPlain(byte b[], int off, int len) {
+        ccis.readPlain(b, off, len);
     }
 
 }

@@ -222,24 +222,33 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     /**
      * Used when BIFF header fields (sid, size) are being read. The internal
      * {@link Cipher} instance must step even when unencrypted bytes are read
+     * 
      */
-    public int readPlain(byte b[], int off, int len) throws IOException {
+    @Override
+    public void readPlain(byte b[], int off, int len) {
         if (len <= 0) {
-            return len;
+            return;
         }
 
-        int readBytes, total = 0;
-        do {
-            readBytes = read(b, off, len, true);
-            total += Math.max(0, readBytes);
-        } while (readBytes > -1 && total < len);
-
-        return total;
+        try {
+            int readBytes, total = 0;
+            do {
+                readBytes = read(b, off, len, true);
+                total += Math.max(0, readBytes);
+            } while (readBytes > -1 && total < len);
+    
+            if (total < len) {
+                throw new EOFException("buffer underrun");
+            }
+        } catch (IOException e) {
+            // need to wrap checked exception, because of LittleEndianInput interface :(
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Some ciphers (actually just XOR) are based on the record size,
-     * which needs to be set before encryption
+     * which needs to be set before decryption
      *
      * @param recordSize the size of the next record
      */

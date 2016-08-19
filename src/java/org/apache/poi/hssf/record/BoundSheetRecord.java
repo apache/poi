@@ -24,6 +24,8 @@ import java.util.List;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.ss.util.WorkbookUtil;
@@ -60,7 +62,9 @@ public final class BoundSheetRecord extends StandardRecord {
 	 * @param in the record stream to read from
 	 */
 	public BoundSheetRecord(RecordInputStream in) {
-		field_1_position_of_BOF = in.readInt();
+	    byte buf[] = new byte[LittleEndianConsts.INT_SIZE];
+	    in.readPlain(buf, 0, buf.length);
+		field_1_position_of_BOF = LittleEndian.getInt(buf);
 		field_2_option_flags = in.readUShort();
 		int field_3_sheetname_length = in.readUByte();
 		field_4_isMultibyteUnicode = in.readByte();

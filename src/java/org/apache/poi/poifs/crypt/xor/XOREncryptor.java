@@ -21,37 +21,41 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.util.Random;
+import java.util.BitSet;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
-import org.apache.poi.poifs.crypt.DataSpaceMapUtils;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.Encryptor;
-import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndian;
 
 public class XOREncryptor extends Encryptor implements Cloneable {
-
     protected XOREncryptor() {
     }
 
     @Override
     public void confirmPassword(String password) {
+        int keyComp      = CryptoFunctions.createXorKey1(password);
+        int verifierComp = CryptoFunctions.createXorVerifier1(password);
+        byte xorArray[]  = CryptoFunctions.createXorArray1(password);
+        
+        byte shortBuf[] = new byte[2];
+        XOREncryptionVerifier ver = (XOREncryptionVerifier)getEncryptionInfo().getVerifier();
+        LittleEndian.putUShort(shortBuf, 0, keyComp);
+        ver.setEncryptedKey(shortBuf);
+        LittleEndian.putUShort(shortBuf, 0, verifierComp);
+        ver.setEncryptedVerifier(shortBuf);
+        setSecretKey(new SecretKeySpec(xorArray, "XOR"));
     }
 
     @Override
     public void confirmPassword(String password, byte keySpec[],
             byte keySalt[], byte verifier[], byte verifierSalt[],
             byte integritySalt[]) {
+        confirmPassword(password);
     }
 
     @Override
@@ -61,8 +65,19 @@ public class XOREncryptor extends Encryptor implements Cloneable {
         return countStream;
     }
 
+    @Override
+    public XORCipherOutputStream getDataStream(OutputStream stream, int initialOffset)
+    throws IOException, GeneralSecurityException {
+        return new XORCipherOutputStream(stream, initialOffset);
+    }
+
     protected int getKeySizeInBytes() {
         return -1;
+    }
+
+    @Override
+    public void setChunkSize(int chunkSize) {
+        // chunkSize is irrelevant
     }
 
     protected void createEncryptionInfoEntry(DirectoryNode dir) throws IOException {
@@ -73,7 +88,21 @@ public class XOREncryptor extends Encryptor implements Cloneable {
         return (XOREncryptor)super.clone();
     }
 
-    protected class XORCipherOutputStream extends ChunkedCipherOutputStream {
+    private class XORCipherOutputStream extends ChunkedCipherOutputStream {
+        private final int _initialOffset;
+        private int _recordStart = 0;
+        private int _recordEnd = 0;
+        private boolean _isPlain = false;
+
+        public XORCipherOutputStream(OutputStream stream, int initialPos) throws IOException, GeneralSecurityException {
+            super(stream, -1);
+            _initialOffset = initialPos;
+        }
+
+        public XORCipherOutputStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
+            super(dir, -1);
+            _initialOffset = 0;
+        }
 
         @Override
         protected Cipher initCipherForBlock(Cipher cipher, int block, boolean lastChunk)
@@ -91,9 +120,67 @@ public class XOREncryptor extends Encryptor implements Cloneable {
             XOREncryptor.this.createEncryptionInfoEntry(dir);
         }
 
-        public XORCipherOutputStream(DirectoryNode dir)
-        throws IOException, GeneralSecurityException {
-            super(dir, 512);
+        @Override
+        public void setNextRecordSize(int recordSize, boolean isPlain) {
+            if (_recordEnd > 0 && !_isPlain) {
+                // encrypt last record
+                invokeCipher((int)getPos(), true);
+            }
+            _recordStart = (int)getTotalPos()+4;
+            _recordEnd = _recordStart+recordSize;
+            _isPlain = isPlain;
         }
+
+        @Override
+        public void flush() throws IOException {
+            setNextRecordSize(0, true);
+            super.flush();
+        }
+
+        @Override
+        protected int invokeCipher(int posInChunk, boolean doFinal) {
+            if (posInChunk == 0) {
+                return 0;
+            }
+
+            final int start = Math.max(posInChunk-(_recordEnd-_recordStart), 0);
+
+            final BitSet plainBytes = getPlainByteFlags();
+            final byte xorArray[] = getEncryptionInfo().getEncryptor().getSecretKey().getEncoded();
+            final byte chunk[] = getChunk();
+            final byte plain[] = (plainBytes.isEmpty()) ? null : chunk.clone();
+
+            /*
+             * From: http://social.msdn.microsoft.com/Forums/en-US/3dadbed3-0e68-4f11-8b43-3a2328d9ebd5
+             *
+             * The initial value for XorArrayIndex is as follows:
+             * XorArrayIndex = (FileOffset + Data.Length) % 16
+             *
+             * The FileOffset variable in this context is the stream offset into the Workbook stream at
+             * the time we are about to write each of the bytes of the record data.
+             * This (the value) is then incremented after each byte is written.
+             */
+            // ... also need to handle invocation in case of a filled chunk
+            int xorArrayIndex = _recordEnd+(start-_recordStart);
+
+            for (int i=start; i < posInChunk; i++) {
+                byte value = chunk[i];
+                value ^= xorArray[(xorArrayIndex++) & 0x0F];
+                value = rotateLeft(value, 8-3);
+                chunk[i] = value;
+            }
+
+            for (int i = plainBytes.nextSetBit(start); i >= 0 && i < posInChunk; i = plainBytes.nextSetBit(i+1)) {
+                chunk[i] = plain[i];
+            }
+
+            return posInChunk;
+        }
+
+        private byte rotateLeft(byte bits, int shift) {
+            return (byte)(((bits & 0xff) << shift) | ((bits & 0xff) >>> (8 - shift)));
+        }
+
+
     }
 }

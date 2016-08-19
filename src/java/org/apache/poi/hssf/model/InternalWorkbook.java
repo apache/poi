@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.model;
 
 import java.security.AccessControlException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -25,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.crypto.SecretKey;
+
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -52,6 +56,7 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtSSTRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.FilePassRecord;
 import org.apache.poi.hssf.record.FileSharingRecord;
 import org.apache.poi.hssf.record.FnGroupCountRecord;
 import org.apache.poi.hssf.record.FontRecord;
@@ -82,8 +87,13 @@ import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
@@ -1082,10 +1092,8 @@ public final class InternalWorkbook {
         SSTRecord sst = null;
         int sstPos = 0;
         boolean wroteBoundSheets = false;
-        for ( int k = 0; k < records.size(); k++ )
-        {
+        for ( Record record : records ) {
 
-            Record record = records.get( k );
             int len = 0;
             if (record instanceof SSTRecord)
             {
@@ -1124,6 +1132,8 @@ public final class InternalWorkbook {
      * Include in it ant code that modifies the workbook record stream and affects its size.
      */
     public void preSerialize(){
+        updateEncryptionRecord();
+        
         // Ensure we have enough tab IDs
         // Can be a few short if new sheets were added
         if(records.getTabpos() > 0) {
@@ -1134,6 +1144,49 @@ public final class InternalWorkbook {
         }
     }
 
+    private void updateEncryptionRecord() {
+        FilePassRecord fpr = null;
+        int fprPos = -1;
+        for (Record r : records.getRecords()) {
+            fprPos++;
+            if (r instanceof FilePassRecord) {
+                fpr = (FilePassRecord)r;
+                break;
+            }
+        }
+        
+        String password = Biff8EncryptionKey.getCurrentUserPassword();
+        if (password == null) {
+            if (fpr != null) {
+                // need to remove password data
+                records.remove(fprPos);
+            }
+            return;
+        } else {
+            // create password record
+            if (fpr == null) {
+                fpr = new FilePassRecord(EncryptionMode.binaryRC4);
+                records.add(1, fpr);
+            }
+            
+            // check if the password has been changed
+            EncryptionInfo ei = fpr.getEncryptionInfo();
+            byte encVer[] = ei.getVerifier().getEncryptedVerifier();
+            try {
+                Decryptor dec = ei.getDecryptor();
+                Encryptor enc = ei.getEncryptor();
+                if (encVer == null || !dec.verifyPassword(password)) {
+                    enc.confirmPassword(password);
+                } else {
+                    SecretKey sk = dec.getSecretKey();
+                    ei.getEncryptor().setSecretKey(sk);
+                }
+            } catch (GeneralSecurityException e) {
+                throw new EncryptedDocumentException("can't validate/update encryption setting", e);
+            }
+        }
+    }
+    
     public int getSize()
     {
         int retval = 0;

@@ -151,11 +151,12 @@ public final class TestRecordFactoryInputStream {
 	
 	
 	/**
-	 * makes sure the record stream starts with {@link BOFRecord} and then {@link WindowOneRecord}
-	 * The second record is gets decrypted so this method also checks its content.
+	 * makes sure the record stream starts with {@link BOFRecord}, {@link FilePassRecord} and then {@link WindowOneRecord}
+	 * The third record is decrypted so this method also checks its content.
 	 */
 	private void confirmReadInitialRecords(RecordFactoryInputStream rfis) {
 		assertEquals(BOFRecord.class, rfis.nextRecord().getClass());
+		FilePassRecord recFP = (FilePassRecord) rfis.nextRecord();
 		WindowOneRecord rec1 = (WindowOneRecord) rfis.nextRecord();
 		assertArrayEquals(HexRead.readFromString(SAMPLE_WINDOW1),rec1.serialize());
 	}

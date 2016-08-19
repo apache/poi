@@ -27,7 +27,7 @@ public class XOREncryptionHeader extends EncryptionHeader implements EncryptionR
     }
 
     @Override
-    public void write(LittleEndianByteArrayOutputStream littleendianbytearrayoutputstream) {
+    public void write(LittleEndianByteArrayOutputStream leos) {
     }
 
     @Override

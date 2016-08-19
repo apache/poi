@@ -78,20 +78,16 @@ public final class RecordFactoryInputStream {
 	               outputRecs.add(rec);
 					}
 					
-					// If it's a FILEPASS, track it specifically but
-					//  don't include it in the main stream
+					// If it's a FILEPASS, track it specifically
 					if (rec instanceof FilePassRecord) {
 						fpr = (FilePassRecord) rec;
-						outputRecs.remove(outputRecs.size()-1);
-						// TODO - add fpr not added to outputRecs
-						rec = outputRecs.get(0);
-					} else {
-						// workbook not encrypted (typical case)
-						if (rec instanceof EOFRecord) {
-							// A workbook stream is never empty, so crash instead
-							// of trying to keep track of nesting level
-							throw new IllegalStateException("Nothing between BOF and EOF");
-						}
+					}
+
+					// workbook not encrypted (typical case)
+					if (rec instanceof EOFRecord) {
+						// A workbook stream is never empty, so crash instead
+						// of trying to keep track of nesting level
+						throw new IllegalStateException("Nothing between BOF and EOF");
 					}
 				}
 			} else {

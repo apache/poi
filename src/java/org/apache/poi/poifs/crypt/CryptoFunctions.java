@@ -498,7 +498,9 @@ public class CryptoFunctions {
      * @return the byte array for xor obfuscation
      */
     public static byte[] createXorArray1(String password) {
-        if (password.length() > 15) password = password.substring(0, 15);
+        if (password.length() > 15) {
+            password = password.substring(0, 15);
+        }
         byte passBytes[] = password.getBytes(Charset.forName("ASCII"));
         
         // this code is based on the libre office implementation.
