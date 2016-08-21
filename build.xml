@@ -40,7 +40,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="3.15"/>
+    <property name="version.id" value="3.15-beta4"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -2390,13 +2390,13 @@ under the License.
         <!-- can't combine updating and pinning of the documentation ... so we need two commits -->
         <!-- (revision)properties can't be set and read within one svn block -->
         <echo message="updating build.xml and status.xml"/>
-        <!--<svn refid="svn.settings">
+        <svn refid="svn.settings">
             <commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
                 <fileset dir="." includes="build.xml,src/documentation/content/xdocs/status.xml"/>
             </commit>
             <update dir="." recurse="true"/>
             <status path="." revisionProperty="svn_version1"/>
-        </svn>-->
+        </svn>
         <echo message="pin documentation - release ${svn_version1}"/>
         <svn refid="svn.settings">
             <propset path="src" name="svn:externals" value="documentation -r${svn_version1} https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
