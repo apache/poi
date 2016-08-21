@@ -1,0 +1,272 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.apache.poi</groupId>
+	<artifactId>poi-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>3.15-beta4-SNAPSHOT</version>
+	<name>Apache POI - the Java API for Microsoft Documents</name>
+	<description>Maven build of Apache POI for Sonar checks</description>
+	<url>http://poi.apache.org/</url>
+	
+	<mailingLists>
+		<mailingList>
+			<name>POI Users List</name>
+			<subscribe>user-subscribe@poi.apache.org</subscribe>
+			<unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
+			<archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
+		</mailingList>
+		<mailingList>
+			<name>POI Developer List</name>
+			<subscribe>dev-subscribe@poi.apache.org</subscribe>
+			<unsubscribe>dev-unsubscribe@poi.apache.org</unsubscribe>
+			<archive>http://mail-archives.apache.org/mod_mbox/poi-dev/</archive>
+		</mailingList>
+	</mailingLists>
+	
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	
+	<organization>
+		<name>Apache Software Foundation</name>
+		<url>http://www.apache.org/</url>
+	</organization>
+	
+	<issueManagement>
+		<system>bugzilla</system>
+		<url>https://issues.apache.org/bugzilla/</url>
+	</issueManagement>
+	
+	<scm>
+		<connection>scm:svn:http://svn.apache.org/repos/asf/poi/trunk</connection>
+		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/poi/trunk</developerConnection>
+		<url>http://svn.apache.org/viewvc/poi</url>
+	</scm>
+	
+	<modules>
+		<module>main</module>
+		<module>ooxml-schema</module>
+		<module>ooxml-schema-encryption</module>
+		<module>ooxml-schema-security</module>
+		<module>ooxml</module>
+		<module>scratchpad</module>
+		<module>excelant</module>
+		<module>examples</module>
+	</modules>
+	
+	<properties>
+		<project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
+		<!-- Try to disable running SVN blame as it causes errors here because the source is copied from the actual SVN location here! -->
+		<sonar.scm.disabled>true</sonar.scm.disabled>
+
+		<!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
+		<xmlbeans.version>2.6.0</xmlbeans.version>
+		<junit.version>4.12</junit.version>
+		<maven.plugin.resources.version>3.0.1</maven.plugin.resources.version>
+		<maven.plugin.jar.version>3.0.1</maven.plugin.jar.version>
+		<maven.plugin.clean.version>3.0.0</maven.plugin.clean.version>
+		<maven.plugin.download.version>1.1.0</maven.plugin.download.version>
+		<maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
+		<maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
+	</properties>
+	
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.5.1</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.plugin.surefire.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>${maven.plugin.surefire.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<systemPropertyVariables>
+						<POI.testdata.path>../../test-data</POI.testdata.path>
+						<java.awt.headless>true</java.awt.headless>
+						<org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
+					</systemPropertyVariables>
+					<!-- use to following to analyze OOM issues:	-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
+					<argLine>-Duser.language=en -Duser.country=US -Xmx1024m</argLine>
+					<excludes>
+						<exclude>**/All*Tests.java</exclude>
+						<exclude>**/TestUnfixedBugs.java</exclude>
+						<exclude>**/TestcaseRecordInputStream.java</exclude>
+						<exclude>**/POITestCase.java</exclude>
+						<!-- TODO: error about no public construct, seems to run with JUnit 3.8... -->
+						<exclude>**/TestWordToConverterSuite*.java</exclude>
+						<exclude>**/TestExcelConverterSuite*.java</exclude>
+					</excludes>
+					<!--test>TestPPTX2PNG</test-->
+					<!--parallel>both</parallel>
+				<threadCount>10</threadCount-->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<!-- We need a fair amount of memory to compile the xml schema, -->
+		<!-- but limit it in case it goes wrong!                        -->
+		<!-- Pick the right amount based on 32 vs 64 bit jvm            -->
+        <!-- ********************************************************** -->
+        <!-- If you are using IntelliJ, you might want to check         -->
+        <!-- http://stackoverflow.com/questions/24115142                -->
+        <!-- ********************************************************** -->
+		<profile>
+			<id>32bitstuff</id>
+			<activation>
+				<property>
+					<name>sun.arch.data.model</name>
+					<value>32</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.compiler.maxmem>512m</maven.compiler.maxmem>
+                <argLine>-Xmx768m -XX:MaxPermSize=128m @{argLine}</argLine>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>64bitstuff</id>
+			<activation>
+				<property>
+					<name>sun.arch.data.model</name>
+					<value>64</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.compiler.maxmem>768m</maven.compiler.maxmem>
+                <argLine>-Xmx1024m -XX:MaxPermSize=256m @{argLine}</argLine>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>xmlbean</id>
+      <activation>
+        <file><exists>xmlbeans.marker</exists></file>
+      </activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>xmlbeans-maven-plugin</artifactId>
+						<version>2.3.3</version>
+						<executions>
+							<execution>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>xmlbeans</goal>
+								</goals>
+                <configuration>
+                  <schemaDirectory>${basedir}/target/schemas</schemaDirectory>
+                  <javaSource>1.5</javaSource>
+                  <noJavac>true</noJavac>
+                  <noUpa>${xmlbeans.noUpa}</noUpa>
+                  <noPvr>${xmlbeans.noPvr}</noPvr>
+                  <xmlConfigs>
+                    <xmlConfig implementation="java.io.File">${basedir}/../../src/ooxml/resources/org/apache/poi/poifs/crypt/encryptionCertificate.xsdconfig</xmlConfig>
+                    <xmlConfig implementation="java.io.File">${basedir}/../../src/ooxml/resources/org/apache/poi/poifs/crypt/encryptionInfo.xsdconfig</xmlConfig>
+                    <xmlConfig implementation="java.io.File">${basedir}/../../src/ooxml/resources/org/apache/poi/poifs/crypt/encryptionPassword.xsdconfig</xmlConfig>
+                    <xmlConfig implementation="java.io.File">${basedir}/../../src/ooxml/resources/org/apache/poi/schemas/ooxmlSchemas.xsdconfig</xmlConfig>
+                  </xmlConfigs>
+                </configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>${maven.plugin.antrun.version}</version>
+            <executions>
+              <execution>
+                <id>copy-xmltype-and-xsdconfig</id>
+                <phase>generate-sources</phase>
+                <goals><goal>run</goal></goals>                   
+                <configuration>
+                  <target>
+                    <copy todir="${basedir}/target/generated-sources/xmlbeans">
+                      <fileset dir="${basedir}/../../src/ooxml/java">
+                        <include name="org/apache/poi/POIXMLTypeLoader.java"/>
+                        <include name="org/apache/poi/util/DocumentHelper.java"/>
+                        <include name="org/apache/poi/util/SAXHelper.java"/>
+                      </fileset>
+                      <fileset dir="${basedir}/../../src/java">
+                        <include name="org/apache/poi/util/POILogFactory.java"/>
+                        <include name="org/apache/poi/util/POILogger.java"/>
+                        <include name="org/apache/poi/util/NullLogger.java"/>
+                        <include name="org/apache/poi/util/Internal.java"/>
+                      </fileset>
+                    </copy>
+                    <copy todir="${basedir}/target/schemas">
+                      <fileset dir="${basedir}/../../src/ooxml/resources/org/apache/poi/schemas"/>
+                    </copy>
+                  </target>
+                </configuration>
+              </execution>
+              <execution>
+                <id>replace-xmltypeloader</id>
+                <phase>process-sources</phase>
+                <goals><goal>run</goal></goals>                   
+                <configuration>
+                  <target>
+                    <replace dir="${basedir}/target/generated-sources/xmlbeans" includes="**/*.java" excludes="**/impl/**">
+                        <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
+                        <replacevalue>org.apache.poi.POIXMLTypeLoader</replacevalue>
+                    </replace>                    
+                  </target>
+                </configuration>
+              </execution>
+              <execution>
+                <id>remove-xmltypeloader-from-schema-jar</id>
+                <phase>prepare-package</phase>
+                <goals><goal>run</goal></goals>                   
+                <configuration>
+                  <target>
+                    <touch file="${basedir}/target/generated-sources/xmlbeans/.staleFlag"/>
+                    <delete dir="${basedir}/target/classes/org/apache"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+				</plugins>
+			</build>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.xmlbeans</groupId>
+          <artifactId>xmlbeans</artifactId>
+          <version>${xmlbeans.version}</version>
+        </dependency>
+      </dependencies>
+		</profile>
+	</profiles>
+</project>
