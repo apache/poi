@@ -1030,6 +1030,7 @@ public abstract class BaseTestCell {
         // Cell.CELL_TYPE_* -> CellType.*
         cell.setCellValue(5.0);
         assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals(0, cell.getCellType()); //make sure that hard-coded int literals still work, even though users should be using the named constants
         assertEquals(CellType.NUMERIC, cell.getCellTypeEnum()); // make sure old way and new way are compatible
 
         // make sure switch(int|Enum) still works. Cases must be statically resolvable in Java 6 ("constant expression required")
@@ -1038,6 +1039,7 @@ public abstract class BaseTestCell {
                 // expected
                 break;
             case Cell.CELL_TYPE_STRING:
+            case Cell.CELL_TYPE_BOOLEAN:
             case Cell.CELL_TYPE_ERROR:
             case Cell.CELL_TYPE_FORMULA:
             case Cell.CELL_TYPE_BLANK:
