@@ -136,45 +136,45 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         Row row = sheet.createRow(0);
 
         Cell cell0 = row.createCell(0);
-        cell0.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell0.setCellType(CellType.NUMERIC);
         cell0.setCellValue(100);
 
         Cell cell1 = row.createCell(1);
-        cell1.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell1.setCellType(CellType.NUMERIC);
         cell1.setCellValue(120);
 
         Cell cell2 = row.createCell(2);
-        cell2.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell2.setCellType(CellType.NUMERIC);
         cell2.setCellValue(130);
 
         // row 1
         row = sheet.createRow(1);
 
         cell0 = row.createCell(0);
-        cell0.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell0.setCellType(CellType.NUMERIC);
         cell0.setCellValue(200);
 
         cell1 = row.createCell(1);
-        cell1.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell1.setCellType(CellType.NUMERIC);
         cell1.setCellValue(220);
 
         cell2 = row.createCell(2);
-        cell2.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell2.setCellType(CellType.NUMERIC);
         cell2.setCellValue(230);
 
         // row 2
         row = sheet.createRow(2);
 
         cell0 = row.createCell(0);
-        cell0.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell0.setCellType(CellType.NUMERIC);
         cell0.setCellValue(300);
 
         cell1 = row.createCell(1);
-        cell1.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell1.setCellType(CellType.NUMERIC);
         cell1.setCellValue(320);
 
         cell2 = row.createCell(2);
-        cell2.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+        cell2.setCellType(CellType.NUMERIC);
         cell2.setCellValue(330);
 
         // Create conditional formatting, CELL1 should be yellow if CELL0 is not blank.

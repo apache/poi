@@ -46,7 +46,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#NUMERIC} instead.
      */
-    CellType CELL_TYPE_NUMERIC = CellType.NUMERIC;
+    int CELL_TYPE_NUMERIC = 0; //CellType.NUMERIC.getCode();
 
     /**
      * String Cell type (1)
@@ -54,7 +54,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#STRING} instead.
      */
-    CellType CELL_TYPE_STRING = CellType.STRING;
+    int CELL_TYPE_STRING = 1; //CellType.STRING.getCode();
 
     /**
      * Formula Cell type (2)
@@ -62,7 +62,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#FORMULA} instead.
      */
-    CellType CELL_TYPE_FORMULA = CellType.FORMULA;
+    int CELL_TYPE_FORMULA = 2; //CellType.FORMULA.getCode();
 
     /**
      * Blank Cell type (3)
@@ -70,7 +70,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#BLANK} instead.
      */
-    CellType CELL_TYPE_BLANK = CellType.BLANK;
+    int CELL_TYPE_BLANK = 3; //CellType.BLANK.getCode();
 
     /**
      * Boolean Cell type (4)
@@ -78,7 +78,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#BOOLEAN} instead.
      */
-    CellType CELL_TYPE_BOOLEAN = CellType.BOOLEAN;
+    int CELL_TYPE_BOOLEAN = 4; //CellType.BOOLEAN.getCode();
 
     /**
      * Error Cell type (5)
@@ -86,7 +86,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#ERROR} instead.
      */
-    CellType CELL_TYPE_ERROR = CellType.ERROR;
+    int CELL_TYPE_ERROR = 5; //CellType.ERROR.getCode();
 
     /**
      * Returns column index of this cell
