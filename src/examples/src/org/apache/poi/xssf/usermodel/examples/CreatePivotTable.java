@@ -39,7 +39,7 @@ public class CreatePivotTable {
         //Create some data to build the pivot table on
         setCellData(sheet);
 
-        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:D4"), new CellReference("H5"));
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:D4", SpreadsheetVersion.EXCEL2007), new CellReference("H5"));
         //Configure the pivot table
         //Use first column as row label
         pivotTable.addRowLabel(0);
