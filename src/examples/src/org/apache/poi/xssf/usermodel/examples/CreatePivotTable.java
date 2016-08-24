@@ -40,8 +40,11 @@ public class CreatePivotTable {
         //Create some data to build the pivot table on
         setCellData(sheet);
 
-        AreaReference area = new AreaReference("A1:D4", SpreadsheetVersion.EXCEL2007);
-        XSSFPivotTable pivotTable = sheet.createPivotTable(area, new CellReference("H5"));
+        AreaReference source = new AreaReference("A1:D4", SpreadsheetVersion.EXCEL2007);
+        CellReference position = new CellReference("H5");
+        // Create a pivot table on this sheet, with H5 as the top-left cell..
+        // The pivot table's data source is on the same sheet in A1:D4
+        XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
         //Configure the pivot table
         //Use first column as row label
         pivotTable.addRowLabel(0);
