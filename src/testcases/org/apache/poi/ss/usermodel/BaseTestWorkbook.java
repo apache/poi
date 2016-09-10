@@ -34,6 +34,7 @@ import java.util.Iterator;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.NullOutputStream;
 import org.junit.Test;
 
 public abstract class BaseTestWorkbook {
@@ -780,15 +781,6 @@ public abstract class BaseTestWorkbook {
 					sheets[i], wb.getSheetAt(i).getSheetName());
 		}
 	}
-
-    protected static class NullOutputStream extends OutputStream {
-        public NullOutputStream() {
-        }
-
-        @Override
-        public void write(int b) throws IOException {
-        }
-    }
 
     @Test
     public void test58499() throws IOException {
