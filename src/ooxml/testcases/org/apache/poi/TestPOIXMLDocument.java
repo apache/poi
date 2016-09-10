@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,9 +34,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.TempFile;
 import org.junit.Test;
@@ -120,12 +123,43 @@ public final class TestPOIXMLDocument {
         FileOutputStream out = new FileOutputStream(tmp);
         doc.write(out);
         out.close();
+        
+        // Should not be able to write to an output stream that has been closed
+        try {
+            doc.write(out);
+            fail("Should not be able to write to an output stream that has been closed.");
+        } catch (final OpenXML4JRuntimeException e) {
+            // FIXME: A better exception class (IOException?) and message should be raised
+            // indicating that the document could not be written because the output stream is closed.
+            // see {@link org.apache.poi.openxml4j.opc.ZipPackage#saveImpl(java.io.OutputStream)}
+            if (e.getMessage().matches("Fail to save: an error occurs while saving the package : The part .+ fail to be saved in the stream with marshaller .+")) {
+                // expected
+            } else {
+                throw e;
+            }
+        }
+
+        // Should not be able to write a document that has been closed
         doc.close();
+        try {
+            doc.write(new NullOutputStream());
+            fail("Should not be able to write a document that has been closed.");
+        } catch (final IOException e) {
+            if (e.getMessage().equals("Cannot write data, document seems to have been closed already")) {
+                // expected
+            } else {
+                throw e;
+            }
+        }
+        
+        // Should be able to close a document multiple times, though subsequent closes will have no effect.
+        doc.close();
+
 
         @SuppressWarnings("resource")
         OPCPackage pkg2 = OPCPackage.open(tmp.getAbsolutePath());
+        doc = new OPCParser(pkg1);
         try {
-            doc = new OPCParser(pkg1);
             doc.parse(new TestFactory());
             context = new HashMap<String,POIXMLDocumentPart>();
             traverse(doc, context);
@@ -150,6 +184,7 @@ public final class TestPOIXMLDocument {
             }
         } finally {
             doc.close();
+            pkg1.close();
             pkg2.close();
         }
     }
