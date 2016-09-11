@@ -17,9 +17,11 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.List;
@@ -101,6 +103,23 @@ public class TestXSLFTableRow {
         assertTrue(tc.getTcPr().getLnT().isSetNoFill());
         assertTrue(tc.getTcPr().getLnL().isSetNoFill());
         assertTrue(tc.getTcPr().getLnR().isSetNoFill());
+    }
+    
+    @Test
+    public void mergeCells() {
+        try {
+            row.mergeCells(0, 0);
+            fail("expected IllegalArgumentException when merging fewer than 2 columns");
+        } catch (final IllegalArgumentException e) {
+            // expected
+        }
+        
+        row.mergeCells(0, 1);
+        List<XSLFTableCell> cells = row.getCells();
+        //the top-left cell of a merged region is not regarded as merged
+        assertFalse("top-left cell of merged region", cells.get(0).isMerged());
+        assertTrue("inside merged region", cells.get(1).isMerged());
+        assertFalse("outside merged region", cells.get(2).isMerged());
     }
     
     @Test
