@@ -40,6 +40,7 @@ import org.apache.xmlbeans.impl.common.SystemCache;
 /**
  * This holds the common functionality for all POI OOXML Document classes.
  */
+// TODO: implements AutoCloseable in Java 7+ when POI drops support for Java 6.
 public abstract class POIXMLDocument extends POIXMLDocumentPart implements Closeable {
     public static final String DOCUMENT_CREATOR = "Apache POI";
 
@@ -230,6 +231,11 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      */
     @SuppressWarnings("resource")
     public final void write(OutputStream stream) throws IOException {
+        OPCPackage p = getPackage();
+        if(p == null) {
+            throw new IOException("Cannot write data, document seems to have been closed already");
+        }
+        
         //force all children to commit their changes into the underlying OOXML Package
         // TODO Shouldn't they be committing to the new one instead?
         Set<PackagePart> context = new HashSet<PackagePart>();
@@ -239,10 +245,6 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         //save extended and custom properties
         getProperties().commit();
 
-        OPCPackage p = getPackage();
-        if(p == null) {
-            throw new IOException("Cannot write data, document seems to have been closed already");
-        }
         p.save(stream);
     }
 }

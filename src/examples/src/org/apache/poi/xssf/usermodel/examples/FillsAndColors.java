@@ -32,13 +32,13 @@ public class FillsAndColors {
         Sheet sheet = wb.createSheet("new sheet");
 
         // Create a row and put some cells in it. Rows are 0 based.
-        Row row = sheet.createRow((short) 1);
+        Row row = sheet.createRow(1);
 
         // Aqua background
         CellStyle style = wb.createCellStyle();
         style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
         style.setFillPattern(CellStyle.BIG_SPOTS);
-        Cell cell = row.createCell((short) 1);
+        Cell cell = row.createCell(1);
         cell.setCellValue(new XSSFRichTextString("X"));
         cell.setCellStyle(style);
 
@@ -46,7 +46,7 @@ public class FillsAndColors {
         style = wb.createCellStyle();
         style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        cell = row.createCell((short) 2);
+        cell = row.createCell(2);
         cell.setCellValue(new XSSFRichTextString("X"));
         cell.setCellStyle(style);
 

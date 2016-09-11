@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import java.util.Map;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.NullOutputStream;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -119,22 +119,4 @@ public abstract class BaseXLSIteratingTest {
 	}
 
 	abstract void runOneFile(File pFile) throws Exception;
-
-	/**
-	 * Implementation of an OutputStream which does nothing, used
-	 * to redirect stdout to avoid spamming the console with output
-	 */
-	private static class NullOutputStream extends OutputStream {
-	    @Override
-	    public void write(byte[] b, int off, int len) {
-	    }
-
-	    @Override
-	    public void write(int b) {
-	    }
-
-	    @Override
-	    public void write(byte[] b) throws IOException {
-	    }
-	}
 }

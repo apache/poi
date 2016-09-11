@@ -2390,17 +2390,19 @@ under the License.
         <!-- can't combine updating and pinning of the documentation ... so we need two commits -->
         <!-- (revision)properties can't be set and read within one svn block -->
         <echo message="updating build.xml and status.xml"/>
+        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'release prepare for ${version.id} - updating build.xml and status.xml' build.xml src/documentation/content/xdocs/status.xml"/>
         <svn refid="svn.settings">
-            <commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
+            <!--<commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
                 <fileset dir="." includes="build.xml,src/documentation/content/xdocs/status.xml"/>
-            </commit>
+            </commit>-->
             <update dir="." recurse="true"/>
             <status path="." revisionProperty="svn_version1"/>
         </svn>
         <echo message="pin documentation - release ${svn_version1}"/>
+        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'release prepare for ${version.id} - pin documentation' src"/>
         <svn refid="svn.settings">
             <propset path="src" name="svn:externals" value="documentation -r${svn_version1} https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
-            <commit message="release prepare for ${version.id} - pin documentation" dir="src" recurse="false"/>
+<!--            <commit message="release prepare for ${version.id} - pin documentation" dir="src" recurse="false"/>-->
             <update dir="." recurse="true"/>
             <status path="." revisionProperty="svn_version2"/>
         </svn>
@@ -2430,12 +2432,13 @@ under the License.
         <svn refid="svn.settings">
             <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
-            <commit message="prepare for ${rel_next}" recurse="false">
+            <!--<commit message="prepare for ${rel_next}" recurse="false">
                 <fileset dir="." includes="build.xml"/>
                 <fileset dir="sonar" includes="**/pom.xml"/>
                 <dirset dir="src"/>
-            </commit>
+            </commit>-->
         </svn>
+        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'prepare for ${rel_next}' build.xml sonar src"/>
 
         <mkdir dir="build/release"/>
 

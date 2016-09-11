@@ -24,6 +24,7 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -46,7 +47,8 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#NUMERIC} instead.
      */
-    CellType CELL_TYPE_NUMERIC = CellType.NUMERIC;
+    @Removal(version="4.0")
+    int CELL_TYPE_NUMERIC = 0; //CellType.NUMERIC.getCode();
 
     /**
      * String Cell type (1)
@@ -54,7 +56,8 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#STRING} instead.
      */
-    CellType CELL_TYPE_STRING = CellType.STRING;
+    @Removal(version="4.0")
+    int CELL_TYPE_STRING = 1; //CellType.STRING.getCode();
 
     /**
      * Formula Cell type (2)
@@ -62,7 +65,8 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#FORMULA} instead.
      */
-    CellType CELL_TYPE_FORMULA = CellType.FORMULA;
+    @Removal(version="4.0")
+    int CELL_TYPE_FORMULA = 2; //CellType.FORMULA.getCode();
 
     /**
      * Blank Cell type (3)
@@ -70,7 +74,8 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#BLANK} instead.
      */
-    CellType CELL_TYPE_BLANK = CellType.BLANK;
+    @Removal(version="4.0")
+    int CELL_TYPE_BLANK = 3; //CellType.BLANK.getCode();
 
     /**
      * Boolean Cell type (4)
@@ -78,7 +83,8 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#BOOLEAN} instead.
      */
-    CellType CELL_TYPE_BOOLEAN = CellType.BOOLEAN;
+    @Removal(version="4.0")
+    int CELL_TYPE_BOOLEAN = 4; //CellType.BOOLEAN.getCode();
 
     /**
      * Error Cell type (5)
@@ -86,7 +92,8 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#ERROR} instead.
      */
-    CellType CELL_TYPE_ERROR = CellType.ERROR;
+    @Removal(version="4.0")
+    int CELL_TYPE_ERROR = 5; //CellType.ERROR.getCode();
 
     /**
      * Returns column index of this cell
@@ -136,6 +143,7 @@ public interface Cell {
      * @see CellType#ERROR
      * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
      */
+    @Removal(version="4.0")
     void setCellType(int cellType);
     /**
      * Set the cells type (numeric, formula or string).
@@ -155,7 +163,7 @@ public interface Cell {
     /**
      * Return the cell type.
      * 
-     * Will return {@link CellType} in a future version of POI.
+     * Will return {@link CellType} in version 4.0 of POI.
      * For forwards compatibility, do not hard-code cell type literals in your code.
      *
      * @return the cell type
@@ -168,9 +176,10 @@ public interface Cell {
      * @return the cell type
      * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
+     * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
     @Internal(since="POI 3.15 beta 3")
+    @Removal(version="4.2")
     CellType getCellTypeEnum();
     
     /**
@@ -192,7 +201,7 @@ public interface Cell {
      * on the cached value of the formula
      * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
+     * Will be renamed to <code>getCachedFormulaResultType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
     @Internal(since="POI 3.15 beta 3")
     CellType getCachedFormulaResultTypeEnum();

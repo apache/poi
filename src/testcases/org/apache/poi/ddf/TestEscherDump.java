@@ -20,9 +20,7 @@ package org.apache.poi.ddf;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
@@ -30,6 +28,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NullOutputStream;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -83,23 +82,6 @@ public class TestEscherDump {
         @SuppressWarnings("resource")
         private NullPrinterStream() throws UnsupportedEncodingException {
             super(new NullOutputStream(),true,LocaleUtil.CHARSET_1252.name());
-        }
-        /**
-         * Implementation of an OutputStream which does nothing, used
-         * to redirect stdout to avoid spamming the console with output
-         */
-        private static class NullOutputStream extends OutputStream {
-            @Override
-            public void write(byte[] b, int off, int len) {
-            }
-
-            @Override
-            public void write(int b) {
-            }
-
-            @Override
-            public void write(byte[] b) throws IOException {
-            }
-        }        
+        }      
     }    
 }
