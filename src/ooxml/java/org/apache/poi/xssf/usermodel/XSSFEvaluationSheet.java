@@ -67,7 +67,28 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
             }
         }
         
-        return _cellCache.get(new CellKey(rowIndex, columnIndex));
+        final CellKey key = new CellKey(rowIndex, columnIndex);
+        EvaluationCell evalcell = _cellCache.get(key);
+        
+        // If cache is stale, update cache with this one cell
+        // This is a compromise between rebuilding the entire cache
+        // (which would quickly defeat the benefit of the cache)
+        // and not caching at all.
+        // See bug 59958: Add cells on the fly to the evaluation sheet cache on cache miss
+        if (evalcell == null) {
+            XSSFRow row = _xs.getRow(rowIndex);
+            if (row == null) {
+                return null;
+            }
+            XSSFCell cell = row.getCell(columnIndex);
+            if (cell == null) {
+                return null;
+            }
+            evalcell = new XSSFEvaluationCell(cell, this);
+            _cellCache.put(key, evalcell);
+        }
+        
+        return evalcell;
     }
     
     private static class CellKey {
