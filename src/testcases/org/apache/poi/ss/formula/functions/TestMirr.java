@@ -162,7 +162,7 @@ public final class TestMirr extends TestCase {
     private static void assertFormulaResult(CellValue cv, HSSFCell cell) {
         double actualValue = cv.getNumberValue();
         double expectedValue = cell.getNumericCellValue(); // cached formula result calculated by Excel
-        assertEquals("Invalid formula result: " + cv.toString(), CellType.NUMERIC, cv.getCellType());
+        assertEquals("Invalid formula result: " + cv.toString(), CellType.NUMERIC, cv.getCellTypeEnum());
         assertEquals(expectedValue, actualValue, 1E-8);
     }
 }

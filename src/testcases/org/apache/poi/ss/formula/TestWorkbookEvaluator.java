@@ -203,7 +203,7 @@ public class TestWorkbookEvaluator {
         } catch (RuntimeException e) {
             fail("Missing arg result not being handled correctly.");
         }
-        assertEquals(CellType.NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
         // adding blank to 1.0 gives 1.0
         assertEquals(1.0, cv.getNumberValue(), 0.0);
 
@@ -211,7 +211,7 @@ public class TestWorkbookEvaluator {
         cell.setCellFormula("\"abc\"&IF(1,,)");
         fe.notifySetFormula(cell);
         cv = fe.evaluate(cell);
-        assertEquals(CellType.STRING, cv.getCellType());
+        assertEquals(CellType.STRING, cv.getCellTypeEnum());
         // adding blank to "abc" gives "abc"
         assertEquals("abc", cv.getStringValue());
 
@@ -219,7 +219,7 @@ public class TestWorkbookEvaluator {
         cell.setCellFormula("\"abc\"&CHOOSE(2,5,,9)");
         fe.notifySetFormula(cell);
         cv = fe.evaluate(cell);
-        assertEquals(CellType.STRING, cv.getCellType());
+        assertEquals(CellType.STRING, cv.getCellTypeEnum());
         // adding blank to "abc" gives "abc"
         assertEquals("abc", cv.getStringValue());
     }
@@ -245,14 +245,14 @@ public class TestWorkbookEvaluator {
                 }
                 throw new RuntimeException(e);
             }
-            assertEquals(CellType.ERROR, cv.getCellType());
+            assertEquals(CellType.ERROR, cv.getCellTypeEnum());
             assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), cv.getErrorValue());
 
             // verify circular refs are still detected properly
             fe.clearAllCachedResultValues();
             cell.setCellFormula("OFFSET(A1,0,0)");
             cv = fe.evaluate(cell);
-            assertEquals(CellType.ERROR, cv.getCellType());
+            assertEquals(CellType.ERROR, cv.getCellTypeEnum());
             assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cv.getErrorValue());
         } finally {
             wb.close();
@@ -396,7 +396,7 @@ public class TestWorkbookEvaluator {
         assertEquals(CellType.FORMULA, D1.getCellTypeEnum());
         assertEquals(expectedFormula, D1.getCellFormula());
         
-        assertEquals(CellType.NUMERIC, result.getCellType());
+        assertEquals(CellType.NUMERIC, result.getCellTypeEnum());
         assertEquals(expectedResult, result.getNumberValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);

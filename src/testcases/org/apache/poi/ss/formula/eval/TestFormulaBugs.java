@@ -58,7 +58,7 @@ public final class TestFormulaBugs {
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		CellValue cv = fe.evaluate(cell);
 
-		assertEquals(CellType.NUMERIC, cv.getCellType());
+		assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
 		assertEquals(3.0, cv.getNumberValue(), 0.0);
 		
 		wb.close();
@@ -106,11 +106,11 @@ public final class TestFormulaBugs {
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		CellValue cv;
 		cv = fe.evaluate(cell);
-		assertEquals(CellType.NUMERIC, cv.getCellType());
+		assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
 		assertEquals(1.0, cv.getNumberValue(), 0.0);
 		
 		cv = fe.evaluate(row.getCell(1));
-		assertEquals(CellType.BOOLEAN, cv.getCellType());
+		assertEquals(CellType.BOOLEAN, cv.getCellTypeEnum());
 		assertEquals(true, cv.getBooleanValue());
 		
 		wb.close();
@@ -161,7 +161,7 @@ public final class TestFormulaBugs {
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		CellValue cv = fe.evaluate(cell);
 
-		assertEquals(CellType.NUMERIC, cv.getCellType());
+		assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
 		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
 
 		wb.close();

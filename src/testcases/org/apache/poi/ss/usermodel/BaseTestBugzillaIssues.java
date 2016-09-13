@@ -1133,8 +1133,8 @@ public abstract class BaseTestBugzillaIssues {
         cfs.setCellFormula("B1");
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals(CellType.NUMERIC, fe.evaluate(cfn).getCellType());
-        assertEquals(CellType.STRING, fe.evaluate(cfs).getCellType());
+        assertEquals(CellType.NUMERIC, fe.evaluate(cfn).getCellTypeEnum());
+        assertEquals(CellType.STRING, fe.evaluate(cfs).getCellTypeEnum());
         fe.evaluateFormulaCellEnum(cfn);
         fe.evaluateFormulaCellEnum(cfs);
 

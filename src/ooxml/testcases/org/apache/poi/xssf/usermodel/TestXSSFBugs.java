@@ -304,7 +304,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                         if(c.getCellTypeEnum() == CellType.FORMULA) {
                             CellValue cv = eval.evaluate(c);
 
-                            if(cv.getCellType() == CellType.NUMERIC) {
+                            if(cv.getCellTypeEnum() == CellType.NUMERIC) {
                                 // assert that the calculated value agrees with
                                 // the cached formula result calculated by Excel
                                 String formula = c.getCellFormula();
@@ -2187,7 +2187,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("E4+E5", cell.getCellFormula());
 
         CellValue value = evaluator.evaluate(cell);
-        assertEquals(CellType.ERROR, value.getCellType());
+        assertEquals(CellType.ERROR, value.getCellTypeEnum());
         assertEquals(-60, value.getErrorValue());
         assertEquals("~CIRCULAR~REF~", FormulaError.forInt(value.getErrorValue()).getString());
         assertEquals("CIRCULAR_REF", FormulaError.forInt(value.getErrorValue()).toString());

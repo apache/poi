@@ -77,7 +77,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         CellValue cv = evaluateFormulaCellValue(cell);
         // cell remains a formula cell, but the cached value is changed
         setCellValue(cell, cv);
-        return cv.getCellType();
+        return cv.getCellTypeEnum();
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
     }
 
     private static void setCellValue(Cell cell, CellValue cv) {
-        CellType cellType = cv.getCellType();
+        CellType cellType = cv.getCellTypeEnum();
         switch (cellType) {
             case BOOLEAN:
                 cell.setCellValue(cv.getBooleanValue());

@@ -132,7 +132,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
     }
 
     protected static void setCellType(Cell cell, CellValue cv) {
-        CellType cellType = cv.getCellType();
+        CellType cellType = cv.getCellTypeEnum();
         switch (cellType) {
             case BOOLEAN:
             case ERROR:
