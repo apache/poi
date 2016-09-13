@@ -78,10 +78,22 @@ public final class CellValue {
 	}
 	/**
 	 * @return Returns the cellType.
+	 * @since POI 3.15
 	 */
-	public CellType getCellType() {
+	public CellType getCellTypeEnum() {
 		return _cellType;
 	}
+	/**
+	 * @return Returns the cellType.
+	 * @deprecated POI 3.15. Use {@link #getCellTypeEnum()} instead.
+	 * In the future, the signature of this method will be changed to return a
+	 * {@link CellType}.
+	 */
+	@Deprecated
+	public int getCellType() {
+		return _cellType.getCode();
+	}
+
 	/**
 	 * @return Returns the errorValue.
 	 */

@@ -55,7 +55,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		HSSFCell cell = sheet.getRow(8).getCell(0);
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv = fe.evaluate(cell);
-		assertEquals(CellType.NUMERIC, cv.getCellType());
+		assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
 		assertEquals(3.72, cv.getNumberValue(), 0.0);
 		wb.close();
 	}
@@ -127,7 +127,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		try {
 			value = hsf.evaluate(cellA1);
 
-	        assertEquals(CellType.NUMERIC, value.getCellType());
+	        assertEquals(CellType.NUMERIC, value.getCellTypeEnum());
 	        assertEquals(5.33, value.getNumberValue(), 0.0);
 	        
 		} catch (RuntimeException e) {

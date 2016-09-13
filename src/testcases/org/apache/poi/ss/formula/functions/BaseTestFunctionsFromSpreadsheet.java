@@ -155,7 +155,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
 
         if (expectedCell.getCellTypeEnum() == CellType.ERROR) {
             int expectedErrorCode = expectedCell.getErrorCellValue();
-            assertEquals(msg, CellType.ERROR, actualValue.getCellType());
+            assertEquals(msg, CellType.ERROR, actualValue.getCellTypeEnum());
             assertEquals(msg, ErrorEval.getText(expectedErrorCode), actualValue.formatAsString());
             assertEquals(msg, expectedErrorCode, actualValue.getErrorValue());
             assertEquals(msg, ErrorEval.getText(expectedErrorCode), ErrorEval.getText(actualValue.getErrorValue()));
@@ -163,11 +163,11 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         }
 
         // unexpected error
-        assertNotEquals(msg, CellType.ERROR, actualValue.getCellType());
+        assertNotEquals(msg, CellType.ERROR, actualValue.getCellTypeEnum());
         assertNotEquals(msg, formatValue(expectedCell), ErrorEval.getText(actualValue.getErrorValue()));
 
         // wrong type error
-        assertEquals(msg, expectedCell.getCellTypeEnum(), actualValue.getCellType());
+        assertEquals(msg, expectedCell.getCellTypeEnum(), actualValue.getCellTypeEnum());
 
         final CellType expectedCellType = expectedCell.getCellTypeEnum();
         switch (expectedCellType) {
