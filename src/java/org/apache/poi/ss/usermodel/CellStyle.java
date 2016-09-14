@@ -541,19 +541,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle)} instead
      */
+    @Removal(version="3.17")
     void setBorderLeft(short border);
     
     /**
      * set the type of border to use for the left border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderLeft(BorderStyle border);
 
     /**
      * get the type of border to use for the left border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderLeftEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderLeft();
+    short getBorderLeft();
+    /**
+     * get the type of border to use for the left border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderLeftEnum();
 
     /**
      * set the type of border to use for the right border of the cell
@@ -574,19 +584,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle)} instead
      */
+    @Removal(version="3.17")
     void setBorderRight(short border);
     
     /**
      * set the type of border to use for the right border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderRight(BorderStyle border);
 
     /**
      * get the type of border to use for the right border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderRightEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderRight();
+    short getBorderRight();
+    /**
+     * get the type of border to use for the right border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderRightEnum();
 
     /**
      * set the type of border to use for the top border of the cell
@@ -607,19 +627,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle)} instead
      */
+    @Removal(version="3.17")
     void setBorderTop(short border);
     
     /**
      * set the type of border to use for the top border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderTop(BorderStyle border);
 
     /**
      * get the type of border to use for the top border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderTopEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderTop();
+    short getBorderTop();
+    /**
+     * get the type of border to use for the top border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderTopEnum();
 
     /**
      * set the type of border to use for the bottom border of the cell
@@ -640,19 +670,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle)} instead.
      */
+    @Removal(version="3.17")
     void setBorderBottom(short border);
     
     /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderBottom(BorderStyle border);
 
     /**
      * get the type of border to use for the bottom border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderBottomEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderBottom();
+    short getBorderBottom();
+    /**
+     * get the type of border to use for the bottom border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderBottomEnum();
 
     /**
      * set the color to use for the left border

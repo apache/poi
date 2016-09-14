@@ -278,10 +278,10 @@ public abstract class BaseTestCell {
 
         assertNotNull("Formula Cell Style", cs);
         assertEquals("Font Index Matches", f.getIndex(), cs.getFontIndex());
-        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
-        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
-        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
-        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottom());
+        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTopEnum());
+        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeftEnum());
+        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRightEnum());
+        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottomEnum());
         wb2.close();
     }
 

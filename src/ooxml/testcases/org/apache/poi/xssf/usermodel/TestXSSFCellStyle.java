@@ -104,11 +104,11 @@ public class TestXSSFCellStyle {
 	@Test
 	public void testGetSetBorderBottom() {
         //default values
-        assertEquals(BorderStyle.NONE, cellStyle.getBorderBottom());
+        assertEquals(BorderStyle.NONE, cellStyle.getBorderBottomEnum());
 
         int num = stylesTable.getBorders().size();
         cellStyle.setBorderBottom(BorderStyle.MEDIUM);
-        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderBottom());
+        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderBottomEnum());
         //a new border has been added
         assertEquals(num + 1, stylesTable.getBorders().size());
         //id of the created border
@@ -122,7 +122,7 @@ public class TestXSSFCellStyle {
         //setting the same border multiple times should not change borderId
         for (int i = 0; i < 3; i++) {
             cellStyle.setBorderBottom(BorderStyle.MEDIUM);
-            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderBottom());
+            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderBottomEnum());
         }
         assertEquals(borderId, cellStyle.getCoreXf().getBorderId());
         assertEquals(num, stylesTable.getBorders().size());
@@ -139,11 +139,11 @@ public class TestXSSFCellStyle {
 	@Test
     public void testGetSetBorderRight() {
         //default values
-        assertEquals(BorderStyle.NONE, cellStyle.getBorderRight());
+        assertEquals(BorderStyle.NONE, cellStyle.getBorderRightEnum());
 
         int num = stylesTable.getBorders().size();
         cellStyle.setBorderRight(BorderStyle.MEDIUM);
-        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderRight());
+        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderRightEnum());
         //a new border has been added
         assertEquals(num + 1, stylesTable.getBorders().size());
         //id of the created border
@@ -157,7 +157,7 @@ public class TestXSSFCellStyle {
         //setting the same border multiple times should not change borderId
         for (int i = 0; i < 3; i++) {
             cellStyle.setBorderRight(BorderStyle.MEDIUM);
-            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderRight());
+            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderRightEnum());
         }
         assertEquals(borderId, cellStyle.getCoreXf().getBorderId());
         assertEquals(num, stylesTable.getBorders().size());
@@ -174,11 +174,11 @@ public class TestXSSFCellStyle {
 	@Test
     public void testGetSetBorderLeft() {
         //default values
-        assertEquals(BorderStyle.NONE, cellStyle.getBorderLeft());
+        assertEquals(BorderStyle.NONE, cellStyle.getBorderLeftEnum());
 
         int num = stylesTable.getBorders().size();
         cellStyle.setBorderLeft(BorderStyle.MEDIUM);
-        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderLeft());
+        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderLeftEnum());
         //a new border has been added
         assertEquals(num + 1, stylesTable.getBorders().size());
         //id of the created border
@@ -192,7 +192,7 @@ public class TestXSSFCellStyle {
         //setting the same border multiple times should not change borderId
         for (int i = 0; i < 3; i++) {
             cellStyle.setBorderLeft(BorderStyle.MEDIUM);
-            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderLeft());
+            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderLeftEnum());
         }
         assertEquals(borderId, cellStyle.getCoreXf().getBorderId());
         assertEquals(num, stylesTable.getBorders().size());
@@ -209,11 +209,11 @@ public class TestXSSFCellStyle {
 	@Test
     public void testGetSetBorderTop() {
         //default values
-        assertEquals(BorderStyle.NONE, cellStyle.getBorderTop());
+        assertEquals(BorderStyle.NONE, cellStyle.getBorderTopEnum());
 
         int num = stylesTable.getBorders().size();
         cellStyle.setBorderTop(BorderStyle.MEDIUM);
-        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderTop());
+        assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderTopEnum());
         //a new border has been added
         assertEquals(num + 1, stylesTable.getBorders().size());
         //id of the created border
@@ -227,7 +227,7 @@ public class TestXSSFCellStyle {
         //setting the same border multiple times should not change borderId
         for (int i = 0; i < 3; i++) {
             cellStyle.setBorderTop(BorderStyle.MEDIUM);
-            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderTop());
+            assertEquals(BorderStyle.MEDIUM, cellStyle.getBorderTopEnum());
         }
         assertEquals(borderId, cellStyle.getCoreXf().getBorderId());
         assertEquals(num, stylesTable.getBorders().size());
@@ -243,7 +243,7 @@ public class TestXSSFCellStyle {
     
     private void testGetSetBorderXMLBean(BorderStyle border, STBorderStyle.Enum expected) {
         cellStyle.setBorderTop(border);
-        assertEquals(border, cellStyle.getBorderTop());
+        assertEquals(border, cellStyle.getBorderTopEnum());
         int borderId = (int)cellStyle.getCoreXf().getBorderId();
         assertTrue(borderId > 0);
         //check changes in the underlying xml bean
@@ -256,7 +256,7 @@ public class TestXSSFCellStyle {
     @Test
     public void testGetSetBorderNone() {
         cellStyle.setBorderTop(BorderStyle.NONE);
-        assertEquals(BorderStyle.NONE, cellStyle.getBorderTop());
+        assertEquals(BorderStyle.NONE, cellStyle.getBorderTopEnum());
         int borderId = (int)cellStyle.getCoreXf().getBorderId();
         assertTrue(borderId > 0);
         //check changes in the underlying xml bean
@@ -562,10 +562,10 @@ public class TestXSSFCellStyle {
         assertEquals(style2.getRightBorderColor(), style1.getRightBorderColor());
         assertEquals(style2.getBottomBorderColor(), style1.getBottomBorderColor());
 
-        assertEquals(style2.getBorderBottom(), style1.getBorderBottom());
-        assertEquals(style2.getBorderLeft(), style1.getBorderLeft());
-        assertEquals(style2.getBorderRight(), style1.getBorderRight());
-        assertEquals(style2.getBorderTop(), style1.getBorderTop());
+        assertEquals(style2.getBorderBottomEnum(), style1.getBorderBottomEnum());
+        assertEquals(style2.getBorderLeftEnum(), style1.getBorderLeftEnum());
+        assertEquals(style2.getBorderRightEnum(), style1.getBorderRightEnum());
+        assertEquals(style2.getBorderTopEnum(), style1.getBorderTopEnum());
         wb2.close();
 	}
 
@@ -999,7 +999,7 @@ public class TestXSSFCellStyle {
         Workbook copy = XSSFTestDataSamples.writeOutAndReadBack(target);
 
         // previously this failed because the border-element was not copied over 
-        copy.getCellStyleAt((short)1).getBorderBottom();
+        copy.getCellStyleAt((short)1).getBorderBottomEnum();
         
         copy.close();
         

@@ -331,6 +331,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see VerticalAlignment
      * @deprecated POI 3.15 beta 3. Use {@link #setVerticalAlignment(VerticalAlignment)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setVerticalAlignment(short align)
     {
@@ -461,6 +462,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderLeft(BorderStyle)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setBorderLeft(short border)
     {
@@ -471,6 +473,7 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * set the type of border to use for the left border of the cell
      * @param border type
+     * @since POI 3.15
      */
     @Override
     public void setBorderLeft(BorderStyle border)
@@ -481,9 +484,20 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * get the type of border to use for the left border of the cell
      * @return border type
+     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderLeftEnum()}.
      */
     @Override
-    public BorderStyle getBorderLeft()
+    public short getBorderLeft()
+    {
+        return _format.getBorderLeft();
+    }
+    /**
+     * get the type of border to use for the left border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    @Override
+    public BorderStyle getBorderLeftEnum()
     {
         return BorderStyle.valueOf(_format.getBorderLeft());
     }
@@ -507,6 +521,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderRight(BorderStyle)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setBorderRight(short border)
     {
@@ -517,6 +532,7 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * set the type of border to use for the right border of the cell
      * @param border type
+     * @since POI 3.15
      */
     @Override
     public void setBorderRight(BorderStyle border)
@@ -527,9 +543,20 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * get the type of border to use for the right border of the cell
      * @return border type
+     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderRightEnum()}.
      */
     @Override
-    public BorderStyle getBorderRight()
+    public short getBorderRight()
+    {
+        return _format.getBorderRight();
+    }
+    /**
+     * get the type of border to use for the right border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    @Override
+    public BorderStyle getBorderRightEnum()
     {
         return BorderStyle.valueOf(_format.getBorderRight());
     }
@@ -553,6 +580,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderTop(BorderStyle)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setBorderTop(short border)
     {
@@ -563,6 +591,7 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * set the type of border to use for the top border of the cell
      * @param border type
+     * @since POI 3.15
      */
     @Override
     public void setBorderTop(BorderStyle border)
@@ -573,9 +602,20 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * get the type of border to use for the top border of the cell
      * @return border type
+     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderTopEnum()}.
      */
     @Override
-    public BorderStyle getBorderTop()
+    public short getBorderTop()
+    {
+        return _format.getBorderTop();
+    }
+    /**
+     * get the type of border to use for the top border of the cell
+     * @return border type
+     * @since 3.15
+     */
+    @Override
+    public BorderStyle getBorderTopEnum()
     {
         return BorderStyle.valueOf(_format.getBorderTop());
     }
@@ -599,6 +639,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderBottom(BorderStyle)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setBorderBottom(short border)
     {
@@ -609,6 +650,7 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
+     * @since 3.15 beta 2
      */
     @Override
     public void setBorderBottom(BorderStyle border)
@@ -619,9 +661,20 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * get the type of border to use for the bottom border of the cell
      * @return border type
+     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderBottomEnum()}.
      */
     @Override
-    public BorderStyle getBorderBottom()
+    public short getBorderBottom()
+    {
+        return _format.getBorderBottom();
+    }
+    /**
+     * get the type of border to use for the bottom border of the cell
+     * @return border type
+     * @since 3.15
+     */
+    @Override
+    public BorderStyle getBorderBottomEnum()
     {
         return BorderStyle.valueOf(_format.getBorderBottom());
     }
@@ -735,6 +788,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @param fp  fill pattern (set to 1 to fill w/foreground color)
      * @deprecated POI 3.15 beta 3. Use {@link #setFillPattern(FillPatternType)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setFillPattern(short fp)
     {
