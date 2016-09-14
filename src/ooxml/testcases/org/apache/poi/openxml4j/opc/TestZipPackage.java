@@ -33,11 +33,14 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -194,6 +197,53 @@ public class TestZipPackage {
         } catch (Exception e) {
         }
         assertTrue("Can't delete tmp file", tmp.delete());
+    }
+    
+    /**
+     * If ZipPackage is passed an invalid file, a call to close
+     *  (eg from the OPCPackage open method) should tidy up the
+     *  stream / file the broken file is being read from.
+     * See bug #60128 for more
+     */
+    @Test
+    public void testTidyStreamOnInvalidFile() throws Exception {
+        // Spreadsheet has a good mix of alternate file types
+        POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
+        
+        File[] notValidF = new File[] {
+                files.getFile("SampleSS.ods"), files.getFile("SampleSS.txt")
+        };
+        InputStream[] notValidS = new InputStream[] {
+                files.openResourceAsStream("SampleSS.ods"), files.openResourceAsStream("SampleSS.txt")
+        };
 
+        for (File notValid : notValidF) {
+            ZipPackage pkg = new ZipPackage(notValid, PackageAccess.READ);
+            assertNotNull(pkg.getZipArchive());
+            assertFalse(pkg.getZipArchive().isClosed());
+            try {
+                pkg.getParts();
+                fail("Shouldn't work");
+            } catch (ODFNotOfficeXmlFileException e) {
+            } catch (NotOfficeXmlFileException ne) {}
+            pkg.close();
+            
+            assertNotNull(pkg.getZipArchive());
+            assertTrue(pkg.getZipArchive().isClosed());
+        }
+        for (InputStream notValid : notValidS) {
+            ZipPackage pkg = new ZipPackage(notValid, PackageAccess.READ);
+            assertNotNull(pkg.getZipArchive());
+            assertFalse(pkg.getZipArchive().isClosed());
+            try {
+                pkg.getParts();
+                fail("Shouldn't work");
+            } catch (ODFNotOfficeXmlFileException e) {
+            } catch (NotOfficeXmlFileException ne) {}
+            pkg.close();
+            
+            assertNotNull(pkg.getZipArchive());
+            assertTrue(pkg.getZipArchive().isClosed());
+        }
     }
 }

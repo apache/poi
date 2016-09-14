@@ -76,6 +76,9 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 		// Free the memory
 		zipEntries = null;
 	}
+	public boolean isClosed() {
+	    return (zipEntries == null);
+	}
 	
 	/**
 	 * Why oh why oh why are Iterator and Enumeration
