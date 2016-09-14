@@ -184,6 +184,7 @@ public class TestZipPackage {
     public void testClosingStreamOnException() throws IOException {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("dcterms_bug_56479.zip");
         File tmp = File.createTempFile("poi-test-truncated-zip", "");
+        // create a corrupted zip file by truncating a valid zip file to the first 100 bytes
         OutputStream os = new FileOutputStream(tmp);
         for (int i = 0; i < 100; i++) {
             os.write(is.read());
@@ -192,10 +193,15 @@ public class TestZipPackage {
         os.close();
         is.close();
 
+        // feed the corrupted zip file to OPCPackage
         try {
             OPCPackage.open(tmp, PackageAccess.READ);
         } catch (Exception e) {
+            // expected: the zip file is invalid
+            // this test does not care if open() throws an exception or not.
         }
+        // If the stream is not closed on exception, it will keep a file descriptor to tmp,
+        // and requests to the OS to delete the file will fail.
         assertTrue("Can't delete tmp file", tmp.delete());
     }
     

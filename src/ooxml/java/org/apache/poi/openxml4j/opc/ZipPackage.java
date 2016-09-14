@@ -19,6 +19,7 @@ package org.apache.poi.openxml4j.opc;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -88,9 +89,18 @@ public final class ZipPackage extends OPCPackage {
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
         super(access);
-        @SuppressWarnings("resource")
         ThresholdInputStream zis = ZipHelper.openZipStream(in);
-        this.zipArchive = new ZipInputStreamZipEntrySource(zis);
+        try {
+            this.zipArchive = new ZipInputStreamZipEntrySource(zis);
+        } catch (final IOException e) {
+            try {
+                zis.close();
+            } catch (final IOException e2) {
+                e2.addSuppressed(e);
+                throw new IOException("Failed to close zip input stream while cleaning up", e2);
+            }
+            throw new IOException("Failed to read zip entry source", e);
+        }
     }
 
     /**
@@ -100,8 +110,9 @@ public final class ZipPackage extends OPCPackage {
      *            The path of the file to open or create.
      * @param access
      *            The package access mode.
+     * @throws InvalidOperationException
      */
-    ZipPackage(String path, PackageAccess access) {
+    ZipPackage(String path, PackageAccess access) throws InvalidOperationException {
         this(new File(path), access);
     }
 
@@ -112,9 +123,9 @@ public final class ZipPackage extends OPCPackage {
      *            The file to open or create.
      * @param access
      *            The package access mode.
+     * @throws InvalidOperationException
      */
-    @SuppressWarnings("resource")
-    ZipPackage(File file, PackageAccess access) {
+    ZipPackage(File file, PackageAccess access) throws InvalidOperationException {
         super(access);
 
         ZipEntrySource ze;
@@ -127,35 +138,71 @@ public final class ZipPackage extends OPCPackage {
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
             logger.log(POILogger.ERROR, "Error in zip file "+file+" - falling back to stream processing (i.e. ignoring zip central directory)");
-            // some zips can't be opened via ZipFile in JDK6, as the central directory
-            // contains either non-latin entries or the compression type can't be handled
-            // the workaround is to iterate over the stream and not the directory
-            FileInputStream fis = null;
-            ThresholdInputStream zis = null;
-            try {
-                fis = new FileInputStream(file);
-                zis = ZipHelper.openZipStream(fis);
-                ze = new ZipInputStreamZipEntrySource(zis);
-            } catch (IOException e2) {
-                if (zis != null) {
-                    try {
-                        zis.close();
-                    } catch (IOException e3) {
-                        throw new InvalidOperationException("Can't open the specified file: '" + file + "'"+
-                                " and couldn't close the file input stream", e);
-                    }
-                } else if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e3) {
-                        throw new InvalidOperationException("Can't open the specified file: '" + file + "'"+
-                                " and couldn't close the file input stream", e);
-                    }
-                }
-                throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
-            }
+            ze = openZipEntrySourceStream(file);
         }
         this.zipArchive = ze;
+    }
+    
+    private static ZipEntrySource openZipEntrySourceStream(File file) throws InvalidOperationException {
+        final FileInputStream fis;
+        // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
+        try {
+            // open the file input stream
+            fis = new FileInputStream(file);
+        } catch (final FileNotFoundException e) {
+            // If the source cannot be acquired, abort (no resources to free at this level)
+            throw new InvalidOperationException("Can't open the specified file input stream from file: '" + file + "'", e);
+        }
+        
+        // If an error occurs while reading the next level of openZipEntrySourceStream, free the acquired resource
+        try {
+            // read from the file input stream
+            return openZipEntrySourceStream(fis);
+        } catch (final Exception e) {
+            try {
+                // abort: close the file input stream
+                fis.close();
+            } catch (final IOException e2) {
+                throw new InvalidOperationException("Could not close the specified file input stream from file: '" + file + "'", e2);
+            }
+            throw new InvalidOperationException("Failed to read the file input stream from file: '" + file + "'", e);
+        }
+    }
+    
+    private static ZipEntrySource openZipEntrySourceStream(FileInputStream fis) throws InvalidOperationException {
+        final ThresholdInputStream zis;
+        // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
+        try {
+            // open the zip input stream
+            zis = ZipHelper.openZipStream(fis);
+        } catch (final IOException e) {
+            // If the source cannot be acquired, abort (no resources to free at this level)
+            throw new InvalidOperationException("Could not open the file input stream", e);
+        }
+        
+        // If an error occurs while reading the next level of openZipEntrySourceStream, free the acquired resource
+        try {
+            // read from the zip input stream
+            return openZipEntrySourceStream(zis);
+        } catch (final Exception e) {
+            try {
+                // abort: close the zip input stream
+                zis.close();
+            } catch (final IOException e2) {
+                throw new InvalidOperationException("Failed to read the zip entry source stream and could not close the zip input stream", e2);
+            }
+            throw new InvalidOperationException("Failed to read the zip entry source stream");
+        }
+    }
+    
+    private static ZipEntrySource openZipEntrySourceStream(ThresholdInputStream zis) throws InvalidOperationException {
+        // Acquire the final level resource. If this is acquired successfully, the zip package was read successfully from the input stream
+        try {
+            // open the zip entry source stream
+            return new ZipInputStreamZipEntrySource(zis);
+        } catch (IOException e) {
+            throw new InvalidOperationException("Could not open the specified zip entry source stream", e);
+        }
     }
 
     /**
@@ -220,11 +267,12 @@ public final class ZipPackage extends OPCPackage {
             boolean hasSettingsXML = false;
             entries = this.zipArchive.getEntries();
             while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                if (entry.getName().equals("mimetype")) {
+                final ZipEntry entry = entries.nextElement();
+                final String name = entry.getName();
+                if ("mimetype".equals(name)) {
                     hasMimetype = true;
                 }
-                if (entry.getName().equals("settings.xml")) {
+                if ("settings.xml".equals(name)) {
                     hasSettingsXML = true;
                 }
                 numEntries++;
