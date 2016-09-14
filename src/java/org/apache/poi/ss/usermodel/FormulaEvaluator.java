@@ -101,6 +101,7 @@ public interface FormulaEvaluator {
      *      or one of {@link CellType#NUMERIC}, {@link CellType#STRING},
      *      {@link CellType#BOOLEAN}, {@link CellType#ERROR}
      *      Note: the cell's type remains as CellType.FORMULA however.
+     * @deprecated 3.15. Will return a {@link CellType} enum in the future
      */
     int evaluateFormulaCell(Cell cell);
     
