@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * Evaluates formula cells.<p/>
