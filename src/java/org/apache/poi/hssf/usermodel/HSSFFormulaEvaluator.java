@@ -155,7 +155,6 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
      * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal
     @Override
     public CellType evaluateFormulaCellEnum(Cell cell) {
         if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
