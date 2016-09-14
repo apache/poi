@@ -30,7 +30,6 @@ import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -141,34 +140,10 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
     public void notifySetFormula(Cell cell) {
         _bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell((HSSFCell)cell));
     }
-
-    /**
-     * If cell contains formula, it evaluates the formula, and
-     *  puts the formula result back into the cell, in place
-     *  of the old formula.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     * Note that the same instance of HSSFCell is returned to
-     * allow chained calls like:
-     * <pre>
-     * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
-     * </pre>
-     * Be aware that your cell value will be changed to hold the
-     *  result of the formula. If you simply want the formula
-     *  value computed for you, use {@link #evaluateFormulaCellEnum(Cell)}}
-     */
+    
     @Override
     public HSSFCell evaluateInCell(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-        HSSFCell result = (HSSFCell) cell;
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
-            CellValue cv = evaluateFormulaCellValue(cell);
-            setCellValue(cell, cv);
-            setCellType(cell, cv); // cell will no longer be a formula cell
-        }
-        return result;
+        return (HSSFCell) super.evaluateInCell(cell);
     }
 
     /**

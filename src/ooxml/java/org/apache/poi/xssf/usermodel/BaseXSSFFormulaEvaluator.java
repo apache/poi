@@ -53,22 +53,6 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
     }
 
     /**
-     * If cell contains formula, it evaluates the formula, and
-     *  puts the formula result back into the cell, in place
-     *  of the old formula.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     */
-    protected void doEvaluateInCell(Cell cell) {
-        if (cell == null) return;
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
-            CellValue cv = evaluateFormulaCellValue(cell);
-            setCellType(cell, cv); // cell will no longer be a formula cell
-            setCellValue(cell, cv);
-        }
-    }
-
-    /**
      * Turns a XSSFCell / SXSSFCell into a XSSFEvaluationCell
      */
     protected abstract EvaluationCell toEvaluationCell(Cell cell);
