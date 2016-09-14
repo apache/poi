@@ -273,6 +273,8 @@ public class HSSFHyperlink implements Hyperlink {
      *
      * @return the type of this hyperlink
      * @see HyperlinkType#forInt
+     * @deprecated POI 3.15. Use {@link #getTypeEnum()} instead.
+     * getType will return a HyperlinkType enum in the future.
      */
     @Override
     public int getType() {

@@ -168,6 +168,7 @@ public class XSSFHyperlink implements Hyperlink {
      * @return the type of this hyperlink
      * @see HyperlinkType#forInt
      * @deprecated POI 3.15 beta 3. Use {@link #getTypeEnum()} instead.
+     * getType will return a HyperlinkType enum in the future.
      */
     @Override
     public int getType() {
