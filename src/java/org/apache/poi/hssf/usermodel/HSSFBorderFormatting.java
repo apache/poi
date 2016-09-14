@@ -42,28 +42,83 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         return borderFormatting;
     }
 
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderBottomEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
     @Override
-    public BorderStyle getBorderBottom() {
+    public short getBorderBottom() {
+        return (short)borderFormatting.getBorderBottom();
+    }
+    /**
+     * @since POI 3.15
+     */
+    @Override
+    public BorderStyle getBorderBottomEnum() {
         return BorderStyle.valueOf((short)borderFormatting.getBorderBottom());
     }
 
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderDiagonalEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
     @Override
-    public BorderStyle getBorderDiagonal() {
+    public short getBorderDiagonal() {
+        return (short)borderFormatting.getBorderDiagonal();
+    }
+    /**
+     * @since POI 3.15
+     */
+    @Override
+    public BorderStyle getBorderDiagonalEnum() {
         return BorderStyle.valueOf((short)borderFormatting.getBorderDiagonal());
     }
 
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderLeftEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
     @Override
-    public BorderStyle getBorderLeft() {
+    public short getBorderLeft() {
+        return (short)borderFormatting.getBorderLeft();
+    }
+    /**
+     * @since POI 3.15
+     */
+    @Override
+    public BorderStyle getBorderLeftEnum() {
         return BorderStyle.valueOf((short)borderFormatting.getBorderLeft());
     }
 
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderRightEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
     @Override
-    public BorderStyle getBorderRight() {
+    public short getBorderRight() {
+        return (short)borderFormatting.getBorderRight();
+    }
+    /**
+     * @since POI 3.15
+     */
+    @Override
+    public BorderStyle getBorderRightEnum() {
         return BorderStyle.valueOf((short)borderFormatting.getBorderRight());
     }
 
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderTopEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
     @Override
-    public BorderStyle getBorderTop() {
+    public short getBorderTop() {
+        return (short)borderFormatting.getBorderTop();
+    }
+    /**
+     * @since POI 3.15
+     */
+    @Override
+    public BorderStyle getBorderTopEnum() {
         return BorderStyle.valueOf((short)borderFormatting.getBorderTop());
     }
 
