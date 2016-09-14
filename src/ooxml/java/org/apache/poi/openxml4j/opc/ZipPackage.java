@@ -99,8 +99,8 @@ public final class ZipPackage extends OPCPackage {
             try {
                 zis.close();
             } catch (final IOException e2) {
-                e2.addSuppressed(e);
-                throw new IOException("Failed to close zip input stream while cleaning up", e2);
+                e.printStackTrace();
+                throw new IOException("Failed to close zip input stream while cleaning up. " + e.getMessage(), e2);
             }
             throw new IOException("Failed to read zip entry source", e);
         }
