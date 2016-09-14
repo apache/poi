@@ -89,6 +89,8 @@ public final class ZipPackage extends OPCPackage {
      * @throws IllegalArgumentException
      *             If the specified input stream not an instance of
      *             ZipInputStream.
+     * @throws IOException
+     *            if input stream cannot be opened, read, or closed
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
         super(access);
