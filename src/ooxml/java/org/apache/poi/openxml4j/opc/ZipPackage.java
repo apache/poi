@@ -53,6 +53,9 @@ import org.apache.poi.util.TempFile;
  * Physical zip package.
  */
 public final class ZipPackage extends OPCPackage {
+    private static final String MIMETYPE = "mimetype";
+    private static final String SETTINGS_XML = "settings.xml";
+
     private static POILogger logger = POILogFactory.getLogger(ZipPackage.class);
 
     /**
@@ -191,7 +194,7 @@ public final class ZipPackage extends OPCPackage {
             } catch (final IOException e2) {
                 throw new InvalidOperationException("Failed to read the zip entry source stream and could not close the zip input stream", e2);
             }
-            throw new InvalidOperationException("Failed to read the zip entry source stream");
+            throw new InvalidOperationException("Failed to read the zip entry source stream", e);
         }
     }
     
@@ -253,7 +256,7 @@ public final class ZipPackage extends OPCPackage {
                     this.contentTypeManager = new ZipContentTypeManager(
                             getZipArchive().getInputStream(entry), this);
                 } catch (IOException e) {
-                    throw new InvalidFormatException(e.getMessage());
+                    throw new InvalidFormatException(e.getMessage(), e);
                 }
                 break;
             }
@@ -269,10 +272,10 @@ public final class ZipPackage extends OPCPackage {
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
                 final String name = entry.getName();
-                if ("mimetype".equals(name)) {
+                if (MIMETYPE.equals(name)) {
                     hasMimetype = true;
                 }
-                if ("settings.xml".equals(name)) {
+                if (SETTINGS_XML.equals(name)) {
                     hasSettingsXML = true;
                 }
                 numEntries++;
@@ -307,10 +310,10 @@ public final class ZipPackage extends OPCPackage {
             String contentType = contentTypeManager.getContentType(partName);
             if (contentType != null && contentType.equals(ContentTypes.RELATIONSHIPS_PART)) {
                 try {
-                    partList.put(partName, new ZipPackagePart(this, entry,
-                                                              partName, contentType));
+                    PackagePart part = new ZipPackagePart(this, entry, partName, contentType);
+                    partList.put(partName, part);
                 } catch (InvalidOperationException e) {
-                    throw new InvalidFormatException(e.getMessage());
+                    throw new InvalidFormatException(e.getMessage(), e);
                 }
             }
         }
@@ -322,17 +325,16 @@ public final class ZipPackage extends OPCPackage {
             PackagePartName partName = buildPartName(entry);
             if(partName == null) continue;
 
-            String contentType = contentTypeManager
-                    .getContentType(partName);
+            String contentType = contentTypeManager.getContentType(partName);
             if (contentType != null && contentType.equals(ContentTypes.RELATIONSHIPS_PART)) {
                 // Already handled
             }
             else if (contentType != null) {
                 try {
-                    partList.put(partName, new ZipPackagePart(this, entry,
-                            partName, contentType));
+                    PackagePart part = new ZipPackagePart(this, entry, partName, contentType);
+                    partList.put(partName, part);
                 } catch (InvalidOperationException e) {
-                    throw new InvalidFormatException(e.getMessage());
+                    throw new InvalidFormatException(e.getMessage(), e);
                 }
             } else {
                 throw new InvalidFormatException(
@@ -440,20 +442,22 @@ public final class ZipPackage extends OPCPackage {
 				// Save the final package to a temporary file
 				try {
 					save(tempFile);
-					
-					// Close the current zip file, so we can
-					//  overwrite it on all platforms
-					this.zipArchive.close();
-					// Copy the new file over the old one
-					FileHelper.copyFile(tempFile, targetFile);
 				} finally {
-					// Either the save operation succeed or not, we delete the
-					// temporary file
-					if (!tempFile.delete()) {
-						logger
-								.log(POILogger.WARN,"The temporary file: '"
-										+ targetFile.getAbsolutePath()
-										+ "' cannot be deleted ! Make sure that no other application use it.");
+					try {
+						// Close the current zip file, so we can
+						//  overwrite it on all platforms
+						this.zipArchive.close();
+						// Copy the new file over the old one
+						FileHelper.copyFile(tempFile, targetFile);
+					} finally {
+						// Either the save operation succeed or not, we delete the
+						// temporary file
+						if (!tempFile.delete()) {
+							logger
+									.log(POILogger.WARN,"The temporary file: '"
+											+ targetFile.getAbsolutePath()
+											+ "' cannot be deleted ! Make sure that no other application use it.");
+						}
 					}
 				}
 			} else {
