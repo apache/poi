@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
@@ -1121,7 +1122,9 @@ public class XSSFCellStyle implements CellStyle {
      * @see #setFillBackgroundColor(short)
      * @see #setFillForegroundColor(short)
      * @param fp  fill pattern (set to {@link org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND} to fill w/foreground color)
+     * @deprecated POI 3.15. Use {@link #setFillPattern(FillPatternType)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setFillPattern(short fp) {
         setFillPattern(FillPatternType.forInt(fp));
