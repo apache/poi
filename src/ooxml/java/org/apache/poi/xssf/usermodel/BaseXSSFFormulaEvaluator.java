@@ -28,7 +28,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.util.Internal;
 
 /**
  * Internal POI use only - parent of XSSF and SXSSF formula evaluators
@@ -69,7 +68,6 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
      * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     public CellType evaluateFormulaCellEnum(Cell cell) {
         if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
             return CellType._NONE;
