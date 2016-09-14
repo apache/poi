@@ -17,6 +17,7 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against a
@@ -296,6 +297,7 @@ public interface ClientAnchor {
      * @param anchorType the anchor type to set
      * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead.
      */
+    @Removal(version="3.17")
     public void setAnchorType( int anchorType );
 
     /**

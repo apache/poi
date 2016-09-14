@@ -21,6 +21,7 @@ import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.util.Removal;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against a
@@ -272,6 +273,8 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @param anchorType the anchor type to set
      * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead.
      */
+    @Removal(version="3.17")
+    @Override
     public void setAnchorType(int anchorType) {
         _escherClientAnchor.setFlag((short) anchorType);
     }

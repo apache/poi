@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 /**
@@ -230,6 +231,7 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * @param anchorType the anchor type to set
      * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead
      */
+    @Removal(version="3.17")
     @Override
     public void setAnchorType( int anchorType )
     {
