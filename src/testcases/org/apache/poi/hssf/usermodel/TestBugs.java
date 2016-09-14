@@ -2567,7 +2567,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(0);
         HSSFCellStyle rstyle = row.getRowStyle();
-        assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottom());
+        assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottomEnum());
         wb.close();
     }
 

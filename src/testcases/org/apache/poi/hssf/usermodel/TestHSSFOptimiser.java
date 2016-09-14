@@ -308,8 +308,8 @@ public final class TestHSSFOptimiser extends TestCase {
 	    // Check
 	    assertEquals(23, wb.getNumCellStyles());
 	    
-	    assertEquals(BorderStyle.THICK, r.getCell(0).getCellStyle().getBorderBottom());
-	    assertEquals(BorderStyle.DASH_DOT, r.getCell(1).getCellStyle().getBorderBottom());
-	    assertEquals(BorderStyle.THICK, r.getCell(2).getCellStyle().getBorderBottom());
+	    assertEquals(BorderStyle.THICK, r.getCell(0).getCellStyle().getBorderBottomEnum());
+	    assertEquals(BorderStyle.DASH_DOT, r.getCell(1).getCellStyle().getBorderBottomEnum());
+	    assertEquals(BorderStyle.THICK, r.getCell(2).getCellStyle().getBorderBottomEnum());
 	}
 }
