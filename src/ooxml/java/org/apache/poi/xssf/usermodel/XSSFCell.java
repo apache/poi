@@ -827,7 +827,7 @@ public final class XSSFCell implements Cell {
      * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} isn't {@link CellType#ERROR}
      * @see FormulaError
      */
-    public String getErrorCellString() {
+    public String getErrorCellString() throws IllegalStateException {
         CellType cellType = getBaseCellType(true);
         if(cellType != CellType.ERROR) throw typeMismatch(CellType.ERROR, cellType, false);
 
@@ -845,13 +845,16 @@ public final class XSSFCell implements Cell {
      * @see FormulaError
      */
     @Override
-    public byte getErrorCellValue() {
+    public byte getErrorCellValue() throws IllegalStateException {
         String code = getErrorCellString();
         if (code == null) {
             return 0;
         }
-
-        return FormulaError.forString(code).getCode();
+        try {
+            return FormulaError.forString(code).getCode();
+        } catch (final IllegalArgumentException e) {
+            throw new IllegalStateException("Unexpected error code", e);
+        }
     }
 
     /**
