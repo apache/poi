@@ -471,6 +471,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      * @param format              The format of the picture
      *
      * @return the picture data
+     * @since 3.15 beta 2
      */
     @Override
     public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException
@@ -486,6 +487,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      * @param format           The format of the picture.
      *
      * @return the picture data
+     * @since 3.15 beta 2
      */
     @Override
     public XSLFPictureData addPicture(File pict, PictureType format) throws IOException
@@ -507,6 +509,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      * 
      * @param pictureData The picture data to find in the SlideShow
      * @return {@code null} if picture data is not found in this slideshow
+     * @since 3.15 beta 2
      */
     @Override
     public XSLFPictureData findPictureData(byte[] pictureData) {
