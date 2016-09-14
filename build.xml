@@ -1092,7 +1092,7 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-integration" depends="compile-scratchpad, compile-main, compile-ooxml">
+    <target name="compile-integration" depends="compile-scratchpad, compile-main, compile-ooxml, compile-examples">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${integration.output.test.dir}"
