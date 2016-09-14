@@ -804,6 +804,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 * @param format        The format of the picture.
 	 *
 	 * @return the picture data.
+	 * @since 3.15 beta 2
 	 */
 	@Override
 	public HSLFPictureData addPicture(InputStream is, PictureType format) throws IOException {
@@ -822,6 +823,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 *            The format of the picture.
 	 *
 	 * @return the picture data.
+	 * @since 3.15 beta 2
 	 */
 	@Override
 	public HSLFPictureData addPicture(File pict, PictureType format) throws IOException {
@@ -844,6 +846,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
      * 
      * @param pictureData The picture data to find in the SlideShow
      * @return {@code null} if picture data is not found in this slideshow
+     * @since 3.15 beta 3
      */
     @Override
     public HSLFPictureData findPictureData(byte[] pictureData) {

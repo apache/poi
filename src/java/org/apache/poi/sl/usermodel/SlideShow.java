@@ -83,6 +83,7 @@ public interface SlideShow<
      * @param format        The format of the picture.
      *
      * @return the picture data reference.
+     * @since 3.15 beta 1
      */
     PictureData addPicture(InputStream is, PictureType format) throws IOException;
 
@@ -93,6 +94,7 @@ public interface SlideShow<
      * @param format            The format of the picture.
      *
      * @return the picture data reference
+     * @since 3.15 beta 1
      */
     PictureData addPicture(File pict, PictureType format) throws IOException;
     
@@ -101,6 +103,7 @@ public interface SlideShow<
      * 
      * @param pictureData The picture data to find in the SlideShow
      * @return {@code null} if picture data is not found in this slideshow
+     * @since 3.15 beta 3
      */
     PictureData findPictureData(byte[] pictureData);
 
