@@ -218,15 +218,27 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     /**
      * Sets the anchor type
      * @param anchorType the anchor type to set
+     * @since POI 3.14
      */
     @Override
     public void setAnchorType( AnchorType anchorType )
     {
         this.anchorType = anchorType;
     }
+    /**
+     * Sets the anchor type
+     * @param anchorType the anchor type to set
+     * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead
+     */
+    @Override
+    public void setAnchorType( int anchorType )
+    {
+        this.anchorType = AnchorType.byId(anchorType);
+    }
 
     /**
      * Gets the anchor type
+     * Changed from returning an int to an enum in POI 3.14 beta 1.
      * @return the anchor type
      */
     @Override

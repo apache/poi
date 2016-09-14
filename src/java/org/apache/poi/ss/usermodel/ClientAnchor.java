@@ -288,11 +288,19 @@ public interface ClientAnchor {
     /**
      * Sets the anchor type
      * @param anchorType the anchor type to set
+     * @since POI 3.14
      */
     public void setAnchorType( AnchorType anchorType );
+    /**
+     * Sets the anchor type
+     * @param anchorType the anchor type to set
+     * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead.
+     */
+    public void setAnchorType( int anchorType );
 
     /**
      * Gets the anchor type
+     * Changed from returning an int to an enum in POI 3.14 beta 1.
      * @return the anchor type
      */
     public AnchorType getAnchorType();
