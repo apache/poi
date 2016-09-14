@@ -943,4 +943,22 @@ public final class TestPackage {
             ZipSecureFile.setMaxTextSize(before);
         }
     }
+    
+    // bug 60128
+    @Test
+    public void testCorruptFile() throws IOException {
+        OPCPackage pkg = null;
+        File file = OpenXML4JTestDataSamples.getSampleFile("invalid.xlsx");
+        try {
+            pkg = OPCPackage.open(file, PackageAccess.READ);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName());
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (pkg != null) {
+                pkg.close();
+            }
+        }
+    }
 }

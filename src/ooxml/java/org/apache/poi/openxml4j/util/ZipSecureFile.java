@@ -134,15 +134,15 @@ public class ZipSecureFile extends ZipFile {
         return MAX_TEXT_SIZE;
     }
 
-    public ZipSecureFile(File file, int mode) throws IOException {
+    public ZipSecureFile(File file, int mode) throws ZipException, IOException {
         super(file, mode);
     }
 
-    public ZipSecureFile(File file) throws IOException {
+    public ZipSecureFile(File file) throws ZipException, IOException {
         super(file);
     }
 
-    public ZipSecureFile(String name) throws IOException {
+    public ZipSecureFile(String name) throws ZipException, IOException {
         super(name);
     }
 
