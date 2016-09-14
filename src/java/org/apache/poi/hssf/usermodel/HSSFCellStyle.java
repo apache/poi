@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -254,6 +255,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #ALIGN_CENTER_SELECTION
      * @deprecated POI 3.15 beta 3. Use {@link #setAlignment(HorizontalAlignment)} instead.
      */
+    @Removal(version="3.17")
     @Override
     public void setAlignment(short align)
     {
