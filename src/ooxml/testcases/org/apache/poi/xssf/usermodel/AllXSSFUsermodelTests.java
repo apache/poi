@@ -59,7 +59,7 @@ import org.junit.runners.Suite;
     TestXSSFSheetComments.class,
     TestColumnHelper.class,
     TestHeaderFooterHelper.class,
-    TestXSSFPivotTable.class,
+    //TestXSSFPivotTable.class, //converted to junit4
     TestForkedEvaluator.class
 })
 public final class AllXSSFUsermodelTests {
