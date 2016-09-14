@@ -56,7 +56,7 @@ public final class ZipPackage extends OPCPackage {
     private static final String MIMETYPE = "mimetype";
     private static final String SETTINGS_XML = "settings.xml";
 
-    private static POILogger logger = POILogFactory.getLogger(ZipPackage.class);
+    private static final POILogger logger = POILogFactory.getLogger(ZipPackage.class);
 
     /**
      * Zip archive, as either a file on disk,
