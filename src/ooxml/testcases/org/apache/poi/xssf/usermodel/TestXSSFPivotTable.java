@@ -19,13 +19,17 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
@@ -35,14 +39,16 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinitio
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 
 public class TestXSSFPivotTable {
+    private static final XSSFITestDataProvider _testDataProvider = XSSFITestDataProvider.instance;
+    private XSSFWorkbook wb;
     private XSSFPivotTable pivotTable;
     private XSSFPivotTable offsetPivotTable;
     private Cell offsetOuterCell;
     
     @Before
     public void setUp(){
-        Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+        wb = new XSSFWorkbook();
+        XSSFSheet sheet =  wb.createSheet();
 
         Row row1 = sheet.createRow(0);
         // Create a cell and put a value in it.
@@ -75,10 +81,10 @@ public class TestXSSFPivotTable {
         Cell cell12 = row1.createCell(3);
         cell12.setCellValue(12.12);
 
-        AreaReference source = new AreaReference("A1:C2");
+        AreaReference source = new AreaReference("A1:C2", _testDataProvider.getSpreadsheetVersion());
         pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
         
-        XSSFSheet offsetSheet = (XSSFSheet) wb.createSheet();
+        XSSFSheet offsetSheet = wb.createSheet();
         
         Row tableRow_1 = offsetSheet.createRow(1);
         offsetOuterCell = tableRow_1.createCell(1);
@@ -116,6 +122,13 @@ public class TestXSSFPivotTable {
         
         AreaReference offsetSource = new AreaReference(new CellReference("C2"), new CellReference("E4"));
         offsetPivotTable = offsetSheet.createPivotTable(offsetSource, new CellReference("C6"));
+    }
+    
+    @After
+    public void tearDown() throws IOException {
+        XSSFWorkbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
+        wb.close();
+        wb2.close();
     }
 
     /**
