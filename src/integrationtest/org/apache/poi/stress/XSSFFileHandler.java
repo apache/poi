@@ -30,6 +30,7 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -134,6 +135,9 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/Simple.xlsb");
         // TODO: good to ignore?
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample-beta.xlsx");
+        
+        // corrupt/invalid
+        EXPECTED_ADDITIONAL_FAILURES.add("openxml4j/invalid.xlsx");
     }
 
     @SuppressWarnings("resource")

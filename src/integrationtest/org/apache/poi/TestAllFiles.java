@@ -298,7 +298,10 @@ public class TestAllFiles {
         List<Object[]> files = new ArrayList<Object[]>();
         for(String file : scanner.getIncludedFiles()) {
             file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
-            if (IGNORED.contains(file)) continue;
+            if (IGNORED.contains(file)) {
+                System.out.println("Ignoring " + file);
+                continue;
+            }
             FileHandler handler = HANDLERS.get(getExtension(file));
             files.add(new Object[] { file, handler });
             
