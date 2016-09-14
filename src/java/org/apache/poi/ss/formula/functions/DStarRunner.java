@@ -131,8 +131,8 @@ public final class DStarRunner implements Function3Arg {
      * 
      *
      * @param nameValueEval Must not be a RefEval or AreaEval. Thus make sure resolveReference() is called on the value first!
-     * @param db
-     * @return
+     * @param db Database
+     * @return Corresponding column number.
      * @throws EvaluationException
      */
     private static int getColumnForName(ValueEval nameValueEval, AreaEval db)
