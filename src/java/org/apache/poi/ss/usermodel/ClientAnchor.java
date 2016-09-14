@@ -36,6 +36,7 @@ public interface ClientAnchor {
      * </p>
      * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_AND_RESIZE} instead.
      */
+    @Removal(version="3.17")
     public static final AnchorType MOVE_AND_RESIZE = AnchorType.MOVE_AND_RESIZE;
     
     /**
@@ -51,6 +52,7 @@ public interface ClientAnchor {
      * </p>
      * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_DONT_RESIZE} instead.
      */
+    @Removal(version="3.17")
     public static final AnchorType MOVE_DONT_RESIZE = AnchorType.MOVE_DONT_RESIZE;
 
     /**
@@ -67,6 +69,7 @@ public interface ClientAnchor {
      * </p>
      * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#DONT_MOVE_AND_RESIZE} instead.
      */
+    @Removal(version="3.17")
     public static final AnchorType DONT_MOVE_AND_RESIZE = AnchorType.DONT_MOVE_AND_RESIZE;
     
     /**
