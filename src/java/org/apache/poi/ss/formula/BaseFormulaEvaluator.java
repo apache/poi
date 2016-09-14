@@ -125,6 +125,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      * replaced with the result of the formula, use {@link #evaluateInCell(org.apache.poi.ss.usermodel.Cell)}
      * @param cell The cell to evaluate
      * @return -1 for non-formula cells, or the type of the <em>formula result</em>
+     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
     @Override
     public int evaluateFormulaCell(Cell cell) {
