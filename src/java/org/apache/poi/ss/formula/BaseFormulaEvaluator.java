@@ -19,10 +19,13 @@ package org.apache.poi.ss.formula;
 
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -131,6 +134,38 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
     public int evaluateFormulaCell(Cell cell) {
         return evaluateFormulaCellEnum(cell).getCode();
     }
+    
+    /**
+     * If cell contains formula, it evaluates the formula,
+     *  and saves the result of the formula. The cell
+     *  remains as a formula cell.
+     * Else if cell does not contain formula, this method leaves
+     *  the cell unchanged.
+     * Note that the type of the formula result is returned,
+     *  so you know what kind of value is also stored with
+     *  the formula.
+     * <pre>
+     * CellType evaluatedCellType = evaluator.evaluateFormulaCellEnum(cell);
+     * </pre>
+     * Be aware that your cell will hold both the formula,
+     *  and the result. If you want the cell replaced with
+     *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
+     * @param cell The cell to evaluate
+     * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
+     *         If cell is not a formula cell, returns {@link CellType#_NONE} rather than throwing an exception.
+     * @since POI 3.15 beta 3
+     * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
+     */
+    @Override
+    public CellType evaluateFormulaCellEnum(Cell cell) {
+        if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
+            return CellType._NONE;
+        }
+        CellValue cv = evaluateFormulaCellValue(cell);
+        // cell remains a formula cell, but the cached value is changed
+        setCellValue(cell, cv);
+        return cv.getCellTypeEnum();
+    }
 
     protected static void setCellType(Cell cell, CellValue cv) {
         CellType cellType = cv.getCellTypeEnum();
@@ -151,6 +186,33 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
                 throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
         }
     }
+    
+    protected abstract RichTextString createRichTextString(String str);
+    
+    protected void setCellValue(Cell cell, CellValue cv) {
+        CellType cellType = cv.getCellTypeEnum();
+        switch (cellType) {
+            case BOOLEAN:
+                cell.setCellValue(cv.getBooleanValue());
+                break;
+            case ERROR:
+                cell.setCellErrorValue(cv.getErrorValue());
+                break;
+            case NUMERIC:
+                cell.setCellValue(cv.getNumberValue());
+                break;
+            case STRING:
+                cell.setCellValue(createRichTextString(cv.getStringValue()));
+                break;
+            case BLANK:
+                // never happens - blanks eventually get translated to zero
+            case FORMULA:
+                // this will never happen, we have already evaluated the formula
+            default:
+                throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
+        }
+    }
+    
 
     /**
      * Loops over all cells in all sheets of the supplied
