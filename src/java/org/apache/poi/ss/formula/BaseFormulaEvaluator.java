@@ -19,11 +19,9 @@ package org.apache.poi.ss.formula;
 
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -110,6 +108,37 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
             default:
                 throw new IllegalStateException("Bad cell type (" + cell.getCellTypeEnum() + ")");
         }
+    }
+    
+    /**
+     * If cell contains formula, it evaluates the formula, and
+     *  puts the formula result back into the cell, in place
+     *  of the old formula.
+     * Else if cell does not contain formula, this method leaves
+     *  the cell unchanged.
+     * Note that the same instance of HSSFCell is returned to
+     * allow chained calls like:
+     * <pre>
+     * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
+     * </pre>
+     * Be aware that your cell value will be changed to hold the
+     *  result of the formula. If you simply want the formula
+     *  value computed for you, use {@link #evaluateFormulaCellEnum(Cell)}}
+     * @param cell
+     * @return the {@code cell} that was passed in, allowing for chained calls
+     */
+    @Override
+    public Cell evaluateInCell(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        Cell result = cell;
+        if (cell.getCellTypeEnum() == CellType.FORMULA) {
+            CellValue cv = evaluateFormulaCellValue(cell);
+            setCellValue(cell, cv);
+            setCellType(cell, cv); // cell will no longer be a formula cell
+        }
+        return result;
     }
 
     protected abstract CellValue evaluateFormulaCellValue(Cell cell);
