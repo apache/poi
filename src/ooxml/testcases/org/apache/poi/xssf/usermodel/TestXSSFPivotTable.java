@@ -17,11 +17,11 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
@@ -349,5 +349,22 @@ public class TestXSSFPivotTable {
         assertEquals(CellType.NUMERIC, offsetOuterCell.getCellTypeEnum());
         
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
+    }
+    
+    @Test
+    public void testPivotTableSheetNamesAreCaseInsensitive() {
+        wb.setSheetName(0,  "original");
+        wb.setSheetName(1,  "offset");
+        XSSFSheet original = wb.getSheet("OriginaL");
+        XSSFSheet offset = wb.getSheet("OffseT");
+        // assume sheets are accessible via case-insensitive name
+        assertNotNull(original);
+        assertNotNull(offset);
+        
+        AreaReference source = new AreaReference("ORIGinal!A1:C2", _testDataProvider.getSpreadsheetVersion());
+        // create a pivot table on the same sheet, case insensitive
+        original.createPivotTable(source, new CellReference("W1"));
+        // create a pivot table on a different sheet, case insensitive
+        offset.createPivotTable(source, new CellReference("W1"));
     }
 }
