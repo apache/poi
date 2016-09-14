@@ -149,10 +149,12 @@ public class TestSecureTempZip {
     static class AesZipFileZipEntrySource implements ZipEntrySource {
         final ZipFile zipFile;
         final Cipher ci;
+        boolean closed;
 
         AesZipFileZipEntrySource(ZipFile zipFile, Cipher ci) {
             this.zipFile = zipFile;
             this.ci = ci;
+            this.closed = false;
         }
 
         /**
@@ -172,6 +174,12 @@ public class TestSecureTempZip {
         @Override
         public void close() throws IOException {
             zipFile.close();
+            closed = true;
+        }
+        
+        @Override
+        public boolean isClosed() {
+            return closed;
         }
     }
 }
