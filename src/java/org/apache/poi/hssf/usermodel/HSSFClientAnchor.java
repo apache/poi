@@ -250,6 +250,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     /**
      * Gets the anchor type
+     * Changed from returning an int to an enum in POI 3.14 beta 1.
      * @return the anchor type
      */
     @Override
@@ -260,10 +261,19 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     /**
      * Sets the anchor type
      * @param anchorType the anchor type to set
+     * @since POI 3.14
      */
     @Override
     public void setAnchorType(AnchorType anchorType) {
         _escherClientAnchor.setFlag(anchorType.value);
+    }
+    /**
+     * Sets the anchor type
+     * @param anchorType the anchor type to set
+     * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead.
+     */
+    public void setAnchorType(int anchorType) {
+        _escherClientAnchor.setFlag((short) anchorType);
     }
 
     private void checkRange(int value, int minRange, int maxRange, String varName) {
