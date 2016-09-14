@@ -35,7 +35,6 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateFormatConverter;
-import org.apache.poi.util.Internal;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -44,28 +43,35 @@ import org.apache.poi.util.Internal;
  * <p/>
  * An Excel format has up to four parts, separated by semicolons.  Each part
  * specifies what to do with particular kinds of values, depending on the number
- * of parts given: <dl> <dt>One part (example: <tt>[Green]#.##</tt>) <dd>If the
- * value is a number, display according to this one part (example: green text,
- * with up to two decimal points). If the value is text, display it as is.
- * <dt>Two parts (example: <tt>[Green]#.##;[Red]#.##</tt>) <dd>If the value is a
- * positive number or zero, display according to the first part (example: green
+ * of parts given:
+ * <dl>
+ * <dt>One part (example: <tt>[Green]#.##</tt>)</dt>
+ * <dd>If the value is a number, display according to this one part (example: green text,
+ * with up to two decimal points). If the value is text, display it as is.</dd>
+ * 
+ * <dt>Two parts (example: <tt>[Green]#.##;[Red]#.##</tt>)</dt>
+ * <dd>If the value is a positive number or zero, display according to the first part (example: green
  * text, with up to two decimal points); if it is a negative number, display
  * according to the second part (example: red text, with up to two decimal
- * points). If the value is text, display it as is. <dt>Three parts (example:
- * <tt>[Green]#.##;[Black]#.##;[Red]#.##</tt>) <dd>If the value is a positive
+ * points). If the value is text, display it as is.</dd>
+ * 
+ * <dt>Three parts (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##</tt>)</dt>
+ * <dd>If the value is a positive
  * number, display according to the first part (example: green text, with up to
  * two decimal points); if it is zero, display according to the second part
  * (example: black text, with up to two decimal points); if it is a negative
  * number, display according to the third part (example: red text, with up to
- * two decimal points). If the value is text, display it as is. <dt>Four parts
- * (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##;[@]</tt>) <dd>If the value is
- * a positive number, display according to the first part (example: green text,
+ * two decimal points). If the value is text, display it as is.</dd>
+ * 
+ * <dt>Four parts (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##;[@]</tt>)</dt>
+ * <dd>If the value is a positive number, display according to the first part (example: green text,
  * with up to two decimal points); if it is zero, display according to the
  * second part (example: black text, with up to two decimal points); if it is a
  * negative number, display according to the third part (example: red text, with
  * up to two decimal points). If the value is text, display according to the
  * fourth part (example: text in the cell's usual color, with the text value
- * surround by brackets). </dl>
+ * surround by brackets).</dd>
+ * </dl>
  * <p/>
  * A given format part may specify a given Locale, by including something
  *  like <tt>[$$-409]</tt> or <tt>[$&pound;-809]</tt> or <tt>[$-40C]</tt>. These
@@ -421,6 +427,7 @@ public class CellFormat {
      * @param cell The cell.
      *
      * @return The ultimate type of this cell.
+     * @deprecated POI 3.15. This will return a CellType enum in the future
      */
     public static int ultimateType(Cell cell) {
         return ultimateTypeEnum(cell).getCode();
@@ -439,7 +446,6 @@ public class CellFormat {
      * @deprecated POI 3.15 beta 3
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     public static CellType ultimateTypeEnum(Cell cell) {
         CellType type = cell.getCellTypeEnum();
         if (type == CellType.FORMULA)
