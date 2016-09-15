@@ -94,6 +94,8 @@ public class FileBackedDataSource extends DataSource {
       if (writable) {
           dst = channel.map(FileChannel.MapMode.READ_WRITE, position, length);
           worked = 0;
+          // remember the buffer for cleanup if necessary
+          buffersToClean.add(dst);  
       } else {
           // Read
           channel.position(position);
@@ -109,9 +111,6 @@ public class FileBackedDataSource extends DataSource {
       // Ready it for reading
       dst.position(0);
 
-      // remember the buffer for cleanup if necessary
-      buffersToClean.add(dst);
-      
       // All done
       return dst;
    }
