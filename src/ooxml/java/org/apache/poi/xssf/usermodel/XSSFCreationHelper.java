@@ -20,6 +20,7 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 public class XSSFCreationHelper implements CreationHelper {
     private final XSSFWorkbook workbook;
@@ -61,6 +62,7 @@ public class XSSFCreationHelper implements CreationHelper {
      * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
      */
     @Deprecated
+    @Removal(version="3.17")
     @Override
     public XSSFHyperlink createHyperlink(int type) {
         return new XSSFHyperlink(type);

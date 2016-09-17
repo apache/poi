@@ -72,24 +72,9 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
         return new SXSSFEvaluationCell((SXSSFCell)cell);
     }
     
-    /**
-     * If cell contains formula, it evaluates the formula, and
-     *  puts the formula result back into the cell, in place
-     *  of the old formula.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     * Note that the same instance of SXSSFCell is returned to
-     * allow chained calls like:
-     * <pre>
-     * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
-     * </pre>
-     * Be aware that your cell value will be changed to hold the
-     *  result of the formula. If you simply want the formula
-     *  value computed for you, use {@link #evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)} }
-     */
+    @Override
     public SXSSFCell evaluateInCell(Cell cell) {
-        doEvaluateInCell(cell);
-        return (SXSSFCell)cell;
+        return (SXSSFCell) super.evaluateInCell(cell);
     }
     
     /**

@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RangePtg;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
+import org.apache.poi.util.Removal;
 
 /**
  * This class performs 'operand class' transformation. Non-base tokens are classified into three
@@ -59,7 +60,10 @@ final class OperandClassTransformer {
 
 	private final FormulaType _formulaType;
 
-	/** @deprecated POI 3.15 beta 3. */
+	/**
+	 * @deprecated POI 3.15 beta 3. Use {@code OperandClassTransformer(FormulaType)} instead.
+	 */
+	@Removal(version="3.17")
 	public OperandClassTransformer(int formulaType) {
 		this(FormulaType.forInt(formulaType));
 	}

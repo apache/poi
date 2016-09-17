@@ -19,6 +19,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Removal;
+
 /**
  * High level representation for Border Formatting component
  * of Conditional Formatting settings
@@ -27,84 +29,128 @@ public interface BorderFormatting {
     /** No border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#NONE}
      */
+    @Removal(version="3.17")
     short BORDER_NONE                = 0x0;
     
     /** Thin border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#THIN}
      */
+    @Removal(version="3.17")
     short BORDER_THIN                = 0x1;
     
     /** Medium border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM}
      */
+    @Removal(version="3.17")
     short BORDER_MEDIUM              = 0x2;
     
     /** dash border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASHED}
      */
+    @Removal(version="3.17")
     short BORDER_DASHED              = 0x3;
     
     /** dot border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOTTED}
      */
+    @Removal(version="3.17")
     short BORDER_DOTTED              = 0x4;
     
     /** Thick border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#THICK}
      */
+    @Removal(version="3.17")
     short BORDER_THICK               = 0x5;
     
     /** double-line border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOUBLE}
      */
+    @Removal(version="3.17")
     short BORDER_DOUBLE              = 0x6;
     
     /** hair-line border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#HAIR}
      */
+    @Removal(version="3.17")
     short BORDER_HAIR                = 0x7;
     
     /** Medium dashed border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASHED}
      */
+    @Removal(version="3.17")
     short BORDER_MEDIUM_DASHED       = 0x8;
-    
     
     /** dash-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT}
      */
+    @Removal(version="3.17")
     short BORDER_DASH_DOT            = 0x9;
     
     /** medium dash-dot border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT}
      */
+    @Removal(version="3.17")
     short BORDER_MEDIUM_DASH_DOT     = 0xA;
     
     /** dash-dot-dot border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT_DOT}
      */
+    @Removal(version="3.17")
     short BORDER_DASH_DOT_DOT        = 0xB;
     
     /** medium dash-dot-dot border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT_DOT}
      */
+    @Removal(version="3.17")
     short BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
     
     /** slanted dash-dot border 
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#SLANTED_DASH_DOT}
      */
+    @Removal(version="3.17")
     short BORDER_SLANTED_DASH_DOT    = 0xD;
 
-    BorderStyle getBorderBottom();
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderBottomEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
+    short getBorderBottom();
+    /** @since POI 3.15 */
+    BorderStyle getBorderBottomEnum();
 
-    BorderStyle getBorderDiagonal();
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderDiagonalEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
+    short getBorderDiagonal();
+    /** @since POI 3.15 */
+    BorderStyle getBorderDiagonalEnum();
 
-    BorderStyle getBorderLeft();
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderLeftEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
+    short getBorderLeft();
+    /** @since POI 3.15 */
+    BorderStyle getBorderLeftEnum();
 
-    BorderStyle getBorderRight();
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderRightEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
+    short getBorderRight();
+    /** @since POI 3.15 */
+    BorderStyle getBorderRightEnum();
 
-    BorderStyle getBorderTop();
+    /**
+     * @deprecated POI 3.15. Use {@link #getBorderTopEnum()}.
+     * This method will return an BorderStyle enum in the future.
+     */
+    short getBorderTop();
+    /** @since POI 3.15 */
+    BorderStyle getBorderTopEnum();
 
+    
     short getBottomBorderColor();
     Color getBottomBorderColorColor();
 

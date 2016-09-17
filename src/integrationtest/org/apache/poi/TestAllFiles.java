@@ -240,6 +240,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_DerivedPartNameFAIL.docx");
+        EXPECTED_FAILURES.add("openxml4j/invalid.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/54764-2.xlsx");   // see TestXSSFBugs.bug54764()
         EXPECTED_FAILURES.add("spreadsheet/54764.xlsx");     // see TestXSSFBugs.bug54764()
         EXPECTED_FAILURES.add("spreadsheet/Simple.xlsb");
@@ -297,7 +298,10 @@ public class TestAllFiles {
         List<Object[]> files = new ArrayList<Object[]>();
         for(String file : scanner.getIncludedFiles()) {
             file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
-            if (IGNORED.contains(file)) continue;
+            if (IGNORED.contains(file)) {
+                System.out.println("Ignoring " + file);
+                continue;
+            }
             FileHandler handler = HANDLERS.get(getExtension(file));
             files.add(new Object[] { file, handler });
             

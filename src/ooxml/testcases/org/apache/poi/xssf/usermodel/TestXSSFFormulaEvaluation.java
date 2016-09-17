@@ -682,4 +682,15 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         value = evaluator.evaluate(cell);
         assertEquals(1, value.getNumberValue(), 0.001);
     }
+    
+    @Test
+    public void evaluateInCellReturnsSameDataType() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.createSheet().createRow(0).createCell(0);
+        XSSFFormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        XSSFCell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+        XSSFCell same = evaluator.evaluateInCell(cell);
+        assertSame(cell, same);
+        wb.close();
+    }
 }

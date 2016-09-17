@@ -185,7 +185,7 @@ public final class TestIndirect {
         fe.clearAllCachedResultValues();
         cell.setCellFormula(formula);
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellType() != CellType.NUMERIC) {
+        if (cv.getCellTypeEnum() != CellType.NUMERIC) {
             fail("expected numeric cell type but got " + cv.formatAsString());
         }
         assertEquals(expectedResult, cv.getNumberValue(), 0.0);
@@ -196,7 +196,7 @@ public final class TestIndirect {
         fe.clearAllCachedResultValues();
         cell.setCellFormula(formula);
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellType() != CellType.ERROR) {
+        if (cv.getCellTypeEnum() != CellType.ERROR) {
             fail("expected error cell type but got " + cv.formatAsString());
         }
         int expCode = expectedResult.getErrorCode();

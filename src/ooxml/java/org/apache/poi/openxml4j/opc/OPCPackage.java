@@ -248,9 +248,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @throws InvalidFormatException
 	 *             If the specified file doesn't exist, and a parsing error
 	 *             occur.
+	 * @throws InvalidOperationException
 	 */
 	public static OPCPackage open(String path, PackageAccess access)
-			throws InvalidFormatException {
+			throws InvalidFormatException, InvalidOperationException {
 		if (path == null || "".equals(path.trim())) {
 			throw new IllegalArgumentException("'path' must be given");
 		}
@@ -261,8 +262,20 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 
 		OPCPackage pack = new ZipPackage(path, access);
+		boolean success = false;
 		if (pack.partList == null && access != PackageAccess.WRITE) {
-			pack.getParts();
+			try {
+				pack.getParts();
+				success = true;
+			} finally {
+				if (! success) {
+					try {
+						pack.close();
+					} catch (final IOException e) {
+						throw new InvalidOperationException("Could not close OPCPackage while cleaning up", e);
+					}
+				}
+			}
 		}
 		pack.originalPackagePath = new File(path).getAbsolutePath();
 		return pack;

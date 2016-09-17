@@ -167,6 +167,7 @@ public interface Cell {
      * For forwards compatibility, do not hard-code cell type literals in your code.
      *
      * @return the cell type
+     * @deprecated POI 3.15. Will return a {@link CellType} enum in the future.
      */
     int getCellType();
     
@@ -178,7 +179,6 @@ public interface Cell {
      * @deprecated POI 3.15 beta 3
      * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     @Removal(version="4.2")
     CellType getCellTypeEnum();
     
@@ -191,6 +191,7 @@ public interface Cell {
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
+     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
     int getCachedFormulaResultType();
 
@@ -203,7 +204,6 @@ public interface Cell {
      * @deprecated POI 3.15 beta 3
      * Will be renamed to <code>getCachedFormulaResultType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     CellType getCachedFormulaResultTypeEnum();
 
     /**

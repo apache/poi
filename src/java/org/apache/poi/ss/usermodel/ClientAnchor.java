@@ -17,6 +17,7 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against a
@@ -35,6 +36,7 @@ public interface ClientAnchor {
      * </p>
      * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_AND_RESIZE} instead.
      */
+    @Removal(version="3.17")
     public static final AnchorType MOVE_AND_RESIZE = AnchorType.MOVE_AND_RESIZE;
     
     /**
@@ -50,6 +52,7 @@ public interface ClientAnchor {
      * </p>
      * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_DONT_RESIZE} instead.
      */
+    @Removal(version="3.17")
     public static final AnchorType MOVE_DONT_RESIZE = AnchorType.MOVE_DONT_RESIZE;
 
     /**
@@ -66,6 +69,7 @@ public interface ClientAnchor {
      * </p>
      * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#DONT_MOVE_AND_RESIZE} instead.
      */
+    @Removal(version="3.17")
     public static final AnchorType DONT_MOVE_AND_RESIZE = AnchorType.DONT_MOVE_AND_RESIZE;
     
     /**
@@ -288,11 +292,20 @@ public interface ClientAnchor {
     /**
      * Sets the anchor type
      * @param anchorType the anchor type to set
+     * @since POI 3.14
      */
     public void setAnchorType( AnchorType anchorType );
+    /**
+     * Sets the anchor type
+     * @param anchorType the anchor type to set
+     * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead.
+     */
+    @Removal(version="3.17")
+    public void setAnchorType( int anchorType );
 
     /**
      * Gets the anchor type
+     * Changed from returning an int to an enum in POI 3.14 beta 1.
      * @return the anchor type
      */
     public AnchorType getAnchorType();

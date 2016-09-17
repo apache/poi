@@ -16,30 +16,39 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 
-import junit.framework.TestCase;
-
-public class TestXSSFPivotTable extends TestCase {
+public class TestXSSFPivotTable {
+    private static final XSSFITestDataProvider _testDataProvider = XSSFITestDataProvider.instance;
+    private XSSFWorkbook wb;
     private XSSFPivotTable pivotTable;
     private XSSFPivotTable offsetPivotTable;
     private Cell offsetOuterCell;
     
-    @Override
+    @Before
     public void setUp(){
-        Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+        wb = new XSSFWorkbook();
+        XSSFSheet sheet =  wb.createSheet();
 
         Row row1 = sheet.createRow(0);
         // Create a cell and put a value in it.
@@ -72,10 +81,10 @@ public class TestXSSFPivotTable extends TestCase {
         Cell cell12 = row1.createCell(3);
         cell12.setCellValue(12.12);
 
-        AreaReference source = new AreaReference("A1:C2");
+        AreaReference source = new AreaReference("A1:C2", _testDataProvider.getSpreadsheetVersion());
         pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
         
-        XSSFSheet offsetSheet = (XSSFSheet) wb.createSheet();
+        XSSFSheet offsetSheet = wb.createSheet();
         
         Row tableRow_1 = offsetSheet.createRow(1);
         offsetOuterCell = tableRow_1.createCell(1);
@@ -114,11 +123,19 @@ public class TestXSSFPivotTable extends TestCase {
         AreaReference offsetSource = new AreaReference(new CellReference("C2"), new CellReference("E4"));
         offsetPivotTable = offsetSheet.createPivotTable(offsetSource, new CellReference("C6"));
     }
+    
+    @After
+    public void tearDown() throws IOException {
+        XSSFWorkbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
+        wb.close();
+        wb2.close();
+    }
 
     /**
      * Verify that when creating a row label it's  created on the correct row
      * and the count is increased by one.
      */
+    @Test
     public void testAddRowLabelToPivotTable() {
         int columnIndex = 0;
 
@@ -141,6 +158,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
+    @Test
     public void testAddRowLabelOutOfRangeThrowsException() {
         int columnIndex = 5;
 
@@ -155,6 +173,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that when creating one column label, no col fields are being created.
      */
+    @Test
     public void testAddOneColumnLabelToPivotTableDoesNotCreateColField() {
         int columnIndex = 0;
 
@@ -167,6 +186,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that it's possible to create three column labels with different DataConsolidateFunction
      */
+    @Test
     public void testAddThreeDifferentColumnLabelsToPivotTable() {
         int columnOne = 0;
         int columnTwo = 1;
@@ -184,6 +204,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that it's possible to create three column labels with the same DataConsolidateFunction
      */
+    @Test
     public void testAddThreeSametColumnLabelsToPivotTable() {
         int columnOne = 0;
         int columnTwo = 1;
@@ -200,6 +221,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that when creating two column labels, a col field is being created and X is set to -2.
      */
+    @Test
     public void testAddTwoColumnLabelsToPivotTable() {
         int columnOne = 0;
         int columnTwo = 1;
@@ -214,6 +236,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that a data field is created when creating a data column
      */
+    @Test
     public void testColumnLabelCreatesDataField() {
         int columnIndex = 0;
 
@@ -229,6 +252,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that it's possible to set a custom name when creating a data column
      */
+    @Test
     public void testColumnLabelSetCustomName() {
         int columnIndex = 0;
 
@@ -245,6 +269,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that it's not possible to create a column label outside of the referenced area.
      */
+    @Test
     public void testAddColumnLabelOutOfRangeThrowsException() {
         int columnIndex = 5;
 
@@ -260,6 +285,7 @@ public class TestXSSFPivotTable extends TestCase {
      * Verify when creating a data column set to a data field, the data field with the corresponding
      * column index will be set to true.
      */
+    @Test
     public void testAddDataColumn() {
         int columnIndex = 0;
         boolean isDataField = true;
@@ -272,6 +298,7 @@ public class TestXSSFPivotTable extends TestCase {
     /**
      * Verify that it's not possible to create a data column outside of the referenced area.
      */
+    @Test
     public void testAddDataColumnOutOfRangeThrowsException() {
         int columnIndex = 5;
         boolean isDataField = true;
@@ -301,6 +328,7 @@ public class TestXSSFPivotTable extends TestCase {
      /**
      * Verify that it's not possible to create a new filter outside of the referenced area.
      */
+    @Test
     public void testAddReportFilterOutOfRangeThrowsException() {
         int columnIndex = 5;
         try {
@@ -315,10 +343,28 @@ public class TestXSSFPivotTable extends TestCase {
      * Verify that the Pivot Table operates only within the referenced area, even when the
      * first column of the referenced area is not index 0.
      */
+    @Test
     public void testAddDataColumnWithOffsetData() {
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
         assertEquals(CellType.NUMERIC, offsetOuterCell.getCellTypeEnum());
         
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
+    }
+    
+    @Test
+    public void testPivotTableSheetNamesAreCaseInsensitive() {
+        wb.setSheetName(0,  "original");
+        wb.setSheetName(1,  "offset");
+        XSSFSheet original = wb.getSheet("OriginaL");
+        XSSFSheet offset = wb.getSheet("OffseT");
+        // assume sheets are accessible via case-insensitive name
+        assertNotNull(original);
+        assertNotNull(offset);
+        
+        AreaReference source = new AreaReference("ORIGinal!A1:C2", _testDataProvider.getSpreadsheetVersion());
+        // create a pivot table on the same sheet, case insensitive
+        original.createPivotTable(source, new CellReference("W1"));
+        // create a pivot table on a different sheet, case insensitive
+        offset.createPivotTable(source, new CellReference("W1"));
     }
 }

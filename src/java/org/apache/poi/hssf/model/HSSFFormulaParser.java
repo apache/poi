@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.model;
 
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.util.Internal;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -26,6 +24,9 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * HSSF wrapper for the {@link FormulaParser} and {@link FormulaRenderer}
@@ -61,6 +62,7 @@ public final class HSSFFormulaParser {
      * 
      * @deprecated POI 3.15 beta 3. Use {@link #parse(String, HSSFWorkbook, FormulaType)} instead.
      */
+    @Removal(version="3.17")
     public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) throws FormulaParseException {
         return parse(formula, workbook, FormulaType.forInt(formulaType));
     }
@@ -87,6 +89,7 @@ public final class HSSFFormulaParser {
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      * @deprecated POI 3.15 beta 3. Use {@link #parse(String, HSSFWorkbook, FormulaType, int)} instead.
      */
+    @Removal(version="3.17")
     public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType, int sheetIndex) throws FormulaParseException {
         return parse(formula, workbook, FormulaType.forInt(formulaType), sheetIndex);
     }

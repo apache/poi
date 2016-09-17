@@ -45,4 +45,9 @@ public interface ZipEntrySource {
 	 *  resources may be freed
 	 */
 	public void close() throws IOException;
+	
+	/**
+	 * Has close been called already?
+	 */
+	public boolean isClosed();
 }

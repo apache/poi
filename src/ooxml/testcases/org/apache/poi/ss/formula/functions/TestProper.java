@@ -96,7 +96,7 @@ public final class TestProper {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellType() != CellType.STRING) {
+        if (cv.getCellTypeEnum() != CellType.STRING) {
             throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
         }
         String actualValue = cv.getStringValue();

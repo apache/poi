@@ -38,8 +38,8 @@ public enum DataConsolidateFunction {
     VAR(10, "Var"),
     VARP(11, "Varp");
 
-    private int value;
-    private String name;
+    private final int value;
+    private final String name;
 
     DataConsolidateFunction(int value, String name) {
         this.value = value;

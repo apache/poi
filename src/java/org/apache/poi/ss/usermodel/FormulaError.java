@@ -166,19 +166,19 @@ public enum FormulaError {
         return false;
     }
 
-    public static FormulaError forInt(byte type){
+    public static FormulaError forInt(byte type) throws IllegalArgumentException {
         FormulaError err = bmap.get(type);
         if(err == null) throw new IllegalArgumentException("Unknown error type: " + type);
         return err;
     }
-    public static FormulaError forInt(int type){
+    public static FormulaError forInt(int type) throws IllegalArgumentException {
         FormulaError err = imap.get(type);
         if(err == null) err = bmap.get((byte)type);
         if(err == null) throw new IllegalArgumentException("Unknown error type: " + type);
         return err;
     }
 
-    public static FormulaError forString(String code){
+    public static FormulaError forString(String code) throws IllegalArgumentException {
         FormulaError err = smap.get(code);
         if(err == null) throw new IllegalArgumentException("Unknown error code: " + code);
         return err;

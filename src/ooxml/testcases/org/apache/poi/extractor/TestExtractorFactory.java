@@ -682,9 +682,12 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(OPCPackage.open(txt.toString()));
-            fail();
+            fail("TestExtractorFactory.testPackage() failed on " + txt.toString());
         } catch(UnsupportedFileFormatException e) {
             // Good
+        } catch (Exception e) {
+            System.out.println("TestExtractorFactory.testPackage() failed on " + txt.toString());
+            throw e;
         }
     }
 
@@ -942,6 +945,7 @@ public class TestExtractorFactory {
         "openxml4j/OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx",
         "openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx",
         "openxml4j/OPCCompliance_DerivedPartNameFAIL.docx",
+        "openxml4j/invalid.xlsx",
         "spreadsheet/54764-2.xlsx",   // see TestXSSFBugs.bug54764()
         "spreadsheet/54764.xlsx",     // see TestXSSFBugs.bug54764()
         "spreadsheet/Simple.xlsb",
