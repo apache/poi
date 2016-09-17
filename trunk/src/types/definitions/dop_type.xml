@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<record fromfile="true" name="DOP" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Document Properties.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+      <field type="byte" size="1" name="formatFlags">
+        <bit number="0" mask="0x01" name="fFacingPages"/>
+        <bit number="1" mask="0x02" name="fWidowControl"/>
+        <bit number="2" mask="0x04" name="fPMHMainDoc"/>
+        <bit number="3" mask="0x18" name="grfSupression"/>
+        <bit number="4" mask="0x60" name="fpc"/>
+        <bit number="5" mask="0x80" name="unused1"/>
+      </field>
+      <field type="byte" size="1" name="unused2"/>
+      <field type="short" size="2" name="footnoteInfo">
+        <bit number="0" mask="0x0003" name="rncFtn"/>
+        <bit number="1" mask="0xfffc" name="nFtn"/>
+      </field>
+      <field type="byte" size="1" name="fOutlineDirtySave"/>
+      <field type="byte" size="1" name="docinfo">
+        <bit number="0" mask="0x01" name="fOnlyMacPics"/>
+        <bit number="1" mask="0x02" name="fOnlyWinPics"/>
+        <bit number="2" mask="0x04" name="fLabelDoc"/>
+        <bit number="3" mask="0x08" name="fHyphCapitals"/>
+        <bit number="4" mask="0x10" name="fAutoHyphen"/>
+        <bit number="5" mask="0x20" name="fFormNoFields"/>
+        <bit number="6" mask="0x40" name="fLinkStyles"/>
+        <bit number="7" mask="0x80" name="fRevMarking"/>
+      </field>
+      <field type="byte" size="1" name="docinfo1">
+        <bit number="0" mask="0x01" name="fBackup"/>
+        <bit number="1" mask="0x02" name="fExactCWords"/>
+        <bit number="2" mask="0x04" name="fPagHidden"/>
+        <bit number="3" mask="0x08" name="fPagResults"/>
+        <bit number="4" mask="0x10" name="fLockAtn"/>
+        <bit number="5" mask="0x20" name="fMirrorMargins"/>
+        <bit number="6" mask="0x40" name="unused3"/>
+        <bit number="7" mask="0x80" name="fDfltTrueType"/>
+      </field>
+      <field type="byte" size="1" name="docinfo2">
+        <bit number="0" mask="0x01" name="fPagSupressTopSpacing"/>
+        <bit number="1" mask="0x02" name="fProtEnabled"/>
+        <bit number="2" mask="0x04" name="fDispFormFldSel"/>
+        <bit number="3" mask="0x08" name="fRMView"/>
+        <bit number="4" mask="0x10" name="fRMPrint"/>
+        <bit number="5" mask="0x20" name="unused4"/>
+        <bit number="6" mask="0x40" name="fLockRev"/>
+        <bit number="7" mask="0x80" name="fEmbedFonts"/>
+      </field>
+      <field type="short" size="2" name="docinfo3">
+        <bit number="0" mask="0x0001" name="oldfNoTabForInd"/>
+        <bit number="1" mask="0x0002" name="oldfNoSpaceRaiseLower"/>
+        <bit number="2" mask="0x0004" name="oldfSuppressSpbfAfterPageBreak"/>
+        <bit number="3" mask="0x0008" name="oldfWrapTrailSpaces"/>
+        <bit number="4" mask="0x0010" name="oldfMapPrintTextColor"/>
+        <bit number="5" mask="0x0020" name="oldfNoColumnBalance"/>
+        <bit number="6" mask="0x0040" name="oldfConvMailMergeEsc"/>
+        <bit number="7" mask="0x0080" name="oldfSupressTopSpacing"/>
+        <bit number="8" mask="0x0100" name="oldfOrigWordTableRules"/>
+        <bit number="9" mask="0x0200" name="oldfTransparentMetafiles"/>
+        <bit number="10" mask="0x0400" name="oldfShowBreaksInFrames"/>
+        <bit number="11" mask="0x0800" name="oldfSwapBordersFacingPgs"/>
+        <bit number="12" mask="0xf000" name="unused5"/>
+      </field>
+      <field type="int" size="2" name="dxaTab"/>
+      <field type="int" size="2" name="wSpare"/>
+      <field type="int" size="2" name="dxaHotz"/>
+      <field type="int" size="2" name="cConsexHypLim"/>
+      <field type="int" size="2" name="wSpare2"/>
+      <field type="int" size="4" name="dttmCreated"/>
+      <field type="int" size="4" name="dttmRevised"/>
+      <field type="int" size="4" name="dttmLastPrint"/>
+      <field type="int" size="2" name="nRevision"/>
+      <field type="int" size="4" name="tmEdited"/>
+      <field type="int" size="4" name="cWords"/>
+      <field type="int" size="4" name="cCh"/>
+      <field type="int" size="2" name="cPg"/>
+      <field type="int" size="4" name="cParas"/>
+      <field type="short" size="2" name="Edn">
+        <bit number="0" mask="0x0003" name="rncEdn"/>
+        <bit number="1" mask="0xfffc" name="nEdn"/>
+      </field>
+      <field type="short" size="2" name="Edn1">
+        <bit number="0" mask="0x0003" name="epc"/>
+        <bit number="1" mask="0x003c" name="nfcFtnRef1"/>
+        <bit number="2" mask="0x03c0" name="nfcEdnRef1"/>
+        <bit number="3" mask="0x0400" name="fPrintFormData"/>
+        <bit number="4" mask="0x0800" name="fSaveFormData"/>
+        <bit number="5" mask="0x1000" name="fShadeFormData"/>
+        <bit number="6" mask="0x8000" name="fWCFtnEdn"/>
+      </field>
+      <field type="int" size="4" name="cLines"/>
+      <field type="int" size="4" name="cWordsFtnEnd"/>
+      <field type="int" size="4" name="cChFtnEdn"/>
+      <field type="short" size="2" name="cPgFtnEdn"/>
+      <field type="int" size="4" name="cParasFtnEdn"/>
+      <field type="int" size="4" name="cLinesFtnEdn"/>
+      <field type="int" size="4" name="lKeyProtDoc"/>
+      <field type="short" size="2" name="view">
+        <bit number="0" mask="0x0007" name="wvkSaved"/>
+        <bit number="1" mask="0x0ff8" name="wScaleSaved"/>
+        <bit number="2" mask="0x3000" name="zkSaved"/>
+        <bit number="3" mask="0x4000" name="fRotateFontW6"/>
+        <bit number="4" mask="0x8000" name="iGutterPos"/>
+      </field>
+      <field type="int" size="4" name="docinfo4">
+        <bit number="0" mask="0x00000001" name="fNoTabForInd"/>
+        <bit number="1" mask="0x00000002" name="fNoSpaceRaiseLower"/>
+        <bit number="2" mask="0x00000004" name="fSupressSpdfAfterPageBreak"/>
+        <bit number="3" mask="0x00000008" name="fWrapTrailSpaces"/>
+        <bit number="4" mask="0x00000010" name="fMapPrintTextColor"/>
+        <bit number="5" mask="0x00000020" name="fNoColumnBalance"/>
+        <bit number="6" mask="0x00000040" name="fConvMailMergeEsc"/>
+        <bit number="7" mask="0x00000080" name="fSupressTopSpacing"/>
+        <bit number="8" mask="0x00000100" name="fOrigWordTableRules"/>
+        <bit number="9" mask="0x00000200" name="fTransparentMetafiles"/>
+        <bit number="10" mask="0x00000400" name="fShowBreaksInFrames"/>
+        <bit number="11" mask="0x00000800" name="fSwapBordersFacingPgs"/>
+        <bit number="12" mask="0x00010000" name="fSuppressTopSPacingMac5"/>
+        <bit number="13" mask="0x00020000" name="fTruncDxaExpand"/>
+        <bit number="14" mask="0x00040000" name="fPrintBodyBeforeHdr"/>
+        <bit number="15" mask="0x00080000" name="fNoLeading"/>
+        <bit number="16" mask="0x00200000" name="fMWSmallCaps"/>
+      </field>
+      <field type="short" size="2" name="adt"/>
+      <field type="byte[]" size="310" name="doptypography"/>
+      <field type="byte[]" size="10" name="dogrid"/>
+      <field type="short" size="2" name="docinfo5">
+        <bit number="0" mask="0x001e" name="lvl"/>
+        <bit number="1" mask="0x0020" name="fGramAllDone"/>
+        <bit number="2" mask="0x0040" name="fGramAllClean"/>
+        <bit number="3" mask="0x0080" name="fSubsetFonts"/>
+        <bit number="4" mask="0x0100" name="fHideLastVersion"/>
+        <bit number="5" mask="0x0200" name="fHtmlDoc"/>
+        <bit number="6" mask="0x0800" name="fSnapBorder"/>
+        <bit number="7" mask="0x1000" name="fIncludeHeader"/>
+        <bit number="8" mask="0x2000" name="fIncludeFooter"/>
+        <bit number="9" mask="0x4000" name="fForcePageSizePag"/>
+        <bit number="10" mask="0x8000" name="fMinFontSizePag"/>
+      </field>
+      <field type="short" size="2" name="docinfo6">
+        <bit number="0" mask="0x0001" name="fHaveVersions"/>
+        <bit number="1" mask="0x0002" name="fAutoVersions"/>
+      </field>
+      <field type="byte[]" size="12" name="asumyi"/>
+      <field type="int" size="4" name="cChWS"/>
+      <field type="int" size="4" name="cChWSFtnEdn"/>
+      <field type="int" size="4" name="grfDocEvents"/>
+      <field type="int" size="4" name="virusinfo">
+        <bit number="0" mask="0x0001" name="fVirusPrompted"/>
+        <bit number="1" mask="0x0002" name="fVirusLoadSafe"/>
+        <bit number="2" mask="0xfffffffc" name="KeyVirusSession30"/>
+      </field>
+      <field type="byte[]" size="30" name="Spare"/>
+      <field type="int" size="4" name="reserved1"/>
+      <field type="int" size="4" name="reserved2"/>
+      <field type="int" size="4" name="cDBC"/>
+      <field type="int" size="4" name="cDBCFtnEdn"/>
+      <field type="int" size="4" name="reserved"/>
+      <field type="short" size="2" name="nfcFtnRef"/>
+      <field type="short" size="2" name="nfcEdnRef"/>
+      <field type="short" size="2" name="hpsZoonFontPag"/>
+      <field type="short" size="2" name="dywDispPag"/>
+    </fields>
+</record>
+
+
+
