@@ -30,11 +30,10 @@ import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.Internal;
 
 /**
  * Evaluates formula cells.<p/>
@@ -80,6 +79,11 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
      */
     public static HSSFFormulaEvaluator create(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
         return new HSSFFormulaEvaluator(workbook, stabilityClassifier, udfFinder);
+    }
+    
+    @Override
+    protected RichTextString createRichTextString(String str) {
+        return new HSSFRichTextString(str);
     }
 
 
@@ -136,87 +140,10 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
     public void notifySetFormula(Cell cell) {
         _bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell((HSSFCell)cell));
     }
-
-    /**
-     * If cell contains formula, it evaluates the formula, and saves the result of the formula. The
-     * cell remains as a formula cell. If the cell does not contain formula, rather than throwing an
-     * exception, this method returns {@link CellType#_NONE} and leaves the cell unchanged.
-     *
-     * Note that the type of the <em>formula result</em> is returned, so you know what kind of
-     * cached formula result is also stored with  the formula.
-     * <pre>
-     * CellType evaluatedCellType = evaluator.evaluateFormulaCell(cell);
-     * </pre>
-     * Be aware that your cell will hold both the formula, and the result. If you want the cell
-     * replaced with the result of the formula, use {@link #evaluateInCell(org.apache.poi.ss.usermodel.Cell)}
-     * @param cell The cell to evaluate
-     * @return {@link CellType#_NONE} for non-formula cells, or the type of the <em>formula result</em>
-     * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
-     */
-    @Internal
-    @Override
-    public CellType evaluateFormulaCellEnum(Cell cell) {
-        if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
-            return CellType._NONE;
-        }
-        CellValue cv = evaluateFormulaCellValue(cell);
-        // cell remains a formula cell, but the cached value is changed
-        setCellValue(cell, cv);
-        return cv.getCellType();
-    }
-
-    /**
-     * If cell contains formula, it evaluates the formula, and
-     *  puts the formula result back into the cell, in place
-     *  of the old formula.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     * Note that the same instance of HSSFCell is returned to
-     * allow chained calls like:
-     * <pre>
-     * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
-     * </pre>
-     * Be aware that your cell value will be changed to hold the
-     *  result of the formula. If you simply want the formula
-     *  value computed for you, use {@link #evaluateFormulaCellEnum(Cell)}}
-     */
+    
     @Override
     public HSSFCell evaluateInCell(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-        HSSFCell result = (HSSFCell) cell;
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
-            CellValue cv = evaluateFormulaCellValue(cell);
-            setCellValue(cell, cv);
-            setCellType(cell, cv); // cell will no longer be a formula cell
-        }
-        return result;
-    }
-
-    private static void setCellValue(Cell cell, CellValue cv) {
-        CellType cellType = cv.getCellType();
-        switch (cellType) {
-            case BOOLEAN:
-                cell.setCellValue(cv.getBooleanValue());
-                break;
-            case ERROR:
-                cell.setCellErrorValue(cv.getErrorValue());
-                break;
-            case NUMERIC:
-                cell.setCellValue(cv.getNumberValue());
-                break;
-            case STRING:
-                cell.setCellValue(new HSSFRichTextString(cv.getStringValue()));
-                break;
-            case BLANK:
-                // never happens - blanks eventually get translated to zero
-            case FORMULA:
-                // this will never happen, we have already evaluated the formula
-            default:
-                throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
-        }
+        return (HSSFCell) super.evaluateInCell(cell);
     }
 
     /**

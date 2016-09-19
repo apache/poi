@@ -32,9 +32,9 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
  * Represents a table in a .pptx presentation
  */
 public class XSLFTableRow implements Iterable<XSLFTableCell> {
-    private CTTableRow _row;
-    private List<XSLFTableCell> _cells;
-    private XSLFTable _table;
+    private final CTTableRow _row;
+    private final List<XSLFTableCell> _cells;
+    private final XSLFTable _table;
 
     /*package*/ XSLFTableRow(CTTableRow row, XSLFTable table){
         _row = row;
@@ -78,6 +78,29 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
         _table.updateRowColIndexes();
         return cell;
     }
+    
+    /**
+     * Merge cells of a table row, inclusive.
+     * Indices are 0-based.
+     *
+     * @param firstCol 0-based index of first column to merge, inclusive
+     * @param lastCol 0-based index of last column to merge, inclusive
+     */
+    public void mergeCells(int firstCol, int lastCol)
+    {
+        if (firstCol >= lastCol) {
+            throw new IllegalArgumentException(
+                "Cannot merge, first column >= last column : "
+                + firstCol + " >= " + lastCol
+            );
+        }
 
+        final int colSpan = (lastCol - firstCol) + 1;
+
+        _cells.get(firstCol).setGridSpan(colSpan);
+        for (final XSLFTableCell cell : _cells.subList(firstCol+1, lastCol+1)) {
+            cell.setHMerge(true);
+        }
+    }
 
 }

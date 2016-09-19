@@ -51,6 +51,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         // TODO - support shifting of page breaks
     }
 
+    /** Error occurred at FormulaShifter#rowMoveAreaPtg while shift rows upward. */
     @Test
     public void testBug54524() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54524.xlsx");
@@ -66,6 +67,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         workbook.close();
     }
 
+    /**  negative row shift causes corrupted data or throws exception */
     @Test
     public void testBug53798() throws IOException {
         // NOTE that for HSSF (.xls) negative shifts combined with positive ones do work as expected  
@@ -124,6 +126,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         }
     }
     
+    /** negative row shift causes corrupted data or throws exception */
     @Test
     public void testBug53798a() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53798.xlsx");
@@ -152,6 +155,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         read.close();
     }
     
+    /** Shifting rows with comment result - Unreadable content error and comment deletion */
     @Test
     public void testBug56017() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56017.xlsx");
@@ -193,6 +197,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wbBack.close();
     }
 
+    /** Moving the active sheet and deleting the others results in a corrupted file */
     @Test
     public void test57171() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
@@ -210,6 +215,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wbRead.close();
     }
 
+    /**  Cannot delete an arbitrary sheet in an XLS workbook (only the last one) */
     @Test
     public void test57163() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
@@ -314,6 +320,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.close();
     }
 
+    /** Failed to clone a sheet from an Excel 2010 */
     @Test
     public void test57165() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
@@ -341,6 +348,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         }
     }
 
+    /** Shifting rows with cell comments only shifts comments from first such cell. Other cell comments not shifted */
     @Test
     public void testBug57828_OnlyOneCommentShiftedInRow() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57828.xlsx");

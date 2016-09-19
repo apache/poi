@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
@@ -72,6 +73,7 @@ public class SXSSFCreationHelper implements CreationHelper {
      * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
      */
     @Deprecated
+    @Removal(version="3.17")
     @Override
     public Hyperlink createHyperlink(int type) {
         return helper.createHyperlink(type);

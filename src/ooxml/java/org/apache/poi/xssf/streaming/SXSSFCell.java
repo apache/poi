@@ -43,6 +43,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
@@ -61,6 +62,8 @@ public class SXSSFCell implements Cell {
      * @deprecated POI 3.15 beta 3.
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
+    @Removal(version="3.17")
+    @Deprecated
     public SXSSFCell(SXSSFRow row, int cellType)
     {
         this(row, CellType.forInt((cellType)));

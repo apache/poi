@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
-import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -62,11 +62,17 @@ public final class DStarRunner implements Function3Arg {
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex,
             ValueEval database, ValueEval filterColumn, ValueEval conditionDatabase) {
         // Input processing and error checks.
-        if(!(database instanceof TwoDEval) || !(conditionDatabase instanceof TwoDEval)) {
+        if(!(database instanceof AreaEval) || !(conditionDatabase instanceof AreaEval)) {
             return ErrorEval.VALUE_INVALID;
         }
-        TwoDEval db = (TwoDEval)database;
-        TwoDEval cdb = (TwoDEval)conditionDatabase;
+        AreaEval db = (AreaEval)database;
+        AreaEval cdb = (AreaEval)conditionDatabase;
+        
+        try {
+            filterColumn = OperandResolver.getSingleValue(filterColumn, srcRowIndex, srcColumnIndex);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
 
         int fc;
         try {
@@ -100,15 +106,11 @@ public final class DStarRunner implements Function3Arg {
             }
             // Filter each entry.
             if(matches) {
-                try {
-                    ValueEval currentValueEval = solveReference(db.getValue(row, fc));
-                    // Pass the match to the algorithm and conditionally abort the search.
-                    boolean shouldContinue = algorithm.processMatch(currentValueEval);
-                    if(! shouldContinue) {
-                        break;
-                    }
-                } catch (EvaluationException e) {
-                    return e.getErrorEval();
+                ValueEval currentValueEval = resolveReference(db, row, fc);
+                // Pass the match to the algorithm and conditionally abort the search.
+                boolean shouldContinue = algorithm.processMatch(currentValueEval);
+                if(! shouldContinue) {
+                    break;
                 }
             }
         }
@@ -126,56 +128,16 @@ public final class DStarRunner implements Function3Arg {
     }
 
     /**
-     * Resolve reference(-chains) until we have a normal value.
+     * 
      *
-     * @param field a ValueEval which can be a RefEval.
-     * @return a ValueEval which is guaranteed not to be a RefEval
-     * @throws EvaluationException If a multi-sheet reference was found along the way.
-     */
-    private static ValueEval solveReference(ValueEval field) throws EvaluationException {
-        if (field instanceof RefEval) {
-            RefEval refEval = (RefEval)field;
-            if (refEval.getNumberOfSheets() > 1) {
-                throw new EvaluationException(ErrorEval.VALUE_INVALID);
-            }
-            return solveReference(refEval.getInnerValueEval(refEval.getFirstSheetIndex()));
-        }
-        else {
-            return field;
-        }
-    }
-
-    /**
-     * Returns the first column index that matches the given name. The name can either be
-     * a string or an integer, when it's an integer, then the respective column
-     * (1 based index) is returned.
-     * @param nameValueEval
-     * @param db
-     * @return the first column index that matches the given name (or int)
+     * @param nameValueEval Must not be a RefEval or AreaEval. Thus make sure resolveReference() is called on the value first!
+     * @param db Database
+     * @return Corresponding column number.
      * @throws EvaluationException
      */
-    @SuppressWarnings("unused")
-    private static int getColumnForTag(ValueEval nameValueEval, TwoDEval db)
+    private static int getColumnForName(ValueEval nameValueEval, AreaEval db)
             throws EvaluationException {
-        int resultColumn = -1;
-
-        // Numbers as column indicator are allowed, check that.
-        if(nameValueEval instanceof NumericValueEval) {
-            double doubleResultColumn = ((NumericValueEval)nameValueEval).getNumberValue();
-            resultColumn = (int)doubleResultColumn;
-            // Floating comparisions are usually not possible, but should work for 0.0.
-            if(doubleResultColumn - resultColumn != 0.0)
-                throw new EvaluationException(ErrorEval.VALUE_INVALID);
-            resultColumn -= 1; // Numbers are 1-based not 0-based.
-        } else {
-            resultColumn = getColumnForName(nameValueEval, db);
-        }
-        return resultColumn;
-    }
-
-    private static int getColumnForName(ValueEval nameValueEval, TwoDEval db)
-            throws EvaluationException {
-        String name = getStringFromValueEval(nameValueEval);
+        String name = OperandResolver.coerceValueToString(nameValueEval);
         return getColumnForString(db, name);
     }
 
@@ -187,16 +149,19 @@ public final class DStarRunner implements Function3Arg {
      * @return Corresponding column number.
      * @throws EvaluationException If it's not possible to turn all headings into strings.
      */
-    private static int getColumnForString(TwoDEval db,String name)
+    private static int getColumnForString(AreaEval db,String name)
             throws EvaluationException {
         int resultColumn = -1;
         final int width = db.getWidth();
         for(int column = 0; column < width; ++column) {
-            ValueEval columnNameValueEval = db.getValue(0, column);
-            if(solveReference(columnNameValueEval) instanceof BlankEval) {
+            ValueEval columnNameValueEval = resolveReference(db, 0, column);
+            if(columnNameValueEval instanceof BlankEval) {
                 continue;
             }
-            String columnName = getStringFromValueEval(columnNameValueEval);
+            if(columnNameValueEval instanceof ErrorEval) {
+                continue;
+            }
+            String columnName = OperandResolver.coerceValueToString(columnNameValueEval);
             if(name.equals(columnName)) {
                 resultColumn = column;
                 break;
@@ -215,7 +180,7 @@ public final class DStarRunner implements Function3Arg {
      * @throws EvaluationException If references could not be resolved or comparison
      * operators and operands didn't match.
      */
-    private static boolean fullfillsConditions(TwoDEval db, int row, TwoDEval cdb)
+    private static boolean fullfillsConditions(AreaEval db, int row, AreaEval cdb)
             throws EvaluationException {
         // Only one row must match to accept the input, so rows are ORed.
         // Each row is made up of cells where each cell is a condition,
@@ -229,20 +194,15 @@ public final class DStarRunner implements Function3Arg {
                 // special column that accepts formulas.
                 boolean columnCondition = true;
                 ValueEval condition = null;
-                try {
-                    // The condition to apply.
-                    condition = solveReference(cdb.getValue(conditionRow, column));
-                } catch (java.lang.RuntimeException e) {
-                    // It might be a special formula, then it is ok if it fails.
-                    columnCondition = false;
-                }
+                
+                // The condition to apply.
+                condition = resolveReference(cdb, conditionRow, column);
+                
                 // If the condition is empty it matches.
                 if(condition instanceof BlankEval)
                     continue;
                 // The column in the DB to apply the condition to.
-                ValueEval targetHeader = solveReference(cdb.getValue(0, column));
-                targetHeader = solveReference(targetHeader);
-
+                ValueEval targetHeader = resolveReference(cdb, 0, column);
 
                 if(!(targetHeader instanceof StringValueEval)) {
                     throw new EvaluationException(ErrorEval.VALUE_INVALID);
@@ -254,14 +214,14 @@ public final class DStarRunner implements Function3Arg {
 
                 if(columnCondition == true) { // normal column condition
                     // Should not throw, checked above.
-                    ValueEval value = db.getValue(
-                            row, getColumnForName(targetHeader, db));
+                    ValueEval value = resolveReference(db, row, getColumnForName(targetHeader, db));
                     if(!testNormalCondition(value, condition)) {
                         matches = false;
                         break;
                     }
                 } else { // It's a special formula condition.
-                    if(getStringFromValueEval(condition).isEmpty()) {
+                    // TODO: Check whether the condition cell contains a formula and return #VALUE! if it doesn't.
+                    if(OperandResolver.coerceValueToString(condition).isEmpty()) {
                         throw new EvaluationException(ErrorEval.VALUE_INVALID);
                     }
                     throw new NotImplementedException(
@@ -328,7 +288,7 @@ public final class DStarRunner implements Function3Arg {
                 if(itsANumber) {
                     return testNumericCondition(value, operator.equal, stringOrNumber);
                 } else { // It's a string.
-                    String valueString = value instanceof BlankEval ? "" : getStringFromValueEval(value);
+                    String valueString = value instanceof BlankEval ? "" : OperandResolver.coerceValueToString(value);
                     return stringOrNumber.equals(valueString);
                 }
             } else { // It's a text starts-with condition.
@@ -336,7 +296,7 @@ public final class DStarRunner implements Function3Arg {
                     return value instanceof StringEval;
                 }
                 else {
-                    String valueString = value instanceof BlankEval ? "" : getStringFromValueEval(value);
+                    String valueString = value instanceof BlankEval ? "" : OperandResolver.coerceValueToString(value);
                     return valueString.startsWith(conditionString);
                 }
             }
@@ -424,20 +384,20 @@ public final class DStarRunner implements Function3Arg {
             return null;
         }
     }
-
+    
     /**
-     * Takes a ValueEval and tries to retrieve a String value from it.
-     * It tries to resolve references if there are any.
+     * Resolve a ValueEval that's in an AreaEval.
      *
-     * @param value ValueEval to retrieve the string from.
-     * @return String corresponding to the given ValueEval.
-     * @throws EvaluationException If it's not possible to retrieve a String value.
+     * @param db AreaEval from which the cell to resolve is retrieved. 
+     * @param dbRow Relative row in the AreaEval.
+     * @param dbCol Relative column in the AreaEval.
+     * @return A ValueEval that is a NumberEval, StringEval, BoolEval, BlankEval or ErrorEval.
      */
-    private static String getStringFromValueEval(ValueEval value)
-            throws EvaluationException {
-        value = solveReference(value);
-        if(!(value instanceof StringValueEval))
-            throw new EvaluationException(ErrorEval.VALUE_INVALID);
-        return ((StringValueEval)value).getStringValue();
+    private static ValueEval resolveReference(AreaEval db, int dbRow, int dbCol) {
+        try {
+            return OperandResolver.getSingleValue(db.getValue(dbRow, dbCol), db.getFirstRow()+dbRow, db.getFirstColumn()+dbCol);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
     }
 }

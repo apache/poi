@@ -278,10 +278,10 @@ public abstract class BaseTestCell {
 
         assertNotNull("Formula Cell Style", cs);
         assertEquals("Font Index Matches", f.getIndex(), cs.getFontIndex());
-        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
-        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
-        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
-        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottom());
+        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTopEnum());
+        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeftEnum());
+        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRightEnum());
+        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottomEnum());
         wb2.close();
     }
 
@@ -1014,5 +1014,37 @@ public abstract class BaseTestCell {
         assertEquals(comment, cell.getCellComment());
 
         wb.close();
+    }
+
+    @Test
+    public void primitiveToEnumReplacementDoesNotBreakBackwardsCompatibility() {
+        // bug 59836
+        // until we have changes POI from working on primitives (int) to enums,
+        // we should make sure we minimize backwards compatibility breakages.
+        // This method tests the old way of working with cell types, alignment, etc.
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+
+        // Cell.CELL_TYPE_* -> CellType.*
+        cell.setCellValue(5.0);
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals(0, cell.getCellType()); //make sure that hard-coded int literals still work, even though users should be using the named constants
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum()); // make sure old way and new way are compatible
+
+        // make sure switch(int|Enum) still works. Cases must be statically resolvable in Java 6 ("constant expression required")
+        switch(cell.getCellType()) {
+            case Cell.CELL_TYPE_NUMERIC:
+                // expected
+                break;
+            case Cell.CELL_TYPE_STRING:
+            case Cell.CELL_TYPE_BOOLEAN:
+            case Cell.CELL_TYPE_ERROR:
+            case Cell.CELL_TYPE_FORMULA:
+            case Cell.CELL_TYPE_BLANK:
+            default:
+                fail("unexpected cell type: " + cell.getCellType());
+        }
     }
 }

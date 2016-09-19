@@ -110,24 +110,24 @@ public final class TestMultiSheetEval extends TestCase {
 
 		switch (cellType) {
 			case BLANK:
-				assertEquals(msg, CellType.BLANK, actual.getCellType());
+				assertEquals(msg, CellType.BLANK, actual.getCellTypeEnum());
 				break;
 			case BOOLEAN:
-				assertEquals(msg, CellType.BOOLEAN, actual.getCellType());
+				assertEquals(msg, CellType.BOOLEAN, actual.getCellTypeEnum());
 				assertEquals(msg, expected.getBooleanCellValue(), actual.getBooleanValue());
 				break;
 			case ERROR:
-				assertEquals(msg, CellType.ERROR, actual.getCellType());
+				assertEquals(msg, CellType.ERROR, actual.getCellTypeEnum());
 				assertEquals(msg, ErrorEval.getText(expected.getErrorCellValue()), ErrorEval.getText(actual.getErrorValue()));
 				break;
 			case FORMULA: // will never be used, since we will call method after formula evaluation
 				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
 			case NUMERIC:
-				assertEquals(msg, CellType.NUMERIC, actual.getCellType());
+				assertEquals(msg, CellType.NUMERIC, actual.getCellTypeEnum());
 				TestMathX.assertEquals(msg, expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
 				break;
 			case STRING:
-				assertEquals(msg, CellType.STRING, actual.getCellType());
+				assertEquals(msg, CellType.STRING, actual.getCellTypeEnum());
 				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
 				break;
 			default:

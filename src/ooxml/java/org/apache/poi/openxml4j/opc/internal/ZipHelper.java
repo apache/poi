@@ -19,6 +19,7 @@ package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -239,10 +240,15 @@ public final class ZipHelper {
      * @param file
      *            The file to open.
      * @return The zip archive freshly open.
+     * @throws IOException if the zip file cannot be opened or closed to read the header signature
+     * @throws NotOfficeXmlFileException if stream does not start with zip header signature
      */
-    public static ZipFile openZipFile(File file) throws IOException {
+    public static ZipFile openZipFile(File file) throws IOException, NotOfficeXmlFileException {
         if (!file.exists()) {
-            return null;
+            throw new FileNotFoundException("File does not exist");
+        }
+        if (file.isDirectory()) {
+            throw new IOException("File is a directory");
         }
         
         // Peek at the first few bytes to sanity check

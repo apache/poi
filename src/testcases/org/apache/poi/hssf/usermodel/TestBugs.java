@@ -2567,7 +2567,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(0);
         HSSFCellStyle rstyle = row.getRowStyle();
-        assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottom());
+        assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottomEnum());
         wb.close();
     }
 
@@ -3051,7 +3051,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         
         HSSFBorderFormatting bord = rule.createBorderFormatting();
         bord.setBorderDiagonal(BorderStyle.THICK);
-        assertEquals(BorderStyle.THICK, bord.getBorderDiagonal());
+        assertEquals(BorderStyle.THICK, bord.getBorderDiagonalEnum());
 
         bord.setBackwardDiagonalOn(true);
         assertTrue(bord.isBackwardDiagonalOn());
@@ -3064,7 +3064,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Create the bottom border style so we know what a border is supposed to look like
         bord.setBorderBottom(BorderStyle.THICK);
-        assertEquals(BorderStyle.THICK, bord.getBorderBottom());
+        assertEquals(BorderStyle.THICK, bord.getBorderBottomEnum());
         bord.setBottomBorderColor(BLUE);
         assertEquals(BLUE, bord.getBottomBorderColor());
         

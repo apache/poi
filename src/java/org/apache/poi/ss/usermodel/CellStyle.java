@@ -17,270 +17,316 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Removal;
+
 public interface CellStyle {
 
     /**
      * general (normal) horizontal alignment
      * @deprecated POI 3.15 beta 3. Use {@link HorizontalAlignment#GENERAL} instead.
      */
+    @Removal(version="3.17")
     static final short ALIGN_GENERAL = 0x0; //HorizontalAlignment.GENERAL.getCode();
 
     /**
      * left-justified horizontal alignment
      * @deprecated POI 3.15 beta 3. Use {@link HorizontalAlignment#LEFT} instead.
      */
+    @Removal(version="3.17")
     static final short ALIGN_LEFT = 0x1; //HorizontalAlignment.LEFT.getCode();
 
     /**
      * center horizontal alignment
      * @deprecated POI 3.15 beta 3. Use {@link HorizontalAlignment#CENTER} instead.
      */
+    @Removal(version="3.17")
     static final short ALIGN_CENTER = 0x2; //HorizontalAlignment.CENTER.getCode();
 
     /**
      * right-justified horizontal alignment
      * @deprecated POI 3.15 beta 3. Use {@link HorizontalAlignment#RIGHT} instead.
      */
+    @Removal(version="3.17")
     static final short ALIGN_RIGHT = 0x3; //HorizontalAlignment.RIGHT.getCode();
 
     /**
      * fill? horizontal alignment
      * @deprecated POI 3.15 beta 3. Use {@link HorizontalAlignment#FILL} instead.
      */
+    @Removal(version="3.17")
     static final short ALIGN_FILL = 0x4; //HorizontalAlignment.FILL.getCode();
 
     /**
      * justified horizontal alignment
      * @deprecated POI 3.15 beta 3. Use {@link HorizontalAlignment#JUSTIFY} instead.
      */
+    @Removal(version="3.17")
     static final short ALIGN_JUSTIFY = 0x5; //HorizontalAlignment.JUSTIFY.getCode();
 
     /**
      * center-selection? horizontal alignment
      * @deprecated POI 3.15 beta 3. Use {@link HorizontalAlignment#CENTER_SELECTION} instead.
      */
+    @Removal(version="3.17")
     static final short ALIGN_CENTER_SELECTION = 0x6; //HorizontalAlignment.CENTER_SELECTION.getCode();
 
     /**
      * top-aligned vertical alignment
      * @deprecated POI 3.15 beta 3. Use {@link VerticalAlignment#TOP} instead.
      */
+    @Removal(version="3.17")
     static final short VERTICAL_TOP = 0x0; //VerticalAlignment.TOP.getCode();
 
     /**
      * center-aligned vertical alignment
      * @deprecated POI 3.15 beta 3. Use {@link VerticalAlignment#CENTER} instead.
      */
+    @Removal(version="3.17")
     static final short VERTICAL_CENTER = 0x1; //VerticalAlignment.CENTER.getCode();
 
     /**
      * bottom-aligned vertical alignment
      * @deprecated POI 3.15 beta 3. Use {@link VerticalAlignment#BOTTOM} instead.
      */
+    @Removal(version="3.17")
     static final short VERTICAL_BOTTOM = 0x2; //VerticalAlignment.BOTTOM.getCode();
 
     /**
      * vertically justified vertical alignment
      * @deprecated POI 3.15 beta 3. Use {@link VerticalAlignment#JUSTIFY} instead.
      */
+    @Removal(version="3.17")
     static final short VERTICAL_JUSTIFY = 0x3; //VerticalAlignment.JUSTIFY.getCode();
 
     /**
      * No border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#NONE} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_NONE = 0x0; //BorderStyle.NONE.getCode();
 
     /**
      * Thin border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#THIN} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_THIN = 0x1; //BorderStyle.THIN.getCode();
 
     /**
      * Medium border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_MEDIUM = 0x2; //BorderStyle.MEDIUM.getCode();
 
     /**
      * dash border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASHED} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_DASHED = 0x3; //BorderStyle.DASHED.getCode();
 
     /**
      * dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOTTED} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_DOTTED = 0x4; //BorderStyle.DOTTED.getCode();
 
     /**
      * Thick border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#THICK} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_THICK = 0x5; //BorderStyle.THICK.getCode();
 
     /**
      * double-line border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOUBLE} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_DOUBLE = 0x6; //BorderStyle.DOUBLE.getCode();
 
     /**
      * hair-line border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#HAIR} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_HAIR = 0x7; //BorderStyle.HAIR.getCode();
 
     /**
      * Medium dashed border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASHED} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_MEDIUM_DASHED = 0x8; //BorderStyle.MEDIUM_DASHED.getCode();
 
     /**
      * dash-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_DASH_DOT = 0x9; //BorderStyle.DASH_DOT.getCode();
 
     /**
      * medium dash-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_MEDIUM_DASH_DOT = 0xA; //BorderStyle.MEDIUM_DASH_DOT.getCode();
 
     /**
      * dash-dot-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT_DOT} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_DASH_DOT_DOT = 0xB; //BorderStyle.DASH_DOT_DOT.getCode();
 
     /**
      * medium dash-dot-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT_DOT} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_MEDIUM_DASH_DOT_DOT = 0xC; //BorderStyle.MEDIUM_DASH_DOT_DOT.getCode();
 
     /**
      * slanted dash-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#SLANTED_DASH_DOT} instead.
      */
+    @Removal(version="3.17")
     static final short BORDER_SLANTED_DASH_DOT = 0xD; //BorderStyle.SLANTED_DASH_DOT.getCode();
 
     /** 
      * Fill Pattern: No background
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#NO_FILL} instead.
      */
+    @Removal(version="3.17")
     static final short NO_FILL = 0; //FillPatternType.NO_FILL.getCode();
 
     /**
      * Fill Pattern: Solidly filled
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#SOLID_FOREGROUND} instead.
      */
+    @Removal(version="3.17")
     static final short SOLID_FOREGROUND = 1; //FillPatternType.SOLID_FOREGROUND.getCode();
 
     /**
      * Fill Pattern: Small fine dots
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#FINE_DOTS} instead.
      */
+    @Removal(version="3.17")
     static final short FINE_DOTS = 2; //FillPatternType.FINE_DOTS.getCode();
 
     /**
      * Fill Pattern: Wide dots
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#ALT_BARS} instead.
      */
+    @Removal(version="3.17")
     static final short ALT_BARS = 3; //FillPatternType.ALT_BARS.getCode();
 
     /**
      * Fill Pattern: Sparse dots
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#SPARSE_DOTS} instead.
      */
+    @Removal(version="3.17")
     static final short SPARSE_DOTS = 4; //FillPatternType.SPARSE_DOTS.getCode();
 
     /**
      * Fill Pattern: Thick horizontal bands
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THICK_HORZ_BANDS} instead.
      */
+    @Removal(version="3.17")
     static final short THICK_HORZ_BANDS = 5; //FillPatternType.THICK_HORZ_BANDS.getCode();
 
     /**
      * Fill Pattern: Thick vertical bands
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THICK_VERT_BANDS} instead.
      */
+    @Removal(version="3.17")
     static final short THICK_VERT_BANDS = 6; //FillPatternType.THICK_VERT_BANDS.getCode();
 
     /**
      * Fill Pattern: Thick backward facing diagonals
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THICK_BACKWARD_DIAG} instead.
      */
+    @Removal(version="3.17")
     static final short THICK_BACKWARD_DIAG = 7; //FillPatternType.THICK_BACKWARD_DIAG.getCode();
 
     /**
      * Fill Pattern: Thick forward facing diagonals
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THICK_FORWARD_DIAG} instead.
      */
+    @Removal(version="3.17")
     static final short THICK_FORWARD_DIAG = 8; //FillPatternType.THICK_FORWARD_DIAG.getCode();
 
     /**
      * Fill Pattern: Large spots
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#BIG_SPOTS} instead.
      */
+    @Removal(version="3.17")
     static final short BIG_SPOTS = 9; //FillPatternType.BIG_SPOTS.getCode();
 
     /**
      * Fill Pattern: Brick-like layout
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#BRICKS} instead.
      */
+    @Removal(version="3.17")
     static final short BRICKS = 10; //FillPatternType.BRICKS.getCode();
 
     /**
      * Fill Pattern: Thin horizontal bands
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_HORZ_BANDS} instead.
      */
+    @Removal(version="3.17")
     static final short THIN_HORZ_BANDS = 11; //FillPatternType.THIN_HORZ_BANDS.getCode();
 
     /**
      * Fill Pattern: Thin vertical bands
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_VERT_BANDS} instead.
      */
+    @Removal(version="3.17")
     static final short THIN_VERT_BANDS = 12; //FillPatternType.THIN_VERT_BANDS.getCode();
 
     /**
      * Fill Pattern: Thin backward diagonal
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_BACKWARD_DIAG} instead.
      */
+    @Removal(version="3.17")
     static final short THIN_BACKWARD_DIAG = 13; //FillPatternType.THIN_BACKWARD_DIAG.getCode();
 
     /**
      * Fill Pattern: Thin forward diagonal
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_FORWARD_DIAG} instead.
      */
+    @Removal(version="3.17")
     static final short THIN_FORWARD_DIAG = 14; //FillPatternType.THIN_FORWARD_DIAG.getCode();
 
     /**
      * Fill Pattern: Squares
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#SQUARES} instead.
      */
+    @Removal(version="3.17")
     static final short SQUARES = 15; //FillPatternType.SQUARES.getCode();
 
     /**
      * Fill Pattern: Diamonds
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#DIAMONDS} instead.
      */
+    @Removal(version="3.17")
     static final short DIAMONDS = 16; //FillPatternType.DIAMONDS.getCode();
 
     /**
      * Fill Pattern: Less Dots
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#LESS_DOTS} instead.
      */
+    @Removal(version="3.17")
     static final short LESS_DOTS = 17; //FillPatternType.LESS_DOTS.getCode();
 
     /**
      * Fill Pattern: Least Dots
      * @deprecated 3.15 beta 3. Use {@link FillPatternType#LEAST_DOTS} instead.
      */
+    @Removal(version="3.17")
     static final short LEAST_DOTS = 18; //FillPatternType.LEAST_DOTS.getCode();
 
     /**
@@ -495,19 +541,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle)} instead
      */
+    @Removal(version="3.17")
     void setBorderLeft(short border);
     
     /**
      * set the type of border to use for the left border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderLeft(BorderStyle border);
 
     /**
      * get the type of border to use for the left border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderLeftEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderLeft();
+    short getBorderLeft();
+    /**
+     * get the type of border to use for the left border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderLeftEnum();
 
     /**
      * set the type of border to use for the right border of the cell
@@ -528,19 +584,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle)} instead
      */
+    @Removal(version="3.17")
     void setBorderRight(short border);
     
     /**
      * set the type of border to use for the right border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderRight(BorderStyle border);
 
     /**
      * get the type of border to use for the right border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderRightEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderRight();
+    short getBorderRight();
+    /**
+     * get the type of border to use for the right border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderRightEnum();
 
     /**
      * set the type of border to use for the top border of the cell
@@ -561,19 +627,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle)} instead
      */
+    @Removal(version="3.17")
     void setBorderTop(short border);
     
     /**
      * set the type of border to use for the top border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderTop(BorderStyle border);
 
     /**
      * get the type of border to use for the top border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderTopEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderTop();
+    short getBorderTop();
+    /**
+     * get the type of border to use for the top border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderTopEnum();
 
     /**
      * set the type of border to use for the bottom border of the cell
@@ -594,19 +670,29 @@ public interface CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle)} instead.
      */
+    @Removal(version="3.17")
     void setBorderBottom(short border);
     
     /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
+     * @since POI 3.15
      */
     void setBorderBottom(BorderStyle border);
 
     /**
      * get the type of border to use for the bottom border of the cell
      * @return border type
+     * @deprecated POI 3.15. Use {@link #getBorderBottomEnum()} instead.
+     * This will return a BorderStyle enum in the future.
      */
-    BorderStyle getBorderBottom();
+    short getBorderBottom();
+    /**
+     * get the type of border to use for the bottom border of the cell
+     * @return border type
+     * @since POI 3.15
+     */
+    BorderStyle getBorderBottomEnum();
 
     /**
      * set the color to use for the left border

@@ -47,13 +47,13 @@ public final class TestIsBlank extends TestCase {
         
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         CellValue result = fe.evaluate(cell);
-        assertEquals(CellType.BOOLEAN, result.getCellType());
+        assertEquals(CellType.BOOLEAN, result.getCellTypeEnum());
         assertEquals(true, result.getBooleanValue());
         
         cell.setCellFormula("isblank(D7:D7)");
         
         result = fe.evaluate(cell);
-        assertEquals(CellType.BOOLEAN, result.getCellType());
+        assertEquals(CellType.BOOLEAN, result.getCellTypeEnum());
         assertEquals(true, result.getBooleanValue());
    }
 }

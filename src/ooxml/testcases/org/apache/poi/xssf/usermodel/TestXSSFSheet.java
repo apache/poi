@@ -47,6 +47,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -1974,5 +1977,47 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         } finally {
             wb.close();
         }
+    }
+    
+    /**
+     * See bug #52425
+     */
+    @Test
+    public void testInsertCommentsToClonedSheet() {
+    	Workbook wb = XSSFTestDataSamples.openSampleWorkbook("52425.xlsx");
+		CreationHelper helper = wb.getCreationHelper();
+		Sheet sheet2 = wb.createSheet("Sheet 2");
+		Sheet sheet3 = wb.cloneSheet(0);
+		wb.setSheetName(2, "Sheet 3");
+
+		// Adding Comment to new created Sheet 2
+		addComments(helper, sheet2);
+		// Adding Comment to cloned Sheet 3
+		addComments(helper, sheet3);
+	}
+    
+    private void addComments(CreationHelper helper, Sheet sheet) {
+		Drawing drawing = sheet.createDrawingPatriarch();
+
+		for (int i = 0; i < 2; i++) {
+			ClientAnchor anchor = helper.createClientAnchor();
+			anchor.setCol1(0);
+			anchor.setRow1(0 + i);
+			anchor.setCol2(2);
+			anchor.setRow2(3 + i);
+
+			Comment comment = drawing.createCellComment(anchor);
+			comment.setString(helper.createRichTextString("BugTesting"));
+
+			Row row = sheet.getRow(0 + i);
+			if (row == null)
+				row = sheet.createRow(0 + i);
+			Cell cell = row.getCell(0);
+			if (cell == null)
+				cell = row.createCell(0);
+
+			cell.setCellComment(comment);
+		}
+
     }
 }

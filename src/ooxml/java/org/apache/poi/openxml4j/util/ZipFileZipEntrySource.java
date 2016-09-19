@@ -39,6 +39,9 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
       }
       zipArchive = null;
    }
+   public boolean isClosed() {
+       return (zipArchive == null);
+   }
 
    public Enumeration<? extends ZipEntry> getEntries() {
       if (zipArchive == null)

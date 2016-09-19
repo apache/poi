@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.util.Internal;
+import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * Internal POI use only - parent of XSSF and SXSSF formula evaluators
@@ -36,6 +36,10 @@ import org.apache.poi.util.Internal;
 public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
     protected BaseXSSFFormulaEvaluator(WorkbookEvaluator bookEvaluator) {
         super(bookEvaluator);
+    }
+    @Override
+    protected RichTextString createRichTextString(String str) {
+        return new XSSFRichTextString(str);
     }
 
     public void notifySetFormula(Cell cell) {
@@ -46,78 +50,6 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
     }
     public void notifyUpdateCell(Cell cell) {
         _bookEvaluator.notifyUpdateCell(new XSSFEvaluationCell((XSSFCell)cell));
-    }
-
-    /**
-     * If cell contains formula, it evaluates the formula,
-     *  and saves the result of the formula. The cell
-     *  remains as a formula cell.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     * Note that the type of the formula result is returned,
-     *  so you know what kind of value is also stored with
-     *  the formula.
-     * <pre>
-     * CellType evaluatedCellType = evaluator.evaluateFormulaCellEnum(cell);
-     * </pre>
-     * Be aware that your cell will hold both the formula,
-     *  and the result. If you want the cell replaced with
-     *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
-     * @param cell The cell to evaluate
-     * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
-     *         If cell is not a formula cell, returns {@link CellType#_NONE} rather than throwing an exception.
-     * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
-     */
-    @Internal(since="POI 3.15 beta 3")
-    public CellType evaluateFormulaCellEnum(Cell cell) {
-        if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
-            return CellType._NONE;
-        }
-        CellValue cv = evaluateFormulaCellValue(cell);
-        // cell remains a formula cell, but the cached value is changed
-        setCellValue(cell, cv);
-        return cv.getCellType();
-    }
-
-    /**
-     * If cell contains formula, it evaluates the formula, and
-     *  puts the formula result back into the cell, in place
-     *  of the old formula.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     */
-    protected void doEvaluateInCell(Cell cell) {
-        if (cell == null) return;
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
-            CellValue cv = evaluateFormulaCellValue(cell);
-            setCellType(cell, cv); // cell will no longer be a formula cell
-            setCellValue(cell, cv);
-        }
-    }
-
-    private static void setCellValue(Cell cell, CellValue cv) {
-        CellType cellType = cv.getCellType();
-        switch (cellType) {
-            case BOOLEAN:
-                cell.setCellValue(cv.getBooleanValue());
-                break;
-            case ERROR:
-                cell.setCellErrorValue(cv.getErrorValue());
-                break;
-            case NUMERIC:
-                cell.setCellValue(cv.getNumberValue());
-                break;
-            case STRING:
-                cell.setCellValue(new XSSFRichTextString(cv.getStringValue()));
-                break;
-            case BLANK:
-                // never happens - blanks eventually get translated to zero
-            case FORMULA:
-                // this will never happen, we have already evaluated the formula
-            default:
-                throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
-        }
     }
 
     /**

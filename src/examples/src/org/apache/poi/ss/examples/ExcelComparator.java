@@ -367,23 +367,23 @@ public class ExcelComparator {
         String borderName;
         switch (borderSide) {
             case 't': default:
-                b1 = style1.getBorderTop() == BorderStyle.THIN;
-                b2 = style2.getBorderTop() == BorderStyle.THIN;
+                b1 = style1.getBorderTopEnum() == BorderStyle.THIN;
+                b2 = style2.getBorderTopEnum() == BorderStyle.THIN;
                 borderName = "TOP";
                 break;
             case 'b':
-                b1 = style1.getBorderBottom() == BorderStyle.THIN;
-                b2 = style2.getBorderBottom() == BorderStyle.THIN;
+                b1 = style1.getBorderBottomEnum() == BorderStyle.THIN;
+                b2 = style2.getBorderBottomEnum() == BorderStyle.THIN;
                 borderName = "BOTTOM";
                 break;
             case 'l':
-                b1 = style1.getBorderLeft() == BorderStyle.THIN;
-                b2 = style2.getBorderLeft() == BorderStyle.THIN;
+                b1 = style1.getBorderLeftEnum() == BorderStyle.THIN;
+                b2 = style2.getBorderLeftEnum() == BorderStyle.THIN;
                 borderName = "LEFT";
                 break;
             case 'r':
-                b1 = style1.getBorderRight() == BorderStyle.THIN;
-                b2 = style2.getBorderRight() == BorderStyle.THIN;
+                b1 = style1.getBorderRightEnum() == BorderStyle.THIN;
+                b2 = style2.getBorderRightEnum() == BorderStyle.THIN;
                 borderName = "RIGHT";
                 break;
         }

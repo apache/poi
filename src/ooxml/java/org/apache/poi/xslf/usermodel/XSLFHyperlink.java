@@ -69,6 +69,10 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
         _link.setTooltip(label);
     }
 
+    /* (non-Javadoc)
+     * @deprecated POI 3.15. Use {@link #getTypeEnum()} instead.
+     * Will return a HyperlinkType enum in the future
+     */
     @Override
     public int getType() {
         return getTypeEnum().getCode();

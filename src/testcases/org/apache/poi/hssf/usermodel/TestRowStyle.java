@@ -151,10 +151,10 @@ public final class TestRowStyle extends TestCase {
             assertNotNull("Row is not null", r);
             
             cs = r.getRowStyle();
-            assertEquals("Bottom Border Style for row:", BorderStyle.THIN, cs.getBorderBottom());
-            assertEquals("Left Border Style for row:",   BorderStyle.THIN, cs.getBorderLeft());
-            assertEquals("Right Border Style for row:",  BorderStyle.THIN, cs.getBorderRight());
-            assertEquals("Top Border Style for row:",    BorderStyle.THIN, cs.getBorderTop());
+            assertEquals("Bottom Border Style for row:", BorderStyle.THIN, cs.getBorderBottomEnum());
+            assertEquals("Left Border Style for row:",   BorderStyle.THIN, cs.getBorderLeftEnum());
+            assertEquals("Right Border Style for row:",  BorderStyle.THIN, cs.getBorderRightEnum());
+            assertEquals("Top Border Style for row:",    BorderStyle.THIN, cs.getBorderTopEnum());
             assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
             assertEquals("FillPattern for row:",         0x1, cs.getFillPattern());
             

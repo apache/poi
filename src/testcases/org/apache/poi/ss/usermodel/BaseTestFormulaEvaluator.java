@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -324,6 +325,17 @@ public abstract class BaseTestFormulaEvaluator {
         assertEquals(2162.62, fe.evaluateInCell(cellC1).getNumericCellValue(), 0.0);
         assertEquals(2162.61, fe.evaluateInCell(cellD1).getNumericCellValue(), 0.0);
         
+        wb.close();
+    }
+    
+    @Test
+    public void evaluateInCellReturnsSameCell() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet().createRow(0).createCell(0);
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+        Cell same = evaluator.evaluateInCell(cell);
+        assertSame(cell, same);
         wb.close();
     }
 }

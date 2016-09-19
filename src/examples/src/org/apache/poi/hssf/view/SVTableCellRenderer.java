@@ -160,8 +160,8 @@ public class SVTableCellRenderer extends JLabel
                                SVTableUtils.getAWTColor(s.getRightBorderColor(), SVTableUtils.black),
                                SVTableUtils.getAWTColor(s.getBottomBorderColor(), SVTableUtils.black),
                                SVTableUtils.getAWTColor(s.getLeftBorderColor(), SVTableUtils.black),
-                               s.getBorderTop(), s.getBorderRight(),
-                               s.getBorderBottom(), s.getBorderLeft(),
+                               s.getBorderTopEnum(), s.getBorderRightEnum(),
+                               s.getBorderBottomEnum(), s.getBorderLeftEnum(),
                                hasFocus);
             setBorder(cellBorder);
             isBorderSet=true;
