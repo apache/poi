@@ -14,40 +14,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.openxml4j.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
+package org.apache.poi.util;
+
+import java.io.OutputStream;
 
 /**
- * An Interface to make getting the different bits
- *  of a Zip File easy.
- * Allows you to get at the ZipEntries, without
- *  needing to worry about ZipFile vs ZipInputStream
- *  being annoyingly very different.
+ * Implementation of an OutputStream which does nothing, used
+ * to redirect stdout to avoid spamming the console with output
  */
-public interface ZipEntrySource {
-	/**
-	 * Returns an Enumeration of all the Entries
-	 */
-	public Enumeration<? extends ZipEntry> getEntries();
-	
-	/**
-	 * Returns an InputStream of the decompressed 
-	 *  data that makes up the entry
-	 */
-	public InputStream getInputStream(ZipEntry entry) throws IOException;
-	
-	/**
-	 * Indicates we are done with reading, and 
-	 *  resources may be freed
-	 */
-	public void close() throws IOException;
-	
-	/**
-	 * Has close been called already?
-	 */
-	public boolean isClosed();
+public final class NullOutputStream extends OutputStream {
+    public NullOutputStream() {
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) {
+    }
+
+    @Override
+    public void write(int b) {
+    }
+
+    @Override
+    public void write(byte[] b) {
+    }
 }

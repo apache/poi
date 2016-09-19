@@ -591,20 +591,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         } else {
             //search the referenced drawing in the list of the sheet's relations
+            final String id = ctDrawing.getId();
             for (RelationPart rp : getRelationParts()){
                 POIXMLDocumentPart p = rp.getDocumentPart();
                 if(p instanceof XSSFVMLDrawing) {
                     XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
                     String drId = rp.getRelationship().getId();
-                    if(drId.equals(ctDrawing.getId())){
+                    if (drId.equals(id)) {
                         drawing = dr;
                         break;
                     }
-                    break;
+                    // do not break here since drawing has not been found yet (see bug 52425)
                 }
             }
             if(drawing == null){
-                logger.log(POILogger.ERROR, "Can't find VML drawing with id=" + ctDrawing.getId() + " in the list of the sheet's relationships");
+                logger.log(POILogger.ERROR, "Can't find VML drawing with id=" + id + " in the list of the sheet's relationships");
             }
         }
         return drawing;
@@ -4164,9 +4165,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return The pivot table
      */
     @Beta
-    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, Sheet sourceSheet){
-
-        if(source.getFirstCell().getSheetName() != null && !source.getFirstCell().getSheetName().equals(sourceSheet.getSheetName())) {
+    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, Sheet sourceSheet) {
+        final String sourceSheetName = source.getFirstCell().getSheetName();
+        if(sourceSheetName != null && !sourceSheetName.equalsIgnoreCase(sourceSheet.getSheetName())) {
             throw new IllegalArgumentException("The area is referenced in another sheet than the "
                     + "defined source sheet " + sourceSheet.getSheetName() + ".");
         }
@@ -4192,8 +4193,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Beta
     public XSSFPivotTable createPivotTable(AreaReference source, CellReference position){
-        if(source.getFirstCell().getSheetName() != null && !source.getFirstCell().getSheetName().equals(this.getSheetName())) {
-            return createPivotTable(source, position, getWorkbook().getSheet(source.getFirstCell().getSheetName()));
+        final String sourceSheetName = source.getFirstCell().getSheetName();
+        if(sourceSheetName != null && !sourceSheetName.equalsIgnoreCase(this.getSheetName())) {
+            final XSSFSheet sourceSheet = getWorkbook().getSheet(sourceSheetName);
+            return createPivotTable(source, position, sourceSheet);
         }
         return createPivotTable(source, position, this);
     }

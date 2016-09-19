@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,7 +40,11 @@ public class CreatePivotTable {
         //Create some data to build the pivot table on
         setCellData(sheet);
 
-        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:D4"), new CellReference("H5"));
+        AreaReference source = new AreaReference("A1:D4", SpreadsheetVersion.EXCEL2007);
+        CellReference position = new CellReference("H5");
+        // Create a pivot table on this sheet, with H5 as the top-left cell..
+        // The pivot table's data source is on the same sheet in A1:D4
+        XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
         //Configure the pivot table
         //Use first column as row label
         pivotTable.addRowLabel(0);

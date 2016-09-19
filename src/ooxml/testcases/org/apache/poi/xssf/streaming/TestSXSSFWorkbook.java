@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +36,8 @@ import java.util.Arrays;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -43,6 +46,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -534,5 +538,41 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         swb.write(bos);
         swb.dispose();
         swb.close();
+    }
+    
+    /**
+     * To avoid accident changes to the template, you should be able
+     *  to create a SXSSFWorkbook from a read-only XSSF one, then
+     *  change + save that (only). See bug #60010
+     * TODO Fix this to work!
+     */
+    @Test
+    @Ignore
+    public void createFromReadOnlyWorkbook() throws Exception {
+        File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
+        OPCPackage pkg = OPCPackage.open(input, PackageAccess.READ);
+        XSSFWorkbook xssf = new XSSFWorkbook(pkg);
+        SXSSFWorkbook wb = new SXSSFWorkbook(xssf, 2);
+        
+        String sheetName = "Test SXSSF";
+        Sheet s = wb.createSheet(sheetName);
+        for (int i=0; i<10; i++) {
+            Row r = s.createRow(i);
+            r.createCell(0).setCellValue(true);
+            r.createCell(1).setCellValue(2.4);
+            r.createCell(2).setCellValue("Test Row " + i);
+        }
+        assertEquals(10, s.getLastRowNum());
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        wb.write(bos);
+        wb.dispose();
+        wb.close();
+        
+        xssf = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()));
+        s = xssf.getSheet(sheetName);
+        assertEquals(10, s.getLastRowNum());
+        assertEquals(true, s.getRow(0).getCell(0).getBooleanCellValue());
+        assertEquals("Test Row 9", s.getRow(9).getCell(2).getStringCellValue());
     }
 }

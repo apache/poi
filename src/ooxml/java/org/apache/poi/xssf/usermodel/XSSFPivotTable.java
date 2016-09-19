@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
@@ -213,24 +214,43 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
 
     protected AreaReference getPivotArea() {
-        AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
-                getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
+        AreaReference pivotArea = new AreaReference(
+                getPivotCacheDefinition()
+                .getCTPivotCacheDefinition()
+                .getCacheSource()
+                .getWorksheetSource()
+                .getRef(),
+                SpreadsheetVersion.EXCEL2007);
         return pivotArea;
+    }
+    
+    /**
+     * Verify column index (relative to first column in pivot area) is within the
+     * pivot area
+     *
+     * @param columnIndex
+     * @throws IndexOutOfBoundsException
+     */
+    private void checkColumnIndex(int columnIndex) throws IndexOutOfBoundsException {
+        AreaReference pivotArea = getPivotArea();
+        int size = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol() + 1;
+
+        if (columnIndex < 0 || columnIndex >= size) {
+            throw new IndexOutOfBoundsException("Column Index: " + columnIndex + ", Size: " + size);
+        }
     }
 
     /**
      * Add a row label using data from the given column.
-     * @param columnIndex the index of the column to be used as row label.
+     * @param columnIndex the index of the source column to be used as row label.
+     * {@code columnIndex} is 0-based indexed and relative to the first column in the source.
      */
     @Beta
     public void addRowLabel(int columnIndex) {
+        checkColumnIndex(columnIndex);
+        
         AreaReference pivotArea = getPivotArea();
-        int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
-        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
-
-        if(columnIndex > lastColIndex) {
-            throw new IndexOutOfBoundsException();
-        }
+        final int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
 
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
@@ -238,7 +258,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
         pivotField.setAxis(STAxis.AXIS_ROW);
         pivotField.setShowAll(false);
-        for(int i = 0; i <= lastRowIndex; i++) {
+        for (int i = 0; i <= lastRowIndex; i++) {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
         items.setCount(items.sizeOfItemArray());
@@ -270,7 +290,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     
     /**
      * Add a column label using data from the given column and specified function
-     * @param columnIndex the index of the column to be used as column label.
+     * @param columnIndex the index of the source column to be used as column label.
+     * {@code columnIndex} is 0-based indexed and relative to the first column in the source.
      * @param function the function to be used on the data
      * The following functions exists:
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
@@ -278,12 +299,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     public void addColumnLabel(DataConsolidateFunction function, int columnIndex, String valueFieldName) {
-        AreaReference pivotArea = getPivotArea();
-        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
-
-        if(columnIndex > lastColIndex && columnIndex < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkColumnIndex(columnIndex);
 
         addDataColumn(columnIndex, true);
         addDataField(function, columnIndex, valueFieldName);
@@ -303,7 +319,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Add a column label using data from the given column and specified function
-     * @param columnIndex the index of the column to be used as column label.
+     * @param columnIndex the index of the source column to be used as column label
+     * {@code columnIndex} is 0-based indexed and relative to the first column in the source..
      * @param function the function to be used on the data
      * The following functions exists:
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
@@ -323,12 +340,10 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     private void addDataField(DataConsolidateFunction function, int columnIndex, String valueFieldName) {
+        checkColumnIndex(columnIndex);
+        
         AreaReference pivotArea = getPivotArea();
-        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
-
-        if(columnIndex > lastColIndex && columnIndex < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        
         CTDataFields dataFields;
         if(pivotTableDefinition.getDataFields() != null) {
             dataFields = pivotTableDefinition.getDataFields();
@@ -352,11 +367,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     public void addDataColumn(int columnIndex, boolean isDataField) {
-        AreaReference pivotArea = getPivotArea();
-        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
-        if(columnIndex > lastColIndex && columnIndex < 0) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkColumnIndex(columnIndex);
+
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
 
@@ -371,13 +383,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     public void addReportFilter(int columnIndex) {
+        checkColumnIndex(columnIndex);
+        
         AreaReference pivotArea = getPivotArea();
-        int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
 
-        if(columnIndex > lastColIndex && columnIndex < 0) {
-            throw new IndexOutOfBoundsException();
-        }
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
 
         CTPivotField pivotField = CTPivotField.Factory.newInstance();

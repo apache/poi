@@ -17,7 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
@@ -46,8 +49,18 @@ public final class DGet implements IDStarAlgorithm {
     public ValueEval getResult() {
         if(result == null) {
             return ErrorEval.VALUE_INVALID;
-        } else {
-            return result;
-        }
+        } else if(result instanceof BlankEval) {
+            return ErrorEval.VALUE_INVALID;
+        } else
+            try {
+                if(OperandResolver.coerceValueToString(OperandResolver.getSingleValue(result, 0, 0)).equals("")) {
+                    return ErrorEval.VALUE_INVALID;
+                }
+                else {
+                    return result;
+                }
+            } catch (EvaluationException e) {
+                return e.getErrorEval();
+            }
     }
 }

@@ -42,6 +42,7 @@ public interface EvaluationCell {
 	 * For forwards compatibility, do not hard-code cell type literals in your code.
 	 *
 	 * @return cell type
+	 * @deprecated 3.15. Will return a {@link CellType} enum in the future.
 	 */
 	int getCellType();
 	/**
@@ -61,6 +62,7 @@ public interface EvaluationCell {
 	 * For forwards compatibility, do not hard-code cell type literals in your code.
 	 *
 	 * @return cell type of cached formula result
+	 * @deprecated 3.15. Will return a {@link CellType} enum in the future.
 	 */
 	int getCachedFormulaResultType();
 	/**

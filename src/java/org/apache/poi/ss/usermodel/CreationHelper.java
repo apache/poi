@@ -17,18 +17,18 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.util.Removal;
 
 /**
  * An object that handles instantiating concrete
  *  classes of the various instances one needs for
  *  HSSF and XSSF.
- * Works around a major shortcoming in Java, where we
- *  can't have static methods on interfaces or abstract
+ * Works around a limitation in Java where we
+ *  cannot have static methods on interfaces or abstract
  *  classes.
  * This allows you to get the appropriate class for
  *  a given interface, without you having to worry
- *  about if you're dealing with HSSF or XSSF, despite
- *  Java being quite rubbish.
+ *  about if you're dealing with HSSF or XSSF.
  */
 public interface CreationHelper {
     /**
@@ -46,6 +46,7 @@ public interface CreationHelper {
      * Creates a new Hyperlink, of the given type
      * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
      */
+    @Removal(version="3.17")
     @Deprecated
     Hyperlink createHyperlink(int type);
     

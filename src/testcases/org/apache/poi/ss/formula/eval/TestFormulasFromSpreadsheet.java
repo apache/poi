@@ -190,24 +190,24 @@ public final class TestFormulasFromSpreadsheet {
            final CellType cellType = expValue.getCellTypeEnum();
            switch (cellType) {
                case BLANK:
-                   assertEquals(msg, CellType.BLANK, actValue.getCellType());
+                   assertEquals(msg, CellType.BLANK, actValue.getCellTypeEnum());
                    break;
                case BOOLEAN:
-                   assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
+                   assertEquals(msg, CellType.BOOLEAN, actValue.getCellTypeEnum());
                    assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
                    break;
                case ERROR:
-                   assertEquals(msg, CellType.ERROR, actValue.getCellType());
+                   assertEquals(msg, CellType.ERROR, actValue.getCellTypeEnum());
                    assertEquals(msg, ErrorEval.getText(expValue.getErrorCellValue()), ErrorEval.getText(actValue.getErrorValue()));
                    break;
                case FORMULA: // will never be used, since we will call method after formula evaluation
                    fail("Cannot expect formula as result of formula evaluation: " + msg);
                case NUMERIC:
-                   assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
+                   assertEquals(msg, CellType.NUMERIC, actValue.getCellTypeEnum());
                    TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
                    break;
                case STRING:
-                   assertEquals(msg, CellType.STRING, actValue.getCellType());
+                   assertEquals(msg, CellType.STRING, actValue.getCellTypeEnum());
                    assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
                    break;
                default:

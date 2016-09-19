@@ -103,7 +103,7 @@ public final class TestCalendarFieldFunction extends TestCase {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellType() != CellType.NUMERIC) {
+        if (cv.getCellTypeEnum() != CellType.NUMERIC) {
             throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
         }
         double actualValue = cv.getNumberValue();

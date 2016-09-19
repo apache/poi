@@ -895,7 +895,7 @@ public class DataFormatter implements Observer {
                 return cell.getRichStringCellValue().getString();
 
             case BOOLEAN :
-                return String.valueOf(cell.getBooleanCellValue());
+                return cell.getBooleanCellValue() ? "TRUE" : "FALSE";
             case BLANK :
                 return "";
             case ERROR:

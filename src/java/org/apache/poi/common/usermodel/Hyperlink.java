@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.common.usermodel;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Represents a hyperlink.
  */
@@ -25,6 +27,7 @@ public interface Hyperlink {
      * 
      * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#URL} instead.
      */
+    @Removal(version="3.17")
     public static final int LINK_URL = 1; // HyperlinkType.URL.getCode()
 
     /**
@@ -32,6 +35,7 @@ public interface Hyperlink {
      * 
      * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#DOCUMENT} instead.
      */
+    @Removal(version="3.17")
     public static final int LINK_DOCUMENT = 2; // HyperlinkType.DOCUMENT.getCode()
 
     /**
@@ -39,6 +43,7 @@ public interface Hyperlink {
      * 
      * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#EMAIL} instead.
      */
+    @Removal(version="3.17")
     public static final int LINK_EMAIL = 3; // HyperlinkType.EMAIL.getCode()
 
     /**
@@ -46,6 +51,7 @@ public interface Hyperlink {
      * 
      * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#FILE} instead.
      */
+    @Removal(version="3.17")
     public static final int LINK_FILE = 4; // HyperlinkType.FILE.getCode()
 
     
@@ -83,6 +89,7 @@ public interface Hyperlink {
      * @return the type of this hyperlink
      * @see HyperlinkType#forInt(int)
      * @deprecated POI 3.15 beta 3. Use {@link #getTypeEnum()}
+     * getType will return a HyperlinkType enum in the future.
      */
     public int getType();
     

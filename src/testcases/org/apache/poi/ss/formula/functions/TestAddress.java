@@ -73,7 +73,7 @@ public final class TestAddress extends TestCase {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), CellType.STRING);
+        assertEquals(result.getCellTypeEnum(), CellType.STRING);
         assertEquals(expectedResult, result.getStringValue());
     }
 }

@@ -597,6 +597,27 @@ public class TestDataFormatter {
         }
     }
 
+    @Test
+    public void testBoolean() throws IOException {
+        DataFormatter formatter = new DataFormatter();
+
+        // Create a spreadsheet with some TRUE/FALSE boolean values in it
+        Workbook wb = new HSSFWorkbook();
+        try {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            c.setCellValue(true);
+            assertEquals("TRUE", formatter.formatCellValue(c));
+
+            c.setCellValue(false);
+            assertEquals("FALSE", formatter.formatCellValue(c));
+        } finally {
+            wb.close();
+        }
+    }
+
     /**
      * While we don't currently support using a locale code at
      *  the start of a format string to format it differently, we
