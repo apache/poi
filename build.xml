@@ -78,7 +78,7 @@ under the License.
       JVM system properties for running tests,
       user.language and user.country are required as we have locale-sensitive formatters
     -->
-    <property name="testpattern" value="Test*"/>
+    <property name="testpattern" value="Test*"/> <!--note: this excludes BaseTest* -->
     <property name="POI.testdata.path" value="test-data"/>
     <property name="java.awt.headless" value="true"/>
     <property name="additionaljar" value=""/>

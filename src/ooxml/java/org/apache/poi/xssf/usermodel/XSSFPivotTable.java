@@ -30,11 +30,11 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
@@ -214,13 +214,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
 
     protected AreaReference getPivotArea() {
-        AreaReference pivotArea = new AreaReference(
-                getPivotCacheDefinition()
-                .getCTPivotCacheDefinition()
-                .getCacheSource()
-                .getWorksheetSource()
-                .getRef(),
-                SpreadsheetVersion.EXCEL2007);
+        final Workbook wb = getDataSheet().getWorkbook();
+        AreaReference pivotArea = getPivotCacheDefinition().getPivotArea(wb);
         return pivotArea;
     }
     
@@ -419,12 +414,14 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Creates cacheSource and workSheetSource for pivot table and sets the source reference as well assets the location of the pivot table
-     * @param source Source for data for pivot table
+     * @param sourceRef Source for data for pivot table - mutually exclusive with sourceName
+     * @param sourceName Source for data for pivot table - mutually exclusive with sourceRef
      * @param position Position for pivot table in sheet
      * @param sourceSheet Sheet where the source will be collected from
      */
     @Beta
-    protected void createSourceReferences(AreaReference source, CellReference position, Sheet sourceSheet){
+    protected void createSourceReferences(CellReference position, Sheet sourceSheet, PivotTableReferenceConfigurator refConfig){
+        
         //Get cell one to the right and one down from position, add both to AreaReference and set pivot table location.
         AreaReference destination = new AreaReference(position, new CellReference(position.getRow()+1, position.getCol()+1));
 
@@ -448,9 +445,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         worksheetSource.setSheet(sourceSheet.getSheetName());
         setDataSheet(sourceSheet);
 
-        String[] firstCell = source.getFirstCell().getCellRefParts();
-        String[] lastCell = source.getLastCell().getCellRefParts();
-        worksheetSource.setRef(firstCell[2]+firstCell[1]+':'+lastCell[2]+lastCell[1]);
+        refConfig.configureReference(worksheetSource);
+        if (worksheetSource.getName() == null && worksheetSource.getRef() == null) throw new IllegalArgumentException("Pivot table source area reference or name must be specified.");
     }
 
     @Beta
@@ -465,11 +461,20 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         int firstColumn = sourceArea.getFirstCell().getCol();
         int lastColumn = sourceArea.getLastCell().getCol();
         CTPivotField pivotField;
-        for(int i = 0; i<=lastColumn-firstColumn; i++) {
+        for(int i = firstColumn; i<=lastColumn; i++) {
             pivotField = pivotFields.addNewPivotField();
             pivotField.setDataField(false);
             pivotField.setShowAll(false);
         }
         pivotFields.setCount(pivotFields.sizeOfPivotFieldArray());
+    }
+    
+    protected static interface PivotTableReferenceConfigurator {
+        
+        /**
+         * Configure the name or area reference for the pivot table 
+         * @param wsSource CTWorksheetSource that needs the pivot source reference assignment
+         */
+        public void configureReference(CTWorksheetSource wsSource);
     }
 }
