@@ -96,6 +96,7 @@ public final class OOXMLLite {
                 "BaseTestXSheet",
                 "BaseTestXRow",
                 "BaseTestXCell",
+                "BaseTestXSSFPivotTable",
                 "TestSXSSFWorkbook\\$\\d",
                 "TestSXSSFWorkbook\\$NullOutputStream",
                 "TestUnfixedBugs",
