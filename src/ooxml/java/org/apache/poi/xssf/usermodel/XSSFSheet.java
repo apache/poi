@@ -64,8 +64,10 @@ import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -80,6 +82,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
@@ -4158,27 +4161,56 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Create a pivot table and set area of source, source sheet and a position for pivot table
-     * @param source Area from where data will be collected
-     * @param position A reference to the cell where the table will start
-     * @param sourceSheet The sheet where source will be collected from
+     * Create a pivot table using the AreaReference range on sourceSheet, at the given position.
+     * If the source reference contains a sheet name, it must match the sourceSheet
+     * @param source location of pivot data
+     * @param position A reference to the top left cell where the pivot table will start
+     * @param sourceSheet The sheet containing the source data, if the source reference doesn't contain a sheet name
+     * @throws IllegalArgumentException if source references a sheet different than sourceSheet
      * @return The pivot table
      */
     @Beta
-    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, Sheet sourceSheet) {
+    public XSSFPivotTable createPivotTable(final AreaReference source, CellReference position, Sheet sourceSheet) {
         final String sourceSheetName = source.getFirstCell().getSheetName();
         if(sourceSheetName != null && !sourceSheetName.equalsIgnoreCase(sourceSheet.getSheetName())) {
             throw new IllegalArgumentException("The area is referenced in another sheet than the "
                     + "defined source sheet " + sourceSheet.getSheetName() + ".");
         }
+
+        return createPivotTable(position, sourceSheet, new PivotTableReferenceConfigurator() {
+                public void configureReference(CTWorksheetSource wsSource) {
+                    final String[] firstCell = source.getFirstCell().getCellRefParts();
+                    final String firstRow = firstCell[1];
+                    final String firstCol = firstCell[2];
+                    final String[] lastCell = source.getLastCell().getCellRefParts();
+                    final String lastRow = lastCell[1];
+                    final String lastCol = lastCell[2];
+                    final String ref = firstCol+firstRow+':'+lastCol+lastRow; //or just source.formatAsString()
+                    wsSource.setRef(ref);
+                }
+            });
+        }
+        
+    /**
+     * Create a pivot table using the AreaReference or named/table range on sourceSheet, at the given position.
+     * If the source reference contains a sheet name, it must match the sourceSheet.
+     * @param sourceRef location of pivot data - mutually exclusive with SourceName
+     * @param sourceName range or table name for pivot data - mutually exclusive with SourceRef
+     * @param position A reference to the top left cell where the pivot table will start
+     * @param sourceSheet The sheet containing the source data, if the source reference doesn't contain a sheet name
+     * @throws IllegalArgumentException if source references a sheet different than sourceSheet
+     * @return The pivot table
+     */
+    private XSSFPivotTable createPivotTable(CellReference position, Sheet sourceSheet, PivotTableReferenceConfigurator refConfig) {
+        
         XSSFPivotTable pivotTable = createPivotTable();
         //Creates default settings for the pivot table
         pivotTable.setDefaultPivotTableDefinition();
 
         //Set sources and references
-        pivotTable.createSourceReferences(source, position, sourceSheet);
+        pivotTable.createSourceReferences(position, sourceSheet, refConfig);
 
-        //Create cachefield/s and empty SharedItems
+        //Create cachefield/s and empty SharedItems - must be after creating references
         pivotTable.getPivotCacheDefinition().createCacheFields(sourceSheet);
         pivotTable.createDefaultDataColumns();
 
@@ -4186,9 +4218,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Create a pivot table and set area of source and a position for pivot table
-     * @param source Area from where data will be collected
-     * @param position A reference to the cell where the table will start
+     * Create a pivot table using the AreaReference range, at the given position.
+     * If the source reference contains a sheet name, that sheet is used, otherwise this sheet is assumed as the source sheet.
+     * @param source location of pivot data
+     * @param position A reference to the top left cell where the pivot table will start
      * @return The pivot table
      */
     @Beta
@@ -4199,6 +4232,57 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             return createPivotTable(source, position, sourceSheet);
         }
         return createPivotTable(source, position, this);
+    }
+    
+    /**
+     * Create a pivot table using the Name range reference on sourceSheet, at the given position.
+     * If the source reference contains a sheet name, it must match the sourceSheet
+     * @param source location of pivot data
+     * @param position A reference to the top left cell where the pivot table will start
+     * @param sourceSheet The sheet containing the source data, if the source reference doesn't contain a sheet name
+     * @throws IllegalArgumentException if source references a sheet different than sourceSheet
+     * @return The pivot table
+     */
+    @Beta
+    public XSSFPivotTable createPivotTable(final Name source, CellReference position, Sheet sourceSheet) {
+        if(source.getSheetName() != null && !source.getSheetName().equals(sourceSheet.getSheetName())) {
+            throw new IllegalArgumentException("The named range references another sheet than the "
+                    + "defined source sheet " + sourceSheet.getSheetName() + ".");
+        }
+        
+        return createPivotTable(position, sourceSheet, new PivotTableReferenceConfigurator() {
+                public void configureReference(CTWorksheetSource wsSource) {
+                    wsSource.setName(source.getNameName());
+                }
+            });
+        }
+        
+    /**
+     * Create a pivot table using the Name range, at the given position.
+     * If the source reference contains a sheet name, that sheet is used, otherwise this sheet is assumed as the source sheet.
+     * @param source location of pivot data
+     * @param position A reference to the top left cell where the pivot table will start
+     * @return The pivot table
+     */
+    @Beta
+    public XSSFPivotTable createPivotTable(Name source, CellReference position) {
+        return createPivotTable(source, position, getWorkbook().getSheet(source.getSheetName()));
+    }
+    
+    /**
+     * Create a pivot table using the Table, at the given position.
+     * Tables are required to have a sheet reference, so no additional logic around reference sheet is needed.
+     * @param source location of pivot data
+     * @param position A reference to the top left cell where the pivot table will start
+     * @return The pivot table
+     */
+    @Beta
+    public XSSFPivotTable createPivotTable(final Table source, CellReference position) {
+       return createPivotTable(position, getWorkbook().getSheet(source.getSheetName()), new PivotTableReferenceConfigurator() {
+           public void configureReference(CTWorksheetSource wsSource) {
+               wsSource.setName(source.getName());
+           }
+       });
     }
     
     /**
