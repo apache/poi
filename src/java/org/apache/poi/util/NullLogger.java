@@ -23,6 +23,7 @@ package org.apache.poi.util;
  * calls as cheap as possible by performing lazy evaluation of the log
  * message.<p>
  */
+@Internal
 public class NullLogger extends POILogger {
     @Override
     public void initialize(final String cat) {
@@ -37,7 +38,7 @@ public class NullLogger extends POILogger {
      */
 
     @Override
-    public void log(final int level, final Object obj1) {
+    protected void log(final int level, final Object obj1) {
         // do nothing
     }
 
@@ -49,7 +50,7 @@ public class NullLogger extends POILogger {
      * @param exception An exception to be logged
      */
     @Override
-    public void log(int level, Object obj1, final Throwable exception) {
+    protected void log(int level, Object obj1, final Throwable exception) {
         // do nothing
     }
 
