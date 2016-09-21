@@ -46,7 +46,7 @@ public class CommonsLogger extends POILogger
      * @param obj1 The object to log.
      */
     @Override
-    protected void log(final int level, final Object obj1)
+    protected void _log(final int level, final Object obj1)
     {
         // FIXME: What happens if level is in between two levels (an even number)?
         // Should this be `if (level >= FATAL) ...`?
@@ -102,7 +102,7 @@ public class CommonsLogger extends POILogger
      * @param exception An exception to be logged
      */
     @Override
-    protected void log(final int level, final Object obj1,
+    protected void _log(final int level, final Object obj1,
                     final Throwable exception) 
     {
         // FIXME: What happens if level is in between two levels (an even number)?
