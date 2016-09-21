@@ -18,16 +18,15 @@
 package org.apache.poi.poifs.macros;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.skipTest;
+import static org.apache.poi.POITestCase.testPassesNow;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -263,17 +262,13 @@ public class TestVBAMacroReader {
         reader.close();
     }
     
-    private static void skipTest(Throwable e) {
-        assumeTrue("This test currently fails with " + e, false);
-    }
-    
     // This test is written as expected-to-fail and should be rewritten
     // as expected-to-pass when the bug is fixed.
     @Test
     public void bug59858() throws IOException {
         try {
             fromFile(POIDataSamples.getSpreadSheetInstance(), "59858.xls");
-            fail("This test passes now. Please update the unit test and bug 59858.");
+            testPassesNow(59858);
         } catch (IOException e) {
             if (e.getMessage().matches("Module offset for '.+' was never read.")) {
                 //e.printStackTrace();
@@ -292,7 +287,7 @@ public class TestVBAMacroReader {
     public void bug60158() throws IOException {
         try {
             fromFile(POIDataSamples.getDocumentInstance(), "60158.docm");
-            fail("This test passes now. Please update the unit test and bug 60158.");
+            testPassesNow(60158);
         } catch (ArrayIndexOutOfBoundsException e) {
             skipTest(e);
         }
