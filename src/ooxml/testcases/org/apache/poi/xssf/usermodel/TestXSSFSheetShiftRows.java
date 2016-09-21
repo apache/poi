@@ -26,8 +26,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import junit.framework.AssertionFailedError;
-
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -405,6 +403,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             at org.apache.poi.xssf.usermodel.XSSFRow.getRowNum(XSSFRow.java:363)
             at org.apache.poi.xssf.usermodel.TestXSSFSheetShiftRows.bug59733(TestXSSFSheetShiftRows.java:393)
          */
+        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
         try {
             sheet.removeRow(sheet.getRow(0));
             assertEquals(1, sheet.getRow(1).getRowNum());
@@ -438,6 +437,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
 
         sheet.shiftRows(3, sheet.getLastRowNum(), 1);
+        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
         try {
             assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
             assertEquals("SUM(D2:D5)", getCellFormula(sheet, "D6"));
