@@ -907,7 +907,9 @@ public class SXSSFWorkbook implements Workbook {
             try {
                 sheet.getSheetDataWriter().close();
             } catch (IOException e) {
-                // ignore exception here
+                logger.log(POILogger.WARN,
+                        "An exception occurred while closing sheet data writer for sheet "
+                        + sheet.getSheetName() + ".", e);
             }
         }
 
@@ -926,11 +928,8 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     public void write(OutputStream stream) throws IOException
     {
-    	for (SXSSFSheet sheet : _xFromSxHash.values())
-    	{
-    		sheet.flushRows();
-    	}
-    	
+        flushSheets();
+
         //Save the template
         File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
         try
@@ -953,6 +952,13 @@ public class SXSSFWorkbook implements Workbook {
             if(!tmplFile.delete()) {
                 throw new IOException("Could not delete temporary file after processing: " + tmplFile);
             }
+        }
+    }
+    
+    protected void flushSheets() throws IOException {
+        for (SXSSFSheet sheet : _xFromSxHash.values())
+        {
+            sheet.flushRows();
         }
     }
     
