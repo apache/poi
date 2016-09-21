@@ -42,9 +42,9 @@ public class SystemOutLogger extends POILogger
      * @param obj1 The object to log.
      */
     @Override
-    public void log(final int level, final Object obj1)
+    protected void _log(final int level, final Object obj1)
     {
-    	log(level, obj1, null);
+    	_log(level, obj1, null);
     }
 
     /**
@@ -56,7 +56,7 @@ public class SystemOutLogger extends POILogger
      */
     @Override
     @SuppressForbidden("uses printStackTrace")
-    public void log(final int level, final Object obj1,
+    protected void _log(final int level, final Object obj1,
                     final Throwable exception) {
         if (check(level)) {
             System.out.println("[" + _cat + "]" + LEVEL_STRINGS_SHORT[Math.min(LEVEL_STRINGS_SHORT.length-1, level)] + " " + obj1);
