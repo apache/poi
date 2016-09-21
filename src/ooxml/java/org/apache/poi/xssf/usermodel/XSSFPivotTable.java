@@ -414,10 +414,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Creates cacheSource and workSheetSource for pivot table and sets the source reference as well assets the location of the pivot table
-     * @param sourceRef Source for data for pivot table - mutually exclusive with sourceName
-     * @param sourceName Source for data for pivot table - mutually exclusive with sourceRef
      * @param position Position for pivot table in sheet
      * @param sourceSheet Sheet where the source will be collected from
+     * @param refConfig  an configurator that knows how to configure pivot table references
      */
     @Beta
     protected void createSourceReferences(CellReference position, Sheet sourceSheet, PivotTableReferenceConfigurator refConfig){
