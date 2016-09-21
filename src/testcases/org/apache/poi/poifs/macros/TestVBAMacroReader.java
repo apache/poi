@@ -262,6 +262,10 @@ public class TestVBAMacroReader {
         reader.close();
     }
     
+    private void skipTest(Throwable e) {
+        assumeTrue("This test currently fails." + e.getLocalizedMessage(), false);
+    }
+    
     // This test is written as expected-to-fail and should be rewritten
     // as expected-to-pass when the bug is fixed.
     @Test
@@ -273,11 +277,23 @@ public class TestVBAMacroReader {
             if (e.getMessage().matches("Module offset for '.+' was never read.")) {
                 //e.printStackTrace();
                 // NPE when reading module.offset in VBAMacroReader.readMacros (approx line 258)
-                assumeTrue("This test currently fails. See stdout.", false);
+                skipTest(e);
             } else {
                 // something unexpected failed
                 throw e;
             }
+        }
+    }
+    
+    // This test is written as expected-to-fail and should be rewritten
+    // as expected-to-pass when the bug is fixed.
+    @Test
+    public void bug60158() throws IOException {
+        try {
+            fromFile(POIDataSamples.getDocumentInstance(), "60158.docm");
+            fail("This test passes now. Please update the unit test and bug 59858.");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            skipTest(e);
         }
     }
 }
