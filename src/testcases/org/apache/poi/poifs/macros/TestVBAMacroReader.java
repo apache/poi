@@ -292,7 +292,7 @@ public class TestVBAMacroReader {
     public void bug60158() throws IOException {
         try {
             fromFile(POIDataSamples.getDocumentInstance(), "60158.docm");
-            fail("This test passes now. Please update the unit test and bug 59858.");
+            fail("This test passes now. Please update the unit test and bug 60158.");
         } catch (ArrayIndexOutOfBoundsException e) {
             skipTest(e);
         }
