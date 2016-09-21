@@ -54,7 +54,7 @@ public abstract class POILogger {
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.  This is converted to a string.
      */
-    abstract protected void log(int level, Object obj1);
+    abstract protected void _log(int level, Object obj1);
 
     /**
      * Log a message
@@ -63,7 +63,7 @@ public abstract class POILogger {
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
-    abstract protected void log(int level, Object obj1, final Throwable exception);
+    abstract protected void _log(int level, Object obj1, final Throwable exception);
 
 
     /**
@@ -107,9 +107,9 @@ public abstract class POILogger {
         // somehow this ambiguity works and doesn't lead to a loop,
         // but it's confusing ...
         if (lastEx == null) {
-            log(level, msg);
+            _log(level, msg);
         } else {
-            log(level, msg, lastEx);
+            _log(level, msg, lastEx);
         }
     }
 }

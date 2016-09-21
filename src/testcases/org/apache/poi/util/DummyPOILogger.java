@@ -23,6 +23,7 @@ import java.util.List;
  * POILogger which logs into an ArrayList, so that 
  *  tests can see what got logged
  */
+@Internal
 public class DummyPOILogger extends POILogger {
 	public List<String>logged = new ArrayList<String>(); 
 
@@ -39,12 +40,12 @@ public class DummyPOILogger extends POILogger {
 	public void initialize(String cat) {}
 
     @Override
-	public void log(int level, Object obj1) {
+	protected void _log(int level, Object obj1) {
 		logged.add(level + " - " + obj1);
 	}
 
     @Override
-	public void log(int level, Object obj1, Throwable exception) {
+	protected void _log(int level, Object obj1, Throwable exception) {
 		logged.add(level + " - " + obj1 + " - " + exception);
 	}
 }

@@ -38,7 +38,7 @@ public class NullLogger extends POILogger {
      */
 
     @Override
-    protected void log(final int level, final Object obj1) {
+    protected void _log(final int level, final Object obj1) {
         // do nothing
     }
 
@@ -50,7 +50,7 @@ public class NullLogger extends POILogger {
      * @param exception An exception to be logged
      */
     @Override
-    protected void log(int level, Object obj1, final Throwable exception) {
+    protected void _log(int level, Object obj1, final Throwable exception) {
         // do nothing
     }
 

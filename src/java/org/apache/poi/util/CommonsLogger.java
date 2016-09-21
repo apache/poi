@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CommonsLogger extends POILogger
 {
-    private static LogFactory   _creator = LogFactory.getFactory();
+    private static final LogFactory   _creator = LogFactory.getFactory();
     private Log             log   = null;
 
     @Override
@@ -46,8 +46,10 @@ public class CommonsLogger extends POILogger
      * @param obj1 The object to log.
      */
     @Override
-    public void log(final int level, final Object obj1)
+    protected void log(final int level, final Object obj1)
     {
+        // FIXME: What happens if level is in between two levels (an even number)?
+        // Should this be `if (level >= FATAL) ...`?
         if(level==FATAL)
         {
           if(log.isFatalEnabled())
@@ -100,9 +102,11 @@ public class CommonsLogger extends POILogger
      * @param exception An exception to be logged
      */
     @Override
-    public void log(final int level, final Object obj1,
+    protected void log(final int level, final Object obj1,
                     final Throwable exception) 
     {
+        // FIXME: What happens if level is in between two levels (an even number)?
+        // Should this be `if (level >= FATAL) ...`?
         if(level==FATAL)
         {
           if(log.isFatalEnabled())
@@ -174,6 +178,8 @@ public class CommonsLogger extends POILogger
     @Override
     public boolean check(final int level)
     {
+        // FIXME: What happens if level is in between two levels (an even number)?
+        // Should this be `if (level >= FATAL) ...`?
         if(level==FATAL)
         {
           if(log.isFatalEnabled())
