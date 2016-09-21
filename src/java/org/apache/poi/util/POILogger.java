@@ -68,6 +68,15 @@ public abstract class POILogger {
 
     /**
      * Check if a logger is enabled to log at the specified level
+     * This allows code to avoid building strings or evaluating functions in
+     * the arguments to log.
+     * 
+     * An example:
+     * <code><pre>
+     * if (logger.check(POILogger.INFO)) {
+     *     logger.log(POILogger.INFO, "Avoid concatenating " + " strings and evaluating " + functions());
+     * }
+     * </pre></code>
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      */
