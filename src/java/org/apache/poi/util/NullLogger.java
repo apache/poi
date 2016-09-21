@@ -53,6 +53,18 @@ public class NullLogger extends POILogger {
         // do nothing
     }
 
+    /**
+     * Log a message. Lazily appends Object parameters together.
+     * If the last parameter is a {@link Throwable} it is logged specially.
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param objs the objects to place in the message
+     */
+    @Override
+    public void log(int level, Object... objs) {
+        // do nothing
+    }
+
     
     /**
      * Check if a logger is enabled to log at the specified level
