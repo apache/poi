@@ -18,6 +18,8 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * Mimics the 'data view' of a cell. This allows formula evaluator
@@ -47,12 +49,15 @@ public final class CellValue {
 	public CellValue(double numberValue) {
 		this(CellType.NUMERIC, numberValue, false, null, 0);
 	}
+
 	public static CellValue valueOf(boolean booleanValue) {
 		return booleanValue ? TRUE : FALSE;
 	}
+
 	public CellValue(String stringValue) {
 		this(CellType.STRING, 0.0, false, stringValue, 0);
 	}
+
 	public static CellValue getError(int errorCode) {
 		return new CellValue(CellType.ERROR, 0.0, false, null, errorCode);
 	}
@@ -64,30 +69,44 @@ public final class CellValue {
 	public boolean getBooleanValue() {
 		return _booleanValue;
 	}
+
 	/**
 	 * @return Returns the numberValue.
 	 */
 	public double getNumberValue() {
 		return _numberValue;
 	}
+
 	/**
 	 * @return Returns the stringValue.
 	 */
 	public String getStringValue() {
 		return _textValue;
 	}
+
+    /**
+     * Return the cell type.
+     *
+     * @return the cell type
+     * @since POI 3.15
+     * @deprecated POI 3.15
+     * Will be renamed to <code>getCellTypeEnum()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
+     */
+    @Internal(since="POI 3.15 beta 3")
+    @Removal(version="4.2")
+    public CellType getCellTypeEnum() {
+        return _cellType;
+    }
+
 	/**
-	 * @return Returns the cellType.
-	 * @since POI 3.15
-	 */
-	public CellType getCellTypeEnum() {
-		return _cellType;
-	}
-	/**
-	 * @return Returns the cellType.
+	 * Return the cell type.
+	 *
+	 * Will return {@link CellType} in version 4.0 of POI.
+	 * For forwards compatibility, do not hard-code cell type literals in your code.
+	 *
+	 * @return the cell type
+	 *
 	 * @deprecated POI 3.15. Use {@link #getCellTypeEnum()} instead.
-	 * In the future, the signature of this method will be changed to return a
-	 * {@link CellType}.
 	 */
 	@Deprecated
 	public int getCellType() {
@@ -100,6 +119,7 @@ public final class CellValue {
 	public byte getErrorValue() {
 		return (byte) _errorCode;
 	}
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");

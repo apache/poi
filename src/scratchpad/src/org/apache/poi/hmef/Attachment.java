@@ -137,6 +137,8 @@ public final class Attachment {
    
    /**
     * Returns the contents of the attachment.
+    *
+    * @throws IllegalArgumentException if there is no AttachmentData available in this Attachment
     */
    public byte[] getContents() {
       TNEFAttribute contents = getAttribute(TNEFProperty.ID_ATTACHDATA);

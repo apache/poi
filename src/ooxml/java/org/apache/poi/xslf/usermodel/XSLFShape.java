@@ -134,7 +134,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
         if (this instanceof PlaceableShape) {
             PlaceableShape<?,?> ps = (PlaceableShape<?,?>)this;
-            ps.setAnchor(((PlaceableShape<?,?>)sh).getAnchor());
+            ps.setAnchor(sh.getAnchor());
         }
         
         
@@ -257,7 +257,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      * Different types of placeholders are allowed and can be specified by using the placeholder
      * type attribute for this element
      *
-     * @param placeholder
+     * @param placeholder The shape to use as placeholder or null if no placeholder should be set.
      */
     protected void setPlaceholder(Placeholder placeholder) {
         String xquery = "declare namespace p='"+PML_NS+"' .//*/p:nvPr";
@@ -494,7 +494,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         int idx = (int)fillRef.getIdx();
         CTSchemeColor phClr = fillRef.getSchemeClr();
         CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
-        XmlObject styleLst = null;
+        final XmlObject styleLst;
         int childIdx;
         if (idx >= 1 && idx <= 999) {
             childIdx = idx-1;
