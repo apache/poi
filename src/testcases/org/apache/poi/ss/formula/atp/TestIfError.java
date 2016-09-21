@@ -84,7 +84,7 @@ public class TestIfError extends TestCase {
         
         
         assertEquals("Checks that the cell is numeric",
-        		CellType.STRING, evaluator.evaluate(cell2).getCellTypeEnum());        
+        		CellType.STRING, evaluator.evaluate(cell2).getCellTypeEnum());
         assertEquals("Rounds -10 to a nearest multiple of -3 (-9)",
                 "Error in calculation", evaluator.evaluate(cell2).getStringValue());
         

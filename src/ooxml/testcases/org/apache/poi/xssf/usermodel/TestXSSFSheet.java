@@ -1581,7 +1581,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         System.out.println("Array formulas currently unsupported");
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
         /*
-        assertEquals("[Array Formula] N7 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N7 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Array Formula] N7 cell formula", "{SUM(H7:J7*{1,2,3})}", cell.getCellFormula());
         */
         
@@ -1792,12 +1792,12 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         // System.out.println("Array formulas currently unsupported");
     /*
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
-        assertEquals("[Array Formula] N10 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N10 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Array Formula] N10 cell formula", "{SUM(H10:J10*{1,2,3})}", cell.getCellFormula());
         
         cell = CellUtil.getCell(destRow2, col);
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula() 
-        assertEquals("[Array Formula] N11 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N11 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Array Formula] N11 cell formula", "{SUM(H11:J11*{1,2,3})}", cell.getCellFormula());
      */
         

@@ -570,7 +570,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             assertEquals(cra.formatAsString(), mcell.getArrayFormulaRange().formatAsString());
             assertEquals("A2:A4*B2:B4", mcell.getCellFormula());
             assertTrue(mcell.isPartOfArrayFormulaGroup());
-            assertEquals(CellType.FORMULA, mcell.getCellType());
+            assertEquals(CellType.FORMULA, mcell.getCellTypeEnum());
         }
 
         */
