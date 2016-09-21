@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -262,8 +263,8 @@ public class TestVBAMacroReader {
         reader.close();
     }
     
-    private void skipTest(Throwable e) {
-        assumeTrue("This test currently fails." + e.getLocalizedMessage(), false);
+    private static void skipTest(Throwable e) {
+        assumeTrue("This test currently fails with " + e, false);
     }
     
     // This test is written as expected-to-fail and should be rewritten
