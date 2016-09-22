@@ -32,11 +32,13 @@ import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -900,5 +902,20 @@ public class TestBugs extends TestCase
         HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("57603-seven_columns.doc");
         HWPFDocument hwpfDocument2 = HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument);
         assertNotNull(hwpfDocument2);
+    }
+    
+    public void test57843() throws IOException {
+        try {
+            File f = POIDataSamples.getDocumentInstance().getFile("57843.doc");
+            boolean readOnly = true;
+            POIFSFileSystem fs = new POIFSFileSystem(f, readOnly);
+            HWPFOldDocument doc = new HWPFOldDocument(fs);
+            assertNotNull(doc);
+            doc.close();
+            fs.close();
+            fixed("57843");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // expected until this bug is fixed
+        }
     }
 }
