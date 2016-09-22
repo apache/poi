@@ -3110,15 +3110,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         sheet.groupColumn(1, 3);
         sheet.setColumnGroupCollapsed(1, true);
         
-        assertEquals(400, sheet.getColumnWidth(1));
-        assertEquals(600, sheet.getColumnWidth(2));
-        assertEquals(800, sheet.getColumnWidth(3));
+        assertEquals(0, sheet.getColumnOutlineLevel(0));
+        assertEquals(1, sheet.getColumnOutlineLevel(1));
+        assertEquals(1, sheet.getColumnOutlineLevel(2));
+        assertEquals(1, sheet.getColumnOutlineLevel(3));
+        assertEquals(0, sheet.getColumnOutlineLevel(4));
         
         // none of the columns should be hidden
         // column group collapsing is a different concept
         for (int c=0; c<5; c++) {
             assertFalse("Column " + c, sheet.isColumnHidden(c));
         }
+        
+        assertEquals(400, sheet.getColumnWidth(1));
+        assertEquals(600, sheet.getColumnWidth(2));
+        assertEquals(800, sheet.getColumnWidth(3));
         
         wb.close();
     }
