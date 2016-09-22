@@ -1024,6 +1024,7 @@ public class TestExtractorFactory {
     
     // This bug is currently open. This test will fail with "expected error not thrown" when the bug has been fixed.
     // When this happens, change this from @Test(expected=...) to @Test
+    // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor
     @Test(expected=AssertionError.class)
     public void test45565() throws Exception {
         POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("45565.xls"));
