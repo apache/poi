@@ -2020,4 +2020,22 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 		}
 
     }
+    
+    // bug 59687:  XSSFSheet.RemoveRow doesn't handle row gaps properly when removing row comments
+    // This test is currently failing (thus expected AssertionError). When this bug is fixed, no error should be thrown.
+    @Test(expected=AssertionError.class)
+    public void testRemoveRowWithCommentAndGapAbove() throws IOException {
+        final Workbook wb = _testDataProvider.openSampleWorkbook("59687.xlsx");
+        final Sheet sheet = wb.getSheetAt(0);
+
+        // comment exists
+        CellAddress commentCellAddress = new CellAddress("A4");
+        assertNotNull(sheet.getCellComment(commentCellAddress));
+        
+        assertEquals("Wrong starting # of comments",  1, sheet.getCellComments().size());
+        
+        sheet.removeRow(sheet.getRow(commentCellAddress.getRow()));
+        
+        assertEquals("There should not be any comments left!",  0, sheet.getCellComments().size());
+    }
 }
