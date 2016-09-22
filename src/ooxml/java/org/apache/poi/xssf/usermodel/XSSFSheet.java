@@ -1928,15 +1928,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
 
         // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-        final Integer rownumI = new Integer(row.getRowNum()); // NOSONAR
-        int idx = _rows.headMap(rownumI).size();
-        _rows.remove(rownumI);
+        final int rowNum = row.getRowNum();
+        final Integer rowNumI = new Integer(rowNum); // NOSONAR
+        // this is not the physical row number!
+        final int idx = _rows.headMap(rowNumI).size();
+        _rows.remove(rowNumI);
         worksheet.getSheetData().removeRow(idx);
 
         // also remove any comment located in that row
         if(sheetComments != null) {
             for (CellAddress ref : getCellComments().keySet()) {
-                if (ref.getRow() == idx) {
+                if (ref.getRow() == rowNum) {
                     sheetComments.removeComment(ref);
                 }
             }
