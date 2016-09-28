@@ -18,13 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
 import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -32,8 +33,6 @@ import org.apache.poi.util.LittleEndianInputStream;
 /**
  * Title:  Record Input Stream<P>
  * Description:  Wraps a stream and provides helper methods for the construction of records.<P>
- *
- * @author Jason Height (jheight @ apache dot org)
  */
 public final class RecordInputStream implements LittleEndianInput {
 	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
@@ -91,6 +90,10 @@ public final class RecordInputStream implements LittleEndianInput {
 	 * index within the data section of the current BIFF record
 	 */
 	private int _currentDataOffset;
+	/**
+	 * index within the data section when mark() was called
+	 */
+	private int _markedDataOffset;
 
 	private static final class SimpleHeaderInput implements BiffHeaderInput {
 
@@ -117,14 +120,14 @@ public final class RecordInputStream implements LittleEndianInput {
 		this (in, null, 0);
 	}
 
-	public RecordInputStream(InputStream in, Biff8EncryptionKey key, int initialOffset) throws RecordFormatException {
+	public RecordInputStream(InputStream in, EncryptionInfo key, int initialOffset) throws RecordFormatException {
 		if (key == null) {
 			_dataInput = getLEI(in);
 			_bhi = new SimpleHeaderInput(in);
 		} else {
 			Biff8DecryptingStream bds = new Biff8DecryptingStream(in, initialOffset, key);
+            _dataInput = bds;
 			_bhi = bds;
-			_dataInput = bds;
 		}
 		_nextSid = readNextSid();
 	}
@@ -305,13 +308,22 @@ public final class RecordInputStream implements LittleEndianInput {
 		}
 		return result;
 	}
+	
+	public void readPlain(byte[] buf, int off, int len) {
+	    readFully(buf, 0, buf.length, true);
+	}
+	
 	@Override
     public void readFully(byte[] buf) {
-		readFully(buf, 0, buf.length);
+		readFully(buf, 0, buf.length, false);
 	}
 
-	@Override
+    @Override
     public void readFully(byte[] buf, int off, int len) {
+        readFully(buf, off, len, false);
+    }
+	
+    protected void readFully(byte[] buf, int off, int len, boolean isPlain) {
 	    int origLen = len;
 	    if (buf == null) {
 	        throw new NullPointerException();
@@ -331,7 +343,11 @@ public final class RecordInputStream implements LittleEndianInput {
 	            }
 	        }
 	        checkRecordPosition(nextChunk);
-	        _dataInput.readFully(buf, off, nextChunk);
+	        if (isPlain) {
+                _dataInput.readPlain(buf, off, nextChunk);
+	        } else {
+                _dataInput.readFully(buf, off, nextChunk);
+	        }
 	        _currentDataOffset+=nextChunk;
 	        off += nextChunk;
 	        len -= nextChunk;
@@ -490,5 +506,32 @@ public final class RecordInputStream implements LittleEndianInput {
      */
     public int getNextSid() {
         return _nextSid;
+    }
+
+    /**
+     * Mark the stream position - experimental function 
+     *
+     * @param readlimit the read ahead limit
+     * 
+     * @see InputStream#mark(int)
+     */
+    @Internal
+    public void mark(int readlimit) {
+        ((InputStream)_dataInput).mark(readlimit);
+        _markedDataOffset = _currentDataOffset;
+    }
+    
+    /**
+     * Resets the stream position to the previously marked position.
+     * Experimental function - this only works, when nextRecord() wasn't called in the meantime.
+     *
+     * @throws IOException if marking is not supported
+     * 
+     * @see InputStream#reset()
+     */
+    @Internal
+    public void reset() throws IOException {
+        ((InputStream)_dataInput).reset();
+        _currentDataOffset = _markedDataOffset;
     }
 }

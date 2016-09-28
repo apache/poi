@@ -15,27 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.util;
+package org.apache.poi.poifs.crypt;
 
-public interface LittleEndianInput {
-	int available();
-	byte readByte();
-	int readUByte();
-	short readShort();
-	int readUShort();
-	int readInt();
-	long readLong();
-	double readDouble();
-	void readFully(byte[] buf);
-	void readFully(byte[] buf, int off, int len);
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-	/**
-	 * Usually acts the same as {@link #readFully(byte[], int, int)}, but
-	 * for an encrypted stream the raw (unencrypted) data is filled 
-	 *
-	 * @param buf the byte array to receive the bytes
-	 * @param off the start offset into the byte array 
-	 * @param len the amount of bytes to fill
-	 */
-	void readPlain(byte[] buf, int off, int len);
+/**
+ * Collects all tests for package <tt>org.apache.poi.poifs.crypt</tt>.
+ */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestBiff8DecryptingStream.class,
+    TestCipherAlgorithm.class,
+    TestXorEncryption.class
+})
+public final class AllEncryptionTests {
 }

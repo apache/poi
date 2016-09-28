@@ -16,11 +16,10 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-
 /**
  * Used when checking if a key is valid for a document 
  */
-public abstract class EncryptionVerifier {
+public abstract class EncryptionVerifier implements Cloneable {
     private byte[] salt;
     private byte[] encryptedVerifier;
     private byte[] encryptedVerifierHash;
@@ -105,5 +104,13 @@ public abstract class EncryptionVerifier {
         this.hashAlgorithm = hashAlgorithm;
     }
     
-    
+    @Override
+    public EncryptionVerifier clone() throws CloneNotSupportedException {
+        EncryptionVerifier other = (EncryptionVerifier)super.clone();
+        other.salt = (salt == null) ? null : salt.clone();
+        other.encryptedVerifier = (encryptedVerifier == null) ? null : encryptedVerifier.clone();
+        other.encryptedVerifierHash = (encryptedVerifierHash == null) ? null : encryptedVerifierHash.clone();
+        other.encryptedKey = (encryptedKey == null) ? null : encryptedKey.clone();
+        return other;
+    }
 }

@@ -17,18 +17,16 @@
 package org.apache.poi.hssf.record;
 
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
-import org.apache.poi.hssf.record.FilePassRecord.Rc4KeyData;
-import org.apache.poi.hssf.record.FilePassRecord.XorKeyData;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.hssf.record.crypto.Biff8RC4Key;
-import org.apache.poi.hssf.record.crypto.Biff8XORKey;
 import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 
 /**
  * A stream based way to get at complete records, with
@@ -80,20 +78,16 @@ public final class RecordFactoryInputStream {
 	               outputRecs.add(rec);
 					}
 					
-					// If it's a FILEPASS, track it specifically but
-					//  don't include it in the main stream
+					// If it's a FILEPASS, track it specifically
 					if (rec instanceof FilePassRecord) {
 						fpr = (FilePassRecord) rec;
-						outputRecs.remove(outputRecs.size()-1);
-						// TODO - add fpr not added to outputRecs
-						rec = outputRecs.get(0);
-					} else {
-						// workbook not encrypted (typical case)
-						if (rec instanceof EOFRecord) {
-							// A workbook stream is never empty, so crash instead
-							// of trying to keep track of nesting level
-							throw new IllegalStateException("Nothing between BOF and EOF");
-						}
+					}
+
+					// workbook not encrypted (typical case)
+					if (rec instanceof EOFRecord) {
+						// A workbook stream is never empty, so crash instead
+						// of trying to keep track of nesting level
+						throw new IllegalStateException("Nothing between BOF and EOF");
 					}
 				}
 			} else {
@@ -114,31 +108,18 @@ public final class RecordFactoryInputStream {
 			    userPassword = Decryptor.DEFAULT_PASSWORD;
 			}
 
-			Biff8EncryptionKey key;
-			if (fpr.getRc4KeyData() != null) {
-			    Rc4KeyData rc4 = fpr.getRc4KeyData();
-			    Biff8RC4Key rc4key = Biff8RC4Key.create(userPassword, rc4.getSalt());
-			    key = rc4key;
-			    if (!rc4key.validate(rc4.getEncryptedVerifier(), rc4.getEncryptedVerifierHash())) {
-	                throw new EncryptedDocumentException(
-                        (Decryptor.DEFAULT_PASSWORD.equals(userPassword) ? "Default" : "Supplied")
-                        + " password is invalid for salt/verifier/verifierHash");
-			    }
-			} else if (fpr.getXorKeyData() != null) {
-			    XorKeyData xor = fpr.getXorKeyData();
-			    Biff8XORKey xorKey = Biff8XORKey.create(userPassword, xor.getKey());
-			    key = xorKey;
-			    
-			    if (!xorKey.validate(userPassword, xor.getVerifier())) {
+			EncryptionInfo info = fpr.getEncryptionInfo();
+            try {
+                if (!info.getDecryptor().verifyPassword(userPassword)) {
                     throw new EncryptedDocumentException(
-		                (Decryptor.DEFAULT_PASSWORD.equals(userPassword) ? "Default" : "Supplied")
-		                + " password is invalid for key/verifier");
-			    }
-			} else {
-			    throw new EncryptedDocumentException("Crypto API not yet supported.");
-			}
+                            (Decryptor.DEFAULT_PASSWORD.equals(userPassword) ? "Default" : "Supplied")
+                            + " password is invalid for salt/verifier/verifierHash");
+                }
+            } catch (GeneralSecurityException e) {
+                throw new EncryptedDocumentException(e);
+            }
 
-			return new RecordInputStream(original, key, _initialRecordsSize);
+			return new RecordInputStream(original, info, _initialRecordsSize);
 		}
 
 		public boolean hasEncryption() {

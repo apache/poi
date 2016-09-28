@@ -16,12 +16,11 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-
 /**
  * Reads and processes OOXML Encryption Headers
  * The constants are largely based on ZIP constants.
  */
-public abstract class EncryptionHeader {
+public abstract class EncryptionHeader implements Cloneable {
     public static final int ALGORITHM_RC4 = CipherAlgorithm.rc4.ecmaId;
     public static final int ALGORITHM_AES_128 = CipherAlgorithm.aes128.ecmaId;
     public static final int ALGORITHM_AES_192 = CipherAlgorithm.aes192.ecmaId;
@@ -131,5 +130,12 @@ public abstract class EncryptionHeader {
     
     protected void setCspName(String cspName) {
         this.cspName = cspName;
+    }
+
+    @Override
+    public EncryptionHeader clone() throws CloneNotSupportedException {
+        EncryptionHeader other = (EncryptionHeader)super.clone();
+        other.keySalt = (keySalt == null) ? null : keySalt.clone();
+        return other;
     }
 }

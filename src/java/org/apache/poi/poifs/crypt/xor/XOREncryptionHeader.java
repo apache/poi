@@ -15,20 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.crypto;
+package org.apache.poi.poifs.crypt.xor;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.apache.poi.poifs.crypt.EncryptionHeader;
+import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
-/**
- * Collects all tests for package <tt>org.apache.poi.hssf.record.crypto</tt>.
- *
- * @author Josh Micich
- */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    TestBiff8DecryptingStream.class,
-    TestBiff8EncryptionKey.class
-})
-public final class AllHSSFEncryptionTests {
+public class XOREncryptionHeader extends EncryptionHeader implements EncryptionRecord, Cloneable {
+
+    protected XOREncryptionHeader() {
+    }
+
+    @Override
+    public void write(LittleEndianByteArrayOutputStream leos) {
+    }
+
+    @Override
+    public XOREncryptionHeader clone() throws CloneNotSupportedException {
+        return (XOREncryptionHeader)super.clone();
+    }
 }

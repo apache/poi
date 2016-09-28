@@ -23,7 +23,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.standard.StandardEncryptionVerifier;
 import org.apache.poi.util.LittleEndianInput;
 
-public class CryptoAPIEncryptionVerifier extends StandardEncryptionVerifier {
+public class CryptoAPIEncryptionVerifier extends StandardEncryptionVerifier implements Cloneable {
 
     protected CryptoAPIEncryptionVerifier(LittleEndianInput is,
             CryptoAPIEncryptionHeader header) {
@@ -36,15 +36,23 @@ public class CryptoAPIEncryptionVerifier extends StandardEncryptionVerifier {
         super(cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
     }
 
+    @Override
     protected void setSalt(byte salt[]) {
         super.setSalt(salt);
     }
 
+    @Override
     protected void setEncryptedVerifier(byte encryptedVerifier[]) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
+    @Override
     protected void setEncryptedVerifierHash(byte encryptedVerifierHash[]) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
+    }
+
+    @Override
+    public CryptoAPIEncryptionVerifier clone() throws CloneNotSupportedException {
+        return (CryptoAPIEncryptionVerifier)super.clone();
     }
 }

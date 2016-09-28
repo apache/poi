@@ -17,6 +17,8 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -24,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-
-import javax.crypto.Cipher;
-import javax.crypto.CipherOutputStream;
 
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
@@ -36,26 +35,45 @@ import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
+import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
 /**
  * This class provides helper functions for encrypted PowerPoint documents.
  */
 @Internal
-public class HSLFSlideShowEncrypted {
+public class HSLFSlideShowEncrypted implements Closeable {
     DocumentEncryptionAtom dea;
     CryptoAPIEncryptor enc = null;
     CryptoAPIDecryptor dec = null;
-    Cipher cipher = null;
-    CipherOutputStream cyos = null;
+//    Cipher cipher = null;
+    ChunkedCipherOutputStream cyos = null;
 
     private static final BitField fieldRecInst = new BitField(0xFFF0);
+
+    private static final int BLIB_STORE_ENTRY_PARTS[] = {
+        1,     // btWin32
+        1,     // btMacOS
+        16,    // rgbUid
+        2,     // tag
+        4,     // size
+        4,     // cRef
+        4,     // foDelay
+        1,     // unused1
+        1,     // cbName (@ index 33)
+        1,     // unused2
+        1,     // unused3
+    };
     
     protected HSLFSlideShowEncrypted(DocumentEncryptionAtom dea) {
         this.dea = dea;
@@ -67,7 +85,9 @@ public class HSLFSlideShowEncrypted {
         UserEditAtom userEditAtomWithEncryption = null;
         for (Map.Entry<Integer, Record> me : recordMap.descendingMap().entrySet()) {
             Record r = me.getValue();
-            if (!(r instanceof UserEditAtom)) continue;
+            if (!(r instanceof UserEditAtom)) {
+                continue;
+            }
             UserEditAtom uea = (UserEditAtom)r;
             if (uea.getEncryptSessionPersistIdRef() != -1) {
                 userEditAtomWithEncryption = uea;
@@ -83,7 +103,7 @@ public class HSLFSlideShowEncrypted {
         Record r = recordMap.get(userEditAtomWithEncryption.getPersistPointersOffset());
         assert(r instanceof PersistPtrHolder);
         PersistPtrHolder ptr = (PersistPtrHolder)r;
-        
+
         Integer encOffset = ptr.getSlideLocationsLookup().get(userEditAtomWithEncryption.getEncryptSessionPersistIdRef());
         if (encOffset == null) {
             // encryption info doesn't exist anymore
@@ -91,7 +111,7 @@ public class HSLFSlideShowEncrypted {
             dea = null;
             return;
         }
-        
+
         r = recordMap.get(encOffset);
         if (r == null) {
             r = Record.buildRecordAtOffset(docstream, encOffset);
@@ -100,7 +120,7 @@ public class HSLFSlideShowEncrypted {
         assert(r instanceof DocumentEncryptionAtom);
         this.dea = (DocumentEncryptionAtom)r;
         decryptInit();
-        
+
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         if(!dec.verifyPassword(pass != null ? pass : Decryptor.DEFAULT_PASSWORD)) {
             throw new EncryptedPowerPointFileException("PowerPoint file is encrypted. The correct password needs to be set via Biff8EncryptionKey.setCurrentUserPassword()");
@@ -110,119 +130,144 @@ public class HSLFSlideShowEncrypted {
     public DocumentEncryptionAtom getDocumentEncryptionAtom() {
         return dea;
     }
-    
-    protected void setPersistId(int persistId) {
-        if (enc != null && dec != null) {
-            throw new EncryptedPowerPointFileException("Use instance either for en- or decryption");
-        }
-        
-        try {
-            if (enc != null) cipher = enc.initCipherForBlock(cipher, persistId);
-            if (dec != null) cipher = dec.initCipherForBlock(cipher, persistId);
-        } catch (GeneralSecurityException e) {
-            throw new EncryptedPowerPointFileException(e);
-        }
-    }
-    
+
     protected void decryptInit() {
-        if (dec != null) return;
+        if (dec != null) {
+            return;
+        }
         EncryptionInfo ei = dea.getEncryptionInfo();
         dec = (CryptoAPIDecryptor)ei.getDecryptor();
     }
-    
+
     protected void encryptInit() {
-        if (enc != null) return;
+        if (enc != null) {
+            return;
+        }
         EncryptionInfo ei = dea.getEncryptionInfo();
         enc = (CryptoAPIEncryptor)ei.getEncryptor();
     }
-    
 
-    
+
+
     protected OutputStream encryptRecord(OutputStream plainStream, int persistId, Record record) {
-        boolean isPlain = (dea == null 
+        boolean isPlain = (dea == null
             || record instanceof UserEditAtom
             || record instanceof PersistPtrHolder
             || record instanceof DocumentEncryptionAtom
         );
-        if (isPlain) return plainStream;
 
-        encryptInit();
-        setPersistId(persistId);
-        
-        if (cyos == null) {
-            cyos = new CipherOutputStream(plainStream, cipher);
+        try {
+            if (isPlain) {
+                if (cyos != null) {
+                    // write cached data to stream
+                    cyos.flush();
+                }
+                return plainStream;
+            }
+
+            encryptInit();
+
+            if (cyos == null) {
+                enc.setChunkSize(-1);
+                cyos = enc.getDataStream(plainStream, 0);
+            }
+            cyos.initCipherForBlock(persistId, false);
+        } catch (Exception e) {
+            throw new EncryptedPowerPointFileException(e);
         }
         return cyos;
     }
 
+    private static void readFully(ChunkedCipherInputStream ccis, byte[] docstream, int offset, int len) throws IOException {
+        if (IOUtils.readFully(ccis, docstream, offset, len) == -1) {
+            throw new EncryptedPowerPointFileException("unexpected EOF");
+        }
+    }
+
     protected void decryptRecord(byte[] docstream, int persistId, int offset) {
-        if (dea == null) return;
+        if (dea == null) {
+            return;
+        }
 
         decryptInit();
-        setPersistId(persistId);
-        
+        dec.setChunkSize(-1);
+        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(docstream, offset);
+        ChunkedCipherInputStream ccis = null;
         try {
+            ccis = dec.getDataStream(lei, docstream.length-offset, 0);
+            ccis.initCipherForBlock(persistId);
+
             // decrypt header and read length to be decrypted
-            cipher.update(docstream, offset, 8, docstream, offset);
+            readFully(ccis, docstream, offset, 8);
             // decrypt the rest of the record
             int rlen = (int)LittleEndian.getUInt(docstream, offset+4);
-            cipher.update(docstream, offset+8, rlen, docstream, offset+8);
-        } catch (GeneralSecurityException e) {
-            throw new CorruptPowerPointFileException(e);
-        }       
-    }        
+            readFully(ccis, docstream, offset+8, rlen);
+
+        } catch (Exception e) {
+            throw new EncryptedPowerPointFileException(e);
+        } finally {
+            try {
+                if (ccis != null) {
+                    ccis.close();
+                }
+                lei.close();
+            } catch (IOException e) {
+                throw new EncryptedPowerPointFileException(e);
+            }
+        }
+    }
+
+    private void decryptPicBytes(byte[] pictstream, int offset, int len)
+    throws IOException, GeneralSecurityException {
+        // when reading the picture elements, each time a segment is read, the cipher needs
+        // to be reset (usually done when calling Cipher.doFinal)
+        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(pictstream, offset);
+        ChunkedCipherInputStream ccis = dec.getDataStream(lei, len, 0);
+        readFully(ccis, pictstream, offset, len);
+        ccis.close();
+        lei.close();
+    }
     
     protected void decryptPicture(byte[] pictstream, int offset) {
-        if (dea == null) return;
-        
+        if (dea == null) {
+            return;
+        }
+
         decryptInit();
-        setPersistId(0);
-        
+
         try {
             // decrypt header and read length to be decrypted
-            cipher.doFinal(pictstream, offset, 8, pictstream, offset);
+            decryptPicBytes(pictstream, offset, 8);
             int recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
             int recType = LittleEndian.getUShort(pictstream, offset+2);
             int rlen = (int)LittleEndian.getUInt(pictstream, offset+4);
             offset += 8;
-            int endOffset = offset + rlen; 
+            int endOffset = offset + rlen;
 
             if (recType == 0xF007) {
                 // TOOD: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
-                
+
                 // File BLIP Store Entry (FBSE)
-                cipher.doFinal(pictstream, offset, 1, pictstream, offset); // btWin32
-                offset++;
-                cipher.doFinal(pictstream, offset, 1, pictstream, offset); // btMacOS
-                offset++;
-                cipher.doFinal(pictstream, offset, 16, pictstream, offset); // rgbUid
-                offset += 16;
-                cipher.doFinal(pictstream, offset, 2, pictstream, offset); // tag
-                offset += 2;
-                cipher.doFinal(pictstream, offset, 4, pictstream, offset); // size
-                offset += 4;
-                cipher.doFinal(pictstream, offset, 4, pictstream, offset); // cRef
-                offset += 4;
-                cipher.doFinal(pictstream, offset, 4, pictstream, offset); // foDelay
-                offset += 4;
-                cipher.doFinal(pictstream, offset+0, 1, pictstream, offset+0); // unused1
-                cipher.doFinal(pictstream, offset+1, 1, pictstream, offset+1); // cbName
-                cipher.doFinal(pictstream, offset+2, 1, pictstream, offset+2); // unused2
-                cipher.doFinal(pictstream, offset+3, 1, pictstream, offset+3); // unused3
-                int cbName = LittleEndian.getUShort(pictstream, offset+1);
-                offset += 4;
+                for (int part : BLIB_STORE_ENTRY_PARTS) {
+                    decryptPicBytes(pictstream, offset, part);
+                }
+                offset += 36;
+                
+                int cbName = LittleEndian.getUShort(pictstream, offset-3);
                 if (cbName > 0) {
-                    cipher.doFinal(pictstream, offset, cbName, pictstream, offset); // nameData
+                    // read nameData
+                    decryptPicBytes(pictstream, offset, cbName);
                     offset += cbName;
                 }
+                
                 if (offset == endOffset) {
                     return; // no embedded blip
                 }
                 // fall through, read embedded blip now
 
                 // update header data
-                cipher.doFinal(pictstream, offset, 8, pictstream, offset);
+                decryptPicBytes(pictstream, offset, 8);
                 recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
                 recType = LittleEndian.getUShort(pictstream, offset+2);
                 // rlen = (int)LittleEndian.getUInt(pictstream, offset+4);
@@ -231,70 +276,73 @@ public class HSLFSlideShowEncrypted {
 
             int rgbUidCnt = (recInst == 0x217 || recInst == 0x3D5 || recInst == 0x46B || recInst == 0x543 ||
                 recInst == 0x6E1 || recInst == 0x6E3 || recInst == 0x6E5 || recInst == 0x7A9) ? 2 : 1;
-            
+
+            // rgbUid 1/2
             for (int i=0; i<rgbUidCnt; i++) {
-                cipher.doFinal(pictstream, offset, 16, pictstream, offset); // rgbUid 1/2
+                decryptPicBytes(pictstream, offset, 16);
                 offset += 16;
             }
-            
+
+            int nextBytes;
             if (recType == 0xF01A || recType == 0XF01B || recType == 0XF01C) {
-                cipher.doFinal(pictstream, offset, 34, pictstream, offset); // metafileHeader
-                offset += 34;
+                // metafileHeader
+                nextBytes = 34;
             } else {
-                cipher.doFinal(pictstream, offset, 1, pictstream, offset); // tag
-                offset += 1;
+                // tag
+                nextBytes = 1;
             }
             
+            decryptPicBytes(pictstream, offset, nextBytes);
+            offset += nextBytes;
+
             int blipLen = endOffset - offset;
-            cipher.doFinal(pictstream, offset, blipLen, pictstream, offset);
-        } catch (GeneralSecurityException e) {
+            decryptPicBytes(pictstream, offset, blipLen);
+        } catch (Exception e) {
             throw new CorruptPowerPointFileException(e);
-        }       
+        }
     }
 
     protected void encryptPicture(byte[] pictstream, int offset) {
-        if (dea == null) return;
-        
+        if (dea == null) {
+            return;
+        }
+
         encryptInit();
-        setPersistId(0);
+
+        LittleEndianByteArrayOutputStream los = new LittleEndianByteArrayOutputStream(pictstream, offset);
+        ChunkedCipherOutputStream ccos = null;
 
         try {
+            enc.setChunkSize(-1);
+            ccos = enc.getDataStream(los, 0);
             int recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
             int recType = LittleEndian.getUShort(pictstream, offset+2);
-            int rlen = (int)LittleEndian.getUInt(pictstream, offset+4);
-            cipher.doFinal(pictstream, offset, 8, pictstream, offset);
+            final int rlen = (int)LittleEndian.getUInt(pictstream, offset+4);
+
+            ccos.write(pictstream, offset, 8);
+            ccos.flush();
             offset += 8;
-            int endOffset = offset + rlen; 
+            int endOffset = offset + rlen;
 
             if (recType == 0xF007) {
                 // TOOD: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
-                
+
                 // File BLIP Store Entry (FBSE)
-                cipher.doFinal(pictstream, offset, 1, pictstream, offset); // btWin32
-                offset++;
-                cipher.doFinal(pictstream, offset, 1, pictstream, offset); // btMacOS
-                offset++;
-                cipher.doFinal(pictstream, offset, 16, pictstream, offset); // rgbUid
-                offset += 16;
-                cipher.doFinal(pictstream, offset, 2, pictstream, offset); // tag
-                offset += 2;
-                cipher.doFinal(pictstream, offset, 4, pictstream, offset); // size
-                offset += 4;
-                cipher.doFinal(pictstream, offset, 4, pictstream, offset); // cRef
-                offset += 4;
-                cipher.doFinal(pictstream, offset, 4, pictstream, offset); // foDelay
-                offset += 4;
-                int cbName = LittleEndian.getUShort(pictstream, offset+1);
-                cipher.doFinal(pictstream, offset+0, 1, pictstream, offset+0); // unused1
-                cipher.doFinal(pictstream, offset+1, 1, pictstream, offset+1); // cbName
-                cipher.doFinal(pictstream, offset+2, 1, pictstream, offset+2); // unused2
-                cipher.doFinal(pictstream, offset+3, 1, pictstream, offset+3); // unused3
-                offset += 4;
+                int cbName = LittleEndian.getUShort(pictstream, offset+33);
+                
+                for (int part : BLIB_STORE_ENTRY_PARTS) {
+                    ccos.write(pictstream, offset, part);
+                    ccos.flush();
+                    offset += part;
+                }
+                
                 if (cbName > 0) {
-                    cipher.doFinal(pictstream, offset, cbName, pictstream, offset); // nameData
+                    ccos.write(pictstream, offset, cbName);
+                    ccos.flush();
                     offset += cbName;
                 }
+                
                 if (offset == endOffset) {
                     return; // no embedded blip
                 }
@@ -303,32 +351,45 @@ public class HSLFSlideShowEncrypted {
                 // update header data
                 recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
                 recType = LittleEndian.getUShort(pictstream, offset+2);
-                // rlen = (int) LittleEndian.getUInt(pictstream, offset+4);
-                cipher.doFinal(pictstream, offset, 8, pictstream, offset);
+                ccos.write(pictstream, offset, 8);
+                ccos.flush();
                 offset += 8;
             }
-            
+
             int rgbUidCnt = (recInst == 0x217 || recInst == 0x3D5 || recInst == 0x46B || recInst == 0x543 ||
                 recInst == 0x6E1 || recInst == 0x6E3 || recInst == 0x6E5 || recInst == 0x7A9) ? 2 : 1;
-                
+
             for (int i=0; i<rgbUidCnt; i++) {
-                cipher.doFinal(pictstream, offset, 16, pictstream, offset); // rgbUid 1/2
+                ccos.write(pictstream, offset, 16); // rgbUid 1/2
+                ccos.flush();
                 offset += 16;
             }
-            
+
             if (recType == 0xF01A || recType == 0XF01B || recType == 0XF01C) {
-                cipher.doFinal(pictstream, offset, 34, pictstream, offset); // metafileHeader
+                ccos.write(pictstream, offset, 34); // metafileHeader
                 offset += 34;
+                ccos.flush();
             } else {
-                cipher.doFinal(pictstream, offset, 1, pictstream, offset); // tag
+                ccos.write(pictstream, offset, 1); // tag
                 offset += 1;
+                ccos.flush();
             }
-            
+
             int blipLen = endOffset - offset;
-            cipher.doFinal(pictstream, offset, blipLen, pictstream, offset);
-        } catch (GeneralSecurityException e) {
-            throw new CorruptPowerPointFileException(e);
-        }       
+            ccos.write(pictstream, offset, blipLen);
+            ccos.flush();
+        } catch (Exception e) {
+            throw new EncryptedPowerPointFileException(e);
+        } finally {
+            try {
+                if (ccos != null) {
+                    ccos.close();
+                }
+                los.close();
+            } catch (IOException e) {
+                throw new EncryptedPowerPointFileException(e);
+            }
+        }
     }
 
     protected Record[] updateEncryptionRecord(Record records[]) {
@@ -372,7 +433,7 @@ public class HSLFSlideShowEncrypted {
     protected static Record[] normalizeRecords(Record records[]) {
         // http://msdn.microsoft.com/en-us/library/office/gg615594(v=office.14).aspx
         // repeated slideIds can be overwritten, i.e. ignored
-        
+
         UserEditAtom uea = null;
         PersistPtrHolder pph = null;
         TreeMap<Integer,Integer> slideLocations = new TreeMap<Integer,Integer>();
@@ -386,7 +447,7 @@ public class HSLFSlideShowEncrypted {
                 uea = (UserEditAtom)pdr;
                 continue;
             }
-            
+
             if (pdr instanceof PersistPtrHolder) {
                 if (pph != null) {
                     duplicatedCount++;
@@ -394,16 +455,18 @@ public class HSLFSlideShowEncrypted {
                 pph = (PersistPtrHolder)pdr;
                 for (Map.Entry<Integer,Integer> me : pph.getSlideLocationsLookup().entrySet()) {
                     Integer oldOffset = slideLocations.put(me.getKey(), me.getValue());
-                    if (oldOffset != null) obsoleteOffsets.add(oldOffset);
+                    if (oldOffset != null) {
+                        obsoleteOffsets.add(oldOffset);
+                    }
                 }
                 continue;
             }
-            
+
             recordMap.put(pdr.getLastOnDiskOffset(), r);
         }
-        
+
         assert(uea != null && pph != null && uea.getPersistPointersOffset() == pph.getLastOnDiskOffset());
-        
+
         recordMap.put(pph.getLastOnDiskOffset(), pph);
         recordMap.put(uea.getLastOnDiskOffset(), uea);
 
@@ -416,15 +479,15 @@ public class HSLFSlideShowEncrypted {
         for (Map.Entry<Integer,Integer> me : slideLocations.entrySet()) {
             pph.addSlideLookup(me.getKey(), me.getValue());
         }
-        
+
         for (Integer oldOffset : obsoleteOffsets) {
             recordMap.remove(oldOffset);
         }
-        
+
         return recordMap.values().toArray(new Record[recordMap.size()]);
     }
-     
-    
+
+
     protected static Record[] removeEncryptionRecord(Record records[]) {
         int deaSlideId = -1;
         int deaOffset = -1;
@@ -444,23 +507,27 @@ public class HSLFSlideShowEncrypted {
             }
             recordList.add(r);
         }
-        
+
         assert(ptr != null);
-        if (deaSlideId == -1 && deaOffset == -1) return records;
-        
+        if (deaSlideId == -1 && deaOffset == -1) {
+            return records;
+        }
+
         TreeMap<Integer,Integer> tm = new TreeMap<Integer,Integer>(ptr.getSlideLocationsLookup());
         ptr.clear();
         int maxSlideId = -1;
         for (Map.Entry<Integer,Integer> me : tm.entrySet()) {
-            if (me.getKey() == deaSlideId || me.getValue() == deaOffset) continue;
+            if (me.getKey() == deaSlideId || me.getValue() == deaOffset) {
+                continue;
+            }
             ptr.addSlideLookup(me.getKey(), me.getValue());
             maxSlideId = Math.max(me.getKey(), maxSlideId);
         }
-        
+
         uea.setMaxPersistWritten(maxSlideId);
 
         records = recordList.toArray(new Record[recordList.size()]);
-        
+
         return records;
     }
 
@@ -470,9 +537,13 @@ public class HSLFSlideShowEncrypted {
         int ueaIdx = -1, ptrIdx = -1, deaIdx = -1, idx = -1;
         for (Record r : records) {
             idx++;
-            if (r instanceof UserEditAtom) ueaIdx = idx;
-            else if (r instanceof PersistPtrHolder) ptrIdx = idx;
-            else if (r instanceof DocumentEncryptionAtom) deaIdx = idx;
+            if (r instanceof UserEditAtom) {
+                ueaIdx = idx;
+            } else if (r instanceof PersistPtrHolder) {
+                ptrIdx = idx;
+            } else if (r instanceof DocumentEncryptionAtom) {
+                deaIdx = idx;
+            }
         }
         assert(ueaIdx != -1 && ptrIdx != -1 && ptrIdx < ueaIdx);
         if (deaIdx != -1) {
@@ -488,13 +559,22 @@ public class HSLFSlideShowEncrypted {
             ptr.addSlideLookup(nextSlideId, ptr.getLastOnDiskOffset()-1);
             uea.setEncryptSessionPersistIdRef(nextSlideId);
             uea.setMaxPersistWritten(nextSlideId);
-            
+
             Record newRecords[] = new Record[records.length+1];
-            if (ptrIdx > 0) System.arraycopy(records, 0, newRecords, 0, ptrIdx);
-            if (ptrIdx < records.length-1) System.arraycopy(records, ptrIdx, newRecords, ptrIdx+1, records.length-ptrIdx);
+            if (ptrIdx > 0) {
+                System.arraycopy(records, 0, newRecords, 0, ptrIdx);
+            }
+            if (ptrIdx < records.length-1) {
+                System.arraycopy(records, ptrIdx, newRecords, ptrIdx+1, records.length-ptrIdx);
+            }
             newRecords[ptrIdx] = dea;
             return newRecords;
         }
     }
 
+    public void close() throws IOException {
+        if (cyos != null) {
+            cyos.close();
+        }
+    }
 }

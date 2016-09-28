@@ -189,4 +189,9 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
         int i = readInt();
         return i & 0xFFFFFFFFL;
     }
+
+    @Override
+    public void readPlain(byte[] buf, int off, int len) {
+        readFully(buf, off, len);
+    }
 }

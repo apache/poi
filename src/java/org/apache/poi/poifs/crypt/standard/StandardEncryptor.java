@@ -53,15 +53,13 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
-public class StandardEncryptor extends Encryptor {
+public class StandardEncryptor extends Encryptor implements Cloneable {
     private static final POILogger logger = POILogFactory.getLogger(StandardEncryptor.class);
 
-    private final StandardEncryptionInfoBuilder builder;
-    
-    protected StandardEncryptor(StandardEncryptionInfoBuilder builder) {
-        this.builder = builder;
+    protected StandardEncryptor() {
     }    
 
+    @Override
     public void confirmPassword(String password) {
         // see [MS-OFFCRYPTO] - 2.3.3 EncryptionVerifier
         Random r = new SecureRandom();
@@ -79,8 +77,9 @@ public class StandardEncryptor extends Encryptor {
      * 
      * see [MS-OFFCRYPTO] - 2.3.4.7 ECMA-376 Document Encryption Key Generation
      */
+    @Override
     public void confirmPassword(String password, byte keySpec[], byte keySalt[], byte verifier[], byte verifierSalt[], byte integritySalt[]) {
-        StandardEncryptionVerifier ver = builder.getVerifier();
+        StandardEncryptionVerifier ver = (StandardEncryptionVerifier)getEncryptionInfo().getVerifier();
 
         ver.setSalt(verifierSalt);
         SecretKey secretKey = generateSecretKey(password, ver, getKeySizeInBytes());
@@ -111,10 +110,11 @@ public class StandardEncryptor extends Encryptor {
     }
 
     private Cipher getCipher(SecretKey key, String padding) {
-        EncryptionVerifier ver = builder.getVerifier();
+        EncryptionVerifier ver = getEncryptionInfo().getVerifier();
         return CryptoFunctions.getCipher(key, ver.getCipherAlgorithm(), ver.getChainingMode(), null, Cipher.ENCRYPT_MODE, padding);
     }
     
+    @Override
     public OutputStream getDataStream(final DirectoryNode dir)
     throws IOException, GeneralSecurityException {
         createEncryptionInfoEntry(dir);
@@ -163,6 +163,7 @@ public class StandardEncryptor extends Encryptor {
             countBytes++;
         }
     
+        @Override
         public void close() throws IOException {
             // the CipherOutputStream adds the padding bytes on close()
             super.close(); 
@@ -175,6 +176,7 @@ public class StandardEncryptor extends Encryptor {
             // TODO: any properties???
         }
     
+        @Override
         public void processPOIFSWriterEvent(POIFSWriterEvent event) {
             try {
                 LittleEndianOutputStream leos = new LittleEndianOutputStream(event.getStream());
@@ -200,15 +202,16 @@ public class StandardEncryptor extends Encryptor {
     }
     
     protected int getKeySizeInBytes() {
-        return builder.getHeader().getKeySize()/8;
+        return getEncryptionInfo().getHeader().getKeySize()/8;
     }
     
     protected void createEncryptionInfoEntry(DirectoryNode dir) throws IOException {
-        final EncryptionInfo info = builder.getEncryptionInfo();
-        final StandardEncryptionHeader header = builder.getHeader();
-        final StandardEncryptionVerifier verifier = builder.getVerifier();
+        final EncryptionInfo info = getEncryptionInfo();
+        final StandardEncryptionHeader header = (StandardEncryptionHeader)info.getHeader();
+        final StandardEncryptionVerifier verifier = (StandardEncryptionVerifier)info.getVerifier();
         
         EncryptionRecord er = new EncryptionRecord(){
+            @Override
             public void write(LittleEndianByteArrayOutputStream bos) {
                 bos.writeShort(info.getVersionMajor());
                 bos.writeShort(info.getVersionMinor());
@@ -221,5 +224,10 @@ public class StandardEncryptor extends Encryptor {
         createEncryptionEntry(dir, "EncryptionInfo", er);
         
         // TODO: any properties???
+    }
+
+    @Override
+    public StandardEncryptor clone() throws CloneNotSupportedException {
+        return (StandardEncryptor)super.clone();
     }
 }
