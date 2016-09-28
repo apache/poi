@@ -32,6 +32,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -59,6 +60,8 @@ public abstract class POIDocument implements Closeable {
 
     /* Have the property streams been read yet? (Only done on-demand) */
     private boolean initialized = false;
+
+    private static final String[] encryptedStreamNames = { "EncryptedSummary" };
     
     /**
      * Constructs a POIDocument with the given directory node.
@@ -195,13 +198,18 @@ public abstract class POIDocument implements Closeable {
         try {
             if (encryptionInfo != null) {
                 step = "getting encrypted";
-                InputStream is = encryptionInfo.getDecryptor().getDataStream(directory);
-                try {
-                    encPoifs = new NPOIFSFileSystem(is);
-                    dirNode = encPoifs.getRoot();
-                } finally {
-                    is.close();
+                String encryptedStream = null;
+                for (String s : encryptedStreamNames) {
+                    if (dirNode.hasEntry(s)) {
+                        encryptedStream = s;
+                    }
                 }
+                if (encryptedStream == null) {
+                    throw new EncryptedDocumentException("can't find matching encrypted property stream");
+                }
+                CryptoAPIDecryptor dec = (CryptoAPIDecryptor)encryptionInfo.getDecryptor();
+                encPoifs = dec.getSummaryEntries(dirNode, encryptedStream);
+                dirNode = encPoifs.getRoot();
             }
             
             //directory can be null when creating new documents

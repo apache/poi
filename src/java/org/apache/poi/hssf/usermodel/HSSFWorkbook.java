@@ -61,8 +61,10 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
 import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.DrawingGroupRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FilePassRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.LabelRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -74,8 +76,11 @@ import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
@@ -101,6 +106,8 @@ import org.apache.poi.util.Configurator;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -119,7 +126,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * The maximum number of cell styles in a .xls workbook.
      * The 'official' limit is 4,000, but POI allows a slightly larger number.
      * This extra delta takes into account built-in styles that are automatically
-     * created for new workbooks
      *
      * See http://office.microsoft.com/en-us/excel-help/excel-specifications-and-limits-HP005199291.aspx
      */
@@ -1444,7 +1450,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "HSSFWorkbook.getBytes()");
         }
-
+        
         HSSFSheet[] sheets = getSheets();
         int nSheets = sheets.length;
 
@@ -1486,9 +1492,70 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             }
             pos += serializedSize;
         }
+
+        encryptBytes(retval);
+        
         return retval;
     }
 
+    @SuppressWarnings("resource")
+    protected void encryptBytes(byte buf[]) {
+        int initialOffset = 0;
+        FilePassRecord fpr = null;
+        for (Record r : workbook.getRecords()) {
+            initialOffset += r.getRecordSize();
+            if (r instanceof FilePassRecord) {
+                fpr = (FilePassRecord)r;
+                break;
+            }
+        }
+        if (fpr == null) {
+            return;
+        }
+        
+        LittleEndianByteArrayInputStream plain = new LittleEndianByteArrayInputStream(buf, 0);
+        LittleEndianByteArrayOutputStream leos = new LittleEndianByteArrayOutputStream(buf, 0);
+        Encryptor enc = fpr.getEncryptionInfo().getEncryptor();
+        enc.setChunkSize(Biff8DecryptingStream.RC4_REKEYING_INTERVAL);
+        byte tmp[] = new byte[1024];
+        try {
+            ChunkedCipherOutputStream os = enc.getDataStream(leos, initialOffset);
+            int totalBytes = 0;
+            while (totalBytes < buf.length) {
+                plain.read(tmp, 0, 4);
+                final int sid = LittleEndian.getUShort(tmp, 0);
+                final int len = LittleEndian.getUShort(tmp, 2);
+                boolean isPlain = Biff8DecryptingStream.isNeverEncryptedRecord(sid);
+                os.setNextRecordSize(len, isPlain);
+                os.writePlain(tmp, 0, 4);
+                if (sid == BoundSheetRecord.sid) {
+                    // special case for the field_1_position_of_BOF (=lbPlyPos) field of
+                    // the BoundSheet8 record which must be unencrypted
+                    byte bsrBuf[] = new byte[len];
+                    plain.readFully(bsrBuf);
+                    os.writePlain(bsrBuf, 0, 4);
+                    os.write(bsrBuf, 4, len-4);
+                } else {
+                    int todo = len;
+                    while (todo > 0) {
+                        int nextLen = Math.min(todo, tmp.length);
+                        plain.readFully(tmp, 0, nextLen);
+                        if (isPlain) {
+                            os.writePlain(tmp, 0, nextLen);
+                        } else {
+                            os.write(tmp, 0, nextLen);
+                        }
+                        todo -= nextLen;
+                    }
+                }
+                totalBytes += 4 + len;
+            }
+            os.close();
+        } catch (Exception e) {
+            throw new EncryptedDocumentException(e);
+        }
+    }
+    
     /*package*/ InternalWorkbook getWorkbook() {
         return workbook;
     }

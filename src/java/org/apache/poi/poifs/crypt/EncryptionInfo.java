@@ -20,6 +20,7 @@ import static org.apache.poi.poifs.crypt.EncryptionMode.agile;
 import static org.apache.poi.poifs.crypt.EncryptionMode.binaryRC4;
 import static org.apache.poi.poifs.crypt.EncryptionMode.cryptoAPI;
 import static org.apache.poi.poifs.crypt.EncryptionMode.standard;
+import static org.apache.poi.poifs.crypt.EncryptionMode.xor;
 
 import java.io.IOException;
 
@@ -34,15 +35,16 @@ import org.apache.poi.util.LittleEndianInput;
 
 /**
  */
-public class EncryptionInfo {
+public class EncryptionInfo implements Cloneable {
+    private final EncryptionMode encryptionMode;
     private final int versionMajor;
     private final int versionMinor;
     private final int encryptionFlags;
     
-    private final EncryptionHeader header;
-    private final EncryptionVerifier verifier;
-    private final Decryptor decryptor;
-    private final Encryptor encryptor;
+    private EncryptionHeader header;
+    private EncryptionVerifier verifier;
+    private Decryptor decryptor;
+    private Encryptor encryptor;
 
     /**
      * A flag that specifies whether CryptoAPI RC4 or ECMA-376 encryption
@@ -75,49 +77,54 @@ public class EncryptionInfo {
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
+    
     /**
      * Opens for decryption
      */
     public EncryptionInfo(OPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
+    
     /**
      * Opens for decryption
      */
     public EncryptionInfo(NPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
+    
     /**
      * Opens for decryption
      */
     public EncryptionInfo(DirectoryNode dir) throws IOException {
-        this(dir.createDocumentInputStream("EncryptionInfo"), false);
+        this(dir.createDocumentInputStream("EncryptionInfo"), null);
     }
 
-    public EncryptionInfo(LittleEndianInput dis, boolean isCryptoAPI) throws IOException {
-        final EncryptionMode encryptionMode;
-        versionMajor = dis.readShort();
-        versionMinor = dis.readShort();
+    public EncryptionInfo(LittleEndianInput dis, EncryptionMode preferredEncryptionMode) throws IOException {
+        if (preferredEncryptionMode == xor) {
+            versionMajor = xor.versionMajor;
+            versionMinor = xor.versionMinor;
+        } else {
+            versionMajor = dis.readUShort();
+            versionMinor = dis.readUShort();
+        }
 
-        if (!isCryptoAPI
-            && versionMajor == binaryRC4.versionMajor
+        if (   versionMajor == xor.versionMajor
+            && versionMinor == xor.versionMinor) {
+            encryptionMode = xor;
+            encryptionFlags = -1;
+        } else if (   versionMajor == binaryRC4.versionMajor
             && versionMinor == binaryRC4.versionMinor) {
             encryptionMode = binaryRC4;
             encryptionFlags = -1;
-        } else if (!isCryptoAPI
-            && versionMajor == agile.versionMajor
+        } else if (
+               2 <= versionMajor && versionMajor <= 4
+            && versionMinor == 2) {
+            encryptionMode = (preferredEncryptionMode == cryptoAPI) ? cryptoAPI : standard;
+            encryptionFlags = dis.readInt();
+        } else if (
+               versionMajor == agile.versionMajor
             && versionMinor == agile.versionMinor){
             encryptionMode = agile;
-            encryptionFlags = dis.readInt();
-        } else if (!isCryptoAPI
-            && 2 <= versionMajor && versionMajor <= 4
-            && versionMinor == standard.versionMinor) {
-            encryptionMode = standard;
-            encryptionFlags = dis.readInt();
-        } else if (isCryptoAPI
-            && 2 <= versionMajor && versionMajor <= 4
-            && versionMinor == cryptoAPI.versionMinor) {
-            encryptionMode = cryptoAPI;
             encryptionFlags = dis.readInt();
         } else {
             encryptionFlags = dis.readInt();
@@ -138,10 +145,6 @@ public class EncryptionInfo {
         }
 
         eib.initialize(this, dis);
-        header = eib.getHeader();
-        verifier = eib.getVerifier();
-        decryptor = eib.getDecryptor();
-        encryptor = eib.getEncryptor();
     }
     
     /**
@@ -175,6 +178,7 @@ public class EncryptionInfo {
           , int blockSize
           , ChainingMode chainingMode
       ) {
+        this.encryptionMode = encryptionMode; 
         versionMajor = encryptionMode.versionMajor;
         versionMinor = encryptionMode.versionMinor;
         encryptionFlags = encryptionMode.encryptionFlags;
@@ -187,11 +191,6 @@ public class EncryptionInfo {
         }
         
         eib.initialize(this, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
-        
-        header = eib.getHeader();
-        verifier = eib.getVerifier();
-        decryptor = eib.getDecryptor();
-        encryptor = eib.getEncryptor();
     }
 
     protected static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode)
@@ -228,5 +227,37 @@ public class EncryptionInfo {
 
     public Encryptor getEncryptor() {
         return encryptor;
+    }
+
+    public void setHeader(EncryptionHeader header) {
+        this.header = header;
+    }
+
+    public void setVerifier(EncryptionVerifier verifier) {
+        this.verifier = verifier;
+    }
+
+    public void setDecryptor(Decryptor decryptor) {
+        this.decryptor = decryptor;
+    }
+
+    public void setEncryptor(Encryptor encryptor) {
+        this.encryptor = encryptor;
+    }
+
+    public EncryptionMode getEncryptionMode() {
+        return encryptionMode;
+    }
+    
+    @Override
+    public EncryptionInfo clone() throws CloneNotSupportedException {
+        EncryptionInfo other = (EncryptionInfo)super.clone();
+        other.header = header.clone();
+        other.verifier = verifier.clone();
+        other.decryptor = decryptor.clone();
+        other.decryptor.setEncryptionInfo(other);
+        other.encryptor = encryptor.clone();
+        other.encryptor.setEncryptionInfo(other);
+        return other;
     }
 }

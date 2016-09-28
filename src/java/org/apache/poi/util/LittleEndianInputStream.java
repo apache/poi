@@ -34,7 +34,8 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 		super(is);
 	}
 	
-	public int available() {
+	@Override
+    public int available() {
 		try {
 			return super.available();
 		} catch (IOException e) {
@@ -42,11 +43,13 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 		}
 	}
 	
-	public byte readByte() {
+	@Override
+    public byte readByte() {
 		return (byte)readUByte();
 	}
 	
-	public int readUByte() {
+	@Override
+    public int readUByte() {
 		byte buf[] = new byte[1];
 		try {
 			checkEOF(read(buf), 1);
@@ -56,11 +59,13 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 		return LittleEndian.getUByte(buf);
 	}
 	
-	public double readDouble() {
+	@Override
+    public double readDouble() {
 		return Double.longBitsToDouble(readLong());
 	}
 	
-	public int readInt() {
+	@Override
+    public int readInt() {
 	    byte buf[] = new byte[LittleEndianConsts.INT_SIZE];
 		try {
 		    checkEOF(read(buf), buf.length);
@@ -82,7 +87,8 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
        return retNum & 0x00FFFFFFFFL;
     }
 	
-	public long readLong() {
+	@Override
+    public long readLong() {
 		byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
 		try {
 		    checkEOF(read(buf), LittleEndianConsts.LONG_SIZE);
@@ -92,11 +98,13 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 		return LittleEndian.getLong(buf);
 	}
 	
-	public short readShort() {
+	@Override
+    public short readShort() {
 		return (short)readUShort();
 	}
 	
-	public int readUShort() {
+	@Override
+    public int readUShort() {
 		byte buf[] = new byte[LittleEndianConsts.SHORT_SIZE];
 		try {
 		    checkEOF(read(buf), LittleEndianConsts.SHORT_SIZE);
@@ -112,15 +120,22 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 		}
 	}
 
-	public void readFully(byte[] buf) {
+	@Override
+    public void readFully(byte[] buf) {
 		readFully(buf, 0, buf.length);
 	}
 
-	public void readFully(byte[] buf, int off, int len) {
+	@Override
+    public void readFully(byte[] buf, int off, int len) {
 	    try {
 	        checkEOF(read(buf, off, len), len);
 	    } catch (IOException e) {
             throw new RuntimeException(e);
         }
 	}
+
+    @Override
+    public void readPlain(byte[] buf, int off, int len) {
+        readFully(buf, off, len);
+    }
 }

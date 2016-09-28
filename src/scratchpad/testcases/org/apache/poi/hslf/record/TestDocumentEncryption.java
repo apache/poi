@@ -44,6 +44,7 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -176,7 +177,7 @@ public class TestDocumentEncryption {
         
         DocumentEncryptionAtom dea = hss.getDocumentEncryptionAtom();
         
-        POIFSFileSystem fs2 = new POIFSFileSystem(dea.getEncryptionInfo().getDecryptor().getDataStream(fs));
+        POIFSFileSystem fs2 = ((CryptoAPIDecryptor)dea.getEncryptionInfo().getDecryptor()).getSummaryEntries(fs.getRoot(), "EncryptedSummary");
         PropertySet ps = PropertySetFactory.create(fs2.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
         assertTrue(ps.isSummaryInformation());
         assertEquals("RC4 CryptoAPI Encryption", ps.getProperties()[1].getValue());

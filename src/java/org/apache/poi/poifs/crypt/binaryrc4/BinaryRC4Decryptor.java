@@ -34,31 +34,38 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
-public class BinaryRC4Decryptor extends Decryptor {
+public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
     private long _length = -1L;
+    private int _chunkSize = 512;
     
     private class BinaryRC4CipherInputStream extends ChunkedCipherInputStream {
 
+        @Override
         protected Cipher initCipherForBlock(Cipher existing, int block)
                 throws GeneralSecurityException {
-            return BinaryRC4Decryptor.initCipherForBlock(existing, block, builder, getSecretKey(), Cipher.DECRYPT_MODE);
+            return BinaryRC4Decryptor.this.initCipherForBlock(existing, block);
         }
 
         public BinaryRC4CipherInputStream(DocumentInputStream stream, long size)
                 throws GeneralSecurityException {
-            super(stream, size, 512);
+            super(stream, size, _chunkSize);
         }
+
+        public BinaryRC4CipherInputStream(InputStream stream)
+                throws GeneralSecurityException {
+            super(stream, Integer.MAX_VALUE, _chunkSize);
+        }    
     }
 
-    protected BinaryRC4Decryptor(BinaryRC4EncryptionInfoBuilder builder) {
-        super(builder);
+    protected BinaryRC4Decryptor() {
     }
 
+    @Override
     public boolean verifyPassword(String password) {
-        EncryptionVerifier ver = builder.getVerifier();
+        EncryptionVerifier ver = getEncryptionInfo().getVerifier();
         SecretKey skey = generateSecretKey(password, ver);
         try {
-            Cipher cipher = initCipherForBlock(null, 0, builder, skey, Cipher.DECRYPT_MODE);
+            Cipher cipher = initCipherForBlock(null, 0, getEncryptionInfo(), skey, Cipher.DECRYPT_MODE);
             byte encryptedVerifier[] = ver.getEncryptedVerifier();
             byte verifier[] = new byte[encryptedVerifier.length];
             cipher.update(encryptedVerifier, 0, encryptedVerifier.length, verifier);
@@ -78,17 +85,23 @@ public class BinaryRC4Decryptor extends Decryptor {
         return false;
     }
 
-    protected static Cipher initCipherForBlock(Cipher cipher, int block,
-        EncryptionInfoBuilder builder, SecretKey skey, int encryptMode)
+    @Override
+    public Cipher initCipherForBlock(Cipher cipher, int block)
     throws GeneralSecurityException {
-        EncryptionVerifier ver = builder.getVerifier();
+        return initCipherForBlock(cipher, block, getEncryptionInfo(), getSecretKey(), Cipher.DECRYPT_MODE);
+    }    
+    
+    protected static Cipher initCipherForBlock(Cipher cipher, int block,
+        EncryptionInfo encryptionInfo, SecretKey skey, int encryptMode)
+    throws GeneralSecurityException {
+        EncryptionVerifier ver = encryptionInfo.getVerifier();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         byte blockKey[] = new byte[4];
         LittleEndian.putUInt(blockKey, 0, block);
         byte encKey[] = CryptoFunctions.generateKey(skey.getEncoded(), hashAlgo, blockKey, 16);
         SecretKey key = new SecretKeySpec(encKey, skey.getAlgorithm());
         if (cipher == null) {
-            EncryptionHeader em = builder.getHeader();
+            EncryptionHeader em = encryptionInfo.getHeader();
             cipher = CryptoFunctions.getCipher(key, em.getCipherAlgorithm(), null, null, encryptMode);
         } else {
             cipher.init(encryptMode, key);
@@ -96,10 +109,10 @@ public class BinaryRC4Decryptor extends Decryptor {
         return cipher;
     }
 
-    protected static SecretKey generateSecretKey(String password,
-            EncryptionVerifier ver) {
-        if (password.length() > 255)
+    protected static SecretKey generateSecretKey(String password, EncryptionVerifier ver) {
+        if (password.length() > 255) {
             password = password.substring(0, 255);
+        }
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
         byte hash[] = hashAlg.digest(StringUtil.getToUnicodeLE(password));
@@ -116,20 +129,38 @@ public class BinaryRC4Decryptor extends Decryptor {
         return skey;
     }
 
+    @Override
     @SuppressWarnings("resource")
-    public InputStream getDataStream(DirectoryNode dir) throws IOException,
+    public ChunkedCipherInputStream getDataStream(DirectoryNode dir) throws IOException,
             GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
         _length = dis.readLong();
-        BinaryRC4CipherInputStream cipherStream = new BinaryRC4CipherInputStream(dis, _length);
-        return cipherStream;
+        return new BinaryRC4CipherInputStream(dis, _length);
     }
+    
+    @Override
+    public InputStream getDataStream(InputStream stream, int size, int initialPos)
+            throws IOException, GeneralSecurityException {
+        return new BinaryRC4CipherInputStream(stream);
+    }
+    
 
+    @Override
     public long getLength() {
         if (_length == -1L) {
             throw new IllegalStateException("Decryptor.getDataStream() was not called");
         }
         
         return _length;
+    }
+
+    @Override
+    public void setChunkSize(int chunkSize) {
+        _chunkSize = chunkSize;
+    }
+    
+    @Override
+    public BinaryRC4Decryptor clone() throws CloneNotSupportedException {
+        return (BinaryRC4Decryptor)super.clone();
     }
 }

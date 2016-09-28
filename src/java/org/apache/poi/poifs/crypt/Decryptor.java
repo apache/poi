@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -28,16 +30,15 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-public abstract class Decryptor {
+public abstract class Decryptor implements Cloneable {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
     public static final String DEFAULT_POIFS_ENTRY="EncryptedPackage";
     
-    protected final EncryptionInfoBuilder builder;
+    protected EncryptionInfo encryptionInfo;
     private SecretKey secretKey;
     private byte[] verifier, integrityHmacKey, integrityHmacValue;
 
-    protected Decryptor(EncryptionInfoBuilder builder) {
-        this.builder = builder;
+    protected Decryptor() {
     }
     
     /**
@@ -54,6 +55,45 @@ public abstract class Decryptor {
     public abstract InputStream getDataStream(DirectoryNode dir)
         throws IOException, GeneralSecurityException;
 
+    /**
+     * Wraps a stream for decryption<p>
+     * 
+     * As we are handling streams and don't know the total length beforehand,
+     * it's the callers duty to care for the length of the entries.
+     *
+     * @param stream the stream to be wrapped
+     * @param initialPos initial/current byte position within the stream
+     * @return decrypted stream
+     */
+    public InputStream getDataStream(InputStream stream, int size, int initialPos)
+        throws IOException, GeneralSecurityException {
+        throw new RuntimeException("this decryptor doesn't support reading from a stream");
+    }
+
+    /**
+     * Sets the chunk size of the data stream.
+     * Needs to be set before the data stream is requested.
+     * When not set, the implementation uses method specific default values
+     *
+     * @param chunkSize the chunk size, i.e. the block size with the same encryption key
+     */
+    public void setChunkSize(int chunkSize) {
+        throw new RuntimeException("this decryptor doesn't support changing the chunk size");
+    }
+
+    /**
+     * Initializes a cipher object for a given block index for encryption
+     *
+     * @param cipher may be null, otherwise the given instance is reset to the new block index
+     * @param block the block index, e.g. the persist/slide id (hslf)
+     * @return a new cipher object, if cipher was null, otherwise the reinitialized cipher
+     * @throws GeneralSecurityException
+     */
+    public Cipher initCipherForBlock(Cipher cipher, int block)
+    throws GeneralSecurityException {
+        throw new RuntimeException("this decryptor doesn't support initCipherForBlock");
+    }
+    
     public abstract boolean verifyPassword(String password)
         throws GeneralSecurityException;
 
@@ -85,9 +125,11 @@ public abstract class Decryptor {
     public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
+
     public InputStream getDataStream(OPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
+
     public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
@@ -126,10 +168,29 @@ public abstract class Decryptor {
     }
 
     protected int getBlockSizeInBytes() {
-        return builder.getHeader().getBlockSize();
+        return encryptionInfo.getHeader().getBlockSize();
     }
     
     protected int getKeySizeInBytes() {
-        return builder.getHeader().getKeySize()/8;
+        return encryptionInfo.getHeader().getKeySize()/8;
+    }
+    
+    public EncryptionInfo getEncryptionInfo() {
+        return encryptionInfo;
+    }
+
+    public void setEncryptionInfo(EncryptionInfo encryptionInfo) {
+        this.encryptionInfo = encryptionInfo;
+    }
+
+    @Override
+    public Decryptor clone() throws CloneNotSupportedException {
+        Decryptor other = (Decryptor)super.clone();
+        other.integrityHmacKey = integrityHmacKey.clone();
+        other.integrityHmacValue = integrityHmacValue.clone();
+        other.verifier = verifier.clone();
+        other.secretKey = new SecretKeySpec(secretKey.getEncoded(), secretKey.getAlgorithm());
+        // encryptionInfo is set from outside
+        return other;
     }
 }
