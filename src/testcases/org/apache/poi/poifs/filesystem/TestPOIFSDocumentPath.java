@@ -227,7 +227,7 @@ public final class TestPOIFSDocumentPath extends TestCase {
         {
             for (int k = 0; k < paths.length; k++)
             {
-                assertEquals(String.valueOf(j) + "<>" + String.valueOf(k),
+                assertEquals(j + "<>" + k,
                              paths[ j ], paths[ k ]);
             }
         }
@@ -274,13 +274,13 @@ public final class TestPOIFSDocumentPath extends TestCase {
             {
                 if (k == j)
                 {
-                    assertEquals(String.valueOf(j) + "<>"
-                                 + String.valueOf(k), fullPaths[ j ],
+                    assertEquals(j + "<>"
+                                 + k, fullPaths[ j ],
                                                       builtUpPaths[ k ]);
                 }
                 else
                 {
-                    assertTrue(String.valueOf(j) + "<>" + String.valueOf(k),
+                    assertTrue(j + "<>" + k,
                                !(fullPaths[ j ].equals(builtUpPaths[ k ])));
                 }
             }
@@ -306,7 +306,7 @@ public final class TestPOIFSDocumentPath extends TestCase {
         {
             for (int j = 0; j < badPaths.length; j++)
             {
-                assertTrue(String.valueOf(j) + "<>" + String.valueOf(k),
+                assertTrue(j + "<>" + k,
                            !(fullPaths[ k ].equals(badPaths[ j ])));
             }
         }
