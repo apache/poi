@@ -128,7 +128,7 @@ public class SheetUtil {
         // We should only be checking merged regions if useMergedCells is true. Why are we doing this for-loop?
         int colspan = 1;
         for (CellRangeAddress region : sheet.getMergedRegions()) {
-            if (containsCell(region, row.getRowNum(), column)) {
+            if (region.isInRange(row.getRowNum(), column)) {
                 if (!useMergedCells) {
                     // If we're not using merged cells, skip this one and move on to the next.
                     return -1;
@@ -151,8 +151,8 @@ public class SheetUtil {
         if (cellType == CellType.STRING) {
             RichTextString rt = cell.getRichStringCellValue();
             String[] lines = rt.getString().split("\\n");
-            for (int i = 0; i < lines.length; i++) {
-                String txt = lines[i] + defaultChar;
+            for (String line : lines) {
+                String txt = line + defaultChar;
 
                 AttributedString str = new AttributedString(txt);
                 copyAttributes(font, str, 0, txt.length());
@@ -193,7 +193,7 @@ public class SheetUtil {
      * @param defaultCharWidth the width of a character using the default font in a workbook
      * @param colspan the number of columns that is spanned by the cell (1 if the cell is not part of a merged region)
      * @param style the cell style, which contains text rotation and indention information needed to compute the cell width
-     * @param width the minimum best-fit width. This algorithm will only return values greater than or equal to the minimum width.
+     * @param minWidth the minimum best-fit width. This algorithm will only return values greater than or equal to the minimum width.
      * @param str the text contained in the cell
      * @return the best fit cell width
      */
@@ -219,8 +219,7 @@ public class SheetUtil {
         }
         // frameWidth accounts for leading spaces which is excluded from bounds.getWidth()
         final double frameWidth = bounds.getX() + bounds.getWidth();
-        final double width = Math.max(minWidth, ((frameWidth / colspan) / defaultCharWidth) + style.getIndention());
-        return width;
+        return Math.max(minWidth, ((frameWidth / colspan) / defaultCharWidth) + style.getIndention());
     }
 
     /**
@@ -273,13 +272,12 @@ public class SheetUtil {
         AttributedString str = new AttributedString(String.valueOf(defaultChar));
         copyAttributes(defaultFont, str, 0, 1);
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        int defaultCharWidth = (int) layout.getAdvance();
-        return defaultCharWidth;
+        return (int) layout.getAdvance();
     }
 
     /**
      * Compute width of a single cell in a row
-     * Convenience method for {@link getCellWidth}
+     * Convenience method for {@link #getCellWidth}
      *
      * @param row the row that contains the cell of interest
      * @param column the column number of the cell whose width is to be calculated
@@ -334,7 +332,7 @@ public class SheetUtil {
     private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
         str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
         str.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints());
-        if (font.getBoldweight() == Font.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
+        if (font.getBold()) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
         if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
         if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
     }
@@ -348,6 +346,7 @@ public class SheetUtil {
      * @return true if the range contains the cell [rowIx, colIx]
      * @deprecated 3.15 beta 2. Use {@link CellRangeAddressBase#isInRange(int, int)}.
      */
+    @Deprecated
     public static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
         return cr.isInRange(rowIx,  colIx);
     }
