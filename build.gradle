@@ -14,38 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.util;
 
-import java.util.ArrayList;
-import java.util.List;
+// For help converting an Ant build to a Gradle build, see
+// https://docs.gradle.org/current/userguide/ant.html
 
-/**
- * POILogger which logs into an ArrayList, so that 
- *  tests can see what got logged
- */
-@Internal
-public class DummyPOILogger extends POILogger {
-	public List<String>logged = new ArrayList<String>(); 
-
-	public void reset() {
-		logged = new ArrayList<String>();
-	}
-	
-    @Override
-	public boolean check(int level) {
-		return true;
-	}
-
-    @Override
-	public void initialize(String cat) {}
-
-    @Override
-	protected void _log(int level, Object obj1) {
-		logged.add(level + " - " + obj1);
-	}
-
-    @Override
-	protected void _log(int level, Object obj1, Throwable exception) {
-		logged.add(level + " - " + obj1 + " - " + exception);
-	}
-}
+ant.importBuild 'build.xml'

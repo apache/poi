@@ -88,27 +88,26 @@ public class FileBackedDataSource extends DataSource {
          throw new IndexOutOfBoundsException("Position " + position + " past the end of the file");
       }
       
-      // Do we read or map (for read/write?
+      // Do we read or map (for read/write)?
       ByteBuffer dst;
-      int worked = -1;
       if (writable) {
           dst = channel.map(FileChannel.MapMode.READ_WRITE, position, length);
-          worked = 0;
-          // remember the buffer for cleanup if necessary
-          buffersToClean.add(dst);  
+
+          // remember this buffer for cleanup
+          buffersToClean.add(dst);
       } else {
-          // Read
+          // allocate the buffer on the heap if we cannot map the data in directly
           channel.position(position);
           dst = ByteBuffer.allocate(length);
-          worked = IOUtils.readFully(channel, dst);
+
+          // Read the contents and check that we could read some data
+          int worked = IOUtils.readFully(channel, dst);
+          if(worked == -1) {
+              throw new IndexOutOfBoundsException("Position " + position + " past the end of the file");
+          }
       }
 
-      // Check
-      if(worked == -1) {
-         throw new IndexOutOfBoundsException("Position " + position + " past the end of the file");
-      }
-
-      // Ready it for reading
+      // make it ready for reading
       dst.position(0);
 
       // All done

@@ -33,7 +33,6 @@ import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -123,7 +122,7 @@ public class ExtractorFactory {
          return OLE2ExtractorFactory.getPreferEventExtractor();
     }
 
-    public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+    public static POITextExtractor createExtractor(File f) throws IOException, OpenXML4JException, XmlException {
         NPOIFSFileSystem fs = null;
         try {
             fs = new NPOIFSFileSystem(f);
@@ -163,7 +162,7 @@ public class ExtractorFactory {
         }
      }
 
-    public static POITextExtractor createExtractor(InputStream inp) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+    public static POITextExtractor createExtractor(InputStream inp) throws IOException, OpenXML4JException, XmlException {
         // Figure out the kind of stream
         // If clearly doesn't do mark/reset, wrap up
         if (! inp.markSupported()) {

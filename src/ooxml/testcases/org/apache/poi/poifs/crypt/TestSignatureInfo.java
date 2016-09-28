@@ -55,6 +55,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.poifs.crypt.dsig.DigestInfo;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
@@ -99,7 +100,7 @@ public class TestSignatureInfo {
     public static void initBouncy() throws IOException {
         CryptoFunctions.registerBouncyCastle();
 
-        /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
+        // Set cal to now ... only set to fixed date for debugging ...
         cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         assertNotNull(cal);
 //        cal.set(2014, 7, 6, 21, 42, 12);
@@ -403,7 +404,9 @@ public class TestSignatureInfo {
         
         // verify
         Iterator<SignaturePart> spIter = si.getSignatureParts().iterator();
-        assertTrue(spIter.hasNext());
+        assertTrue("Had: " + si.getSignatureConfig().getOpcPackage().
+                        getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN),
+                spIter.hasNext());
         SignaturePart sp = spIter.next();
         boolean valid = sp.validate();
         assertTrue(valid);

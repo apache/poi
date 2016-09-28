@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.POITestCase.skipTest;
+import static org.apache.poi.POITestCase.testPassesNow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -295,7 +297,7 @@ public abstract class BaseTestSheetShiftRows {
         wb.close();
     }
 
-    @Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
+    //@Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
     public final void shiftWithMergedRegions_bug56454() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -328,7 +330,15 @@ public abstract class BaseTestSheetShiftRows {
         expectedMergedRegions.add(A4_B8);
         expectedMergedRegions.add(C4_D8);
         
-        assertEquals(expectedMergedRegions, sheet.getMergedRegions());
+        // This test is written as expected-to-fail and should be rewritten
+        // as expected-to-pass when the bug is fixed.
+        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
+        try {
+            assertEquals(expectedMergedRegions, sheet.getMergedRegions());
+            testPassesNow(56454);
+        } catch (AssertionError e) {
+            skipTest(e);
+        }
         wb.close();
     }
     
@@ -589,7 +599,7 @@ public abstract class BaseTestSheetShiftRows {
         read.close();
     }
     
-    @Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
+    //@Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
     public void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -614,9 +624,17 @@ public abstract class BaseTestSheetShiftRows {
         // C5:D7 will be shifted down with same size
         sheet.shiftRows(4, sheet.getLastRowNum(), 1);
 
-        assertEquals(2, sheet.getNumMergedRegions());
-        assertEquals(CellRangeAddress.valueOf("A4:B8"), sheet.getMergedRegion(0));
-        assertEquals(CellRangeAddress.valueOf("C5:D8"), sheet.getMergedRegion(1));
+        // This test is written as expected-to-fail and should be rewritten
+        // as expected-to-pass when the bug is fixed.
+        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
+        try {
+            assertEquals(2, sheet.getNumMergedRegions());
+            assertEquals(CellRangeAddress.valueOf("A4:B8"), sheet.getMergedRegion(0));
+            assertEquals(CellRangeAddress.valueOf("C5:D8"), sheet.getMergedRegion(1));
+            testPassesNow(56454);
+        } catch (AssertionError e) {
+            skipTest(e);
+        }
         
         wb.close();
     }

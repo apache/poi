@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.extractor;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -37,6 +38,7 @@ import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -1018,5 +1020,17 @@ public class TestExtractorFactory {
         } catch (IllegalStateException e) {
             // expected here
         }
+    }
+    
+    // This bug is currently open. This test will fail with "expected error not thrown" when the bug has been fixed.
+    // When this happens, change this from @Test(expected=...) to @Test
+    // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor
+    @Test(expected=AssertionError.class)
+    public void test45565() throws Exception {
+        POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("45565.xls"));
+        String text = extractor.getText();
+        assertContains(text, "testdoc");
+        assertContains(text, "test phrase");
+        extractor.close();
     }
 }

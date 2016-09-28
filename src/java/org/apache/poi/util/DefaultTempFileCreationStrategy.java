@@ -83,14 +83,21 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     }
     
     /**
-     * Attempt to create a directory
+     * Attempt to create a directory, including any necessary parent directories.
+     * Does nothing if directory already exists.
      *
-     * @param directory
-     * @throws IOException
+     * @param directory  the directory to create
+     * @throws IOException if unable to create temporary directory or it is not a directory
      */
     private void createTempDirectory(File directory) throws IOException {
-        if (!(directory.exists() || directory.mkdirs()) || !directory.isDirectory()) {
+        // create directory if it doesn't exist
+        final boolean dirExists = (directory.exists() || directory.mkdirs());
+        
+        if (!dirExists) {
             throw new IOException("Could not create temporary directory '" + directory + "'");
+        }
+        else if (!directory.isDirectory()) {
+            throw new IOException("Could not create temporary directory. '" + directory + "' exists but is not a directory.");
         }
     }
     

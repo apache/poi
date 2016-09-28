@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POITestCase.skipTest;
+import static org.apache.poi.POITestCase.testPassesNow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -35,7 +37,7 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Ignore;
+import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.junit.Test;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
@@ -377,7 +379,9 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.close();
     }
     
-    @Ignore("Bug 59733 - shiftRows() causes org.apache.xmlbeans.impl.values.XmlValueDisconnectedException")
+    // This test is written as expected-to-fail and should be rewritten
+    // as expected-to-pass when the bug is fixed.
+    //@Ignore("Bug 59733 - shiftRows() causes org.apache.xmlbeans.impl.values.XmlValueDisconnectedException")
     @Test
     public void bug59733() throws IOException {
         Workbook workbook = new XSSFWorkbook();
@@ -399,9 +403,50 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             at org.apache.poi.xssf.usermodel.XSSFRow.getRowNum(XSSFRow.java:363)
             at org.apache.poi.xssf.usermodel.TestXSSFSheetShiftRows.bug59733(TestXSSFSheetShiftRows.java:393)
          */
-        sheet.removeRow(sheet.getRow(0));
-        assertEquals(1, sheet.getRow(1).getRowNum());
+        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
+        try {
+            sheet.removeRow(sheet.getRow(0));
+            assertEquals(1, sheet.getRow(1).getRowNum());
+            testPassesNow(59733);
+        } catch (XmlValueDisconnectedException e) {
+            skipTest(e);
+        }
+        
 
         workbook.close();
+    }
+
+    private static String getCellFormula(Sheet sheet, String address) {
+        CellAddress cellAddress = new CellAddress(address);
+        Row row = sheet.getRow(cellAddress.getRow());
+        assertNotNull(row);
+        Cell cell = row.getCell(cellAddress.getColumn());
+        assertNotNull(cell);
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+        return cell.getCellFormula();
+    }
+
+    // This test is written as expected-to-fail and should be rewritten
+    // as expected-to-pass when the bug is fixed.
+    @Test
+    public void testSharedFormulas() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
+        assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D5"));
+        assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
+
+        sheet.shiftRows(3, sheet.getLastRowNum(), 1);
+        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
+        try {
+            assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
+            assertEquals("SUM(D2:D5)", getCellFormula(sheet, "D6"));
+            assertEquals("SUM(E2:E5)", getCellFormula(sheet, "E6"));
+            testPassesNow(59983);
+        } catch (AssertionError e) {
+            skipTest(e);
+        }
+        
+        wb.close();
     }
 }

@@ -64,7 +64,7 @@ public class SignatureConfig {
 
     private static final POILogger LOG = POILogFactory.getLogger(SignatureConfig.class);
     
-    public static interface SignatureConfigurable {
+    public interface SignatureConfigurable {
         void setSignatureConfig(SignatureConfig signatureConfig);        
     }
 

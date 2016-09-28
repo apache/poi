@@ -3091,4 +3091,41 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         assertEquals("09 Mar 2016", result);
     }
+    
+    // This bug is currently open. When this bug is fixed, it should not throw an AssertionError
+    @Test(expected=AssertionError.class)
+    public void test55076_collapseColumnGroups() throws Exception {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        
+        // this column collapsing bug only occurs when the grouped columns are different widths
+        sheet.setColumnWidth(1, 400);
+        sheet.setColumnWidth(2, 600);
+        sheet.setColumnWidth(3, 800);
+        
+        assertEquals(400, sheet.getColumnWidth(1));
+        assertEquals(600, sheet.getColumnWidth(2));
+        assertEquals(800, sheet.getColumnWidth(3));
+        
+        sheet.groupColumn(1, 3);
+        sheet.setColumnGroupCollapsed(1, true);
+        
+        assertEquals(0, sheet.getColumnOutlineLevel(0));
+        assertEquals(1, sheet.getColumnOutlineLevel(1));
+        assertEquals(1, sheet.getColumnOutlineLevel(2));
+        assertEquals(1, sheet.getColumnOutlineLevel(3));
+        assertEquals(0, sheet.getColumnOutlineLevel(4));
+        
+        // none of the columns should be hidden
+        // column group collapsing is a different concept
+        for (int c=0; c<5; c++) {
+            assertFalse("Column " + c, sheet.isColumnHidden(c));
+        }
+        
+        assertEquals(400, sheet.getColumnWidth(1));
+        assertEquals(600, sheet.getColumnWidth(2));
+        assertEquals(800, sheet.getColumnWidth(3));
+        
+        wb.close();
+    }
 }

@@ -147,7 +147,8 @@ public final class XSSFRowShifter extends RowShifter {
 
                 }
 
-                if (f.isSetRef()) { //Range of cells which the formula applies to.
+                //Range of cells which the formula applies to.
+                if (f.isSetRef()) {
                     String ref = f.getRef();
                     String shiftedRef = shiftFormula(row, ref, shifter);
                     if (shiftedRef != null) f.setRef(shiftedRef);

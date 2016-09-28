@@ -35,22 +35,22 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 public interface Workbook extends Closeable, Iterable<Sheet> {
 
     /** Extended windows meta file */
-    public static final int PICTURE_TYPE_EMF = 2;
+    int PICTURE_TYPE_EMF = 2;
 
     /** Windows Meta File */
-    public static final int PICTURE_TYPE_WMF = 3;
+    int PICTURE_TYPE_WMF = 3;
 
     /** Mac PICT format */
-    public static final int PICTURE_TYPE_PICT = 4;
+    int PICTURE_TYPE_PICT = 4;
 
     /** JPEG format */
-    public static final int PICTURE_TYPE_JPEG = 5;
+    int PICTURE_TYPE_JPEG = 5;
 
     /** PNG format */
-    public static final int PICTURE_TYPE_PNG = 6;
+    int PICTURE_TYPE_PNG = 6;
 
     /** Device independent bitmap */
-    public static final int PICTURE_TYPE_DIB = 7;
+    int PICTURE_TYPE_DIB = 7;
 
 
     /**
@@ -58,14 +58,14 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @see #setSheetHidden(int, int)
      */
-    public static final int SHEET_STATE_VISIBLE = 0;
+    int SHEET_STATE_VISIBLE = 0;
 
     /**
      * Indicates the book window is hidden, but can be shown by the user via the user interface.
      *
      * @see #setSheetHidden(int, int)
      */
-    public static final int SHEET_STATE_HIDDEN = 1;
+    int SHEET_STATE_HIDDEN = 1;
 
     /**
      * Indicates the sheet is hidden and cannot be shown in the user interface (UI).
@@ -77,7 +77,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @see #setSheetHidden(int, int)
      */
-    public static final int SHEET_STATE_VERY_HIDDEN = 2;
+    int SHEET_STATE_VERY_HIDDEN = 2;
 
     /**
      * Convenience method to get the active sheet.  The active sheet is is the sheet
@@ -169,7 +169,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     int getSheetIndex(Sheet sheet);
 
     /**
-     * Sreate an Sheet for this Workbook, adds it to the sheets and returns
+     * Create a Sheet for this Workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
      * @return Sheet representing the new sheet.
@@ -217,7 +217,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
      *      for a safe way to create valid names
      * </p>
-     * @param sheetname  sheetname to set for the sheet.
+     * @param sheetname The name to set for the sheet.
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
@@ -253,6 +253,8 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @param index of the sheet number (0-based physical & logical)
      * @return Sheet at the provided index
+     * @throws IllegalArgumentException if the index is out of range (index
+     *            &lt; 0 || index &gt;= getNumberOfSheets()).
      */
     Sheet getSheetAt(int index);
 
@@ -617,7 +619,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * workbook values when the workbook is opened
      * @since 3.8
      */
-    public void setForceFormulaRecalculation(boolean value);
+    void setForceFormulaRecalculation(boolean value);
 
     /**
      * Whether Excel will be asked to recalculate all formulas when the  workbook is opened.
@@ -632,6 +634,5 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return SpreadsheetVersion enum
      * @since 3.14 beta 2
      */
-    public SpreadsheetVersion getSpreadsheetVersion();
-
+    SpreadsheetVersion getSpreadsheetVersion();
 }

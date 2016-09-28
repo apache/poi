@@ -1581,7 +1581,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         System.out.println("Array formulas currently unsupported");
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
         /*
-        assertEquals("[Array Formula] N7 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N7 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Array Formula] N7 cell formula", "{SUM(H7:J7*{1,2,3})}", cell.getCellFormula());
         */
         
@@ -1792,12 +1792,12 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         // System.out.println("Array formulas currently unsupported");
     /*
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
-        assertEquals("[Array Formula] N10 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N10 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Array Formula] N10 cell formula", "{SUM(H10:J10*{1,2,3})}", cell.getCellFormula());
         
         cell = CellUtil.getCell(destRow2, col);
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula() 
-        assertEquals("[Array Formula] N11 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N11 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Array Formula] N11 cell formula", "{SUM(H11:J11*{1,2,3})}", cell.getCellFormula());
      */
         
@@ -2019,5 +2019,22 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 			cell.setCellComment(comment);
 		}
 
+    }
+    
+    // bug 59687:  XSSFSheet.RemoveRow doesn't handle row gaps properly when removing row comments
+    @Test
+    public void testRemoveRowWithCommentAndGapAbove() throws IOException {
+        final Workbook wb = _testDataProvider.openSampleWorkbook("59687.xlsx");
+        final Sheet sheet = wb.getSheetAt(0);
+
+        // comment exists
+        CellAddress commentCellAddress = new CellAddress("A4");
+        assertNotNull(sheet.getCellComment(commentCellAddress));
+        
+        assertEquals("Wrong starting # of comments",  1, sheet.getCellComments().size());
+        
+        sheet.removeRow(sheet.getRow(commentCellAddress.getRow()));
+        
+        assertEquals("There should not be any comments left!",  0, sheet.getCellComments().size());
     }
 }
