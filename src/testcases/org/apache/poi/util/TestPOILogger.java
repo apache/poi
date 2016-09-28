@@ -65,13 +65,13 @@ public final class TestPOILogger extends POILogger {
     }
 
     @Override
-    public void log(int level, Object obj1) {
+    protected void _log(int level, Object obj1) {
         lastLog = (obj1 == null) ? "" : obj1.toString();
         lastEx = null;
     }
 
     @Override
-    public void log(int level, Object obj1, Throwable exception) {
+    protected void _log(int level, Object obj1, Throwable exception) {
         lastLog = (obj1 == null) ? "" : obj1.toString();
         lastEx = exception;
     }

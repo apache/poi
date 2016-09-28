@@ -54,7 +54,7 @@ public abstract class POILogger {
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.  This is converted to a string.
      */
-    abstract protected void log(int level, Object obj1);
+    abstract protected void _log(int level, Object obj1);
 
     /**
      * Log a message
@@ -63,11 +63,20 @@ public abstract class POILogger {
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
-    abstract protected void log(int level, Object obj1, final Throwable exception);
+    abstract protected void _log(int level, Object obj1, final Throwable exception);
 
 
     /**
      * Check if a logger is enabled to log at the specified level
+     * This allows code to avoid building strings or evaluating functions in
+     * the arguments to log.
+     * 
+     * An example:
+     * <code><pre>
+     * if (logger.check(POILogger.INFO)) {
+     *     logger.log(POILogger.INFO, "Avoid concatenating " + " strings and evaluating " + functions());
+     * }
+     * </pre></code>
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      */
@@ -98,9 +107,9 @@ public abstract class POILogger {
         // somehow this ambiguity works and doesn't lead to a loop,
         // but it's confusing ...
         if (lastEx == null) {
-            log(level, msg);
+            _log(level, msg);
         } else {
-            log(level, msg, lastEx);
+            _log(level, msg, lastEx);
         }
     }
 }

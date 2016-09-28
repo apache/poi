@@ -319,6 +319,7 @@ public class ColumnHelper {
     }
 
     public int getIndexOfColumn(CTCols cols, CTCol searchCol) {
+        if (cols == null || searchCol == null) return -1;
         int i = 0;
         for (CTCol col : cols.getColArray()) {
             if (col.getMin() == searchCol.getMin() && col.getMax() == searchCol.getMax()) {

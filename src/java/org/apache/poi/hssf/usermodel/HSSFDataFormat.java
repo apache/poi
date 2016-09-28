@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -90,7 +89,7 @@ public final class HSSFDataFormat implements DataFormat {
 	public short getFormat(String pFormat) {
 	   // Normalise the format string
 		String format;
-		if (pFormat.toUpperCase(Locale.ROOT).equals("TEXT")) {
+		if (pFormat.equalsIgnoreCase("TEXT")) {
 			format = "@";
 		} else {
 			format = pFormat;

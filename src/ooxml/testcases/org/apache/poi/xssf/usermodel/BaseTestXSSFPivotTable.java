@@ -16,16 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -38,97 +35,27 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
 
-public class TestXSSFPivotTable {
+public abstract class BaseTestXSSFPivotTable {
     private static final XSSFITestDataProvider _testDataProvider = XSSFITestDataProvider.instance;
-    private XSSFWorkbook wb;
-    private XSSFPivotTable pivotTable;
-    private XSSFPivotTable offsetPivotTable;
-    private Cell offsetOuterCell;
+    protected XSSFWorkbook wb;
+    protected XSSFPivotTable pivotTable;
+    protected XSSFPivotTable offsetPivotTable;
+    protected Cell offsetOuterCell;
     
+    /**
+     * required to set up the test pivot tables and cell reference, either by name or reference.
+     * @see junit.framework.TestCase#setUp()
+     */
     @Before
-    public void setUp(){
-        wb = new XSSFWorkbook();
-        XSSFSheet sheet =  wb.createSheet();
-
-        Row row1 = sheet.createRow(0);
-        // Create a cell and put a value in it.
-        Cell cell = row1.createCell(0);
-        cell.setCellValue("Names");
-        Cell cell2 = row1.createCell(1);
-        cell2.setCellValue("#");
-        Cell cell7 = row1.createCell(2);
-        cell7.setCellValue("Data");
-        Cell cell10 = row1.createCell(3);
-        cell10.setCellValue("Value");
-
-        Row row2 = sheet.createRow(1);
-        Cell cell3 = row2.createCell(0);
-        cell3.setCellValue("Jan");
-        Cell cell4 = row2.createCell(1);
-        cell4.setCellValue(10);
-        Cell cell8 = row2.createCell(2);
-        cell8.setCellValue("Apa");
-        Cell cell11 = row1.createCell(3);
-        cell11.setCellValue(11.11);
-
-        Row row3 = sheet.createRow(2);
-        Cell cell5 = row3.createCell(0);
-        cell5.setCellValue("Ben");
-        Cell cell6 = row3.createCell(1);
-        cell6.setCellValue(9);
-        Cell cell9 = row3.createCell(2);
-        cell9.setCellValue("Bepa");
-        Cell cell12 = row1.createCell(3);
-        cell12.setCellValue(12.12);
-
-        AreaReference source = new AreaReference("A1:C2", _testDataProvider.getSpreadsheetVersion());
-        pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
-        
-        XSSFSheet offsetSheet = wb.createSheet();
-        
-        Row tableRow_1 = offsetSheet.createRow(1);
-        offsetOuterCell = tableRow_1.createCell(1);
-        offsetOuterCell.setCellValue(-1);
-        Cell tableCell_1_1 = tableRow_1.createCell(2);
-        tableCell_1_1.setCellValue("Row #");
-        Cell tableCell_1_2 = tableRow_1.createCell(3);
-        tableCell_1_2.setCellValue("Exponent");
-        Cell tableCell_1_3 = tableRow_1.createCell(4);
-        tableCell_1_3.setCellValue("10^Exponent");
-        
-        Row tableRow_2 = offsetSheet.createRow(2);
-        Cell tableCell_2_1 = tableRow_2.createCell(2);
-        tableCell_2_1.setCellValue(0);
-        Cell tableCell_2_2 = tableRow_2.createCell(3);
-        tableCell_2_2.setCellValue(0);
-        Cell tableCell_2_3 = tableRow_2.createCell(4);
-        tableCell_2_3.setCellValue(1);
-        
-        Row tableRow_3= offsetSheet.createRow(3);
-        Cell tableCell_3_1 = tableRow_3.createCell(2);
-        tableCell_3_1.setCellValue(1);
-        Cell tableCell_3_2 = tableRow_3.createCell(3);
-        tableCell_3_2.setCellValue(1);
-        Cell tableCell_3_3 = tableRow_3.createCell(4);
-        tableCell_3_3.setCellValue(10);
-        
-        Row tableRow_4 = offsetSheet.createRow(4);
-        Cell tableCell_4_1 = tableRow_4.createCell(2);
-        tableCell_4_1.setCellValue(2);
-        Cell tableCell_4_2 = tableRow_4.createCell(3);
-        tableCell_4_2.setCellValue(2);
-        Cell tableCell_4_3 = tableRow_4.createCell(4);
-        tableCell_4_3.setCellValue(100);
-        
-        AreaReference offsetSource = new AreaReference(new CellReference("C2"), new CellReference("E4"));
-        offsetPivotTable = offsetSheet.createPivotTable(offsetSource, new CellReference("C6"));
-    }
+    public abstract void setUp();
     
     @After
     public void tearDown() throws IOException {
-        XSSFWorkbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
-        wb.close();
-        wb2.close();
+        if (wb != null) {
+            XSSFWorkbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
+            wb.close();
+            wb2.close();
+        }
     }
 
     /**
@@ -155,6 +82,7 @@ public class TestXSSFPivotTable {
         assertEquals(0, (int)pivotTable.getRowLabelColumns().get(0));
         assertEquals(1, (int)pivotTable.getRowLabelColumns().get(1));
     }
+
     /**
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
@@ -314,6 +242,7 @@ public class TestXSSFPivotTable {
      /**
      * Verify that it's possible to create a new filter
      */
+    @Test
     public void testAddReportFilter() {
         int columnIndex = 0;
 

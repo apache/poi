@@ -3,7 +3,7 @@
 	<groupId>org.apache.poi</groupId>
 	<artifactId>poi-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.16-beta1-SNAPSHOT</version>
+	<version>3.15-beta4-SNAPSHOT</version>
 	<name>Apache POI - the Java API for Microsoft Documents</name>
 	<description>Maven build of Apache POI for Sonar checks</description>
 	<url>http://poi.apache.org/</url>

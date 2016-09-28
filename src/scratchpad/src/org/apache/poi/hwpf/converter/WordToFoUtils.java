@@ -154,37 +154,37 @@ public class WordToFoUtils extends AbstractWordUtils
         {
             block.setAttribute(
                     "text-indent",
-                    String.valueOf( paragraph.getFirstLineIndent()
-                            / TWIPS_PER_PT )
+                    paragraph.getFirstLineIndent()
+                            / TWIPS_PER_PT
                             + "pt" );
         }
         if ( paragraph.getIndentFromLeft() != 0 )
         {
             block.setAttribute(
                     "start-indent",
-                    String.valueOf( paragraph.getIndentFromLeft()
-                            / TWIPS_PER_PT )
+                    paragraph.getIndentFromLeft()
+                            / TWIPS_PER_PT
                             + "pt" );
         }
         if ( paragraph.getIndentFromRight() != 0 )
         {
             block.setAttribute(
                     "end-indent",
-                    String.valueOf( paragraph.getIndentFromRight()
-                            / TWIPS_PER_PT )
+                    paragraph.getIndentFromRight()
+                            / TWIPS_PER_PT
                             + "pt" );
         }
         if ( paragraph.getSpacingBefore() != 0 )
         {
             block.setAttribute(
                     "space-before",
-                    String.valueOf( paragraph.getSpacingBefore() / TWIPS_PER_PT )
+                    paragraph.getSpacingBefore() / TWIPS_PER_PT
                             + "pt" );
         }
         if ( paragraph.getSpacingAfter() != 0 )
         {
             block.setAttribute( "space-after",
-                    String.valueOf( paragraph.getSpacingAfter() / TWIPS_PER_PT )
+                    paragraph.getSpacingAfter() / TWIPS_PER_PT
                             + "pt" );
         }
     }

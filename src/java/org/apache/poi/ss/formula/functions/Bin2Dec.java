@@ -84,7 +84,7 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
                 //Add 1 to obtained number
                 sum++;
     
-                value = "-" + String.valueOf(sum);
+                value = "-" + sum;
             }
         } catch (NumberFormatException e) {
             return ErrorEval.NUM_ERROR;

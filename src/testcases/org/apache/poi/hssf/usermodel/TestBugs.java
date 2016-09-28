@@ -1885,12 +1885,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
        // TODO - Fix these so they work...
        /*row = s.getRow(4);
-       assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
+       assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
        assertEquals("'[$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2", row.getCell(1).getCellFormula());
        assertEquals(123.0, row.getCell(1).getNumericCellValue(), 0);
 
        row = s.getRow(5);
-       assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
+       assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
        assertEquals("'[$http://example.com/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
        assertEquals(234.0, row.getCell(1).getNumericCellValue(), 0);*/
        
