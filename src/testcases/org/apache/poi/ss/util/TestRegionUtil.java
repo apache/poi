@@ -17,8 +17,14 @@
 
 package org.apache.poi.ss.util;
 
+import static org.junit.Assert.*;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.After;
@@ -32,7 +38,10 @@ import java.io.IOException;
  */
 public final class TestRegionUtil {
     private static final CellRangeAddress A1C3 = new CellRangeAddress(0, 2, 0, 2);
-    private static short THIN = BorderStyle.THIN.getCode();
+    private static final BorderStyle NONE = BorderStyle.NONE;
+    private static final BorderStyle THIN = BorderStyle.THIN;
+    private static final int RED = IndexedColors.RED.getIndex();
+    private static final int DEFAULT_COLOR = 0;
     private Workbook wb;
     private Sheet sheet;
     
@@ -47,42 +56,108 @@ public final class TestRegionUtil {
         wb.close();
     }
     
-    // TODO: fill this in with meaningful unit tests
-    // Right now this just makes sure that RegionUtil is compiled into poi schemas
-    // and that the code doesn't run in an infinite loop.
-    // Don't spend too much time getting this unit test to work as this class
-    // will likely be replaced by CellStyleTemplate soon.
+    private CellStyle getCellStyle(int rowIndex, int columnIndex) {
+        Row row = sheet.getRow(rowIndex);
+        if (row == null) row = sheet.createRow(rowIndex);
+        Cell cell = row.getCell(columnIndex);
+        if (cell == null) cell = row.createCell(columnIndex);
+        return cell.getCellStyle();
+    }
+    
     @Test
     public void setBorderTop() {
+        assertEquals(NONE, getCellStyle(0, 0).getBorderTopEnum());
+        assertEquals(NONE, getCellStyle(0, 1).getBorderTopEnum());
+        assertEquals(NONE, getCellStyle(0, 2).getBorderTopEnum());
         RegionUtil.setBorderTop(THIN, A1C3, sheet);
+        assertEquals(THIN, getCellStyle(0, 0).getBorderTopEnum());
+        assertEquals(THIN, getCellStyle(0, 1).getBorderTopEnum());
+        assertEquals(THIN, getCellStyle(0, 2).getBorderTopEnum());
     }
     @Test
     public void setBorderBottom() {
+        assertEquals(NONE, getCellStyle(2, 0).getBorderBottomEnum());
+        assertEquals(NONE, getCellStyle(2, 1).getBorderBottomEnum());
+        assertEquals(NONE, getCellStyle(2, 2).getBorderBottomEnum());
         RegionUtil.setBorderBottom(THIN, A1C3, sheet);
+        assertEquals(THIN, getCellStyle(2, 0).getBorderBottomEnum());
+        assertEquals(THIN, getCellStyle(2, 1).getBorderBottomEnum());
+        assertEquals(THIN, getCellStyle(2, 2).getBorderBottomEnum());
     }
     @Test
     public void setBorderRight() {
+        assertEquals(NONE, getCellStyle(0, 2).getBorderRightEnum());
+        assertEquals(NONE, getCellStyle(1, 2).getBorderRightEnum());
+        assertEquals(NONE, getCellStyle(2, 2).getBorderRightEnum());
         RegionUtil.setBorderRight(THIN, A1C3, sheet);
+        assertEquals(THIN, getCellStyle(0, 2).getBorderRightEnum());
+        assertEquals(THIN, getCellStyle(1, 2).getBorderRightEnum());
+        assertEquals(THIN, getCellStyle(2, 2).getBorderRightEnum());
     }
     @Test
     public void setBorderLeft() {
+        assertEquals(NONE, getCellStyle(0, 0).getBorderLeftEnum());
+        assertEquals(NONE, getCellStyle(1, 0).getBorderLeftEnum());
+        assertEquals(NONE, getCellStyle(2, 0).getBorderLeftEnum());
         RegionUtil.setBorderLeft(THIN, A1C3, sheet);
+        assertEquals(THIN, getCellStyle(0, 0).getBorderLeftEnum());
+        assertEquals(THIN, getCellStyle(1, 0).getBorderLeftEnum());
+        assertEquals(THIN, getCellStyle(2, 0).getBorderLeftEnum());
     }
     
     @Test
     public void setTopBorderColor() {
-        RegionUtil.setTopBorderColor(THIN, A1C3, sheet);
+        assertEquals(DEFAULT_COLOR, getCellStyle(0, 0).getTopBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(0, 1).getTopBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(0, 2).getTopBorderColor());
+        RegionUtil.setTopBorderColor(RED, A1C3, sheet);
+        assertEquals(RED, getCellStyle(0, 0).getTopBorderColor());
+        assertEquals(RED, getCellStyle(0, 1).getTopBorderColor());
+        assertEquals(RED, getCellStyle(0, 2).getTopBorderColor());
     }
     @Test
     public void setBottomBorderColor() {
-        RegionUtil.setBottomBorderColor(THIN, A1C3, sheet);
+        assertEquals(DEFAULT_COLOR, getCellStyle(2, 0).getBottomBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(2, 1).getBottomBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(2, 2).getBottomBorderColor());
+        RegionUtil.setBottomBorderColor(RED, A1C3, sheet);
+        assertEquals(RED, getCellStyle(2, 0).getBottomBorderColor());
+        assertEquals(RED, getCellStyle(2, 1).getBottomBorderColor());
+        assertEquals(RED, getCellStyle(2, 2).getBottomBorderColor());
     }
     @Test
     public void setRightBorderColor() {
-        RegionUtil.setRightBorderColor(THIN, A1C3, sheet);
+        assertEquals(DEFAULT_COLOR, getCellStyle(0, 2).getRightBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(1, 2).getRightBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(2, 2).getRightBorderColor());
+        RegionUtil.setRightBorderColor(RED, A1C3, sheet);
+        assertEquals(RED, getCellStyle(0, 2).getRightBorderColor());
+        assertEquals(RED, getCellStyle(1, 2).getRightBorderColor());
+        assertEquals(RED, getCellStyle(2, 2).getRightBorderColor());
     }
     @Test
     public void setLeftBorderColor() {
-        RegionUtil.setLeftBorderColor(THIN, A1C3, sheet);
+        assertEquals(DEFAULT_COLOR, getCellStyle(0, 0).getLeftBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(1, 0).getLeftBorderColor());
+        assertEquals(DEFAULT_COLOR, getCellStyle(2, 0).getLeftBorderColor());
+        RegionUtil.setLeftBorderColor(RED, A1C3, sheet);
+        assertEquals(RED, getCellStyle(0, 0).getLeftBorderColor());
+        assertEquals(RED, getCellStyle(1, 0).getLeftBorderColor());
+        assertEquals(RED, getCellStyle(2, 0).getLeftBorderColor());
+    }
+    
+    @Test
+    public void bordersCanBeAddedToNonExistantCells() {
+        RegionUtil.setBorderTop(THIN, A1C3, sheet);
+        assertEquals(THIN, getCellStyle(0, 0).getBorderTopEnum());
+        assertEquals(THIN, getCellStyle(0, 1).getBorderTopEnum());
+        assertEquals(THIN, getCellStyle(0, 2).getBorderTopEnum());
+    }
+    @Test
+    public void borderColorsCanBeAddedToNonExistantCells() {
+        RegionUtil.setTopBorderColor(RED, A1C3, sheet);
+        assertEquals(RED, getCellStyle(0, 0).getTopBorderColor());
+        assertEquals(RED, getCellStyle(0, 1).getTopBorderColor());
+        assertEquals(RED, getCellStyle(0, 2).getTopBorderColor());
     }
 }
