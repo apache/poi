@@ -39,14 +39,17 @@ public final class RegionUtil {
     private static final class CellPropertySetter {
 
         private final String _propertyName;
-        private final Short _propertyValue;
+        private final Object _propertyValue;
 
 
         public CellPropertySetter(String propertyName, int value) {
             _propertyName = propertyName;
             _propertyValue = Short.valueOf((short) value);
         }
-
+        public CellPropertySetter(String propertyName, BorderStyle value) {
+            _propertyName = propertyName;
+            _propertyValue = value;
+        }
 
         public void setProperty(Row row, int column) {
             // create cell if it does not exist
@@ -100,7 +103,14 @@ public final class RegionUtil {
      * @since POI 3.16 beta 1
      */
     public static void setBorderLeft(BorderStyle border, CellRangeAddress region, Sheet sheet) {
-        setBorderLeft(border.getCode(), region, sheet);
+        int rowStart = region.getFirstRow();
+        int rowEnd = region.getLastRow();
+        int column = region.getFirstColumn();
+
+        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_LEFT, border);
+        for (int i = rowStart; i <= rowEnd; i++) {
+            cps.setProperty(CellUtil.getRow(i, sheet), column);
+        }
     }
 
     /**
@@ -182,7 +192,14 @@ public final class RegionUtil {
      * @since POI 3.16 beta 1
      */
     public static void setBorderRight(BorderStyle border, CellRangeAddress region, Sheet sheet) {
-        setBorderRight(border.getCode(), region, sheet);
+        int rowStart = region.getFirstRow();
+        int rowEnd = region.getLastRow();
+        int column = region.getLastColumn();
+
+        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_RIGHT, border);
+        for (int i = rowStart; i <= rowEnd; i++) {
+            cps.setProperty(CellUtil.getRow(i, sheet), column);
+        }
     }
 
     /**
@@ -264,7 +281,14 @@ public final class RegionUtil {
      * @since POI 3.16 beta 1
      */
     public static void setBorderBottom(BorderStyle border, CellRangeAddress region, Sheet sheet) {
-        setBorderBottom(border.getCode(), region, sheet);
+        int colStart = region.getFirstColumn();
+        int colEnd = region.getLastColumn();
+        int rowIndex = region.getLastRow();
+        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_BOTTOM, border);
+        Row row = CellUtil.getRow(rowIndex, sheet);
+        for (int i = colStart; i <= colEnd; i++) {
+            cps.setProperty(row, i);
+        }
     }
 
     /**
@@ -346,7 +370,14 @@ public final class RegionUtil {
      * @since POI 3.16 beta 1
      */
     public static void setBorderTop(BorderStyle border, CellRangeAddress region, Sheet sheet) {
-       setBorderTop(border.getCode(), region, sheet);
+        int colStart = region.getFirstColumn();
+        int colEnd = region.getLastColumn();
+        int rowIndex = region.getFirstRow();
+        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_TOP, border);
+        Row row = CellUtil.getRow(rowIndex, sheet);
+        for (int i = colStart; i <= colEnd; i++) {
+            cps.setProperty(row, i);
+        }
     }
 
     /**
