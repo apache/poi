@@ -201,7 +201,6 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
      * Helper function for overriding the cipher invocation, i.e. XOR doesn't use a cipher
      * and uses it's own implementation
      *
-     * @return
      * @throws BadPaddingException 
      * @throws IllegalBlockSizeException 
      * @throws ShortBufferException 
