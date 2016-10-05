@@ -39,12 +39,12 @@ import org.apache.poi.ss.usermodel.Workbook;
  * draw all the borders for a single sheet. That template can be applied to any
  * sheet in any workbook.
  * 
- * This class requires the full spreadsheet to be in memory so {@link SWorkbook}
- * Spreadsheets are not supported. The same {@link PropertyTemplate} can,
- * however, be applied to both
- * {@link HSSFWorkbook}, and XSSFWorkbook objects if
- * necessary. Portions of the border that fall outside the max range of the
- * {@link HSSFWorkbook} sheet are ignored.
+ * This class requires the full spreadsheet to be in memory, so 
+ * {@link org.apache.poi.xssf.streaming.SXSSFWorkbook} Spreadsheets are not
+ * supported. The same {@link PropertyTemplate} can, however, be applied to both
+ * {@link HSSFWorkbook} and {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}
+ * objects if necessary. Portions of the border that fall outside the max range
+ * of the {@link Workbook} sheet are ignored.
  * </p>
  * 
  * <p>
@@ -954,8 +954,8 @@ public final class PropertyTemplate {
      * Converts a Short object to a short value or 0 if the object is not a
      * Short
      *
-     * @param value
-     * @return
+     * @param value Potentially short value to convert
+     * @return short value, or 0 if not a short
      */
     private static short getShort(Object value) {
         if (value instanceof Short) {
