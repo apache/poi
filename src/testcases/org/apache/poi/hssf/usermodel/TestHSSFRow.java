@@ -17,11 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -30,6 +25,8 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Test HSSFRow is okay.
@@ -42,10 +39,12 @@ public final class TestHSSFRow extends BaseTestRow {
         super(HSSFITestDataProvider.instance);
     }
 
+    @Test
     public void testRowBounds() throws IOException {
         baseTestRowBounds(SpreadsheetVersion.EXCEL97.getLastRowIndex());
     }
 
+    @Test
     public void testCellBounds() throws IOException {
         baseTestCellBounds(SpreadsheetVersion.EXCEL97.getLastColumnIndex());
     }
@@ -136,16 +135,28 @@ public final class TestHSSFRow extends BaseTestRow {
         HSSFRow row = sheet.createRow(0);
 
         assertEquals(row.getHeight(), sheet.getDefaultRowHeight());
-        assertEquals(row.getRowRecord().getBadFontHeight(), false);
+        assertFalse(row.getRowRecord().getBadFontHeight());
 
         row.setHeight((short) 123);
-        assertEquals(row.getHeight(), 123);
-        assertEquals(row.getRowRecord().getBadFontHeight(), true);
+        assertEquals(123, row.getHeight());
+        assertTrue(row.getRowRecord().getBadFontHeight());
 
         row.setHeight((short) -1);
         assertEquals(row.getHeight(), sheet.getDefaultRowHeight());
-        assertEquals(row.getRowRecord().getBadFontHeight(), false);
-        
+        assertFalse(row.getRowRecord().getBadFontHeight());
+
+        row.setHeight((short) 123);
+        assertEquals(123, row.getHeight());
+        assertTrue(row.getRowRecord().getBadFontHeight());
+
+        row.setHeightInPoints(-1);
+        assertEquals(row.getHeight(), sheet.getDefaultRowHeight());
+        assertFalse(row.getRowRecord().getBadFontHeight());
+
+        row.setHeightInPoints(432);
+        assertEquals(432*20, row.getHeight());
+        assertTrue(row.getRowRecord().getBadFontHeight());
+
         workbook.close();
     }
 }
