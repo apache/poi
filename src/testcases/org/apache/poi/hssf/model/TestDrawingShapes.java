@@ -27,14 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherBoolProperty;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
@@ -160,6 +153,9 @@ public class TestDrawingShapes {
         HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 50, 50, (short) 2, 2, (short) 4, 4);
         anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
         assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
+        //noinspection deprecation
+        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE.value);
+        assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
 
         HSSFSimpleShape rectangle = drawing.createSimpleShape(anchor);
         rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
@@ -175,8 +171,13 @@ public class TestDrawingShapes {
         rectangle.setWrapText(HSSFSimpleShape.WRAP_NONE);
         rectangle.setString(new HSSFRichTextString("teeeest"));
         assertEquals(rectangle.getLineStyleColor(), 1111);
-        assertEquals(((EscherSimpleProperty)((EscherOptRecord)HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherOptRecord.RECORD_ID))
-                .lookup(EscherProperties.TEXT__TEXTID)).getPropertyValue(), "teeeest".hashCode());
+        EscherContainerRecord escherContainer = HSSFTestHelper.getEscherContainer(rectangle);
+        assertNotNull(escherContainer);
+        EscherRecord childById = escherContainer.getChildById(EscherOptRecord.RECORD_ID);
+        assertNotNull(childById);
+        EscherProperty lookup = ((EscherOptRecord) childById).lookup(EscherProperties.TEXT__TEXTID);
+        assertNotNull(lookup);
+        assertEquals(((EscherSimpleProperty) lookup).getPropertyValue(), "teeeest".hashCode());
         assertEquals(rectangle.isNoFill(), true);
         assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_NONE);
         assertEquals(rectangle.getString().getString(), "teeeest");
