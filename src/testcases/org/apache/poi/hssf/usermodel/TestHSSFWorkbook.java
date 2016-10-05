@@ -1222,7 +1222,10 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         try {
             wb.write();
             fail("Shouldn't work for new files");
-        } catch (IllegalStateException e) {}
+        } catch (IllegalStateException e) {
+            // expected here
+        }
+        wb.close();
         
         // Can't work for InputStream opened files
         wb = new HSSFWorkbook(
@@ -1230,7 +1233,10 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         try {
             wb.write();
             fail("Shouldn't work for InputStream");
-        } catch (IllegalStateException e) {}
+        } catch (IllegalStateException e) {
+            // expected here
+        }
+        wb.close();
         
         // Can't work for OPOIFS
         OPOIFSFileSystem ofs = new OPOIFSFileSystem(
@@ -1239,7 +1245,10 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         try {
             wb.write();
             fail("Shouldn't work for OPOIFSFileSystem");
-        } catch (IllegalStateException e) {}
+        } catch (IllegalStateException e) {
+            // expected here
+        }
+        wb.close();
         
         // Can't work for Read-Only files
         NPOIFSFileSystem fs = new NPOIFSFileSystem(
@@ -1248,17 +1257,27 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         try {
             wb.write();
             fail("Shouldn't work for Read Only");
-        } catch (IllegalStateException e) {}
+        } catch (IllegalStateException e) {
+            // expected here
+        }
+        wb.close();
     }
     
     @Test
     public void inPlaceWrite() throws Exception {
         // Setup as a copy of a known-good file
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
-        IOUtils.copy(
-                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"),
-                new FileOutputStream(file)
-        );
+        InputStream inputStream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls");
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            try {
+                IOUtils.copy(inputStream, outputStream);
+            } finally {
+                outputStream.close();
+            }
+        } finally {
+            inputStream.close();
+        }
         
         // Open from the temp file in read-write mode
         HSSFWorkbook wb = new HSSFWorkbook(new NPOIFSFileSystem(file, false));
@@ -1276,6 +1295,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
         assertEquals(1, wb.getNumberOfSheets());
         assertEquals("Changed!", wb.getSheetAt(0).getRow(0).getCell(0).toString());
+
+        wb.close();
     }
     
     @Test
