@@ -17,11 +17,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -90,10 +86,17 @@ public final class TestHWPFWrite extends HWPFTestCase {
    public void testInPlaceWrite() throws Exception {
        // Setup as a copy of a known-good file
        final File file = TempFile.createTempFile("TestDocument", ".doc");
-       IOUtils.copy(
-               POIDataSamples.getDocumentInstance().openResourceAsStream("SampleDoc.doc"),
-               new FileOutputStream(file)
-       );
+       InputStream inputStream = POIDataSamples.getDocumentInstance().openResourceAsStream("SampleDoc.doc");
+       try {
+           FileOutputStream outputStream = new FileOutputStream(file);
+           try {
+               IOUtils.copy(inputStream, outputStream);
+           } finally {
+               outputStream.close();
+           }
+       } finally {
+           inputStream.close();
+       }
 
        // Open from the temp file in read-write mode
        HWPFDocument doc = new HWPFDocument(new NPOIFSFileSystem(file, false).getRoot());
@@ -108,7 +111,9 @@ public final class TestHWPFWrite extends HWPFTestCase {
        doc.close();
 
        doc = new HWPFDocument(new NPOIFSFileSystem(file).getRoot());
+       r = doc.getRange();
        assertEquals("X XX a test document\r", r.getParagraph(0).text());
+       doc.close();
    }
 
    @SuppressWarnings("resource")
@@ -121,7 +126,10 @@ public final class TestHWPFWrite extends HWPFTestCase {
        try {
            doc.write();
            fail("Shouldn't work for InputStream");
-       } catch (IllegalStateException e) {}
+       } catch (IllegalStateException e) {
+           // expected here
+       }
+       doc.close();
 
        // Can't work for OPOIFS
        OPOIFSFileSystem ofs = new OPOIFSFileSystem(
@@ -130,7 +138,10 @@ public final class TestHWPFWrite extends HWPFTestCase {
        try {
            doc.write();
            fail("Shouldn't work for OPOIFSFileSystem");
-       } catch (IllegalStateException e) {}
+       } catch (IllegalStateException e) {
+           // expected here
+       }
+       doc.close();
 
        // Can't work for Read-Only files
        NPOIFSFileSystem fs = new NPOIFSFileSystem(
@@ -139,6 +150,9 @@ public final class TestHWPFWrite extends HWPFTestCase {
        try {
            doc.write();
            fail("Shouldn't work for Read Only");
-       } catch (IllegalStateException e) {}
+       } catch (IllegalStateException e) {
+           // expected here
+       }
+       doc.close();
    }
 }

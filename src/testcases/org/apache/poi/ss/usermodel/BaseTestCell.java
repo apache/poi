@@ -1017,7 +1017,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void primitiveToEnumReplacementDoesNotBreakBackwardsCompatibility() {
+    public void primitiveToEnumReplacementDoesNotBreakBackwardsCompatibility() throws IOException {
         // bug 59836
         // until we have changes POI from working on primitives (int) to enums,
         // we should make sure we minimize backwards compatibility breakages.
@@ -1046,5 +1046,7 @@ public abstract class BaseTestCell {
             default:
                 fail("unexpected cell type: " + cell.getCellType());
         }
+
+        wb.close();
     }
 }

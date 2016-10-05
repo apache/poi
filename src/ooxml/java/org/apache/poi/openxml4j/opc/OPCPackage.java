@@ -54,6 +54,7 @@ import org.apache.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnma
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -221,18 +222,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            // pack.originalPackagePath = file.getAbsolutePath();
            return pack;
        } catch (InvalidFormatException e) {
-           try {
-               pack.close();
-           } catch (IOException e1) {
-               throw new IllegalStateException(e);
-           }
+		   IOUtils.closeQuietly(pack);
            throw e;
        } catch (RuntimeException e) {
-           try {
-               pack.close();
-           } catch (IOException e1) {
-               throw new IllegalStateException(e);
-           }
+		   IOUtils.closeQuietly(pack);
            throw e;
        }
    }
@@ -277,6 +270,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				}
 			}
 		}
+
 		pack.originalPackagePath = new File(path).getAbsolutePath();
 		return pack;
 	}
@@ -310,18 +304,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		   pack.originalPackagePath = file.getAbsolutePath();
 		   return pack;
 	   } catch (InvalidFormatException e) {
-		   try {
-			   pack.close();
-		   } catch (IOException e1) {
-			   throw new IllegalStateException(e);
-		   }
+		   IOUtils.closeQuietly(pack);
 		   throw e;
 	   } catch (RuntimeException e) {
-		   try {
-			   pack.close();
-		   } catch (IOException e1) {
-			   throw new IllegalStateException(e);
-		   }
+		   IOUtils.closeQuietly(pack);
 		   throw e;
 	   }
    }
@@ -340,8 +326,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	public static OPCPackage open(InputStream in) throws InvalidFormatException,
 			IOException {
 		OPCPackage pack = new ZipPackage(in, PackageAccess.READ_WRITE);
-		if (pack.partList == null) {
-			pack.getParts();
+		try {
+			if (pack.partList == null) {
+				pack.getParts();
+			}
+		} catch (InvalidFormatException e) {
+			IOUtils.closeQuietly(pack);
+			throw e;
+		} catch (RuntimeException e) {
+			IOUtils.closeQuietly(pack);
+			throw e;
 		}
 		return pack;
 	}
@@ -357,13 +351,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *             Throws if the specified file exist and is not valid.
 	 */
 	public static OPCPackage openOrCreate(File file) throws InvalidFormatException {
-		OPCPackage retPackage = null;
 		if (file.exists()) {
-			retPackage = open(file.getAbsolutePath());
+			return open(file.getAbsolutePath());
 		} else {
-			retPackage = create(file);
+			return create(file);
 		}
-		return retPackage;
 	}
 
 	/**

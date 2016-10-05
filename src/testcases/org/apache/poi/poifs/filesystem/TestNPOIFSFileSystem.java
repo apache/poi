@@ -24,11 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -96,20 +92,25 @@ public final class TestNPOIFSFileSystem {
        HeaderBlock header = new HeaderBlock(new ByteArrayInputStream(baos.toByteArray()));
        return header;
    }
-   
-   protected static NPOIFSFileSystem writeOutAndReadBack(NPOIFSFileSystem original) throws IOException {
-       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-       original.writeFilesystem(baos);
-       original.close();
-       return new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
-   }
-   protected static NPOIFSFileSystem writeOutFileAndReadBack(NPOIFSFileSystem original) throws IOException {
-       final File file = TempFile.createTempFile("TestPOIFS", ".ole2");
-       final FileOutputStream fout = new FileOutputStream(file);
-       original.writeFilesystem(fout);
-       original.close();
-       return new NPOIFSFileSystem(file, false);
-   }
+
+    protected static NPOIFSFileSystem writeOutAndReadBack(NPOIFSFileSystem original) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        original.writeFilesystem(baos);
+        original.close();
+        return new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+    }
+
+    protected static NPOIFSFileSystem writeOutFileAndReadBack(NPOIFSFileSystem original) throws IOException {
+        final File file = TempFile.createTempFile("TestPOIFS", ".ole2");
+        final OutputStream fout = new FileOutputStream(file);
+        try {
+            original.writeFilesystem(fout);
+        } finally {
+            fout.close();
+        }
+        original.close();
+        return new NPOIFSFileSystem(file, false);
+    }
    
    @Test
    public void basicOpen() throws Exception {
