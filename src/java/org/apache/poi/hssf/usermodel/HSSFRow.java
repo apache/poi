@@ -205,9 +205,9 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      *  records too.
      */
     protected void removeAllCells() {
-        for(int i=0; i<cells.length; i++) {
-            if(cells[i] != null) {
-                removeCell(cells[i], true);
+        for (HSSFCell cell : cells) {
+            if (cell != null) {
+                removeCell(cell, true);
             }
         }
         cells=new HSSFCell[INITIAL_CAPACITY];
@@ -232,9 +232,9 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
                 row.setFirstCol(colIx);
             } else if (colIx > row.getLastCol()) {
                 row.setLastCol(colIx + 1);
-            } else {
+            } /*else {
                 // added cell is within first and last cells
-            }
+            }*/
         }
         // TODO - RowRecord column boundaries need to be updated for cell comments too
         return hcell;
@@ -446,12 +446,11 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     @Override
     public int getPhysicalNumberOfCells()
     {
-      int count=0;
-      for(int i=0;i<cells.length;i++)
-      {
-        if(cells[i]!=null) count++;
-      }
-      return count;
+        int count = 0;
+        for (HSSFCell cell : cells) {
+            if (cell != null) count++;
+        }
+        return count;
     }
 
     /**
