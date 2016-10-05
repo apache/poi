@@ -87,7 +87,7 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
             evalcell = new XSSFEvaluationCell(cell, this);
             _cellCache.put(key, evalcell);
         }
-        
+
         return evalcell;
     }
     
