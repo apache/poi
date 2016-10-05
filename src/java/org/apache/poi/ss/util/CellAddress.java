@@ -88,6 +88,15 @@ public class CellAddress implements Comparable<CellAddress> {
     }
     
     /**
+     * Create a new CellAddress object
+     * 
+     * @param address a CellAddress
+     */
+    public CellAddress(CellAddress address) {
+        this(address.getRow(), address.getColumn());
+    }
+    
+    /**
      * Create a new CellAddress object.
      *
      * @param cell the Cell to get the location of
