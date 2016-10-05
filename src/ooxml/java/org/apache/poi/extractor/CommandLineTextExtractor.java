@@ -33,27 +33,30 @@ public class CommandLineTextExtractor {
          System.err.println("   CommandLineTextExtractor <filename> [filename] [filename]");
          System.exit(1);
       }
-      
-      for(int i=0; i<args.length; i++) {
-         System.out.println(DIVIDER);
-         
-         File f = new File(args[i]);
-         System.out.println(f);
-         
-         POITextExtractor extractor = 
-            ExtractorFactory.createExtractor(f);
-         try {
-             POITextExtractor metadataExtractor =
-                extractor.getMetadataTextExtractor();
-             
-             System.out.println("   " + DIVIDER);
-             System.out.println(metadataExtractor.getText());
-             System.out.println("   " + DIVIDER);
-             System.out.println(extractor.getText());
-             System.out.println(DIVIDER);
-         } finally {
-             extractor.close();
-         }
-      }
+
+       for (String arg : args) {
+           System.out.println(DIVIDER);
+
+           File f = new File(arg);
+           System.out.println(f);
+
+           POITextExtractor extractor =
+                   ExtractorFactory.createExtractor(f);
+           try {
+               POITextExtractor metadataExtractor =
+                       extractor.getMetadataTextExtractor();
+
+               System.out.println("   " + DIVIDER);
+               String metaData = metadataExtractor.getText();
+               System.out.println(metaData);
+               System.out.println("   " + DIVIDER);
+               String text = extractor.getText();
+               System.out.println(text);
+               System.out.println(DIVIDER);
+               System.out.println("Had " + metaData.length() + " characters of metadata and " + text.length() + " characters of text");
+           } finally {
+               extractor.close();
+           }
+       }
    }
 }
