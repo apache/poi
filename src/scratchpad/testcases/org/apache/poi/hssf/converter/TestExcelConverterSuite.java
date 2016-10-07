@@ -16,41 +16,42 @@
 ==================================================================== */
 package org.apache.poi.hssf.converter;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.XMLHelper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.XMLHelper;
-
+@RunWith(Parameterized.class)
 public class TestExcelConverterSuite
 {
     /**
      * YK: a quick hack to exclude failing documents from the suite.
      */
-    private static List<String> failingFiles = Arrays.asList( //
+    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
+    private static List<String> failingFiles = Arrays.asList(
             /* not failing, but requires more memory */
             "ex45698-22488.xls" );
 
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite(
-                TestExcelConverterSuite.class.getName() );
-
-        File directory = POIDataSamples.getSpreadSheetInstance().getFile(
+    @Parameterized.Parameters(name="{index}: {0}")
+    public static Iterable<Object[]> files() {
+        List<Object[]> files = new ArrayList<Object[]>();
+        File directory = POIDataSamples.getDocumentInstance().getFile(
                 "../spreadsheet" );
         for ( final File child : directory.listFiles( new FilenameFilter()
         {
@@ -60,38 +61,24 @@ public class TestExcelConverterSuite
             }
         } ) )
         {
-            final String name = child.getName();
-            suite.addTest( new TestCase( name + " [FO]" )
-            {
-                @Override
-                public void runTest() throws Exception
-                {
-                    testFo( child );
-                }
-            } );
-            suite.addTest( new TestCase( name + " [HTML]" )
-            {
-                @Override
-                public void runTest() throws Exception
-                {
-                    testHtml( child );
-                }
-            } );
+            files.add(new Object[] { child });
         }
 
-        return suite;
+        return files;
     }
 
-    protected static void testFo( File child ) throws Exception
+
+    @Parameterized.Parameter
+    public File child;
+
+    @Test
+    public void testFo() throws Exception
     {
         HSSFWorkbook workbook;
-        try
-        {
+        try {
             workbook = ExcelToHtmlUtils.loadXls( child );
-        }
-        catch ( Exception exc )
-        {
-            // unable to parse file -- not WordToFoConverter fault
+        } catch ( Exception exc ) {
+            // unable to parse file -- not ExcelToFoConverter fault
             return;
         }
 
@@ -109,18 +96,18 @@ public class TestExcelConverterSuite
         transformer.transform(
                 new DOMSource( excelToHtmlConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
+
+        assertNotNull(stringWriter.toString());
     }
 
-    protected static void testHtml( File child ) throws Exception
+    @Test
+    public void testHtml() throws Exception
     {
         HSSFWorkbook workbook;
-        try
-        {
+        try {
             workbook = ExcelToHtmlUtils.loadXls( child );
-        }
-        catch ( Exception exc )
-        {
-            // unable to parse file -- not WordToFoConverter fault
+        } catch ( Exception exc ) {
+            // unable to parse file -- not ExcelToFoConverter fault
             return;
         }
 
@@ -138,5 +125,7 @@ public class TestExcelConverterSuite
         transformer.transform(
                 new DOMSource( excelToHtmlConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
+
+        assertNotNull(stringWriter.toString());
     }
 }

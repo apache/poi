@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.converter;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,14 +29,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.util.XMLHelper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import static org.junit.Assert.assertNotNull;
+
+@RunWith(Parameterized.class)
 public class TestWordToConverterSuite
 {
     /**
@@ -44,11 +47,9 @@ public class TestWordToConverterSuite
     private static List<String> failingFiles = Arrays
             .asList( "ProblemExtracting.doc" );
 
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite(
-                TestWordToConverterSuite.class.getName() );
-
+    @Parameterized.Parameters(name="{index}: {0}")
+    public static Iterable<Object[]> files() {
+        List<Object[]> files = new ArrayList<Object[]>();
         File directory = POIDataSamples.getDocumentInstance().getFile(
                 "../document" );
         for ( final File child : directory.listFiles( new FilenameFilter()
@@ -59,44 +60,21 @@ public class TestWordToConverterSuite
             }
         } ) )
         {
-            final String name = child.getName();
-
-            suite.addTest( new TestCase( name + " [FO]" )
-            {
-                public void runTest() throws Exception
-                {
-                    testFo( child );
-                }
-            } );
-            suite.addTest( new TestCase( name + " [HTML]" )
-            {
-                public void runTest() throws Exception
-                {
-                    testHtml( child );
-                }
-            } );
-            suite.addTest( new TestCase( name + " [TEXT]" )
-            {
-                public void runTest() throws Exception
-                {
-                    testText( child );
-                }
-            } );
-
+            files.add(new Object[] { child });
         }
 
-        return suite;
+        return files;
     }
 
-    protected static void testFo( File child ) throws Exception
-    {
+    @Parameterized.Parameter
+    public File child;
+
+    @Test
+    public void testFo() throws Exception {
         HWPFDocumentCore hwpfDocument;
-        try
-        {
+        try {
             hwpfDocument = AbstractWordUtils.loadDoc( child );
-        }
-        catch ( Exception exc )
-        {
+        } catch ( Exception exc ) {
             return;
         }
 
@@ -115,17 +93,16 @@ public class TestWordToConverterSuite
                 new StreamResult( stringWriter ) );
 
         // no exceptions
+        assertNotNull(stringWriter.toString());
     }
 
-    protected static void testHtml( File child ) throws Exception
+    @Test
+    public void testHtml() throws Exception
     {
         HWPFDocumentCore hwpfDocument;
-        try
-        {
+        try {
             hwpfDocument = AbstractWordUtils.loadDoc( child );
-        }
-        catch ( Exception exc )
-        {
+        } catch ( Exception exc ) {
             return;
         }
 
@@ -145,17 +122,16 @@ public class TestWordToConverterSuite
                 new StreamResult( stringWriter ) );
 
         // no exceptions
+        assertNotNull(stringWriter.toString());
     }
 
-    protected static void testText( File child ) throws Exception
+    @Test
+    public void testText() throws Exception
     {
         HWPFDocumentCore wordDocument;
-        try
-        {
+        try {
             wordDocument = AbstractWordUtils.loadDoc( child );
-        }
-        catch ( Exception exc )
-        {
+        } catch ( Exception exc ) {
             return;
         }
 
@@ -174,7 +150,7 @@ public class TestWordToConverterSuite
                 new DOMSource( wordToTextConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
 
-        stringWriter.toString();
         // no exceptions
+        assertNotNull(stringWriter.toString());
     }
 }
