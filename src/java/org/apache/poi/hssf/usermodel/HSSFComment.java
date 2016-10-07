@@ -143,7 +143,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     /**
-     * Returns whether this comment is visible.
+     * Sets whether this comment is visible.
      *
      * @param visible <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
@@ -154,7 +154,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     /**
-     * Sets whether this comment is visible.
+     * Returns whether this comment is visible.
      *
      * @return <code>true</code> if the comment is visible, <code>false</code> otherwise
      */

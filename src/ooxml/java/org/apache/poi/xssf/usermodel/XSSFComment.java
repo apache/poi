@@ -102,7 +102,9 @@ public class XSSFComment implements Comment {
     }
 
     /**
-     * @return whether the comment is visible
+     * Returns whether this comment is visible.
+     *
+     * @return <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
     @Override
     public boolean isVisible() {
@@ -115,7 +117,9 @@ public class XSSFComment implements Comment {
     }
 
     /**
-     * @param visible whether the comment is visible
+     * Sets whether this comment is visible.
+     *
+     * @param visible <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
     @Override
     public void setVisible(boolean visible) {
