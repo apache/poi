@@ -17,21 +17,43 @@
 
 package org.apache.poi.hslf.extractor;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.usermodel.*;
-import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.hslf.model.Comment;
+import org.apache.poi.hslf.model.HSLFMetroShape;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.model.OLEShape;
+import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
+import org.apache.poi.hslf.usermodel.HSLFNotes;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideMaster;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFTable;
+import org.apache.poi.hslf.usermodel.HSLFTableCell;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.hslf.usermodel.HSLFTextShape;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class can be used to extract text from a PowerPoint file. Can optionally
  * also get the notes from one.
- *
- * @author Nick Burch
  */
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
+   private static final POILogger LOG = POILogFactory.getLogger(PowerPointExtractor.class);
+    
    private final HSLFSlideShowImpl _hslfshow;
    private final HSLFSlideShow _show;
    private final List<HSLFSlide> _slides;
@@ -207,19 +229,26 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
                 for (HSLFSlideMaster master : _show.getSlideMasters()) {
                     for(HSLFShape sh : master.getShapes()){
                         if(sh instanceof HSLFTextShape){
-                            if(HSLFMasterSheet.isPlaceholder(sh)) {
-                                // don't bother about boiler
-                                // plate text on master
-                                // sheets
+                            HSLFTextShape hsh = (HSLFTextShape)sh;
+                            final String text = hsh.getText();
+                            if (text == null || "".equals(text) || "*".equals(text)) {
                                 continue;
                             }
-                            HSLFTextShape tsh = (HSLFTextShape)sh;
-                            String text = tsh.getText();
-                            if (text != null){
-                                ret.append(text);
-                                if (!text.endsWith("\n")) {
-                                    ret.append("\n");
+                            
+                            if (HSLFMasterSheet.isPlaceholder(sh)) {
+                                // check for metro shape of complex placeholder
+                                boolean isMetro = new HSLFMetroShape<HSLFShape>(sh).hasMetroBlob();
+                                
+                                if (!isMetro) {
+                                    // don't bother about boiler plate text on master sheets
+                                    LOG.log(POILogger.INFO, "Ignoring boiler plate (placeholder) text on slide master:", text);
+                                    continue;
                                 }
+                            }
+                            
+                            ret.append(text);
+                            if (!text.endsWith("\n")) {
+                                ret.append("\n");
                             }
                         }
                     }

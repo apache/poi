@@ -47,14 +47,20 @@ public class HSLFMetroShape<T extends Shape<?,?>> {
      * @return the bytes of the metro blob, which are bytes of an OPCPackage, i.e. a zip stream 
      */
     public byte[] getMetroBytes() {
+        EscherComplexProperty ep = getMetroProp();
+        return (ep == null) ? null : ep.getComplexData();
+    }
+
+    /**
+     * @return if there's a metro blob to extract
+     */
+    public boolean hasMetroBlob() {
+        return getMetroProp() != null;
+    }
+    
+    private EscherComplexProperty getMetroProp() {
         AbstractEscherOptRecord opt = shape.getEscherChild(EscherTertiaryOptRecord.RECORD_ID);
-        if (opt != null) {
-            EscherComplexProperty ep = (EscherComplexProperty)opt.lookup(EscherProperties.GROUPSHAPE__METROBLOB);
-            if (ep != null) {
-                return ep.getComplexData();
-            }
-        }
-        return null;
+        return (opt == null) ? null : (EscherComplexProperty)opt.lookup(EscherProperties.GROUPSHAPE__METROBLOB);
     }
     
     /**
