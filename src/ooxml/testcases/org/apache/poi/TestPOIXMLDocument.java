@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.junit.Test;
 
 /**
@@ -277,4 +280,38 @@ public final class TestPOIXMLDocument {
             open.close();
         }
     }
+    
+    @Test(expected=IllegalStateException.class)
+    public void testOSGIClassLoadingAsIs() throws IOException {
+        Thread thread = Thread.currentThread();
+        ClassLoader cl = thread.getContextClassLoader();
+        InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
+        try {
+            thread.setContextClassLoader(cl.getParent());
+            XMLSlideShow ppt = new XMLSlideShow(is);
+            ppt.getSlides().get(0).getShapes();
+        } finally {
+            thread.setContextClassLoader(cl);
+            is.close();
+        }
+    }
+
+
+    @Test
+    public void testOSGIClassLoadingFixed() throws IOException {
+        Thread thread = Thread.currentThread();
+        ClassLoader cl = thread.getContextClassLoader();
+        InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
+        try {
+            thread.setContextClassLoader(cl.getParent());
+            POIXMLTypeLoader.setClassLoader(cl);
+            XMLSlideShow ppt = new XMLSlideShow(is);
+            ppt.getSlides().get(0).getShapes();
+        } finally {
+            thread.setContextClassLoader(cl);
+            POIXMLTypeLoader.setClassLoader(null);
+            is.close();
+        }
+    }
+
 }
