@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeLoader;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -46,6 +48,8 @@ import org.xml.sax.SAXException;
 @SuppressWarnings("deprecation")
 public class POIXMLTypeLoader {
 
+    private static ThreadLocal<ClassLoader> classLoader = new ThreadLocal<ClassLoader>();
+    
     public static final XmlOptions DEFAULT_XML_OPTIONS;
     static {
         DEFAULT_XML_OPTIONS = new XmlOptions();
@@ -80,8 +84,32 @@ public class POIXMLTypeLoader {
         return options == null ? DEFAULT_XML_OPTIONS : options;
     }
 
+    /**
+     * Sets the {@link ClassLoader} which is used, when XmlBeans are dynamically instantiated -
+     * opposed to being loaded by the factory class which is accompanied by each generated XmlBeans interface.
+     * <p>
+     * This is especially necessary in a context which doesn't guarantee that the current (thread) context
+     * cassloader has access to all XmlBeans schema definitions (*.xsb) - which is typically in OSGI the case.
+     * <p>
+     * The classloader will be only set for the current thread in a {@link ThreadLocal}. Although the
+     * ThreadLocal is implemented via a {@link WeakReference}, it's good style to {@code null} the classloader
+     * when the user code is finalized.
+     * 
+     * @param cl the classloader to be used when XmlBeans classes and definitions are looked up
+     */
+    public static void setClassLoader(ClassLoader cl) {
+        classLoader.set(cl);
+    }
+    
+    private static SchemaTypeLoader getTypeLoader() {
+        ClassLoader cl = classLoader.get();
+        return (cl == null)
+            ? XmlBeans.getContextTypeLoader()
+            : XmlBeans.typeLoaderForClassLoader(cl);
+    }
+    
     public static XmlObject newInstance(SchemaType type, XmlOptions options) {
-        return XmlBeans.getContextTypeLoader().newInstance(type, getXmlOptions(options));
+        return getTypeLoader().newInstance(type, getXmlOptions(options));
     }
 
     public static XmlObject parse(String xmlText, SchemaType type, XmlOptions options) throws XmlException {
@@ -113,34 +141,34 @@ public class POIXMLTypeLoader {
     public static XmlObject parse(InputStream jiois, SchemaType type, XmlOptions options) throws XmlException, IOException {
         try {
             Document doc = DocumentHelper.readDocument(jiois);
-            return XmlBeans.getContextTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+            return getTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
         } catch (SAXException e) {
             throw new IOException("Unable to parse xml bean", e);
         }
     }
 
     public static XmlObject parse(XMLStreamReader xsr, SchemaType type, XmlOptions options) throws XmlException {
-        return XmlBeans.getContextTypeLoader().parse(xsr, type, getXmlOptions(options));
+        return getTypeLoader().parse(xsr, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(Reader jior, SchemaType type, XmlOptions options) throws XmlException, IOException {
         try {
             Document doc = DocumentHelper.readDocument(new InputSource(jior));
-            return XmlBeans.getContextTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+            return getTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
         } catch (SAXException e) {
             throw new XmlException("Unable to parse xml bean", e);
         }
     }
 
     public static XmlObject parse(Node node, SchemaType type, XmlOptions options) throws XmlException {
-        return XmlBeans.getContextTypeLoader().parse(node, type, getXmlOptions(options));
+        return getTypeLoader().parse(node, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(XMLInputStream xis, SchemaType type, XmlOptions options) throws XmlException, XMLStreamException {
-        return XmlBeans.getContextTypeLoader().parse(xis, type, getXmlOptions(options));
+        return getTypeLoader().parse(xis, type, getXmlOptions(options));
     }
     
     public static XMLInputStream newValidatingXMLInputStream ( XMLInputStream xis, SchemaType type, XmlOptions options ) throws XmlException, XMLStreamException {
-        return XmlBeans.getContextTypeLoader().newValidatingXMLInputStream(xis, type, getXmlOptions(options));
+        return getTypeLoader().newValidatingXMLInputStream(xis, type, getXmlOptions(options));
     }
 }

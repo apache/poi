@@ -19,8 +19,6 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +27,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLException;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTableShape;
 import org.apache.poi.sl.draw.DrawTextShape;
@@ -37,7 +34,6 @@ import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
@@ -53,6 +49,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>,
     TableShape<XSLFShape,XSLFTextParagraph> {
     /* package */ static final String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
+    /* package */ static final String DRAWINGML_URI = "http://schemas.openxmlformats.org/drawingml/2006/main";
 
     private CTTable _table;
     private List<XSLFTableRow> _rows;
@@ -60,28 +57,30 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     /*package*/ XSLFTable(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape, sheet);
 
-        XmlObject[] rs = shape.getGraphic().getGraphicData()
-                .selectPath("declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' ./a:tbl");
-        if (rs.length == 0) {
-            throw new IllegalStateException("a:tbl element was not found in\n " + shape.getGraphic().getGraphicData());
+        CTGraphicalObjectData god = shape.getGraphic().getGraphicData();
+        XmlCursor xc = god.newCursor();
+        if (!xc.toChild(DRAWINGML_URI, "tbl")) {
+            throw new IllegalStateException("a:tbl element was not found in\n " + god);
         }
 
+        XmlObject xo = xc.getObject();
         // Pesky XmlBeans bug - see Bugzilla #49934
         // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
-        if(rs[0] instanceof XmlAnyTypeImpl){
-            try {
-                rs[0] = CTTable.Factory.parse(rs[0].toString(), DEFAULT_XML_OPTIONS);
-            }catch (XmlException e){
-                throw new POIXMLException(e);
-            }
+        if (xo instanceof XmlAnyTypeImpl){
+            String errStr =
+                "Schemas (*.xsb) for CTTable can't be loaded - usually this happens when OSGI " +
+                "loading is used and the thread context classloader has no reference to " +
+                "the xmlbeans classes - use POIXMLTypeLoader.setClassLoader() to set the loader, " +
+                "e.g. with CTTable.class.getClassLoader()"
+            ;
+            throw new IllegalStateException(errStr);
         }
+        _table = (CTTable)xo;
+        xc.dispose();
 
-        _table = (CTTable) rs[0];
-        CTTableRow[] trArray = _table.getTrArray();
-        _rows = new ArrayList<XSLFTableRow>(trArray.length);
-        for(CTTableRow row : trArray) {
-            XSLFTableRow xr = new XSLFTableRow(row, this);
-            _rows.add(xr);
+        _rows = new ArrayList<XSLFTableRow>(_table.sizeOfTrArray());
+        for(CTTableRow row : _table.getTrArray()) {
+            _rows.add(new XSLFTableRow(row, this));
         }
         updateRowColIndexes();
     }
@@ -171,13 +170,18 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
         frame.addNewXfrm();
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
-        XmlCursor cursor = gr.newCursor();
-        cursor.toNextToken();
-        cursor.beginElement(new QName("http://schemas.openxmlformats.org/drawingml/2006/main", "tbl"));
-        cursor.beginElement(new QName("http://schemas.openxmlformats.org/drawingml/2006/main", "tblPr"));
-        cursor.toNextToken();
-        cursor.beginElement(new QName("http://schemas.openxmlformats.org/drawingml/2006/main", "tblGrid"));
-        cursor.dispose();
+        XmlCursor grCur = gr.newCursor();
+        grCur.toNextToken();
+        grCur.beginElement(new QName(DRAWINGML_URI, "tbl"));
+        
+        CTTable tbl = CTTable.Factory.newInstance();
+        tbl.addNewTblPr();
+        tbl.addNewTblGrid();
+        XmlCursor tblCur = tbl.newCursor();
+        
+        tblCur.moveXmlContents(grCur);
+        tblCur.dispose();
+        grCur.dispose();
         gr.setUri(TABLE_URI);
         return frame;
     }
