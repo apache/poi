@@ -28,11 +28,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -168,5 +169,40 @@ public class TestFormulaParser {
             // expected during successful test
             assertNotNull(e.getMessage());
         }
+    }
+    
+    // trivial case for bug 60219: FormulaParser can't parse external references when sheet name is quoted
+    @Test
+    public void testParseExternalReferencesWithUnquotedSheetName() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFEvaluationWorkbook fpwb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs = FormulaParser.parse("[1]Sheet1!A1", fpwb, FormulaType.CELL, -1);
+        // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
+        assertEquals("Ptgs length", 1, ptgs.length);
+        assertTrue("Ptg class", ptgs[0] instanceof Ref3DPxg);
+        Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
+        assertEquals("External workbook number", 1, pxg.getExternalWorkbookNumber());
+        assertEquals("Sheet name", "Sheet1", pxg.getSheetName());
+        assertEquals("Row", 0, pxg.getRow());
+        assertEquals("Column", 0, pxg.getColumn());
+        wb.close();
+    }
+    
+    // bug 60219: FormulaParser can't parse external references when sheet name is quoted
+    @Ignore
+    @Test
+    public void testParseExternalReferencesWithQuotedSheetName() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFEvaluationWorkbook fpwb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs = FormulaParser.parse("'[1]Sheet 1'!A1", fpwb, FormulaType.CELL, -1);
+        // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
+        assertEquals("Ptgs length", 1, ptgs.length);
+        assertTrue("Ptg class", ptgs[0] instanceof Ref3DPxg);
+        Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
+        assertEquals("External workbook number", 1, pxg.getExternalWorkbookNumber());
+        assertEquals("Sheet name", "Sheet 1", pxg.getSheetName());
+        assertEquals("Row", 0, pxg.getRow());
+        assertEquals("Column", 0, pxg.getColumn());
+        wb.close();
     }
 }
