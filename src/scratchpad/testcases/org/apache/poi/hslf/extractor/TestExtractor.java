@@ -431,5 +431,19 @@ public final class TestExtractor {
         String target = "this\tText\tis\twithin\ta\n"+
                 "table\t1\t2\t3\t4";
         assertTrue(text.contains(target));
-    }    
+    }
+
+    // bug 60003
+    @Test
+    public void testExtractMasterSlideFooterText() throws Exception {
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("60003.ppt"));
+        ppe.close();
+
+        ppe = new PowerPointExtractor(hslf);
+        ppe.setMasterByDefault(true);
+      
+        String text = ppe.getText();
+        assertContains(text, "Prague");
+        hslf.close();
+    }
 }
