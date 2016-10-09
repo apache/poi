@@ -199,7 +199,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
         System.arraycopy(_plain, 0, _chunk, 0, totalBytes);
 
-        invokeCipher(totalBytes, _chunkSize > -1);
+        invokeCipher(totalBytes, totalBytes == _chunkSize);
     }
 
     /**
