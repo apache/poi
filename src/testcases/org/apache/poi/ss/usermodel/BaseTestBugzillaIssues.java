@@ -1680,4 +1680,101 @@ public abstract class BaseTestBugzillaIssues {
             assertNotNull(cellValue);
         }
     }
+    
+    // bug 60197: setSheetOrder should update sheet-scoped named ranges to maintain references to the sheets before the re-order
+    @Test
+    public void bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet1 = wb.createSheet("Sheet1");
+        Sheet sheet2 = wb.createSheet("Sheet2");
+        Sheet sheet3 = wb.createSheet("Sheet3");
+    
+        Name nameOnSheet1 = wb.createName();
+        nameOnSheet1.setSheetIndex(wb.getSheetIndex(sheet1));
+        nameOnSheet1.setNameName("NameOnSheet1");
+        nameOnSheet1.setRefersToFormula("Sheet1!A1");
+        
+        Name nameOnSheet2 = wb.createName();
+        nameOnSheet2.setSheetIndex(wb.getSheetIndex(sheet2));
+        nameOnSheet2.setNameName("NameOnSheet2");
+        nameOnSheet2.setRefersToFormula("Sheet2!A1");
+        
+        Name nameOnSheet3 = wb.createName();
+        nameOnSheet3.setSheetIndex(wb.getSheetIndex(sheet3));
+        nameOnSheet3.setNameName("NameOnSheet3");
+        nameOnSheet3.setRefersToFormula("Sheet3!A1");
+        
+        // workbook-scoped name
+        Name name = wb.createName();
+        name.setNameName("WorkbookScopedName");
+        name.setRefersToFormula("Sheet2!A1");
+        
+        assertEquals("Sheet1", nameOnSheet1.getSheetName());
+        assertEquals("Sheet2", nameOnSheet2.getSheetName());
+        assertEquals("Sheet3", nameOnSheet3.getSheetName());
+        assertEquals(-1, name.getSheetIndex());
+        assertEquals("Sheet2!A1", name.getRefersToFormula());
+        
+        // rearrange the sheets several times to make sure the names always refer to the right sheet
+        for (int i=0; i<=9; i++) {
+            wb.setSheetOrder("Sheet3", i % 3);
+            
+            // Current bug in XSSF:
+            // Call stack:
+            //   XSSFWorkbook.write(OutputStream)
+            //   XSSFWorkbook.commit()
+            //   XSSFWorkbook.saveNamedRanges()
+            // This dumps the current namedRanges to CTDefinedName and writes these to the CTWorkbook
+            // Then the XSSFName namedRanges list is cleared and rebuilt
+            // Thus, any XSSFName object becomes invalid after a write
+            // This re-assignment to the XSSFNames is not necessary if wb.write is not called.
+            nameOnSheet1 = wb.getName("NameOnSheet1");
+            nameOnSheet2 = wb.getName("NameOnSheet2");
+            nameOnSheet3 = wb.getName("NameOnSheet3");
+            name = wb.getName("WorkbookScopedName");
+            
+            // The name should still refer to the same sheet after the sheets are re-ordered
+            assertEquals(i % 3, wb.getSheetIndex("Sheet3"));
+            assertEquals(nameOnSheet1.getNameName(), "Sheet1", nameOnSheet1.getSheetName());
+            assertEquals(nameOnSheet2.getNameName(), "Sheet2", nameOnSheet2.getSheetName());
+            assertEquals(nameOnSheet3.getNameName(), "Sheet3", nameOnSheet3.getSheetName());
+            assertEquals(name.getNameName(), -1, name.getSheetIndex());
+            assertEquals(name.getNameName(), "Sheet2!A1", name.getRefersToFormula());
+            
+            // make sure the changes to the names stick after writing out the workbook
+            Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
+            
+            // See note above. XSSFNames become invalid after workbook write
+            // Without reassignment here, an XmlValueDisconnectedException may occur
+            nameOnSheet1 = wb.getName("NameOnSheet1");
+            nameOnSheet2 = wb.getName("NameOnSheet2");
+            nameOnSheet3 = wb.getName("NameOnSheet3");
+            name = wb.getName("WorkbookScopedName");
+            
+            // Saving the workbook should not change the sheet names
+            assertEquals(i % 3, wb.getSheetIndex("Sheet3"));
+            assertEquals(nameOnSheet1.getNameName(), "Sheet1", nameOnSheet1.getSheetName());
+            assertEquals(nameOnSheet2.getNameName(), "Sheet2", nameOnSheet2.getSheetName());
+            assertEquals(nameOnSheet3.getNameName(), "Sheet3", nameOnSheet3.getSheetName());
+            assertEquals(name.getNameName(), -1, name.getSheetIndex());
+            assertEquals(name.getNameName(), "Sheet2!A1", name.getRefersToFormula());
+            
+            // Verify names in wb2
+            nameOnSheet1 = wb2.getName("NameOnSheet1");
+            nameOnSheet2 = wb2.getName("NameOnSheet2");
+            nameOnSheet3 = wb2.getName("NameOnSheet3");
+            name = wb2.getName("WorkbookScopedName");
+            
+            assertEquals(i % 3, wb2.getSheetIndex("Sheet3"));
+            assertEquals(nameOnSheet1.getNameName(), "Sheet1", nameOnSheet1.getSheetName());
+            assertEquals(nameOnSheet2.getNameName(), "Sheet2", nameOnSheet2.getSheetName());
+            assertEquals(nameOnSheet3.getNameName(), "Sheet3", nameOnSheet3.getSheetName());
+            assertEquals(name.getNameName(), -1, name.getSheetIndex());
+            assertEquals(name.getNameName(), "Sheet2!A1", name.getRefersToFormula());
+            
+            wb2.close();
+        }
+        
+        wb.close();
+    }
 }
