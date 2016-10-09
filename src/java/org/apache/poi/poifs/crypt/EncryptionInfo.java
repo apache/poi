@@ -34,6 +34,9 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
+ * This class may require {@code poi-ooxml} to be on the classpath to load
+ * some {@link EncryptionMode}s.
+ * @see #getBuilder(EncryptionMode)
  */
 public class EncryptionInfo implements Cloneable {
     private final EncryptionMode encryptionMode;
@@ -193,6 +196,22 @@ public class EncryptionInfo implements Cloneable {
         eib.initialize(this, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
     }
 
+    /**
+     * This method loads the builder class with reflection, which may generate
+     * a {@code ClassNotFoundException} if the class is not on the classpath.
+     * For example, {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionInfoBuilder}
+     * is contained in the {@code poi-ooxml} package since the class makes use of some OOXML
+     * classes rather than using the {@code poi} package and plain XML DOM calls.
+     * As such, you may need to include {@code poi-ooxml} and {@code poi-ooxml-schemas} to load
+     * some encryption mode builders. See bug #60021 for more information.
+     * https://bz.apache.org/bugzilla/show_bug.cgi?id=60021
+     *
+     * @param encryptionMode the encryption mode
+     * @return an encryption info builder
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
     protected static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode)
     throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
