@@ -189,7 +189,6 @@ public class TestWorkbookProtection {
         assertTrue(wb.validateRevisionsPassword("test"));
     }
     
-    @Ignore("bug 60230: currently failing due to regression from bug 59857 r1762726")
     @Test
     public void testEncryptDecrypt() throws Exception {
         final String password = "abc123";
@@ -208,7 +207,9 @@ public class TestWorkbookProtection {
         EncryptionInfo encryptionInfo = new EncryptionInfo(EncryptionMode.agile);
         Encryptor enc = encryptionInfo.getEncryptor();
         enc.confirmPassword(password);
-        OPCPackage opc = OPCPackage.open(new FileInputStream(tf1));
+        FileInputStream fis = new FileInputStream(tf1);
+        OPCPackage opc = OPCPackage.open(fis);
+        IOUtils.closeQuietly(fis);
         try {
             OutputStream os = enc.getDataStream(poiFileSystem);
             opc.save(os);
@@ -221,7 +222,9 @@ public class TestWorkbookProtection {
         poiFileSystem.writeFilesystem(fos2);
         IOUtils.closeQuietly(fos2);
         workbook.close();
-        POIFSFileSystem poiFileSystem2 = new POIFSFileSystem(new FileInputStream(tf1));
+        fis = new FileInputStream(tf1);
+        POIFSFileSystem poiFileSystem2 = new POIFSFileSystem(fis);
+        IOUtils.closeQuietly(fis);
         EncryptionInfo encryptionInfo2 = new EncryptionInfo(poiFileSystem2);
         Decryptor decryptor = encryptionInfo2.getDecryptor();
         decryptor.verifyPassword(password);
