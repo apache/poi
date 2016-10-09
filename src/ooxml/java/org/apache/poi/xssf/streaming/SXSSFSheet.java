@@ -1704,7 +1704,7 @@ public class SXSSFSheet implements Sheet
     @Override
     public Drawing createDrawingPatriarch()
     {
-        return _sh.createDrawingPatriarch();
+        return new SXSSFDrawing((SXSSFWorkbook)getWorkbook(), _sh.createDrawingPatriarch());
     }
 
 

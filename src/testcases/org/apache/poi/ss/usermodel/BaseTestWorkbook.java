@@ -26,15 +26,19 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.NullOutputStream;
+import org.apache.poi.util.TempFile;
 import org.junit.Test;
 
 public abstract class BaseTestWorkbook {
@@ -893,6 +897,60 @@ public abstract class BaseTestWorkbook {
             assertTrue(e.getMessage(), e.getMessage().contains("already contains a sheet named 'Sheet1'"));
         }
 
+        wb.close();
+    }
+    
+    // bug 51233 and 55075: correctly size image if added to a row with a custom height
+    @Test
+    public void createDrawing() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("Main Sheet");
+        Row row0 = sheet.createRow(0);
+        Row row1 = sheet.createRow(1);
+        Cell cell = row1.createCell(0);
+        row0.createCell(1);
+        row1.createCell(0);
+        row1.createCell(1);
+
+        byte[] pictureData = _testDataProvider.getTestDataFileContent("logoKarmokar4.png");
+
+        int handle = wb.addPicture(pictureData, Workbook.PICTURE_TYPE_PNG);
+        Drawing drawing = sheet.createDrawingPatriarch();
+        CreationHelper helper = wb.getCreationHelper();
+        ClientAnchor anchor = helper.createClientAnchor();
+        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+        anchor.setCol1(0);
+        anchor.setRow1(0);
+        Picture picture = drawing.createPicture(anchor, handle);
+
+        row0.setHeightInPoints(144);
+        // set a column width so that XSSF and SXSSF have the same width (default widths may be different otherwise)
+        sheet.setColumnWidth(0, 100*256);
+        picture.resize();
+        
+        // The actual dimensions don't matter as much as having XSSF and SXSSF produce the same size drawings
+        
+        // Check drawing height
+        assertEquals(0, anchor.getRow1());
+        assertEquals(0, anchor.getRow2());
+        assertEquals(0, anchor.getDy1());
+        assertEquals(1609725, anchor.getDy2()); //HSSF: 225
+        
+        // Check drawing width
+        assertEquals(0, anchor.getCol1());
+        assertEquals(0, anchor.getCol2());
+        assertEquals(0, anchor.getDx1());
+        assertEquals(1114425, anchor.getDx2()); //HSSF: 171
+        
+        final boolean writeOut = false;
+        if (writeOut) {
+            String ext = "." + _testDataProvider.getStandardFileNameExtension();
+            String prefix = wb.getClass().getName() + "-createDrawing";
+            File f = TempFile.createTempFile(prefix, ext);
+            FileOutputStream out = new FileOutputStream(f);
+            wb.write(out);
+            out.close();
+        }
         wb.close();
     }
 
