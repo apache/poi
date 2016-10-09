@@ -24,8 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -56,22 +55,14 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
         return TempFile.createTempFile("poi-sxssf-sheet-xml", ".gz");
     }
 
-    /**
-     * @return a wrapped instance of GZIPOutputStream
-     */
     @Override
-	public Writer createWriter(File fd)throws IOException {
-        return new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fd)), "UTF-8");
+    protected InputStream decorateInputStream(FileInputStream fis) throws IOException {
+        return new GZIPInputStream(fis);
     }
 
-
-    /**
-     * @return a GZIPInputStream stream to read the compressed temp file
-     */
     @Override
-	public InputStream getWorksheetXMLInputStream() throws IOException {
-        File fd = getTempFile();
-        return new GZIPInputStream(new FileInputStream(fd));
+    protected OutputStream decorateOutputStream(FileOutputStream fos) throws IOException {
+        return new GZIPOutputStream(fos);
     }
 
 }

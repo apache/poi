@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Iterator;
@@ -69,7 +70,7 @@ public class SheetDataWriter {
         _out = createWriter(_fd);
     }
 
-    public SheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException{
+    public SheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
         this();
         this._sharedStringSource = sharedStringsTable;
     }
@@ -90,8 +91,23 @@ public class SheetDataWriter {
      * 
      * @param  fd the file to write to
      */
-    public Writer createWriter(File fd)throws IOException {
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fd), "UTF-8"));
+    public Writer createWriter(File fd) throws IOException {
+        final OutputStream decorated = decorateOutputStream(new FileOutputStream(fd));
+        return new BufferedWriter(new OutputStreamWriter(decorated, "UTF-8"));
+    }
+    
+    /**
+     * Override this to translate (such as encrypt or compress) the file output stream
+     * as it is being written to disk.
+     * The default behavior is to to pass the stream through unmodified.
+     *
+     * @param fos  the stream to decorate
+     * @return a decorated stream
+     * @throws IOException
+     * @see #decorateInputStream(FileInputStream)
+     */
+    protected OutputStream decorateOutputStream(FileOutputStream fos) throws IOException {
+        return fos;
     }
 
     /**
@@ -112,7 +128,21 @@ public class SheetDataWriter {
      */
     public InputStream getWorksheetXMLInputStream() throws IOException {
         File fd = getTempFile();
-        return new FileInputStream(fd);
+        return decorateInputStream(new FileInputStream(fd));
+    }
+    
+    /**
+     * Override this to translate (such as decrypt or expand) the file input stream
+     * as it is being read from disk.
+     * The default behavior is to to pass the stream through unmodified.
+     *
+     * @param fis  the stream to decorate
+     * @return a decorated stream
+     * @throws IOException
+     * @see #decorateOutputStream(FileOutputStream)
+     */
+    protected InputStream decorateInputStream(FileInputStream fis) throws IOException {
+        return fis;
     }
 
     public int getNumberOfFlushedRows() {
