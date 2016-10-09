@@ -23,9 +23,26 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestWorkbookProtection {
@@ -171,4 +188,46 @@ public class TestWorkbookProtection {
 		assertTrue(wb.isRevisionLocked());
 		assertTrue(wb.validateRevisionsPassword("test"));
 	}
+    
+    @Ignore("bug 60230: currently failing due to regression from bug 59857 r1762726")
+    @Test
+    public void testEncryptDecrypt() throws Exception {
+        final String password = "abc123";
+        final String sheetName = "TestSheet1";
+        final String cellValue = "customZipEntrySource";
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet1 = workbook.createSheet(sheetName);
+        XSSFRow row1 = sheet1.createRow(1);
+        XSSFCell cell1 = row1.createCell(1);
+        cell1.setCellValue(cellValue);
+        File tf1 = TempFile.createTempFile("poitest", ".xlsx");
+        FileOutputStream fos1 = new FileOutputStream(tf1);
+        workbook.write(fos1);
+        IOUtils.closeQuietly(fos1);
+        POIFSFileSystem poiFileSystem = new POIFSFileSystem();
+        EncryptionInfo encryptionInfo = new EncryptionInfo(EncryptionMode.agile);
+        Encryptor enc = encryptionInfo.getEncryptor();
+        enc.confirmPassword(password);
+        OPCPackage opc = OPCPackage.open(new FileInputStream(tf1));
+        try {
+            OutputStream os = enc.getDataStream(poiFileSystem);
+            opc.save(os);
+            IOUtils.closeQuietly(os);
+        } finally {
+            IOUtils.closeQuietly(opc);
+        }
+        tf1.delete();
+        FileOutputStream fos2 = new FileOutputStream(tf1);
+        poiFileSystem.writeFilesystem(fos2);
+        IOUtils.closeQuietly(fos2);
+        workbook.close();
+        POIFSFileSystem poiFileSystem2 = new POIFSFileSystem(new FileInputStream(tf1));
+        EncryptionInfo encryptionInfo2 = new EncryptionInfo(poiFileSystem2);
+        Decryptor decryptor = encryptionInfo2.getDecryptor();
+        decryptor.verifyPassword(password);
+        XSSFWorkbook workbook2 = new XSSFWorkbook(decryptor.getDataStream(poiFileSystem2));
+        workbook2.close();
+        tf1.delete();
+    }
+
 }
