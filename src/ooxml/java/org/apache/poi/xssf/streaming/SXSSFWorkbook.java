@@ -35,6 +35,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.util.ZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -46,6 +48,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -288,6 +291,14 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
+     * Get whether temp files should be compressed.
+     *
+     * @return whether to compress temp files
+     */
+    public boolean isCompressTempFiles() {
+        return _compressTmpFiles;
+    }
+    /**
      * Set whether temp files should be compressed.
      * <p>
      *   SXSSF writes sheet data in temporary files (a temp file per-sheet)
@@ -300,11 +311,16 @@ public class SXSSFWorkbook implements Workbook {
      * </p>
      * @param compress whether to compress temp files
      */
-    public void setCompressTempFiles(boolean compress){
+    public void setCompressTempFiles(boolean compress) {
         _compressTmpFiles = compress;
     }
+    
+    @Internal
+    protected SharedStringsTable getSharedStringSource() {
+        return _sharedStringSource;
+    }
 
-    SheetDataWriter createSheetDataWriter() throws IOException {
+    protected SheetDataWriter createSheetDataWriter() throws IOException {
         if(_compressTmpFiles) {
             return new GZIPSheetDataWriter(_sharedStringSource);
         }
@@ -353,21 +369,19 @@ public class SXSSFWorkbook implements Workbook {
         return null;
     }
 
-    private void injectData(File zipfile, OutputStream out) throws IOException 
+    protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException 
     {
-    	// don't use ZipHelper.openZipFile here - see #59743
-        ZipFile zip = new ZipFile(zipfile);
         try
         {
             ZipOutputStream zos = new ZipOutputStream(out);
             try
             {
-                Enumeration<? extends ZipEntry> en = zip.entries();
+                Enumeration<? extends ZipEntry> en = zipEntrySource.getEntries();
                 while (en.hasMoreElements()) 
                 {
                     ZipEntry ze = en.nextElement();
                     zos.putNextEntry(new ZipEntry(ze.getName()));
-                    InputStream is = zip.getInputStream(ze);
+                    InputStream is = zipEntrySource.getInputStream(ze);
                     XSSFSheet xSheet=getSheetFromZipEntryName(ze.getName());
                     if(xSheet!=null)
                     {
@@ -396,7 +410,7 @@ public class SXSSFWorkbook implements Workbook {
         }
         finally
         {
-            zip.close();
+            zipEntrySource.close();
         }
     }
     private static void copyStream(InputStream in, OutputStream out) throws IOException {
@@ -945,7 +959,8 @@ public class SXSSFWorkbook implements Workbook {
             }
 
             //Substitute the template entries with the generated sheet data files
-            injectData(tmplFile, stream);
+            final ZipEntrySource source = new ZipFileZipEntrySource(new ZipFile(tmplFile));
+            injectData(source, stream);
         }
         finally
         {
