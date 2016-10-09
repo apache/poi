@@ -98,7 +98,7 @@ public final class SXSSFPicture implements Picture {
      */
     @Override
     public void resize(double scale){
-        XSSFClientAnchor anchor = getAnchor();
+        XSSFClientAnchor anchor = getClientAnchor();
 
         XSSFClientAnchor pref = getPreferredSize(scale);
 
@@ -131,7 +131,7 @@ public final class SXSSFPicture implements Picture {
      * @return XSSFClientAnchor with the preferred size for this image
      */
     public XSSFClientAnchor getPreferredSize(double scale){
-        XSSFClientAnchor anchor = getAnchor();
+        XSSFClientAnchor anchor = getClientAnchor();
 
         XSSFPictureData data = getPictureData();
         Dimension size = getImageDimension(data.getPackagePart(), data.getPictureType());
@@ -236,8 +236,8 @@ public final class SXSSFPicture implements Picture {
         return (XSSFSheet)_picture.getDrawing().getParent();
     }
 
-    private XSSFClientAnchor getAnchor() {
-        return (XSSFClientAnchor)_picture.getAnchor();
+    private XSSFAnchor getAnchor() {
+        return _picture.getAnchor();
     }
 
     @Override
