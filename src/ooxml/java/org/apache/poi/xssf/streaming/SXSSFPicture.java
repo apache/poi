@@ -18,10 +18,8 @@
 package org.apache.poi.xssf.streaming;
 
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
@@ -33,7 +31,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.IOException;
 
 /**
