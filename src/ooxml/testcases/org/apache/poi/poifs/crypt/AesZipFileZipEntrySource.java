@@ -69,8 +69,10 @@ public class AesZipFileZipEntrySource implements ZipEntrySource {
 
     @Override
     public void close() throws IOException {
-        zipFile.close();
-        tmpFile.delete();
+        if(!closed) {
+            zipFile.close();
+            tmpFile.delete();
+        }
         closed = true;
     }
     

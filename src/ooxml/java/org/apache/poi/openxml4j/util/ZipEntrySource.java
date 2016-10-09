@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.util;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -28,7 +29,7 @@ import java.util.zip.ZipEntry;
  *  needing to worry about ZipFile vs ZipInputStream
  *  being annoyingly very different.
  */
-public interface ZipEntrySource {
+public interface ZipEntrySource extends Closeable {
 	/**
 	 * Returns an Enumeration of all the Entries
 	 */
@@ -44,6 +45,7 @@ public interface ZipEntrySource {
 	 * Indicates we are done with reading, and 
 	 *  resources may be freed
 	 */
+	@Override
 	public void close() throws IOException;
 	
 	/**
