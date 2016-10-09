@@ -680,10 +680,8 @@ public final class XSSFCell implements Cell {
      *
      * @return the cell type
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     @Override
     public CellType getCellTypeEnum() {
         if (isFormulaCell()) return CellType.FORMULA;
@@ -713,7 +711,6 @@ public final class XSSFCell implements Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
     @Override

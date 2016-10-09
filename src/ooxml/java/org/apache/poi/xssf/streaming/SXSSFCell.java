@@ -162,6 +162,7 @@ public class SXSSFCell implements Cell {
      * Return the cell type.
      *
      * @return the cell type
+     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
     @Override
     public int getCellType()
@@ -174,10 +175,8 @@ public class SXSSFCell implements Cell {
      *
      * @return the cell type
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     @Override
     public CellType getCellTypeEnum()
     {
@@ -189,6 +188,7 @@ public class SXSSFCell implements Cell {
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
+     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
     @Override
     public int getCachedFormulaResultType()
@@ -202,10 +202,8 @@ public class SXSSFCell implements Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3.
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     @Override
     public CellType getCachedFormulaResultTypeEnum()
     {
