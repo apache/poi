@@ -19,10 +19,14 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,19 +34,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.poifs.crypt.AesZipFileZipEntrySource;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -54,11 +64,13 @@ import org.junit.Test;
  * is encrypted, but the final saved workbook is not encrypted
  */
 public final class TestSXSSFWorkbookWithCustomZipEntrySource {
-
+    
+    final String sheetName = "TestSheet1";
+    final String cellValue = "customZipEntrySource";
+    
+    // write an unencrypted workbook to disk, but any temporary files are encrypted
     @Test
-    public void customZipEntrySource() throws IOException, GeneralSecurityException {
-        final String sheetName = "TestSheet1";
-        final String cellValue = "customZipEntrySource";
+    public void customZipEntrySource() throws IOException {
         SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource();
         SXSSFSheet sheet1 = workbook.createSheet(sheetName);
         SXSSFRow row1 = sheet1.createRow(1);
@@ -77,6 +89,54 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         xwb.close();
     }
     
+    // write an encrypted workbook to disk, and encrypt any temporary files as well
+    @Test
+    public void customZipEntrySourceForWriteAndRead() throws IOException, GeneralSecurityException, InvalidFormatException {
+        SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource();
+        SXSSFSheet sheet1 = workbook.createSheet(sheetName);
+        SXSSFRow row1 = sheet1.createRow(1);
+        SXSSFCell cell1 = row1.createCell(1);
+        cell1.setCellValue(cellValue);
+        EncryptedTempData tempData = new EncryptedTempData();
+        workbook.write(tempData.getOutputStream());
+        workbook.close();
+        workbook.dispose();
+        ZipEntrySource zipEntrySource = AesZipFileZipEntrySource.createZipEntrySource(tempData.getInputStream());
+        tempData.dispose();
+        OPCPackage opc = OPCPackage.open(zipEntrySource);
+        XSSFWorkbook xwb = new XSSFWorkbook(opc);
+        zipEntrySource.close();
+        XSSFSheet xs1 = xwb.getSheetAt(0);
+        assertEquals(sheetName, xs1.getSheetName());
+        XSSFRow xr1 = xs1.getRow(1);
+        XSSFCell xc1 = xr1.getCell(1);
+        assertEquals(cellValue, xc1.getStringCellValue());
+        xwb.close();
+        opc.close();
+    }
+    
+    @Test
+    public void validateTempFilesAreEncrypted() throws IOException {
+        TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource workbook = new TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource();
+        SXSSFSheet sheet1 = workbook.createSheet(sheetName);
+        SXSSFRow row1 = sheet1.createRow(1);
+        SXSSFCell cell1 = row1.createCell(1);
+        cell1.setCellValue(cellValue);
+        ByteArrayOutputStream os = new ByteArrayOutputStream(8192);
+        workbook.write(os);
+        workbook.close();
+        List<File> tempFiles = workbook.getTempFiles();
+        assertEquals(1, tempFiles.size());
+        File tempFile = tempFiles.get(0);
+        assertTrue("tempFile exists?", tempFile.exists());
+        byte[] data = IOUtils.toByteArray(new FileInputStream(tempFile));
+        String text = new String(data, UTF_8);
+        assertFalse(text.contains(sheetName));
+        assertFalse(text.contains(cellValue));
+        workbook.dispose();
+        assertFalse("tempFile deleted after dispose?", tempFile.exists());
+    }
+    
     static class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
 
         private static final POILogger logger = POILogFactory.getLogger(SXSSFWorkbookWithCustomZipEntrySource.class);
@@ -84,17 +144,19 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         @Override
         public void write(OutputStream stream) throws IOException {
             flushSheets();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            EncryptedTempData tempData = new EncryptedTempData();
+            OutputStream os = tempData.getOutputStream();
             getXSSFWorkbook().write(os);
+            os.close();
             ZipEntrySource source = null;
             try {
                 // provide ZipEntrySource to poi which decrypts on the fly
-                source = AesZipFileZipEntrySource.createZipEntrySource(new ByteArrayInputStream(os.toByteArray()));
+                source = AesZipFileZipEntrySource.createZipEntrySource(tempData.getInputStream());
                 injectData(source, stream);
             } catch (GeneralSecurityException e) {
                 throw new IOException(e);
             } finally {
-                source.close();
+                IOUtils.closeQuietly(source);
             }
         }
 
@@ -106,6 +168,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             return new SheetDataWriterWithDecorator();
         }
     }
+    
     
     static class SheetDataWriterWithDecorator extends SheetDataWriter {
         final static CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
@@ -141,4 +204,37 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         }
         
     }
+    
+    // a class to save and read an AES-encrypted workbook
+    static class EncryptedTempData {
+        final static CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
+        final SecretKeySpec skeySpec;
+        final byte[] ivBytes;
+        final File tempFile;
+        
+        EncryptedTempData() throws IOException {
+            SecureRandom sr = new SecureRandom();
+            ivBytes = new byte[16];
+            byte[] keyBytes = new byte[16];
+            sr.nextBytes(ivBytes);
+            sr.nextBytes(keyBytes);
+            skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
+            tempFile = TempFile.createTempFile("poi-temp-data", ".tmp");
+        }
+
+        OutputStream getOutputStream() throws IOException {
+            Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, null);
+            return new CipherOutputStream(new FileOutputStream(tempFile), ciEnc);
+        }
+
+        InputStream getInputStream() throws IOException {
+            Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, null);
+            return new CipherInputStream(new FileInputStream(tempFile), ciDec);
+        }
+        
+        void dispose() {
+            tempFile.delete();
+        }
+    }
+    
 }
