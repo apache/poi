@@ -92,8 +92,16 @@ public class SheetDataWriter {
      * @param  fd the file to write to
      */
     public Writer createWriter(File fd) throws IOException {
-        final OutputStream decorated = decorateOutputStream(new FileOutputStream(fd));
-        return new BufferedWriter(new OutputStreamWriter(decorated, "UTF-8"));
+        FileOutputStream fos = new FileOutputStream(fd);
+        OutputStream decorated;
+        try {
+            decorated = decorateOutputStream(fos);
+        } catch (final IOException e) {
+            fos.close();
+            throw e;
+        }
+        return new BufferedWriter(
+                new OutputStreamWriter(decorated, "UTF-8"));
     }
     
     /**
@@ -128,7 +136,13 @@ public class SheetDataWriter {
      */
     public InputStream getWorksheetXMLInputStream() throws IOException {
         File fd = getTempFile();
-        return decorateInputStream(new FileInputStream(fd));
+        FileInputStream fis = new FileInputStream(fd);
+        try {
+            return decorateInputStream(fis);
+        } catch (IOException e) {
+            fis.close();
+            throw e;
+        }
     }
     
     /**
