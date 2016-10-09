@@ -176,7 +176,6 @@ public interface Cell {
      *
      * @return the cell type
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3
      * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
     @Removal(version="4.2")
@@ -201,7 +200,6 @@ public interface Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3
      * Will be renamed to <code>getCachedFormulaResultType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
     CellType getCachedFormulaResultTypeEnum();
