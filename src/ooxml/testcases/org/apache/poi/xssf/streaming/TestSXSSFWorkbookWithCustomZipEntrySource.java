@@ -19,7 +19,6 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,9 +31,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -114,6 +113,11 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         xwb.close();
         opc.close();
     }
+    
+    // Java 7 and above:
+    // import static java.nio.charset.StandardCharsets.UTF_8;
+    // Java 6 and below:
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
     
     @Test
     public void validateTempFilesAreEncrypted() throws IOException {
