@@ -97,68 +97,68 @@ public class TestWorkbookProtection {
     
     @Test
     public void shouldReadWorkbookProtection() throws Exception {
-		XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-		assertFalse(workbook.isStructureLocked());
-		assertFalse(workbook.isWindowsLocked());
-		assertFalse(workbook.isRevisionLocked());
+        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
+        assertFalse(workbook.isStructureLocked());
+        assertFalse(workbook.isWindowsLocked());
+        assertFalse(workbook.isRevisionLocked());
 
-		workbook = openSampleWorkbook("workbookProtection_workbook_structure_protected.xlsx");
-		assertTrue(workbook.isStructureLocked());
-		assertFalse(workbook.isWindowsLocked());
-		assertFalse(workbook.isRevisionLocked());
+        workbook = openSampleWorkbook("workbookProtection_workbook_structure_protected.xlsx");
+        assertTrue(workbook.isStructureLocked());
+        assertFalse(workbook.isWindowsLocked());
+        assertFalse(workbook.isRevisionLocked());
 
-		workbook = openSampleWorkbook("workbookProtection_workbook_windows_protected.xlsx");
-		assertTrue(workbook.isWindowsLocked());
-		assertFalse(workbook.isStructureLocked());
-		assertFalse(workbook.isRevisionLocked());
+        workbook = openSampleWorkbook("workbookProtection_workbook_windows_protected.xlsx");
+        assertTrue(workbook.isWindowsLocked());
+        assertFalse(workbook.isStructureLocked());
+        assertFalse(workbook.isRevisionLocked());
 
-		workbook = openSampleWorkbook("workbookProtection_workbook_revision_protected.xlsx");
-		assertTrue(workbook.isRevisionLocked());
-		assertFalse(workbook.isWindowsLocked());
-		assertFalse(workbook.isStructureLocked());
-	}
-
-    @Test
-	public void shouldWriteStructureLock() throws Exception {
-		XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-		assertFalse(workbook.isStructureLocked());
-
-		workbook.lockStructure();
-
-		assertTrue(workbook.isStructureLocked());
-
-		workbook.unLockStructure();
-
-		assertFalse(workbook.isStructureLocked());
-	}
+        workbook = openSampleWorkbook("workbookProtection_workbook_revision_protected.xlsx");
+        assertTrue(workbook.isRevisionLocked());
+        assertFalse(workbook.isWindowsLocked());
+        assertFalse(workbook.isStructureLocked());
+    }
 
     @Test
-	public void shouldWriteWindowsLock() throws Exception {
-		XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-		assertFalse(workbook.isWindowsLocked());
+    public void shouldWriteStructureLock() throws Exception {
+        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
+        assertFalse(workbook.isStructureLocked());
 
-		workbook.lockWindows();
+        workbook.lockStructure();
 
-		assertTrue(workbook.isWindowsLocked());
+        assertTrue(workbook.isStructureLocked());
 
-		workbook.unLockWindows();
+        workbook.unLockStructure();
 
-		assertFalse(workbook.isWindowsLocked());
-	}
+        assertFalse(workbook.isStructureLocked());
+    }
 
     @Test
-	public void shouldWriteRevisionLock() throws Exception {
-		XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-		assertFalse(workbook.isRevisionLocked());
+    public void shouldWriteWindowsLock() throws Exception {
+        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
+        assertFalse(workbook.isWindowsLocked());
 
-		workbook.lockRevision();
+        workbook.lockWindows();
 
-		assertTrue(workbook.isRevisionLocked());
+        assertTrue(workbook.isWindowsLocked());
 
-		workbook.unLockRevision();
+        workbook.unLockWindows();
 
-		assertFalse(workbook.isRevisionLocked());
-	}
+        assertFalse(workbook.isWindowsLocked());
+    }
+
+    @Test
+    public void shouldWriteRevisionLock() throws Exception {
+        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
+        assertFalse(workbook.isRevisionLocked());
+
+        workbook.lockRevision();
+
+        assertTrue(workbook.isRevisionLocked());
+
+        workbook.unLockRevision();
+
+        assertFalse(workbook.isRevisionLocked());
+    }
 
     @SuppressWarnings("resource")
     @Test
@@ -175,19 +175,19 @@ public class TestWorkbookProtection {
     
     @SuppressWarnings("resource")
     @Test
-	public void testIntegration() throws Exception {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		wb.createSheet("Testing purpose sheet");
-		assertFalse(wb.isRevisionLocked());
+    public void testIntegration() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.createSheet("Testing purpose sheet");
+        assertFalse(wb.isRevisionLocked());
 
-		wb.lockRevision();
-		wb.setRevisionsPassword("test", null);
+        wb.lockRevision();
+        wb.setRevisionsPassword("test", null);
 
-		wb = writeOutAndReadBack(wb);
-		
-		assertTrue(wb.isRevisionLocked());
-		assertTrue(wb.validateRevisionsPassword("test"));
-	}
+        wb = writeOutAndReadBack(wb);
+        
+        assertTrue(wb.isRevisionLocked());
+        assertTrue(wb.validateRevisionsPassword("test"));
+    }
     
     @Ignore("bug 60230: currently failing due to regression from bug 59857 r1762726")
     @Test
