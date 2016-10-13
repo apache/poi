@@ -1,5 +1,6 @@
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
+
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
    The ASF licenses this file to You under the Apache License, Version 2.0
@@ -14,6 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
@@ -55,27 +57,13 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.EndnotesDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * <p>High(ish) level class for working with .docx files.</p>
@@ -438,12 +426,68 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
     public XWPFHeaderFooterPolicy createHeaderFooterPolicy() {
         if (headerFooterPolicy == null) {
-            if (! ctDocument.getBody().isSetSectPr()) {
-                ctDocument.getBody().addNewSectPr();
-            }
+//            if (! ctDocument.getBody().isSetSectPr()) {
+//                ctDocument.getBody().addNewSectPr();
+//            }
             headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
         }
         return headerFooterPolicy;
+    }
+    
+    /**
+     * Create a header of the given type
+     *
+     * @param type {@link HeaderFooterType} enum
+     * @return object of type {@link XWPFHeader}
+     */
+    public XWPFHeader createHeader(HeaderFooterType type) {
+        XWPFHeaderFooterPolicy hfPolicy = createHeaderFooterPolicy();
+        // TODO this needs to be migrated out into section code
+        if (type == HeaderFooterType.FIRST) {
+            CTSectPr ctSectPr = getSection();
+            if (ctSectPr.isSetTitlePg() == false) {
+                CTOnOff titlePg = ctSectPr.addNewTitlePg();
+                titlePg.setVal(STOnOff.ON);
+            }
+        } else if (type == HeaderFooterType.EVEN) {
+            // TODO Add support for Even/Odd headings and footers
+        }
+        return hfPolicy.createHeader(STHdrFtr.Enum.forInt(type.toInt()));
+    }
+    
+    
+    /**
+     * Create a footer of the given type
+     *
+     * @param type {@link HeaderFooterType} enum
+     * @return object of type {@link XWPFFooter}
+     */
+    public XWPFFooter createFooter(HeaderFooterType type) {
+        XWPFHeaderFooterPolicy hfPolicy = createHeaderFooterPolicy();
+        // TODO this needs to be migrated out into section code
+        if (type == HeaderFooterType.FIRST) {
+            CTSectPr ctSectPr = getSection();
+            if (ctSectPr.isSetTitlePg() == false) {
+                CTOnOff titlePg = ctSectPr.addNewTitlePg();
+                titlePg.setVal(STOnOff.ON);
+            }
+        } else if (type == HeaderFooterType.EVEN) {
+            // TODO Add support for Even/Odd headings and footers
+        }
+        return hfPolicy.createFooter(STHdrFtr.Enum.forInt(type.toInt()));
+    }
+
+    /**
+     * Return the {@link CTSectPr} object that corresponds with the
+     * last section in this document.
+     *
+     * @return {@link CTSectPr} object
+     */
+    private CTSectPr getSection() {
+        CTBody ctBody = getDocument().getBody();
+        return (ctBody.isSetSectPr() ?
+                ctBody.getSectPr() :
+                ctBody.addNewSectPr());
     }
 
     /**
