@@ -3128,4 +3128,47 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         wb.close();
     }
+    
+    /**
+     * Other things, including charts, may end up taking drawing part
+     *  numbers. (Uses a test file hand-crafted with an extra non-drawing
+     *  part with a part number)
+     */
+    @Test
+    public void drawingNumbersAlreadyTaken_60255() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("60255_extra_drawingparts.xlsx");
+        assertEquals(4, wb.getNumberOfSheets());
+        
+        // Sheet 3 starts with a drawing
+        Sheet sheet = wb.getSheetAt(0);
+        assertNull(sheet.getDrawingPatriarch());
+        sheet = wb.getSheetAt(1);
+        assertNull(sheet.getDrawingPatriarch());
+        sheet = wb.getSheetAt(2);
+        assertNotNull(sheet.getDrawingPatriarch());
+        sheet = wb.getSheetAt(3);
+        assertNull(sheet.getDrawingPatriarch());
+        
+        // Add another sheet, and give it a drawing
+        sheet = wb.createSheet();
+        assertNull(sheet.getDrawingPatriarch());
+        sheet.createDrawingPatriarch();
+        assertNotNull(sheet.getDrawingPatriarch());
+        
+        // Save and check
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(5, wb.getNumberOfSheets());
+        
+        // Sheets 3 and 5 now
+        sheet = wb.getSheetAt(0);
+        assertNull(sheet.getDrawingPatriarch());
+        sheet = wb.getSheetAt(1);
+        assertNull(sheet.getDrawingPatriarch());
+        sheet = wb.getSheetAt(2);
+        assertNotNull(sheet.getDrawingPatriarch());
+        sheet = wb.getSheetAt(3);
+        assertNull(sheet.getDrawingPatriarch());
+        sheet = wb.getSheetAt(4);
+        assertNotNull(sheet.getDrawingPatriarch());
+    }
 }
