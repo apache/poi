@@ -56,12 +56,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
 public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     private CTTable ctTable;
-    private List<XSSFXmlColumnPr> xmlColumnPr;
-    private CTTableColumn[] ctColumns;
-    private HashMap<String, Integer> columnMap;
-    private CellReference startCellReference;
-    private CellReference endCellReference;    
-    private String commonXPath; 
+    private transient List<XSSFXmlColumnPr> xmlColumnPr;
+    private transient CTTableColumn[] ctColumns;
+    private transient HashMap<String, Integer> columnMap;
+    private transient CellReference startCellReference;
+    private transient CellReference endCellReference;    
+    private transient String commonXPath; 
 
 
     public XSSFTable() {
