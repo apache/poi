@@ -219,7 +219,6 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		builder.append(' ');
 		if (validationType!=ValidationType.ANY) {
 			if (validationType != ValidationType.LIST
-					&& validationType != ValidationType.ANY
 					&& validationType != ValidationType.FORMULA) {
 				builder.append(LIST_SEPARATOR).append(ot).append(", ");
 			}
