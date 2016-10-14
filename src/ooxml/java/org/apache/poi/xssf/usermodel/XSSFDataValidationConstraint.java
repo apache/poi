@@ -82,6 +82,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	 */
 	public XSSFDataValidationConstraint(int validationType, int operator, String formula1, String formula2) {
 		super();
+		//removes leading equals sign if present
 		setFormula1(formula1);
 		setFormula2(formula2);
 		this.validationType = validationType;
@@ -92,12 +93,10 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		//FIXME: Need to confirm if this is not a formula.
 		// empirical testing shows Excel saves explicit lists surrounded by double quotes, 
 		// range formula expressions can't start with quotes (I think - anyone have a creative counter example?)
-		if( ValidationType.LIST==validationType
-				&& formula1 != null
-				&& formula1.startsWith(QUOTE)
-				&& formula1.endsWith(QUOTE) ) {
-            final String formulaWithoutQuotes = formula1.substring(1, formula1.length()-1);
-			explicitListOfValues = LIST_SPLIT_REGEX.split(formulaWithoutQuotes);
+		if ( ValidationType.LIST == validationType
+				&& this.formula1 != null
+				&& isQuoted(this.formula1) ) {
+			explicitListOfValues = LIST_SPLIT_REGEX.split(unquote(this.formula1));
 		}
 	}
 
@@ -168,6 +167,19 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	protected static String removeLeadingEquals(String formula1) {
 		return isFormulaEmpty(formula1) ? formula1 : formula1.charAt(0)=='=' ? formula1.substring(1) : formula1;
 	}
+	private static boolean isQuoted(String s) {
+		return s.startsWith(QUOTE) && s.endsWith(QUOTE);
+	}
+	private static String unquote(String s) {
+		// removes leading and trailing quotes from a quoted string
+		if (isQuoted(s)) {
+			return s.substring(1, s.length()-1);
+		}
+		return s;
+	}
+	protected static boolean isFormulaEmpty(String formula1) {
+		return formula1 == null || formula1.trim().length()==0;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setFormula2(java.lang.String)
@@ -207,9 +219,6 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		}
 	}
 
-	protected static boolean isFormulaEmpty(String formula1) {
-		return formula1 == null || formula1.trim().length()==0;
-	}
 	
 	public String prettyPrint() {
 		StringBuilder builder = new StringBuilder();
