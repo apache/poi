@@ -223,14 +223,14 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 					&& validationType != ValidationType.FORMULA) {
 				builder.append(LIST_SEPARATOR).append(ot).append(", ");
 			}
-
+			final String NOQUOTE = "";
 			if (validationType == ValidationType.LIST && explicitListOfValues != null) {
-				builder.append(QUOTE).append(Arrays.asList(explicitListOfValues)).append(QUOTE).append(' ');
+				builder.append(NOQUOTE).append(Arrays.asList(explicitListOfValues)).append(NOQUOTE).append(' ');
 			} else {
-				builder.append(QUOTE).append(formula1).append(QUOTE).append(' ');
+				builder.append(NOQUOTE).append(formula1).append(NOQUOTE).append(' ');
 			}
 			if (formula2 != null) {
-				builder.append(QUOTE).append(formula2).append(QUOTE).append(' ');
+				builder.append(NOQUOTE).append(formula2).append(NOQUOTE).append(' ');
 			}
 		}
 		return builder.toString();
