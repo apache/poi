@@ -39,6 +39,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 
 /**
  * Represents an entry of a OOXML package.
@@ -536,6 +537,55 @@ public class POIXMLDocumentPart {
      */
     public final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx){
         return createRelationship(descriptor, factory, idx, false).getDocumentPart();
+    }
+    
+    /**
+     * Identifies the next available part number for a part of the given type,
+     *  if possible, otherwise -1 if none are available.
+     * The found (valid) index can then be safely given to
+     *  {@link #createRelationship(POIXMLRelation, POIXMLFactory, int)} or
+     *  {@link #createRelationship(POIXMLRelation, POIXMLFactory, int, boolean)}
+     *  without naming clashes.
+     * If parts with other types are already claiming a name for this relationship
+     *  type (eg a {@link XSSFRelation#CHART} using the drawing part namespace 
+     *  normally used by {@link XSSFRelation#DRAWINGS}), those will be considered
+     *  when finding the next spare number.
+     *
+     * @param descriptor The relationship type to find the part number for
+     * @param minIdx The minimum free index to assign, use -1 for any
+     * @return The next free part number, or -1 if none available
+     */
+    protected final int getNextPartNumber(POIXMLRelation descriptor, int minIdx) {
+        OPCPackage pkg = packagePart.getPackage();
+        
+        try {
+            if (descriptor.getDefaultFileName().equals(descriptor.getFileName(9999))) {
+                // Non-index based, check if default is free
+                PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getDefaultFileName());
+                if (pkg.containPart(ppName)) {
+                    // Default name already taken, not index based, nothing free
+                    return -1;
+                } else {
+                    // Default name free
+                    return 0;
+                }
+            }
+            
+            // Default to searching from 1, unless they asked for 0+
+            int idx = minIdx;
+            if (minIdx < 0) idx = 1;
+            while (idx < 1000) {
+                String name = descriptor.getFileName(idx);
+                if (!pkg.containPart(PackagingURIHelper.createPartName(name))) {
+                    return idx;
+                }
+                idx++;
+            }
+        } catch (InvalidFormatException e) {
+            // Give a general wrapped exception for the problem
+            throw new POIXMLException(e);
+        }
+        return -1;
     }
 
     /**

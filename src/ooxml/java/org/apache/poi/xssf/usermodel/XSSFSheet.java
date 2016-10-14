@@ -554,8 +554,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             return getDrawingPatriarch();
         }
         
-        //drawingNumber = #drawings.size() + 1
+        // Default drawingNumber = #drawings.size() + 1
         int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
+        drawingNumber = getNextPartNumber(XSSFRelation.DRAWINGS, drawingNumber);
         RelationPart rp = createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
         XSSFDrawing drawing = rp.getDocumentPart();
         String relId = rp.getRelationship().getId();
