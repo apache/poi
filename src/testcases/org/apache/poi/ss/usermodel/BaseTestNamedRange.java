@@ -673,22 +673,33 @@ public abstract class BaseTestNamedRange {
         wb.close();
     }
     
+    // bug 56781: name validation only checks for first character's validity and presence of spaces
+    // bug 60246: validate name does not allow DOT in named ranges
     @Test
-    public void test56781() throws IOException {
+    public void testValid() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         
         Name name = wb.createName();
         for (String valid : Arrays.asList(
                 "Hello",
                 "number1",
-                "_underscore"
-                //"p.e.r.o.i.d.s",
-                //"\\Backslash",
-                //"Backslash\\"
+                "_underscore",
+                "underscore_",
+                "p.e.r.o.i.d.s",
+                "\\Backslash",
+                "Backslash\\"
                 )) {
             name.setNameName(valid);
         }
         
+        wb.close();
+    }
+    
+    @Test
+    public void testInvalid() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        
+        Name name = wb.createName();
         try {
             name.setNameName("");
             fail("expected exception: (blank)");
@@ -704,7 +715,18 @@ public abstract class BaseTestNamedRange {
                 "Colon:",
                 "A-Minus",
                 "A+Plus",
-                "Dollar$")) {
+                "Dollar$",
+                ".periodAtBeginning",
+                "R", //special shorthand
+                "C", //special shorthand
+                "A1", // A1-style cell reference
+                "R1C1", // R1C1-style cell reference
+                "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+                "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+                "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+                "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters..."+
+                "NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters.NameThatIsLongerThan255Characters"
+                )) {
             try {
                 name.setNameName(invalid);
                 fail("expected exception: " + invalid);
