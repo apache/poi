@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestOle10Native {
@@ -107,4 +108,12 @@ public class TestOle10Native {
             }
         }
     }
+
+    @Test
+    @Ignore("BUG 60256")
+    public void testOleNativeOOM() throws IOException, Ole10NativeException {
+        POIFSFileSystem fs = new POIFSFileSystem(dataSamples.openResourceAsStream("60256.bin"));
+        Ole10Native ole = Ole10Native.createFromEmbeddedOleObject(fs);
+    }
+
 }
