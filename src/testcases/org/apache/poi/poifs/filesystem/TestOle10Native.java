@@ -20,6 +20,8 @@ package org.apache.poi.poifs.filesystem;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -110,10 +112,14 @@ public class TestOle10Native {
     }
 
     @Test
-    @Ignore("BUG 60256")
     public void testOleNativeOOM() throws IOException, Ole10NativeException {
         POIFSFileSystem fs = new POIFSFileSystem(dataSamples.openResourceAsStream("60256.bin"));
-        Ole10Native ole = Ole10Native.createFromEmbeddedOleObject(fs);
+        try {
+            Ole10Native.createFromEmbeddedOleObject(fs);
+            fail("Should have thrown exception because OLENative lacks a length parameter");
+        } catch (Ole10NativeException e) {
+            assertTrue(e.getMessage().indexOf("declared data length") > -1);
+        }
     }
 
 }

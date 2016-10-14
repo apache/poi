@@ -192,7 +192,10 @@ public class Ole10Native {
             dataSize = totalSize;
             break;
         }
-        
+
+        if ((long)dataSize + (long)ofs > (long)data.length) { //cast to avoid overflow
+            throw new Ole10NativeException("Invalid Ole10Native: declared data length > available data");
+        }
         dataBuffer = new byte[dataSize];
         System.arraycopy(data, ofs, dataBuffer, 0, dataSize);
         ofs += dataSize;
