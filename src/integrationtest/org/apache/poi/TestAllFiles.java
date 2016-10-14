@@ -249,6 +249,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("poifs/only-zero-byte-streams.ole2"); // No actual contents
         EXPECTED_FAILURES.add("spreadsheet/poc-xmlbomb.xlsx");  // contains xml-entity-expansion
         EXPECTED_FAILURES.add("spreadsheet/poc-shared-strings.xlsx");  // contains shared-string-entity-expansion
+        EXPECTED_FAILURES.add("spreadsheet/60255_extra_drawingparts.xlsx"); // Non-drawing drawing
         
         // old Excel files, which we only support simple text extraction of
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_2.xls");
