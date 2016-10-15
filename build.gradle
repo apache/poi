@@ -16,11 +16,11 @@
 ==================================================================== */
 buildscript {
 	repositories {
-		jcenter()
+		maven { url "https://plugins.gradle.org/m2/" }
 	}
 
 	dependencies {
-		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.1'
+		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'
 	}
 }
 
@@ -154,10 +154,10 @@ project('main') {
 		baseline = 'org.apache.poi:poi:' + japicmpversion + '@jar'
 		to = jar.archivePath
 		onlyModified = true
-		// not available, see issue #6: onlyBinaryIncompatibleModified = true
+		onlyBinaryIncompatibleModified = true
 		failOnModification = false
 		txtOutputFile = file("$buildDir/reports/japi.txt")
-		// not available, see issue #6: htmlOutputFile = file("$buildDir/reports/japi.html")
+		htmlOutputFile = file("$buildDir/reports/japi.html")
 	}
 }
 
@@ -197,10 +197,10 @@ project('ooxml') {
 		baseline = 'org.apache.poi:poi-ooxml:' + japicmpversion + '@jar'
 		to = jar.archivePath
 		onlyModified = true
-		// not available, see issue #6: onlyBinaryIncompatibleModified = true
+		onlyBinaryIncompatibleModified = true
 		failOnModification = false
 		txtOutputFile = file("$buildDir/reports/japi.txt")
-		// not available, see issue #6: htmlOutputFile = file("$buildDir/reports/japi.html")
+		htmlOutputFile = file("$buildDir/reports/japi.html")
 	}
 }
 
@@ -233,10 +233,10 @@ project('excelant') {
 		baseline = 'org.apache.poi:poi-excelant:' + japicmpversion + '@jar'
 		to = jar.archivePath
 		onlyModified = true
-		// not available, see issue #6: onlyBinaryIncompatibleModified = true
+		onlyBinaryIncompatibleModified = true
 		failOnModification = false
 		txtOutputFile = file("$buildDir/reports/japi.txt")
-		// not available, see issue #6: htmlOutputFile = file("$buildDir/reports/japi.html")
+		htmlOutputFile = file("$buildDir/reports/japi.html")
 	}
 }
 
@@ -286,9 +286,9 @@ project('scratchpad') {
 		baseline = 'org.apache.poi:poi-scratchpad:' + japicmpversion + '@jar'
 		to = jar.archivePath
 		onlyModified = true
-		// not available, see issue #6: onlyBinaryIncompatibleModified = true
+		onlyBinaryIncompatibleModified = true
 		failOnModification = false
 		txtOutputFile = file("$buildDir/reports/japi.txt")
-		// not available, see issue #6: htmlOutputFile = file("$buildDir/reports/japi.html")
+		htmlOutputFile = file("$buildDir/reports/japi.html")
 	}
 }
