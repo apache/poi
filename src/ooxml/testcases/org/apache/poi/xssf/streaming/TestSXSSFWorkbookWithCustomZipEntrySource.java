@@ -165,6 +165,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             } catch (GeneralSecurityException e) {
                 throw new IOException(e);
             } finally {
+                tempData.dispose();
                 IOUtils.closeQuietly(source);
             }
         }
