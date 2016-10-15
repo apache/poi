@@ -67,38 +67,33 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class Days360 extends Var2or3ArgFunction {
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-        double result;
         try {
             double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
             double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
-            result = evaluate(d0, d1, false);
+            return new NumberEval(evaluate(d0, d1, false));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        return new NumberEval(result);
     }
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
             ValueEval arg2) {
-        double result;
         try {
             double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
             double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
             ValueEval ve = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
             Boolean method = OperandResolver.coerceValueToBoolean(ve, false);
-            result = evaluate(d0, d1, method == null ? false : method.booleanValue());
+            return new NumberEval(evaluate(d0, d1, method != null && method.booleanValue()));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        return new NumberEval(result);
     }
 
     private static double evaluate(double d0, double d1, boolean method) {
         Calendar realStart = getDate(d0);
         Calendar realEnd = getDate(d1);
         int startingDate[] = getStartingDate(realStart, method);
-        int endingDate[] = getEndingDate(realEnd, realStart, method);
-        
+        int endingDate[] = getEndingDate(realEnd, startingDate, method);
         return
             (endingDate[0]*360+endingDate[1]*30+endingDate[2])-
             (startingDate[0]*360+startingDate[1]*30+startingDate[2]);
@@ -111,34 +106,32 @@ public class Days360 extends Var2or3ArgFunction {
     }
 
     private static int[] getStartingDate(Calendar realStart, boolean method) {
-        Calendar d = realStart;
-        int yyyy = d.get(Calendar.YEAR);
-        int mm = d.get(Calendar.MONTH);
-        int dd = Math.min(30, d.get(Calendar.DAY_OF_MONTH));
+        int yyyy = realStart.get(Calendar.YEAR);
+        int mm = realStart.get(Calendar.MONTH);
+        int dd = Math.min(30, realStart.get(Calendar.DAY_OF_MONTH));
         
-        if (method == false && isLastDayOfMonth(d)) dd = 30;
+        if (!method && isLastDayOfMonth(realStart)) dd = 30;
         
         return new int[]{yyyy,mm,dd};
     }
 
-    private static int[] getEndingDate(Calendar realEnd, Calendar realStart, boolean method) {
-        Calendar d = realEnd;
-        int yyyy = d.get(Calendar.YEAR);
-        int mm = d.get(Calendar.MONTH);
-        int dd = Math.min(30, d.get(Calendar.DAY_OF_MONTH));
+    private static int[] getEndingDate(Calendar realEnd, int startingDate[], boolean method) {
+        int yyyy = realEnd.get(Calendar.YEAR);
+        int mm = realEnd.get(Calendar.MONTH);
+        int dd = Math.min(30, realEnd.get(Calendar.DAY_OF_MONTH));
 
-        if (method == false && realEnd.get(Calendar.DAY_OF_MONTH) == 31) {
-            if (realStart.get(Calendar.DAY_OF_MONTH) < 30) {
-                d.set(Calendar.DAY_OF_MONTH, 1);
-                d.add(Calendar.MONTH, 1);
-                yyyy = d.get(Calendar.YEAR);
-                mm = d.get(Calendar.MONTH);
+        if (!method && realEnd.get(Calendar.DAY_OF_MONTH) == 31) {
+            if (startingDate[2] < 30) {
+                realEnd.set(Calendar.DAY_OF_MONTH, 1);
+                realEnd.add(Calendar.MONTH, 1);
+                yyyy = realEnd.get(Calendar.YEAR);
+                mm = realEnd.get(Calendar.MONTH);
                 dd = 1;
             } else {
                 dd = 30;
             }
         }
-        
+
         return new int[]{yyyy,mm,dd};
     }
     
