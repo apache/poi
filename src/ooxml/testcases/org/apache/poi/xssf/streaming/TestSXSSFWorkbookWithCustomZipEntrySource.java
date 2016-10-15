@@ -133,10 +133,15 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         assertEquals(1, tempFiles.size());
         File tempFile = tempFiles.get(0);
         assertTrue("tempFile exists?", tempFile.exists());
-        byte[] data = IOUtils.toByteArray(new FileInputStream(tempFile));
-        String text = new String(data, UTF_8);
-        assertFalse(text.contains(sheetName));
-        assertFalse(text.contains(cellValue));
+        InputStream stream = new FileInputStream(tempFile);
+        try {
+            byte[] data = IOUtils.toByteArray(stream);
+            String text = new String(data, UTF_8);
+            assertFalse(text.contains(sheetName));
+            assertFalse(text.contains(cellValue));
+        } finally {
+            stream.close();
+        }
         workbook.dispose();
         assertFalse("tempFile deleted after dispose?", tempFile.exists());
     }
@@ -173,7 +178,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         }
     }
     
-    
     static class SheetDataWriterWithDecorator extends SheetDataWriter {
         final static CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
         SecretKeySpec skeySpec;
@@ -206,7 +210,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, "PKCS5Padding");
             return new CipherInputStream(fis, ciDec);
         }
-        
     }
     
     // a class to save and read an AES-encrypted workbook
@@ -237,8 +240,8 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         }
         
         void dispose() {
-            tempFile.delete();
+            assertTrue("Could not delete tempfile " + tempFile + ": " + tempFile.exists(),
+                    !tempFile.exists() || tempFile.delete());
         }
     }
-    
 }
