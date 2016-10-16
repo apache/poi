@@ -230,12 +230,12 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         EscherArrayProperty verticesProp = new EscherArrayProperty((short)(EscherProperties.GEOMETRY__VERTICES + 0x4000), false, null);
         verticesProp.setNumberOfElementsInArray(pntInfo.size());
         verticesProp.setNumberOfElementsInMemory(pntInfo.size());
-        verticesProp.setSizeOfElements(0xFFF0);
+        verticesProp.setSizeOfElements(8);
         for (int i = 0; i < pntInfo.size(); i++) {
             Point2D.Double pnt = pntInfo.get(i);
-            byte[] data = new byte[4];
-            LittleEndian.putShort(data, 0, (short)Units.pointsToMaster(pnt.getX() - bounds.getX()));
-            LittleEndian.putShort(data, 2, (short)Units.pointsToMaster(pnt.getY() - bounds.getY()));
+            byte[] data = new byte[8];
+            LittleEndian.putInt(data, 0, Units.pointsToMaster(pnt.getX() - bounds.getX()));
+            LittleEndian.putInt(data, 4, Units.pointsToMaster(pnt.getY() - bounds.getY()));
             verticesProp.setElement(i, data);
         }
         opt.addEscherProperty(verticesProp);
@@ -282,6 +282,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
 
         Iterator<byte[]> vertIter = verticesProp.iterator();
         Iterator<byte[]> segIter = segmentsProp.iterator();
+        double xyPoints[] = new double[2];
         
         while (vertIter.hasNext() && segIter.hasNext()) {
             byte[] segElem = segIter.next();
@@ -292,30 +293,30 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                     break;
                 }
                 case moveTo: {
-                    byte[] p = vertIter.next();
-                    double x = Units.masterToPoints(LittleEndian.getShort(p, 0));
-                    double y = Units.masterToPoints(LittleEndian.getShort(p, 2));
+                    fillPoint(vertIter.next(), xyPoints);
+                    double x = xyPoints[0];
+                    double y = xyPoints[1];
                     path.moveTo(x,y);
                     break;
                 }
                 case curveTo: {
-                    byte[] p1 = vertIter.next();
-                    double x1 = Units.masterToPoints(LittleEndian.getShort(p1, 0));
-                    double y1 = Units.masterToPoints(LittleEndian.getShort(p1, 2));
-                    byte[] p2 = vertIter.next();
-                    double x2 = Units.masterToPoints(LittleEndian.getShort(p2, 0));
-                    double y2 = Units.masterToPoints(LittleEndian.getShort(p2, 2));
-                    byte[] p3 = vertIter.next();
-                    double x3 = Units.masterToPoints(LittleEndian.getShort(p3, 0));
-                    double y3 = Units.masterToPoints(LittleEndian.getShort(p3, 2));
+                    fillPoint(vertIter.next(), xyPoints);
+                    double x1 = xyPoints[0];
+                    double y1 = xyPoints[1];
+                    fillPoint(vertIter.next(), xyPoints);
+                    double x2 = xyPoints[0];
+                    double y2 = xyPoints[1];
+                    fillPoint(vertIter.next(), xyPoints);
+                    double x3 = xyPoints[0];
+                    double y3 = xyPoints[1];
                     path.curveTo(x1,y1,x2,y2,x3,y3);
                     break;
                 }
                 case lineTo:
                     if (vertIter.hasNext()) {
-                        byte[] p = vertIter.next();
-                        double x = Units.masterToPoints(LittleEndian.getShort(p, 0));
-                        double y = Units.masterToPoints(LittleEndian.getShort(p, 2));
+                        fillPoint(vertIter.next(), xyPoints);
+                        double x = xyPoints[0];
+                        double y = xyPoints[1];
                         path.lineTo(x,y);
                     }
                     break;
@@ -342,6 +343,25 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                 anchor.getHeight()/bounds.getHeight()
         );
         return new Path2D.Double(at.createTransformedShape(path));
+    }
+    
+    private void fillPoint(byte xyMaster[], double xyPoints[]) {
+        if (xyMaster == null || xyPoints == null || (xyMaster.length != 4 && xyMaster.length != 8) || xyPoints.length != 2) {
+            logger.log(POILogger.WARN, "Invalid number of master bytes for a single point - ignore point");
+            return;
+        }
+        
+        int x, y;
+        if (xyMaster.length == 4) {
+            x = LittleEndian.getShort(xyMaster, 0);
+            y = LittleEndian.getShort(xyMaster, 2);
+        } else {
+            x = LittleEndian.getInt(xyMaster, 0);
+            y = LittleEndian.getInt(xyMaster, 4);
+        }
+        
+        xyPoints[0] = Units.masterToPoints(x);
+        xyPoints[1] = Units.masterToPoints(y);
     }
     
     private static <T extends EscherProperty> T getShapeProp(AbstractEscherOptRecord opt, int propId) {
