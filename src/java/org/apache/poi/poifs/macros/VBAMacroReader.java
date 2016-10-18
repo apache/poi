@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -268,6 +269,7 @@ public class VBAMacroReader implements Closeable {
     private static final int MODULE_NAME = 0x0019;
     private static final int MODULE_NAME_UNICODE = 0x0047;
     private static final int MODULE_DOC_STRING = 0x001c;
+    private static final int STREAMNAME_RESERVED = 0x0032;
 
     /**
      * Reads VBA Project modules from a VBA Project directory located at
@@ -287,6 +289,7 @@ public class VBAMacroReader implements Closeable {
                     // process DIR
                     RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis);
                     String streamName = null;
+                    String streamNameUnicode = null;
                     int recordId = 0;
                     try {
                         while (true) {
@@ -306,6 +309,14 @@ public class VBAMacroReader implements Closeable {
                                 break;
                             case STREAMNAME:
                                 streamName = readString(in, recordLength, modules.charset);
+                                int reserved = in.readShort();
+                                if (reserved != STREAMNAME_RESERVED) {
+                                    throw new IOException("Expected x0032 after stream name before Unicode stream name, but found: "+
+                                            Integer.toHexString(reserved));
+                                }
+                                int unicodeNameRecordLength = in.readInt();
+                                streamNameUnicode = readUnicodeString(in, unicodeNameRecordLength);
+                                //do something with this at some point
                                 break;
                             case MODULEOFFSET:
                                 readModule(in, streamName, modules);
@@ -333,5 +344,11 @@ public class VBAMacroReader implements Closeable {
                 dis.close();
             }
         }
+    }
+
+    private String readUnicodeString(RLEDecompressingInputStream in, int unicodeNameRecordLength) throws IOException {
+        byte[] buffer = new byte[unicodeNameRecordLength];
+        IOUtils.readFully(in, buffer);
+        return new String(buffer, Charset.forName("UTF-16LE"));
     }
 }

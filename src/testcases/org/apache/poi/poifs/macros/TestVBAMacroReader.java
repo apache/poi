@@ -244,22 +244,15 @@ public class TestVBAMacroReader {
         assertContains(content, testMacroNoSub);
     }
     
-    @Ignore
+
     @Test
     public void bug59830() throws IOException {
-        // This file is intentionally omitted from the test-data directory
-        // unless we can extract the vbaProject.bin from this Word 97-2003 file
-        // so that it's less likely to be opened and executed on a Windows computer.
-        // The file is attached to bug 59830.
-        // The Macro Virus only affects Windows computers, as it makes a
-        // subprocess call to powershell.exe with an encoded payload
-        // The document contains macros that execute on workbook open if macros
-        // are enabled
-        File doc = POIDataSamples.getDocumentInstance().getFile("macro_virus.doc.do_not_open");
-        VBAMacroReader reader = new VBAMacroReader(doc);
-        Map<String, String> macros = reader.readMacros();
-        assertNotNull(macros);
-        reader.close();
+        //test file is "609751.xls" in govdocs1
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("59830.xls");
+        VBAMacroReader r = new VBAMacroReader(f);
+        Map<String, String> macros = r.readMacros();
+        assertNotNull(macros.get("Module20"));
+        assertContains(macros.get("Module20"), "here start of superscripting");
     }
     
     // This test is written as expected-to-fail and should be rewritten
