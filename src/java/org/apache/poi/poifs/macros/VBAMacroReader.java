@@ -265,6 +265,9 @@ public class VBAMacroReader implements Closeable {
     private static final int MODULETYPE_PROCEDURAL = 0x0021;
     private static final int MODULETYPE_DOCUMENT_CLASS_OR_DESIGNER = 0x0022;
     private static final int PROJECTLCID = 0x0002;
+    private static final int MODULE_NAME = 0x0019;
+    private static final int MODULE_NAME_UNICODE = 0x0047;
+    private static final int MODULE_DOC_STRING = 0x001c;
 
     /**
      * Reads VBA Project modules from a VBA Project directory located at
