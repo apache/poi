@@ -218,7 +218,7 @@ public class VBAMacroReader implements Closeable {
             module = new Module();
             modules.put(name, module);
             module.read(dis);
-        } else {
+        } else if (module.buf == null) { //if we haven't already read the bytes for the module keyed off this name...
             if (module.offset == null) {
                 //This should not happen. bug 59858
                 throw new IOException("Module offset for '" + name + "' was never read.");

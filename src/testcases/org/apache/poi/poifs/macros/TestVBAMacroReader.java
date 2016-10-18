@@ -254,24 +254,14 @@ public class TestVBAMacroReader {
         assertNotNull(macros.get("Module20"));
         assertContains(macros.get("Module20"), "here start of superscripting");
     }
-    
-    // This test is written as expected-to-fail and should be rewritten
-    // as expected-to-pass when the bug is fixed.
+
     @Test
     public void bug59858() throws IOException {
-        try {
-            fromFile(POIDataSamples.getSpreadSheetInstance(), "59858.xls");
-            testPassesNow(59858);
-        } catch (IOException e) {
-            if (e.getMessage().matches("Module offset for '.+' was never read.")) {
-                //e.printStackTrace();
-                // NPE when reading module.offset in VBAMacroReader.readMacros (approx line 258)
-                skipTest(e);
-            } else {
-                // something unexpected failed
-                throw e;
-            }
-        }
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("59830.xls");
+        VBAMacroReader r = new VBAMacroReader(f);
+        Map<String, String> macros = r.readMacros();
+        assertNotNull(macros.get("Module20"));
+        assertContains(macros.get("Module20"), "start of superscripting");
     }
 
     @Test
