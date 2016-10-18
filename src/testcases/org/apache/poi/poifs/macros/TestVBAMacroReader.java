@@ -257,11 +257,11 @@ public class TestVBAMacroReader {
 
     @Test
     public void bug59858() throws IOException {
-        File f = POIDataSamples.getSpreadSheetInstance().getFile("59830.xls");
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("59858.xls");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
-        assertNotNull(macros.get("Module20"));
-        assertContains(macros.get("Module20"), "start of superscripting");
+        assertNotNull(macros.get("Sheet4"));
+        assertContains(macros.get("Sheet4"), "intentional constituent");
     }
 
     @Test
