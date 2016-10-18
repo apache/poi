@@ -272,4 +272,14 @@ public class TestVBAMacroReader {
         assertNotNull(macros.get("NewMacros"));
         assertContains(macros.get("NewMacros"), "' dirty");
     }
+
+    @Test
+    public void bug60273() throws IOException {
+        //test file derives from govdocs1 147240.xls
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("60273.xls");
+        VBAMacroReader r = new VBAMacroReader(f);
+        Map<String, String> macros = r.readMacros();
+        assertNotNull(macros.get("Module1"));
+        assertContains(macros.get("Module1"), "9/8/2004");
+    }
 }

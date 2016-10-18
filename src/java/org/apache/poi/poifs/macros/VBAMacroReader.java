@@ -41,6 +41,7 @@ import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RLEDecompressingInputStream;
@@ -305,7 +306,7 @@ public class VBAMacroReader implements Closeable {
                                 break;
                             case PROJECTCODEPAGE:
                                 int codepage = in.readShort();
-                                modules.charset = Charset.forName("Cp" + codepage);
+                                modules.charset = Charset.forName(CodePageUtil.codepageToEncoding(codepage, true));
                                 break;
                             case STREAMNAME:
                                 streamName = readString(in, recordLength, modules.charset);
