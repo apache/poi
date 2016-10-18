@@ -91,7 +91,7 @@ public class RLEDecompressingInputStream extends InputStream {
                 return -1;
             }
         }
-        return buf[pos++];
+        return buf[pos++]& 0xFF;
     }
 
     @Override

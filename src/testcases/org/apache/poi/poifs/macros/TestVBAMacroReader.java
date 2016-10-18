@@ -280,16 +280,13 @@ public class TestVBAMacroReader {
             }
         }
     }
-    
-    // This test is written as expected-to-fail and should be rewritten
-    // as expected-to-pass when the bug is fixed.
+
     @Test
     public void bug60158() throws IOException {
-        try {
-            fromFile(POIDataSamples.getDocumentInstance(), "60158.docm");
-            testPassesNow(60158);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            skipTest(e);
-        }
+        File f = POIDataSamples.getDocumentInstance().getFile("60158.docm");
+        VBAMacroReader r = new VBAMacroReader(f);
+        Map<String, String> macros = r.readMacros();
+        assertNotNull(macros.get("NewMacros"));
+        assertContains(macros.get("NewMacros"), "' dirty");
     }
 }
