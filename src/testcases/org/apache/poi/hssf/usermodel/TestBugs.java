@@ -2373,9 +2373,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /**
      * Sum across multiple workbooks
      *  eg =SUM($Sheet2.A1:$Sheet3.A1)
-     * DISABLED - We currently get the formula wrong, and mis-evaluate
      */
-    @Ignore
+    @Test
     public void test48703() throws Exception {
         HSSFWorkbook wb = openSample("48703.xls");
         assertEquals(3, wb.getNumberOfSheets());
@@ -2385,7 +2384,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Row r = sheet.getRow(0);
         Cell c = r.getCell(0);
 
-        assertEquals("SUM(Sheet2!A1:Sheet3!A1)", c.getCellFormula());
+        assertEquals("SUM(Sheet2:Sheet3!A1)", c.getCellFormula());
         assertEquals(4.0, c.getNumericCellValue(), 0);
 
         // Check the evaluated result
