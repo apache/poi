@@ -46,8 +46,15 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RLEDecompressingInputStream;
 
 /**
- * Finds all VBA Macros in an office file (OLE2/POIFS and OOXML/OPC),
+ * <p>Finds all VBA Macros in an office file (OLE2/POIFS and OOXML/OPC),
  *  and returns them.
+ * </p>
+ * <p>
+ * <b>NOTE:</b> This does not read macros from .ppt files.
+ * See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF() in the scratchpad
+ * module for an example of how to do this. Patches that make macro
+ * extraction from .ppt more elegant are welcomed!
+ * </p>
  * 
  * @since 3.15-beta2
  */

@@ -87,7 +87,8 @@ public class TestVBAMacroReader {
     public void XSSFfromStream() throws Exception {
         fromStream(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
-    @Ignore("bug 59302: Found 0 macros")
+    @Ignore("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
+            "for an example of how to get macros out of ppt. TODO: make integration across file formats more elegant")
     @Test
     public void HSLFfromStream() throws Exception {
         fromStream(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
@@ -123,7 +124,8 @@ public class TestVBAMacroReader {
     public void XSSFfromFile() throws Exception {
         fromFile(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
-    @Ignore("bug 59302: Found 0 macros")
+    @Ignore("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
+            "for an example of how to get macros out of ppt. TODO: make integration across file formats more elegant")
     @Test
     public void HSLFfromFile() throws Exception {
         fromFile(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");

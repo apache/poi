@@ -144,6 +144,15 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
     }
 
     /**
+     * Gets the record instance from the header
+     *
+     * @return record instance
+     */
+    public int getRecordInstance() {
+        return (LittleEndian.getUShort(_header, 0) >>> 4);
+    }
+    
+    /**
      * Write the contents of the record back, so it can be written
      * to disk.
      *

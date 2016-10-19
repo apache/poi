@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,7 +31,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.AttributedCharacterIterator;
@@ -43,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherColorRef;
@@ -51,12 +55,18 @@ import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.record.DocInfoListContainer;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.VBAInfoAtom;
+import org.apache.poi.hslf.record.VBAInfoContainer;
 import org.apache.poi.hssf.usermodel.DummyGraphics2d;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.macros.VBAMacroReader;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.DrawTextParagraph;
@@ -72,6 +82,7 @@ import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -947,5 +958,52 @@ public final class TestBugs {
         assertEquals(cExp.getAlpha()*100000./255., cs.getAlpha(), 1);
         
         ppt2.close();
+    }
+
+    @Test
+    public void bug59302() throws IOException {
+        //add extraction from PPT
+        Map<String, String> macros = getMacrosFromHSLF("59302.ppt");
+        assertNotNull("couldn't find macros", macros);
+        assertNotNull("couldn't find second module", macros.get("Module2"));
+        assertContains(macros.get("Module2"), "newMacro in Module2");
+
+        assertNotNull("couldn't find first module", macros.get("Module1"));
+        assertContains(macros.get("Module1"), "Italicize");
+
+        macros = getMacrosFromHSLF("SimpleMacro.ppt");
+        assertNotNull(macros.get("Module1"));
+        assertContains(macros.get("Module1"), "This is a macro slideshow");
+    }
+
+    //It isn't pretty, but it works...
+    private Map<String, String> getMacrosFromHSLF(String fileName) throws IOException {
+        InputStream is = null;
+        NPOIFSFileSystem npoifs = null;
+        try {
+            is = new FileInputStream(POIDataSamples.getSlideShowInstance().getFile(fileName));
+            npoifs = new NPOIFSFileSystem(is);
+            //TODO: should we run the VBAMacroReader on this npoifs?
+            //TBD: We know that ppt typically don't store macros in the regular place,
+            //but _can_ they?
+
+            HSLFSlideShow ppt = new HSLFSlideShow(npoifs);
+
+            //get macro persist id
+            DocInfoListContainer list = (DocInfoListContainer)ppt.getDocumentRecord().findFirstOfType(RecordTypes.List.typeID);
+            VBAInfoContainer vbaInfo = (VBAInfoContainer)list.findFirstOfType(RecordTypes.VBAInfo.typeID);
+            VBAInfoAtom vbaAtom = (VBAInfoAtom)vbaInfo.findFirstOfType(RecordTypes.VBAInfoAtom.typeID);
+            long persistId = vbaAtom.getPersistIdRef();
+            for (HSLFObjectData objData : ppt.getEmbeddedObjects()) {
+                if (objData.getExOleObjStg().getPersistId() == persistId) {
+                    return new VBAMacroReader(objData.getData()).readMacros();
+                }
+            }
+
+        } finally {
+            IOUtils.closeQuietly(npoifs);
+            IOUtils.closeQuietly(is);
+        }
+        return null;
     }
 }
