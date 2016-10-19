@@ -243,5 +243,7 @@ public final class TestXSSFReader extends TestCase {
 
        assertEquals(false, iter.hasNext());
        assertEquals("Orders", iter.getSheetName());
+       
+       pkg.close();
    }
 }
