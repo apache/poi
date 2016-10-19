@@ -1360,7 +1360,9 @@ public abstract class BaseTestBugzillaIssues {
         wb.close();
     }
     
-    @Ignore
+    // Bug 58648: FormulaParser throws exception in parseSimpleFactor() when getCellFormula()
+    // is called on a cell and the formula contains spaces between closing parentheses ") )"
+    // https://bz.apache.org/bugzilla/show_bug.cgi?id=58648
     @Test
     public void test58648() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
