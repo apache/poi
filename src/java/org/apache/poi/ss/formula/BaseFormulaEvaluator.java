@@ -183,7 +183,6 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
      *         If cell is not a formula cell, returns {@link CellType#_NONE} rather than throwing an exception.
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
      */
     @Override
     public CellType evaluateFormulaCellEnum(Cell cell) {
