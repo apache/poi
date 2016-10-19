@@ -24,11 +24,7 @@ import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 /**
  * Trivial extension of Property for POIFSDocuments
  */
-
-public class DocumentProperty
-    extends Property
-{
-
+public class DocumentProperty extends Property {
     // the POIFSDocument this property is associated with
     private OPOIFSDocument _document;
 
@@ -56,7 +52,6 @@ public class DocumentProperty
      * @param array byte data
      * @param offset offset into byte data
      */
-
     protected DocumentProperty(final int index, final byte [] array,
                                final int offset)
     {
@@ -69,7 +64,6 @@ public class DocumentProperty
      *
      * @param doc the associated POIFSDocument
      */
-
     public void setDocument(OPOIFSDocument doc)
     {
         _document = doc;
@@ -80,7 +74,6 @@ public class DocumentProperty
      *
      * @return the associated document
      */
-
     public OPOIFSDocument getDocument()
     {
         return _document;
@@ -93,7 +86,6 @@ public class DocumentProperty
      *
      * @return true if this property should use small blocks
      */
-
     public boolean shouldUseSmallBlocks()
     {
         return super.shouldUseSmallBlocks();
@@ -102,7 +94,6 @@ public class DocumentProperty
     /**
      * @return true if a directory type Property
      */
-
     public boolean isDirectory()
     {
         return false;
@@ -112,7 +103,6 @@ public class DocumentProperty
      * Perform whatever activities need to be performed prior to
      * writing
      */
-
     protected void preWrite()
     {
 
@@ -128,5 +118,4 @@ public class DocumentProperty
     }
 
     /* **********  END  extension of Property ********** */
-}   // end public class DocumentProperty
-
+}

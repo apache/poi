@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
@@ -28,7 +26,6 @@ import java.io.IOException;
  *
  * @author Marc Johnson27591@hotmail.com
  */
-
 public interface Parent
     extends Child
 {
@@ -71,8 +68,4 @@ public interface Parent
      */
 
     public void setNextChild(final Child child);
-
-    /** *** end methods from interface Child *** */
-
-}   // end public interface Parent
-
+}

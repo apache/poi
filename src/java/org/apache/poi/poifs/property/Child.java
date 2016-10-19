@@ -26,9 +26,7 @@ package org.apache.poi.poifs.property;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 
-public interface Child
-{
-
+public interface Child {
     /**
      * Get the next Child, if any
      *
@@ -62,5 +60,4 @@ public interface Child
      */
 
     public void setPreviousChild(final Child child);
-}   // end public interface Child
-
+}
