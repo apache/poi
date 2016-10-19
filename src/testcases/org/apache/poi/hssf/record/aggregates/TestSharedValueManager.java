@@ -85,8 +85,8 @@ public final class TestSharedValueManager extends TestCase {
 		} while (attempt++ < MAX_ATTEMPTS);
 
 		int count=0;
-		for (int i = 0; i < records.length; i++) {
-			if (records[i] instanceof SharedFormulaRecord) {
+		for (Record record : records) {
+			if (record instanceof SharedFormulaRecord) {
 				count++;
 			}
 		}
@@ -115,8 +115,8 @@ public final class TestSharedValueManager extends TestCase {
 		} while (attempt++ < MAX_ATTEMPTS);
 
 		int count=0;
-		for (int i = 0; i < records.length; i++) {
-			if (records[i] instanceof SharedFormulaRecord) {
+		for (Record record : records) {
+			if (record instanceof SharedFormulaRecord) {
 				count++;
 			}
 		}

@@ -75,8 +75,7 @@ public final class TestAddingSlides extends TestCase {
         //grab UserEditAtom
         UserEditAtom usredit = null;
         Record[] _records = hss_empty.getRecords();
-        for (int i = 0; i < _records.length; i++) {
-            Record record = _records[i];
+        for (Record record : _records) {
             if(record.getRecordType() == RecordTypes.UserEditAtom.typeID) {
                 usredit = (UserEditAtom)record;
             }
@@ -169,10 +168,9 @@ public final class TestAddingSlides extends TestCase {
         //grab UserEditAtom
         UserEditAtom usredit = null;
         Record[] _records = hss_two.getRecords();
-        for (int i = 0; i < _records.length; i++) {
-            Record record = _records[i];
-            if(_records[i].getRecordType() == RecordTypes.UserEditAtom.typeID) {
-                usredit = (UserEditAtom)_records[i];
+        for (Record record : _records) {
+            if(record.getRecordType() == RecordTypes.UserEditAtom.typeID) {
+                usredit = (UserEditAtom)record;
             }
        }
        assertNotNull(usredit);

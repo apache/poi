@@ -69,14 +69,14 @@ public final class TestStreamBugs extends StreamTest {
 
 		// Get without recursing
 		Pointer[] ptrs = trailer.getChildPointers();
-		for(int i=0; i<ptrs.length; i++) {
-			Stream.createStream(ptrs[i], contents, chunkFactory, ptrFactory);
+		for (Pointer ptr : ptrs) {
+			Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
 		}
 
 		// Get with recursing into chunks
-		for(int i=0; i<ptrs.length; i++) {
+		for (Pointer ptr : ptrs) {
 			Stream stream =
-				Stream.createStream(ptrs[i], contents, chunkFactory, ptrFactory);
+				Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
 			if(stream instanceof ChunkStream) {
 				ChunkStream cStream = (ChunkStream)stream;
 				cStream.findChunks();
@@ -84,9 +84,9 @@ public final class TestStreamBugs extends StreamTest {
 		}
 
 		// Get with recursing into chunks and pointers
-		for(int i=0; i<ptrs.length; i++) {
+		for (Pointer ptr : ptrs) {
 			Stream stream =
-				Stream.createStream(ptrs[i], contents, chunkFactory, ptrFactory);
+				Stream.createStream(ptr, contents, chunkFactory, ptrFactory);
 			if(stream instanceof PointerContainingStream) {
 				PointerContainingStream pStream =
 					(PointerContainingStream)stream;

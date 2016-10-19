@@ -129,9 +129,7 @@ public final class TestAreaPtg extends TestCase {
 		int letUsShiftColumn1By1Column=1;
 		HSSFWorkbook wb = null;
 		Ptg[] ptgs = HSSFFormulaParser.parse(formula, wb);
-		for(int i=0; i<ptgs.length; i++)
-		{
-			Ptg ptg = ptgs[i];
+		for (Ptg ptg : ptgs) {
 			if (ptg instanceof AreaPtg )
 			{
 				AreaPtg aptg = (AreaPtg)ptg;

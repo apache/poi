@@ -148,8 +148,7 @@ public class NumberRenderingSpreadsheetGenerator {
 		SheetWriter sw = new SheetWriter(wb);
 		
 		ExampleConversion[] exampleValues = NumberToTextConversionExamples.getExampleConversions();
-		for (int i = 0; i < exampleValues.length; i++) {
-			ExampleConversion example = exampleValues[i];
+		for (ExampleConversion example : exampleValues) {
 			sw.addTestRow(example.getRawDoubleBits(), example.getExcelRendering());
 		}
 		
@@ -178,8 +177,7 @@ public class NumberRenderingSpreadsheetGenerator {
 	public static void writeJavaDoc() {
 		
 		ExampleConversion[] exampleConversions = NumberToTextConversionExamples.getExampleConversions();
-		for (int i = 0; i < exampleConversions.length; i++) {
-			ExampleConversion ec = exampleConversions[i];
+		for (ExampleConversion ec : exampleConversions) {
 			String line = 	" * <tr><td>" 
 				+ formatLongAsHex(ec.getRawDoubleBits())
 				+ "</td><td>" + Double.toString(ec.getDoubleValue()) 

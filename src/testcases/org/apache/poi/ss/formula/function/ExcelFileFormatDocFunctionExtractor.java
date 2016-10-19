@@ -219,8 +219,8 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			Arrays.sort(keys);
 
 			_ps.println("# " + headingText);
-			for (int i = 0; i < keys.length; i++) {
-				FunctionData fd = _allFunctionsByIndex.get(keys[i]);
+			for (Integer key : keys) {
+				FunctionData fd = _allFunctionsByIndex.get(key);
 				_ps.println(fd.formatAsDataLine());
 			}
 		}
@@ -554,9 +554,9 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			"See the License for the specific language governing permissions and",
 			"limitations under the License.",
 		};
-		for (int i = 0; i < lines.length; i++) {
+		for (String line : lines) {
 			ps.print("# ");
-			ps.println(lines[i]);
+			ps.println(line);
 		}
 		ps.println();
 	}

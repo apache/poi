@@ -47,8 +47,8 @@ public final class TestRecordSetup {
 	@Test
 	public void testHandleParentAwareRecords() {
 		Record[] records = hss.getRecords();
-		for(int i=0; i<records.length; i++) {
-			ensureParentAware(records[i],null);
+		for (Record record : records) {
+			ensureParentAware(record,null);
 		}
 	}
 	private void ensureParentAware(Record r,RecordContainer parent) {

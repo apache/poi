@@ -73,8 +73,8 @@ public final class TestFormatTrackingHSSFListener {
 		String[] files = new String[] { 
 				"45365.xls", "45365-2.xls", "MissingBits.xls" 
 		};
-		for(int k=0; k<files.length; k++) {
-			processFile(files[k]);
+		for (String file : files) {
+			processFile(file);
 			
 			// Check we found our formats
 			assertTrue(listener.getNumberOfCustomFormats() > 5);

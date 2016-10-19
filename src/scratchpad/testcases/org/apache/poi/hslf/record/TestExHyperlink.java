@@ -117,8 +117,7 @@ public final class TestExHyperlink extends TestCase {
 
 		// Within that, grab out the Hyperlink atoms
 		List<ExHyperlink> linksA = new ArrayList<ExHyperlink>();
-		for(int i=0; i<exObjList._children.length; i++) {
-			Record ch = exObjList._children[i];
+		for (Record ch : exObjList._children) {
 			if(ch instanceof ExHyperlink) {
 				linksA.add((ExHyperlink) ch);
 			}

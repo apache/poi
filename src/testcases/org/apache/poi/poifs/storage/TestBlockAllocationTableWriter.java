@@ -43,10 +43,9 @@ public final class TestBlockAllocationTableWriter extends TestCase {
         };
         int                        expectedIndex = 0;
 
-        for (int j = 0; j < blockSizes.length; j++)
-        {
-            assertEquals(expectedIndex, table.allocateSpace(blockSizes[ j ]));
-            expectedIndex += blockSizes[ j ];
+        for (int blockSize : blockSizes) {
+            assertEquals(expectedIndex, table.allocateSpace(blockSize));
+            expectedIndex += blockSize;
         }
     }
 

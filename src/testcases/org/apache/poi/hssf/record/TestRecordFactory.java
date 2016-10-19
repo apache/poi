@@ -213,9 +213,9 @@ public final class TestRecordFactory extends TestCase {
 			EOFRecord.instance,
 		};
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for (int i = 0; i < recs.length; i++) {
+		for (Record rec : recs) {
 			try {
-				baos.write(recs[i].serialize());
+				baos.write(rec.serialize());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

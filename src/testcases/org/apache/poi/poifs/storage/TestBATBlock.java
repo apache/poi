@@ -96,9 +96,8 @@ public final class TestBATBlock extends TestCase {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(512
                                            * blocks.length);
 
-        for (int j = 0; j < blocks.length; j++)
-        {
-            blocks[ j ].writeBlocks(stream);
+        for (BATBlock block : blocks) {
+            block.writeBlocks(stream);
         }
         byte[] actual = stream.toByteArray();
 
@@ -178,9 +177,8 @@ public final class TestBATBlock extends TestCase {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(512
                                            * blocks.length);
 
-        for (int j = 0; j < blocks.length; j++)
-        {
-            blocks[ j ].writeBlocks(stream);
+        for (BATBlock block : blocks) {
+            block.writeBlocks(stream);
         }
         byte[] actual = stream.toByteArray();
 

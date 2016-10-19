@@ -190,8 +190,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
 				}
 			}
 
-			for (int j = 0; j < doubleOperandOperatorTypes.length; j++) {
-				int operatorType = doubleOperandOperatorTypes[j];
+			for (int operatorType : doubleOperandOperatorTypes) {
 				final Row row1 = sheet.createRow(offset++);
 				
 				cell_10 = row1.createCell(0);

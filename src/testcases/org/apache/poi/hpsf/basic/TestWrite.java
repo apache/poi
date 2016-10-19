@@ -473,9 +473,7 @@ public class TestWrite
         Throwable thr = null;
         final int[] validCodepages = new int[]
             {CODEPAGE_DEFAULT, CODEPAGE_UTF8, CODEPAGE_UTF16, CODEPAGE_1252};
-        for (int i = 0; i < validCodepages.length; i++)
-        {
-            final int cp = validCodepages[i];
+        for (final int cp : validCodepages) {
             if (cp == -1 && !hasProperDefaultCharset())
             {
                 System.err.println(IMPROPER_DEFAULT_CHARSET_MESSAGE +
@@ -512,9 +510,7 @@ public class TestWrite
         }
 
         final int[] invalidCodepages = new int[] {0, 1, 2, 4711, 815};
-        for (int i = 0; i < invalidCodepages.length; i++)
-        {
-            int cp = invalidCodepages[i];
+        for (int cp : invalidCodepages) {
             final long type = cp == CODEPAGE_UTF16 ? Variant.VT_LPWSTR
                                                    : Variant.VT_LPSTR;
             try

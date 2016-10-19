@@ -142,10 +142,10 @@ public final class TestPOIFSFileSystem extends TestCase {
 			"ShortLastBlock.qwp", "ShortLastBlock.wps"
 		};
 
-		for(int i=0; i<files.length; i++) {
+		for (String file : files) {
 			// Open the file up
 			OPOIFSFileSystem fs = new OPOIFSFileSystem(
-			    _samples.openResourceAsStream(files[i])
+			    _samples.openResourceAsStream(file)
 			);
 
 			// Write it into a temp output array

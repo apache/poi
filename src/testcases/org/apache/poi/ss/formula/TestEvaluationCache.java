@@ -701,8 +701,8 @@ public class TestEvaluationCache extends TestCase {
 	}
 
 	private static void debugPrint(PrintStream ps, String[] log) {
-		for (int i = 0; i < log.length; i++) {
-			ps.println('"' + log[i] + "\",");
+		for (String element : log) {
+			ps.println('"' + element + "\",");
 		}
 	}
 

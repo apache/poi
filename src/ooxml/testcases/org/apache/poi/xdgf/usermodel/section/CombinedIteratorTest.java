@@ -30,9 +30,9 @@ public class CombinedIteratorTest {
 
         Iterator<String> iter = iterable.iterator();
 
-        for (int i = 0; i < expected.length; i++) {
+        for (String element : expected) {
             Assert.assertEquals(true, iter.hasNext());
-            Assert.assertEquals(expected[i], iter.next());
+            Assert.assertEquals(element, iter.next());
         }
 
         Assert.assertEquals(false, iter.hasNext());

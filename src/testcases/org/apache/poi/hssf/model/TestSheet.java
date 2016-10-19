@@ -297,8 +297,7 @@ public final class TestSheet {
 		boolean is11 = false;
 
 		int[] rowBreaks = sheet.getRowBreaks();
-		for (int i = 0; i < rowBreaks.length; i++) {
-			int main = rowBreaks[i];
+		for (int main : rowBreaks) {
 			if (main != 0 && main != 10 && main != 11) fail("Invalid page break");
 			if (main == 0)	 is0 = true;
 			if (main == 10) is10= true;
@@ -355,8 +354,7 @@ public final class TestSheet {
 		boolean is15 = false;
 
 		int[] colBreaks = sheet.getColumnBreaks();
-		for (int i = 0; i < colBreaks.length; i++) {
-			int main = colBreaks[i];
+		for (int main : colBreaks) {
 			if (main != 0 && main != 1 && main != 10 && main != 15) fail("Invalid page break");
 			if (main == 0)  is0 = true;
 			if (main == 1)  is1 = true;

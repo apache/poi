@@ -72,9 +72,8 @@ public final class TestSmallDocumentBlock extends TestCase {
                      (_testdata_size + 63) / 64, results.length);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        for (int j = 0; j < results.length; j++)
-        {
-            results[ j ].writeBlocks(output);
+        for (SmallDocumentBlock result : results) {
+            result.writeBlocks(output);
         }
         byte[] output_array = output.toByteArray();
 
@@ -114,9 +113,8 @@ public final class TestSmallDocumentBlock extends TestCase {
             assertEquals(5, blocks.length);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-            for (int k = 0; k < blocks.length; k++)
-            {
-                blocks[ k ].writeBlocks(stream);
+            for (SmallDocumentBlock block : blocks) {
+                block.writeBlocks(stream);
             }
             stream.close();
             byte[] output = stream.toByteArray();
