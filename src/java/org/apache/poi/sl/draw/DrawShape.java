@@ -135,6 +135,8 @@ public class DrawShape implements Drawable {
                     graphics.translate(-centerX, -centerY);
                 }
                 break;
+            default:
+                throw new RuntimeException("unexpected transform code " + ch);
             }
         }
     }
