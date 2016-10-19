@@ -241,18 +241,35 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     @Override
     public XSLFSlide importContent(XSLFSheet src){
         super.importContent(src);
-
-        XSLFBackground bgShape = getBackground();
-        if(bgShape != null) {
-            CTBackground bg = (CTBackground)bgShape.getXmlObject();
-            if(bg.isSetBgPr() && bg.getBgPr().isSetBlipFill()){
-                CTBlip blip = bg.getBgPr().getBlipFill().getBlip();
-                String blipId = blip.getEmbed();
-
-                String relId = importBlip(blipId, src.getPackagePart());
-                blip.setEmbed(relId);
-            }
+        if (!(src instanceof XSLFSlide)) {
+            return this;
         }
+
+        // only copy direct backgrounds - not backgrounds of master sheet
+        CTBackground bgOther = ((XSLFSlide)src)._slide.getCSld().getBg();
+        if (bgOther == null) {
+            return this;
+        }
+        
+        CTBackground bgThis = _slide.getCSld().getBg();
+        // remove existing background
+        if (bgThis != null) {
+            if (bgThis.isSetBgPr() && bgThis.getBgPr().isSetBlipFill()) {
+                String oldId = bgThis.getBgPr().getBlipFill().getBlip().getEmbed();
+                removeRelation(getRelationById(oldId));
+            }
+            _slide.getCSld().unsetBg();
+        }
+            
+        bgThis = (CTBackground)_slide.getCSld().addNewBg().set(bgOther);
+            
+        if(bgOther.isSetBgPr() && bgOther.getBgPr().isSetBlipFill()){
+            String idOther = bgOther.getBgPr().getBlipFill().getBlip().getEmbed();
+            String idThis = importBlip(idOther, src.getPackagePart());
+            bgThis.getBgPr().getBlipFill().getBlip().setEmbed(idThis);
+            
+        }
+
         return this;
     }
 

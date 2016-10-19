@@ -31,7 +31,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 
@@ -43,6 +46,7 @@ import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -516,5 +520,31 @@ public class TestXSLFBugs {
         float expRGB[] = expected.getRGBComponents(null);
         float actRGB[] = actual.getRGBComponents(null);
         assertArrayEquals(expRGB, actRGB, 0.0001f);
+    }
+
+    @Test
+    public void bug55714() throws IOException {
+        XMLSlideShow srcPptx = XSLFTestDataSamples.openSampleDocument("pptx2svg.pptx");
+        XMLSlideShow newPptx = new XMLSlideShow();
+        XSLFSlide srcSlide = srcPptx.getSlides().get(0);
+        XSLFSlide newSlide = newPptx.createSlide();
+
+        XSLFSlideLayout srcSlideLayout = srcSlide.getSlideLayout();
+        XSLFSlideLayout newSlideLayout = newSlide.getSlideLayout();
+        newSlideLayout.importContent(srcSlideLayout);
+
+        XSLFSlideMaster srcSlideMaster = srcSlide.getSlideMaster();
+        XSLFSlideMaster newSlideMaster = newSlide.getSlideMaster();
+        newSlideMaster.importContent(srcSlideMaster); 
+
+        newSlide.importContent(srcSlide);
+        XMLSlideShow rwPptx = XSLFTestDataSamples.writeOutAndReadBack(newPptx);
+        
+        PaintStyle ps = rwPptx.getSlides().get(0).getBackground().getFillStyle().getPaint();
+        assertTrue(ps instanceof TexturePaint);
+        
+        rwPptx.close();
+        newPptx.close();
+        srcPptx.close();
     }
 }
