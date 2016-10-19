@@ -590,4 +590,24 @@ public class StringUtil {
    public static String join(String separator, Object... array) {
        return join(array, separator);
    }
+   
+   /**
+    * Count number of occurrences of needle in haystack
+    * Has same signature as org.apache.commons.lang3.StringUtils#countMatches
+    *
+    * @param haystack  the CharSequence to check, may be null
+    * @param needle    the character to count the quantity of 
+    * @return the number of occurrences, 0 if the CharSequence is null
+    */
+   public static int countMatches(CharSequence haystack, char needle) {
+       if (haystack == null) return 0;
+       int count = 0;
+       final int length = haystack.length();
+       for (int i=0; i<length; i++) {
+           if (haystack.charAt(i) == needle) {
+               count++;
+           }
+       }
+       return count;
+   }
 }
