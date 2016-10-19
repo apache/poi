@@ -68,6 +68,7 @@ public class TestFieldsTables extends HWPFTestCase
     {
     }
 
+    @Override
     protected String getTestFile()
     {
         return "test-fields.doc";

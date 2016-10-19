@@ -37,6 +37,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
  * Tests for XWPF Tables
  */
 public class TestXWPFTable extends TestCase {
+    @Override
     protected void setUp() {
         /*
           XWPFDocument doc = new XWPFDocument();

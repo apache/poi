@@ -53,6 +53,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         EXPECTED_EXTRACTOR_FAILURES.add("poifs/Notes.ole2");
     }
 
+    @Override
     public void handleExtracting(File file) throws Exception {
         boolean before = ExtractorFactory.getThreadPrefersEventExtractors();
         try {

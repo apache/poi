@@ -36,6 +36,7 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
         super(XSSFITestDataProvider.instance);
     }
 
+    @Override
     protected void assertColour(String hexExpected, Color actual) {
         assertNotNull("Colour must be given", actual);
         XSSFColor colour = (XSSFColor)actual;

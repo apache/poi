@@ -236,6 +236,7 @@ public class TestWrite
         final POIFSReader r = new POIFSReader();
         r.registerListener(new POIFSReaderListener()
             {
+                @Override
                 public void processPOIFSReaderEvent
                     (final POIFSReaderEvent event)
                 {
@@ -318,6 +319,7 @@ public class TestWrite
         final POIFSReader r = new POIFSReader();
         r.registerListener(new POIFSReaderListener()
             {
+                @Override
                 public void processPOIFSReaderEvent
                     (final POIFSReaderEvent event)
                 {
@@ -352,6 +354,7 @@ public class TestWrite
 
     static class MyPOIFSReaderListener implements POIFSReaderListener
     {
+        @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
             try

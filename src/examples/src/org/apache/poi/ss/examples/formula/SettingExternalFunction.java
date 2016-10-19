@@ -56,6 +56,7 @@ public class SettingExternalFunction {
             // don't care about the implementation, we are not interested in evaluation
             // and this method will never be called
             FreeRefFunction NA = new FreeRefFunction() {
+                @Override
                 public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
                     return ErrorEval.NA;
                 }
@@ -66,6 +67,7 @@ public class SettingExternalFunction {
             _functionsByName.put("BDS", NA);
         }
 
+        @Override
         public FreeRefFunction findFunction(String name) {
             return _functionsByName.get(name.toUpperCase(Locale.ROOT));
         }

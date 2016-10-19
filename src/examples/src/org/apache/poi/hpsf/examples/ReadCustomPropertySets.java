@@ -61,6 +61,7 @@ public class ReadCustomPropertySets
 
     static class MyPOIFSReaderListener implements POIFSReaderListener
     {
+        @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
             PropertySet ps = null;

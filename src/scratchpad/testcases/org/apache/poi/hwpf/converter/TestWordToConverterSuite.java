@@ -54,6 +54,7 @@ public class TestWordToConverterSuite
                 "../document" );
         for ( final File child : directory.listFiles( new FilenameFilter()
         {
+            @Override
             public boolean accept( File dir, String name )
             {
                 return name.endsWith( ".doc" ) && !failingFiles.contains( name );

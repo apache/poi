@@ -34,7 +34,8 @@ public final class TestStreamComplex extends StreamTest {
 	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
 
-	protected void setUp() throws Exception {
+	@Override
+    protected void setUp() throws Exception {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 

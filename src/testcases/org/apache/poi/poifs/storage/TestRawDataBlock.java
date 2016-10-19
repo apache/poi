@@ -210,7 +210,8 @@ public final class TestRawDataBlock extends TestCase {
 			return true;
 		}
 
-		public int read() {
+		@Override
+        public int read() {
 			if(pos >= data.length) {
 				return -1;
 			}
@@ -226,7 +227,8 @@ public final class TestRawDataBlock extends TestCase {
 		 *  size, whichever is lower.
 		 * Quite often will simply claim to have no data
 		 */
-		public int read(byte[] b, int off, int len) {
+		@Override
+        public int read(byte[] b, int off, int len) {
 			// Keep the length within the chunk size
 			if(len > chunkSize) {
 				len = chunkSize;
@@ -252,7 +254,8 @@ public final class TestRawDataBlock extends TestCase {
 			return len;
 		}
 
-		public int read(byte[] b) {
+		@Override
+        public int read(byte[] b) {
 			return read(b, 0, b.length);
 		}
 	}

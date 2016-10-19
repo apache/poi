@@ -136,6 +136,7 @@ public final class LocalRawDataBlockList extends RawDataBlockList {
      *
      * @return desired block
      */
+    @Override
     public ListManagedBlock remove(final int index)
         throws IOException
     {
@@ -165,6 +166,7 @@ public final class LocalRawDataBlockList extends RawDataBlockList {
      * @param index the index of the specified block; if the index is
      *              out of range, that's ok
      */
+    @Override
     public void zap(final int index)
     {
         ensureArrayExists();
@@ -182,6 +184,7 @@ public final class LocalRawDataBlockList extends RawDataBlockList {
         }
     }
     
+    @Override
     public int blockCount() {
        return _list.size();
     }

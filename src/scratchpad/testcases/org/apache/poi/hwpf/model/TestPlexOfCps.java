@@ -56,7 +56,8 @@ public final class TestPlexOfCps
       assertEquals(node.getEnd()-node.getStart(), span);
     }
   }
-  protected void setUp()
+  @Override
+protected void setUp()
     throws Exception
   {
     super.setUp();
@@ -66,7 +67,8 @@ public final class TestPlexOfCps
     _hWPFDocFixture.setUp();
   }
 
-  protected void tearDown()
+  @Override
+protected void tearDown()
     throws Exception
   {
     _plexOfCps = null;

@@ -85,7 +85,8 @@ public final class TestSectionTable
     }
   }
 
-  protected void setUp()
+  @Override
+protected void setUp()
     throws Exception
   {
     super.setUp();
@@ -95,7 +96,8 @@ public final class TestSectionTable
     _hWPFDocFixture.setUp();
   }
 
-  protected void tearDown()
+  @Override
+protected void tearDown()
     throws Exception
   {
     _hWPFDocFixture.tearDown();

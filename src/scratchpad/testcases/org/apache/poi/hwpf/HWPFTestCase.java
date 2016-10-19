@@ -29,7 +29,8 @@ public abstract class HWPFTestCase extends TestCase {
 	protected HWPFTestCase() {
 	}
 
-	protected void setUp() throws Exception {
+	@Override
+    protected void setUp() throws Exception {
 		super.setUp();
 		/** @todo verify the constructors */
 		_hWPFDocFixture = new HWPFDocFixture(this, getTestFile());
@@ -42,7 +43,8 @@ public abstract class HWPFTestCase extends TestCase {
 	  return HWPFDocFixture.DEFAULT_TEST_FILE;
 	}
 
-	protected void tearDown() throws Exception {
+	@Override
+    protected void tearDown() throws Exception {
 		if (_hWPFDocFixture != null) {
 			_hWPFDocFixture.tearDown();
 		}

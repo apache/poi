@@ -42,6 +42,7 @@ public class HybridStreaming {
         InputStream sourceBytes = new FileInputStream("workbook.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook(sourceBytes) {
             /** Avoid DOM parse of large sheet */
+            @Override
             public void parseSheet(java.util.Map<String,XSSFSheet> shIdMap, CTSheet ctSheet) {
                 if (!SHEET_TO_STREAM.equals(ctSheet.getName())) {
                     super.parseSheet(shIdMap, ctSheet);
@@ -59,15 +60,19 @@ public class HybridStreaming {
     private static SheetContentsHandler createSheetContentsHandler() {
         return new SheetContentsHandler() {
             
+            @Override
             public void startRow(int rowNum) {
             }
             
+            @Override
             public void headerFooter(String text, boolean isHeader, String tagName) {
             }
             
+            @Override
             public void endRow(int rowNum) {
             }
             
+            @Override
             public void cell(String cellReference, String formattedValue, XSSFComment comment) {
             }
         };

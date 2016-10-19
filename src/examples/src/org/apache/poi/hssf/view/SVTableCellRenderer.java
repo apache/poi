@@ -137,6 +137,7 @@ public class SVTableCellRenderer extends JLabel
         this.wb = wb;
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
                           boolean isSelected, boolean hasFocus, int row, int column) {
 	boolean isBorderSet = false;
@@ -249,14 +250,19 @@ public class SVTableCellRenderer extends JLabel
 	return this;
     }
 
+    @Override
     public void validate() {}
 
+    @Override
     public void revalidate() {}
 
+    @Override
     public void repaint(long tm, int x, int y, int width, int height) {}
 
+    @Override
     public void repaint(Rectangle r) { }
 
+    @Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 	// Strings get interned...
 	if (propertyName=="text") {
@@ -264,6 +270,7 @@ public class SVTableCellRenderer extends JLabel
 	}
     }
 
+    @Override
     public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) { }
 
     /**

@@ -128,6 +128,7 @@ public final class TestHSSFRow extends BaseTestRow {
         workbook.close();
     }
 
+    @Override
     @Test
     public void testRowHeight() throws IOException{
         HSSFWorkbook workbook = new HSSFWorkbook();

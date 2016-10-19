@@ -102,7 +102,8 @@ public class ExcelAntEvaluateCell extends Task {
 		return precisionToUse;
 	}
 	
-	public void execute() throws BuildException {
+	@Override
+    public void execute() throws BuildException {
 		
 		precisionToUse = 0 ;
 		

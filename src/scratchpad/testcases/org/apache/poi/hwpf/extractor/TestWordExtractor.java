@@ -80,7 +80,8 @@ public final class TestWordExtractor extends TestCase {
 	// With footnote
 	private String filename6;
 
-	protected void setUp() throws Exception {
+	@Override
+    protected void setUp() throws Exception {
 
 		String filename = "test2.doc";
 		String filename2 = "test.doc";

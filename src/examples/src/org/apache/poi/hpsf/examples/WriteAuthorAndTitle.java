@@ -155,6 +155,7 @@ public class WriteAuthorAndTitle
          * <p>The method is called by POI's eventing API for each file in the
          * origin POIFS.</p>
          */
+        @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
             /* The following declarations are shortcuts for accessing the

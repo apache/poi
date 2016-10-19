@@ -42,7 +42,8 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
     /**
      * [Bug 49928] formatCellValue returns incorrect value for \u00a3 formatted cells
      */
-	@Test
+	@Override
+    @Test
     public void test49928() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49928.xlsx");
         doTest49928Core(wb);
@@ -68,7 +69,8 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
     /**
      * [Bug 58532] Handle formats that go numnum, numK, numM etc 
      */
-	@Test
+	@Override
+    @Test
     public void test58532() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FormatKM.xlsx");
         doTest58532Core(wb);

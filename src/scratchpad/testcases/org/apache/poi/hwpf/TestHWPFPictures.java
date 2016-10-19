@@ -44,7 +44,8 @@ public final class TestHWPFPictures extends TestCase {
 	private String imgCFile;
 	private String imgDFile;
 
-	protected void setUp() {
+	@Override
+    protected void setUp() {
 
 		docAFile = "testPictures.doc";
 		docBFile = "two_images.doc";

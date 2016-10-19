@@ -217,6 +217,7 @@ public class BaseTestCellUtil {
      * @throws IOException
      * 
      */
+    @Deprecated
     @SuppressWarnings("deprecated")
     @Test
     public void setAlignment() throws IOException {
@@ -369,6 +370,7 @@ public class BaseTestCellUtil {
      * @deprecated Replaced by {@link #setFillForegroundColorBeforeFillBackgroundColorEnum()}
      * @since POI 3.15 beta 3
      */
+    @Deprecated
     // bug 55555
     @Test
     public void setFillForegroundColorBeforeFillBackgroundColor() throws IOException {

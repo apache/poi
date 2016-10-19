@@ -47,6 +47,7 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
     /**
      * [Bug 49928] formatCellValue returns incorrect value for \u00a3 formatted cells
      */
+    @Override
     @Test
     public void test49928() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49928.xls");
@@ -68,6 +69,7 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
     /**
      * [Bug 58532] Handle formats that go numnum, numK, numM etc 
      */
+    @Override
     @Test
     public void test58532() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("FormatKM.xls");

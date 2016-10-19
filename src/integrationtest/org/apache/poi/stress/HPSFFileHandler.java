@@ -37,7 +37,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
 	}
 	
 	// a test-case to test this locally without executing the full TestAllFiles
-	@Test
+	@Override
+    @Test
 	public void test() throws Exception {
 		InputStream stream = new FileInputStream("test-data/hpsf/Test0313rur.adm");
 		try {

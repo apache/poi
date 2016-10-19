@@ -50,7 +50,8 @@ public class ExcelAntSetStringCell extends ExcelAntSet {
 		return stringValue;
 	}
 	
-	public void execute() throws BuildException {
+	@Override
+    public void execute() throws BuildException {
 		wbUtil.setStringValue(cellStr, stringValue ) ;
 		
 		log( "set cell " + cellStr + " to value " + stringValue + " as String.", Project.MSG_DEBUG ) ;

@@ -64,6 +64,7 @@ public final class TestRangeProperties extends TestCase {
     private HWPFDocument u;
     private HWPFDocument a;
 
+    @Override
     protected void setUp() {
         u = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
         a = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");

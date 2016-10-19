@@ -105,6 +105,7 @@ public class ReaderWriter
      * @param event the POIFSReaderEvent
      */
 
+    @Override
     public void processPOIFSReaderEvent(final POIFSReaderEvent event)
     {
         DocumentInputStream istream = event.getStream();
@@ -167,6 +168,7 @@ public class ReaderWriter
      * @param event the POIFSWriterEvent
      */
 
+    @Override
     public void processPOIFSWriterEvent(final POIFSWriterEvent event)
     {
         try

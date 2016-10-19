@@ -31,7 +31,8 @@ public final class TestVisioExtractor extends TestCase {
 
 	private String defFilename;
 	private int defTextChunks;
-	protected void setUp() {
+	@Override
+    protected void setUp() {
 		defFilename = "Test_Visio-Some_Random_Text.vsd";
 		defTextChunks = 5;
 	}

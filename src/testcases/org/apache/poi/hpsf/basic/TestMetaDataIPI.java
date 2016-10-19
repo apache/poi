@@ -52,7 +52,8 @@ public final class TestMetaDataIPI extends TestCase{
 	 * Setup is used to get the document ready. Gets the DocumentSummaryInformation and the
 	 * SummaryInformation to reasonable values
 	 */
-	public void setUp() throws Exception {
+	@Override
+    public void setUp() throws Exception {
 		bout = new ByteArrayOutputStream();
 		poifs = new POIFSFileSystem();
 		dir = poifs.getRoot();

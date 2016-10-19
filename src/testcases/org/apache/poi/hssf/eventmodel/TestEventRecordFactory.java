@@ -47,6 +47,7 @@ public final class TestEventRecordFactory extends TestCase {
         final boolean[] wascalled = { false, }; // hack to pass boolean by ref into inner class
 
         ERFListener listener = new ERFListener() {
+            @Override
             public boolean processRecord(Record rec) {
                 wascalled[0] = true;
                 assertTrue("must be BOFRecord got SID="+rec.getSid(),
@@ -154,7 +155,8 @@ public final class TestEventRecordFactory extends TestCase {
                   ContinueRecord.class.getName(),
                   ContinueRecord.class.getName()
               };
-              public boolean processRecord(Record rec)
+              @Override
+            public boolean processRecord(Record rec)
               {
                   // System.out.println(rec.toString());
                   assertEquals(

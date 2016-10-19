@@ -30,6 +30,7 @@ public final class TestFontDetails extends TestCase {
     private Properties properties;
     private FontDetails fontDetails;
 
+    @Override
     protected void setUp() {
         properties = new Properties();
         properties.setProperty("font.Arial.height", "13");

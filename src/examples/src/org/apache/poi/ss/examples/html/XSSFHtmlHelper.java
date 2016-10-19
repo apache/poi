@@ -28,6 +28,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
  * @author Ken Arnold, Industrious Media LLC
  */
 public class XSSFHtmlHelper implements HtmlHelper {
+    @Override
     public void colorStyles(CellStyle style, Formatter out) {
         XSSFCellStyle cs = (XSSFCellStyle) style;
         styleColor(out, "background-color", cs.getFillForegroundXSSFColor());

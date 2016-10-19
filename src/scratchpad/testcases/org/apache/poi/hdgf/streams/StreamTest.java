@@ -33,10 +33,15 @@ public abstract class StreamTest extends TestCase {
 			this.format = format;
 		}
 
-		public boolean destinationCompressed() { return compressed; }
-		public boolean destinationHasChunks() { return false; }
-		public boolean destinationHasPointers() { return hasPointers; }
-		public boolean destinationHasStrings() { return false; }
-		public int getSizeInBytes() { return -1; }
+		@Override
+        public boolean destinationCompressed() { return compressed; }
+		@Override
+        public boolean destinationHasChunks() { return false; }
+		@Override
+        public boolean destinationHasPointers() { return hasPointers; }
+		@Override
+        public boolean destinationHasStrings() { return false; }
+		@Override
+        public int getSizeInBytes() { return -1; }
 	}
 }

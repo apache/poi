@@ -54,6 +54,7 @@ public class TestUnicode extends TestCase {
      * @exception FileNotFoundException if the file to be read does not exist.
      * @exception IOException if any other I/O exception occurs
      */
+    @Override
     protected void setUp() {
         POIDataSamples samples = POIDataSamples.getHPSFInstance();
         data = samples.getFile(POI_FS);

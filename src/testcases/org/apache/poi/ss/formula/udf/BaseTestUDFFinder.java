@@ -26,6 +26,7 @@ public class BaseTestUDFFinder {
 
     protected UDFFinder _instance;
     protected static final FreeRefFunction NotImplemented = new FreeRefFunction() {
+        @Override
         public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
             throw new RuntimeException("not implemented");
         }

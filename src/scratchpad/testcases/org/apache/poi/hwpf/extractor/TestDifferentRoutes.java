@@ -49,7 +49,8 @@ public final class TestDifferentRoutes extends TestCase {
 
 	private HWPFDocument doc;
 
-	protected void setUp() {
+	@Override
+    protected void setUp() {
 		doc = HWPFTestDataSamples.openSampleFile("test2.doc");
 	}
 

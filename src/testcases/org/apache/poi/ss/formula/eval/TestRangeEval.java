@@ -75,10 +75,12 @@ public final class TestRangeEval extends TestCase {
 		public MockRefEval(int rowIndex, int columnIndex) {
 			super(-1, -1, rowIndex, columnIndex);
 		}
-		public ValueEval getInnerValueEval(int sheetIndex) {
+		@Override
+        public ValueEval getInnerValueEval(int sheetIndex) {
 			throw new RuntimeException("not expected to be called during this test");
 		}
-		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx,
+		@Override
+        public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx,
 				int relLastColIx) {
 			AreaI area = new OffsetArea(getRow(), getColumn(),
 					relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
@@ -94,27 +96,32 @@ public final class TestRangeEval extends TestCase {
 		private MockAreaEval(int firstRow, int firstColumn, int lastRow, int lastColumn) {
 			super(firstRow, firstColumn, lastRow, lastColumn);
 		}
-		public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+		@Override
+        public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 			throw new RuntimeException("not expected to be called during this test");
 		}
+        @Override
         public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
             throw new RuntimeException("not expected to be called during this test");
         }
-		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx,
+		@Override
+        public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx,
 				int relLastColIx) {
 			AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),
 					relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
 			return new MockAreaEval(area);
 		}
-		public TwoDEval getRow(int rowIndex) {
+		@Override
+        public TwoDEval getRow(int rowIndex) {
 			if (rowIndex >= getHeight()) {
 				throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
 						+ ".  Allowable range is (0.." + getHeight() + ").");
 			}
 			return new MockAreaEval(rowIndex, getFirstColumn(), rowIndex, getLastColumn());
 		}
-		public TwoDEval getColumn(int columnIndex) {
+		@Override
+        public TwoDEval getColumn(int columnIndex) {
 			if (columnIndex >= getWidth()) {
 				throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
 						+ ".  Allowable range is (0.." + getWidth() + ").");

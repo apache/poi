@@ -121,6 +121,7 @@ public class TreeReaderListener implements POIFSReaderListener
      * reading. This method retrieves properties of the document and
      * adds them to a tree model.</p>
      */
+    @Override
     public void processPOIFSReaderEvent(final POIFSReaderEvent event)
     {
         DocumentDescriptor d;

@@ -52,6 +52,7 @@ public class TestFunctionRegistry extends TestCase {
         }
 
         FunctionEval.registerFunction("FISHER", new Function() {
+            @Override
             public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
                 return ErrorEval.NA;
             }
@@ -69,6 +70,7 @@ public class TestFunctionRegistry extends TestCase {
         }
 
         AnalysisToolPak.registerFunction("CUBEMEMBERPROPERTY", new FreeRefFunction() {
+            @Override
             public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
                 return ErrorEval.NUM_ERROR;
             }
@@ -80,6 +82,7 @@ public class TestFunctionRegistry extends TestCase {
 
     public void testExceptions() {
         Function func = new Function() {
+            @Override
             public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
                 return ErrorEval.NA;
             }
@@ -106,6 +109,7 @@ public class TestFunctionRegistry extends TestCase {
         }
 
         FreeRefFunction atpFunc = new FreeRefFunction() {
+            @Override
             public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
                 return ErrorEval.NUM_ERROR;
             }

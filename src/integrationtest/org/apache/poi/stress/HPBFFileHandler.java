@@ -39,7 +39,8 @@ public class HPBFFileHandler extends POIFSFileHandler {
 	}
 	
 	// a test-case to test this locally without executing the full TestAllFiles
-	@Test
+	@Override
+    @Test
 	public void test() throws Exception {
 		File file = new File("test-data/publisher/SampleBrochure.pub");
 

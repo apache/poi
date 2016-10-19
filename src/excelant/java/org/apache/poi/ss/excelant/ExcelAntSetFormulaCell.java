@@ -43,7 +43,8 @@ public class ExcelAntSetFormulaCell extends ExcelAntSet {
 		return cellValue;
 	}
 	
-	public void execute() throws BuildException {
+	@Override
+    public void execute() throws BuildException {
 		
 		wbUtil.setFormulaValue( cellStr, cellValue ) ;
 		

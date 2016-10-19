@@ -44,9 +44,11 @@ public class SVRowHeader extends JList {
       this.sheet = sheet;
     }
 
+    @Override
     public int getSize() {
     	return sheet.getLastRowNum() + 1;
     }
+    @Override
     public Object getElementAt(int index) {
       return Integer.toString(index+1);
     }
@@ -69,6 +71,7 @@ public class SVRowHeader extends JList {
       setFont(header.getFont());
     }
 
+    @Override
     public Component getListCellRendererComponent( JList list,
            Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Dimension d = getPreferredSize();

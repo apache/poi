@@ -171,7 +171,8 @@ public final class TestValueRecordsAggregate {
 			_writeIndex = 0;
 
 		}
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 			r.serialize(_writeIndex, _buf);
 			_writeIndex += r.getRecordSize();
 		}
@@ -396,7 +397,8 @@ public final class TestValueRecordsAggregate {
 		final BlankStats bs = new BlankStats();
 		RecordVisitor rv = new RecordVisitor() {
 
-			public void visitRecord(Record r) {
+			@Override
+            public void visitRecord(Record r) {
 				if (r instanceof MulBlankRecord) {
 					MulBlankRecord mbr = (MulBlankRecord) r;
 					bs.countMulBlankRecords++;

@@ -144,6 +144,7 @@ public final class TestRecordContainer extends TestCase {
         assertEquals(ch.length-1, recordContainer.getChildRecords().length);
     }
 
+    @Override
     protected void setUp() throws Exception {
 		super.setUp();
 

@@ -57,7 +57,8 @@ public class TestCellWalk extends TestCase {
 	private int cellsVisited = 0;
 	private long ordinalNumberSum = 0L;
 
-	public void onCell(Cell cell, CellWalkContext ctx) {
+	@Override
+    public void onCell(Cell cell, CellWalkContext ctx) {
 	    ++cellsVisited;
 	    ordinalNumberSum += ctx.getOrdinalNumber();
 	}

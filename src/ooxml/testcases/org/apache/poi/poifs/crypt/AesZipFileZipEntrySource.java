@@ -57,10 +57,12 @@ public class AesZipFileZipEntrySource implements ZipEntrySource {
      * Note: the file sizes are rounded up to the next cipher block size,
      * so don't rely on file sizes of these custom encrypted zip file entries!
      */
+    @Override
     public Enumeration<? extends ZipEntry> getEntries() {
         return zipFile.entries();
     }
 
+    @Override
     @SuppressWarnings("resource")
     public InputStream getInputStream(ZipEntry entry) throws IOException {
         InputStream is = zipFile.getInputStream(entry);
@@ -113,6 +115,7 @@ public class AesZipFileZipEntrySource implements ZipEntrySource {
             zos.putNextEntry(zeNew);
             FilterOutputStream fos2 = new FilterOutputStream(zos){
                 // don't close underlying ZipOutputStream
+                @Override
                 public void close() {}
             };
             CipherOutputStream cos = new CipherOutputStream(fos2, ciEnc);

@@ -48,6 +48,7 @@ public abstract class BaseTestExternalFunctions {
             //
         }
 
+        @Override
         public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
             if (args.length != 1 || !(args[0] instanceof StringEval)) {
                 return ErrorEval.VALUE_INVALID;
@@ -62,6 +63,7 @@ public abstract class BaseTestExternalFunctions {
             //
         }
 
+        @Override
         public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
             if (args.length != 1 || !(args[0] instanceof StringEval)) {
                 return ErrorEval.VALUE_INVALID;

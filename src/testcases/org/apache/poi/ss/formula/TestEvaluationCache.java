@@ -67,7 +67,8 @@ public class TestEvaluationCache extends TestCase {
 		private EvaluationCell getCell(ICacheEntry a) {
 			return _formulaCellsByCacheEntry.get(a);
 		}
-		public int compare(ICacheEntry oa, ICacheEntry ob) {
+		@Override
+        public int compare(ICacheEntry oa, ICacheEntry ob) {
 			EvaluationCell a = getCell(oa);
 			EvaluationCell b = getCell(ob);
 			int cmp;
@@ -99,24 +100,29 @@ public class TestEvaluationCache extends TestCase {
 			_formulaCellsByCacheEntry = new HashMap<ICacheEntry,EvaluationCell>();
 			_plainCellLocsByCacheEntry = new HashMap<ICacheEntry, Loc>();
 		}
-		public void onCacheHit(int sheetIndex, int rowIndex, int columnIndex, ValueEval result) {
+		@Override
+        public void onCacheHit(int sheetIndex, int rowIndex, int columnIndex, ValueEval result) {
 			log("hit", rowIndex, columnIndex, result);
 		}
-		public void onReadPlainValue(int sheetIndex, int rowIndex, int columnIndex, ICacheEntry entry) {
+		@Override
+        public void onReadPlainValue(int sheetIndex, int rowIndex, int columnIndex, ICacheEntry entry) {
 			Loc loc = new Loc(0, sheetIndex, rowIndex, columnIndex);
 			_plainCellLocsByCacheEntry.put(entry, loc);
 			log("value", rowIndex, columnIndex, entry.getValue());
 		}
-		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry) {
+		@Override
+        public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry) {
 			_formulaCellsByCacheEntry.put(entry, cell);
 			HSSFCell hc = _book.getSheetAt(0).getRow(cell.getRowIndex()).getCell(cell.getColumnIndex());
 			log("start", cell.getRowIndex(), cell.getColumnIndex(), FormulaExtractor.getPtgs(hc));
 		}
-		public void onEndEvaluate(ICacheEntry entry, ValueEval result) {
+		@Override
+        public void onEndEvaluate(ICacheEntry entry, ValueEval result) {
 			EvaluationCell cell = _formulaCellsByCacheEntry.get(entry);
 			log("end", cell.getRowIndex(), cell.getColumnIndex(), result);
 		}
-		public void onClearCachedValue(ICacheEntry entry) {
+		@Override
+        public void onClearCachedValue(ICacheEntry entry) {
 			int rowIndex;
 			int columnIndex;
 			EvaluationCell cell = _formulaCellsByCacheEntry.get(entry);
@@ -133,15 +139,18 @@ public class TestEvaluationCache extends TestCase {
 			}
 			log("clear", rowIndex, columnIndex, entry.getValue());
 		}
-		public void sortDependentCachedValues(ICacheEntry[] entries) {
+		@Override
+        public void sortDependentCachedValues(ICacheEntry[] entries) {
 			Arrays.sort(entries, new FormulaCellCacheEntryComparer(_formulaCellsByCacheEntry));
 		}
-		public void onClearDependentCachedValue(ICacheEntry entry, int depth) {
+		@Override
+        public void onClearDependentCachedValue(ICacheEntry entry, int depth) {
 			EvaluationCell cell = _formulaCellsByCacheEntry.get(entry);
 			log("clear" + depth, cell.getRowIndex(), cell.getColumnIndex(), entry.getValue());
 		}
 
-		public void onChangeFromBlankValue(int sheetIndex, int rowIndex, int columnIndex,
+		@Override
+        public void onChangeFromBlankValue(int sheetIndex, int rowIndex, int columnIndex,
 				EvaluationCell cell, ICacheEntry entry) {
 			log("changeFromBlank", rowIndex, columnIndex, entry.getValue());
 			if (entry.getValue() == null) { // hack to tell the difference between formula and plain value

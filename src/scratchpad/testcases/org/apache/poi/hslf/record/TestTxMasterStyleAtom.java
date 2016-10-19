@@ -38,6 +38,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 public final class TestTxMasterStyleAtom extends TestCase {
     protected HSLFSlideShow _ppt;
 
+    @Override
     public void setUp() {
         _ppt = new HSLFSlideShow();
     }

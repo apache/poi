@@ -48,7 +48,8 @@ public final class TestAddingSlides extends TestCase {
 	/**
 	 * Create/open the slideshows
 	 */
-	public void setUp() throws Exception {
+	@Override
+    public void setUp() throws Exception {
 		hss_empty = HSLFSlideShowImpl.create();
 		ss_empty = new HSLFSlideShow(hss_empty);
 

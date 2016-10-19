@@ -375,9 +375,11 @@ public final class TestFormulaEvaluatorBugs {
             return _countCacheMisses;
         }
 
+        @Override
         public void onCacheHit(int sheetIndex, int srcRowNum, int srcColNum, ValueEval result) {
             _countCacheHits++;
         }
+        @Override
         public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry) {
             _countCacheMisses++;
         }

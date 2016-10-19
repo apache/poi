@@ -41,6 +41,7 @@ import org.apache.poi.util.HexDump;
 public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
 {
 
+    @Override
     public Component getTreeCellRendererComponent(final JTree tree,
                                                   final Object value,
                                                   final boolean selectedCell,

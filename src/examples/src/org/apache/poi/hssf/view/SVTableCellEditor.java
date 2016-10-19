@@ -66,7 +66,8 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
    *
    * @return    The cellEditable value
    */
-  public boolean isCellEditable(java.util.EventObject e) {
+  @Override
+public boolean isCellEditable(java.util.EventObject e) {
     if (e instanceof MouseEvent) {
       return ((MouseEvent) e).getClickCount() >= 2;
     }
@@ -74,7 +75,8 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
   }
 
 
-  public boolean shouldSelectCell(EventObject anEvent) {
+  @Override
+public boolean shouldSelectCell(EventObject anEvent) {
     return true;
   }
 
@@ -85,20 +87,23 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
   }
 
 
-  public boolean stopCellEditing() {
+  @Override
+public boolean stopCellEditing() {
     System.out.println("Stop Cell Editing");
     fireEditingStopped();
     return true;
   }
 
 
-  public void cancelCellEditing() {
+  @Override
+public void cancelCellEditing() {
     System.out.println("Cancel Cell Editing");
     fireEditingCanceled();
   }
 
 
-  public void actionPerformed(ActionEvent e) {
+  @Override
+public void actionPerformed(ActionEvent e) {
     System.out.println("Action performed");
     stopCellEditing();
   }
@@ -109,7 +114,8 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
    *
    * @return    The cellEditorValue value
    */
-  public Object getCellEditorValue() {
+  @Override
+public Object getCellEditorValue() {
     System.out.println("GetCellEditorValue");
     //JMH Look at when this method is called. Should it return a HSSFCell?
     return editor.getText();
@@ -121,7 +127,8 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
    *
    * @return             The tableCellEditorComponent value
    */
-  public Component getTableCellEditorComponent(JTable table, Object value,
+  @Override
+public Component getTableCellEditorComponent(JTable table, Object value,
       boolean isSelected,
       int row,
       int column) {

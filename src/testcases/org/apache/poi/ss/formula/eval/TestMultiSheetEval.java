@@ -136,7 +136,8 @@ public final class TestMultiSheetEval extends TestCase {
 	}
 
 
-	protected void setUp() {
+	@Override
+    protected void setUp() {
 		if (workbook == null) {
 			workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
 			sheet = workbook.getSheet( SS.TEST_SHEET_NAME );

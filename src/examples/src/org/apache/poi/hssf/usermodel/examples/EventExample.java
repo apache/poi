@@ -40,6 +40,7 @@ public class EventExample
      * This method listens for incoming records and handles them as required.
      * @param record    The record that was found while reading.
      */
+    @Override
     public void processRecord(Record record)
     {
         switch (record.getSid())

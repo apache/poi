@@ -116,7 +116,8 @@ public class FromHowTo {
 			this.sst = sst;
 		}
 
-		public void startElement(String uri, String localName, String name,
+		@Override
+        public void startElement(String uri, String localName, String name,
 								 Attributes attributes) throws SAXException {
 			// c => cell
 			if(name.equals("c")) {
@@ -131,7 +132,8 @@ public class FromHowTo {
 			lastContents = "";
 		}
 
-		public void endElement(String uri, String localName, String name)
+		@Override
+        public void endElement(String uri, String localName, String name)
 				throws SAXException {
 			// Process the last contents as required.
 			// Do now, as characters() may be called more than once
@@ -152,7 +154,8 @@ public class FromHowTo {
 			}
 		}
 
-		public void characters(char[] ch, int start, int length) throws SAXException { // NOSONAR
+		@Override
+        public void characters(char[] ch, int start, int length) throws SAXException { // NOSONAR
 			lastContents += new String(ch, start, length);
 		}
 	}

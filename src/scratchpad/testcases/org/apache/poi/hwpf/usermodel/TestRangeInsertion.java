@@ -38,7 +38,8 @@ public final class TestRangeInsertion extends TestCase {
 
 	private String illustrativeDocFile;
 
-	protected void setUp() {
+	@Override
+    protected void setUp() {
 		illustrativeDocFile = "testRangeInsertion.doc";
 	}
 

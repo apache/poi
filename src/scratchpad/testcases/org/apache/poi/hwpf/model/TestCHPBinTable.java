@@ -73,7 +73,8 @@ public final class TestCHPBinTable
     }
 
   }
-  protected void setUp()
+  @Override
+protected void setUp()
     throws Exception
   {
     super.setUp();
@@ -82,7 +83,8 @@ public final class TestCHPBinTable
     _hWPFDocFixture.setUp();
   }
 
-  protected void tearDown()
+  @Override
+protected void tearDown()
     throws Exception
   {
     _cHPBinTable = null;
