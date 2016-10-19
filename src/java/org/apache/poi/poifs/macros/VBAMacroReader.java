@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -55,6 +54,8 @@ import org.apache.poi.util.RLEDecompressingInputStream;
 public class VBAMacroReader implements Closeable {
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
+    // FIXME: When minimum supported version is Java 7, replace with java.nio.charset.StandardCharsets.UTF_16LE
+    private static final UTF_16LE = Charset.forName("UTF-16LE");
     
     private NPOIFSFileSystem fs;
     
@@ -350,6 +351,6 @@ public class VBAMacroReader implements Closeable {
     private String readUnicodeString(RLEDecompressingInputStream in, int unicodeNameRecordLength) throws IOException {
         byte[] buffer = new byte[unicodeNameRecordLength];
         IOUtils.readFully(in, buffer);
-        return new String(buffer, Charset.forName("UTF-16LE"));
+        return new String(buffer, UTF_16LE);
     }
 }
