@@ -89,10 +89,8 @@ public final class CellValue {
      *
      * @return the cell type
      * @since POI 3.15
-     * @deprecated POI 3.15
      * Will be renamed to <code>getCellTypeEnum()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
-    @Internal(since="POI 3.15 beta 3")
     @Removal(version="4.2")
     public CellType getCellTypeEnum() {
         return _cellType;
