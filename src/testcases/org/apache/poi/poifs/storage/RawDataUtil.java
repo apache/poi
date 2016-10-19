@@ -34,8 +34,8 @@ public final class RawDataUtil {
 	public static byte[] decode(String[] hexDataLines) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(hexDataLines.length * 32 + 32);
 
-		for (int i = 0; i < hexDataLines.length; i++) {
-			byte[] lineData = HexRead.readFromString(hexDataLines[i]);
+		for (String hexDataLine : hexDataLines) {
+			byte[] lineData = HexRead.readFromString(hexDataLine);
 			baos.write(lineData, 0, lineData.length);
 		}
 		return baos.toByteArray();
@@ -73,8 +73,8 @@ public final class RawDataUtil {
 	public static void confirmEqual(byte[] expected, String[] hexDataLines) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(hexDataLines.length * 32 + 32);
 
-		for (int i = 0; i < hexDataLines.length; i++) {
-			byte[] lineData = HexRead.readFromString(hexDataLines[i]);
+		for (String hexDataLine : hexDataLines) {
+			byte[] lineData = HexRead.readFromString(hexDataLine);
 			baos.write(lineData, 0, lineData.length);
 		}
 		if (!Arrays.equals(expected, baos.toByteArray())) {

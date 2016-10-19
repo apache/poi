@@ -133,8 +133,7 @@ public class NumberComparingSpreadsheetGenerator {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		SheetWriter sw = new SheetWriter(wb);
 		ComparisonExample[] ces = NumberComparisonExamples.getComparisonExamples();
-		for (int i = 0; i < ces.length; i++) {
-			ComparisonExample ce = ces[i];
+		for (ComparisonExample ce : ces) {
 			sw.addTestRow(ce.getA(), ce.getB(), ce.getExpectedResult());
 		}
 

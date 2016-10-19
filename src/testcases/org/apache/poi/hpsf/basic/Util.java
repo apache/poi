@@ -159,10 +159,8 @@ final class Util {
             /* Register the listener for all POI files. */
             r.registerListener(pfl);
         else
-            /* Register the listener for the specified POI files
-             * only. */
-            for (int i = 0; i < poiFiles.length; i++)
-                r.registerListener(pfl, poiFiles[i]);
+            for (String poiFile : poiFiles)
+                r.registerListener(pfl, poiFile);
 
         /* Read the POI filesystem. */
         FileInputStream stream = new FileInputStream(poiFs);
@@ -257,9 +255,7 @@ final class Util {
         for (Iterator<String> i = p.stringPropertyNames().iterator(); i.hasNext();)
             names.add(i.next());
         Collections.sort(names);
-        for (final Iterator<String> i = names.iterator(); i.hasNext();)
-        {
-            String name = i.next();
+        for (String name : names) {
             String value = p.getProperty(name);
             System.out.println(name + ": " + value);
         }

@@ -445,8 +445,7 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		int eorCount=0;
 		int mbrCount=0;
 		int brCount=0;
-		for (int i = 0; i < rr.length; i++) {
-			Record record = rr[i];
+		for (Record record : rr) {
 			if (record instanceof MulBlankRecord) {
 				mbrCount++;
 			}
@@ -474,8 +473,7 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
         Record[] rr = r;
         int missingCount=0;
         int lastCount=0;
-        for (int i = 0; i < rr.length; i++) {
-            Record record = rr[i];
+        for (Record record : rr) {
             if (record instanceof MissingCellDummyRecord) {
                 missingCount++;
             }

@@ -59,12 +59,10 @@ public final class TestPOIFSReaderRegistry extends TestCase {
     public void testEmptyRegistry() {
         POIFSReaderRegistry registry = new POIFSReaderRegistry();
 
-        for (int j = 0; j < paths.length; j++)
-        {
-            for (int k = 0; k < names.length; k++)
-            {
+        for (POIFSDocumentPath path : paths) {
+            for (String name : names) {
                 Iterator<POIFSReaderListener> listeners =
-                    registry.getListeners(paths[ j ], names[ k ]);
+                    registry.getListeners(path, name);
 
                 assertTrue(!listeners.hasNext());
             }
@@ -129,16 +127,13 @@ public final class TestPOIFSReaderRegistry extends TestCase {
                 }
             }
         }
-        for (int j = 0; j < listeners.length; j++)
-        {
-            registry.registerListener(listeners[ j ]);
+        for (POIFSReaderListener listener : listeners) {
+            registry.registerListener(listener);
         }
-        for (int k = 0; k < paths.length; k++)
-        {
-            for (int n = 0; n < names.length; n++)
-            {
+        for (POIFSDocumentPath path : paths) {
+            for (String name : names) {
                 Iterator<POIFSReaderListener> listeners =
-                    registry.getListeners(paths[ k ], names[ n ]);
+                    registry.getListeners(path, name);
                 Set<POIFSReaderListener> registeredListeners =
                     new HashSet<POIFSReaderListener>();
 
@@ -148,10 +143,9 @@ public final class TestPOIFSReaderRegistry extends TestCase {
                 }
                 assertEquals(this.listeners.length,
                              registeredListeners.size());
-                for (int j = 0; j < this.listeners.length; j++)
-                {
+                for (POIFSReaderListener listener : this.listeners) {
                     assertTrue(registeredListeners
-                        .contains(this.listeners[ j ]));
+                        .contains(listener));
                 }
             }
         }

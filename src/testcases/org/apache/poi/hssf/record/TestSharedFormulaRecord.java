@@ -238,8 +238,7 @@ public final class TestSharedFormulaRecord extends TestCase {
     private static int countSharedFormulas(HSSFSheet sheet) {
         Record[] records = RecordInspector.getRecords(sheet, 0);
         int count = 0;
-        for (int i = 0; i < records.length; i++) {
-            Record rec = records[i];
+        for (Record rec : records) {
             if(rec instanceof SharedFormulaRecord) {
                 count++;
             }

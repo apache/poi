@@ -58,9 +58,7 @@ public class TestReadAllFiles extends TestCase {
                 }
             });
 
-        for (int i = 0; i < fileList.length; i++)
-        {
-            final File f = fileList[i];
+        for (final File f : fileList) {
             /* Read the POI filesystem's property set streams: */
             final POIFile[] psf1 = Util.readPropertySets(f);
 

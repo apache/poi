@@ -643,12 +643,11 @@ public class TestWriteWellKnown {
             }
         });
 
-        for (int i = 0; i < docs.length; i++)
-        {
+        for (File doc : docs) {
             try {
-                task.runTest(docs[i]);
+                task.runTest(doc);
             } catch (Exception e) {
-                throw new IOException("While handling file " + docs[i], e);
+                throw new IOException("While handling file " + doc, e);
             }
         }
     }

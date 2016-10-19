@@ -251,18 +251,18 @@ public class TestHSSFDateUtil {
     public void identifyDateFormats() {
         // First up, try with a few built in date formats
         short[] builtins = new short[] { 0x0e, 0x0f, 0x10, 0x16, 0x2d, 0x2e };
-        for(int i=0; i<builtins.length; i++) {
-            String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
-            assertTrue( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
-            assertTrue( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
+        for (short builtin : builtins) {
+            String formatStr = HSSFDataFormat.getBuiltinFormat(builtin);
+            assertTrue( HSSFDateUtil.isInternalDateFormat(builtin) );
+            assertTrue( HSSFDateUtil.isADateFormat(builtin,formatStr) );
         }
 
         // Now try a few built-in non date formats
         builtins = new short[] { 0x01, 0x02, 0x17, 0x1f, 0x30 };
-        for(int i=0; i<builtins.length; i++) {
-            String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
-            assertFalse( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
-            assertFalse( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
+        for (short builtin : builtins) {
+            String formatStr = HSSFDataFormat.getBuiltinFormat(builtin);
+            assertFalse( HSSFDateUtil.isInternalDateFormat(builtin) );
+            assertFalse( HSSFDateUtil.isADateFormat(builtin,formatStr) );
         }
 
         // Now for some non-internal ones
@@ -296,10 +296,10 @@ public class TestHSSFDateUtil {
                 "[BLACK]dddd/mm/yy",
                 "[yeLLow]yyyy-mm-dd"
         };
-        for(int i=0; i<formats.length; i++) {
+        for (String format : formats) {
             assertTrue(
-                    formats[i] + " is a date format",
-                    HSSFDateUtil.isADateFormat(formatId, formats[i])
+                    format + " is a date format",
+                    HSSFDateUtil.isADateFormat(formatId, format)
             );
         }
 
@@ -314,10 +314,10 @@ public class TestHSSFDateUtil {
                 //support elapsed time [h],[m],[s]
                 "[hh]", "[mm]", "[ss]", "[SS]", "[red][hh]"
         };
-        for(int i=0; i<formats.length; i++) {
+        for (String format : formats) {
             assertTrue(
-                    formats[i] + " is a datetime format",
-                    HSSFDateUtil.isADateFormat(formatId, formats[i])
+                    format + " is a datetime format",
+                    HSSFDateUtil.isADateFormat(formatId, format)
             );
         }
 
@@ -330,10 +330,10 @@ public class TestHSSFDateUtil {
                 "[ms]", "[Mh]",
                 "", null
         };
-        for(int i=0; i<formats.length; i++) {
+        for (String format : formats) {
             assertFalse(
-                    formats[i] + " is not a date or datetime format",
-                    HSSFDateUtil.isADateFormat(formatId, formats[i])
+                    format + " is not a date or datetime format",
+                    HSSFDateUtil.isADateFormat(formatId, format)
             );
         }
 
@@ -342,7 +342,7 @@ public class TestHSSFDateUtil {
         formats = new String[] {
                 "yyyy:mm:dd",
         };
-        for(int i=0; i<formats.length; i++) {
+        for (String format : formats) {
         //    assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
         }
     }

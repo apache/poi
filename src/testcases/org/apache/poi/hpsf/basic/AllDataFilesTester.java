@@ -62,9 +62,7 @@ public class AllDataFilesTester {
             {
                 return file.isFile() && file.getName().startsWith("Test");
             }});
-        for (int i = 0; i < docs.length; i++)
-        {
-            final File doc = docs[i];
+        for (final File doc : docs) {
             final Logger logger = Logger.getLogger(getClass().getName());
             logger.info("Processing file \" " + doc.toString() + "\".");
 

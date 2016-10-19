@@ -327,9 +327,8 @@ public class SanityChecker {
     void checkRecordOrder(List<? extends RecordBase> records, CheckRecord[] check)
     {
         int recordIdx = 0;
-        for ( int checkIdx = 0; checkIdx < check.length; checkIdx++ )
-        {
-            recordIdx = check[checkIdx].match(records, recordIdx);
+        for (CheckRecord element : check) {
+            recordIdx = element.match(records, recordIdx);
         }
     }
 

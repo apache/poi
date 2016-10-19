@@ -91,8 +91,8 @@ public final class TestHSSFEventFactory extends TestCase {
         assertTrue( recs.length > 100 );
 
         // And none of them are continue ones
-        for(int i=0; i<recs.length; i++) {
-            assertFalse( recs[i] instanceof ContinueRecord );
+        for (Record rec : recs) {
+            assertFalse( rec instanceof ContinueRecord );
         }
 
         // Check that the last few records are as we expect

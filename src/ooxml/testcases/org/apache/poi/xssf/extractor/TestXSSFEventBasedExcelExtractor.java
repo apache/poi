@@ -155,10 +155,8 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
 		
 		POITextExtractor[] extractors =
 			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
-		for (int i = 0; i < extractors.length; i++) {
-            POITextExtractor extractor = extractors[i];
-			
-			String text = extractor.getText().replaceAll("[\r\t]", "");
+		for (POITextExtractor extractor : extractors) {
+            String text = extractor.getText().replaceAll("[\r\t]", "");
 			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
 			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
 			Matcher m = pattern.matcher(text);

@@ -235,8 +235,7 @@ public final class TestAreaReference extends TestCase {
         assertEquals(refA, arefs[0].formatAsString());
         assertEquals(refB, arefs[1].formatAsString());
 
-        for(int i=0; i<arefs.length; i++) {
-            AreaReference ar = arefs[i];
+        for (AreaReference ar : arefs) {
             confirmResolveCellRef(wb, ar.getFirstCell());
             confirmResolveCellRef(wb, ar.getLastCell());
         }
