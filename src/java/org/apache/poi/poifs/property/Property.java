@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 
 package org.apache.poi.poifs.property;
 
@@ -522,11 +520,7 @@ public abstract class Property implements Child, POIFSViewable {
      *
      * @return short description
      */
-    public String getShortDescription()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("Property: \"").append(getName()).append("\"");
-        return buffer.toString();
+    public String getShortDescription() {
+        return "Property: \"" + getName() + "\"";
     }
 }

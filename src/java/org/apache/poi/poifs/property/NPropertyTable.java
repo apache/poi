@@ -73,12 +73,6 @@ public final class NPropertyTable extends PropertyTableBase {
         _bigBigBlockSize = headerBlock.getBigBlockSize();
     }
     
-    /**
-     * Builds
-     * @param startAt
-     * @param filesystem
-     * @throws IOException
-     */
     private static List<Property> buildProperties(final Iterator<ByteBuffer> dataSource,
           final POIFSBigBlockSize bigBlockSize) throws IOException
     {

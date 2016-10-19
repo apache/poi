@@ -147,9 +147,9 @@ public class VBAMacroReader implements Closeable {
      * For each macro module that is found, the module's name and code are
      * added to <tt>modules<tt>.
      *
-     * @param dir
-     * @param modules
-     * @throws IOException
+     * @param dir The directory of entries to look at
+     * @param modules The resulting map of modules
+     * @throws IOException If reading the VBA module fails
      * @since 3.15-beta2
      */
     protected void findMacros(DirectoryNode dir, ModuleMap modules) throws IOException {
@@ -173,7 +173,7 @@ public class VBAMacroReader implements Closeable {
      * @param length number of bytes to read from stream
      * @param charset the character set encoding of the bytes in the stream
      * @return a java String in the supplied character set
-     * @throws IOException
+     * @throws IOException If reading from the stream fails
      */
     private static String readString(InputStream stream, int length, Charset charset) throws IOException {
         byte[] buffer = new byte[length];
@@ -191,7 +191,7 @@ public class VBAMacroReader implements Closeable {
      * @param in the run-length encoded input stream to read from
      * @param streamName the stream name of the module
      * @param modules a map to store the modules
-     * @throws IOException
+     * @throws IOException If reading data from the stream or from modules fails
      */
     private static void readModule(RLEDecompressingInputStream in, String streamName, ModuleMap modules) throws IOException {
         int moduleOffset = in.readInt();
@@ -240,7 +240,7 @@ public class VBAMacroReader implements Closeable {
     /**
       * Skips <tt>n</tt> bytes in an input stream, throwing IOException if the
       * number of bytes skipped is different than requested.
-      * @throws IOException
+      * @throws IOException If skipping would exceed the available data or skipping did not work.
       */
     private static void trySkip(InputStream in, long n) throws IOException {
         long skippedBytes = in.skip(n);
@@ -260,16 +260,23 @@ public class VBAMacroReader implements Closeable {
     // Constants from MS-OVBA: https://msdn.microsoft.com/en-us/library/office/cc313094(v=office.12).aspx
     private static final int EOF = -1;
     private static final int VERSION_INDEPENDENT_TERMINATOR = 0x0010;
+    @SuppressWarnings("unused")
     private static final int VERSION_DEPENDENT_TERMINATOR = 0x002B;
     private static final int PROJECTVERSION = 0x0009;
     private static final int PROJECTCODEPAGE = 0x0003;
     private static final int STREAMNAME = 0x001A;
     private static final int MODULEOFFSET = 0x0031;
+    @SuppressWarnings("unused")
     private static final int MODULETYPE_PROCEDURAL = 0x0021;
+    @SuppressWarnings("unused")
     private static final int MODULETYPE_DOCUMENT_CLASS_OR_DESIGNER = 0x0022;
+    @SuppressWarnings("unused")
     private static final int PROJECTLCID = 0x0002;
+    @SuppressWarnings("unused")
     private static final int MODULE_NAME = 0x0019;
+    @SuppressWarnings("unused")
     private static final int MODULE_NAME_UNICODE = 0x0047;
+    @SuppressWarnings("unused")
     private static final int MODULE_DOC_STRING = 0x001c;
     private static final int STREAMNAME_RESERVED = 0x0032;
 
@@ -291,7 +298,6 @@ public class VBAMacroReader implements Closeable {
                     // process DIR
                     RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis);
                     String streamName = null;
-                    String streamNameUnicode = null;
                     int recordId = 0;
                     try {
                         while (true) {
@@ -317,8 +323,8 @@ public class VBAMacroReader implements Closeable {
                                             Integer.toHexString(reserved));
                                 }
                                 int unicodeNameRecordLength = in.readInt();
-                                streamNameUnicode = readUnicodeString(in, unicodeNameRecordLength);
-                                //do something with this at some point
+                                readUnicodeString(in, unicodeNameRecordLength);
+                                // do something with this at some point
                                 break;
                             case MODULEOFFSET:
                                 readModule(in, streamName, modules);
