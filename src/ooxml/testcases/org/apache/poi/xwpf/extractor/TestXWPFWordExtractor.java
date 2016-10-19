@@ -23,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
@@ -51,15 +53,9 @@ public class TestXWPFWordExtractor extends TestCase {
                 "Phasellus ultricies mi nec leo. Sed tempus. In sit amet lorem at velit faucibus vestibulum.\n"
         ));
 
-        // Check number of paragraphs
-        int ps = 0;
-        char[] t = text.toCharArray();
-        for (int i = 0; i < t.length; i++) {
-            if (t[i] == '\n') {
-                ps++;
-            }
-        }
-        assertEquals(3, ps);
+        // Check number of paragraphs by counting number of newlines
+        int numberOfParagraphs = StringUtil.count(text, '\n');
+        assertEquals(3, numberOfParagraphs);
 
         extractor.close();
     }
@@ -90,15 +86,9 @@ public class TestXWPFWordExtractor extends TestCase {
                 "11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\n\n \n\n\n"
         ));
 
-        // Check number of paragraphs
-        int ps = 0;
-        char[] t = text.toCharArray();
-        for (int i = 0; i < t.length; i++) {
-            if (t[i] == '\n') {
-                ps++;
-            }
-        }
-        assertEquals(134, ps);
+        // Check number of paragraphs by counting number of newlines
+        int numberOfParagraphs = StringUtil.count(text, '\n');
+        assertEquals(134, numberOfParagraphs);
 
         extractor.close();
     }

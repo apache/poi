@@ -44,8 +44,8 @@ public final class TestContentType extends TestCase {
 		String[] contentTypesToTest = new String[] { "text/xml",
 				"application/pgp-key", "application/vnd.hp-PCLXL",
 				"application/vnd.lotus-1-2-3" };
-		for (int i = 0; i < contentTypesToTest.length; ++i) {
-			new ContentType(contentTypesToTest[i]);
+		for (String contentType : contentTypesToTest) {
+			new ContentType(contentType);
 		}
 	}
 
@@ -72,14 +72,13 @@ public final class TestContentType extends TestCase {
 				"text[/xml", "text]/xml", "text?/xml", "tex=t/xml",
 				"te{xt/xml", "tex}t/xml", "te xt/xml",
 				"text" + (char) 9 + "/xml", "text xml", " text/xml " };
-		for (int i = 0; i < contentTypesToTest.length; ++i) {
+		for (String contentType : contentTypesToTest) {
 			try {
-				new ContentType(contentTypesToTest[i]);
+				new ContentType(contentType);
 			} catch (InvalidFormatException e) {
 				continue;
 			}
-			fail("Must have fail for content type: '" + contentTypesToTest[i]
-					+ "' !");
+			fail("Must have fail for content type: '" + contentType + "' !");
 		}
 	}
 
@@ -110,14 +109,13 @@ public final class TestContentType extends TestCase {
                 "mail/toto;titi = tata", // spaces not allowed
                 "text/\u0080" // characters above ASCII are not allowed
         };
-		for (int i = 0; i < contentTypesToTest.length; ++i) {
+		for (String contentType : contentTypesToTest) {
 			try {
-				new ContentType(contentTypesToTest[i]);
+				new ContentType(contentType);
 			} catch (InvalidFormatException e) {
 				continue;
 			}
-			fail("Must have fail for content type: '" + contentTypesToTest[i]
-					+ "' !");
+			fail("Must have fail for content type: '" + contentType + "' !");
 		}
 	}
 
@@ -128,14 +126,13 @@ public final class TestContentType extends TestCase {
 	 */
 	public void testContentTypeCommentFailure() {
 		String[] contentTypesToTest = new String[] { "text/xml(comment)" };
-		for (int i = 0; i < contentTypesToTest.length; ++i) {
+		for (String contentType : contentTypesToTest) {
 			try {
-				new ContentType(contentTypesToTest[i]);
+				new ContentType(contentType);
 			} catch (InvalidFormatException e) {
 				continue;
 			}
-			fail("Must have fail for content type: '" + contentTypesToTest[i]
-					+ "' !");
+			fail("Must have fail for content type: '" + contentType + "' !");
 		}
 	}
 	
