@@ -71,7 +71,9 @@ public class POIFSDump {
             }
             try {
                 DirectoryEntry root = fs.getRoot();
-                File file = new File(new File(filename).getName(), root.getName());
+                String filenameWithoutPath = new File(filename).getName();
+                File dumpDir = new File(filenameWithoutPath + "_dump");
+                File file = new File(dumpDir, root.getName());
                 if (!file.exists() && !file.mkdirs()) {
                     throw new IOException("Could not create directory " + file);
                 }
