@@ -52,7 +52,7 @@ public class TestPOIFSDump {
     @After
     public void tearDown() throws IOException {
         // clean up the directory that POIFSDump writes to
-        deleteDirectory(new File(new File(TEST_FILE).getName()));
+        deleteDirectory(new File(new File(TEST_FILE+"_dump").getName()));
     }
 
     public static void deleteDirectory(File directory) throws IOException {
@@ -172,7 +172,7 @@ public class TestPOIFSDump {
         POIFSDump.main(new String[] {});
     }
 
-    @Test
+    @Test(expected=IndexOutOfBoundsException.class)
     public void testFailToWrite() throws IOException {
         File dir = TempFile.createTempFile("TestPOIFSDump", ".tst");
         assertTrue("Had: " + dir, dir.exists());
@@ -186,13 +186,8 @@ public class TestPOIFSDump {
         NPropertyTable props = fs.getPropertyTable();
         assertNotNull(props);
 
-        try {
-            // try with an invalid startBlock to trigger an exception
-            // to validate that file-handles are closed properly
-            POIFSDump.dump(fs, 999999999, "mini-stream", dir);
-            fail("Should catch exception here");
-        } catch (IndexOutOfBoundsException e) {
-            // expected here
-        }
+        // try with an invalid startBlock to trigger an exception
+        // to validate that file-handles are closed properly
+        POIFSDump.dump(fs, 999999999, "mini-stream", dir);
     }
 }
