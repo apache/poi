@@ -1354,9 +1354,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * Sum across multiple workbooks
      *  eg =SUM($Sheet1.C1:$Sheet4.C1)
-     * DISABLED As we can't currently evaluate these
      */
-    @Ignore
     @Test
     public void bug48703() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48703.xlsx");
