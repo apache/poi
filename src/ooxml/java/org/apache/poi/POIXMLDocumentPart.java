@@ -559,9 +559,10 @@ public class POIXMLDocumentPart {
         OPCPackage pkg = packagePart.getPackage();
         
         try {
-            if (descriptor.getDefaultFileName().equals(descriptor.getFileName(9999))) {
+            String name = descriptor.getDefaultFileName();
+            if (name.equals(descriptor.getFileName(9999))) {
                 // Non-index based, check if default is free
-                PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getDefaultFileName());
+                PackagePartName ppName = PackagingURIHelper.createPartName(name);
                 if (pkg.containPart(ppName)) {
                     // Default name already taken, not index based, nothing free
                     return -1;
@@ -575,8 +576,9 @@ public class POIXMLDocumentPart {
             int idx = minIdx;
             if (minIdx < 0) idx = 1;
             while (idx < 1000) {
-                String name = descriptor.getFileName(idx);
-                if (!pkg.containPart(PackagingURIHelper.createPartName(name))) {
+                name = descriptor.getFileName(idx);
+                PackagePartName ppName = PackagingURIHelper.createPartName(name);
+                if (!pkg.containPart(ppName)) {
                     return idx;
                 }
                 idx++;
