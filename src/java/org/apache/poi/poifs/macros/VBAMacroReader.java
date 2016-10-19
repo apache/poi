@@ -55,7 +55,7 @@ public class VBAMacroReader implements Closeable {
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
     // FIXME: When minimum supported version is Java 7, replace with java.nio.charset.StandardCharsets.UTF_16LE
-    private static final UTF_16LE = Charset.forName("UTF-16LE");
+    private static final Charset UTF_16LE = Charset.forName("UTF-16LE");
     
     private NPOIFSFileSystem fs;
     
