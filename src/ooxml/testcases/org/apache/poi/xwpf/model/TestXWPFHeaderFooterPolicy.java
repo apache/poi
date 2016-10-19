@@ -37,6 +37,7 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
     private XWPFDocument oddEven;
     private XWPFDocument diffFirst;
 
+    @Override
     protected void setUp() throws IOException {
         noHeader = XWPFTestDataSamples.openSampleDocument("NoHeadFoot.docx");
         header = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");

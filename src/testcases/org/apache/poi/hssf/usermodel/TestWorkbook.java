@@ -478,6 +478,7 @@ public final class TestWorkbook {
         public int getCount() {
             return _count;
         }
+        @Override
         public void visitRecord(Record r) {
             if (r instanceof LabelSSTRecord) {
                 _count++;

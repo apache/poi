@@ -93,7 +93,8 @@ public final class TestHWPFRangeParts extends TestCase {
 	 */
 	private HWPFDocument docUnicode;
 
-	public void setUp() {
+	@Override
+    public void setUp() {
 		docUnicode = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		docAscii = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 	}

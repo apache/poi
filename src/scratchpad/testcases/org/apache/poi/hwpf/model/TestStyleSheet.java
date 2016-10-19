@@ -61,7 +61,8 @@ public final class TestStyleSheet
     assertEquals(newStyleSheet, _styleSheet);
   }
 
-  protected void setUp()
+  @Override
+protected void setUp()
     throws Exception
   {
     super.setUp();
@@ -76,7 +77,8 @@ public final class TestStyleSheet
     _styleSheet = new StyleSheet(tableStream, fib.getFcStshf());
   }
 
-  protected void tearDown()
+  @Override
+protected void tearDown()
     throws Exception
   {
     _styleSheet = null;

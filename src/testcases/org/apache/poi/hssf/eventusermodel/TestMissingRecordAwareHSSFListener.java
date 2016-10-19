@@ -367,7 +367,8 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		private final List<Record> _records = new ArrayList<Record>();
 		private boolean logToStdOut = false;
 
-		public void processRecord(Record record) {
+		@Override
+        public void processRecord(Record record) {
 			_records.add(record);
 			
 			if(record instanceof MissingRowDummyRecord) {

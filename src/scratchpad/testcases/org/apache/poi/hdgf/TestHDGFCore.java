@@ -30,7 +30,8 @@ public final class TestHDGFCore extends TestCase {
 
 	private POIFSFileSystem fs;
 
-	protected void setUp() throws Exception {
+	@Override
+    protected void setUp() throws Exception {
 		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
 	}
 

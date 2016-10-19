@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class TestXSSFForkedEvaluator extends TestForkedEvaluator {
     
+    @Override
     protected Workbook newWorkbook() {
         return new XSSFWorkbook();
     }

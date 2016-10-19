@@ -41,6 +41,7 @@ class LocalProperty
      * do nothing
      */
 
+    @Override
     protected void preWrite()
     {
     }
@@ -49,6 +50,7 @@ class LocalProperty
      * @return false
      */
 
+    @Override
     public boolean isDirectory()
     {
         return false;

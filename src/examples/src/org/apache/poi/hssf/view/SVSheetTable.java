@@ -114,6 +114,7 @@ public class SVSheetTable extends JTable {
   }
 
   private class HeaderCellRenderer implements TableCellRenderer {
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
         boolean isSelected, boolean hasFocus, int row, int column) {
 
@@ -128,6 +129,7 @@ public class SVSheetTable extends JTable {
       this.formulaDisplay = formulaDisplay;
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
       int row = getSelectedRow();
       int col = getSelectedColumn();
@@ -187,7 +189,8 @@ public class SVSheetTable extends JTable {
     }
 
     addHierarchyListener(new HierarchyListener() {
-      public void hierarchyChanged(HierarchyEvent e) {
+      @Override
+    public void hierarchyChanged(HierarchyEvent e) {
         if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) != 0) {
           Container changedParent = e.getChangedParent();
           if (changedParent instanceof JViewport) {

@@ -863,11 +863,13 @@ public final class TestBugs {
         assertEquals(hlRun.getEndIndex(), hlShape.getEndIndex());
 
         OutputStream nullOutput = new OutputStream(){
+            @Override
             public void write(int b) throws IOException {}
         };
         
         final boolean found[] = { false }; 
         DummyGraphics2d dgfx = new DummyGraphics2d(new PrintStream(nullOutput)){
+            @Override
             public void drawString(AttributedCharacterIterator iterator, float x, float y) {
                 // For the test file, common sl draws textruns one by one and not mixed
                 // so we evaluate the whole iterator

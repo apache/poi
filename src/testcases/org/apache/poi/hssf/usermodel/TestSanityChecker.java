@@ -124,7 +124,8 @@ public final class TestSanityChecker {
 		final List<Record> records = Arrays.asList(recs);
 		try {
 			new Runnable() {
-				public void run() {
+				@Override
+                public void run() {
 					c.checkRecordOrder(records, check);
 				}
 			}.run();

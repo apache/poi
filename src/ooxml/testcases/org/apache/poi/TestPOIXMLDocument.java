@@ -79,6 +79,7 @@ public final class TestPOIXMLDocument {
             //
         }
 
+        @Override
         protected POIXMLRelation getDescriptor(String relationshipType) {
             return null;
         }

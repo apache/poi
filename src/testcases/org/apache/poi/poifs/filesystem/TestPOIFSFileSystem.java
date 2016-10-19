@@ -66,14 +66,16 @@ public final class TestPOIFSFileSystem extends TestCase {
 			_isClosed = false;
 		}
 
-		public int read() throws IOException {
+		@Override
+        public int read() throws IOException {
 			int result = _is.read();
 			if(result >=0) {
 				checkRead(1);
 			}
 			return result;
 		}
-		public int read(byte[] b, int off, int len) throws IOException {
+		@Override
+        public int read(byte[] b, int off, int len) throws IOException {
 			int result = _is.read(b, off, len);
 			checkRead(result);
 			return result;
@@ -85,7 +87,8 @@ public final class TestPOIFSFileSystem extends TestCase {
 				throw new MyEx();
 			}
 		}
-		public void close() throws IOException {
+		@Override
+        public void close() throws IOException {
 			_isClosed = true;
 			_is.close();
 		}

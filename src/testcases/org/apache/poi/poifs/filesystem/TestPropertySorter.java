@@ -136,6 +136,7 @@ public final class TestPropertySorter extends TestCase {
      */
     private static final Comparator<Property> OldCaseSensitivePropertyComparator = new Comparator<Property>() {
 
+        @Override
         public int compare(Property o1, Property o2) {
             String name1  = o1.getName();
             String name2  = o2.getName();

@@ -31,9 +31,11 @@ public abstract class AbstractNumericTestCase extends TestCase {
     public static final double POS_ZERO = 1E-4;
     public static final double DIFF_TOLERANCE_FACTOR = 1E-8;
 
+    @Override
     public void setUp() {
     }
 
+    @Override
     public void tearDown() {
     }
 

@@ -64,6 +64,7 @@ public final class TestEmptyProperties extends TestCase {
      * does not exist
      * @exception IOException if an I/O exception occurs
      */
+    @Override
     public void setUp() throws FileNotFoundException, IOException
     {
         POIDataSamples samples = POIDataSamples.getHPSFInstance();

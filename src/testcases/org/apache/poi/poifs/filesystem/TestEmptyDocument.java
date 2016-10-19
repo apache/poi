@@ -49,7 +49,8 @@ public final class TestEmptyDocument extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Foo", 0, new POIFSWriterListener() {
-			public void processPOIFSWriterEvent(POIFSWriterEvent event) {
+			@Override
+            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
 				_logger.log(POILogger.WARN, "written");
 			}
 		});
@@ -74,7 +75,8 @@ public final class TestEmptyDocument extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Bar", 1, new POIFSWriterListener() {
-			public void processPOIFSWriterEvent(POIFSWriterEvent event) {
+			@Override
+            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
 				try {
 					event.getStream().write(0);
 				} catch (IOException exception) {
@@ -83,7 +85,8 @@ public final class TestEmptyDocument extends TestCase {
 			}
 		});
 		dir.createDocument("Foo", 0, new POIFSWriterListener() {
-			public void processPOIFSWriterEvent(POIFSWriterEvent event) {
+			@Override
+            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
 			}
 		});
 

@@ -51,7 +51,8 @@ public final class TestBiff8DecryptingStream {
 			_initialValue = initialValue;
 		}
 
-		public int read() {
+		@Override
+        public int read() {
 			return (_initialValue+_position++) & 0xFF;
 		}
 	}

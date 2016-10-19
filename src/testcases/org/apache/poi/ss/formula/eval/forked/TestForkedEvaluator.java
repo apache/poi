@@ -69,7 +69,8 @@ public class TestForkedEvaluator {
 
 		// The stability classifier is useful to reduce memory consumption of caching logic
 		IStabilityClassifier stabilityClassifier = new IStabilityClassifier() {
-			public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
+			@Override
+            public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
 				return sheetIndex == 1;
 			}
 		};

@@ -57,6 +57,7 @@ public class AllDataFilesTester {
         final File dataDir = _samples.getFile("");
         final File[] docs = dataDir.listFiles(new FileFilter()
         {
+            @Override
             public boolean accept(final File file)
             {
                 return file.isFile() && file.getName().startsWith("Test");

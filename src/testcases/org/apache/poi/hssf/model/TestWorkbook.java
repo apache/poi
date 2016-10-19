@@ -109,6 +109,7 @@ public final class TestWorkbook {
         assertNotNull(wb.getNameXPtg("ISODD", AggregatingUDFFinder.DEFAULT));
 
         FreeRefFunction NotImplemented = new FreeRefFunction() {
+            @Override
             public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
                 throw new RuntimeException("not implemented");
             }

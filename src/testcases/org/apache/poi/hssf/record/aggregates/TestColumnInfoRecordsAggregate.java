@@ -66,7 +66,8 @@ public final class TestColumnInfoRecordsAggregate {
 
 		private List<Record> _list = new ArrayList<Record>();
 
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 			_list.add(r);
 		}
 

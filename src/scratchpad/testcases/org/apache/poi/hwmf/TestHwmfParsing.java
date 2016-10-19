@@ -105,6 +105,7 @@ public class TestHwmfParsing {
         while ((ze = zis.getNextEntry()) != null) {
             String basename = ze.getName().replaceAll(".*?([^/]+)\\.wmf", "$1");
             FilterInputStream fis = new FilterInputStream(zis){
+                @Override
                 public void close() throws IOException {}
             };
             try {
@@ -138,6 +139,7 @@ public class TestHwmfParsing {
         final String startFile = "";
         File files[] = indir.listFiles(new FileFilter() {
             boolean foundStartFile = false;
+            @Override
             public boolean accept(File pathname) {
                 foundStartFile |= startFile.isEmpty() || pathname.getName().contains(startFile);
                 return foundStartFile && pathname.getName().matches("(?i).*\\.wmf?$");

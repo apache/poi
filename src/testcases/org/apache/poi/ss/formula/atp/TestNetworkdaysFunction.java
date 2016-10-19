@@ -107,14 +107,17 @@ public class TestNetworkdaysFunction extends TestCase {
             return getRelativeValue(-1, relativeRowIndex, relativeColumnIndex);
         }
 
+        @Override
         public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
             return null;
         }
 
+        @Override
         public TwoDEval getColumn(int columnIndex) {
             return null;
         }
 
+        @Override
         public TwoDEval getRow(int rowIndex) {
             return null;
         }

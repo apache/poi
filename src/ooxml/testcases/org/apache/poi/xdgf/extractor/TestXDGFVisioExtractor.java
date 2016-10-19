@@ -30,6 +30,7 @@ public class TestXDGFVisioExtractor extends TestCase {
     private OPCPackage pkg;
     private XmlVisioDocument xml;
 
+    @Override
     protected void setUp() throws Exception {
         diagrams = POIDataSamples.getDiagramInstance();
         

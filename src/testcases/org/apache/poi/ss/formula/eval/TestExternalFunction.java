@@ -42,7 +42,8 @@ public final class TestExternalFunction extends TestCase {
 			//
 		}
 
-		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+		@Override
+        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 			if (args.length != 1 || !(args[0] instanceof StringEval)) {
 				return ErrorEval.VALUE_INVALID;
 			}
@@ -56,7 +57,8 @@ public final class TestExternalFunction extends TestCase {
 			//
 		}
 
-		public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+		@Override
+        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
 			if (args.length != 1 || !(args[0] instanceof StringEval)) {
 				return ErrorEval.VALUE_INVALID;
 			}

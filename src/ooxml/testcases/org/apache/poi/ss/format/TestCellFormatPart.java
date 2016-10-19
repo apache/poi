@@ -57,6 +57,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     @Test
     public void testGeneralFormat() throws Exception {
         runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
+            @Override
             public Object getValue(Cell cell) {
                 switch (CellFormat.ultimateTypeEnum(cell)) {
                     case BOOLEAN:
@@ -72,6 +73,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
 
     public void testNumberFormat() throws Exception {
         runFormatTests("NumberFormatTests.xlsx", new CellValue() {
+            @Override
             public Object getValue(Cell cell) {
                 return cell.getNumericCellValue();
             }
@@ -81,6 +83,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     @Test
     public void testNumberApproxFormat() throws Exception {
         runFormatTests("NumberFormatApproxTests.xlsx", new CellValue() {
+            @Override
             public Object getValue(Cell cell) {
                 return cell.getNumericCellValue();
             }
@@ -104,6 +107,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {
             runFormatTests("DateFormatTests.xlsx", new CellValue() {
+                @Override
                 public Object getValue(Cell cell) {
                     return cell.getDateCellValue();
                 }
@@ -116,6 +120,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     @Test
     public void testElapsedFormat() throws Exception {
         runFormatTests("ElapsedFormatTests.xlsx", new CellValue() {
+            @Override
             public Object getValue(Cell cell) {
                 return cell.getNumericCellValue();
             }
@@ -125,6 +130,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     @Test
     public void testTextFormat() throws Exception {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
+            @Override
             public Object getValue(Cell cell) {
                 switch(CellFormat.ultimateTypeEnum(cell)) {
                     case BOOLEAN:
@@ -139,6 +145,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     @Test
     public void testConditions() throws Exception {
         runFormatTests("FormatConditionTests.xlsx", new CellValue() {
+            @Override
             Object getValue(Cell cell) {
                 return cell.getNumericCellValue();
             }

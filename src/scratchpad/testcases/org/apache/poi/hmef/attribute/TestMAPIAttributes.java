@@ -44,7 +44,8 @@ public final class TestMAPIAttributes extends TestCase {
    }
 
 
-   protected void tearDown() throws Exception {
+   @Override
+protected void tearDown() throws Exception {
        stream.close();
 
        super.tearDown();

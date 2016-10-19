@@ -70,7 +70,8 @@ public final class TestChartTitleFormatRecord {
 			chartTitleFormatRecords = new ArrayList<ChartTitleFormatRecord>();
 		}
 
-		public void processRecord(Record record) {
+		@Override
+        public void processRecord(Record record) {
 			if(record instanceof ChartTitleFormatRecord) {
 				chartTitleFormatRecords.add((ChartTitleFormatRecord)record);
 			}

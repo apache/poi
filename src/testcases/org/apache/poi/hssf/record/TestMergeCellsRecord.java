@@ -58,7 +58,8 @@ public final class TestMergeCellsRecord extends TestCase {
 	}
    
 	private static final RecordVisitor dummyRecordVisitor = new RecordVisitor() {
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 			// do nothing
 		}
 	};

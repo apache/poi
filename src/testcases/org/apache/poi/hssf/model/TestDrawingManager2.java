@@ -25,6 +25,7 @@ public final class TestDrawingManager2 extends TestCase {
     private DrawingManager2 drawingManager2;
     private EscherDggRecord dgg;
 
+    @Override
     protected void setUp() {
         dgg = new EscherDggRecord();
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[0] );

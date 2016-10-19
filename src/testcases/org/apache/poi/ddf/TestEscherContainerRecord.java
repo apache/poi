@@ -138,10 +138,14 @@ public final class TestEscherContainerRecord extends TestCase {
 
 	private static final class DummyEscherRecord extends EscherRecord {
 		public DummyEscherRecord() { }
-		public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) { return 0; }
-		public int serialize(int offset, byte[] data, EscherSerializationListener listener) { return 0; }
-		public int getRecordSize() { return 10; }
-		public String getRecordName() { return ""; }
+		@Override
+        public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) { return 0; }
+		@Override
+        public int serialize(int offset, byte[] data, EscherSerializationListener listener) { return 0; }
+		@Override
+        public int getRecordSize() { return 10; }
+		@Override
+        public String getRecordName() { return ""; }
 	}
 
 	public void testGetRecordSize() {

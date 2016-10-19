@@ -137,6 +137,7 @@ public final class TestDec2Hex extends TestCase {
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
         WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
             
+            @Override
             public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
                 return true;
             }

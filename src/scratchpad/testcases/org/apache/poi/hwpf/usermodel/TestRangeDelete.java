@@ -46,7 +46,8 @@ public final class TestRangeDelete extends TestCase {
 
 	private String illustrativeDocFile;
 
-	protected void setUp() {
+	@Override
+    protected void setUp() {
 		illustrativeDocFile = "testRangeDelete.doc";
 	}
 

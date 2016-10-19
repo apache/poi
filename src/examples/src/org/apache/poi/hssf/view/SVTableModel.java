@@ -55,10 +55,12 @@ public class SVTableModel extends AbstractTableModel {
   }
 
 
-  public int getColumnCount() {
+  @Override
+public int getColumnCount() {
     return this.maxcol+1;
   }
-  public Object getValueAt(int row, int col) {
+  @Override
+public Object getValueAt(int row, int col) {
     HSSFRow r = st.getRow(row);
     HSSFCell c = null;
     if (r != null) {
@@ -66,19 +68,23 @@ public class SVTableModel extends AbstractTableModel {
     }
     return c;
   }
-  public int getRowCount() {
+  @Override
+public int getRowCount() {
     return st.getLastRowNum() + 1;
   }
 
-  public Class<?> getColumnClass(int c) {
+  @Override
+public Class<?> getColumnClass(int c) {
 	return HSSFCell.class;
   }
 
-  public boolean isCellEditable(int rowIndex, int columnIndex) {
+  @Override
+public boolean isCellEditable(int rowIndex, int columnIndex) {
     return true;
   }
 
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+  @Override
+public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
     if (aValue != null)
       System.out.println("SVTableModel.setValueAt. value type = "+aValue.getClass().getName());
     else System.out.println("SVTableModel.setValueAt. value type = null");

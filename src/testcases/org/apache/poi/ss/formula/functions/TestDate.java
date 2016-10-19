@@ -35,6 +35,7 @@ public final class TestDate extends TestCase {
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;
 
+    @Override
     public void setUp() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");

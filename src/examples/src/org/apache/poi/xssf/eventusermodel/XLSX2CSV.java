@@ -83,6 +83,7 @@ public class XLSX2CSV {
             }
         }
 
+        @Override
         public void startRow(int rowNum) {
             // If there were gaps, output the missing rows
             outputMissingRows(rowNum-currentRow-1);
@@ -92,6 +93,7 @@ public class XLSX2CSV {
             currentCol = -1;
         }
 
+        @Override
         public void endRow(int rowNum) {
             // Ensure the minimum number of columns
             for (int i=currentCol; i<minColumns; i++) {
@@ -100,6 +102,7 @@ public class XLSX2CSV {
             output.append('\n');
         }
 
+        @Override
         public void cell(String cellReference, String formattedValue,
                 XSSFComment comment) {
             if (firstCellOfRow) {
@@ -132,6 +135,7 @@ public class XLSX2CSV {
             }
         }
 
+        @Override
         public void headerFooter(String text, boolean isHeader, String tagName) {
             // Skip, no headers or footers in CSV
         }

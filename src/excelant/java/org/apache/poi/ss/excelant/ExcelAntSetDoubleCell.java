@@ -50,7 +50,8 @@ public class ExcelAntSetDoubleCell extends ExcelAntSet {
 		return cellValue;
 	}
 	
-	public void execute() throws BuildException {
+	@Override
+    public void execute() throws BuildException {
 		wbUtil.setDoubleValue(cellStr, cellValue ) ;
 		
 		log( "set cell " + cellStr + " to value " + cellValue + " as double.", Project.MSG_DEBUG ) ;

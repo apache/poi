@@ -36,7 +36,8 @@ public final class TestStreamBugs extends StreamTest {
 	private PointerFactory ptrFactory;
 	private POIFSFileSystem filesystem;
 
-	protected void setUp() throws Exception {
+	@Override
+    protected void setUp() throws Exception {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 

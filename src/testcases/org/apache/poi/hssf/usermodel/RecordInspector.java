@@ -42,7 +42,8 @@ public final class RecordInspector {
 			_list = new ArrayList<Record>(128);
 		}
 
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 			_list.add(r);
 		}
 

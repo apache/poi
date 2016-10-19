@@ -66,7 +66,8 @@ public class SVBorder extends AbstractBorder {
      this.selected = selected;
    }
 
-   public void paintBorder(Component c, Graphics g, int x, int y, int width,
+   @Override
+public void paintBorder(Component c, Graphics g, int x, int y, int width,
                            int height) {
       Color oldColor = g.getColor();
 

@@ -54,6 +54,7 @@ public class ReadTitle
 
     static class MyPOIFSReaderListener implements POIFSReaderListener
     {
+        @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
             SummaryInformation si = null;

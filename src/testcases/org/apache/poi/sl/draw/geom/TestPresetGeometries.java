@@ -39,6 +39,7 @@ public class TestPresetGeometries {
         for(String name : shapes.keySet()) {
             CustomGeometry geom = shapes.get(name);
             Context ctx = new Context(geom, new Rectangle2D.Double(0, 0, 100, 100), new IAdjustableShape() {
+                @Override
                 public Guide getAdjustValue(String presetName) {
                     return null;
                 }

@@ -61,6 +61,7 @@ public class Outlines implements Closeable {
         }
     }
     
+    @Override
     public void close() throws IOException {
         wb.close();
     }

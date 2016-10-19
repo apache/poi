@@ -153,6 +153,7 @@ public final class TestEventWorkbookBuilder extends TestCase {
         private final List<Record> _records = new ArrayList<Record>();
         private final List<Record> _frecs = new ArrayList<Record>();
 
+        @Override
         public void processRecord(Record record) {
             _records.add(record);
             if(record instanceof FormulaRecord) {

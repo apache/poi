@@ -48,10 +48,12 @@ public class TestXSLFTextParagraph {
             super(p);
         }
         
+        @Override
         public void breakText(Graphics2D graphics) {
             super.breakText(graphics);
         }
         
+        @Override
         public double getWrappingWidth(boolean firstLine, Graphics2D graphics) {
             return super.getWrappingWidth(firstLine, graphics);
         }

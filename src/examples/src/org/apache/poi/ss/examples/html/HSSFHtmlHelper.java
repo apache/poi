@@ -42,6 +42,7 @@ public class HSSFHtmlHelper implements HtmlHelper {
         colors = wb.getCustomPalette();
     }
 
+    @Override
     public void colorStyles(CellStyle style, Formatter out) {
         HSSFCellStyle cs = (HSSFCellStyle) style;
         out.format("  /* fill pattern = %d */%n", cs.getFillPattern());

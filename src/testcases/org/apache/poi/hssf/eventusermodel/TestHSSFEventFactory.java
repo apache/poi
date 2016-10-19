@@ -130,6 +130,7 @@ public final class TestHSSFEventFactory extends TestCase {
             return result;
         }
 
+        @Override
         public void processRecord(Record record) {
             records.add(record);
         }

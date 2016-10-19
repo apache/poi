@@ -92,6 +92,7 @@ public final class TestBin2Dec extends TestCase {
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
         WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
             
+            @Override
             public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
                 return true;
             }

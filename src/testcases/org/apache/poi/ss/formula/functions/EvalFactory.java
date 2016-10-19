@@ -88,9 +88,11 @@ public final class EvalFactory {
 			super(firstRow, firstColumn, lastRow, lastColumn);
 			_values = values;
 		}
-		public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+		@Override
+        public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 		    return getRelativeValue(-1, relativeRowIndex, relativeColumnIndex);
 		}
+        @Override
         public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
 			if (relativeRowIndex < 0 || relativeRowIndex >=getHeight()) {
 				throw new IllegalArgumentException("row index out of range");
@@ -102,7 +104,8 @@ public final class EvalFactory {
 			int oneDimensionalIndex = relativeRowIndex * width + relativeColumnIndex;
 			return _values[oneDimensionalIndex];
 		}
-		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+		@Override
+        public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
 			if (relFirstRowIx < 0 || relFirstColIx < 0
 					|| relLastRowIx >= getHeight() || relLastColIx >= getWidth()) {
 				throw new RuntimeException("Operation not implemented on this mock object");
@@ -133,7 +136,8 @@ public final class EvalFactory {
 			}
 			return result;
 		}
-		public TwoDEval getRow(int rowIndex) {
+		@Override
+        public TwoDEval getRow(int rowIndex) {
 			if (rowIndex >= getHeight()) {
 				throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
 						+ ".  Allowable range is (0.." + getHeight() + ").");
@@ -144,7 +148,8 @@ public final class EvalFactory {
 			}
 			return new MockAreaEval(rowIndex, getFirstColumn(), rowIndex, getLastColumn(), values);
 		}
-		public TwoDEval getColumn(int columnIndex) {
+		@Override
+        public TwoDEval getColumn(int columnIndex) {
 			if (columnIndex >= getWidth()) {
 				throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
 						+ ".  Allowable range is (0.." + getWidth() + ").");
@@ -167,10 +172,12 @@ public final class EvalFactory {
 			super(-1, -1, ptg.getRow(), ptg.getColumn());
 			_value = value;
 		}
-		public ValueEval getInnerValueEval(int sheetIndex) {
+		@Override
+        public ValueEval getInnerValueEval(int sheetIndex) {
 			return _value;
 		}
-		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
+		@Override
+        public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
 			throw new RuntimeException("Operation not implemented on this mock object");
 		}
 	}

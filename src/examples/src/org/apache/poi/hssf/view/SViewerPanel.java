@@ -129,7 +129,8 @@ public class SViewerPanel extends JPanel {
     return scroll;
   }
 
-  public void paint(Graphics g) {
+  @Override
+public void paint(Graphics g) {
     //JMH I am only overriding this to get a picture of the time taken to paint
     long start = System.currentTimeMillis();
     super.paint(g);
@@ -180,19 +181,24 @@ public class SViewerPanel extends JPanel {
       }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
       checkPopup(e);
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
       checkPopup(e);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       checkPopup(e);
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {}
+    @Override
     public void mouseExited(MouseEvent e) {}
   }
 
@@ -202,6 +208,7 @@ public class SViewerPanel extends JPanel {
       super("Rename");
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       int tabIndex = sheetPane.getSelectedIndex();
       if (tabIndex != -1) {
@@ -220,6 +227,7 @@ public class SViewerPanel extends JPanel {
       super("Insert");
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       //Create a new sheet then search for the sheet and make sure that the
       //sheetPane shows it.
@@ -239,6 +247,7 @@ public class SViewerPanel extends JPanel {
       super("Delete");
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       int tabIndex = sheetPane.getSelectedIndex();
       if (tabIndex != -1) {
@@ -267,12 +276,14 @@ public class SViewerPanel extends JPanel {
       SViewerPanel p = new SViewerPanel(wb, true);
       JFrame frame;
       frame = new JFrame() {
+        @Override
         protected void processWindowEvent(WindowEvent e) {
           super.processWindowEvent(e);
           if (e.getID() == WindowEvent.WINDOW_CLOSING) {
             System.exit(0);
           }
         }
+        @Override
         public synchronized void setTitle(String title) {
           super.setTitle(title);
           enableEvents(AWTEvent.WINDOW_EVENT_MASK);

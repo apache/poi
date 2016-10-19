@@ -36,6 +36,7 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
     public TestHSSFConditionalFormatting(){
         super(HSSFITestDataProvider.instance);
     }
+    @Override
     protected void assertColour(String hexExpected, Color actual) {
         assertNotNull("Colour must be given", actual);
         if (actual instanceof HSSFColor) {

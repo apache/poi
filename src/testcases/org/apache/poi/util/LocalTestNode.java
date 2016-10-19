@@ -78,6 +78,7 @@ class LocalTestNode
      * @param o
      */
 
+    @Override
     public int compareTo(Object o)
     {
         LocalTestNode other = ( LocalTestNode ) o;
@@ -98,6 +99,7 @@ class LocalTestNode
      * @return true if equal
      */
 
+    @Override
     public boolean equals(Object o)
     {
         if (o == null)
@@ -117,6 +119,7 @@ class LocalTestNode
     /**
      * @return hash code
      */
+    @Override
     public int hashCode()
     {
         return getKey().hashCode() ^ getValue().hashCode();

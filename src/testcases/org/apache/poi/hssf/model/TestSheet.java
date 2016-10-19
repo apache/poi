@@ -120,7 +120,8 @@ public final class TestSheet {
 		public MergedCellListener() {
 			_count = 0;
 		}
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 			if (r instanceof MergeCellsRecord) {
 				_count++;
 			}
@@ -457,7 +458,8 @@ public final class TestSheet {
 		public SizeCheckingRecordVisitor() {
 			_totalSize = 0;
 		}
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 
 			int estimatedSize=r.getRecordSize();
 			byte[] buf = new byte[estimatedSize];
@@ -554,7 +556,8 @@ public final class TestSheet {
 		public IndexRecord getIndexRecord() {
 			return _indexRecord;
 		}
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 			if (r instanceof IndexRecord) {
 				if (_indexRecord != null) {
 					throw new RuntimeException("too many index records");

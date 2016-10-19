@@ -500,6 +500,7 @@ public abstract class BuildFileTest extends TestCase {
             this.buffer = buffer;
         }
 
+        @Override
         public void write(int b) {
             buffer.append((char) b);
         }
@@ -522,6 +523,7 @@ public abstract class BuildFileTest extends TestCase {
         /**
          * Fired before any targets are started.
          */
+        @Override
         public void buildStarted(BuildEvent event) {
         }
 
@@ -531,6 +533,7 @@ public abstract class BuildFileTest extends TestCase {
          *
          * @see BuildEvent#getException()
          */
+        @Override
         public void buildFinished(BuildEvent event) {
         }
 
@@ -539,6 +542,7 @@ public abstract class BuildFileTest extends TestCase {
          *
          * @see BuildEvent#getTarget()
          */
+        @Override
         public void targetStarted(BuildEvent event) {
             //System.out.println("targetStarted " + event.getTarget().getName());
         }
@@ -549,6 +553,7 @@ public abstract class BuildFileTest extends TestCase {
          *
          * @see BuildEvent#getException()
          */
+        @Override
         public void targetFinished(BuildEvent event) {
             //System.out.println("targetFinished " + event.getTarget().getName());
         }
@@ -558,6 +563,7 @@ public abstract class BuildFileTest extends TestCase {
          *
          * @see BuildEvent#getTask()
          */
+        @Override
         public void taskStarted(BuildEvent event) {
             //System.out.println("taskStarted " + event.getTask().getTaskName());
         }
@@ -568,6 +574,7 @@ public abstract class BuildFileTest extends TestCase {
          *
          * @see BuildEvent#getException()
          */
+        @Override
         public void taskFinished(BuildEvent event) {
             //System.out.println("taskFinished " + event.getTask().getTaskName());
         }
@@ -578,6 +585,7 @@ public abstract class BuildFileTest extends TestCase {
          * @see BuildEvent#getMessage()
          * @see BuildEvent#getPriority()
          */
+        @Override
         public void messageLogged(BuildEvent event) {
             if (event.getPriority() > logLevel) {
                 // ignore event

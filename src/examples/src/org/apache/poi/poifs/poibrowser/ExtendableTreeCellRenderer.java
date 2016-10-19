@@ -49,6 +49,7 @@ public class ExtendableTreeCellRenderer implements TreeCellRenderer
         renderers = new HashMap<Class<?>,TreeCellRenderer>();
         register(Object.class, new DefaultTreeCellRenderer()
             {
+                @Override
                 public Component getTreeCellRendererComponent
                     (JTree tree, Object value, boolean selectedCell,
                      boolean expanded, boolean leaf, int row, boolean hasCellFocus)
@@ -97,6 +98,7 @@ public class ExtendableTreeCellRenderer implements TreeCellRenderer
      *
      * @see TreeCellRenderer#getTreeCellRendererComponent
      */
+    @Override
     public Component getTreeCellRendererComponent
         (final JTree tree, final Object value, final boolean selected,
          final boolean expanded, final boolean leaf, final int row,

@@ -47,7 +47,8 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 	 * Set things up, using a PowerPoint document and
 	 *  a Word Document for our testing
 	 */
-	public void setUp() throws Exception {
+	@Override
+    public void setUp() throws Exception {
 		doc = new HSLFSlideShowImpl(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		doc2 = HWPFTestDataSamples.openSampleFile("test2.doc");

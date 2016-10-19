@@ -33,6 +33,7 @@ public class TestXWPFDecorators extends TestCase {
     private XWPFDocument hyperlink;
     private XWPFDocument comments;
 
+    @Override
     protected void setUp() throws IOException {
         simple = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         hyperlink = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");

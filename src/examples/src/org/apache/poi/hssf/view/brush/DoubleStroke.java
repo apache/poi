@@ -47,6 +47,7 @@ public class DoubleStroke implements Brush {
      *
      * @return The created stroke as a new shape.
      */
+    @Override
     public Shape createStrokedShape(Shape s) {
         // Use the first stroke to create an outline of the shape
         Shape outline = stroke1.createStrokedShape(s);
@@ -56,6 +57,7 @@ public class DoubleStroke implements Brush {
     }
 
     /** {@inheritDoc} */
+    @Override
     public float getLineWidth() {
         return stroke1.getLineWidth() + 2 * stroke2.getLineWidth();
     }

@@ -95,6 +95,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         super.bug35084();
     }
 
+    @Override
     @Test
     public void getCellComment() throws IOException {
         // TODO: reading cell comments via Sheet does not work currently as it tries 
