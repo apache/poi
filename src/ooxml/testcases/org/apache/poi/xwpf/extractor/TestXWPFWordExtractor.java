@@ -54,7 +54,7 @@ public class TestXWPFWordExtractor extends TestCase {
         ));
 
         // Check number of paragraphs by counting number of newlines
-        int numberOfParagraphs = StringUtil.count(text, '\n');
+        int numberOfParagraphs = StringUtil.countMatches(text, '\n');
         assertEquals(3, numberOfParagraphs);
 
         extractor.close();
@@ -87,7 +87,7 @@ public class TestXWPFWordExtractor extends TestCase {
         ));
 
         // Check number of paragraphs by counting number of newlines
-        int numberOfParagraphs = StringUtil.count(text, '\n');
+        int numberOfParagraphs = StringUtil.countMatches(text, '\n');
         assertEquals(134, numberOfParagraphs);
 
         extractor.close();
