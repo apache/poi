@@ -192,5 +192,24 @@ public class TestStringUtil {
         assertEquals("abc|def|ghi", StringUtil.join("|", "abc", "def", "ghi"));
         assertEquals("5|8.5|true|string", StringUtil.join("|", 5, 8.5, true, "string")); //assumes Locale prints number decimal point as a period rather than a comma
     }
+    
+    @Test
+    public void count() {
+        String test = "Apache POI project\n\u00a9 Copyright 2016";
+        // supports search in null or empty string
+        assertEquals("null", 0, StringUtil.countMatches(null, 'A'));
+        assertEquals("empty string", 0, StringUtil.countMatches("", 'A'));
+        
+        assertEquals("normal", 2, StringUtil.countMatches(test, 'e'));
+        assertEquals("normal, should not find a in escaped copyright", 1, StringUtil.countMatches(test, 'a'));
+        
+        // search for non-printable characters
+        assertEquals("null character", 0, StringUtil.countMatches(test, '\0'));
+        assertEquals("CR", 0, StringUtil.countMatches(test, '\r'));
+        assertEquals("LF", 1, StringUtil.countMatches(test, '\n'));
+        
+        // search for unicode characters
+        assertEquals("Unicode", 1, StringUtil.countMatches(test, '\u00a9'));
+    }
 }
 
