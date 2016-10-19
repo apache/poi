@@ -575,7 +575,8 @@ public class POIXMLDocumentPart {
             // Default to searching from 1, unless they asked for 0+
             int idx = minIdx;
             if (minIdx < 0) idx = 1;
-            while (idx < 1000) {
+            int maxIdx = minIdx + pkg.getParts().size();
+            while (idx <= maxIdx) {
                 name = descriptor.getFileName(idx);
                 PackagePartName ppName = PackagingURIHelper.createPartName(name);
                 if (!pkg.containPart(ppName)) {
