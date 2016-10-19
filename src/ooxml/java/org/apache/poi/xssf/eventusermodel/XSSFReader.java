@@ -186,7 +186,7 @@ public class XSSFReader {
         /**
          *  Maps relId and the corresponding PackagePart
          */
-        private Map<String, PackagePart> sheetMap;
+        private final Map<String, PackagePart> sheetMap;
 
         /**
          * Current CTSheet bean
@@ -198,7 +198,7 @@ public class XSSFReader {
          * We can't rely on the Ooxml4J's relationship iterator because it returns objects in physical order,
          * i.e. as they are stored in the underlying package
          */
-        private Iterator<CTSheet> sheetIterator;
+        private final Iterator<CTSheet> sheetIterator;
 
         /**
          * Construct a new SheetIterator
@@ -213,11 +213,14 @@ public class XSSFReader {
             try {
                 //step 1. Map sheet's relationship Id and the corresponding PackagePart
                 sheetMap = new HashMap<String, PackagePart>();
+                OPCPackage pkg = wb.getPackage();
+                String REL_WORKSHEET = XSSFRelation.WORKSHEET.getRelation();
+                String REL_CHARTSHEET = XSSFRelation.CHARTSHEET.getRelation();
                 for(PackageRelationship rel : wb.getRelationships()){
-                    if(rel.getRelationshipType().equals(XSSFRelation.WORKSHEET.getRelation()) ||
-                       rel.getRelationshipType().equals(XSSFRelation.CHARTSHEET.getRelation())){
+                    String relType = rel.getRelationshipType();
+                    if (relType.equals(REL_WORKSHEET) || relType.equals(REL_CHARTSHEET)) {
                         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                        sheetMap.put(rel.getId(), wb.getPackage().getPart(relName));
+                        sheetMap.put(rel.getId(), pkg.getPart(relName));
                     }
                 }
                 //step 2. Read array of CTSheet elements, wrap it in a ArayList and construct an iterator
@@ -236,6 +239,7 @@ public class XSSFReader {
          *
          * @return <tt>true</tt> if the iterator has more elements.
          */
+        @Override
         public boolean hasNext() {
             return sheetIterator.hasNext();
         }
@@ -245,6 +249,7 @@ public class XSSFReader {
          *
          * @return input stream of the next sheet in the iteration
          */
+        @Override
         public InputStream next() {
             ctSheet = sheetIterator.next();
 
@@ -328,6 +333,7 @@ public class XSSFReader {
         /**
          * We're read only, so remove isn't supported
          */
+        @Override
         public void remove() {
             throw new IllegalStateException("Not supported");
         }
