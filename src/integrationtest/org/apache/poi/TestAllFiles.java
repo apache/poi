@@ -189,7 +189,6 @@ public class TestAllFiles {
         OLD_FILES.add("document/word95err.doc");
         OLD_FILES.add("hpsf/TestMickey.doc");
         OLD_FILES.add("document/52117.doc");
-        OLD_FILES.add("spreadsheet/60284.xls");
     }
 
     private static final Set<String> EXPECTED_FAILURES = new HashSet<String>();
@@ -259,6 +258,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
         EXPECTED_FAILURES.add("spreadsheet/59074.xls");
+        EXPECTED_FAILURES.add("spreadsheet/60284.xls");
         
         // OOXML Strict is not yet supported, see bug #57699
         EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
