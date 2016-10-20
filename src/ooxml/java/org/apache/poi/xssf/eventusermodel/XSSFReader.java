@@ -47,6 +47,7 @@ import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
 /**
@@ -226,7 +227,16 @@ public class XSSFReader {
                 //step 2. Read array of CTSheet elements, wrap it in a ArayList and construct an iterator
                 //Note, using XMLBeans might be expensive, consider refactoring to use SAX or a plain regexp search
                 CTWorkbook wbBean = WorkbookDocument.Factory.parse(wb.getInputStream(), DEFAULT_XML_OPTIONS).getWorkbook();
-                sheetIterator = wbBean.getSheets().getSheetList().iterator(); 
+                List<CTSheet> validSheets = new ArrayList<CTSheet>();
+                for (CTSheet ctSheet : wbBean.getSheets().getSheetList()) {
+                    //if there's no relationship id, silently skip the sheet
+                     if ("".equals(ctSheet.getId())) {
+                        //skip it
+                    } else {
+                        validSheets.add(ctSheet);
+                    }
+                }
+                sheetIterator = validSheets.iterator();
             } catch (InvalidFormatException e){
                 throw new POIXMLException(e);
             } catch (XmlException e){
