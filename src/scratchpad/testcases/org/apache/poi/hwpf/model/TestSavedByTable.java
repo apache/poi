@@ -36,7 +36,7 @@ public final class TestSavedByTable
 {
 
   /** The expected entries in the test document. */
-  private List expected = Arrays.asList(new Object[] {
+  private final List expected = Arrays.asList(new Object[] {
     new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
     new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
     new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),

@@ -30,7 +30,7 @@ import junit.framework.TestCase;
  * Tests to verify that the library can read blank msg files.
  */
 public final class TestBlankFileRead extends TestCase {
-    private MAPIMessage mapiMessage;
+    private final MAPIMessage mapiMessage;
 
     /**
      * Initialize this test, load up the blank.msg mapi message.

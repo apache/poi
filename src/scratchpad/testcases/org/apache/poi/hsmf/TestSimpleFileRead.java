@@ -30,7 +30,7 @@ import junit.framework.TestCase;
  *  format with no attachments or extra recipents.
  */
 public final class TestSimpleFileRead extends TestCase {
-    private MAPIMessage mapiMessage;
+    private final MAPIMessage mapiMessage;
 
     /**
      * Initialize this test, load up the blank.msg mapi message.

@@ -29,14 +29,14 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
  *  a range of files
  */
 public final class TestBasics extends TestCase {
-   private MAPIMessage simple;
-   private MAPIMessage quick;
-   private MAPIMessage outlook30;
-   private MAPIMessage attachments;
-   private MAPIMessage noRecipientAddress;
-   private MAPIMessage unicode;
-   private MAPIMessage cyrillic;
-   private MAPIMessage chinese;
+   private final MAPIMessage simple;
+   private final MAPIMessage quick;
+   private final MAPIMessage outlook30;
+   private final MAPIMessage attachments;
+   private final MAPIMessage noRecipientAddress;
+   private final MAPIMessage unicode;
+   private final MAPIMessage cyrillic;
+   private final MAPIMessage chinese;
 
    /**
     * Initialize this test, load up the blank.msg mapi message.

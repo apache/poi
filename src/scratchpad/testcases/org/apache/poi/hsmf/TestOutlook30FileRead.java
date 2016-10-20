@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * Tests to verify that we can still work on the newer Outlook 3.0 files.
  */
 public final class TestOutlook30FileRead extends TestCase {
-    private MAPIMessage mapiMessage;
+    private final MAPIMessage mapiMessage;
 
     /**
      * Initialize this test, load up the blank.msg mapi message.

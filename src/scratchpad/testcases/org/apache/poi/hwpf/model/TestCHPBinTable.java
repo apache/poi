@@ -31,7 +31,7 @@ public final class TestCHPBinTable
   private CHPBinTable _cHPBinTable = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-  private TextPieceTable fakeTPT = new TextPieceTable() {
+  private final TextPieceTable fakeTPT = new TextPieceTable() {
       @Override
       public boolean isIndexInTable(int bytePos) {
           return true;

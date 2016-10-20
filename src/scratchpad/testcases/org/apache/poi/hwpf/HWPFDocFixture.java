@@ -32,7 +32,7 @@ public final class HWPFDocFixture
   public byte[] _tableStream;
   public byte[] _mainStream;
   public FileInformationBlock _fib;
-  private String _testFile;
+  private final String _testFile;
 
   public HWPFDocFixture(Object obj, String testFile)
   {

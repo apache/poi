@@ -36,7 +36,7 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestExHyperlink extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] {
+	private final byte[] data_a = new byte[] {
 		0x0F, 00, 0xD7-256, 0x0F, 0xA8-256, 00, 00, 00,
 
 		00, 00, 0xD3-256, 0x0F, 04, 00, 00, 00,

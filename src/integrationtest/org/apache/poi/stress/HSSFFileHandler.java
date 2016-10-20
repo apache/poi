@@ -30,7 +30,7 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 
 public class HSSFFileHandler extends SpreadsheetHandler {
-	private POIFSFileHandler delegate = new POIFSFileHandler();
+	private final POIFSFileHandler delegate = new POIFSFileHandler();
 	@Override
     public void handleFile(InputStream stream) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook(stream);

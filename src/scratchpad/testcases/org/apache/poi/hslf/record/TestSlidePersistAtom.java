@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestSlidePersistAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 0, 0, 0xF3-256, 3, 0x14, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 0, 0, 0xF3-256, 3, 0x14, 0, 0, 0,
 		4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0,
 		1, 0, 0, 0, 0, 0, 0 };
 

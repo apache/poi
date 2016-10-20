@@ -365,7 +365,7 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
 		private final List<Record> _records = new ArrayList<Record>();
-		private boolean logToStdOut = false;
+		private final boolean logToStdOut = false;
 
 		@Override
         public void processRecord(Record record) {

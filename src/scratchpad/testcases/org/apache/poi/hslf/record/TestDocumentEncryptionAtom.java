@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public final class TestDocumentEncryptionAtom {
 	// From a real file
-	private byte[] data_a = new byte[] {
+	private final byte[] data_a = new byte[] {
 		0x0F, 00, 0x14, 0x2F, 0xBE-256, 00, 00, 00,
 		02, 00, 02, 00, 0x0C, 00, 00, 00,
 		0x76, 00, 00, 00, 0x0C, 00, 00, 00,
@@ -67,7 +67,7 @@ public final class TestDocumentEncryptionAtom {
 		0xB2-256, 0x8E-256, 0x67, 0x54, 0x07, 0x04, 0x00
 	};
 
-	private byte[] data_b = new byte[] {
+	private final byte[] data_b = new byte[] {
 			15, 0, 20, 47, -66, 0, 0, 0,
 			2, 0, 2, 0, 4,
 			0, 0, 0, 118, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0,

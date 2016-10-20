@@ -91,8 +91,8 @@ public class TestEvaluationCache extends TestCase {
 
 		private final List<String> _logList;
 		private final HSSFWorkbook _book;
-		private Map<ICacheEntry,EvaluationCell> _formulaCellsByCacheEntry;
-		private Map<ICacheEntry,Loc> _plainCellLocsByCacheEntry;
+		private final Map<ICacheEntry,EvaluationCell> _formulaCellsByCacheEntry;
+		private final Map<ICacheEntry,Loc> _plainCellLocsByCacheEntry;
 
 		public EvalListener(HSSFWorkbook wb) {
 			_book = wb;

@@ -26,8 +26,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 public class TestEntryUtils extends TestCase {
-    private byte[] dataSmallA = new byte[] { 12, 42, 11, -12, -121 };
-    private byte[] dataSmallB = new byte[] { 11, 73, 21, -92, -103 };
+    private final byte[] dataSmallA = new byte[] { 12, 42, 11, -12, -121 };
+    private final byte[] dataSmallB = new byte[] { 11, 73, 21, -92, -103 };
 
     public void testCopyRecursively() throws Exception {
        POIFSFileSystem fsD = new POIFSFileSystem();

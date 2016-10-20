@@ -33,8 +33,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  the more usual, Workbook)
  */
 public final class TestNonStandardWorkbookStreamNames extends TestCase {
-	private String xlsA = "WORKBOOK_in_capitals.xls";
-   private String xlsB = "BOOK_in_capitals.xls";
+	private final String xlsA = "WORKBOOK_in_capitals.xls";
+   private final String xlsB = "BOOK_in_capitals.xls";
 
 	/**
 	 * Test that we can open a file with WORKBOOK

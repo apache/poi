@@ -39,7 +39,7 @@ import org.junit.Test;
  * Tests to verify that the text extractor works
  */
 public final class TestOutlookTextExtractor {
-   private POIDataSamples samples = POIDataSamples.getHSMFInstance();
+   private final POIDataSamples samples = POIDataSamples.getHSMFInstance();
 	
    private static TimeZone userTZ;
    

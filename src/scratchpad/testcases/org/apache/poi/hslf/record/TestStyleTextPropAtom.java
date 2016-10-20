@@ -125,7 +125,7 @@ public final class TestStyleTextPropAtom {
         28, 0, 1, 0, 0, 0, 0, 0,
         3, 0, 1, 0, 24, 0
     };
-    private int data_c_text_len = 123-1;
+    private final int data_c_text_len = 123-1;
 
     /**
      * From a real file supplied for Bug 40143 by tales@great.ufc.br

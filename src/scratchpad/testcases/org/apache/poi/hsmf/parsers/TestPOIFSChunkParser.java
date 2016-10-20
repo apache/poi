@@ -46,7 +46,7 @@ import org.junit.Test;
  * Tests to verify that the chunk parser works properly
  */
 public final class TestPOIFSChunkParser {
-   private POIDataSamples samples = POIDataSamples.getHSMFInstance();
+   private final POIDataSamples samples = POIDataSamples.getHSMFInstance();
 
    @Test
    public void testFindsCore() throws Exception {

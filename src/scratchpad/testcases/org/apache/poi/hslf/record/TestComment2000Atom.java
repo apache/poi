@@ -36,14 +36,14 @@ import org.junit.Test;
  */
 public final class TestComment2000Atom {
 	// From a real file
-	private byte[] data_a = new byte[] {
+	private final byte[] data_a = new byte[] {
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
 		01, 00, 00, 00, 0xD6-256, 07, 01, 00,
 		02, 00, 0x18, 00, 0x0A, 00, 0x1A, 00,
 		0x0F, 00, 0xCD-256, 00, 0x92-256, 00,
 		00,	00, 0x92-256, 00, 00, 00
 	};
-	private byte[] data_b = new byte[] {
+	private final byte[] data_b = new byte[] {
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
 		05, 00, 00, 00, 0xD6-256, 0x07, 01, 00,
 		02, 00, 0x18, 00, 0x15, 00, 0x19, 00, 03,

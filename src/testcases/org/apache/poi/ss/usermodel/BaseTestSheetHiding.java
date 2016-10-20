@@ -35,7 +35,7 @@ public abstract class BaseTestSheetHiding {
     protected Workbook wbH;
     protected Workbook wbU;
 
-    private String _file1, _file2;
+    private final String _file1, _file2;
 
     /**
 	 * @param testDataProvider an object that provides test data in HSSF /  specific way

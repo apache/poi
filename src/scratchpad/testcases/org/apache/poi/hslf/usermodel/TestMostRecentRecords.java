@@ -30,9 +30,9 @@ import junit.framework.TestCase;
  */
 public final class TestMostRecentRecords extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShowImpl hss;
+	private final HSLFSlideShowImpl hss;
 	// SlideShow primed on the test data
-	private HSLFSlideShow ss;
+	private final HSLFSlideShow ss;
 
 	public TestMostRecentRecords() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();

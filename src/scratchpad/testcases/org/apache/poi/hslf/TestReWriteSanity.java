@@ -36,9 +36,9 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestReWriteSanity extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShowImpl ss;
+	private final HSLFSlideShowImpl ss;
 	// POIFS primed on the test data
-	private POIFSFileSystem pfs;
+	private final POIFSFileSystem pfs;
 
     public TestReWriteSanity() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();

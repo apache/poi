@@ -40,11 +40,11 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 public class ReaderWriter
     implements POIFSReaderListener, POIFSWriterListener
 {
-    private POIFSFileSystem filesystem;
-    private DirectoryEntry  root;
+    private final POIFSFileSystem filesystem;
+    private final DirectoryEntry  root;
 
     // keys are DocumentDescriptors, values are byte[]s
-    private Map<DocumentDescriptor, byte[]>             dataMap;
+    private final Map<DocumentDescriptor, byte[]>             dataMap;
 
     /**
      * Constructor ReaderWriter

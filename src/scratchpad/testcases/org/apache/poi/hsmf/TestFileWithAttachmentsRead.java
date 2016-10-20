@@ -31,8 +31,8 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
  * @author Nicolas Bureau
  */
 public class TestFileWithAttachmentsRead extends TestCase {
-   private MAPIMessage twoSimpleAttachments;
-   private MAPIMessage pdfMsgAttachments;
+   private final MAPIMessage twoSimpleAttachments;
+   private final MAPIMessage pdfMsgAttachments;
 
    /**
     * Initialize this test, load up the attachment_test_msg.msg mapi message.

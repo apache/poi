@@ -85,7 +85,7 @@ public class SanityChecker {
     {
         Class<? extends RecordBase> record;
         char occurance;  // 1 = one time, M = 1..many times, * = 0..many, 0 = optional
-        private boolean together;
+        private final boolean together;
 
         public CheckRecord( Class<? extends RecordBase> record, char occurance )
         {

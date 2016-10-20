@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  */
 public final class TestHeadersFootersAtom extends TestCase {
 	// From a real file
-	private byte[] data = new byte[] {
+	private final byte[] data = new byte[] {
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 00,
             0x00, 0x00, 0x23, 0x00 };
 

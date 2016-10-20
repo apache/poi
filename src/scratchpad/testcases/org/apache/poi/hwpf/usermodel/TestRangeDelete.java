@@ -30,19 +30,19 @@ import junit.framework.TestCase;
 public final class TestRangeDelete extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
-	private String introText =
+	private final String introText =
 		"Introduction\r";
-	private String fillerText =
+	private final String fillerText =
 		"${delete} This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
-	private String originalText =
+	private final String originalText =
 		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} ${delete} and all the POI contributors for their assistance in this matter.\r";
-	private String lastText =
+	private final String lastText =
 		"Thank you, ${organization} ${delete}!\r";
-	private String searchText = "${delete}";
-	private String expectedText1 = " This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
-	private String expectedText2 =
+	private final String searchText = "${delete}";
+	private final String expectedText1 = " This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
+	private final String expectedText2 =
 		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization}  and all the POI contributors for their assistance in this matter.\r";
-	private String expectedText3 = "Thank you, ${organization} !\r";
+	private final String expectedText3 = "Thank you, ${organization} !\r";
 
 	private String illustrativeDocFile;
 

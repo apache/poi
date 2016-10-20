@@ -86,7 +86,7 @@ public final class TestAbortableListener extends TestCase {
 	}
 
 	private static final class AbortableCountingListener extends AbortableHSSFListener {
-		private int abortAfterIndex;
+		private final int abortAfterIndex;
 		public int countSeen;
 		public Record lastRecordSeen;
 

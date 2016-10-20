@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestColorSchemeAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 60, 0, 0xF0-256, 0x07, 0x20, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 60, 0, 0xF0-256, 0x07, 0x20, 0, 0, 0,
 		0xFF-256, 0xFF-256, 0xFF-256, 00,   00, 00, 00, 00,
 		0x80-256, 0x80-256, 0x80-256, 00,   00, 00, 00, 00,
 		0xBB-256, 0xE0-256, 0xE3-256, 00,   0x33, 0x33, 0x99-256, 00,

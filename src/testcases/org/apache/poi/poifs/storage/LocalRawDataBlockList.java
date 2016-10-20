@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianConsts;
  * @author Marc Johnson(mjohnson at apache dot org)
  */
 public final class LocalRawDataBlockList extends RawDataBlockList {
-    private List<RawDataBlock> _list;
+    private final List<RawDataBlock> _list;
     private RawDataBlock[] _array;
 
     public LocalRawDataBlockList()

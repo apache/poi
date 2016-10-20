@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestDocumentAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 1, 0, 0xE9-256, 3, 0x28, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 1, 0, 0xE9-256, 3, 0x28, 0, 0, 0,
 		0x80-256, 0x16, 0, 0, 0xE0-256, 0x10, 0, 0,
 		0xE0-256, 0x10, 0, 0, 0x80-256, 0x16, 0, 0,
 		0x05, 0, 0, 0, 0x0A, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,

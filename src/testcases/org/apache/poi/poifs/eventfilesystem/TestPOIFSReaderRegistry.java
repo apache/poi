@@ -31,11 +31,11 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
  * @author Marc Johnson
  */
 public final class TestPOIFSReaderRegistry extends TestCase {
-    private POIFSReaderListener[] listeners =
+    private final POIFSReaderListener[] listeners =
     {
         new Listener(), new Listener(), new Listener(), new Listener()
     };
-    private POIFSDocumentPath[]   paths     =
+    private final POIFSDocumentPath[]   paths     =
     {
         new POIFSDocumentPath(), new POIFSDocumentPath(new String[]
         {
@@ -48,7 +48,7 @@ public final class TestPOIFSReaderRegistry extends TestCase {
             "c"
         })
     };
-    private String[]              names     =
+    private final String[]              names     =
     {
         "a0", "a1", "a2", "a3"
     };
