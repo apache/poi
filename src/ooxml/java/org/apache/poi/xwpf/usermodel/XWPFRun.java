@@ -1077,7 +1077,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
                     if (ctfldChar.getFfData() != null) {
                         for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
-                            if (checkBox.getDefault().getVal() == STOnOff.X_1) {
+                            if (checkBox.getDefault() != null && checkBox.getDefault().getVal() == STOnOff.X_1) {
                                 text.append("|X|");
                             } else {
                                 text.append("|_|");
