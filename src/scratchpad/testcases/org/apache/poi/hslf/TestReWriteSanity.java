@@ -96,5 +96,7 @@ public final class TestReWriteSanity extends TestCase {
 		CurrentUserAtom cua = wss.getCurrentUserAtom();
 		int listedUEPos = (int)cua.getCurrentEditOffset();
 		assertEquals(lastUEPos,listedUEPos);
+		
+		wss.close();
 	}
 }
