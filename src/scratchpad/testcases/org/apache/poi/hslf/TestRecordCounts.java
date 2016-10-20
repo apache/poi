@@ -44,8 +44,8 @@ public final class TestRecordCounts extends TestCase {
 		Record[] r = ss.getRecords();
 
 		int count = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof Slide) {
+		for (final Record rec : r) {
+			if(rec instanceof Slide) {
 				count++;
 			}
 		}
@@ -58,9 +58,8 @@ public final class TestRecordCounts extends TestCase {
 		Record[] r = ss.getRecords();
 
 		int count = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof Notes &&
-			r[i].getRecordType() == 1008l) {
+		for (final Record rec : r) {
+			if (rec instanceof Notes && rec.getRecordType() == 1008l) {
 				count++;
 			}
 		}
@@ -74,9 +73,8 @@ public final class TestRecordCounts extends TestCase {
 		Record[] r = rt[0].getChildRecords();
 
 		int count = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof SlideListWithText &&
-			r[i].getRecordType() == 4080l) {
+		for (final Record rec : r) {
+			if (rec instanceof SlideListWithText && rec.getRecordType() == 4080l) {
 				count++;
 			}
 		}

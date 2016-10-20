@@ -45,20 +45,20 @@ public final class TestTxMasterStyleAtom extends TestCase {
 
     public void testDefaultStyles()  {
         TxMasterStyleAtom[] txmaster = getMasterStyles();
-        for (int i = 0; i < txmaster.length; i++) {
-            int txtype = txmaster[i].getTextType();
+        for (final TxMasterStyleAtom atom : txmaster) {
+            final int txtype = atom.getTextType();
             switch (txtype){
                 case TextHeaderAtom.TITLE_TYPE:
-                    checkTitleType(txmaster[i]);
+                    checkTitleType(atom);
                     break;
                 case TextHeaderAtom.BODY_TYPE:
-                    checkBodyType(txmaster[i]);
+                    checkBodyType(atom);
                     break;
                 case TextHeaderAtom.NOTES_TYPE:
-                    checkNotesType(txmaster[i]);
+                    checkNotesType(atom);
                     break;
                 case TextHeaderAtom.OTHER_TYPE:
-                    checkOtherType(txmaster[i]);
+                    checkOtherType(atom);
                     break;
                 case TextHeaderAtom.CENTRE_BODY_TYPE:
                     break;
@@ -204,13 +204,11 @@ public final class TestTxMasterStyleAtom extends TestCase {
         List<TxMasterStyleAtom> lst = new ArrayList<TxMasterStyleAtom>();
 
         Record[] coreRecs = _ppt.getMostRecentCoreRecords();
-        for (int i = 0; i < coreRecs.length; i++) {
-            Record coreRec = coreRecs[i];
+        for (final Record coreRec : coreRecs) {
             if(coreRec.getRecordType() == RecordTypes.MainMaster.typeID){
                 Record[] recs = coreRec.getChildRecords();
                 int cnt = 0;
-                for (int j = 0; j < recs.length; j++) {
-                    Record rec = recs[j];
+                for (final Record rec : recs) {
                     if (rec instanceof TxMasterStyleAtom) {
                         lst.add((TxMasterStyleAtom) rec);
                         cnt++;
@@ -221,10 +219,10 @@ public final class TestTxMasterStyleAtom extends TestCase {
                 TxMasterStyleAtom txstyle = null;
                 Document doc = (Document)coreRec;
                 Record[] rec = doc.getEnvironment().getChildRecords();
-                for (int j = 0; j < rec.length; j++) {
-                    if (rec[j] instanceof TxMasterStyleAtom) {
+                for (final Record atom : rec) {
+                    if (atom instanceof TxMasterStyleAtom) {
                         if (txstyle != null)  fail("Document.Environment must contain 1 TxMasterStyleAtom");
-                        txstyle = (TxMasterStyleAtom)rec[j];
+                        txstyle = (TxMasterStyleAtom)atom;
                     }
                 }
                 if (txstyle == null) {

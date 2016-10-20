@@ -47,9 +47,8 @@ public final class TestIntList extends TestCase {
             0, 1, 2, 3, 5
         };
 
-        for (int j = 0; j < testArray.length; j++)
-        {
-            list.add(testArray[ j ]);
+        for (int element : testArray) {
+            list.add(element);
         }
         for (int j = 0; j < testArray.length; j++)
         {

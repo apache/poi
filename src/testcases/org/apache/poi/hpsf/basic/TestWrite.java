@@ -699,11 +699,11 @@ public class TestWrite
                     return f.getName().startsWith("Test") && TestReadAllFiles.checkExclude(f);
                 }
             });
-        for (int i = 0; i < fileList.length; i++) {
+        for (final File file : fileList) {
             try {
-                testRecreate(fileList[i]);
+                testRecreate(file);
             } catch (Exception e) {
-                throw new IOException("While handling file " + fileList[i], e);
+                throw new IOException("While handling file " + file, e);
             }
         }
     }
@@ -729,10 +729,9 @@ public class TestWrite
         copy.deleteOnExit();
         final OutputStream out = new FileOutputStream(copy);
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-        for (int i = 0; i < psf1.length; i++)
-        {
+        for (POIFile file : psf1) {
             final InputStream in =
-                new ByteArrayInputStream(psf1[i].getBytes());
+                new ByteArrayInputStream(file.getBytes());
             final PropertySet psIn = PropertySetFactory.create(in);
             final MutablePropertySet psOut = new MutablePropertySet(psIn);
             final ByteArrayOutputStream psStream =
@@ -741,7 +740,7 @@ public class TestWrite
             psStream.close();
             final byte[] streamData = psStream.toByteArray();
             poiFs.createDocument(new ByteArrayInputStream(streamData),
-                                 psf1[i].getName());
+                                 file.getName());
             poiFs.writeFilesystem(out);
         }
         poiFs.close();

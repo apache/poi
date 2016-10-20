@@ -106,9 +106,9 @@ public final class TestExHyperlink extends TestCase {
 		Document doc = ss.getDocumentRecord();
 		// Get the ExObjList
 		ExObjList exObjList = null;
-		for(int i=0; i<doc._children.length; i++) {
-			if(doc._children[i] instanceof ExObjList) {
-				exObjList = (ExObjList)doc._children[i];
+		for (final Record rec : doc._children) {
+			if(rec instanceof ExObjList) {
+				exObjList = (ExObjList)rec;
 			}
 		}
 		if (exObjList == null) {

@@ -577,11 +577,21 @@ public class StringUtil {
    // Could be replaced with org.apache.commons.lang3.StringUtils#join
    @Internal
    public static String join(Object[] array, String separator) {
-       if (array.length == 0) return "";
+       if (array == null || array.length == 0) return "";
        StringBuilder sb = new StringBuilder();
        sb.append(array[0]);
        for (int i=1; i<array.length; i++) {
            sb.append(separator).append(array[i]);
+       }
+       return sb.toString();
+   }
+   
+   @Internal
+   public static String join(Object[] array) {
+       if (array == null) return "";
+       StringBuilder sb = new StringBuilder();
+       for (Object o : array) {
+           sb.append(o);
        }
        return sb.toString();
    }

@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -252,8 +251,8 @@ final class Util {
     {
         final Properties p = System.getProperties();
         final List<String> names = new LinkedList<String>();
-        for (Iterator<String> i = p.stringPropertyNames().iterator(); i.hasNext();)
-            names.add(i.next());
+        for (String name : p.stringPropertyNames())
+            names.add(name);
         Collections.sort(names);
         for (String name : names) {
             String value = p.getProperty(name);

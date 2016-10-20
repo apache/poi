@@ -65,21 +65,21 @@ public final class TestHSSFClientAnchor extends TestCase {
      * (Bug 42999 reported that dx1 and dx2 are swapped if dx1>dx2. It doesn't make sense for client anchors.)
      */
     public void testConvertAnchor() {
-        HSSFClientAnchor[] anchor = {
+        HSSFClientAnchor[] anchors = {
             new HSSFClientAnchor( 0 , 0 , 0 , 0 ,(short)0, 1,(short)1,3),
             new HSSFClientAnchor( 100 , 0 , 900 , 255 ,(short)0, 1,(short)1,3),
             new HSSFClientAnchor( 900 , 0 , 100 , 255 ,(short)0, 1,(short)1,3)
         };
-        for (int i = 0; i < anchor.length; i++) {
-            EscherClientAnchorRecord record = (EscherClientAnchorRecord)ConvertAnchor.createAnchor(anchor[i]);
-            assertEquals(anchor[i].getDx1(), record.getDx1());
-            assertEquals(anchor[i].getDx2(), record.getDx2());
-            assertEquals(anchor[i].getDy1(), record.getDy1());
-            assertEquals(anchor[i].getDy2(), record.getDy2());
-            assertEquals(anchor[i].getCol1(), record.getCol1());
-            assertEquals(anchor[i].getCol2(), record.getCol2());
-            assertEquals(anchor[i].getRow1(), record.getRow1());
-            assertEquals(anchor[i].getRow2(), record.getRow2());
+        for (HSSFClientAnchor anchor : anchors) {
+            EscherClientAnchorRecord record = (EscherClientAnchorRecord)ConvertAnchor.createAnchor(anchor);
+            assertEquals(anchor.getDx1(), record.getDx1());
+            assertEquals(anchor.getDx2(), record.getDx2());
+            assertEquals(anchor.getDy1(), record.getDy1());
+            assertEquals(anchor.getDy2(), record.getDy2());
+            assertEquals(anchor.getCol1(), record.getCol1());
+            assertEquals(anchor.getCol2(), record.getCol2());
+            assertEquals(anchor.getRow1(), record.getRow1());
+            assertEquals(anchor.getRow2(), record.getRow2());
         }
     }
 

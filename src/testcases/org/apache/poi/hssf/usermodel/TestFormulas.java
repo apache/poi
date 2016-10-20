@@ -135,8 +135,8 @@ public final class TestFormulas extends TestCase {
         String[] operation = new String[] {
                             "+", "-", "*", "/", "^", "&"
                            };
-        for (int k = 0; k < operation.length; k++) {
-            operationRefTest(operation[k]);
+        for (final String op : operation) {
+            operationRefTest(op);
         }
     }
 

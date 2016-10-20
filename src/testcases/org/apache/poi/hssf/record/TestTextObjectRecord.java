@@ -107,10 +107,10 @@ public final class TestTextObjectRecord extends TestCase {
      * Test that TextObjectRecord serializes logs records properly.
      */
     public void testLongRecords() {
-        int[] length = {1024, 2048, 4096, 8192, 16384}; //test against strings of different length
-        for (int i = 0; i < length.length; i++) {
-            StringBuffer buff = new StringBuffer(length[i]);
-            for (int j = 0; j < length[i]; j++) {
+        int[] lengths = {1024, 2048, 4096, 8192, 16384}; //test against strings of different length
+        for (int length : lengths) {
+            StringBuffer buff = new StringBuffer(length);
+            for (int j = 0; j < length; j++) {
                 buff.append("x");
             }
             HSSFRichTextString str = new HSSFRichTextString(buff.toString());

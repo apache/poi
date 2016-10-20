@@ -17,20 +17,28 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
+import org.junit.Test;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.util.StringUtil;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * Test the different routes to extracting text
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestDifferentRoutes extends TestCase {
-	private String[] p_text = new String[] {
+public final class TestDifferentRoutes {
+	private static final String[] p_text = new String[] {
 			"This is a simple word document\r",
 			"\r",
 			"It has a number of paragraphs in it\r",
@@ -49,14 +57,20 @@ public final class TestDifferentRoutes extends TestCase {
 
 	private HWPFDocument doc;
 
-	@Override
-    protected void setUp() {
+	@Before
+	public void setUp() {
 		doc = HWPFTestDataSamples.openSampleFile("test2.doc");
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		doc.close();
 	}
 
 	/**
 	 * Test model based extraction
 	 */
+	@Test
 	public void testExtractFromModel() {
 		Range r = doc.getRange();
 
@@ -66,20 +80,15 @@ public final class TestDifferentRoutes extends TestCase {
 			text[i] = p.text();
 		}
 
-		assertEquals(p_text.length, text.length);
-		for (int i = 0; i < p_text.length; i++) {
-			assertEquals(p_text[i], text[i]);
-		}
+		assertArrayEquals(p_text, text);
 	}
 
 	/**
 	 * Test textPieces based extraction
 	 */
+	@Test
 	public void testExtractFromTextPieces() throws Exception {
-		StringBuffer exp = new StringBuffer();
-		for (int i = 0; i < p_text.length; i++) {
-			exp.append(p_text[i]);
-		}
-		assertEquals(exp.toString(), doc.getDocumentText());
+		String expected = StringUtil.join(p_text, "");
+		assertEquals(expected, doc.getDocumentText());
 	}
 }

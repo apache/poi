@@ -66,24 +66,24 @@ public final class TestReWriteSanity extends TestCase {
 		int pos = 0;
 		int lastUEPos = -1;
 
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof PersistPtrHolder) {
-				pp.put(Integer.valueOf(pos), r[i]);
+		for (final Record rec : r) {
+			if(rec instanceof PersistPtrHolder) {
+				pp.put(Integer.valueOf(pos), rec);
 			}
-			if(r[i] instanceof UserEditAtom) {
-				ue.put(Integer.valueOf(pos), r[i]);
+			if(rec instanceof UserEditAtom) {
+				ue.put(Integer.valueOf(pos), rec);
 				lastUEPos = pos;
 			}
 
 			ByteArrayOutputStream bc = new ByteArrayOutputStream();
-			r[i].writeOut(bc);
+			rec.writeOut(bc);
 			pos += bc.size();
 		}
 
 		// Check that the UserEditAtom's point to right stuff
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof UserEditAtom) {
-				UserEditAtom uea = (UserEditAtom)r[i];
+		for (final Record rec : r) {
+			if(rec instanceof UserEditAtom) {
+				UserEditAtom uea = (UserEditAtom)rec;
 				int luPos = uea.getLastUserEditAtomOffset();
 				int ppPos = uea.getPersistPointersOffset();
 

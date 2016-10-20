@@ -213,10 +213,9 @@ public final class TestSmallDocumentBlock extends TestCase {
 
             assertEquals("testing block at offset " + offset, 64,
                          out_data.length);
-            for (int j = 0; j < out_data.length; j++)
-            {
+            for (byte b : out_data) {
                 assertEquals("testing byte at offset " + offset,
-                             data[ offset ], out_data[ j ]);
+                             data[ offset ], b);
                 offset++;
             }
         }
