@@ -246,4 +246,23 @@ public final class TestXSSFReader extends TestCase {
        
        pkg.close();
    }
+
+    /**
+     * NPE when sheet has no relationship id in the workbook
+     * 60825
+     */
+    public void testSheetWithNoRelationshipId() throws Exception {
+        OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("60825.xlsx");
+        ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
+        assertNotNull(strings);
+        XSSFReader reader = new XSSFReader(pkg);
+        StylesTable styles = reader.getStylesTable();
+        assertNotNull(styles);
+
+        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+        assertNotNull(iter.next());
+        assertFalse(iter.hasNext());
+
+        pkg.close();
+    }
 }
