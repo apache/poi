@@ -44,76 +44,76 @@ import org.junit.Test;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestReWriteSanity {
-	// HSLFSlideShow primed on the test data
-	private HSLFSlideShowImpl ss;
-	// POIFS primed on the test data
-	private POIFSFileSystem pfs;
+    // HSLFSlideShow primed on the test data
+    private HSLFSlideShowImpl ss;
+    // POIFS primed on the test data
+    private POIFSFileSystem pfs;
 
-	@Before
+    @Before
     public void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShowImpl(pfs);
+        pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        ss = new HSLFSlideShowImpl(pfs);
     }
-	
-	@After
-	public void tearDown() throws Exception {
-	    pfs.close();
-	    ss.close();
-	}
+    
+    @After
+    public void tearDown() throws Exception {
+        pfs.close();
+        ss.close();
+    }
 
     @Test
-	public void testUserEditAtomsRight() throws Exception {
-		// Write out to a byte array
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ss.write(baos);
+    public void testUserEditAtomsRight() throws Exception {
+        // Write out to a byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ss.write(baos);
 
-		// Build an input stream of it
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        // Build an input stream of it
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
-		// Create a new one from that
-		HSLFSlideShowImpl wss = new HSLFSlideShowImpl(bais);
+        // Create a new one from that
+        HSLFSlideShowImpl wss = new HSLFSlideShowImpl(bais);
 
-		// Find the location of the PersistPtrIncrementalBlocks and
-		// UserEditAtoms
-		Record[] r = wss.getRecords();
-		Map<Integer,Record> pp = new HashMap<Integer,Record>();
-		Map<Integer,Object> ue = new HashMap<Integer,Object>();
-		ue.put(Integer.valueOf(0),Integer.valueOf(0)); // Will show 0 if first
-		int pos = 0;
-		int lastUEPos = -1;
+        // Find the location of the PersistPtrIncrementalBlocks and
+        // UserEditAtoms
+        Record[] r = wss.getRecords();
+        Map<Integer,Record> pp = new HashMap<Integer,Record>();
+        Map<Integer,Object> ue = new HashMap<Integer,Object>();
+        ue.put(Integer.valueOf(0),Integer.valueOf(0)); // Will show 0 if first
+        int pos = 0;
+        int lastUEPos = -1;
 
-		for (final Record rec : r) {
-			if(rec instanceof PersistPtrHolder) {
-				pp.put(Integer.valueOf(pos), rec);
-			}
-			if(rec instanceof UserEditAtom) {
-				ue.put(Integer.valueOf(pos), rec);
-				lastUEPos = pos;
-			}
+        for (final Record rec : r) {
+            if(rec instanceof PersistPtrHolder) {
+                pp.put(Integer.valueOf(pos), rec);
+            }
+            if(rec instanceof UserEditAtom) {
+                ue.put(Integer.valueOf(pos), rec);
+                lastUEPos = pos;
+            }
 
-			ByteArrayOutputStream bc = new ByteArrayOutputStream();
-			rec.writeOut(bc);
-			pos += bc.size();
-		}
+            ByteArrayOutputStream bc = new ByteArrayOutputStream();
+            rec.writeOut(bc);
+            pos += bc.size();
+        }
 
-		// Check that the UserEditAtom's point to right stuff
-		for (final Record rec : r) {
-			if(rec instanceof UserEditAtom) {
-				UserEditAtom uea = (UserEditAtom)rec;
-				int luPos = uea.getLastUserEditAtomOffset();
-				int ppPos = uea.getPersistPointersOffset();
+        // Check that the UserEditAtom's point to right stuff
+        for (final Record rec : r) {
+            if(rec instanceof UserEditAtom) {
+                UserEditAtom uea = (UserEditAtom)rec;
+                int luPos = uea.getLastUserEditAtomOffset();
+                int ppPos = uea.getPersistPointersOffset();
 
-				assertContains(ue, Integer.valueOf(luPos));
-				assertContains(pp, Integer.valueOf(ppPos));
-			}
-		}
+                assertContains(ue, Integer.valueOf(luPos));
+                assertContains(pp, Integer.valueOf(ppPos));
+            }
+        }
 
-		// Check that the CurrentUserAtom points to the right UserEditAtom
-		CurrentUserAtom cua = wss.getCurrentUserAtom();
-		int listedUEPos = (int)cua.getCurrentEditOffset();
-		assertEquals(lastUEPos,listedUEPos);
-		
-		wss.close();
-	}
+        // Check that the CurrentUserAtom points to the right UserEditAtom
+        CurrentUserAtom cua = wss.getCurrentUserAtom();
+        int listedUEPos = (int)cua.getCurrentEditOffset();
+        assertEquals(lastUEPos,listedUEPos);
+        
+        wss.close();
+    }
 }
