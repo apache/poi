@@ -17,11 +17,12 @@
 
 package org.apache.poi.poifs.macros;
 
-import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.skipTest;
-import static org.apache.poi.POITestCase.testPassesNow;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,12 +32,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.StringUtil;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class TestVBAMacroReader {
     private static final Map<POIDataSamples, String> expectedMacroContents;
@@ -255,6 +253,7 @@ public class TestVBAMacroReader {
         Map<String, String> macros = r.readMacros();
         assertNotNull(macros.get("Module20"));
         assertContains(macros.get("Module20"), "here start of superscripting");
+        r.close();
     }
 
     @Test
@@ -264,6 +263,7 @@ public class TestVBAMacroReader {
         Map<String, String> macros = r.readMacros();
         assertNotNull(macros.get("Sheet4"));
         assertContains(macros.get("Sheet4"), "intentional constituent");
+        r.close();
     }
 
     @Test
@@ -273,6 +273,7 @@ public class TestVBAMacroReader {
         Map<String, String> macros = r.readMacros();
         assertNotNull(macros.get("NewMacros"));
         assertContains(macros.get("NewMacros"), "' dirty");
+        r.close();
     }
 
     @Test
@@ -283,5 +284,6 @@ public class TestVBAMacroReader {
         Map<String, String> macros = r.readMacros();
         assertNotNull(macros.get("Module1"));
         assertContains(macros.get("Module1"), "9/8/2004");
+        r.close();
     }
 }

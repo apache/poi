@@ -684,11 +684,11 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(OPCPackage.open(txt.toString()));
-            fail("TestExtractorFactory.testPackage() failed on " + txt.toString());
+            fail("TestExtractorFactory.testPackage() failed on " + txt);
         } catch(UnsupportedFileFormatException e) {
             // Good
         } catch (Exception e) {
-            System.out.println("TestExtractorFactory.testPackage() failed on " + txt.toString());
+            System.out.println("TestExtractorFactory.testPackage() failed on " + txt);
             throw e;
         }
     }
@@ -1028,9 +1028,12 @@ public class TestExtractorFactory {
     @Test(expected=AssertionError.class)
     public void test45565() throws Exception {
         POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("45565.xls"));
-        String text = extractor.getText();
-        assertContains(text, "testdoc");
-        assertContains(text, "test phrase");
-        extractor.close();
+        try {
+            String text = extractor.getText();
+            assertContains(text, "testdoc");
+            assertContains(text, "test phrase");
+        } finally {
+            extractor.close();
+        }
     }
 }

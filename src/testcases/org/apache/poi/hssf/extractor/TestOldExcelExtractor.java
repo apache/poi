@@ -366,5 +366,6 @@ public final class TestOldExcelExtractor {
         } catch (EncryptedDocumentException e) {
             assertTrue("correct exception thrown", true);
         }
+        ex.close();
     }
 }
