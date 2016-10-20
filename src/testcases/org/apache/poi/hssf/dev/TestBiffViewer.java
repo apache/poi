@@ -47,6 +47,7 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
         EXCLUDED.put("testEXCEL_4.xls", OldExcelFormatException.class);  // Biff 4 / Excel 4, pre-OLE2
         EXCLUDED.put("testEXCEL_5.xls", OldExcelFormatException.class);  // Biff 5 / Excel 5
         EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
+        EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
         EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
         // EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("50833.xls", IllegalArgumentException.class);       // "Name is too long" when setting username
