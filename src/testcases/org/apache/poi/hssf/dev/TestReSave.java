@@ -16,13 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
@@ -31,6 +24,11 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.PrintStream;
+
+import static org.junit.Assert.assertTrue;
 
 public class TestReSave extends BaseXLSIteratingTest {
     @BeforeClass
@@ -76,7 +74,7 @@ public class TestReSave extends BaseXLSIteratingTest {
     			ReSave.main(new String[] { "-bos", reSavedFile.getAbsolutePath() });
 			} finally {
 				// clean up the re-saved file
-				reSavedFile.delete();
+				assertTrue(!reSavedFile.exists() || reSavedFile.delete());
 			}
 
 		} finally {
@@ -92,10 +90,6 @@ public class TestReSave extends BaseXLSIteratingTest {
             dataDirName = "test-data";
         }
 
-        List<String> failed = new ArrayList<String>();
         runOneFile(new File(dataDirName + "/spreadsheet", "49931.xls"));
-
-        assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
-                failed.isEmpty());
     }
 }
