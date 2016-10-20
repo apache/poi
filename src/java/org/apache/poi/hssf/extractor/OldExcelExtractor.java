@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.CodepageRecord;
@@ -57,6 +58,9 @@ import org.apache.poi.util.IOUtils;
  * </p>
  */
 public class OldExcelExtractor implements Closeable {
+
+    private final static int FILE_PASS_RECORD_SID = 0x2f;
+
     private RecordInputStream ris;
 
     // sometimes we hold the stream here and thus need to ensure it is closed at some point
@@ -232,7 +236,9 @@ public class OldExcelExtractor implements Closeable {
             ris.nextRecord();
 
             switch (sid) {
-                // Biff 5+ only, no sheet names in older formats
+                case  FILE_PASS_RECORD_SID:
+                    throw new EncryptedDocumentException("Encryption not supported for Old Excel files");
+
                 case OldSheetRecord.sid:
                     OldSheetRecord shr = new OldSheetRecord(ris);
                     shr.setCodePage(codepage);

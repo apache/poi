@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.apache.poi.EmptyFileException;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -345,10 +346,25 @@ public final class TestOldExcelExtractor {
                 out.close();
             }
             String string = new String(out.toByteArray(), "UTF-8");
-            assertTrue("Had: " + string, 
+            assertTrue("Had: " + string,
                     string.contains("Table C-13--Lemons"));
         } finally {
             System.setOut(save);
+        }
+    }
+
+    @Test
+    public void testEncryptionException() throws Exception {
+        //test file derives from Common Crawl
+        File file = HSSFTestDataSamples.getSampleFile("60284.xls");
+        OldExcelExtractor ex = new OldExcelExtractor(file);
+        assertEquals(5, ex.getBiffVersion());
+        assertEquals(5, ex.getFileType());
+        try {
+            ex.getText();
+            fail();
+        } catch (EncryptedDocumentException e) {
+            assertTrue("correct exception thrown", true);
         }
     }
 }
