@@ -18,15 +18,24 @@
 package org.apache.poi.hslf;
 
 
-import junit.framework.TestCase;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.CurrentUserAtom;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
@@ -34,18 +43,26 @@ import org.apache.poi.POIDataSamples;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestReWriteSanity extends TestCase {
+public final class TestReWriteSanity {
 	// HSLFSlideShow primed on the test data
-	private final HSLFSlideShowImpl ss;
+	private HSLFSlideShowImpl ss;
 	// POIFS primed on the test data
-	private final POIFSFileSystem pfs;
+	private POIFSFileSystem pfs;
 
-    public TestReWriteSanity() throws Exception {
+	@Before
+    public void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShowImpl(pfs);
     }
+	
+	@After
+	public void tearDown() throws Exception {
+	    pfs.close();
+	    ss.close();
+	}
 
+    @Test
 	public void testUserEditAtomsRight() throws Exception {
 		// Write out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -87,8 +104,8 @@ public final class TestReWriteSanity extends TestCase {
 				int luPos = uea.getLastUserEditAtomOffset();
 				int ppPos = uea.getPersistPointersOffset();
 
-				assertTrue(pp.containsKey(Integer.valueOf(ppPos)));
-				assertTrue(ue.containsKey(Integer.valueOf(luPos)));
+				assertContains(ue, Integer.valueOf(luPos));
+				assertContains(pp, Integer.valueOf(ppPos));
 			}
 		}
 
