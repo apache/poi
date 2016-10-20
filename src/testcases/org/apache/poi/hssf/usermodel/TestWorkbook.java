@@ -51,7 +51,7 @@ public final class TestWorkbook {
     private static final String LAST_NAME_VALUE      = "Bush";
     private static final String FIRST_NAME_VALUE     = "George";
     private static final String SSN_VALUE            = "555555555";
-    private SanityChecker sanityChecker = new SanityChecker();
+    private final SanityChecker sanityChecker = new SanityChecker();
 
 
     private static HSSFWorkbook openSample(String sampleFileName) {

@@ -38,7 +38,7 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
  * Tests for the older OPOIFS-based POIFSFileSystem
  */
 public final class TestPOIFSFileSystem extends TestCase {
-   private POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+   private final POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
 
 	/**
 	 * Mock exception used to ensure correct error handling

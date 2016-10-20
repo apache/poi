@@ -31,10 +31,10 @@ import org.apache.poi.hwpf.HWPFTestDataSamples;
 public final class TestRangeInsertion extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
-	private String originalText =
+	private final String originalText =
 		"It is used to confirm that text insertion works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.\r";
-	private String textToInsert = "Look at me!  I'm cool!  ";
-	private int insertionPoint = 122;
+	private final String textToInsert = "Look at me!  I'm cool!  ";
+	private final int insertionPoint = 122;
 
 	private String illustrativeDocFile;
 

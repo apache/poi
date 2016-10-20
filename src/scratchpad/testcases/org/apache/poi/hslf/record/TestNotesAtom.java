@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestNotesAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
 		0, 0, 0, 0x80-256, 0, 0, 0x0D, 0x30 };
 
 	public void testRecordType() {

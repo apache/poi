@@ -28,7 +28,7 @@ import java.util.Random;
  */
 public class SlowInputStream extends FilterInputStream
 {
-    private Random r = new Random(0);
+    private final Random r = new Random(0);
     
     public SlowInputStream(InputStream in) {
         super(in);

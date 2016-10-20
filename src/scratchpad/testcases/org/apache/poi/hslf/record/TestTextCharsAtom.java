@@ -28,12 +28,12 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestTextCharsAtom extends TestCase {
 	// From a real file
-	private byte[] data = new byte[]  { 0, 0, 0xA0-256, 0x0f, 0x08, 0, 0, 0,
+	private final byte[] data = new byte[]  { 0, 0, 0xA0-256, 0x0f, 0x08, 0, 0, 0,
 		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00 };
-	private String data_text = "This";
-	private byte[] alt_data = new byte[] { 0, 0, 0xA0-256, 0x0F, 0x0a, 0, 0, 0,
+	private final String data_text = "This";
+	private final byte[] alt_data = new byte[] { 0, 0, 0xA0-256, 0x0F, 0x0a, 0, 0, 0,
 		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00, 0xa3-256, 0x01 };
-	private String alt_text = "This\u01A3";
+	private final String alt_text = "This\u01A3";
 
     public void testRecordType() {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);

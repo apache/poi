@@ -28,12 +28,12 @@ import java.io.ByteArrayOutputStream;
  */
 public class TestInteractiveInfoAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] {
+	private final byte[] data_a = new byte[] {
 		00, 00, 0xF3-256, 0x0F, 0x10, 00, 00, 00,
 		00, 00, 00, 00, 01, 00, 00, 00,
 		04, 00, 00, 00, 8, 00, 00, 00
 	};
-	private byte[] data_b = new byte[] {
+	private final byte[] data_b = new byte[] {
 		00, 00, 0xF3-256, 0x0F, 0x10, 00, 00, 00,
 		00, 00, 00, 00, 04, 00, 00, 00,
 		04, 00, 00, 00, 8, 00, 00, 00

@@ -417,7 +417,7 @@ public final class TestCellStyle extends TestCase {
     
     
     private static class CellFormatBugExample extends Thread {
-        private String fileName;
+        private final String fileName;
         private Throwable exception = null;
 
         public CellFormatBugExample(String fileName) {

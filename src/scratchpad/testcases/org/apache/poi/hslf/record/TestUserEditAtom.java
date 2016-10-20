@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestUserEditAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 0, 0, 0xF5-256, 0x0F, 0x1C, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 0, 0, 0xF5-256, 0x0F, 0x1C, 0, 0, 0,
 		00, 01, 00, 00, 0xD9-256, 18, 00, 03,
 		00, 00, 00, 00, 00, 0x18, 00, 00, 01, 00, 00, 00,
 		05, 00, 00, 00, 01, 00, 0xF6-256, 77 };

@@ -28,12 +28,12 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestTxInteractiveInfoAtom extends TestCase {
 	// From WithLinks.ppt
-	private byte[] data_a = new byte[] {
+	private final byte[] data_a = new byte[] {
 		00, 00, (byte)0xDF, 0x0F, 0x08, 00, 00, 00,
 		0x19, 00, 00, 00, 0x38, 00, 00, 00
 	};
 
-	private byte[] data_b = new byte[] {
+	private final byte[] data_b = new byte[] {
 		00, 00, (byte)0xDF, 0x0F, 0x08, 00, 00, 00,
 		0x39, 00, 00, 00, 0x4E, 00, 00, 00
 	};

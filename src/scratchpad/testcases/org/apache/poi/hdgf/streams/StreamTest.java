@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 public abstract class StreamTest extends TestCase {
 	public static class TestPointer extends Pointer {
-		private boolean compressed;
+		private final boolean compressed;
 		protected boolean hasPointers = false;
 		public TestPointer(boolean compressed, int offset, int length, int type, short format) {
 			this.compressed = compressed;

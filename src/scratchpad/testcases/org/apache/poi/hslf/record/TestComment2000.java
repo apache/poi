@@ -40,7 +40,7 @@ import org.junit.Test;
  */
 public final class TestComment2000 {
 	// From a real file
-	private byte[] data_a = new byte[] {
+	private final byte[] data_a = new byte[] {
 		0x0F, 00, 0xE0-256, 0x2E, 0x9C-256, 00, 00, 00,
 		00, 00, 0xBA-256, 0x0F, 0x14, 00, 00, 00,
 		0x44, 00, 0x75, 00, 0x6D, 00, 0x62, 00,
@@ -64,7 +64,7 @@ public final class TestComment2000 {
 		0x0F, 00, 0xCD-256, 00, 0x92-256, 00,
 		00,	00, 0x92-256, 00, 00, 00
 	};
-	private byte[] data_b = new byte[] {
+	private final byte[] data_b = new byte[] {
 		0x0F, 00, 0xE0-256, 0x2E, 0xAC-256, 00, 00, 00,
 		00, 00, 0xBA-256, 0x0F, 0x10, 00, 00, 00,
 		0x48, 00, 0x6F, 00, 0x67, 00, 0x77, 00,

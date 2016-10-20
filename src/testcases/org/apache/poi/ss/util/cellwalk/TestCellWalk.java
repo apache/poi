@@ -35,7 +35,7 @@ public class TestCellWalk extends TestCase {
 	{null,       null, "str"}
     };
 
-    private CountCellHandler countCellHandler = new CountCellHandler();
+    private final CountCellHandler countCellHandler = new CountCellHandler();
 
     public void testNotTraverseEmptyCells() {
 	Workbook wb = new HSSFWorkbook();

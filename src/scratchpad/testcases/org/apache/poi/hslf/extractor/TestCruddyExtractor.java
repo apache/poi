@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class TestCruddyExtractor extends TestCase {
 	// Extractor primed on the test data
-	private QuickButCruddyTextExtractor te;
+	private final QuickButCruddyTextExtractor te;
 	// All the text to be found in the file
 	String[] allTheText = new String[] {
 		"This is a test title",

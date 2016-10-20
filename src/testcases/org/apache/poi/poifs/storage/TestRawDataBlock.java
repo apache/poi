@@ -190,9 +190,9 @@ public final class TestRawDataBlock extends TestCase {
 	 *  not to have any data
 	 */
 	public static class SlowInputStream extends InputStream {
-		private Random rnd = new Random();
-		private byte[] data;
-		private int chunkSize;
+		private final Random rnd = new Random();
+		private final byte[] data;
+		private final int chunkSize;
 		private int pos = 0;
 
 		public SlowInputStream(byte[] data, int chunkSize) {

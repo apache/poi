@@ -30,7 +30,7 @@ import org.apache.poi.xssf.usermodel.*;
 public final class TestXSSFChartAxis extends TestCase {
 
 	private static final double EPSILON = 1E-7;
-	private XSSFChartAxis axis;
+	private final XSSFChartAxis axis;
 
 	public TestXSSFChartAxis() {
 		super();

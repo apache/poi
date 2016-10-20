@@ -31,7 +31,7 @@ import org.apache.poi.util.HexRead;
  * @author Yegor Kozlov
  */
 public final class TestNoteRecord extends TestCase {
-    private byte[] testData = HexRead.readFromString(
+    private final byte[] testData = HexRead.readFromString(
             "06 00 01 00 02 00 02 04 " +
             "1A 00 00 " +
             "41 70 61 63 68 65 20 53 6F 66 74 77 61 72 65 20 46 6F 75 6E 64 61 74 69 6F 6E " +

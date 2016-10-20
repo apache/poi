@@ -31,15 +31,15 @@ import org.apache.poi.hwpf.HWPFTestDataSamples;
 public final class TestRangeReplacement extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
-	private String originalText =
+	private final String originalText =
 		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} and all the POI contributors for their assistance in this matter.\r";
-	private String searchText = "${organization}";
-	private String replacementText = "Apache Software Foundation";
-	private String expectedText2 =
+	private final String searchText = "${organization}";
+	private final String replacementText = "Apache Software Foundation";
+	private final String expectedText2 =
 		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the Apache Software Foundation and all the POI contributors for their assistance in this matter.\r";
-	private String expectedText3 = "Thank you, Apache Software Foundation!\r";
+	private final String expectedText3 = "Thank you, Apache Software Foundation!\r";
 
-	private String illustrativeDocFile = "testRangeReplacement.doc";
+	private final String illustrativeDocFile = "testRangeReplacement.doc";
 
 	/**
 	 * Test just opening the files

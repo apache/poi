@@ -41,8 +41,8 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 public class TestThemesTable {
-    private String testFileSimple = "Themes.xlsx";
-    private String testFileComplex = "Themes2.xlsx";
+    private final String testFileSimple = "Themes.xlsx";
+    private final String testFileComplex = "Themes2.xlsx";
     // TODO .xls version available too, add HSSF support then check 
     
     // What colours they should show up as

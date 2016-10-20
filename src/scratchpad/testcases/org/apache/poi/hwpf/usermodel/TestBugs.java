@@ -811,16 +811,16 @@ public class TestBugs extends TestCase
     
     // These are the values the are expected to be read when the file
     // is checked.
-    private int section1LeftMargin = 1440;
-    private int section1RightMargin = 1440;
-    private int section1TopMargin = 1440;
-    private int section1BottomMargin = 1440;
-    private int section1NumColumns = 1;
+    private final int section1LeftMargin = 1440;
+    private final int section1RightMargin = 1440;
+    private final int section1TopMargin = 1440;
+    private final int section1BottomMargin = 1440;
+    private final int section1NumColumns = 1;
     private int section2LeftMargin = 1440;
     private int section2RightMargin = 1440;
     private int section2TopMargin = 1440;
     private int section2BottomMargin = 1440;
-    private int section2NumColumns = 3;
+    private final int section2NumColumns = 3;
     
     public void testHWPFSections() {
         HWPFDocument document = null;

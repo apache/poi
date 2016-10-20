@@ -28,11 +28,11 @@ import java.io.ByteArrayOutputStream;
  */
 public class TestExObjListAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] {
+	private final byte[] data_a = new byte[] {
 		00, 00, 0x0A, 0x04, 04, 00, 00, 00,
 		01, 00, 00, 00
 	};
-	private byte[] data_b = new byte[] {
+	private final byte[] data_b = new byte[] {
 		00, 00, 0x0A, 0x04, 04, 00, 00, 00,
 		04, 00, 00, 00
 	};

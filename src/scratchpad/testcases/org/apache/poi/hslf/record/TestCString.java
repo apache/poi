@@ -28,10 +28,10 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestCString extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 0, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 0, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
 		0x48, 00, 0x6F, 00, 0x67, 00, 0x77, 00,
 		0x61, 00, 0x72, 00, 0x74, 00, 0x73, 00  };
-	private byte[] data_b = new byte[] { 0x10, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
+	private final byte[] data_b = new byte[] { 0x10, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
 		0x43, 00, 0x6F, 00, 0x6D, 00, 0x6D, 00,
 		0x65, 00, 0x6E, 00, 0x74, 00, 0x73, 00 };
 

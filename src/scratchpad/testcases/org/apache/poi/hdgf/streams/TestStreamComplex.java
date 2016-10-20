@@ -29,8 +29,8 @@ import org.apache.poi.POIDataSamples;
 
 public final class TestStreamComplex extends StreamTest {
 	private byte[] contents;
-	private int trailerPointerAt = 0x24;
-	private int trailerDataAt = 0x8a94;
+	private final int trailerPointerAt = 0x24;
+	private final int trailerDataAt = 0x8a94;
 	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
 

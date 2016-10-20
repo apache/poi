@@ -150,7 +150,7 @@ public final class TestEventRecordFactory extends TestCase {
         final int[] recCnt = { 0 };
         final int[] offset = { 0 };
         ERFListener listener = new ERFListener() {
-              private String[] expectedRecordTypes = {
+              private final String[] expectedRecordTypes = {
                   UnknownRecord.class.getName(),
                   ContinueRecord.class.getName(),
                   ContinueRecord.class.getName()

@@ -50,7 +50,7 @@ public final class POIDataSamples {
     /** <code>true</code> if standard system propery is not set,
      * but the data is available on the test runtime classpath */
     private boolean _sampleDataIsAvaliableOnClassPath;
-    private String _moduleDir;
+    private final String _moduleDir;
 
     /**
      *

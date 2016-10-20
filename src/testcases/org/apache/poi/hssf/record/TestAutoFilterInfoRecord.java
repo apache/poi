@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * @author Yegor Kozlov
  */
 public final class TestAutoFilterInfoRecord extends TestCase {
-    private byte[] data = new byte[] {
+    private final byte[] data = new byte[] {
         0x05, 0x00
     };
 

@@ -31,7 +31,7 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestCounts extends TestCase {
 	// SlideShow primed on the test data
-	private HSLFSlideShow ss;
+	private final HSLFSlideShow ss;
 
 	public TestCounts() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();

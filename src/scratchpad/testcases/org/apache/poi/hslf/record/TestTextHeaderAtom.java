@@ -28,9 +28,9 @@ import java.io.ByteArrayOutputStream;
  */
 public final class TestTextHeaderAtom extends TestCase {
 	// From a real file
-	private byte[] notes_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0};
-	private byte[] title_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
-	private byte[] body_data = new byte[]  { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
+	private final byte[] notes_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0};
+	private final byte[] title_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
+	private final byte[] body_data = new byte[]  { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
 
 	public void testRecordType() {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
