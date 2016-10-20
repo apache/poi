@@ -59,8 +59,8 @@ public final class TestRecordSetup {
 		if(r instanceof RecordContainer) {
 			RecordContainer rc = (RecordContainer)r;
 			Record[] children = rc.getChildRecords();
-			for(int i=0; i<children.length; i++) {
-				ensureParentAware(children[i], rc);
+			for (Record rec : children) {
+				ensureParentAware(rec, rc);
 			}
 		}
 	}

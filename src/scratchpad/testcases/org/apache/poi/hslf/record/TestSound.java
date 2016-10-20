@@ -40,9 +40,9 @@ public final class TestSound extends TestCase {
 		Document doc = ppt.getDocumentRecord();
 		SoundCollection soundCollection = null;
 		Record[] doc_ch = doc.getChildRecords();
-		for (int i = 0; i < doc_ch.length; i++) {
-			if (doc_ch[i] instanceof SoundCollection) {
-				soundCollection = (SoundCollection) doc_ch[i];
+		for (Record rec : doc_ch) {
+			if (rec instanceof SoundCollection) {
+				soundCollection = (SoundCollection) rec;
 				break;
 			}
 		}
@@ -53,9 +53,9 @@ public final class TestSound extends TestCase {
 		Sound sound = null;
 		Record[] sound_ch = soundCollection.getChildRecords();
 		int k = 0;
-		for (int i = 0; i < sound_ch.length; i++) {
-			if (sound_ch[i] instanceof Sound) {
-				sound = (Sound) sound_ch[i];
+		for (Record rec : sound_ch) {
+			if (rec instanceof Sound) {
+				sound = (Sound) rec;
 				k++;
 			}
 		}

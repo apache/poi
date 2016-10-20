@@ -87,11 +87,10 @@ public final class TestByteField extends TestCase {
 
             // as expected
         }
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (byte b : _test_array) {
             array = new byte[ 1 ];
-            new ByteField(0, _test_array[ j ], array);
-            assertEquals(_test_array[ j ], new ByteField(0, array).get());
+            new ByteField(0, b, array);
+            assertEquals(b, new ByteField(0, array).get());
         }
     }
 
@@ -151,11 +150,10 @@ public final class TestByteField extends TestCase {
         ByteField field = new ByteField(0);
         byte[]    array = new byte[ 1 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
-            field.set(_test_array[ j ]);
+        for (byte b : _test_array) {
+            field.set(b);
             field.writeToBytes(array);
-            assertEquals("testing ", _test_array[ j ], array[ 0 ]);
+            assertEquals("testing ", b, array[ 0 ]);
         }
     }
 }

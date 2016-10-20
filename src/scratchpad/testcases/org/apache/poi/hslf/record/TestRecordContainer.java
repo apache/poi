@@ -153,9 +153,9 @@ public final class TestRecordContainer extends TestCase {
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		Record[] r = hss.getRecords();
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof RecordContainer) {
-				recordContainer = (RecordContainer)r[i];
+		for (Record rec : r) {
+			if(rec instanceof RecordContainer) {
+				recordContainer = (RecordContainer)rec;
 				return;
 			}
 		}

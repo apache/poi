@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -46,8 +45,7 @@ public final class TestHSSFPictureData extends TestCase{
         List<HSSFPictureData> lst = (List<HSSFPictureData>)(List<?>)wb.getAllPictures();
         //assertEquals(2, lst.size());
 
-        for (Iterator it = lst.iterator(); it.hasNext(); ) {
-            HSSFPictureData pict = (HSSFPictureData)it.next();
+        for (final HSSFPictureData pict : lst) {
             String ext = pict.suggestFileExtension();
             byte[] data = pict.getData();
             if (ext.equals("jpeg")){

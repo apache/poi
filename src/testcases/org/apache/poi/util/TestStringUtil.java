@@ -191,6 +191,10 @@ public class TestStringUtil {
         assertEquals("abc", StringUtil.join(",", "abc")); // degenerate case: one thing to join, no trailing comma
         assertEquals("abc|def|ghi", StringUtil.join("|", "abc", "def", "ghi"));
         assertEquals("5|8.5|true|string", StringUtil.join("|", 5, 8.5, true, "string")); //assumes Locale prints number decimal point as a period rather than a comma
+        
+        String[] arr = new String[] { "Apache", "POI", "project" };
+        assertEquals("no separator", "ApachePOIproject", StringUtil.join(arr));
+        assertEquals("separator", "Apache POI project", StringUtil.join(arr, " "));
     }
     
     @Test

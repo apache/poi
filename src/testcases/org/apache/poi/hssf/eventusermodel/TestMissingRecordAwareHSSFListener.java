@@ -211,9 +211,9 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		// Check the numbers of the last seen columns
 		LastCellOfRowDummyRecord[] lrs = new LastCellOfRowDummyRecord[24];
 		int lrscount = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof LastCellOfRowDummyRecord) {
-				lrs[lrscount] = (LastCellOfRowDummyRecord)r[i];
+		for (final Record rec : r) {
+			if(rec instanceof LastCellOfRowDummyRecord) {
+				lrs[lrscount] = (LastCellOfRowDummyRecord)rec;
 				lrscount++;
 			}
 		}
@@ -351,9 +351,9 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		readRecords("MRExtraLines.xls");
 		
 		int rowCount=0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof LastCellOfRowDummyRecord) {
-				LastCellOfRowDummyRecord eor = (LastCellOfRowDummyRecord) r[i];
+		for (Record rec : r) {
+			if(rec instanceof LastCellOfRowDummyRecord) {
+				LastCellOfRowDummyRecord eor = (LastCellOfRowDummyRecord) rec;
 				assertEquals(rowCount, eor.getRow());
 				rowCount++;
 			}
@@ -416,8 +416,7 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		Record[] rr = r;
 		int eorCount=0;
 		int sfrCount=0;
-		for (int i = 0; i < rr.length; i++) {
-			Record record = rr[i];
+		for (Record record : rr) {
 			if (record instanceof SharedFormulaRecord) {
 				sfrCount++;
 			}

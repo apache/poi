@@ -87,11 +87,10 @@ public final class TestShortField extends TestCase {
 
             // as expected
         }
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (short element : _test_array) {
             array = new byte[ 2 ];
-            new ShortField(0, _test_array[ j ], array);
-            assertEquals(_test_array[ j ], new ShortField(0, array).get());
+            new ShortField(0, element, array);
+            assertEquals(element, new ShortField(0, array).get());
         }
     }
 
@@ -160,15 +159,14 @@ public final class TestShortField extends TestCase {
         ShortField field = new ShortField(0);
         byte[]     array = new byte[ 2 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
-            field.set(_test_array[ j ]);
+        for (short element : _test_array) {
+            field.set(element);
             field.writeToBytes(array);
             short val = ( short ) (array[ 1 ] << 8);
 
             val &= ( short ) 0xFF00;
             val += ( short ) (array[ 0 ] & 0x00FF);
-            assertEquals("testing ", _test_array[ j ], val);
+            assertEquals("testing ", element, val);
         }
     }
 }

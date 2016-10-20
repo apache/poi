@@ -340,10 +340,9 @@ public final class TestDocumentInputStream extends TestCase {
           while (stream.available() >= buffer.length)
           {
              assertEquals(_buffer_size, stream.read(buffer));
-             for (int j = 0; j < buffer.length; j++)
-             {
+             for (byte data : buffer) {
                 assertEquals("in main loop, byte " + offset,
-                      _workbook_data[ offset ], buffer[ j ]);
+                      _workbook_data[ offset ], data);
                 offset++;
              }
              assertEquals("offset " + offset, _workbook_size - offset,

@@ -89,11 +89,10 @@ public final class TestIntegerField extends TestCase {
 
             // as expected
         }
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int element : _test_array) {
             array = new byte[ 4 ];
-            new IntegerField(0, _test_array[ j ], array);
-            assertEquals(_test_array[ j ], new IntegerField(0, array).get());
+            new IntegerField(0, element, array);
+            assertEquals(element, new IntegerField(0, array).get());
         }
     }
 
@@ -172,9 +171,8 @@ public final class TestIntegerField extends TestCase {
         IntegerField field = new IntegerField(0);
         byte[]       array = new byte[ 4 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
-            field.set(_test_array[ j ]);
+        for (int b : _test_array) {
+            field.set(b);
             field.writeToBytes(array);
             int val = array[ 3 ] << 24;
 
@@ -182,7 +180,7 @@ public final class TestIntegerField extends TestCase {
             val += (array[ 2 ] << 16) & 0x00FF0000;
             val += (array[ 1 ] << 8) & 0x0000FF00;
             val += (array[ 0 ] & 0x000000FF);
-            assertEquals("testing ", _test_array[ j ], val);
+            assertEquals("testing ", b, val);
         }
     }
 }
