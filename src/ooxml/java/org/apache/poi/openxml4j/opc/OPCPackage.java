@@ -1409,7 +1409,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 */
 	@Override
     public boolean isRelationshipExists(PackageRelationship rel) {
-        for (PackageRelationship r : this.getRelationships()) {
+        for (PackageRelationship r : relationships) {
             if (r == rel) {
                 return true;
             }
