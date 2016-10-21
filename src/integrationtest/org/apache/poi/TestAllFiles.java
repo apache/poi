@@ -17,7 +17,6 @@
 package org.apache.poi;
 
 
-import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.stress.*;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.Test;
@@ -353,7 +352,7 @@ public class TestAllFiles {
 
             assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
                 EXPECTED_FAILURES.contains(file) && !ignoredOPC);
-        } catch (OldWordFileFormatException e) {
+        } catch (OldFileFormatException e) {
             // for old word files we should still support extracting text
             if(OLD_FILES.contains(file)) {
                 handler.handleExtracting(inputFile);
