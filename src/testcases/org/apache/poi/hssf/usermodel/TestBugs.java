@@ -95,6 +95,7 @@ import org.junit.Test;
  * <b>YK: If a bug can be tested in terms of common ss interfaces,
  *  define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
+@SuppressWarnings("deprecation")
 public final class TestBugs extends BaseTestBugzillaIssues {
     // to not affect other tests running in the same JVM
     @After
@@ -894,7 +895,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /**
      * Problems with extracting check boxes from
      *  HSSFObjectData
-     * @throws Exception
      */
     @Test(expected=FileNotFoundException.class)
     public void bug44840() throws Exception {
@@ -943,33 +943,15 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Check all names fit within range, and use
         //  DeletedArea3DPtg
         InternalWorkbook w = wb1.getWorkbook();
-        for(int i=0; i<w.getNumNames(); i++) {
-            NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getSheetNumber() <= wb1.getNumberOfSheets());
-
-            Ptg[] nd = r.getNameDefinition();
-            assertEquals(1, nd.length);
-            assertTrue(nd[0] instanceof DeletedArea3DPtg);
-        }
-
+        assertNames(wb1, w);
 
         // Delete the 2nd sheet
         wb1.removeSheetAt(1);
 
-
         // Re-check
         assertEquals(1, wb1.getNumberOfNames());
         assertEquals(2, wb1.getNumberOfSheets());
-
-        for(int i=0; i<w.getNumNames(); i++) {
-            NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getSheetNumber() <= wb1.getNumberOfSheets());
-
-            Ptg[] nd = r.getNameDefinition();
-            assertEquals(1, nd.length);
-            assertTrue(nd[0] instanceof DeletedArea3DPtg);
-        }
-
+        assertNames(wb1, w);
 
         // Save and re-load
         HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
@@ -979,20 +961,23 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(1, wb2.getNumberOfNames());
         assertEquals(2, wb2.getNumberOfSheets());
 
+        assertNames(wb2, w);
+        wb2.close();
+    }
+
+    private void assertNames(HSSFWorkbook wb1, InternalWorkbook w) {
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getSheetNumber() <= wb2.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb1.getNumberOfSheets());
 
             Ptg[] nd = r.getNameDefinition();
             assertEquals(1, nd.length);
             assertTrue(nd[0] instanceof DeletedArea3DPtg);
         }
-        wb2.close();
     }
 
     /**
      * Test that fonts get added properly
-     * @throws IOException 
      */
     @Test
     public void bug45338() throws IOException {
@@ -1061,12 +1046,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 "Thingy", false, true, (short)2, (byte)2
             )
         );
+        HSSFFont font = wb.findFont(
+                (short) 11, (short) 123, (short) 22,
+                "Thingy", false, true, (short) 2, (byte) 2
+        );
+        assertNotNull(font);
         assertEquals(
             5,
-            wb.findFont(
-                   (short)11, (short)123, (short)22,
-                   "Thingy", false, true, (short)2, (byte)2
-               ).getIndex()
+            font.getIndex()
         );
         assertEquals(nf,
                wb.findFont(
@@ -1187,10 +1174,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * In this sample file, the vector column
      *  is C, and the data column is B.
      *
-     * For now, blows up with an exception from ExtPtg
      *  Expected ExpPtg to be converted from Shared to Non-Shared...
      */
-    @Ignore
+    @Ignore("For now, blows up with an exception from ExtPtg")
+    @Test
     public void test43623() throws Exception {
         HSSFWorkbook wb1 = openSample("43623.xls");
         assertEquals(1, wb1.getNumberOfSheets());
@@ -1223,7 +1210,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /**
      * People are all getting confused about the last
      *  row and cell number
-     * @throws IOException 
      */
     @Test
     public void bug30635() throws IOException {
@@ -1796,7 +1782,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
        // Ensure the print setup
        assertEquals("new_sheet!$A$1:$C$1", wb2.getPrintArea(0));
-       assertEquals("new_sheet!$A$1:$C$1", wb2.getName("Print_Area").getRefersToFormula());
+        HSSFName printArea = wb2.getName("Print_Area");
+        assertNotNull(printArea);
+        assertEquals("new_sheet!$A$1:$C$1", printArea.getRefersToFormula());
 
        // Needs reference not value
        NameRecord nr = wb2.getWorkbook().getNameRecord(
@@ -1902,30 +1890,33 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49185() throws Exception {
-      HSSFWorkbook wb1 = openSample("49185.xls");
-      Name name = wb1.getName("foobarName");
-      assertEquals("This is a comment", name.getComment());
+        HSSFWorkbook wb1 = openSample("49185.xls");
+        Name name = wb1.getName("foobarName");
+        assertNotNull(name);
+        assertEquals("This is a comment", name.getComment());
 
-      // Rename the name, comment comes with it
-      name.setNameName("ChangedName");
-      assertEquals("This is a comment", name.getComment());
+        // Rename the name, comment comes with it
+        name.setNameName("ChangedName");
+        assertEquals("This is a comment", name.getComment());
 
-      // Save and re-check
-      HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
-      wb1.close();
-      name = wb2.getName("ChangedName");
-      assertEquals("This is a comment", name.getComment());
+        // Save and re-check
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
+        name = wb2.getName("ChangedName");
+        assertNotNull(name);
+        assertEquals("This is a comment", name.getComment());
 
-      // Now try to change it
-      name.setComment("Changed Comment");
-      assertEquals("Changed Comment", name.getComment());
+        // Now try to change it
+        name.setComment("Changed Comment");
+        assertEquals("Changed Comment", name.getComment());
 
-      // Save and re-check
-      HSSFWorkbook wb3 = writeOutAndReadBack(wb2);
-      wb2.close();
-      name = wb3.getName("ChangedName");
-      assertEquals("Changed Comment", name.getComment());
-      wb3.close();
+        // Save and re-check
+        HSSFWorkbook wb3 = writeOutAndReadBack(wb2);
+        wb2.close();
+        name = wb3.getName("ChangedName");
+        assertNotNull(name);
+        assertEquals("Changed Comment", name.getComment());
+        wb3.close();
     }
 
     /**
@@ -2081,7 +2072,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     /**
      * Last row number when shifting rows
-     * @throws IOException 
      */
     @Test
     public void bug50416LastRowNumber() throws IOException {
@@ -2562,10 +2552,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /** Row style information is 12 not 16 bits */
     @Test
     public void bug49237() throws Exception {
-        HSSFWorkbook wb = openSample("49237.xls");
-        HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFRow row = sheet.getRow(0);
-        HSSFCellStyle rstyle = row.getRowStyle();
+        Workbook wb = openSample("49237.xls");
+        Sheet sheet = wb.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        CellStyle rstyle = row.getRowStyle();
+        assertNotNull(rstyle);
         assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottomEnum());
         wb.close();
     }

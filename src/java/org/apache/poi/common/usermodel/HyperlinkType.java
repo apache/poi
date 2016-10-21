@@ -57,16 +57,16 @@ public enum HyperlinkType {
     
     /**
      * The codes don't have any real meaning.
-     * There bytes that are read in and written out from HSSF, HSLF, XSSF, and XSLF are different
+     * They are bytes that are read in and written out from HSSF, HSLF, XSSF, and XSLF are different
      * that the codes here.
      * These codes only exist to assist in transitioning from using ints to enums.
      *
-     * @param code
+     * @param code The unique number for this type.
      * @deprecated POI 3.15 beta 3
      */
     @Internal(since="3.15 beta 3")
     @Deprecated
-    private HyperlinkType(int code) {
+    HyperlinkType(int code) {
         this.code = code;
     }
     

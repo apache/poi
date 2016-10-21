@@ -43,6 +43,7 @@ public final class WindowOneRecord extends StandardRecord {
         BitFieldFactory.getInstance(0x01);                                        // is this window is hidden
     static final private BitField iconic   =
         BitFieldFactory.getInstance(0x02);                                        // is this window is an icon
+    @SuppressWarnings("unused")
     static final private BitField reserved = BitFieldFactory.getInstance(0x04);   // reserved
     static final private BitField hscroll  =
         BitFieldFactory.getInstance(0x08);                                        // display horizontal scrollbar
@@ -353,41 +354,37 @@ public final class WindowOneRecord extends StandardRecord {
         return field_9_tab_width_ratio;
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[WINDOW1]\n");
-        buffer.append("    .h_hold          = ")
-            .append(Integer.toHexString(getHorizontalHold())).append("\n");
-        buffer.append("    .v_hold          = ")
-            .append(Integer.toHexString(getVerticalHold())).append("\n");
-        buffer.append("    .width           = ")
-            .append(Integer.toHexString(getWidth())).append("\n");
-        buffer.append("    .height          = ")
-            .append(Integer.toHexString(getHeight())).append("\n");
-        buffer.append("    .options         = ")
-            .append(Integer.toHexString(getOptions())).append("\n");
-        buffer.append("        .hidden      = ").append(getHidden())
-            .append("\n");
-        buffer.append("        .iconic      = ").append(getIconic())
-            .append("\n");
-        buffer.append("        .hscroll     = ")
-            .append(getDisplayHorizontalScrollbar()).append("\n");
-        buffer.append("        .vscroll     = ")
-            .append(getDisplayVerticalScrollbar()).append("\n");
-        buffer.append("        .tabs        = ").append(getDisplayTabs())
-            .append("\n");
-        buffer.append("    .activeSheet     = ")
-            .append(Integer.toHexString(getActiveSheetIndex())).append("\n");
-        buffer.append("    .firstVisibleTab    = ")
-            .append(Integer.toHexString(getFirstVisibleTab())).append("\n");
-        buffer.append("    .numselectedtabs = ")
-            .append(Integer.toHexString(getNumSelectedTabs())).append("\n");
-        buffer.append("    .tabwidthratio   = ")
-            .append(Integer.toHexString(getTabWidthRatio())).append("\n");
-        buffer.append("[/WINDOW1]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[WINDOW1]\n" +
+                "    .h_hold          = " +
+                Integer.toHexString(getHorizontalHold()) + "\n" +
+                "    .v_hold          = " +
+                Integer.toHexString(getVerticalHold()) + "\n" +
+                "    .width           = " +
+                Integer.toHexString(getWidth()) + "\n" +
+                "    .height          = " +
+                Integer.toHexString(getHeight()) + "\n" +
+                "    .options         = " +
+                Integer.toHexString(getOptions()) + "\n" +
+                "        .hidden      = " + getHidden() +
+                "\n" +
+                "        .iconic      = " + getIconic() +
+                "\n" +
+                "        .hscroll     = " +
+                getDisplayHorizontalScrollbar() + "\n" +
+                "        .vscroll     = " +
+                getDisplayVerticalScrollbar() + "\n" +
+                "        .tabs        = " + getDisplayTabs() +
+                "\n" +
+                "    .activeSheet     = " +
+                Integer.toHexString(getActiveSheetIndex()) + "\n" +
+                "    .firstVisibleTab    = " +
+                Integer.toHexString(getFirstVisibleTab()) + "\n" +
+                "    .numselectedtabs = " +
+                Integer.toHexString(getNumSelectedTabs()) + "\n" +
+                "    .tabwidthratio   = " +
+                Integer.toHexString(getTabWidthRatio()) + "\n" +
+                "[/WINDOW1]\n";
     }
 
     public void serialize(LittleEndianOutput out) {
