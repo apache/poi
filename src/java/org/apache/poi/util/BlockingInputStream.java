@@ -28,7 +28,7 @@ import java.io.IOException;
  * data from slow (ie, non FileInputStream) sources, for example when 
  * reading an OLE2 Document over a network. 
  *
- * Possible extentions: add a timeout. Curently a call to read(byte[]) on this
+ * Possible extensions: add a timeout. Currently a call to read(byte[]) on this
  *    class is blocking, so use at your own peril if your underlying stream blocks. 
  *
  * @author Jens Gerhard

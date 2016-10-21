@@ -265,7 +265,6 @@ public class Range { // TODO -instantiable superclass
 			// This means there's nested stuff, so we
 			// can just zap the lot
 			text = text.substring(0, first13) + text.substring(last15 + 1);
-			continue;
 		}
 
 		return text;
@@ -648,8 +647,8 @@ public class Range { // TODO -instantiable superclass
 	public void replaceText(String pPlaceHolder, String pValue, int pOffset) {
 		int absPlaceHolderIndex = getStartOffset() + pOffset;
 
-		Range subRange = new Range(absPlaceHolderIndex, (absPlaceHolderIndex + pPlaceHolder
-				.length()), this);
+		Range subRange = new Range(absPlaceHolderIndex,
+				(absPlaceHolderIndex + pPlaceHolder.length()), this);
 		subRange.insertBefore(pValue);
 
 		// re-create the sub-range so we can delete it
@@ -669,15 +668,14 @@ public class Range { // TODO -instantiable superclass
 	 *            The replacement text (e.g., "Apache Software Foundation")
 	 */
 	public void replaceText(String pPlaceHolder, String pValue) {
-		boolean keepLooking = true;
-		while (keepLooking) {
-
+		while (true) {
 			String text = text();
 			int offset = text.indexOf(pPlaceHolder);
-			if (offset >= 0)
+			if (offset >= 0) {
 				replaceText(pPlaceHolder, pValue, offset);
-			else
-				keepLooking = false;
+			} else {
+				break;
+			}
 		}
 	}
 
@@ -726,10 +724,8 @@ public class Range { // TODO -instantiable superclass
             istd = papx.getIstd();
         }
 
-        CharacterRun chp = new CharacterRun( chpx, _doc.getStyleSheet(), istd,
-                this );
-
-        return chp;
+		return new CharacterRun( chpx, _doc.getStyleSheet(), istd,
+				this);
     }
 
 	/**
@@ -742,8 +738,7 @@ public class Range { // TODO -instantiable superclass
 	public Section getSection(int index) {
 		initSections();
 		SEPX sepx = _sections.get(index + _sectionStart);
-		Section sep = new Section(sepx, this);
-		return sep;
+		return new Section(sepx, this);
 	}
 
 	/**
@@ -949,8 +944,6 @@ public class Range { // TODO -instantiable superclass
      * 
      * @param rpl
      *            A list of property nodes.
-     * @param min
-     *            A hint on where to start looking.
      * @param start
      *            The starting character offset.
      * @param end

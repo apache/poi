@@ -39,7 +39,6 @@ import org.apache.poi.util.POILogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -130,7 +129,6 @@ public class TestBugs extends TestCase
 
     /**
      * Bug 33519 - HWPF fails to read a file
-     * @throws IOException 
      */
     public void test33519() throws IOException
     {
@@ -139,7 +137,6 @@ public class TestBugs extends TestCase
 
     /**
      * Bug 34898 - WordExtractor doesn't read the whole string from the file
-     * @throws IOException 
      */
     public void test34898() throws IOException
     {
@@ -180,7 +177,6 @@ public class TestBugs extends TestCase
 
     /**
      * Bug 44331 - HWPFDocument.write destroys fields
-     * @throws IOException 
      */
     @SuppressWarnings("deprecation")
     public void test44431() throws IOException
@@ -209,7 +205,6 @@ public class TestBugs extends TestCase
 
     /**
      * Bug 44331 - HWPFDocument.write destroys fields
-     * @throws IOException 
      */
     public void test44431_2() throws IOException
     {
@@ -237,7 +232,6 @@ public class TestBugs extends TestCase
 
     /**
      * Bug 45473 - HWPF cannot read file after save
-     * @throws IOException 
      */
     public void test45473() throws IOException
     {
@@ -292,7 +286,6 @@ public class TestBugs extends TestCase
     /**
      * [RESOLVED FIXED] Bug 46817 - Regression: Text from some table cells
      * missing
-     * @throws IOException 
      */
     public void test46817() throws IOException
     {
@@ -307,7 +300,6 @@ public class TestBugs extends TestCase
      * [FAILING] Bug 47286 - Word documents saves in wrong format if source
      * contains form elements
      * 
-     * @throws IOException
      */
     @SuppressWarnings("deprecation")
     public void test47286() throws IOException
@@ -526,7 +518,6 @@ public class TestBugs extends TestCase
 
     /**
      * [FAILING] Bug 50955 - error while retrieving the text file
-     * @throws IOException 
      */
     public void test50955() throws IOException
     {
@@ -571,9 +562,6 @@ public class TestBugs extends TestCase
     /**
      * [RESOLVED FIXED] Bug 51604 - replace text fails for doc (poi 3.8 beta
      * release from download site )
-     * 
-     * @throws IOException
-     * @throws FileNotFoundException
      */
     public void test51604p2() throws Exception
     {
@@ -581,18 +569,7 @@ public class TestBugs extends TestCase
 
         Range range = doc.getRange();
         int numParagraph = range.numParagraphs();
-        for (int i = 0; i < numParagraph; i++ )
-        {
-            Paragraph paragraph = range.getParagraph(i);
-            int numCharRuns = paragraph.numCharacterRuns();
-            for (int j = 0; j < numCharRuns; j++ )
-            {
-                CharacterRun charRun = paragraph.getCharacterRun(j);
-                String text = charRun.text();
-                if (text.contains("Header" ) )
-                    charRun.replaceText(text, "added");
-            }
-        }
+        replaceText(range, numParagraph);
 
         doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
         final FileInformationBlock fileInformationBlock = doc
@@ -608,6 +585,21 @@ public class TestBugs extends TestCase
             totalLength += partLength;
         }
         assertEquals(doc.getText().length(), totalLength);
+    }
+
+    private void replaceText(Range range, int numParagraph) {
+        for (int i = 0; i < numParagraph; i++ )
+        {
+            Paragraph paragraph = range.getParagraph(i);
+            int numCharRuns = paragraph.numCharacterRuns();
+            for (int j = 0; j < numCharRuns; j++ )
+            {
+                CharacterRun charRun = paragraph.getCharacterRun(j);
+                String text = charRun.text();
+                if (text.contains("Header" ) )
+                    charRun.replaceText(text, "added");
+            }
+        }
     }
 
     /**
@@ -632,18 +624,7 @@ public class TestBugs extends TestCase
 
         Range range = doc.getRange();
         int numParagraph = range.numParagraphs();
-        for (int i = 0; i < numParagraph; i++ )
-        {
-            Paragraph paragraph = range.getParagraph(i);
-            int numCharRuns = paragraph.numCharacterRuns();
-            for (int j = 0; j < numCharRuns; j++ )
-            {
-                CharacterRun charRun = paragraph.getCharacterRun(j);
-                String text = charRun.text();
-                if (text.contains("Header" ) )
-                    charRun.replaceText(text, "added");
-            }
-        }
+        replaceText(range, numParagraph);
 
         doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
 
@@ -675,7 +656,6 @@ public class TestBugs extends TestCase
     /**
      * Bug 51678 - Extracting text from Bug51524.zip is slow Bug 51524 -
      * PapBinTable constructor is slow
-     * @throws IOException 
      */
     public void test51678And51524() throws IOException
     {
@@ -822,34 +802,21 @@ public class TestBugs extends TestCase
     private int section2BottomMargin = 1440;
     private final int section2NumColumns = 3;
     
+    @SuppressWarnings("SuspiciousNameCombination")
     public void testHWPFSections() {
-        HWPFDocument document = null;
-        Paragraph para = null;
-        Section section = null;
-        Range overallRange = null;
-        int numParas = 0;
-        int numSections = 0;
-        document = HWPFTestDataSamples.openSampleFile("Bug53453Section.doc");
-        overallRange = document.getOverallRange();
-        numParas = overallRange.numParagraphs();
+        HWPFDocument document = HWPFTestDataSamples.openSampleFile("Bug53453Section.doc");
+        Range overallRange = document.getOverallRange();
+        int numParas = overallRange.numParagraphs();
         for(int i = 0; i < numParas; i++) {
-            para = overallRange.getParagraph(i);
-            numSections = para.numSections();
+            Paragraph para = overallRange.getParagraph(i);
+            int numSections = para.numSections();
             for(int j = 0; j < numSections; j++) {
-                section = para.getSection(j);
+                Section section = para.getSection(j);
                 if(para.text().trim().equals("Section1")) {
-                    assertEquals(section1BottomMargin, section.getMarginBottom());
-                    assertEquals(section1LeftMargin, section.getMarginLeft());
-                    assertEquals(section1RightMargin, section.getMarginRight());
-                    assertEquals(section1TopMargin, section.getMarginTop());
-                    assertEquals(section1NumColumns, section.getNumColumns());
+                    assertSection1Margin(section);
                 }
                 else if(para.text().trim().equals("Section2")) {
-                    assertEquals(section2BottomMargin, section.getMarginBottom());
-                    assertEquals(section2LeftMargin, section.getMarginLeft());
-                    assertEquals(section2RightMargin, section.getMarginRight());
-                    assertEquals(section2TopMargin, section.getMarginTop());
-                    assertEquals(section2NumColumns, section.getNumColumns());
+                    assertSection2Margin(section);
                     
                     // Change the margin widths
                     this.section2BottomMargin = (int)(1.5 * AbstractWordUtils.TWIPS_PER_INCH);
@@ -869,28 +836,38 @@ public class TestBugs extends TestCase
         overallRange = document.getOverallRange();
         numParas = overallRange.numParagraphs();
         for(int i = 0; i < numParas; i++) {
-            para = overallRange.getParagraph(i);
-            numSections = para.numSections();
+            Paragraph para = overallRange.getParagraph(i);
+            int numSections = para.numSections();
             for(int j = 0; j < numSections; j++) {
-                section = para.getSection(j);
+                Section section = para.getSection(j);
                 if(para.text().trim().equals("Section1")) {
                     // No changes to the margins in Section1
-                    assertEquals(section1BottomMargin, section.getMarginBottom());
-                    assertEquals(section1LeftMargin, section.getMarginLeft());
-                    assertEquals(section1RightMargin, section.getMarginRight());
-                    assertEquals(section1TopMargin, section.getMarginTop());
-                    assertEquals(section1NumColumns, section.getNumColumns());
+                    assertSection1Margin(section);
                 }
                 else if(para.text().trim().equals("Section2")) {
                     // The margins in Section2 have kept the new settings.
-                    assertEquals(section2BottomMargin, section.getMarginBottom());
-                    assertEquals(section2LeftMargin, section.getMarginLeft());
-                    assertEquals(section2RightMargin, section.getMarginRight());
-                    assertEquals(section2TopMargin, section.getMarginTop());
-                    assertEquals(section2NumColumns, section.getNumColumns());
+                    assertSection2Margin(section);
                 }
             }
         }
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void assertSection1Margin(Section section) {
+        assertEquals(section1BottomMargin, section.getMarginBottom());
+        assertEquals(section1LeftMargin, section.getMarginLeft());
+        assertEquals(section1RightMargin, section.getMarginRight());
+        assertEquals(section1TopMargin, section.getMarginTop());
+        assertEquals(section1NumColumns, section.getNumColumns());
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void assertSection2Margin(Section section) {
+        assertEquals(section2BottomMargin, section.getMarginBottom());
+        assertEquals(section2LeftMargin, section.getMarginLeft());
+        assertEquals(section2RightMargin, section.getMarginRight());
+        assertEquals(section2TopMargin, section.getMarginTop());
+        assertEquals(section2NumColumns, section.getNumColumns());
     }
 
     public void testRegressionIn315beta2() {
@@ -898,24 +875,31 @@ public class TestBugs extends TestCase
         assertNotNull(hwpfDocument);
     }
 
-    public void DISABLEDtest57603SevenRowTable() throws Exception {
-        HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("57603-seven_columns.doc");
-        HWPFDocument hwpfDocument2 = HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument);
-        assertNotNull(hwpfDocument2);
+    public void test57603SevenRowTable() throws Exception {
+        try {
+            HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("57603-seven_columns.doc");
+            HWPFDocument hwpfDocument2 = HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument);
+            assertNotNull(hwpfDocument2);
+            hwpfDocument2.close();
+            hwpfDocument.close();
+            fixed("57603");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // expected until this bug is fixed
+        }
     }
     
     public void test57843() throws IOException {
+        File f = POIDataSamples.getDocumentInstance().getFile("57843.doc");
+        POIFSFileSystem fs = new POIFSFileSystem(f, true);
         try {
-            File f = POIDataSamples.getDocumentInstance().getFile("57843.doc");
-            boolean readOnly = true;
-            POIFSFileSystem fs = new POIFSFileSystem(f, readOnly);
             HWPFOldDocument doc = new HWPFOldDocument(fs);
             assertNotNull(doc);
             doc.close();
-            fs.close();
             fixed("57843");
         } catch (ArrayIndexOutOfBoundsException e) {
             // expected until this bug is fixed
+        } finally {
+            fs.close();
         }
     }
 }
