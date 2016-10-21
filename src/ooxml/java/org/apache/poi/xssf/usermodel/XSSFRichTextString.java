@@ -75,7 +75,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
  * </blockquote>
  */
 public class XSSFRichTextString implements RichTextString {
-    private static final Pattern utfPtrn = Pattern.compile("_x([0-9A-F]{4})_");
+    private static final Pattern utfPtrn = Pattern.compile("_x([0-9A-Fa-f]{4})_");
 
     private CTRst st;
     private StylesTable styles;
@@ -244,12 +244,13 @@ public class XSSFRichTextString implements RichTextString {
         if(ctFont.sizeOfShadowArray() > 0) pr.addNewShadow().setVal(ctFont.getShadowArray(0).getVal());
         if(ctFont.sizeOfStrikeArray() > 0) pr.addNewStrike().setVal(ctFont.getStrikeArray(0).getVal());
     }
-    
+
     /**
      * Does this string have any explicit formatting applied, or is 
      *  it just text in the default style?
      */
     public boolean hasFormatting() {
+        //noinspection deprecation - for performance reasons!
         CTRElt[] rs = st.getRArray();
         if (rs == null || rs.length == 0) {
             return false;
@@ -311,6 +312,7 @@ public class XSSFRichTextString implements RichTextString {
             return utfDecode(st.getT());
         }
         StringBuilder buf = new StringBuilder();
+        //noinspection deprecation - for performance reasons!
         for(CTRElt r : st.getRArray()){
             buf.append(r.getT());
         }
@@ -381,6 +383,7 @@ public class XSSFRichTextString implements RichTextString {
     public XSSFFont getFontAtIndex( int index ) {
         final ThemesTable themes = getThemesTable();
         int pos = 0;
+        //noinspection deprecation - for performance reasons!
         for(CTRElt r : st.getRArray()){
             final int length = r.getT().length();
             if(index >= pos && index < pos + length) {
@@ -406,6 +409,7 @@ public class XSSFRichTextString implements RichTextString {
     protected void setStylesTableReference(StylesTable tbl){
         styles = tbl;
         if(st.sizeOfRArray() > 0) {
+            //noinspection deprecation - for performance reasons!
             for (CTRElt r : st.getRArray()) {
                 CTRPrElt pr = r.getRPr();
                 if(pr != null && pr.sizeOfRFontArray() > 0){
@@ -556,6 +560,7 @@ public class XSSFRichTextString implements RichTextString {
     TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
         int length = 0;
         TreeMap<Integer, CTRPrElt> formats = new TreeMap<Integer, CTRPrElt>();
+        //noinspection deprecation - for performance reasons!
         for (CTRElt r : entry.getRArray()) {
             String txt = r.getT();
             CTRPrElt fmt = r.getRPr();
