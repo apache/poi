@@ -75,6 +75,7 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
@@ -1007,5 +1008,16 @@ public final class TestBugs {
             IOUtils.closeQuietly(is);
         }
         return null;
+    }
+
+    /**
+     * Bug 60294: Add "unknown" ShapeType for 4095
+     */
+    @Test
+    public void bug60294() throws IOException {
+        HSLFSlideShow ppt = open("60294.ppt");
+        List<HSLFShape> shList = ppt.getSlides().get(0).getShapes();
+        assertEquals(ShapeType.NOT_PRIMITIVE, ((HSLFAutoShape)shList.get(2)).getShapeType());
+        ppt.close();
     }
 }

@@ -307,6 +307,11 @@ public enum ShapeType {
     }
     
     public static ShapeType forId(int id, boolean isOoxmlId){
+        // exemption for #60294
+        if (!isOoxmlId && id == 0x0FFF) {
+            return NOT_PRIMITIVE;
+        }
+        
         for(ShapeType t : values()){
             if((isOoxmlId && t.ooxmlId == id) ||
                (!isOoxmlId && t.nativeId == id)) return t;
