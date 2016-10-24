@@ -41,10 +41,8 @@ public final class PointerFactory {
 			p.format = LittleEndian.getShort(data, offset+16);
 
 			return p;
-		} else if(version == 5) {
-			throw new RuntimeException("TODO Support v5 Pointers");
 		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
+			throw new IllegalArgumentException("Visio files with versions below 6 are not supported, yours was " + version);
 		}
 	}
 }
