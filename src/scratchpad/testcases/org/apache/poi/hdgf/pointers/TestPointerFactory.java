@@ -40,24 +40,13 @@ public final class TestPointerFactory extends TestCase {
 		-1, 0, 0, 0, -84, -1, 79, 1, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0
 	};
 
-	public void testCreateV4() {
-		PointerFactory pf = new PointerFactory(4);
-		try {
-			pf.createPointer(new byte[]{}, 0);
-			fail();
-		} catch(IllegalArgumentException e) {
-			// As expected
-		}
-	}
-
 	public void testCreateV5() {
 		PointerFactory pf = new PointerFactory(5);
 		try {
 			pf.createPointer(new byte[]{}, 0);
 			fail();
-		} catch(RuntimeException e) {
-			// Still to do
-			assertEquals("TODO Support v5 Pointers", e.getMessage());
+		} catch(IllegalArgumentException e) {
+			// As expected
 		}
 	}
 
