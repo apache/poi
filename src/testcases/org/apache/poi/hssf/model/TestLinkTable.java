@@ -101,7 +101,7 @@ public final class TestLinkTable extends TestCase {
 		The original file produces the same error.
 
 		This bug was caused by a combination of invalid sheet indexes in the EXTERNSHEET
-		record, and eager initialisation of the extern sheet references. Note - the workbook
+		record, and eager initialization of the extern sheet references. Note - the workbook
 		has 2 sheets, but the EXTERNSHEET record refers to sheet indexes 0, 1 and 2.
 
 		Offset 0x3954 (14676)

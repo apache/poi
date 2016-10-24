@@ -63,7 +63,7 @@ public final class TestBoolErrRecord extends TestCase {
 		try {
 			hasMore = in.hasNextRecord();
 		} catch (LeftoverDataException e) {
-			if ("Initialisation of record 0x205 left 1 bytes remaining still to be read.".equals(e.getMessage())) {
+			if ("Initialization of record 0x205 left 1 bytes remaining still to be read.".equals(e.getMessage())) {
 				throw new AssertionFailedError("Identified bug 47479");
 			}
 			throw e;
