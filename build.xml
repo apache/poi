@@ -300,6 +300,7 @@ under the License.
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
     	<propertyref name="org.apache.commons.logging.Log"/>
         <propertyref name="java.locale.providers"/>		<!-- required for Java 9 compilation -->
+        <propertyref name="version.id"/>    <!-- to detect if we are running on slow Gump VM -->
     </propertyset>
 
     <!-- this can be overwriten to empty when running with Java 9 -->
