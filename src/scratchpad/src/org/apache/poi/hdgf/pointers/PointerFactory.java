@@ -42,7 +42,14 @@ public final class PointerFactory {
 
 			return p;
 		} else if(version == 5) {
-			throw new RuntimeException("TODO Support v5 Pointers");
+            p = new PointerV5();
+            p.type = LittleEndian.getShort(data, offset+0);
+            p.format = LittleEndian.getShort(data, offset+2);
+            p.address = (int)LittleEndian.getUInt(data, offset+4);
+            p.offset = (int)LittleEndian.getUInt(data, offset+8);
+            p.length = (int)LittleEndian.getUInt(data, offset+12);
+
+            return p;
 		} else {
 			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
 		}

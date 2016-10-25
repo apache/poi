@@ -23,6 +23,12 @@ import junit.framework.TestCase;
  * Tests for the pointer factory, and the pointers themselves
  */
 public final class TestPointerFactory extends TestCase {
+    // Type: 14    Addr: 011eb2ac  Offset: 1dd4    Len:  14d   Format: 52  From: 24
+    private static byte[] vp5_a = new byte[] {
+        0x14, 0, 0x52, 0, (byte)0xac, (byte)0xb2, 0x1e, 1, (byte)0xd4, 0x1d, 0, 0,
+        0x4d, 1, 0, 0
+    };
+    
 	// Type: 16   Addr: 0143aff4  Offset: 80   Len: 54   Format: 46   From: 8a94
 	private static byte[] vp6_a = new byte[] {
 		22, 0, 0, 0, -12, -81, 67, 1, -128, 0, 0, 0, 84, 0, 0, 0, 70, 0
@@ -52,13 +58,21 @@ public final class TestPointerFactory extends TestCase {
 
 	public void testCreateV5() {
 		PointerFactory pf = new PointerFactory(5);
-		try {
-			pf.createPointer(new byte[]{}, 0);
-			fail();
-		} catch(RuntimeException e) {
-			// Still to do
-			assertEquals("TODO Support v5 Pointers", e.getMessage());
-		}
+		
+        Pointer a = pf.createPointer(vp5_a, 0);
+        assertEquals(0x14, a.getType());
+        assertEquals(0x011eb2ac, a.getAddress());
+        assertEquals(0x1dd4, a.getOffset());
+        assertEquals(0x14d, a.getLength());
+        assertEquals(0x52, a.getFormat());
+
+        // TODO Are these right?
+        assertTrue(a.destinationCompressed());
+        assertFalse(a.destinationHasStrings());
+        assertFalse(a.destinationHasChunks());
+        assertTrue(a.destinationHasPointers());
+
+        assertEquals(16, a.getSizeInBytes());
 	}
 
 	public void testCreateV6() {
