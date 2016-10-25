@@ -17,6 +17,7 @@
 
 package org.apache.poi.hdgf.pointers;
 
+import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -53,5 +54,42 @@ public final class PointerFactory {
 		} else {
 			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
 		}
+	}
+	
+	/**
+	 * In a {@link PointerContainingStream}, where would the
+	 *  number of child pointers be stored for this kind of Pointer?
+	 */
+	public int identifyNumPointersOffset(Pointer pointer, byte[] data) {
+	    if (pointer instanceof PointerV6) {
+	        // V6 stores it as the first value in the stream
+	        return (int)LittleEndian.getUInt(data, 0);
+	    } else if (pointer instanceof PointerV5) {
+	        // V5 uses fixed offsets
+	        switch (pointer.type) {
+    	         case 0x1d:
+    	         case 0x4e:
+    	            return 0x24-6;
+    	         case 0x1e:
+    	            return 0x3c-6;
+                 case 0x14:
+                     return 0x88-6;
+	        }
+	        return 10;
+	    } else {
+            throw new IllegalArgumentException("Unsupported Pointer type " + pointer);
+	    }
+	}
+	
+	public int identifyNumPointers(Pointer pointer, int offset, byte[] data) {
+        if (pointer instanceof PointerV6) {
+            // V6 stores it a 32 bit number at the offset
+            return (int)LittleEndian.getUInt(data, offset);
+        } else if (pointer instanceof PointerV5) {
+            // V5 stores it as a 16 bit number at the offset
+            return LittleEndian.getShort(data, offset);
+        } else {
+            throw new IllegalArgumentException("Unsupported Pointer type " + pointer);
+        }
 	}
 }
