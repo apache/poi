@@ -22,6 +22,7 @@ import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.POIDataSamples;
+import org.junit.Ignore;
 
 import junit.framework.TestCase;
 
@@ -90,6 +91,21 @@ public final class TestHDGFCore extends TestCase {
       HDGFDiagram hdgf = new HDGFDiagram(fs);
       assertNotNull(hdgf);
 	}
+
+	/**
+	 * TODO: V5 support is incomplete
+	 */
+    public void TODOtestV5() throws Exception {
+        fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v5_Connection_Types.vsd"));
+
+        HDGFDiagram hdgf = new HDGFDiagram(fs);
+        assertNotNull(hdgf);
+
+        VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf);
+        String text = textExtractor.getText().replace("\u0000", "").trim();
+
+        assertEquals("Static to Static\n\nDynamic to Dynamic\n\nDynamic to Static", text);
+    }
 
     public void testV6NonUtf16LE() throws Exception {
    		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v6-non-utf16le.vsd"));
