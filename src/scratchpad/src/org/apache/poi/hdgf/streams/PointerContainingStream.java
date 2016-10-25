@@ -20,6 +20,7 @@ package org.apache.poi.hdgf.streams;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
+import org.apache.poi.hdgf.pointers.PointerV6;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -40,20 +41,26 @@ public class PointerContainingStream extends Stream { // TODO - instantiable sup
 		this.pointerFactory = pointerFactory;
 
 		// Find the offset to the number of child pointers we have
-		// This ought to be the first thing stored in us
-		numPointersLocalOffset = (int)LittleEndian.getUInt(
-				store.getContents(), 0
+		numPointersLocalOffset = pointerFactory.identifyNumPointersOffset(
+				pointer, store.getContents()
 		);
 
 		// Generate the objects for the pointers we contain
-		int numPointers = (int)LittleEndian.getUInt(
-				store.getContents(), numPointersLocalOffset
+		int numPointers = pointerFactory.identifyNumPointers(
+				pointer, numPointersLocalOffset, store.getContents()
 		);
 		childPointers = new Pointer[numPointers];
+		
+		// Prepare to read the children
+        int pos = numPointersLocalOffset;
 
-		// After the number of pointers is another (unknown)
-		//  4 byte value
-		int pos = numPointersLocalOffset + 4 + 4;
+        // v5 only has another (unknown) 4 byte value
+        // TODO Should this logic go into PointerFactory?
+        if (pointer instanceof PointerV6) {
+            pos += 4 + 4;
+        } else {
+            pos += 2;
+        }
 
 		// Now create the pointer objects
 		for(int i=0; i<numPointers; i++) {
