@@ -29,19 +29,26 @@ public final class TestHDGFCore extends TestCase {
     private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
 
     private POIFSFileSystem fs;
+    private HDGFDiagram hdgf;
+    private VisioTextExtractor textExtractor;
 
     @Override
     protected void setUp() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
     }
-    
+    @Override
+    protected void tearDown() throws Exception {
+        if (textExtractor != null) textExtractor.close();
+        if (hdgf != null) hdgf.close();
+    }
+
 
     public void testCreate() throws Exception {
-        new HDGFDiagram(fs);
+        hdgf = new HDGFDiagram(fs);
     }
 
     public void testTrailer() throws Exception {
-        HDGFDiagram hdgf = new HDGFDiagram(fs);
+        hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
         assertNotNull(hdgf.getTrailerStream());
 
@@ -70,7 +77,7 @@ public final class TestHDGFCore extends TestCase {
     public void testNegativeChunkLength() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength.vsd"));
 
-        HDGFDiagram hdgf = new HDGFDiagram(fs);
+        hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
 
         // And another file
@@ -88,17 +95,17 @@ public final class TestHDGFCore extends TestCase {
     public void DISABLEDtestAIOOB() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("44501.vsd"));
 
-        HDGFDiagram hdgf = new HDGFDiagram(fs);
+        hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
     }
 
     public void testV5() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v5_Connection_Types.vsd"));
 
-        HDGFDiagram hdgf = new HDGFDiagram(fs);
+        hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
 
-        VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf);
+        textExtractor = new VisioTextExtractor(hdgf);
         String text = textExtractor.getText().replace("\u0000", "").trim();
 
         assertEquals("Static to Static\nDynamic to Static\nDynamic to Dynamic", text);
@@ -107,10 +114,10 @@ public final class TestHDGFCore extends TestCase {
     public void testV6NonUtf16LE() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v6-non-utf16le.vsd"));
 
-        HDGFDiagram hdgf = new HDGFDiagram(fs);
+        hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
 
-        VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf);
+        textExtractor = new VisioTextExtractor(hdgf);
         String text = textExtractor.getText().replace("\u0000", "").trim();
 
         assertEquals("Table\n\n\nPropertySheet\n\n\n\nPropertySheetField", text);
@@ -119,10 +126,10 @@ public final class TestHDGFCore extends TestCase {
     public void testUtf16LE() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
 
-        HDGFDiagram hdgf = new HDGFDiagram(fs);
+        hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
 
-        VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf);
+        textExtractor = new VisioTextExtractor(hdgf);
         String text = textExtractor.getText().trim();
 
         assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page", text);
