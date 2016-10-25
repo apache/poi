@@ -92,10 +92,7 @@ public final class TestHDGFCore extends TestCase {
       assertNotNull(hdgf);
 	}
 
-	/**
-	 * TODO: V5 support is incomplete
-	 */
-    public void TODOtestV5() throws Exception {
+    public void testV5() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v5_Connection_Types.vsd"));
 
         HDGFDiagram hdgf = new HDGFDiagram(fs);
@@ -104,7 +101,7 @@ public final class TestHDGFCore extends TestCase {
         VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf);
         String text = textExtractor.getText().replace("\u0000", "").trim();
 
-        assertEquals("Static to Static\n\nDynamic to Dynamic\n\nDynamic to Static", text);
+        assertEquals("Static to Static\nDynamic to Static\nDynamic to Dynamic", text);
     }
 
     public void testV6NonUtf16LE() throws Exception {
