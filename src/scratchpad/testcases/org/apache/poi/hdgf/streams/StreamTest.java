@@ -18,6 +18,7 @@
 package org.apache.poi.hdgf.streams;
 
 import org.apache.poi.hdgf.pointers.Pointer;
+import static org.apache.poi.hdgf.pointers.PointerV6.*;
 
 import junit.framework.TestCase;
 
@@ -41,7 +42,20 @@ public abstract class StreamTest extends TestCase {
         public boolean destinationHasPointers() { return hasPointers; }
 		@Override
         public boolean destinationHasStrings() { return false; }
+		
 		@Override
         public int getSizeInBytes() { return -1; }
+		@Override
+        public int getNumPointersOffset(byte[] data) { 
+		    return getNumPointersOffsetV6(data); 
+		}
+        @Override
+        public int getNumPointers(int offset, byte[] data) { 
+            return getNumPointersV6(offset, data);
+        }
+        @Override
+        public int getPostNumPointersSkip() {
+            return getPostNumPointersSkipV6();
+        }
 	}
 }

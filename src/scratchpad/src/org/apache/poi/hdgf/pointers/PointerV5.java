@@ -17,6 +17,8 @@
 
 package org.apache.poi.hdgf.pointers;
 
+import org.apache.poi.util.LittleEndian;
+
 /**
  * A Pointer from v5
  */
@@ -43,4 +45,33 @@ public final class PointerV5 extends Pointer {
 	 * With v6 pointers, the on-disk size is 16 bytes
 	 */
 	public int getSizeInBytes() { return 16; }
+	
+	/**
+	 * Depends on the type only, not stored
+	 */
+    public int getNumPointersOffset(byte[] data) {
+        switch (type) {
+            case 0x1d:
+            case 0x4e:
+               return 0x24-6;
+            case 0x1e:
+               return 0x3c-6;
+            case 0x14:
+                return 0x88-6;
+       }
+       return 10;
+    }
+    /**
+     * 16 bit int at the given offset
+     */
+    public int getNumPointers(int offset, byte[] data) {
+        // V5 stores it as a 16 bit number at the offset
+        return LittleEndian.getShort(data, offset);
+    }
+    /**
+     * Just the 2 bytes of the number of pointers
+     */
+    public int getPostNumPointersSkip() {
+        return 2;
+    }
 }
