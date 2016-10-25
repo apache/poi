@@ -25,27 +25,27 @@ import org.apache.poi.util.LittleEndian;
  *  of the file
  */
 public final class PointerFactory {
-	private int version;
-	public PointerFactory(int version) {
-		this.version = version;
-	}
-	public int getVersion() { return version; }
+    private int version;
+    public PointerFactory(int version) {
+        this.version = version;
+    }
+    public int getVersion() { return version; }
 
-	/**
-	 * Creates a single Pointer from the data at the given offset
-	 */
-	public Pointer createPointer(byte[] data, int offset) {
-		Pointer p;
-		if(version >= 6) {
-			p = new PointerV6();
-			p.type = LittleEndian.getInt(data, offset+0);
-			p.address = (int)LittleEndian.getUInt(data, offset+4);
-			p.offset = (int)LittleEndian.getUInt(data, offset+8);
-			p.length = (int)LittleEndian.getUInt(data, offset+12);
-			p.format = LittleEndian.getShort(data, offset+16);
+    /**
+     * Creates a single Pointer from the data at the given offset
+     */
+    public Pointer createPointer(byte[] data, int offset) {
+        Pointer p;
+        if(version >= 6) {
+            p = new PointerV6();
+            p.type = LittleEndian.getInt(data, offset+0);
+            p.address = (int)LittleEndian.getUInt(data, offset+4);
+            p.offset = (int)LittleEndian.getUInt(data, offset+8);
+            p.length = (int)LittleEndian.getUInt(data, offset+12);
+            p.format = LittleEndian.getShort(data, offset+16);
 
-			return p;
-		} else if(version == 5) {
+            return p;
+        } else if(version == 5) {
             p = new PointerV5();
             p.type = LittleEndian.getShort(data, offset+0);
             p.format = LittleEndian.getShort(data, offset+2);
@@ -54,31 +54,31 @@ public final class PointerFactory {
             p.length = (int)LittleEndian.getUInt(data, offset+12);
 
             return p;
-		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
-		}
-	}
-	
-	/**
-	 * Parsers the {@link PointerContainingStream} contents and
-	 *  creates all the child Pointers for it
-	 */
-	public Pointer[] createContainerPointers(Pointer parent, byte[] data) {
-	    // Where in the stream does the "number of pointers" offset live?
-	    int numPointersOffset = parent.getNumPointersOffset(data);
-	    // How many do we have?
-	    int numPointers = parent.getNumPointers(numPointersOffset, data);
-	    // How much to skip for the num pointers + any extra data?
-	    int skip = parent.getPostNumPointersSkip();
-	    
-	    // Create
-	    int pos = numPointersOffset + skip;
-	    Pointer[] childPointers = new Pointer[numPointers];
+        } else {
+            throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
+        }
+    }
+
+    /**
+     * Parsers the {@link PointerContainingStream} contents and
+     *  creates all the child Pointers for it
+     */
+    public Pointer[] createContainerPointers(Pointer parent, byte[] data) {
+        // Where in the stream does the "number of pointers" offset live?
+        int numPointersOffset = parent.getNumPointersOffset(data);
+        // How many do we have?
+        int numPointers = parent.getNumPointers(numPointersOffset, data);
+        // How much to skip for the num pointers + any extra data?
+        int skip = parent.getPostNumPointersSkip();
+
+        // Create
+        int pos = numPointersOffset + skip;
+        Pointer[] childPointers = new Pointer[numPointers];
         for(int i=0; i<numPointers; i++) {
             childPointers[i] = this.createPointer(data, pos);
             pos += childPointers[i].getSizeInBytes();
         }
-        
+
         return childPointers;
-	}
+    }
 }

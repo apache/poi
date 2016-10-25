@@ -24,42 +24,42 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class PointerV5 extends Pointer {
     // TODO Are these getters correct?
-	public boolean destinationHasStrings() {
-		return (0x40 <= format && format < 0x50);
-	}
-	public boolean destinationHasPointers() {
-		if(type == 20) return true;
-		if(format == 0x1d || format == 0x1e) return true;
-		return (0x50 <= format && format < 0x60);
-	}
-	public boolean destinationHasChunks() {
-		return (0xd0 <= format && format < 0xdf);
-	}
+    public boolean destinationHasStrings() {
+        return (0x40 <= format && format < 0x50);
+    }
+    public boolean destinationHasPointers() {
+        if(type == 20) return true;
+        if(format == 0x1d || format == 0x1e) return true;
+        return (0x50 <= format && format < 0x60);
+    }
+    public boolean destinationHasChunks() {
+        return (0xd0 <= format && format < 0xdf);
+    }
 
-	public boolean destinationCompressed() {
-		// Apparently, it's the second least significant bit
-		return (format & 2) > 0;
-	}
+    public boolean destinationCompressed() {
+        // Apparently, it's the second least significant bit
+        return (format & 2) > 0;
+    }
 
-	/**
-	 * With v6 pointers, the on-disk size is 16 bytes
-	 */
-	public int getSizeInBytes() { return 16; }
-	
-	/**
-	 * Depends on the type only, not stored
-	 */
+    /**
+     * With v6 pointers, the on-disk size is 16 bytes
+     */
+    public int getSizeInBytes() { return 16; }
+
+    /**
+     * Depends on the type only, not stored
+     */
     public int getNumPointersOffset(byte[] data) {
         switch (type) {
             case 0x1d:
             case 0x4e:
-               return 0x24-6;
+                return 30;
             case 0x1e:
-               return 0x3c-6;
+                return 54;
             case 0x14:
-                return 0x88-6;
-       }
-       return 10;
+                return 130;
+        }
+        return 10;
     }
     /**
      * 16 bit int at the given offset

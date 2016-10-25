@@ -23,32 +23,32 @@ import static org.apache.poi.hdgf.pointers.PointerV6.*;
 import junit.framework.TestCase;
 
 public abstract class StreamTest extends TestCase {
-	public static class TestPointer extends Pointer {
-		private final boolean compressed;
-		protected boolean hasPointers = false;
-		public TestPointer(boolean compressed, int offset, int length, int type, short format) {
-			this.compressed = compressed;
-			this.offset = offset;
-			this.length = length;
-			this.type = type;
-			this.format = format;
-		}
+    public static class TestPointer extends Pointer {
+        private final boolean compressed;
+        protected boolean hasPointers = false;
+        public TestPointer(boolean compressed, int offset, int length, int type, short format) {
+            this.compressed = compressed;
+            this.offset = offset;
+            this.length = length;
+            this.type = type;
+            this.format = format;
+        }
 
-		@Override
+        @Override
         public boolean destinationCompressed() { return compressed; }
-		@Override
+        @Override
         public boolean destinationHasChunks() { return false; }
-		@Override
+        @Override
         public boolean destinationHasPointers() { return hasPointers; }
-		@Override
+        @Override
         public boolean destinationHasStrings() { return false; }
-		
-		@Override
+
+        @Override
         public int getSizeInBytes() { return -1; }
-		@Override
+        @Override
         public int getNumPointersOffset(byte[] data) { 
-		    return getNumPointersOffsetV6(data); 
-		}
+            return getNumPointersOffsetV6(data); 
+        }
         @Override
         public int getNumPointers(int offset, byte[] data) { 
             return getNumPointersV6(offset, data);
@@ -57,5 +57,5 @@ public abstract class StreamTest extends TestCase {
         public int getPostNumPointersSkip() {
             return getPostNumPointersSkipV6();
         }
-	}
+    }
 }
