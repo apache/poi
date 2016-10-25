@@ -31,6 +31,9 @@ public final class PointerFactory {
 	}
 	public int getVersion() { return version; }
 
+	/**
+	 * Creates a single Pointer from the data at the given offset
+	 */
 	public Pointer createPointer(byte[] data, int offset) {
 		Pointer p;
 		if(version >= 6) {
@@ -57,39 +60,25 @@ public final class PointerFactory {
 	}
 	
 	/**
-	 * In a {@link PointerContainingStream}, where would the
-	 *  number of child pointers be stored for this kind of Pointer?
+	 * Parsers the {@link PointerContainingStream} contents and
+	 *  creates all the child Pointers for it
 	 */
-	public int identifyNumPointersOffset(Pointer pointer, byte[] data) {
-	    if (pointer instanceof PointerV6) {
-	        // V6 stores it as the first value in the stream
-	        return (int)LittleEndian.getUInt(data, 0);
-	    } else if (pointer instanceof PointerV5) {
-	        // V5 uses fixed offsets
-	        switch (pointer.type) {
-    	         case 0x1d:
-    	         case 0x4e:
-    	            return 0x24-6;
-    	         case 0x1e:
-    	            return 0x3c-6;
-                 case 0x14:
-                     return 0x88-6;
-	        }
-	        return 10;
-	    } else {
-            throw new IllegalArgumentException("Unsupported Pointer type " + pointer);
-	    }
-	}
-	
-	public int identifyNumPointers(Pointer pointer, int offset, byte[] data) {
-        if (pointer instanceof PointerV6) {
-            // V6 stores it a 32 bit number at the offset
-            return (int)LittleEndian.getUInt(data, offset);
-        } else if (pointer instanceof PointerV5) {
-            // V5 stores it as a 16 bit number at the offset
-            return LittleEndian.getShort(data, offset);
-        } else {
-            throw new IllegalArgumentException("Unsupported Pointer type " + pointer);
+	public Pointer[] createContainerPointers(Pointer parent, byte[] data) {
+	    // Where in the stream does the "number of pointers" offset live?
+	    int numPointersOffset = parent.getNumPointersOffset(data);
+	    // How many do we have?
+	    int numPointers = parent.getNumPointers(numPointersOffset, data);
+	    // How much to skip for the num pointers + any extra data?
+	    int skip = parent.getPostNumPointersSkip();
+	    
+	    // Create
+	    int pos = numPointersOffset + skip;
+	    Pointer[] childPointers = new Pointer[numPointers];
+        for(int i=0; i<numPointers; i++) {
+            childPointers[i] = this.createPointer(data, pos);
+            pos += childPointers[i].getSizeInBytes();
         }
+        
+        return childPointers;
 	}
 }

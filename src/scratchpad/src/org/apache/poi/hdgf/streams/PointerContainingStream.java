@@ -20,8 +20,6 @@ package org.apache.poi.hdgf.streams;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
-import org.apache.poi.hdgf.pointers.PointerV6;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * A stream that holds pointers, possibly in addition to some
@@ -33,42 +31,14 @@ public class PointerContainingStream extends Stream { // TODO - instantiable sup
 
 	private ChunkFactory chunkFactory;
 	private PointerFactory pointerFactory;
-	private int numPointersLocalOffset;
 
 	protected PointerContainingStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
 		super(pointer, store);
 		this.chunkFactory = chunkFactory;
 		this.pointerFactory = pointerFactory;
-
-		// Find the offset to the number of child pointers we have
-		numPointersLocalOffset = pointerFactory.identifyNumPointersOffset(
-				pointer, store.getContents()
-		);
-
-		// Generate the objects for the pointers we contain
-		int numPointers = pointerFactory.identifyNumPointers(
-				pointer, numPointersLocalOffset, store.getContents()
-		);
-		childPointers = new Pointer[numPointers];
 		
-		// Prepare to read the children
-        int pos = numPointersLocalOffset;
-
-        // v5 only has another (unknown) 4 byte value
-        // TODO Should this logic go into PointerFactory?
-        if (pointer instanceof PointerV6) {
-            pos += 4 + 4;
-        } else {
-            pos += 2;
-        }
-
-		// Now create the pointer objects
-		for(int i=0; i<numPointers; i++) {
-			childPointers[i] = pointerFactory.createPointer(
-					store.getContents(), pos
-			);
-			pos += childPointers[i].getSizeInBytes();
-		}
+		// Have the child pointers identified and created
+		childPointers = pointerFactory.createContainerPointers(pointer, store.getContents());
 	}
 
 	/**

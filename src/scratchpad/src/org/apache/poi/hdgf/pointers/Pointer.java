@@ -45,6 +45,10 @@ public abstract class Pointer {
 	}
 
 	public abstract int getSizeInBytes();
+	public abstract int getNumPointersOffset(byte[] data);
+	public abstract int getNumPointers(int offset, byte[] data);
+	public abstract int getPostNumPointersSkip();
+	
 	public abstract boolean destinationHasStrings();
 	public abstract boolean destinationHasPointers();
 	public abstract boolean destinationHasChunks();
