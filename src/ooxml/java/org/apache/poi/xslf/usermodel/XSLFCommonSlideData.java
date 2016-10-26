@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -38,6 +39,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
+/*
+ * @deprecated POI 3.16 beta 1. - iterate over the shapes of a slide instead
+ */
+@Removal(version="3.18")
 @Beta
 public class XSLFCommonSlideData {
     private final CTCommonSlideData data;

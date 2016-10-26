@@ -17,24 +17,25 @@
 package org.apache.poi.xslf.extractor;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xslf.usermodel.DrawingParagraph;
-import org.apache.poi.xslf.usermodel.DrawingTextBody;
-import org.apache.poi.xslf.usermodel.DrawingTextPlaceholder;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFCommentAuthors;
 import org.apache.poi.xslf.usermodel.XSLFComments;
-import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
 import org.apache.poi.xslf.usermodel.XSLFNotes;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFShapeContainer;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFTable;
+import org.apache.poi.xslf.usermodel.XSLFTableCell;
+import org.apache.poi.xslf.usermodel.XSLFTableRow;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthor;
@@ -115,84 +116,108 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
    
    /**
     * Gets the requested text from the file
+    * 
     * @param slideText Should we retrieve text from slides?
     * @param notesText Should we retrieve text from notes?
     * @param masterText Should we retrieve text from master slides?
+    * 
+    * @return the extracted text
     */
    public String getText(boolean slideText, boolean notesText, boolean masterText) {
-      StringBuffer text = new StringBuffer();
+      StringBuilder text = new StringBuilder();
 
-      List<XSLFSlide> slides = slideshow.getSlides();
-      XSLFCommentAuthors commentAuthors = slideshow.getCommentAuthors();
-
-      for (XSLFSlide slide : slides) {
-         try {
-            XSLFNotes notes = slide.getNotes();
-            XSLFComments comments = slide.getComments();
-            XSLFSlideLayout layout = slide.getSlideLayout();
-            XSLFSlideMaster master = layout.getSlideMaster();
-
-            // TODO Do the slide's name
-            // (Stored in docProps/app.xml)
-
-            // Do the slide's text if requested
-            if (slideText) {
-               extractText(slide.getCommonSlideData(), false, text);
-               
-               // If requested, get text from the master and it's layout 
-               if(masterText) {
-                  if(layout != null) {
-                     extractText(layout.getCommonSlideData(), true, text);
-                  }
-                  if(master != null) {
-                     extractText(master.getCommonSlideData(), true, text);
-                  }
-               }
-
-               // If the slide has comments, do those too
-               if (comments != null) {
-                  for (CTComment comment : comments.getCTCommentsList().getCmArray()) {
-                     // Do the author if we can
-                     if (commentAuthors != null) {
-                        CTCommentAuthor author = commentAuthors.getAuthorById(comment.getAuthorId());
-                        if(author != null) {
-                           text.append(author.getName() + ": ");
-                        }
-                     }
-                     
-                     // Then the comment text, with a new line afterwards
-                     text.append(comment.getText());
-                     text.append("\n");
-                  }
-               }
-            }
-
-            // Do the notes if requested
-            if (notesText && notes != null) {
-               extractText(notes.getCommonSlideData(), false, text);
-            }
-         } catch (Exception e) {
-            throw new RuntimeException(e);
-         }
+      for (XSLFSlide slide : slideshow.getSlides()) {
+          text.append(getText(slide, slideText, notesText, masterText));
       }
 
       return text.toString();
    }
-	
-	private void extractText(XSLFCommonSlideData data, boolean skipPlaceholders, StringBuffer text) {
-	   for(DrawingTextBody textBody : data.getDrawingText()) {
-	      if(skipPlaceholders && textBody instanceof DrawingTextPlaceholder) {
-	         DrawingTextPlaceholder ph = (DrawingTextPlaceholder)textBody;
-	         if(! ph.isPlaceholderCustom()) {
-	            // Skip non-customised placeholder text
-	            continue;
-	         }
-	      }
-	      
-	      for (DrawingParagraph p : textBody.getParagraphs()) {
-            text.append(p.getText());
-            text.append("\n");
-	      }
-	   }
+
+   /**
+    * Gets the requested text from the slide
+    * 
+    * @param slide the slide to retrieve the text from
+    * @param slideText Should we retrieve text from slides?
+    * @param notesText Should we retrieve text from notes?
+    * @param masterText Should we retrieve text from master slides?
+    * 
+    * @return the extracted text
+    */
+   public static String getText(XSLFSlide slide, boolean slideText, boolean notesText, boolean masterText) {
+       StringBuilder text = new StringBuilder();
+
+       XSLFCommentAuthors commentAuthors = slide.getSlideShow().getCommentAuthors();
+
+       XSLFNotes notes = slide.getNotes();
+       XSLFComments comments = slide.getComments();
+       XSLFSlideLayout layout = slide.getSlideLayout();
+       XSLFSlideMaster master = layout.getSlideMaster();
+
+       // TODO Do the slide's name
+       // (Stored in docProps/app.xml)
+
+       // Do the slide's text if requested
+       if (slideText) {
+          extractText(slide, false, text);
+          
+          // If requested, get text from the master and it's layout 
+          if(masterText) {
+             if(layout != null) {
+                extractText(layout, true, text);
+             }
+             if(master != null) {
+                extractText(master, true, text);
+             }
+          }
+
+          // If the slide has comments, do those too
+          if (comments != null) {
+             for (CTComment comment : comments.getCTCommentsList().getCmArray()) {
+                // Do the author if we can
+                if (commentAuthors != null) {
+                   CTCommentAuthor author = commentAuthors.getAuthorById(comment.getAuthorId());
+                   if(author != null) {
+                      text.append(author.getName() + ": ");
+                   }
+                }
+                
+                // Then the comment text, with a new line afterwards
+                text.append(comment.getText());
+                text.append("\n");
+             }
+          }
+       }
+
+       // Do the notes if requested
+       if (notesText && notes != null) {
+          extractText(notes, false, text);
+       }
+       
+       return text.toString();
+   }
+   
+    private static void extractText(XSLFShapeContainer data, boolean skipPlaceholders, StringBuilder text) {
+       for (XSLFShape s : data) {
+           if (s instanceof XSLFShapeContainer) {
+               extractText((XSLFShapeContainer)s, skipPlaceholders, text);
+           } else if (s instanceof XSLFTextShape) {
+               XSLFTextShape ts = (XSLFTextShape)s;
+               // Skip non-customised placeholder text
+               if (!(skipPlaceholders && ts.isPlaceholder())) {
+                   text.append(ts.getText());
+                   text.append("\n");
+               }
+           } else if (s instanceof XSLFTable) {
+               XSLFTable ts = (XSLFTable)s;
+               // Skip non-customised placeholder text
+               for (XSLFTableRow r : ts) {
+                   for (XSLFTableCell c : r) {
+                       text.append(c.getText());
+                       text.append("\t");
+                   }
+                   text.append("\n");
+               }
+           }
+       }
 	}
 }

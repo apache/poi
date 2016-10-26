@@ -47,6 +47,7 @@ import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
@@ -128,11 +129,19 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      */
     public abstract XmlObject getXmlObject();
 
+    /*
+     * @deprecated POI 3.16 beta 1. use {@link XSLFTable} instead
+     */
+    @Removal(version="3.18")
     @Internal
     public XSLFCommonSlideData getCommonSlideData() {
        return _commonSlideData;
     }
 
+    /*
+     * @deprecated POI 3.16 beta 1. use {@link XSLFTable} instead
+     */
+    @Removal(version="3.18")
     protected void setCommonSlideData(CTCommonSlideData data) {
        if(data == null) {
           _commonSlideData = null;
@@ -550,7 +559,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @param packagePart   package part containing the data to import
      * @return ID of the created relationship
      */
-    @SuppressWarnings("resource")
     String importBlip(String blipId, PackagePart packagePart) {
         PackageRelationship blipRel = packagePart.getRelationship(blipId);
         PackagePart blipPart;
@@ -573,7 +581,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     /**
      * Import a package part into this sheet.
      */
-    @SuppressWarnings("resource")
     PackagePart importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
         PackagePart destPP = getPackagePart();
         PackagePartName srcPPName = srcPafrt.getPartName();
