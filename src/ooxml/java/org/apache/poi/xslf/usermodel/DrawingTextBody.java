@@ -22,7 +22,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
 /*
- * @deprecated POI 3.16 beta 1. use {@link XSLFTable} instead
+ * @deprecated POI 3.16 beta 1. use {@link XSLFTextShape} instead
  */
 @Removal(version="3.18")
 public class DrawingTextBody {

@@ -28,7 +28,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  *
  */
 /*
- * @deprecated POI 3.16 beta 1. use ??? instead
+ * @deprecated POI 3.16 beta 1. use {@link XSLFSimpleShape#isPlaceholder} instead
  */
 @Removal(version="3.18")
 public class DrawingTextPlaceholder extends DrawingTextBody {
