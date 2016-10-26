@@ -51,6 +51,7 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -252,14 +253,7 @@ public class TestXSLFBugs {
     }
     
     protected String getSlideText(XSLFSlide slide) {
-        StringBuffer text = new StringBuffer();
-        for(DrawingTextBody textBody : slide.getCommonSlideData().getDrawingText()) {
-            for (DrawingParagraph p : textBody.getParagraphs()) {
-                text.append(p.getText());
-                text.append("\n");
-            }
-        }
-        return text.toString();
+        return XSLFPowerPointExtractor.getText(slide, true, false, false);
     }
 
     @Test

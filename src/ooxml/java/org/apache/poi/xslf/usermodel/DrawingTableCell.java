@@ -17,8 +17,13 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 
+/*
+ * @deprecated POI 3.16 beta 1. use {@link XSLFTable} instead
+ */
+@Removal(version="3.18")
 public class DrawingTableCell {
     private final CTTableCell cell;
     private final DrawingTextBody drawingTextBody;

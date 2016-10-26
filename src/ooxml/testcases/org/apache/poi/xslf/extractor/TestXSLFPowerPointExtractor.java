@@ -97,21 +97,21 @@ public class TestXSLFPowerPointExtractor {
 
 		// Just notes, no slides
 		text = extractor.getText(false, true);
-		assertEquals("\n\n\n\n", text);
+		assertEquals("\n\n1\n\n\n2\n", text);
 
 		// Both
 		text = extractor.getText(true, true, false);
 		String bothText =
 	        "Lorem ipsum dolor sit amet\n" +
             "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
-            "\n\n\n" +
+            "\n\n\n1\n" +
             "Lorem ipsum dolor sit amet\n" +
             "Lorem\n" +
             "ipsum\n" +
             "dolor\n" +
             "sit\n" +
             "amet\n" +
-            "\n\n\n";
+            "\n\n\n2\n";
         assertEquals(bothText, text);
 
 		// With Slides and Master Text
@@ -134,22 +134,21 @@ public class TestXSLFPowerPointExtractor {
         String snmText =
             "Lorem ipsum dolor sit amet\n" +
             "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
-            "\n" +
-            "\n\n" +
+            "\n\n\n1\n" +
             "Lorem ipsum dolor sit amet\n" +
             "Lorem\n" +
             "ipsum\n" +
             "dolor\n" +
             "sit\n" +
             "amet\n" +
-            "\n\n\n";
+            "\n\n\n2\n";
         assertEquals(snmText, text);
 
 		// Via set defaults
 		extractor.setSlidesByDefault(false);
 		extractor.setNotesByDefault(true);
 		text = extractor.getText();
-		assertEquals("\n\n\n\n", text);
+		assertEquals("\n\n1\n\n\n2\n", text);
 
 		extractor.close();
 		xmlA.close();

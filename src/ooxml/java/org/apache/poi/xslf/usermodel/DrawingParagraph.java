@@ -17,12 +17,17 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
+/*
+ * @deprecated POI 3.16 beta 1. Instead iterate over the shapes/notes of the slides
+ */
+@Removal(version="3.18")
 public class DrawingParagraph {
     private final CTTextParagraph p;
 

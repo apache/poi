@@ -17,6 +17,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
@@ -26,6 +27,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  * @author nick
  *
  */
+/*
+ * @deprecated POI 3.16 beta 1. use ??? instead
+ */
+@Removal(version="3.18")
 public class DrawingTextPlaceholder extends DrawingTextBody {
     private final CTPlaceholder placeholder;
 
