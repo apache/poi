@@ -400,6 +400,14 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
                 logger.log(POILogger.ERROR, "" + pos);
             } else {
+                //The pictstream can be truncated halfway through a picture.
+                //This is not a problem if the pictstream contains extra pictures
+                //that are not used in any slide -- BUG-60305
+                if (pos+imgsize > pictstream.length) {
+                    logger.log(POILogger.WARN, "\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
+                            "in others, this could indicate a corrupt file");
+                    break;
+                }
                 // Build the PictureData object from the data
                 try {
                     HSLFPictureData pict = HSLFPictureData.create(pt);
