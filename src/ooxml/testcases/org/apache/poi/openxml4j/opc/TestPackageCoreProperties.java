@@ -94,6 +94,9 @@ public final class TestPackageCoreProperties {
         props.setCreatedProperty("2007-05-12T06:00:00-0200");
         assertEquals(dateToInsert, props.getCreatedProperty().getValue());
 
+        props.setCreatedProperty("2015-07-27");
+        assertEquals(msdf.parse("2015-07-27T00:00:00.000Z"), props.getCreatedProperty().getValue());
+
         props.setCreatedProperty("2007-05-12T10:00:00.123+0200");
         assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().getValue());
 
