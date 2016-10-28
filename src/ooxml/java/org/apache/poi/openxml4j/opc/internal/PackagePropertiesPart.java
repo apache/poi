@@ -55,6 +55,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	private final static String[] DATE_FORMATS = new String[]{
 			DEFAULT_DATEFORMAT,
 			"yyyy-MM-dd'T'HH:mm:ss.SS'Z'",
+            "yyyy-MM-dd"
 	};
 
 	//Had to add this and TIME_ZONE_PAT to handle tz with colons.
@@ -635,7 +636,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 		if (date == null) {
 		   return "";
 		}
-		
+
 		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
 		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 		return df.format(date);
