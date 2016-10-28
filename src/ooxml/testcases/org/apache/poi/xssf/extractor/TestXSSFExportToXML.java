@@ -17,17 +17,7 @@
 
 package org.apache.poi.xssf.extractor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import junit.framework.TestCase;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -38,12 +28,20 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Roberto Manicardi
@@ -101,15 +99,13 @@ public final class TestXSSFExportToXML extends TestCase {
 		XSSFWorkbook wb = XSSFTestDataSamples
 				.openSampleWorkbook("CustomXmlMappings-inverse-order.xlsx");
 
-		MapInfo mapInfo = null;
-
         boolean found = false;
 		for (POIXMLDocumentPart p : wb.getRelations()) {
 
 			if (!(p instanceof MapInfo)) {
 				continue;
 			}
-			mapInfo = (MapInfo) p;
+            MapInfo mapInfo = (MapInfo) p;
 
 			XSSFMap map = mapInfo.getXSSFMapById(1);
 			XSSFExportToXml exporter = new XSSFExportToXml(map);
@@ -150,13 +146,11 @@ public final class TestXSSFExportToXML extends TestCase {
 		XSSFWorkbook wb = XSSFTestDataSamples
 				.openSampleWorkbook("CustomXmlMappings-inverse-order.xlsx");
 
-		MapInfo mapInfo = null;
-
         boolean found = false;
 		for (POIXMLDocumentPart p : wb.getRelations()) {
 
 			if (p instanceof MapInfo) {
-				mapInfo = (MapInfo) p;
+                MapInfo mapInfo = (MapInfo) p;
 
 				XSSFMap map = mapInfo.getXSSFMapById(1);
 				XSSFExportToXml exporter = new XSSFExportToXml(map);
@@ -340,7 +334,6 @@ public final class TestXSSFExportToXML extends TestCase {
        assertTrue(found);
    }
    
-   @Test
    public void testXmlExportIgnoresEmptyCells_Bugzilla_55924() throws Exception {
 
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55924.xlsx");
@@ -627,4 +620,18 @@ public final class TestXSSFExportToXML extends TestCase {
        }
        assertTrue(found);
    }
+
+    public void testBug59026() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("59026.xlsx");
+
+        Collection<XSSFMap> mappings = wb.getCustomXMLMappings();
+        assertTrue(mappings.size() > 0);
+        for (XSSFMap map : mappings) {
+            XSSFExportToXml exporter = new XSSFExportToXml(map);
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            exporter.exportToXML(os, false);
+            assertNotNull(os.toString("UTF-8"));
+        }
+    }
 }

@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -98,12 +97,11 @@ public class XSSFExportToXml implements Comparator<String>{
      * Exports the data in an XML stream
      *
      * @param os OutputStream in which will contain the output XML
-     * @param validate if true, validates the XML againts the XML Schema
-     * @throws SAXException
-     * @throws TransformerException  
-     * @throws ParserConfigurationException 
+     * @param validate if true, validates the XML against the XML Schema
+     * @throws SAXException If validating the document fails
+     * @throws TransformerException If transforming the document fails
      */
-    public void exportToXML(OutputStream os, boolean validate) throws SAXException, ParserConfigurationException, TransformerException {
+    public void exportToXML(OutputStream os, boolean validate) throws SAXException, TransformerException {
         exportToXML(os, "UTF-8", validate);
     }
 
@@ -112,12 +110,11 @@ public class XSSFExportToXml implements Comparator<String>{
      *
      * @param os OutputStream in which will contain the output XML
      * @param encoding the output charset encoding
-     * @param validate if true, validates the XML againts the XML Schema
-     * @throws SAXException
-     * @throws ParserConfigurationException 
-     * @throws TransformerException
+     * @param validate if true, validates the XML against the XML Schema
+     * @throws SAXException If validating the document fails
+     * @throws TransformerException If transforming the document fails
      */
-    public void exportToXML(OutputStream os, String encoding, boolean validate) throws SAXException, ParserConfigurationException, TransformerException{
+    public void exportToXML(OutputStream os, String encoding, boolean validate) throws SAXException, TransformerException{
         List<XSSFSingleXmlCell> singleXMLCells = map.getRelatedSingleXMLCell();
         List<XSSFTable> tables = map.getRelatedTables();
 
@@ -240,6 +237,7 @@ public class XSSFExportToXml implements Comparator<String>{
      *
      * @param xml the XML to validate
      * @return true, if document is valid
+     * @throws SAXException If validating the document fails
      */
     private boolean isValid(Document xml) throws SAXException{
         try{
@@ -397,11 +395,11 @@ public class XSSFExportToXml implements Comparator<String>{
         String[] leftTokens = leftXpath.split("/");
         String[] rightTokens = rightXpath.split("/");
 
-        int minLenght = leftTokens.length< rightTokens.length? leftTokens.length : rightTokens.length;
+        int minLength = leftTokens.length< rightTokens.length? leftTokens.length : rightTokens.length;
 
         Node localComplexTypeRootNode = xmlSchema;
 
-        for(int i =1;i <minLenght; i++) {
+        for(int i =1;i <minLength; i++) {
 
             String leftElementName = leftTokens[i];
             String rightElementName = rightTokens[i];
@@ -427,6 +425,9 @@ public class XSSFExportToXml implements Comparator<String>{
     }
 
     private int indexOfElementInComplexType(String elementName,Node complexType) {
+        if(complexType == null) {
+            return -1;
+        }
 
         NodeList list  = complexType.getChildNodes();
         int indexOf = -1;
@@ -472,6 +473,10 @@ public class XSSFExportToXml implements Comparator<String>{
 
     private String getComplexTypeNameFromChildren(Node localComplexTypeRootNode,
             String elementNameWithoutNamespace) {
+        if(localComplexTypeRootNode == null) {
+            return "";
+        }
+
         NodeList  list  = localComplexTypeRootNode.getChildNodes();
         String complexTypeName = "";
 
