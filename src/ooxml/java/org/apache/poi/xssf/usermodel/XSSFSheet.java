@@ -3451,8 +3451,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             worksheet.getHyperlinks().setHyperlinkArray(ctHls);
         }
 
+        int minCell=Integer.MAX_VALUE, maxCell=Integer.MIN_VALUE;
         for(XSSFRow row : _rows.values()){
+            // first perform the normal write actions for the row
             row.onDocumentWrite();
+
+            // then calculate min/max cell-numbers for the worksheet-dimension
+            if(row.getFirstCellNum() != -1) {
+                minCell = Math.min(minCell, row.getFirstCellNum());
+            }
+            if(row.getLastCellNum() != -1) {
+                maxCell = Math.max(maxCell, row.getLastCellNum());
+            }
+        }
+
+        // finally, if we had at least one cell we can populate the optional dimension-field
+        if(minCell != Integer.MAX_VALUE) {
+            String ref = new CellRangeAddress(getFirstRowNum(), getLastRowNum(), minCell, maxCell).formatAsString();
+            if(worksheet.isSetDimension()) {
+                worksheet.getDimension().setRef(ref);
+            } else {
+                worksheet.addNewDimension().setRef(ref);
+            }
         }
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);

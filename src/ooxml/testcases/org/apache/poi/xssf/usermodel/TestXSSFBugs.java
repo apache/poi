@@ -25,13 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -3168,5 +3162,32 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertNull(sheet.getDrawingPatriarch());
         sheet = wb.getSheetAt(4);
         assertNotNull(sheet.getDrawingPatriarch());
+    }
+
+    @Test
+    public void test53611() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        Row row = sheet.createRow(1);
+        Cell cell = row.createCell(1);
+        cell.setCellValue("blabla");
+
+        row = sheet.createRow(4);
+        cell = row.createCell(7);
+        cell.setCellValue("blabla");
+
+        // we currently only populate the dimension during writing out
+        // to avoid having to iterate all rows/cells in each add/remove of a row or cell
+        //OutputStream str = new FileOutputStream("/tmp/53611.xlsx");
+        OutputStream str = new ByteArrayOutputStream();
+        try {
+            wb.write(str);
+        } finally {
+            str.close();
+        }
+
+        assertEquals("B2:I5", ((XSSFSheet)sheet).getCTWorksheet().getDimension().getRef());
+
+        wb.close();
     }
 }
