@@ -38,14 +38,10 @@ public class BetterHeaderFooterExample {
 
         // create header/footer functions insert an empty paragraph
         XWPFHeader head = doc.createHeader(HeaderFooterType.DEFAULT);
-        p = head.getParagraphArray(0);
-        r = p.createRun();
-        r.setText("header");
+        head.createParagraph().createRun().setText("header");
         
         XWPFFooter foot = doc.createFooter(HeaderFooterType.DEFAULT);
-        p = foot.getParagraphArray(0);
-        r = p.createRun();
-        r.setText("footer");
+        foot.createParagraph().createRun().setText("footer");
         
         try {
             OutputStream os = new FileOutputStream(new File("header2.docx"));

@@ -17,16 +17,22 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
-public final class TestXWPFHeader extends TestCase {
+public final class TestXWPFHeader {
+
+    @Test
     public void testSimpleHeader() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerFooter.docx");
 
@@ -38,6 +44,7 @@ public final class TestXWPFHeader extends TestCase {
         assertNotNull(footer);
     }
 
+    @Test
     public void testImageInHeader() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
 
@@ -49,6 +56,7 @@ public final class TestXWPFHeader extends TestCase {
         assertEquals(1, header.getRelations().size());
     }
 
+    @Test
     public void testSetHeader() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         // no header is set (yet)
@@ -56,6 +64,7 @@ public final class TestXWPFHeader extends TestCase {
         assertNull(policy.getDefaultHeader());
         assertNull(policy.getFirstPageHeader());
         assertNull(policy.getDefaultFooter());
+        assertNull(policy.getFirstPageFooter());
 
         CTP ctP1 = CTP.Factory.newInstance();
         CTR ctR1 = ctP1.addNewR();
@@ -95,29 +104,31 @@ public final class TestXWPFHeader extends TestCase {
         XWPFHeader headerD = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT, pars);
         XWPFHeader headerF = policy.createHeader(XWPFHeaderFooterPolicy.FIRST);
         // Set a default footer and capture the returned XWPFFooter object.
-        XWPFFooter footer = policy.createFooter(XWPFHeaderFooterPolicy.DEFAULT, pars2);
+        XWPFFooter footerD = policy.createFooter(XWPFHeaderFooterPolicy.DEFAULT, pars2);
+        XWPFFooter footerF = policy.createFooter(XWPFHeaderFooterPolicy.FIRST);
 
         // Ensure the headers and footer were set correctly....
         assertNotNull(policy.getDefaultHeader());
         assertNotNull(policy.getFirstPageHeader());
         assertNotNull(policy.getDefaultFooter());
+        assertNotNull(policy.getFirstPageFooter());
         // ....and that the footer object captured above contains two
         // paragraphs of text.
-        assertEquals(2, footer.getParagraphs().size());
+        assertEquals(2, footerD.getParagraphs().size());
+        assertEquals(0, footerF.getParagraphs().size());
 
         // Check the header created with the paragraph got them, and the one
-        // created without got an empty one
+        // created without got none
         assertEquals(1, headerD.getParagraphs().size());
-        assertEquals(1, headerF.getParagraphs().size());
-
         assertEquals(tText, headerD.getParagraphs().get(0).getText());
-        assertEquals("", headerF.getParagraphs().get(0).getText());
+
+        assertEquals(0, headerF.getParagraphs().size());
 
         // As an additional check, recover the defauls footer and
         // make sure that it contains two paragraphs of text and that
         // both do hold what is expected.
-        footer = policy.getDefaultFooter();
-        XWPFParagraph[] paras = footer.getParagraphs().toArray(new XWPFParagraph[0]);
+        footerD = policy.getDefaultFooter();
+        XWPFParagraph[] paras = footerD.getParagraphs().toArray(new XWPFParagraph[0]);
 
         assertEquals(2, paras.length);
         assertEquals("First paragraph for the footer", paras[0].getText());
@@ -126,12 +137,15 @@ public final class TestXWPFHeader extends TestCase {
 
         // Add some text to the empty header
         String fText1 = "New Text!";
-        headerF.getParagraphs().get(0).insertNewRun(0).setText(fText1);
-        // TODO Add another paragraph and check
-
+        String fText2 = "More Text!";
+        headerF.createParagraph().insertNewRun(0).setText(fText1);
+        headerF.createParagraph().insertNewRun(0).setText(fText2);
+//        headerF.getParagraphs().get(0).insertNewRun(0).setText(fText1);
+    
         // Check it
         assertEquals(tText, headerD.getParagraphs().get(0).getText());
         assertEquals(fText1, headerF.getParagraphs().get(0).getText());
+        assertEquals(fText2, headerF.getParagraphs().get(1).getText());
 
 
         // Save, re-open, ensure it's all still there
@@ -141,7 +155,7 @@ public final class TestXWPFHeader extends TestCase {
         assertNotNull(policy.getFirstPageHeader());
         assertNull(policy.getEvenPageHeader());
         assertNotNull(policy.getDefaultFooter());
-        assertNull(policy.getFirstPageFooter());
+        assertNotNull(policy.getFirstPageFooter());
         assertNull(policy.getEvenPageFooter());
 
         // Check the new headers still have their text
@@ -149,16 +163,20 @@ public final class TestXWPFHeader extends TestCase {
         headerF = policy.getFirstPageHeader();
         assertEquals(tText, headerD.getParagraphs().get(0).getText());
         assertEquals(fText1, headerF.getParagraphs().get(0).getText());
+        assertEquals(fText2, headerF.getParagraphs().get(1).getText());
 
         // Check the new footers have their new text too
-        footer = policy.getDefaultFooter();
-        paras = footer.getParagraphs().toArray(new XWPFParagraph[0]);
+        footerD = policy.getDefaultFooter();
+        paras = footerD.getParagraphs().toArray(new XWPFParagraph[0]);
+        footerF = policy.getFirstPageFooter();
 
         assertEquals(2, paras.length);
         assertEquals("First paragraph for the footer", paras[0].getText());
         assertEquals("Second paragraph for the footer", paras[1].getText());
+        assertEquals(1, footerF.getParagraphs().size());
     }
 
+    @Test
     public void testSetWatermark() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
 
@@ -183,18 +201,22 @@ public final class TestXWPFHeader extends TestCase {
         assertNotNull(policy.getEvenPageHeader());
     }
 
+    @Test
     public void testAddPictureData() {
         // TODO
     }
 
+    @Test
     public void testGetAllPictures() {
         // TODO
     }
 
+    @Test
     public void testGetAllPackagePictures() {
         // TODO
     }
 
+    @Test
     public void testGetPictureDataById() {
         // TODO
     }
