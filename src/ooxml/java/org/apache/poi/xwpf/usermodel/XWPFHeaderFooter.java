@@ -43,10 +43,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
  * Parent of XWPF headers and footers
  */
 public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBody {
-    List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>(1);
-    List<XWPFTable> tables = new ArrayList<XWPFTable>(1);
+    List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
+    List<XWPFTable> tables = new ArrayList<XWPFTable>();
     List<XWPFPictureData> pictures = new ArrayList<XWPFPictureData>();
-    List<IBodyElement> bodyElements = new ArrayList<IBodyElement>(1);
+    List<IBodyElement> bodyElements = new ArrayList<IBodyElement>();
 
     CTHdrFtr headerFooter;
     XWPFDocument document;
@@ -323,11 +323,73 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     /**
      * Adds a new paragraph at the end of the header or footer
+     * 
+     * @return new {@link XWPFParagraph} object
      */
     public XWPFParagraph createParagraph() {
         XWPFParagraph paragraph = new XWPFParagraph(headerFooter.addNewP(), this);
         paragraphs.add(paragraph);
+        bodyElements.add(paragraph);
         return paragraph;
+    }
+    
+    /**
+     * Adds a new table at the end of the header or footer
+     * 
+     * @param rows - number of rows in the table
+     * @param cols - number of columns in the table
+     * @return new {@link XWPFTable} object
+     */
+    public XWPFTable createTable(int rows, int cols) {
+        XWPFTable table = new XWPFTable(headerFooter.addNewTbl(), this, rows, cols);
+        tables.add(table);
+        bodyElements.add(table);
+        return table;
+    }
+    
+    /**
+     * Removes a specific paragraph from this header / footer
+     *
+     * @param paragraph - {@link XWPFParagraph} object to remove
+     */
+    public void removeParagraph(XWPFParagraph paragraph) {
+        if (paragraphs.contains(paragraph)) {
+            CTP ctP = paragraph.getCTP();
+            XmlCursor c = ctP.newCursor();
+            c.removeXml();
+            c.dispose();
+            paragraphs.remove(paragraph);
+            bodyElements.remove(paragraph);
+        }
+    }
+    
+    /**
+     * Removes a specific table from this header / footer
+     * 
+     * @param table - {@link XWPFTable} object to remove 
+     */
+    public void removeTable(XWPFTable table) {
+        if (tables.contains(table)) {
+            CTTbl ctTbl = table.getCTTbl();
+            XmlCursor c = ctTbl.newCursor();
+            c.removeXml();
+            c.dispose();
+            tables.remove(table);
+            bodyElements.remove(table);
+        }
+    }
+    
+    /**
+     * Clears all paragraphs and tables from this header / footer
+     */
+    public void clearHeaderFooter() {
+       XmlCursor c = headerFooter.newCursor();
+       c.removeXmlContents();
+       c.dispose();
+       paragraphs.clear();
+       tables.clear();
+       bodyElements.clear();
+       CTP ctp = CTP.Factory.newInstance();
     }
     
     /**
@@ -537,5 +599,26 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     public POIXMLDocumentPart getPart() {
         return this;
+    }
+    
+    @Override
+    protected void prepareForCommit() {
+        // must contain at least an empty paragraph
+        if (bodyElements.size() == 0) {
+            createParagraph();
+        }
+        
+        // Cells must contain at least an empty paragraph
+        for (XWPFTable tbl : tables) {
+            for (XWPFTableRow row : tbl.tableRows) {
+                for (XWPFTableCell cell : row.getTableCells()) {
+                    if (cell.getBodyElements().size() == 0) {
+                        cell.addParagraph();
+                    }
+                }
+            }
+        }
+        super.prepareForCommit();
+        
     }
 }

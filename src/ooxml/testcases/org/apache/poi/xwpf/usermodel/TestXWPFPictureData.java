@@ -73,7 +73,7 @@ public class TestXWPFPictureData extends TestCase {
         // Add a default header
         policy = doc.createHeaderFooterPolicy();
         XWPFHeader header = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
-        header.getParagraphs().get(0).createRun().setText("Hello, Header World!");
+        header.createParagraph().createRun().setText("Hello, Header World!");
         header.createParagraph().createRun().setText("Paragraph 2");
         assertEquals(0, header.getAllPictures().size());
         assertEquals(2, header.getParagraphs().size());

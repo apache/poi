@@ -271,19 +271,19 @@ public class XWPFHeaderFooterPolicy {
                 ftr.setPArray(i, paragraphs[i].getCTP());
             }
         } else {
-            CTP p = ftr.addNewP();
-            CTBody body = doc.getDocument().getBody();
-            if (body.sizeOfPArray() > 0) {
-                CTP p0 = body.getPArray(0);
-                if (p0.isSetRsidR()) {
-                    byte[] rsidr = p0.getRsidR();
-                    byte[] rsidrdefault = p0.getRsidRDefault();
-                    p.setRsidP(rsidr);
-                    p.setRsidRDefault(rsidrdefault);
-                }
-            }
-            CTPPr pPr = p.addNewPPr();
-            pPr.addNewPStyle().setVal(pStyle);
+//            CTP p = ftr.addNewP();
+//            CTBody body = doc.getDocument().getBody();
+//            if (body.sizeOfPArray() > 0) {
+//                CTP p0 = body.getPArray(0);
+//                if (p0.isSetRsidR()) {
+//                    byte[] rsidr = p0.getRsidR();
+//                    byte[] rsidrdefault = p0.getRsidRDefault();
+//                    p.setRsidP(rsidr);
+//                    p.setRsidRDefault(rsidrdefault);
+//                }
+//            }
+//            CTPPr pPr = p.addNewPPr();
+//            pPr.addNewPStyle().setVal(pStyle);
         }
         return ftr;
     }
