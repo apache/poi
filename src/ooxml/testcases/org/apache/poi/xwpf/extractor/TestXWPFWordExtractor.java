@@ -399,7 +399,6 @@ public class TestXWPFWordExtractor extends TestCase {
 
     public void testCheckboxes() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("checkboxes.docx");
-        System.out.println(doc);
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertEquals("This is a small test for checkboxes \nunchecked: |_| \n" +
