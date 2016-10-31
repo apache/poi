@@ -220,4 +220,11 @@ public final class TestXWPFHeader {
     public void testGetPictureDataById() {
         // TODO
     }
+
+    @Test
+    public void bug60293() throws Exception {
+        //test handling of non-standard header/footer options
+        XWPFDocument xwpf = XWPFTestDataSamples.openSampleDocument("60293.docx");
+        assertEquals(3, xwpf.getHeaderList().size());
+    }
 }
