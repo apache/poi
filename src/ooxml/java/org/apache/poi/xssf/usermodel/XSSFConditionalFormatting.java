@@ -64,7 +64,11 @@ public class XSSFConditionalFormatting implements ConditionalFormatting {
         return lst.toArray(new CellRangeAddress[lst.size()]);
     }
 
+    @Override
     public void setFormattingRanges(CellRangeAddress[] ranges) {
+        if (ranges == null) {
+            throw new IllegalArgumentException("cellRanges must not be null");
+        }
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (CellRangeAddress range : ranges) {

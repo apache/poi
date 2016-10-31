@@ -18,8 +18,8 @@
  */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.junit.Test;
 
@@ -55,40 +55,5 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
     @Test
     public void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xlsx");
-    }
-
-    @Test
-    public void testSetCellRangeAddress() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        final XSSFSheet sheet = wb.createSheet("S1");
-        final XSSFSheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
-        assertEquals(0, cf.getNumConditionalFormattings());
-        ExtendedColor color = wb.getCreationHelper().createExtendedColor();
-        color.setARGBHex("FF63BE7B");
-        ConditionalFormattingRule rule1 = cf.createConditionalFormattingRule(color);
-        DataBarFormatting db1 = rule1.getDataBarFormatting();
-        db1.getMinThreshold().setRangeType(ConditionalFormattingThreshold.RangeType.MIN);
-        db1.getMaxThreshold().setRangeType(ConditionalFormattingThreshold.RangeType.MAX);
-
-        cf.addConditionalFormatting(new CellRangeAddress[] {
-                CellRangeAddress.valueOf("A1:A5")
-        }, rule1);
-
-        assertEquals(1, cf.getNumConditionalFormattings());
-        XSSFConditionalFormatting readCf = cf.getConditionalFormattingAt(0);
-        CellRangeAddress[] formattingRanges = readCf.getFormattingRanges();
-        assertEquals(1, formattingRanges.length);
-        CellRangeAddress formattingRange = formattingRanges[0];
-        assertEquals("A1:A5", formattingRange.formatAsString());
-
-        readCf.setFormattingRanges(new CellRangeAddress[] {
-                CellRangeAddress.valueOf("A1:A6")
-        });
-
-        readCf = cf.getConditionalFormattingAt(0);
-        formattingRanges = readCf.getFormattingRanges();
-        assertEquals(1, formattingRanges.length);
-        formattingRange = formattingRanges[0];
-        assertEquals("A1:A6", formattingRange.formatAsString());
     }
 }
