@@ -29,6 +29,7 @@ import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.xmlbeans.impl.values.XmlValueOutOfRangeException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtrRef;
@@ -115,8 +116,14 @@ public class XWPFHeaderFooterPolicy {
             if (relatedPart != null && relatedPart instanceof XWPFHeader) {
                 hdr = (XWPFHeader) relatedPart;
             }
-            // Assign it
-            Enum type = ref.getType();
+            // Assign it; treat invalid options as "default" POI-60293
+            Enum type;
+            try {
+                type = ref.getType();
+            } catch (XmlValueOutOfRangeException e) {
+                type = STHdrFtr.DEFAULT;
+            }
+
             assignHeader(hdr, type);
         }
         for (int i = 0; i < sectPr.sizeOfFooterReferenceArray(); i++) {
@@ -127,8 +134,13 @@ public class XWPFHeaderFooterPolicy {
             if (relatedPart != null && relatedPart instanceof XWPFFooter) {
                 ftr = (XWPFFooter) relatedPart;
             }
-            // Assign it
-            Enum type = ref.getType();
+            // Assign it; treat invalid options as "default" POI-60293
+            Enum type;
+            try {
+                type = ref.getType();
+            } catch (XmlValueOutOfRangeException e) {
+                type = STHdrFtr.DEFAULT;
+            }
             assignFooter(ftr, type);
         }
     }
