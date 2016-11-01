@@ -37,10 +37,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
-/**
- *  @author Maxim Valyanskiy
- *  @author Gary King
- */
 public class TestDecryptor {
     @Test
     public void passwordVerification() throws IOException, GeneralSecurityException {
@@ -162,4 +158,22 @@ public class TestDecryptor {
         //dec.verifyPassword(null);
         dec.getDataStream(pfs);
     }
+
+    @Test
+    public void bug60320() throws IOException, GeneralSecurityException {
+        InputStream is = POIDataSamples.getPOIFSInstance().openResourceAsStream("60320-protected.xlsx");
+        POIFSFileSystem fs = new POIFSFileSystem(is);
+        is.close();
+
+        EncryptionInfo info = new EncryptionInfo(fs);
+
+        Decryptor d = Decryptor.getInstance(info);
+
+        boolean b = d.verifyPassword("Test001!!");
+        assertTrue(b);
+
+        zipOk(fs.getRoot(), d);
+        
+        fs.close();
+    }    
 }

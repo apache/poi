@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.util.Removal;
+
 /**
  * Reads and processes OOXML Encryption Headers
  * The constants are largely based on ZIP constants.
@@ -82,8 +85,19 @@ public abstract class EncryptionHeader implements Cloneable {
     
     protected void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
         this.cipherAlgorithm = cipherAlgorithm;
+        if (cipherAlgorithm.allowedKeySize.length == 1) {
+            setKeySize(cipherAlgorithm.defaultKeySize);
+        }
+    }
+
+    public HashAlgorithm getHashAlgorithm() {
+        return hashAlgorithm;
     }
     
+    /**
+     * @deprecated POI 3.16 beta 1. use {@link #getHashAlgorithm()}
+     */
+    @Removal(version="3.18")
     public HashAlgorithm getHashAlgorithmEx() {
         return hashAlgorithm;
     }
@@ -96,8 +110,21 @@ public abstract class EncryptionHeader implements Cloneable {
         return keyBits;
     }
     
+    /**
+     * Sets the keySize (in bits). Before calling this method, make sure
+     * to set the cipherAlgorithm, as the amount of keyBits gets validated against
+     * the list of allowed keyBits of the corresponding cipherAlgorithm
+     *
+     * @param keyBits
+     */
     protected void setKeySize(int keyBits) {
         this.keyBits = keyBits;
+        for (int allowedBits : getCipherAlgorithm().allowedKeySize) {
+            if (allowedBits == keyBits) {
+                return;
+            }
+        }
+        throw new EncryptedDocumentException("KeySize "+keyBits+" not allowed for cipher "+getCipherAlgorithm());
     }
 
     public int getBlockSize() {

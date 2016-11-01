@@ -36,7 +36,9 @@ import javax.crypto.Cipher;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.crypt.agile.AgileDecryptor;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionHeader;
+import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -87,7 +89,7 @@ public class TestEncryptor {
         
         assertArrayEquals(payloadExpected.toByteArray(), payloadActual.toByteArray());
     }
-    
+
     @Test
     public void agileEncryption() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
@@ -378,5 +380,143 @@ public class TestEncryptor {
                 listEntry((DocumentNode)ent, ext, path);
             }
         }
+    }
+
+    /*
+     * this test simulates the generation of bugs 60320 sample file
+     * as the padding bytes of the EncryptedPackage stream are random or in POIs case PKCS5-padded
+     * one would need to mock those bytes to get the same hmacValues - see diff below
+     *
+     * this use-case is experimental - for the time being the setters of the encryption classes
+     * are spreaded between two packages and are protected - so you would need to violate
+     * the packages rules and provide a helper class in the *poifs.crypt package-namespace.
+     * the default way of defining the encryption settings is via the EncryptionInfo class
+     */
+    @Test
+    public void bug60320CustomEncrypt() throws Exception {
+        // --- src/java/org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.java  (revision 1766745)
+        // +++ src/java/org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.java  (working copy)
+        // @@ -208,6 +208,13 @@
+        //      protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException {
+        //          byte plain[] = (_plainByteFlags.isEmpty()) ? null : _chunk.clone();
+        //  
+        // +        if (posInChunk < 4096) {
+        // +            _cipher.update(_chunk, 0, posInChunk, _chunk);
+        // +            byte bla[] = { (byte)0x7A,(byte)0x0F,(byte)0x27,(byte)0xF0,(byte)0x17,(byte)0x6E,(byte)0x77,(byte)0x05,(byte)0xB9,(byte)0xDA,(byte)0x49,(byte)0xF9,(byte)0xD7,(byte)0x8E,(byte)0x03,(byte)0x1D };
+        // +            System.arraycopy(bla, 0, _chunk, posInChunk-2, bla.length);
+        // +            return posInChunk-2+bla.length;
+        // +        }
+        // +        
+        //          int ciLen = (doFinal)
+        //              ? _cipher.doFinal(_chunk, 0, posInChunk, _chunk)
+        //              : _cipher.update(_chunk, 0, posInChunk, _chunk);
+        //
+        //      --- src/ooxml/java/org/apache/poi/poifs/crypt/agile/AgileDecryptor.java (revision 1766745)
+        //      +++ src/ooxml/java/org/apache/poi/poifs/crypt/agile/AgileDecryptor.java (working copy)
+        //      
+        //      @@ -300,7 +297,7 @@
+        //      protected static Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk, EncryptionInfo encryptionInfo, SecretKey skey, int encryptionMode)
+        //      throws GeneralSecurityException {
+        //          EncryptionHeader header = encryptionInfo.getHeader();
+        // -        String padding = (lastChunk ? "PKCS5Padding" : "NoPadding");
+        // +        String padding = "NoPadding"; // (lastChunk ? "PKCS5Padding" : "NoPadding");
+        //          if (existing == null || !existing.getAlgorithm().endsWith(padding)) {
+        //              existing = getCipher(skey, header.getCipherAlgorithm(), header.getChainingMode(), header.getKeySalt(), encryptionMode, padding);
+        //          }
+
+        InputStream is = POIDataSamples.getPOIFSInstance().openResourceAsStream("60320-protected.xlsx");
+        POIFSFileSystem fsOrig = new POIFSFileSystem(is);
+        is.close();
+        EncryptionInfo infoOrig = new EncryptionInfo(fsOrig);
+        Decryptor decOrig = infoOrig.getDecryptor();
+        boolean b = decOrig.verifyPassword("Test001!!");
+        assertTrue(b);
+        InputStream decIn = decOrig.getDataStream(fsOrig);
+        byte[] zipInput = IOUtils.toByteArray(decIn);
+        decIn.close();
+
+        InputStream epOrig = fsOrig.getRoot().createDocumentInputStream("EncryptedPackage");
+        // ignore the 16 padding bytes
+        byte[] epOrigBytes = IOUtils.toByteArray(epOrig, 9400);
+        epOrig.close();
+        
+        EncryptionInfo eiNew = new EncryptionInfo(EncryptionMode.agile);
+        AgileEncryptionHeader aehHeader = (AgileEncryptionHeader)eiNew.getHeader();
+        aehHeader.setCipherAlgorithm(CipherAlgorithm.aes128);
+        aehHeader.setHashAlgorithm(HashAlgorithm.sha1);
+        AgileEncryptionVerifier aehVerifier = (AgileEncryptionVerifier)eiNew.getVerifier();
+        
+        // this cast might look strange - if the setters would be public, it will become obsolete
+        // see http://stackoverflow.com/questions/5637650/overriding-protected-methods-in-java
+        ((EncryptionVerifier)aehVerifier).setCipherAlgorithm(CipherAlgorithm.aes256);
+        aehVerifier.setHashAlgorithm(HashAlgorithm.sha512);
+        
+        Encryptor enc = eiNew.getEncryptor();
+        enc.confirmPassword("Test001!!",
+            infoOrig.getDecryptor().getSecretKey().getEncoded(),
+            infoOrig.getHeader().getKeySalt(),
+            infoOrig.getDecryptor().getVerifier(),
+            infoOrig.getVerifier().getSalt(),
+            infoOrig.getDecryptor().getIntegrityHmacKey()
+        );
+        NPOIFSFileSystem fsNew = new NPOIFSFileSystem();
+        OutputStream os = enc.getDataStream(fsNew);
+        os.write(zipInput);
+        os.close();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        fsNew.writeFilesystem(bos);
+        fsNew.close();
+        
+        NPOIFSFileSystem fsReload = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+        InputStream epReload = fsReload.getRoot().createDocumentInputStream("EncryptedPackage");
+        byte[] epNewBytes = IOUtils.toByteArray(epReload, 9400);
+        epReload.close();
+        
+        assertArrayEquals(epOrigBytes, epNewBytes);
+        
+        EncryptionInfo infoReload = new EncryptionInfo(fsOrig);
+        Decryptor decReload = infoReload.getDecryptor();
+        b = decReload.verifyPassword("Test001!!");
+        assertTrue(b);
+        
+        AgileEncryptionHeader aehOrig = (AgileEncryptionHeader)infoOrig.getHeader();
+        AgileEncryptionHeader aehReload = (AgileEncryptionHeader)infoReload.getHeader();
+        assertEquals(aehOrig.getBlockSize(), aehReload.getBlockSize());
+        assertEquals(aehOrig.getChainingMode(), aehReload.getChainingMode());
+        assertEquals(aehOrig.getCipherAlgorithm(), aehReload.getCipherAlgorithm());
+        assertEquals(aehOrig.getCipherProvider(), aehReload.getCipherProvider());
+        assertEquals(aehOrig.getCspName(), aehReload.getCspName());
+        assertArrayEquals(aehOrig.getEncryptedHmacKey(), aehReload.getEncryptedHmacKey());
+        // this only works, when the paddings are mocked to be the same ...
+        // assertArrayEquals(aehOrig.getEncryptedHmacValue(), aehReload.getEncryptedHmacValue());
+        assertEquals(aehOrig.getFlags(), aehReload.getFlags());
+        assertEquals(aehOrig.getHashAlgorithm(), aehReload.getHashAlgorithm());
+        assertArrayEquals(aehOrig.getKeySalt(), aehReload.getKeySalt());
+        assertEquals(aehOrig.getKeySize(), aehReload.getKeySize());
+        
+        AgileEncryptionVerifier aevOrig = (AgileEncryptionVerifier)infoOrig.getVerifier();
+        AgileEncryptionVerifier aevReload = (AgileEncryptionVerifier)infoReload.getVerifier();
+        assertEquals(aevOrig.getBlockSize(), aevReload.getBlockSize());
+        assertEquals(aevOrig.getChainingMode(), aevReload.getChainingMode());
+        assertEquals(aevOrig.getCipherAlgorithm(), aevReload.getCipherAlgorithm());
+        assertArrayEquals(aevOrig.getEncryptedKey(), aevReload.getEncryptedKey());
+        assertArrayEquals(aevOrig.getEncryptedVerifier(), aevReload.getEncryptedVerifier());
+        assertArrayEquals(aevOrig.getEncryptedVerifierHash(), aevReload.getEncryptedVerifierHash());
+        assertEquals(aevOrig.getHashAlgorithm(), aevReload.getHashAlgorithm());
+        assertEquals(aevOrig.getKeySize(), aevReload.getKeySize());
+        assertArrayEquals(aevOrig.getSalt(), aevReload.getSalt());
+        assertEquals(aevOrig.getSpinCount(), aevReload.getSpinCount());
+
+        AgileDecryptor adOrig = (AgileDecryptor)infoOrig.getDecryptor();
+        AgileDecryptor adReload = (AgileDecryptor)infoReload.getDecryptor();
+        
+        assertArrayEquals(adOrig.getIntegrityHmacKey(), adReload.getIntegrityHmacKey());
+        // doesn't work without mocking ... see above
+        // assertArrayEquals(adOrig.getIntegrityHmacValue(), adReload.getIntegrityHmacValue());
+        assertArrayEquals(adOrig.getSecretKey().getEncoded(), adReload.getSecretKey().getEncoded());
+        assertArrayEquals(adOrig.getVerifier(), adReload.getVerifier());
+
+        fsReload.close();
     }
 }

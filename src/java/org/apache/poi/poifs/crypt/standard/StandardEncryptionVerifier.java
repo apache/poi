@@ -56,7 +56,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         setCipherAlgorithm(header.getCipherAlgorithm());
         setChainingMode(header.getChainingMode());
         setEncryptedKey(null);
-        setHashAlgorithm(header.getHashAlgorithmEx()); 
+        setHashAlgorithm(header.getHashAlgorithm()); 
     }
     
     protected StandardEncryptionVerifier(CipherAlgorithm cipherAlgorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode) {
