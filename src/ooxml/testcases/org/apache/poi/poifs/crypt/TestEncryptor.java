@@ -394,6 +394,9 @@ public class TestEncryptor {
      */
     @Test
     public void bug60320CustomEncrypt() throws Exception {
+        int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
+        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
+
         // --- src/java/org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.java  (revision 1766745)
         // +++ src/java/org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.java  (working copy)
         // @@ -208,6 +208,13 @@

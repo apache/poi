@@ -29,12 +29,15 @@ import java.security.GeneralSecurityException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.crypto.Cipher;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Assume;
 import org.junit.Test;
 
 public class TestDecryptor {
@@ -161,6 +164,9 @@ public class TestDecryptor {
 
     @Test
     public void bug60320() throws IOException, GeneralSecurityException {
+        int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
+        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
+
         InputStream is = POIDataSamples.getPOIFSInstance().openResourceAsStream("60320-protected.xlsx");
         POIFSFileSystem fs = new POIFSFileSystem(is);
         is.close();
