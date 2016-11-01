@@ -389,7 +389,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
        paragraphs.clear();
        tables.clear();
        bodyElements.clear();
-       CTP ctp = CTP.Factory.newInstance();
     }
     
     /**
