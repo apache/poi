@@ -91,10 +91,12 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @throws BuildException If the workbook cannot be loaded.
      */
     private Workbook loadWorkbook() {
+        if (excelFileName == null) {
+            throw new BuildException("fileName attribute must be set!", getLocation());
+        }
 
-        File workbookFile = new File(excelFileName);
         try {
-            FileInputStream fis = new FileInputStream(workbookFile);
+            FileInputStream fis = new FileInputStream(excelFileName);
             try {
             	workbook = WorkbookFactory.create(fis);
             } finally {
