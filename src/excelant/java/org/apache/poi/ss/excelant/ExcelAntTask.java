@@ -17,27 +17,19 @@
 
 package org.apache.poi.ss.excelant;
 
-import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
-import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
+import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
+
 /**
  * Ant task class for testing Excel workbook cells.
- * 
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- *
  */
 public class ExcelAntTask extends Task {
     
@@ -98,70 +90,50 @@ public class ExcelAntTask extends Task {
 		log( versionBffr.toString(), Project.MSG_INFO ) ;
 		
 		log( "Using input file: " + excelFileName, Project.MSG_INFO ) ;
+
+        workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
 		
-		Workbook targetWorkbook = loadWorkbook() ;
-		if( targetWorkbook == null ) {
-			log( "Unable to load " + excelFileName + 
-					            ".  Verify the file exists and can be read.",
-					            Project.MSG_ERR ) ;
-			return ;
-		}
-		if( tests.size() > 0 ) {
+		for (ExcelAntTest test : tests) {
+			log("executing test: " + test.getName(), Project.MSG_DEBUG);
 
-			for (ExcelAntTest test : tests) {
-				log("executing test: " + test.getName(), Project.MSG_DEBUG);
-
-				workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
-
-				for (ExcelAntUserDefinedFunction eaUdf : functions) {
-					try {
-						workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName());
-					} catch (Exception e) {
-						throw new BuildException(e.getMessage(), e);
-					}
-				}
-				test.setWorkbookUtil(workbookUtil);
-
-				if (precision != null && precision.getValue() > 0) {
-					log("setting precision for the test " + test.getName(), Project.MSG_VERBOSE);
-					test.setPrecision(precision.getValue());
-				}
-
-				test.execute();
-
-				if (test.didTestPass()) {
-					successCount++;
-				} else {
-					if (failOnError) {
-						throw new BuildException("Test " + test.getName() + " failed.");
-					}
-				}
-				totalCount++;
-
-				workbookUtil = null;
+			if (workbookUtil == null) {
+			    workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
 			}
-			log( successCount + "/" + totalCount + " tests passed.", Project.MSG_INFO ) ;
-			workbookUtil = null ;
+
+			for (ExcelAntUserDefinedFunction eaUdf : functions) {
+				try {
+					workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName());
+				} catch (Exception e) {
+					throw new BuildException(e.getMessage(), e);
+				}
+			}
+			test.setWorkbookUtil(workbookUtil);
+
+			if (precision != null && precision.getValue() > 0) {
+				log("setting precision for the test " + test.getName(), Project.MSG_VERBOSE);
+				test.setPrecision(precision.getValue());
+			}
+
+			test.execute();
+
+			if (test.didTestPass()) {
+				successCount++;
+			} else {
+				if (failOnError) {
+					throw new BuildException("Test " + test.getName() + " failed.");
+				}
+			}
+			totalCount++;
+
+			workbookUtil = null;
 		}
+
+		if( !tests.isEmpty() ) {
+		    log( successCount + "/" + totalCount + " tests passed.", Project.MSG_INFO );
+		}
+        workbookUtil = null;
 	}
 	
-
-    private Workbook loadWorkbook() {
-        if (excelFileName == null) {
-            throw new BuildException("fileName attribute must be set!",
-                                     getLocation());
-        }
-
-		File workbookFile = new File( excelFileName ) ;
-        try {
-            FileInputStream fis = new FileInputStream( workbookFile ) ;
-            return WorkbookFactory.create( fis ) ;
-        } catch (Exception e) {
-            throw new BuildException("Cannot load file " + excelFileName
-                    + ". Make sure the path and file permissions are correct.", e, getLocation());
-        }
-	}
-
 
     /**
      * ExcelAnt depends on external libraries not included in the Ant distribution.
