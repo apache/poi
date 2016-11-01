@@ -92,7 +92,7 @@ public final class Fixed implements Function1Arg, Function2Arg, Function3Arg {
             // Format number conditionally using a thousands separator.
             NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
             DecimalFormat formatter = (DecimalFormat)nf;
-            formatter.setGroupingUsed(! skipThousandsSeparator);
+            formatter.setGroupingUsed(!(skipThousandsSeparator != null && skipThousandsSeparator));
             formatter.setMinimumFractionDigits(places >= 0 ? places : 0);
             formatter.setMaximumFractionDigits(places >= 0 ? places : 0);
             String numberString = formatter.format(number.doubleValue());
