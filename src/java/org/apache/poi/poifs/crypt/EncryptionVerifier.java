@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Used when checking if a key is valid for a document 
  */
@@ -48,10 +50,17 @@ public abstract class EncryptionVerifier implements Cloneable {
         return spinCount;
     }
 
+    /**
+     * @deprecated POI 3.16 beta 1. use {@link #getChainingMode()}
+     */
+    @Removal(version="3.18")
     public int getCipherMode() {
         return chainingMode.ecmaId;
     }
 
+    /**
+     * @deprecated POI 3.16 beta 1. use {@link #getCipherAlgorithm()}
+     */
     public int getAlgorithm() {
         return cipherAlgorithm.ecmaId;
     }

@@ -45,17 +45,17 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
             throw new EncryptedDocumentException("Unable to parse keyData");
         }
 
-        setKeySize((int)keyData.getKeyBits());
-        setFlags(0);
-        setSizeExtra(0);
-        setCspName(null);
-        setBlockSize(keyData.getBlockSize());
-
         int keyBits = (int)keyData.getKeyBits();
         
         CipherAlgorithm ca = CipherAlgorithm.fromXmlId(keyData.getCipherAlgorithm().toString(), keyBits);
         setCipherAlgorithm(ca);
         setCipherProvider(ca.provider);
+
+        setKeySize(keyBits);
+        setFlags(0);
+        setSizeExtra(0);
+        setCspName(null);
+        setBlockSize(keyData.getBlockSize());
 
         switch (keyData.getCipherChaining().intValue()) {
         case STCipherChaining.INT_CHAINING_MODE_CBC:
@@ -73,7 +73,7 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
         HashAlgorithm ha = HashAlgorithm.fromEcmaId(keyData.getHashAlgorithm().toString());
         setHashAlgorithm(ha);
 
-        if (getHashAlgorithmEx().hashSize != hashSize) {
+        if (getHashAlgorithm().hashSize != hashSize) {
             throw new EncryptedDocumentException("Unsupported hash algorithm: " + 
                     keyData.getHashAlgorithm() + " @ " + hashSize + " bytes");
         }

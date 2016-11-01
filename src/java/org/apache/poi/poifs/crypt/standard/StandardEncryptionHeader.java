@@ -108,7 +108,7 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
         bos.writeInt(getFlags());
         bos.writeInt(0); // size extra
         bos.writeInt(getCipherAlgorithm().ecmaId);
-        bos.writeInt(getHashAlgorithmEx().ecmaId);
+        bos.writeInt(getHashAlgorithm().ecmaId);
         bos.writeInt(getKeySize());
         bos.writeInt(getCipherProvider().ecmaId);
         bos.writeInt(0); // reserved1

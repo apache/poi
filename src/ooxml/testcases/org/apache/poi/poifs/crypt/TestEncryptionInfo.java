@@ -35,7 +35,7 @@ public class TestEncryptionInfo {
         assertEquals(2, info.getVersionMinor());
 
         assertEquals(CipherAlgorithm.aes128, info.getHeader().getCipherAlgorithm());
-        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithmEx());
+        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithm());
         assertEquals(128, info.getHeader().getKeySize());
         assertEquals(32, info.getVerifier().getEncryptedVerifierHash().length);
         assertEquals(CipherProvider.aes, info.getHeader().getCipherProvider());                
@@ -54,7 +54,7 @@ public class TestEncryptionInfo {
         assertEquals(4, info.getVersionMinor());
 
         assertEquals(CipherAlgorithm.aes256, info.getHeader().getCipherAlgorithm());
-        assertEquals(HashAlgorithm.sha512, info.getHeader().getHashAlgorithmEx());
+        assertEquals(HashAlgorithm.sha512, info.getHeader().getHashAlgorithm());
         assertEquals(256, info.getHeader().getKeySize());
         assertEquals(64, info.getVerifier().getEncryptedVerifierHash().length);
         assertEquals(CipherProvider.aes, info.getHeader().getCipherProvider());                
