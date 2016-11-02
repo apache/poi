@@ -91,26 +91,6 @@ public class EntryUtils
     }
 
     /**
-     * Copies nodes from one Directory to the other minus the excepts
-     * 
-     * @param sourceRoot
-     *            is the source Directory to copy from
-     * @param targetRoot
-     *            is the target Directory to copy to
-     * @param excepts
-     *            is a list of Strings specifying what nodes NOT to copy
-     * @deprecated POI 3.8 beta 5. Use {@link FilteringDirectoryNode} instead
-     */
-    public static void copyNodes( DirectoryEntry sourceRoot,
-            DirectoryEntry targetRoot, List<String> excepts )
-            throws IOException
-    {
-        FilteringDirectoryNode source = new FilteringDirectoryNode(sourceRoot, excepts);
-        FilteringDirectoryNode target = new FilteringDirectoryNode(targetRoot, excepts);
-        copyNodes( source, target );
-    }
-
-    /**
      * Copies all nodes from one POIFS to the other
      * 
      * @param source

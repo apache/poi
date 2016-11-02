@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.poifs.filesystem.EntryUtils;
+import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -88,7 +89,9 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
         writeProperties(fs, excepts);
         
         // Copy over everything else unchanged
-        EntryUtils.copyNodes(directory, fs.getRoot(), excepts);
+        FilteringDirectoryNode src = new FilteringDirectoryNode(directory, excepts);
+        FilteringDirectoryNode dest = new FilteringDirectoryNode(fs.getRoot(), excepts);
+        EntryUtils.copyNodes(src, dest);
         
         // Caller will save the resultant POIFSFileSystem to the stream/file
     }
