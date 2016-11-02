@@ -276,9 +276,8 @@ public final class TestFormulaShifter {
     }
     
     @Test
-    @SuppressWarnings("deprecation")
     public void testConstructor() {
-        assertNotNull(FormulaShifter.createForRowShift(1, "name", 1, 2, 2));
+        assertNotNull(FormulaShifter.createForRowShift(1, "name", 1, 2, 2, SpreadsheetVersion.EXCEL97));
     }
 
     @Test
