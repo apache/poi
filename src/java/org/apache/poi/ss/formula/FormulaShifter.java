@@ -105,21 +105,6 @@ public final class FormulaShifter {
         _dstSheetIndex = dstSheetIndex;
         _mode = ShiftMode.SheetMove;
     }
-
-    /**
-     * @deprecated As of 3.14 beta 1 (November 2015), replaced by {@link #createForRowShift(int, String, int, int, int, SpreadsheetVersion)}
-     *
-     * @param externSheetIndex
-     * @param sheetName
-     * @param firstMovedRowIndex
-     * @param lastMovedRowIndex
-     * @param numberOfRowsToMove
-     * @return FormulaShifter object that can be passed to a RowShifter to modify formulas.
-     */
-    @Deprecated
-    public static FormulaShifter createForRowShift(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove) {
-        return createForRowShift(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, SpreadsheetVersion.EXCEL97);
-    }
     
     public static FormulaShifter createForRowShift(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove,
             SpreadsheetVersion version) {
