@@ -105,15 +105,9 @@ public class EntryUtils
             DirectoryEntry targetRoot, List<String> excepts )
             throws IOException
     {
-        Iterator<Entry> entries = sourceRoot.getEntries();
-        while ( entries.hasNext() )
-        {
-            Entry entry = entries.next();
-            if ( !excepts.contains( entry.getName() ) )
-            {
-                copyNodeRecursively( entry, targetRoot );
-            }
-        }
+        FilteringDirectoryNode source = new FilteringDirectoryNode(sourceRoot, excepts);
+        FilteringDirectoryNode target = new FilteringDirectoryNode(targetRoot, excepts);
+        copyNodes( source, target );
     }
 
     /**
