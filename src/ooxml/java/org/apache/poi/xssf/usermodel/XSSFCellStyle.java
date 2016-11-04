@@ -46,7 +46,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 
-
 /**
  *
  * High level representation of the the possible formatting information for the contents of the cells on a sheet in a
@@ -656,6 +655,14 @@ public class XSSFCellStyle implements CellStyle {
     }
 
     /**
+     * Is "Quote Prefix" or "123 Prefix" enabled for the cell?
+     */
+    @Override
+    public boolean getQuotePrefixed() {
+        return _cellXf.getQuotePrefix();
+    }
+    
+    /**
      * Get the color to use for the right border
      *
      * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#BLACK}
@@ -1254,6 +1261,16 @@ public class XSSFCellStyle implements CellStyle {
              _cellXf.addNewProtection();
          }
         _cellXf.getProtection().setLocked(locked);
+    }
+    
+    /**
+     * Turn on or off "Quote Prefix" or "123 Prefix" for the style,
+     *  which is used to tell Excel that the thing which looks like
+     *  a number or a formula shouldn't be treated as on.
+     */
+    @Override
+    public void setQuotePrefixed(boolean quotePrefix) {
+        _cellXf.setQuotePrefix(quotePrefix);
     }
 
     /**

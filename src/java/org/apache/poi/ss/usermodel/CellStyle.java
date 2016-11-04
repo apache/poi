@@ -397,6 +397,22 @@ public interface CellStyle {
      */
 
     boolean getLocked();
+    
+    /**
+     * Turn on or off "Quote Prefix" or "123 Prefix" for the style,
+     *  which is used to tell Excel that the thing which looks like
+     *  a number or a formula shouldn't be treated as on.
+     * Turning this on is somewhat (but not completely, see {@link IgnoredErrorType})
+     *  like prefixing the cell value with a ' in Excel
+     */
+    void setQuotePrefixed(boolean quotePrefix);
+    
+    /**
+     * Is "Quote Prefix" or "123 Prefix" enabled for the cell?
+     * Having this on is somewhat (but not completely, see {@link IgnoredErrorType})
+     *  like prefixing the cell value with a ' in Excel
+     */
+    boolean getQuotePrefixed();
 
     /**
      * set the type of horizontal alignment for the cell
