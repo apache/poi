@@ -45,6 +45,10 @@ public class XWPFSDTContentCell implements ISDTContent {
     public XWPFSDTContentCell(CTSdtContentCell sdtContentCell,
                               XWPFTableRow xwpfTableRow, IBody part) {
         super();
+        //sdtContentCell is allowed to be null:  minOccurs="0" maxOccurs="1"
+        if (sdtContentCell == null) {
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         XmlCursor cursor = sdtContentCell.newCursor();
 
