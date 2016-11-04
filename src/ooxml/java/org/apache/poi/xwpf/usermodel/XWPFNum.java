@@ -20,7 +20,7 @@ package org.apache.poi.xwpf.usermodel;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 
 /**
- * @author Philipp Epp
+ * TODO Bring more of the logic over from XWPFParagraph
  */
 public class XWPFNum {
     protected XWPFNumbering numbering;
