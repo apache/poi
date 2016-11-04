@@ -244,6 +244,24 @@ public final class HSSFCellStyle implements CellStyle {
     }
 
     /**
+     * Turn on or off "Quote Prefix" or "123 Prefix" for the style,
+     *  which is used to tell Excel that the thing which looks like
+     *  a number or a formula shouldn't be treated as on.
+     */
+    @Override
+    public void setQuotePrefixed(boolean quotePrefix) {
+        _format.set123Prefix(quotePrefix);
+    }
+    
+    /**
+     * Is "Quote Prefix" or "123 Prefix" enabled for the cell?
+     */
+    @Override
+    public boolean getQuotePrefixed() {
+        return _format.get123Prefix();
+    }
+    
+    /**
      * set the type of horizontal alignment for the cell
      * @param align - the type of alignment
      * @see #ALIGN_GENERAL
