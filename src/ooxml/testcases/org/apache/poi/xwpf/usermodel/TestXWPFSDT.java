@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +130,15 @@ public final class TestXWPFSDT extends TestCase {
             AbstractXWPFSDT sdt = sdts.get(i);
             assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
         }
+    }
+
+    public void test60341() throws IOException {
+        //handle sdtbody without an sdtpr
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug60341.docx");
+        List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
+        assertEquals(1, sdts.size());
+        assertEquals("", sdts.get(0).getTag());
+        assertEquals("", sdts.get(0).getTitle());
     }
 
     private List<AbstractXWPFSDT> extractAllSDTs(XWPFDocument doc) {
