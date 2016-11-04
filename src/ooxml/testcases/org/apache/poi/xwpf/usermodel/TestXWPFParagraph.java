@@ -592,4 +592,88 @@ public final class TestXWPFParagraph {
         }
         assertEquals("This is a test.\n\n\n\n3\n4\n5\n\n\n\nThis is a whole paragraph where one word is deleted.\n", str.toString());
     }
+    
+    @Test
+    public void testNumberedLists() throws Exception {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ComplexNumberedLists.docx");
+        XWPFParagraph p;
+        
+        p = doc.getParagraphArray(0);
+        assertEquals("This is a document with numbered lists", p.getText());
+        assertEquals(null, p.getNumID());
+        assertEquals(null, p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(1);
+        assertEquals("Entry #1", p.getText());
+        assertEquals(BigInteger.valueOf(1), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(2);
+        assertEquals("Entry #2, with children", p.getText());
+        assertEquals(BigInteger.valueOf(1), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(3);
+        assertEquals("2-a", p.getText());
+        assertEquals(BigInteger.valueOf(1), p.getNumID());
+        assertEquals(BigInteger.valueOf(1), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(4);
+        assertEquals("2-b", p.getText());
+        assertEquals(BigInteger.valueOf(1), p.getNumID());
+        assertEquals(BigInteger.valueOf(1), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(5);
+        assertEquals("2-c", p.getText());
+        assertEquals(BigInteger.valueOf(1), p.getNumID());
+        assertEquals(BigInteger.valueOf(1), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(6);
+        assertEquals("Entry #3", p.getText());
+        assertEquals(BigInteger.valueOf(1), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(7);
+        assertEquals("Entry #4", p.getText());
+        assertEquals(BigInteger.valueOf(1), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        // New list
+        p = doc.getParagraphArray(8);
+        assertEquals("Restarted to 1 from 5", p.getText());
+        assertEquals(BigInteger.valueOf(2), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(9);
+        assertEquals("Restarted @ 2", p.getText());
+        assertEquals(BigInteger.valueOf(2), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        p = doc.getParagraphArray(10);
+        assertEquals("Restarted @ 3", p.getText());
+        assertEquals(BigInteger.valueOf(2), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        assertEquals(null, p.getNumStartOverride());
+        
+        // New list starting at 10
+        p = doc.getParagraphArray(11);
+        assertEquals("Jump to new list at 10", p.getText());
+        assertEquals(BigInteger.valueOf(6), p.getNumID());
+        assertEquals(BigInteger.valueOf(0), p.getNumIlvl());
+        // TODO Why isn't this seen as 10?
+        assertEquals(null, p.getNumStartOverride());
+        
+        // TODO Shouldn't we use XWPFNumbering or similar here?
+        // TODO Make it easier to change
+    }
 }
