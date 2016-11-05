@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.xwpf.model.WMLHelper;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
@@ -192,55 +193,74 @@ public class XWPFTableRow {
      */
     public boolean isCantSplitRow() {
         boolean isCant = false;
-        CTTrPr trpr = getTrPr();
-        if (trpr.sizeOfCantSplitArray() > 0) {
-            CTOnOff onoff = trpr.getCantSplitArray(0);
-            isCant = onoff.getVal().equals(STOnOff.ON);
+        if (ctRow.isSetTrPr()) {
+            CTTrPr trpr = getTrPr();
+            if (trpr.sizeOfCantSplitArray() > 0) {
+                CTOnOff onoff = trpr.getCantSplitArray(0);
+                isCant = (onoff.isSetVal() ? WMLHelper.STOnOffToBoolean(onoff.getVal()) : true);
+            }
         }
         return isCant;
     }
 
     /**
-     * This attribute controls whether to allow table rows to split across pages.
+     * Controls whether to allow this table row to split across pages.
      * The logic for this attribute is a little unusual: a true value means
      * DON'T allow rows to split, false means allow rows to split.
      *
-     * @param split - if true, don't allow rows to be split. If false, allow
-     *              rows to be split.
+     * @param split - if true, don't allow row to be split. If false, allow
+     *              row to be split.
      */
     public void setCantSplitRow(boolean split) {
         CTTrPr trpr = getTrPr();
-        CTOnOff onoff = trpr.addNewCantSplit();
-        onoff.setVal(split ? STOnOff.ON : STOnOff.OFF);
+        CTOnOff onoff = (trpr.sizeOfCantSplitArray() > 0 ? trpr.getCantSplitArray(0) : trpr.addNewCantSplit());
+        onoff.setVal(WMLHelper.BooleanToSTOnOff(split));
     }
 
     /**
      * Return true if a table's header row should be repeated at the top of a
-     * table split across pages.
+     * table split across pages. NOTE - Word will not repeat a table row unless
+     * all preceding rows of the table are also repeated. This function returns
+     * false if the row will not be repeated even if the repeat tag is present
+     * for this row. 
      *
      * @return true if table's header row should be repeated at the top of each
      * page of table, false otherwise.
      */
     public boolean isRepeatHeader() {
         boolean repeat = false;
-        CTTrPr trpr = getTrPr();
-        if (trpr.sizeOfTblHeaderArray() > 0) {
-            CTOnOff rpt = trpr.getTblHeaderArray(0);
-            repeat = rpt.getVal().equals(STOnOff.ON);
+        for (XWPFTableRow row : table.getRows()) {
+            repeat = row.getRepeat();
+            if (row == this || !repeat) {
+                break;
+            }
+        }
+        return repeat;
+    }
+    
+    private boolean getRepeat() {
+        boolean repeat = false;
+        if (ctRow.isSetTrPr()) {
+            CTTrPr trpr = getTrPr();
+            if (trpr.sizeOfTblHeaderArray() > 0) {
+                CTOnOff rpt = trpr.getTblHeaderArray(0);
+                repeat = (rpt.isSetVal() ? WMLHelper.STOnOffToBoolean(rpt.getVal()) : true);
+            }
         }
         return repeat;
     }
 
     /**
      * This attribute controls whether to repeat a table's header row at the top
-     * of a table split across pages.
+     * of a table split across pages. NOTE - for a row to be repeated, all preceding
+     * rows in the table must also be repeated.
      *
      * @param repeat - if TRUE, repeat header row at the top of each page of table;
      *               if FALSE, don't repeat header row.
      */
     public void setRepeatHeader(boolean repeat) {
         CTTrPr trpr = getTrPr();
-        CTOnOff onoff = trpr.addNewTblHeader();
-        onoff.setVal(repeat ? STOnOff.ON : STOnOff.OFF);
+        CTOnOff onoff = (trpr.sizeOfTblHeaderArray() > 0 ? trpr.getTblHeaderArray(0) : trpr.addNewTblHeader());
+        onoff.setVal(WMLHelper.BooleanToSTOnOff(repeat));
     }
 }

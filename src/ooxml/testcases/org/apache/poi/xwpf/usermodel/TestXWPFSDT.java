@@ -17,21 +17,26 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public final class TestXWPFSDT extends TestCase {
+public final class TestXWPFSDT {
 
     /**
      * Test simple tag and title extraction from SDT
      *
      * @throws Exception
      */
+    @Test
     public void testTagTitle() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
         String tag = null;
@@ -51,7 +56,7 @@ public final class TestXWPFSDT extends TestCase {
         assertEquals("title", "MyTitle", title);
     }
 
-
+    @Test
     public void testGetSDTs() throws Exception {
         String[] contents = new String[]{
                 "header_rich_text",
@@ -83,6 +88,7 @@ public final class TestXWPFSDT extends TestCase {
     /**
      * POI-54771 and TIKA-1317
      */
+    @Test
     public void testSDTAsCell() throws Exception {
         //Bug54771a.docx and Bug54771b.docx test slightly 
         //different recursion patterns. Keep both!
@@ -110,6 +116,7 @@ public final class TestXWPFSDT extends TestCase {
     /**
      * POI-55142 and Tika 1130
      */
+    @Test
     public void testNewLinesBetweenRuns() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug55142.docx");
         List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
@@ -132,6 +139,7 @@ public final class TestXWPFSDT extends TestCase {
         }
     }
 
+    @Ignore
     public void test60341() throws IOException {
         //handle sdtbody without an sdtpr
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug60341.docx");
