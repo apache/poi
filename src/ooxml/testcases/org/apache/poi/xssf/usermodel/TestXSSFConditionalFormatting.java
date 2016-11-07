@@ -18,15 +18,15 @@
  */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-
 import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * XSSF-specific Conditional Formatting tests
