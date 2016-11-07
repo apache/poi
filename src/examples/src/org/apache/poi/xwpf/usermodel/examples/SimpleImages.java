@@ -16,9 +16,13 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xwpf.usermodel;
+package org.apache.poi.xwpf.usermodel.examples;
 
 import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.usermodel.BreakType;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
