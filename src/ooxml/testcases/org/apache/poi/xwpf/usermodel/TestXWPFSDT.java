@@ -139,7 +139,7 @@ public final class TestXWPFSDT {
         }
     }
 
-    @Ignore
+    @Test
     public void test60341() throws IOException {
         //handle sdtbody without an sdtpr
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug60341.docx");
