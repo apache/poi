@@ -104,6 +104,8 @@ public final class OOXMLLite {
                 "TestDataSamples",
                 "All.+Tests",
                 "ZipFileAssert",
+                "AesZipFileZipEntrySource",
+                "TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource",
                 "PkiTestUtils",
                 "TestCellFormatPart\\$\\d",
                 "TestSignatureInfo\\$\\d",

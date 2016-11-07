@@ -17,21 +17,19 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.IOException;
-import java.util.TreeMap;
-
 import junit.framework.TestCase;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
-import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
+
+import java.io.IOException;
+import java.util.TreeMap;
 
 /**
  * Tests functionality of the XSSFRichTextRun object
