@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.apache.poi.xwpf.usermodel.examples;
 
 import java.io.File;
 import java.io.FileOutputStream;

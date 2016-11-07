@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.xwpf.usermodel;
+package org.apache.poi.xwpf.usermodel.examples;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row;
