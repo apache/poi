@@ -23,10 +23,8 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
 /**
@@ -120,98 +118,5 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         Workbook wbBack = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         assertNotNull(wbBack);
         wbBack.close();
-    }
-
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void test52122() throws Exception {
-        Workbook workbook = new HSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Conditional Formatting Test");
-        sheet.setColumnWidth(0, 256 * 10);
-        sheet.setColumnWidth(1, 256 * 10);
-        sheet.setColumnWidth(2, 256 * 10);
-
-        // Create some content.
-        // row 0
-        Row row = sheet.createRow(0);
-
-        Cell cell0 = row.createCell(0);
-        cell0.setCellType(CellType.NUMERIC);
-        cell0.setCellValue(100);
-
-        Cell cell1 = row.createCell(1);
-        cell1.setCellType(CellType.NUMERIC);
-        cell1.setCellValue(120);
-
-        Cell cell2 = row.createCell(2);
-        cell2.setCellType(CellType.NUMERIC);
-        cell2.setCellValue(130);
-
-        // row 1
-        row = sheet.createRow(1);
-
-        cell0 = row.createCell(0);
-        cell0.setCellType(CellType.NUMERIC);
-        cell0.setCellValue(200);
-
-        cell1 = row.createCell(1);
-        cell1.setCellType(CellType.NUMERIC);
-        cell1.setCellValue(220);
-
-        cell2 = row.createCell(2);
-        cell2.setCellType(CellType.NUMERIC);
-        cell2.setCellValue(230);
-
-        // row 2
-        row = sheet.createRow(2);
-
-        cell0 = row.createCell(0);
-        cell0.setCellType(CellType.NUMERIC);
-        cell0.setCellValue(300);
-
-        cell1 = row.createCell(1);
-        cell1.setCellType(CellType.NUMERIC);
-        cell1.setCellValue(320);
-
-        cell2 = row.createCell(2);
-        cell2.setCellType(CellType.NUMERIC);
-        cell2.setCellValue(330);
-
-        // Create conditional formatting, CELL1 should be yellow if CELL0 is not blank.
-        SheetConditionalFormatting formatting = sheet.getSheetConditionalFormatting();
-
-        ConditionalFormattingRule rule = formatting.createConditionalFormattingRule("$A$1>75");
-
-        PatternFormatting pattern = rule.createPatternFormatting();
-        pattern.setFillBackgroundColor(IndexedColors.BLUE.index);
-        pattern.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
-
-        CellRangeAddress[] range = {CellRangeAddress.valueOf("B2:C2")};
-        CellRangeAddress[] range2 = {CellRangeAddress.valueOf("B1:C1")};
-
-        formatting.addConditionalFormatting(range, rule);
-        formatting.addConditionalFormatting(range2, rule);
-
-        // Write file.
-        /*FileOutputStream fos = new FileOutputStream("c:\\temp\\52122_conditional-sheet.xls");
-        try {
-            workbook.write(fos);
-        } finally {
-            fos.close();
-        }*/
-
-        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)workbook);
-        Sheet sheetBack = wbBack.getSheetAt(0);
-        final SheetConditionalFormatting sheetConditionalFormattingBack = sheetBack.getSheetConditionalFormatting();
-        assertNotNull(sheetConditionalFormattingBack);
-        final ConditionalFormatting formattingBack = sheetConditionalFormattingBack.getConditionalFormattingAt(0);
-        assertNotNull(formattingBack);
-        final ConditionalFormattingRule ruleBack = formattingBack.getRule(0);
-        assertNotNull(ruleBack);
-        final PatternFormatting patternFormattingBack1 = ruleBack.getPatternFormatting();
-        assertNotNull(patternFormattingBack1);
-        assertEquals(IndexedColors.BLUE.index, patternFormattingBack1.getFillBackgroundColor());
-        assertEquals(PatternFormatting.SOLID_FOREGROUND, patternFormattingBack1.getFillPattern());
     }
 }
