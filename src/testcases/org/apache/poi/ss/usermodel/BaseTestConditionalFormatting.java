@@ -19,15 +19,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
 import org.apache.poi.hssf.usermodel.HSSFConditionalFormatting;
 import org.apache.poi.hssf.usermodel.HSSFConditionalFormattingRule;
 import org.apache.poi.ss.ITestDataProvider;
@@ -35,6 +26,10 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 /**
  * Base tests for Conditional Formatting, for both HSSF and XSSF
@@ -1270,5 +1265,82 @@ public abstract class BaseTestConditionalFormatting {
         ConditionalFormattingRule rule = sheet.getSheetConditionalFormatting().createConditionalFormattingRule("$A$1>0");
         sheet.getSheetConditionalFormatting().addConditionalFormatting(ranges, rule);
         wb.close();
+    }
+
+    @Test
+    public void testSetCellRangeAddresswithSingleRange() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        final Sheet sheet = wb.createSheet("S1");
+        final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
+        assertEquals(0, cf.getNumConditionalFormattings());
+        ConditionalFormattingRule rule1 = cf.createConditionalFormattingRule("$A$1>0");
+        cf.addConditionalFormatting(new CellRangeAddress[] {
+                CellRangeAddress.valueOf("A1:A5")
+        }, rule1);
+
+        assertEquals(1, cf.getNumConditionalFormattings());
+        ConditionalFormatting readCf = cf.getConditionalFormattingAt(0);
+        CellRangeAddress[] formattingRanges = readCf.getFormattingRanges();
+        assertEquals(1, formattingRanges.length);
+        CellRangeAddress formattingRange = formattingRanges[0];
+        assertEquals("A1:A5", formattingRange.formatAsString());
+
+        readCf.setFormattingRanges(new CellRangeAddress[] {
+                CellRangeAddress.valueOf("A1:A6")
+        });
+
+        readCf = cf.getConditionalFormattingAt(0);
+        formattingRanges = readCf.getFormattingRanges();
+        assertEquals(1, formattingRanges.length);
+        formattingRange = formattingRanges[0];
+        assertEquals("A1:A6", formattingRange.formatAsString());
+    }
+
+    @Test
+    public void testSetCellRangeAddressWithMultipleRanges() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        final Sheet sheet = wb.createSheet("S1");
+        final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
+        assertEquals(0, cf.getNumConditionalFormattings());
+        ConditionalFormattingRule rule1 = cf.createConditionalFormattingRule("$A$1>0");
+        cf.addConditionalFormatting(new CellRangeAddress[] {
+                CellRangeAddress.valueOf("A1:A5")
+        }, rule1);
+
+        assertEquals(1, cf.getNumConditionalFormattings());
+        ConditionalFormatting readCf = cf.getConditionalFormattingAt(0);
+        CellRangeAddress[] formattingRanges = readCf.getFormattingRanges();
+        assertEquals(1, formattingRanges.length);
+        CellRangeAddress formattingRange = formattingRanges[0];
+        assertEquals("A1:A5", formattingRange.formatAsString());
+
+        readCf.setFormattingRanges(new CellRangeAddress[] {
+                CellRangeAddress.valueOf("A1:A6"),
+                CellRangeAddress.valueOf("B1:B6")
+        });
+
+        readCf = cf.getConditionalFormattingAt(0);
+        formattingRanges = readCf.getFormattingRanges();
+        assertEquals(2, formattingRanges.length);
+        formattingRange = formattingRanges[0];
+        assertEquals("A1:A6", formattingRange.formatAsString());
+        formattingRange = formattingRanges[1];
+        assertEquals("B1:B6", formattingRange.formatAsString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetCellRangeAddressWithNullRanges() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        final Sheet sheet = wb.createSheet("S1");
+        final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
+        assertEquals(0, cf.getNumConditionalFormattings());
+        ConditionalFormattingRule rule1 = cf.createConditionalFormattingRule("$A$1>0");
+        cf.addConditionalFormatting(new CellRangeAddress[] {
+                CellRangeAddress.valueOf("A1:A5")
+        }, rule1);
+
+        assertEquals(1, cf.getNumConditionalFormattings());
+        ConditionalFormatting readCf = cf.getConditionalFormattingAt(0);
+        readCf.setFormattingRanges(null);
     }
 }

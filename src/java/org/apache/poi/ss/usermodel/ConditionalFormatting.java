@@ -81,6 +81,12 @@ public interface ConditionalFormatting {
     CellRangeAddress[] getFormattingRanges();
 
     /**
+     * Sets the cell ranges the rule conditional formatting must be applied to.
+     * @param ranges non-null array of <tt>CellRangeAddress</tt>s
+     */
+    void setFormattingRanges(CellRangeAddress[] ranges);
+
+    /**
      * Replaces an existing Conditional Formatting rule at position idx.
      * Excel pre-2007 allows to create up to 3 Conditional Formatting rules,
      *  2007 and later allow unlimited numbers.
