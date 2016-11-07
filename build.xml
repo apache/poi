@@ -1263,6 +1263,7 @@ under the License.
                         <exclude name="**/All*Tests.java"/>
                         <exclude name="**/TestUnfixedBugs.java"/>
                         <exclude name="**/TestcaseRecordInputStream.java"/>
+                        <exclude name="**/${testexcludepattern}.java"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1324,6 +1325,7 @@ under the License.
                         <exclude name="**/All*Tests.java"/>
                         <exclude name="**/TestUnfixedBugs.java"/>
                         <exclude name="**/TestcaseRecordInputStream.java"/>
+                        <exclude name="**/${testexcludepattern}.java"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1368,6 +1370,7 @@ under the License.
                     <fileset dir="${scratchpad.src.test}">
                         <include name="**/${testpattern}.java"/>
                         <exclude name="**/AllTests.java"/>
+                        <exclude name="**/${testexcludepattern}.java"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1410,7 +1413,8 @@ under the License.
                           <include name="**/${testpattern}.java"/>
                           <exclude name="**/TestUnfixedBugs.java"/>
                           <exclude name="**/All*Tests.java"/>
-                            <exclude name="**/TestSignatureInfo.java"/>
+                          <exclude name="**/TestSignatureInfo.java"/>
+                          <exclude name="**/${testexcludepattern}.java"/>
                       </fileset>
                   </batchtest>
               </junit>
@@ -1481,6 +1485,7 @@ under the License.
                           <include name="**/org/apache/poi/xssf/**/${testpattern}.java"/>
                           <exclude name="**/TestUnfixedBugs.java"/>
                           <exclude name="**/All*Tests.java"/>
+                          <exclude name="**/${testexcludepattern}.java"/>
                       </fileset>
                   </batchtest>
               </junit>
@@ -1525,6 +1530,7 @@ under the License.
                 <batchtest todir="${integration.reports.test}">
                     <fileset dir="${integration.src.test}">
                         <include name="**/${testpattern}.java"/>
+                        <exclude name="**/${testexcludepattern}.java"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1616,6 +1622,7 @@ under the License.
                 <batchtest todir="${excelant.reports.test}">
                     <fileset dir="${excelant.src.test}">
                         <include name="**/${testpattern}.java"/>
+                        <exclude name="**/${testexcludepattern}.java"/>
                     </fileset>
                 </batchtest>
             </junit>
