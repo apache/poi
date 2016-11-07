@@ -18,9 +18,10 @@ package org.apache.poi.ss.examples;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Shows how various alignment options work.
@@ -31,25 +32,26 @@ public class AligningCells {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
 
         Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow((short) 2);
+        Row row = sheet.createRow(2);
         row.setHeightInPoints(30);
         for (int i = 0; i < 8; i++) {
             //column width is set in units of 1/256th of a character width
             sheet.setColumnWidth(i, 256 * 15);
         }
 
-        createCell(wb, row, (short) 0, HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM);
-        createCell(wb, row, (short) 1, HorizontalAlignment.CENTER_SELECTION, VerticalAlignment.BOTTOM);
-        createCell(wb, row, (short) 2, HorizontalAlignment.FILL, VerticalAlignment.CENTER);
-        createCell(wb, row, (short) 3, HorizontalAlignment.GENERAL, VerticalAlignment.CENTER);
-        createCell(wb, row, (short) 4, HorizontalAlignment.JUSTIFY, VerticalAlignment.JUSTIFY);
-        createCell(wb, row, (short) 5, HorizontalAlignment.LEFT, VerticalAlignment.TOP);
-        createCell(wb, row, (short) 6, HorizontalAlignment.RIGHT, VerticalAlignment.TOP);
+        createCell(wb, row, 0, HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM);
+        createCell(wb, row, 1, HorizontalAlignment.CENTER_SELECTION, VerticalAlignment.BOTTOM);
+        createCell(wb, row, 2, HorizontalAlignment.FILL, VerticalAlignment.CENTER);
+        createCell(wb, row, 3, HorizontalAlignment.GENERAL, VerticalAlignment.CENTER);
+        createCell(wb, row, 4, HorizontalAlignment.JUSTIFY, VerticalAlignment.JUSTIFY);
+        createCell(wb, row, 5, HorizontalAlignment.LEFT, VerticalAlignment.TOP);
+        createCell(wb, row, 6, HorizontalAlignment.RIGHT, VerticalAlignment.TOP);
 
         // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("ss-example-align.xlsx");
+        OutputStream fileOut = new FileOutputStream("ss-example-align.xlsx");
         wb.write(fileOut);
         fileOut.close();
+
         wb.close();
     }
 
@@ -61,7 +63,7 @@ public class AligningCells {
      * @param column the column number to create the cell in
      * @param halign the horizontal alignment for the cell.
      */
-    private static void createCell(Workbook wb, Row row, short column, HorizontalAlignment halign, VerticalAlignment valign) {
+    private static void createCell(Workbook wb, Row row, int column, HorizontalAlignment halign, VerticalAlignment valign) {
         CreationHelper ch = wb.getCreationHelper();
         Cell cell = row.createCell(column);
         cell.setCellValue(ch.createRichTextString("Align It"));
