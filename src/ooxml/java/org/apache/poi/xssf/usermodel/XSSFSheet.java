@@ -381,7 +381,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Verify that the candidate region does not intersect with an existing multi-cell array formula in this sheet
      *
-     * @param region
+     * @param region a region that is validated.
      * @throws IllegalStateException if candidate region intersects an existing array formula in this sheet
      */
     private void validateArrayFormulas(CellRangeAddress region) {
@@ -4217,10 +4217,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Create a pivot table using the AreaReference or named/table range on sourceSheet, at the given position.
      * If the source reference contains a sheet name, it must match the sourceSheet.
-     * @param sourceRef location of pivot data - mutually exclusive with SourceName
-     * @param sourceName range or table name for pivot data - mutually exclusive with SourceRef
      * @param position A reference to the top left cell where the pivot table will start
      * @param sourceSheet The sheet containing the source data, if the source reference doesn't contain a sheet name
+     * @param refConfig A reference to the pivot table configurator
      * @throws IllegalArgumentException if source references a sheet different than sourceSheet
      * @return The pivot table
      */

@@ -85,6 +85,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 
+@SuppressWarnings("deprecation")
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public TestXSSFBugs() {
         super(XSSFITestDataProvider.instance);
@@ -135,7 +136,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     /**
      * We should carry vba macros over after save
-     * @throws InvalidFormatException 
      */
     @Test
     public void bug45431() throws IOException, InvalidFormatException {
@@ -1824,7 +1824,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * New hyperlink with no initial cell reference, still need
      *  to be able to change it
-     * @throws IOException
      */
     @Test
     public void testBug56527() throws IOException {
@@ -2251,7 +2250,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Expected:
 
      * [  0][  2][  4]
-     * @throws IOException
      */
     @Test
     public void testBug56820_Formula1() throws IOException {
@@ -2282,7 +2280,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * [  0] <- number
      * [  2] <- formula
      * [  4] <- formula
-     * @throws IOException
      */
     @Test
     public void testBug56820_Formula2() throws IOException {
