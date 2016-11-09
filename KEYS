@@ -9,6 +9,14 @@ Developers:
         (gpg --list-key <your email>
              && gpg --armor --export <your email>) >> this file.
 
+Since the KEYS may be needed to check signatures for archived
+releases, it is important that all keys that have ever been used
+to sign releases are retained in the file. Entries should only
+be added, not removed.
+To keep the KEYS file manageable, it's recommended to only add
+the keys of committers who have signed releases.
+https://www.apache.org/dev/release-signing#keys-policy
+https://people.apache.org/keys/
 
 
 pub  1024D/12DAE9BE 2004-01-25 Glen Stampoultzis <glens@apache.org>
