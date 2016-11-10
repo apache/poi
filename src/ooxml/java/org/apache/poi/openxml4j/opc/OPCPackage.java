@@ -1654,7 +1654,13 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             if (packagePart.getContentType().equals(oldContentType)) {
                 PackagePartName partName = packagePart.getPartName();
                 contentTypeManager.addContentType(partName, newContentType);
+                try {
+                    packagePart.setContentType(newContentType);
+                } catch (InvalidFormatException e) {
+                    throw new OpenXML4JRuntimeException("invalid content type - "+newContentType, e);
+                }
                 success = true;
+                this.isDirty = true;
             }
         }
         return success;

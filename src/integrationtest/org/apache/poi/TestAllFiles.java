@@ -91,6 +91,7 @@ public class TestAllFiles {
         HANDLERS.put(".ppsm", new XSLFFileHandler());
         HANDLERS.put(".ppsx", new XSLFFileHandler());
         HANDLERS.put(".thmx", new XSLFFileHandler());
+        HANDLERS.put(".potx", new XSLFFileHandler());
 
         // Outlook
         HANDLERS.put(".msg", new HSMFFileHandler());
