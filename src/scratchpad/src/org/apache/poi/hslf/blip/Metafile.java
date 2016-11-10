@@ -116,6 +116,10 @@ public abstract class Metafile extends HSLFPictureData {
         public int getSize(){
             return 34;
         }
+        
+        public int getWmfSize() {
+            return wmfsize;
+        }
     }
 
     protected static byte[] compress(byte[] bytes, int offset, int length) throws IOException {

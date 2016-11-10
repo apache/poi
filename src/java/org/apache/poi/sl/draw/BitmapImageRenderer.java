@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.draw;
 
+import java.awt.AlphaComposite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -62,7 +63,7 @@ public class BitmapImageRenderer implements ImageRenderer {
     
     /**
      * Read the image data via ImageIO and optionally try to workaround metadata errors.
-     * The resulting image is of image image type {@link BufferedImage#TYPE_INT_ARGB}
+     * The resulting image is of image type {@link BufferedImage#TYPE_INT_ARGB}
      *
      * @param data the data stream
      * @param contentType the content type
@@ -72,6 +73,10 @@ public class BitmapImageRenderer implements ImageRenderer {
     private static BufferedImage readImage(InputStream data, String contentType) throws IOException {
         IOException lastException = null;
         BufferedImage img = null;
+        if (data.markSupported()) {
+            data.mark(data.available());
+        }
+        
         // currently don't use FileCacheImageInputStream,
         // because of the risk of filling the file handles (see #59166)
         ImageInputStream iis = new MemoryCacheImageInputStream(data);
@@ -84,31 +89,93 @@ public class BitmapImageRenderer implements ImageRenderer {
                 ImageReader reader = iter.next();
                 ImageReadParam param = reader.getDefaultReadParam();
                 // 0:default mode, 1:fallback mode
-                for (int mode=0; img==null && mode<2; mode++) {
-                    iis.reset();
+                for (int mode=0; img==null && mode<3; mode++) {
+                    lastException = null;
+                    try {
+                        iis.reset();
+                    } catch (IOException e) {
+                        if (data.markSupported()) {
+                            data.reset();
+                            data.mark(data.available());
+                            iis.close();
+                            iis = new MemoryCacheImageInputStream(data);
+                        } else {
+                            // can't restore the input stream, so we need to stop processing here
+                            lastException = e;
+                            break;
+                        }
+                    }
                     iis.mark();
 
-                    if (mode == 1) {
-                        // fallback mode for invalid image band metadata
-                        // see http://stackoverflow.com/questions/10416378
-                        Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
-                        while (imageTypes.hasNext()) {
-                            ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
-                            int bufferedImageType = imageTypeSpecifier.getBufferedImageType();
-                            if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
-                                param.setDestinationType(imageTypeSpecifier);
+                    try {
+                    
+                        switch (mode) {
+                            case 0:
+                                reader.setInput(iis, false, true);
+                                img = reader.read(0, param);
+                                break;
+                            case 1: {
+                                // try to load picture in gray scale mode
+                                // fallback mode for invalid image band metadata
+                                // see http://stackoverflow.com/questions/10416378
+                                Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
+                                while (imageTypes.hasNext()) {
+                                    ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
+                                    int bufferedImageType = imageTypeSpecifier.getBufferedImageType();
+                                    if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+                                        param.setDestinationType(imageTypeSpecifier);
+                                        break;
+                                    }
+                                }
+                                reader.setInput(iis, false, true);
+                                img = reader.read(0, param);
+                                break;
+                            }
+                            case 2: {
+                                // try to load truncated pictures by supplying a BufferedImage
+                                // and use the processed data up till the point of error
+                                reader.setInput(iis, false, true);
+                                int height = reader.getHeight(0);
+                                int width = reader.getWidth(0);
+                                
+                                Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
+                                if (imageTypes.hasNext()) {
+                                    ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
+                                    img = imageTypeSpecifier.createBufferedImage(width, height);
+                                    param.setDestination(img);
+                                } else {
+                                    lastException = new IOException("unable to load even a truncated version of the image.");
+                                    break;
+                                }
+
+                                try {
+                                    reader.read(0, param);
+                                } finally {
+                                    if (img.getType() != BufferedImage.TYPE_INT_ARGB) {
+                                        int y = findTruncatedBlackBox(img, width, height);
+                                        if (y < height) {
+                                            BufferedImage argbImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                                            Graphics2D g = argbImg.createGraphics();
+                                            g.clipRect(0, 0, width, y);
+                                            g.drawImage(img, 0, 0, null);
+                                            g.dispose();
+                                            img.flush();
+                                            img = argbImg;
+                                        }
+                                    }
+                                }                                
                                 break;
                             }
                         }
-                    }
                     
-                    try {
-                        reader.setInput(iis, false, true);
-                        img = reader.read(0, param);
                     } catch (IOException e) {
-                        lastException = e;
+                        if (mode < 2) {
+                            lastException = e;
+                        }
                     } catch (RuntimeException e) {
-                        lastException = new IOException("ImageIO runtime exception - "+(mode==0 ? "normal" : "fallback"), e);
+                        if (mode < 2) {
+                            lastException = new IOException("ImageIO runtime exception - "+(mode==0 ? "normal" : "fallback"), e);
+                        }
                     }
                 }
                 reader.dispose();
@@ -140,6 +207,21 @@ public class BitmapImageRenderer implements ImageRenderer {
         return img;
     }
 
+    private static int findTruncatedBlackBox(BufferedImage img, int width, int height) {
+        // scan through the image to find the black box after the truncated data
+        int h = height-1;
+        for (; h > 0; h--) {
+            for (int w = width-1; w > 0; w-=width/10) {
+                int p = img.getRGB(w, h);
+                if (p != 0xff000000) {
+                    return h+1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    
     @Override
     public BufferedImage getImage() {
         return img;
