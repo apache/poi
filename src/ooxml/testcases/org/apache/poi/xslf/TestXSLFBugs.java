@@ -31,10 +31,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 
@@ -43,6 +40,7 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
@@ -52,8 +50,6 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
-import org.apache.poi.xslf.usermodel.DrawingParagraph;
-import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFHyperlink;
@@ -540,5 +536,24 @@ public class TestXSLFBugs {
         rwPptx.close();
         newPptx.close();
         srcPptx.close();
+    }
+
+    @Test
+    public void bug59273() throws IOException {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("bug59273.potx");
+        ppt.getPackage().replaceContentType(
+            XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType(), 
+            XSLFRelation.MAIN.getContentType()
+        );
+
+        XMLSlideShow rwPptx = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        OPCPackage pkg = rwPptx.getPackage();
+        int size = pkg.getPartsByContentType(XSLFRelation.MAIN.getContentType()).size();
+        assertEquals(1, size);
+        size = pkg.getPartsByContentType(XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType()).size();
+        assertEquals(0, size);
+        
+        rwPptx.close();
+        ppt.close();
     }
 }
