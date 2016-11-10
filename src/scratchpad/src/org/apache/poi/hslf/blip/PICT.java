@@ -25,12 +25,16 @@ import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
  * Represents Macintosh PICT picture data.
  */
 public final class PICT extends Metafile {
+    private static POILogger LOG = POILogFactory.getLogger(PICT.class);
+    
     public static class NativeHeader {
         /**
          * skip the first 512 bytes - they are MAC specific crap
@@ -122,18 +126,37 @@ public final class PICT extends Metafile {
     }
 
     private byte[] read(byte[] data, int pos) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         Header header = new Header();
         header.read(data, pos);
         bis.skip(pos + header.getSize());
-        InflaterInputStream inflater = new InflaterInputStream( bis );
         byte[] chunk = new byte[4096];
-        int count;
-        while ((count = inflater.read(chunk)) >=0 ) {
-            out.write(chunk,0,count);
+        ByteArrayOutputStream out = new ByteArrayOutputStream(header.getWmfSize());
+        InflaterInputStream inflater = new InflaterInputStream( bis );
+        try {
+            int count;
+            while ((count = inflater.read(chunk)) >=0 ) {
+                out.write(chunk,0,count);
+                // PICT zip-stream can be erroneous, so we clear the array to determine
+                // the maximum of read bytes, after the inflater crashed
+                bytefill(chunk, (byte)0);
+            }
+        } catch (Exception e) {
+            int lastLen;
+            for (lastLen=chunk.length-1; lastLen>=0 && chunk[lastLen] == 0; lastLen--);
+            if (++lastLen > 0) {
+                if (header.getWmfSize() > out.size()) {
+                    // sometimes the wmfsize is smaller than the amount of already successfully read bytes
+                    // in this case we take the lastLen as-is, otherwise we truncate it to the given size
+                    lastLen = Math.min(lastLen, header.getWmfSize() - out.size());
+                }
+                out.write(chunk,0,lastLen);
+            }
+            // End of picture marker for PICT is 0x00 0xFF
+            LOG.log(POILogger.ERROR, "PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: "+header.getWmfSize()+" / Read bytes: "+out.size(), e);
+        } finally {
+            inflater.close();
         }
-        inflater.close();
         return out.toByteArray();
     }
 
@@ -191,5 +214,23 @@ public final class PICT extends Metafile {
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");
         }        
+    }
+    
+    
+    /*
+     * initialize a smaller piece of the array and use the System.arraycopy 
+     * call to fill in the rest of the array in an expanding binary fashion
+     */
+    private static void bytefill(byte[] array, byte value) {
+        // http://stackoverflow.com/questions/9128737/fastest-way-to-set-all-values-of-an-array
+        int len = array.length;
+
+        if (len > 0){
+            array[0] = value;
+        }
+
+        for (int i = 1; i < len; i += i) {
+            System.arraycopy(array, 0, array, i, ((len - i) < i) ? (len - i) : i);
+        }
     }
 }
