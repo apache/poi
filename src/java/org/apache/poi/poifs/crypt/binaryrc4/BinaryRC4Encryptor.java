@@ -41,7 +41,7 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
 public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
 
-    private int _chunkSize = 512;
+    private int chunkSize = 512;
     
     protected BinaryRC4Encryptor() {
     }
@@ -115,7 +115,7 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
 
     @Override
     public void setChunkSize(int chunkSize) {
-        _chunkSize = chunkSize;
+        this.chunkSize = chunkSize;
     }
     
     @Override
@@ -127,12 +127,12 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
 
         public BinaryRC4CipherOutputStream(OutputStream stream)
         throws IOException, GeneralSecurityException {
-            super(stream, BinaryRC4Encryptor.this._chunkSize);
+            super(stream, BinaryRC4Encryptor.this.chunkSize);
         }
 
         public BinaryRC4CipherOutputStream(DirectoryNode dir)
         throws IOException, GeneralSecurityException {
-            super(dir, BinaryRC4Encryptor.this._chunkSize);
+            super(dir, BinaryRC4Encryptor.this.chunkSize);
         }
 
         @Override

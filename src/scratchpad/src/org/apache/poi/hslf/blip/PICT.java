@@ -33,7 +33,7 @@ import org.apache.poi.util.Units;
  * Represents Macintosh PICT picture data.
  */
 public final class PICT extends Metafile {
-    private static POILogger LOG = POILogFactory.getLogger(PICT.class);
+    private static final POILogger LOG = POILogFactory.getLogger(PICT.class);
     
     public static class NativeHeader {
         /**

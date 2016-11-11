@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xwpf.model;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.util.POILogFactory;
@@ -65,8 +63,6 @@ import com.microsoft.schemas.vml.STTrueFalse;
  * the right headers and footers for the document.
  */
 public class XWPFHeaderFooterPolicy {
-    private static final POILogger LOG = POILogFactory.getLogger(XWPFHeaderFooterPolicy.class);
-    
     public static final Enum DEFAULT = STHdrFtr.DEFAULT;
     public static final Enum EVEN = STHdrFtr.EVEN;
     public static final Enum FIRST = STHdrFtr.FIRST;
@@ -282,7 +278,7 @@ public class XWPFHeaderFooterPolicy {
                 CTP p = ftr.addNewP();
                 ftr.setPArray(i, paragraphs[i].getCTP());
             }
-        } else {
+//        } else {
 //            CTP p = ftr.addNewP();
 //            CTBody body = doc.getDocument().getBody();
 //            if (body.sizeOfPArray() > 0) {

@@ -29,13 +29,13 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 /* package */ class CryptoAPIDocumentOutputStream extends ByteArrayOutputStream {
-    private Cipher cipher;
-    private CryptoAPIEncryptor encryptor;
-    private byte oneByte[] = { 0 };
+    private final Cipher cipher;
+    private final CryptoAPIEncryptor encryptor;
+    private final byte oneByte[] = { 0 };
 
     public CryptoAPIDocumentOutputStream(CryptoAPIEncryptor encryptor) throws GeneralSecurityException {
         this.encryptor = encryptor;
-        setBlock(0);
+        cipher = encryptor.initCipherForBlock(null, 0);
     }
     
     public byte[] getBuf() {
@@ -47,7 +47,7 @@ import org.apache.poi.util.Internal;
     }
     
     public void setBlock(int block) throws GeneralSecurityException {
-        cipher = encryptor.initCipherForBlock(cipher, block);
+        encryptor.initCipherForBlock(cipher, block);
     }
     
     @Override

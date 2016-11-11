@@ -24,13 +24,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 
-import org.apache.poi.crypt.examples.EncryptedTempData;
 import org.apache.poi.examples.util.TempFileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.Encryptor;
+import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
+import org.apache.poi.poifs.crypt.temp.SXSSFWorkbookWithCustomZipEntrySource;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFCell;
@@ -47,42 +48,38 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
  */
 public class SavePasswordProtectedXlsx {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        if(args.length != 2) {
+            throw new IllegalArgumentException("Expected 2 params: filename and password");
+        }
+        TempFileUtils.checkTempFiles();
+        String filename = args[0];
+        String password = args[1];
+        SXSSFWorkbookWithCustomZipEntrySource wb = new SXSSFWorkbookWithCustomZipEntrySource();
         try {
-            if(args.length != 2) {
-                throw new Exception("Expected 2 params: filename and password");
-            }
-            TempFileUtils.checkTempFiles();
-            String filename = args[0];
-            String password = args[1];
-            SXSSFWorkbookWithCustomZipEntrySource wb = new SXSSFWorkbookWithCustomZipEntrySource();
-            try {
-                for(int i = 0; i < 10; i++) {
-                    SXSSFSheet sheet = wb.createSheet("Sheet" + i);
-                    for(int r = 0; r < 1000; r++) {
-                        SXSSFRow row = sheet.createRow(r);
-                        for(int c = 0; c < 100; c++) {
-                            SXSSFCell cell = row.createCell(c);
-                            cell.setCellValue("abcd");
-                        }
+            for(int i = 0; i < 10; i++) {
+                SXSSFSheet sheet = wb.createSheet("Sheet" + i);
+                for(int r = 0; r < 1000; r++) {
+                    SXSSFRow row = sheet.createRow(r);
+                    for(int c = 0; c < 100; c++) {
+                        SXSSFCell cell = row.createCell(c);
+                        cell.setCellValue("abcd");
                     }
                 }
-                EncryptedTempData tempData = new EncryptedTempData();
-                try {
-                    wb.write(tempData.getOutputStream());
-                    save(tempData.getInputStream(), filename, password);
-                    System.out.println("Saved " + filename);
-                } finally {
-                    tempData.dispose();
-                }
-            } finally {
-                wb.close();
-                wb.dispose();
             }
-            TempFileUtils.checkTempFiles();
-        } catch(Throwable t) {
-            t.printStackTrace();
+            EncryptedTempData tempData = new EncryptedTempData();
+            try {
+                wb.write(tempData.getOutputStream());
+                save(tempData.getInputStream(), filename, password);
+                System.out.println("Saved " + filename);
+            } finally {
+                tempData.dispose();
+            }
+        } finally {
+            wb.close();
+            wb.dispose();
         }
+        TempFileUtils.checkTempFiles();
     }
     
     public static void save(final InputStream inputStream, final String filename, final String pwd)

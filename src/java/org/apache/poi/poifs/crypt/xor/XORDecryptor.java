@@ -25,6 +25,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -33,8 +34,8 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndian;
 
 public class XORDecryptor extends Decryptor implements Cloneable {
-    private long _length = -1L;
-    private int _chunkSize = 512;
+    private long length = -1L;
+    private int chunkSize = 512;
 
     protected XORDecryptor() {
     }
@@ -69,7 +70,7 @@ public class XORDecryptor extends Decryptor implements Cloneable {
 
     @Override
     public ChunkedCipherInputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
-        throw new RuntimeException("not supported");
+        throw new EncryptedDocumentException("not supported");
     }
 
     @Override
@@ -81,16 +82,16 @@ public class XORDecryptor extends Decryptor implements Cloneable {
 
     @Override
     public long getLength() {
-        if (_length == -1L) {
+        if (length == -1L) {
             throw new IllegalStateException("Decryptor.getDataStream() was not called");
         }
 
-        return _length;
+        return length;
     }
 
     @Override
     public void setChunkSize(int chunkSize) {
-        _chunkSize = chunkSize;
+        this.chunkSize = chunkSize;
     }
     
     @Override
@@ -99,14 +100,14 @@ public class XORDecryptor extends Decryptor implements Cloneable {
     }
 
     private class XORCipherInputStream extends ChunkedCipherInputStream {
-        private final int _initialOffset;
-        private int _recordStart = 0;
-        private int _recordEnd = 0;
+        private final int initialOffset;
+        private int recordStart = 0;
+        private int recordEnd = 0;
         
         public XORCipherInputStream(InputStream stream, int initialPos)
                 throws GeneralSecurityException {
-            super(stream, Integer.MAX_VALUE, _chunkSize);
-            _initialOffset = initialPos;
+            super(stream, Integer.MAX_VALUE, chunkSize);
+            this.initialOffset = initialPos;
         }
         
         @Override
@@ -133,9 +134,9 @@ public class XORDecryptor extends Decryptor implements Cloneable {
              * the time we are about to write each of the bytes of the record data.
              * This (the value) is then incremented after each byte is written. 
              */
-            final int xorArrayIndex = _initialOffset+_recordEnd+(pos-_recordStart);
+            final int xorArrayIndex = initialOffset+recordEnd+(pos-recordStart);
             
-            for (int i=0; pos+i < _recordEnd && i < totalBytes; i++) {
+            for (int i=0; pos+i < recordEnd && i < totalBytes; i++) {
                 // The following is taken from the Libre Office implementation
                 // It seems that the encrypt and decrypt method is mixed up
                 // in the MS-OFFCRYPTO docs
@@ -165,8 +166,8 @@ public class XORDecryptor extends Decryptor implements Cloneable {
             final int pos = (int)getPos();
             final byte chunk[] = getChunk();
             final int chunkMask = getChunkMask();
-            _recordStart = pos;
-            _recordEnd = _recordStart+recordSize;
+            recordStart = pos;
+            recordEnd = recordStart+recordSize;
             int nextBytes = Math.min(recordSize, chunk.length-(pos & chunkMask));
             invokeCipher(nextBytes, true);
         }

@@ -17,9 +17,8 @@
  * ====================================================================
  */
 
-package org.apache.poi.crypt.examples;
+package org.apache.poi.poifs.crypt.temp;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,38 +34,40 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.Beta;
+import org.apache.poi.xssf.streaming.SheetDataWriter;
 
-/**
- * EncryptedTempData can be used to buffer binary data in a secure way, by using encrypted temp files.
- */
-public class EncryptedTempData {
+@Beta
+public class SheetDataWriterWithDecorator extends SheetDataWriter {
     final static CipherAlgorithm cipherAlgorithm = CipherAlgorithm.aes128;
-    final SecretKeySpec skeySpec;
-    final byte[] ivBytes;
-    final File tempFile;
+    SecretKeySpec skeySpec;
+    byte[] ivBytes;
     
-    public EncryptedTempData() throws IOException {
-        SecureRandom sr = new SecureRandom();
-        ivBytes = new byte[16];
-        byte[] keyBytes = new byte[16];
-        sr.nextBytes(ivBytes);
-        sr.nextBytes(keyBytes);
-        skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
-        tempFile = TempFile.createTempFile("poi-temp-data", ".tmp");
-    }
-
-    public OutputStream getOutputStream() throws IOException {
-        Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, null);
-        return new CipherOutputStream(new FileOutputStream(tempFile), ciEnc);
-    }
-
-    public InputStream getInputStream() throws IOException {
-        Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, null);
-        return new CipherInputStream(new FileInputStream(tempFile), ciDec);
+    public SheetDataWriterWithDecorator() throws IOException {
+        super();
     }
     
-    public void dispose() {
-        tempFile.delete();
+    void init() {
+        if(skeySpec == null) {
+            SecureRandom sr = new SecureRandom();
+            ivBytes = new byte[16];
+            byte[] keyBytes = new byte[16];
+            sr.nextBytes(ivBytes);
+            sr.nextBytes(keyBytes);
+            skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
+        }
+    }
+
+    @Override
+    protected OutputStream decorateOutputStream(FileOutputStream fos) {
+        init();
+        Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, "PKCS5Padding");
+        return new CipherOutputStream(fos, ciEnc);
+    }
+    
+    @Override
+    protected InputStream decorateInputStream(FileInputStream fis) {
+        Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, "PKCS5Padding");
+        return new CipherInputStream(fis, ciDec);
     }
 }

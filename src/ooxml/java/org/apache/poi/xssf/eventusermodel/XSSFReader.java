@@ -230,9 +230,8 @@ public class XSSFReader {
                 List<CTSheet> validSheets = new ArrayList<CTSheet>();
                 for (CTSheet ctSheet : wbBean.getSheets().getSheetList()) {
                     //if there's no relationship id, silently skip the sheet
-                     if ("".equals(ctSheet.getId())) {
-                        //skip it
-                    } else {
+                    String sheetId = ctSheet.getId();
+                    if (sheetId != null && sheetId.length() > 0) {
                         validSheets.add(ctSheet);
                     }
                 }

@@ -35,8 +35,8 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
-    private long _length = -1L;
-    private int _chunkSize = 512;
+    private long length = -1L;
+    private int chunkSize = 512;
     
     private class BinaryRC4CipherInputStream extends ChunkedCipherInputStream {
 
@@ -48,12 +48,12 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
 
         public BinaryRC4CipherInputStream(DocumentInputStream stream, long size)
                 throws GeneralSecurityException {
-            super(stream, size, _chunkSize);
+            super(stream, size, chunkSize);
         }
 
         public BinaryRC4CipherInputStream(InputStream stream)
                 throws GeneralSecurityException {
-            super(stream, Integer.MAX_VALUE, _chunkSize);
+            super(stream, Integer.MAX_VALUE, chunkSize);
         }    
     }
 
@@ -134,8 +134,8 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
     public ChunkedCipherInputStream getDataStream(DirectoryNode dir) throws IOException,
             GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
-        _length = dis.readLong();
-        return new BinaryRC4CipherInputStream(dis, _length);
+        length = dis.readLong();
+        return new BinaryRC4CipherInputStream(dis, length);
     }
     
     @Override
@@ -147,16 +147,16 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
 
     @Override
     public long getLength() {
-        if (_length == -1L) {
+        if (length == -1L) {
             throw new IllegalStateException("Decryptor.getDataStream() was not called");
         }
         
-        return _length;
+        return length;
     }
 
     @Override
     public void setChunkSize(int chunkSize) {
-        _chunkSize = chunkSize;
+        this.chunkSize = chunkSize;
     }
     
     @Override

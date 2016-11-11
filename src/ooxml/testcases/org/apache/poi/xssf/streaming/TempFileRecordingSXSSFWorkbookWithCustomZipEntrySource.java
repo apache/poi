@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.xssf.streaming.TestSXSSFWorkbookWithCustomZipEntrySource.SXSSFWorkbookWithCustomZipEntrySource;
-import org.apache.poi.xssf.streaming.TestSXSSFWorkbookWithCustomZipEntrySource.SheetDataWriterWithDecorator;
+import org.apache.poi.poifs.crypt.temp.SXSSFWorkbookWithCustomZipEntrySource;
+import org.apache.poi.poifs.crypt.temp.SheetDataWriterWithDecorator;
 
 // a class to record a list of temporary files that are written to disk
 // afterwards, a test function can check whether these files were encrypted or not

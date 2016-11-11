@@ -346,7 +346,9 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
     }
     
     private void fillPoint(byte xyMaster[], double xyPoints[]) {
-        if (xyMaster == null || xyPoints == null || (xyMaster.length != 4 && xyMaster.length != 8) || xyPoints.length != 2) {
+        int masterCnt = (xyMaster == null) ? 0 : xyMaster.length;
+        int pointCnt = (xyPoints == null) ? 0 : xyPoints.length;
+        if ((masterCnt != 4 && masterCnt != 8) || pointCnt != 2) {
             logger.log(POILogger.WARN, "Invalid number of master bytes for a single point - ignore point");
             return;
         }

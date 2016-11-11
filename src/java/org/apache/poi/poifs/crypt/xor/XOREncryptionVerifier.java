@@ -60,12 +60,12 @@ public class XOREncryptionVerifier extends EncryptionVerifier implements Encrypt
     }
 
     @Override
-    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
+    protected final void setEncryptedVerifier(byte[] encryptedVerifier) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     @Override
-    protected void setEncryptedKey(byte[] encryptedKey) {
+    protected final void setEncryptedKey(byte[] encryptedKey) {
         super.setEncryptedKey(encryptedKey);
     }
 }
