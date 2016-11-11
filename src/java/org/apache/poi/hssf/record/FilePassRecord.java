@@ -110,7 +110,7 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
                 ((CryptoAPIEncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
                 break;
             default:
-                throw new RuntimeException("not supported");
+                throw new EncryptedDocumentException("not supported");
         }
 
         out.write(data, 0, bos.getWriteIndex());
@@ -140,16 +140,16 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
 
 	@Override
     public String toString() {
-		StringBuffer buffer = new StringBuffer();
+	    StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[FILEPASS]\n");
-		buffer.append("    .type = ").append(HexDump.shortToHex(encryptionType)).append("\n");
+		buffer.append("    .type = ").append(HexDump.shortToHex(encryptionType)).append('\n');
         String prefix = "     ."+encryptionInfo.getEncryptionMode();
-        buffer.append(prefix+".info = ").append(HexDump.shortToHex(encryptionInfo.getVersionMajor())).append("\n");
-        buffer.append(prefix+".ver  = ").append(HexDump.shortToHex(encryptionInfo.getVersionMinor())).append("\n");
-        buffer.append(prefix+".salt = ").append(HexDump.toHex(encryptionInfo.getVerifier().getSalt())).append("\n");
-        buffer.append(prefix+".verifier = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifier())).append("\n");
-        buffer.append(prefix+".verifierHash = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifierHash())).append("\n");
+        buffer.append(prefix+".info = ").append(HexDump.shortToHex(encryptionInfo.getVersionMajor())).append('\n');
+        buffer.append(prefix+".ver  = ").append(HexDump.shortToHex(encryptionInfo.getVersionMinor())).append('\n');
+        buffer.append(prefix+".salt = ").append(HexDump.toHex(encryptionInfo.getVerifier().getSalt())).append('\n');
+        buffer.append(prefix+".verifier = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifier())).append('\n');
+        buffer.append(prefix+".verifierHash = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifierHash())).append('\n');
 		buffer.append("[/FILEPASS]\n");
 		return buffer.toString();
 	}

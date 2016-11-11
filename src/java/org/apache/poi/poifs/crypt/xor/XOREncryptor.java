@@ -61,8 +61,7 @@ public class XOREncryptor extends Encryptor implements Cloneable {
     @Override
     public OutputStream getDataStream(DirectoryNode dir)
     throws IOException, GeneralSecurityException {
-        OutputStream countStream = new XORCipherOutputStream(dir);
-        return countStream;
+        return new XORCipherOutputStream(dir);
     }
 
     @Override
@@ -89,19 +88,15 @@ public class XOREncryptor extends Encryptor implements Cloneable {
     }
 
     private class XORCipherOutputStream extends ChunkedCipherOutputStream {
-        private final int _initialOffset;
-        private int _recordStart = 0;
-        private int _recordEnd = 0;
-        private boolean _isPlain = false;
+        private int recordStart = 0;
+        private int recordEnd = 0;
 
         public XORCipherOutputStream(OutputStream stream, int initialPos) throws IOException, GeneralSecurityException {
             super(stream, -1);
-            _initialOffset = initialPos;
         }
 
         public XORCipherOutputStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
             super(dir, -1);
-            _initialOffset = 0;
         }
 
         @Override
@@ -122,13 +117,12 @@ public class XOREncryptor extends Encryptor implements Cloneable {
 
         @Override
         public void setNextRecordSize(int recordSize, boolean isPlain) {
-            if (_recordEnd > 0 && !_isPlain) {
+            if (recordEnd > 0 && !isPlain) {
                 // encrypt last record
                 invokeCipher((int)getPos(), true);
             }
-            _recordStart = (int)getTotalPos()+4;
-            _recordEnd = _recordStart+recordSize;
-            _isPlain = isPlain;
+            recordStart = (int)getTotalPos()+4;
+            recordEnd = recordStart+recordSize;
         }
 
         @Override
@@ -143,7 +137,7 @@ public class XOREncryptor extends Encryptor implements Cloneable {
                 return 0;
             }
 
-            final int start = Math.max(posInChunk-(_recordEnd-_recordStart), 0);
+            final int start = Math.max(posInChunk-(recordEnd-recordStart), 0);
 
             final BitSet plainBytes = getPlainByteFlags();
             final byte xorArray[] = getEncryptionInfo().getEncryptor().getSecretKey().getEncoded();
@@ -161,7 +155,7 @@ public class XOREncryptor extends Encryptor implements Cloneable {
              * This (the value) is then incremented after each byte is written.
              */
             // ... also need to handle invocation in case of a filled chunk
-            int xorArrayIndex = _recordEnd+(start-_recordStart);
+            int xorArrayIndex = recordEnd+(start-recordStart);
 
             for (int i=start; i < posInChunk; i++) {
                 byte value = chunk[i];

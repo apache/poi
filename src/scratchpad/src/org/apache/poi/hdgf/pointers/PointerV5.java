@@ -28,14 +28,24 @@ public final class PointerV5 extends Pointer {
         return (0x40 <= format && format < 0x50);
     }
     public boolean destinationHasPointers() {
-        if(type == 20) return true;
-        if(type == 22) return false;
-        if(format == 0x1d || format == 0x1e) return true;
+        if(type == 20) {
+            return true;
+        }
+        if(type == 22) {
+            return false;
+        }
+        if(format == 0x1d || format == 0x1e) {
+            return true;
+        }
         return (0x50 <= format && format < 0x60);
     }
     public boolean destinationHasChunks() {
-        if (type == 21) return true;
-        if (type == 24) return true;
+        if (type == 21) {
+            return true;
+        }
+        if (type == 24) {
+            return true;
+        }
         return (0xd0 <= format && format < 0xdf);
     }
 

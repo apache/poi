@@ -23,6 +23,7 @@ import java.security.GeneralSecurityException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
@@ -63,7 +64,7 @@ public abstract class Encryptor implements Cloneable {
 
     public ChunkedCipherOutputStream getDataStream(OutputStream stream, int initialOffset)
     throws IOException, GeneralSecurityException {
-        throw new RuntimeException("this decryptor doesn't support writing directly to a stream");
+        throw new EncryptedDocumentException("this decryptor doesn't support writing directly to a stream");
     }
     
     public SecretKey getSecretKey() {
@@ -90,7 +91,7 @@ public abstract class Encryptor implements Cloneable {
      * @param chunkSize the chunk size, i.e. the block size with the same encryption key
      */
     public void setChunkSize(int chunkSize) {
-        throw new RuntimeException("this decryptor doesn't support changing the chunk size");
+        throw new EncryptedDocumentException("this decryptor doesn't support changing the chunk size");
     }
     
     @Override

@@ -50,8 +50,8 @@ import org.apache.poi.util.StringUtil;
 
 public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
 
-    private long _length;
-    private int _chunkSize = -1;
+    private long length = -1L;
+    private int chunkSize = -1;
     
     static class StreamDescriptorEntry {
         static BitField flagStream = BitFieldFactory.getInstance(1);
@@ -65,7 +65,6 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
     }
 
     protected CryptoAPIDecryptor() {
-        _length = -1L;
     }
 
     @Override
@@ -209,14 +208,14 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
      */
     @Override
     public long getLength() {
-        if (_length == -1L) {
+        if (length == -1L) {
             throw new IllegalStateException("Decryptor.getDataStream() was not called");
         }
-        return _length;
+        return length;
     }
 
     public void setChunkSize(int chunkSize) {
-        _chunkSize = chunkSize;
+        this.chunkSize = chunkSize;
     }
     
     @Override
@@ -234,7 +233,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
 
         public CryptoAPICipherInputStream(InputStream stream, long size, int initialPos)
                 throws GeneralSecurityException {
-            super(stream, size, _chunkSize, initialPos);
+            super(stream, size, chunkSize, initialPos);
         }    
     }
 }

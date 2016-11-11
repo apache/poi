@@ -312,7 +312,7 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
         } else {
             aps = new IvParameterSpec(iv);
         }
-            
+
         existing.init(encryptionMode, skey, aps);
         
         return existing;

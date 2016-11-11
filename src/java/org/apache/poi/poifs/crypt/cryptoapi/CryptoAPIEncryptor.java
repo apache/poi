@@ -53,7 +53,7 @@ import org.apache.poi.util.StringUtil;
 
 public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
     
-    private int _chunkSize = 512;
+    private int chunkSize = 512;
     
     protected CryptoAPIEncryptor() {
     }
@@ -215,7 +215,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
 
     @Override
     public void setChunkSize(int chunkSize) {
-        _chunkSize = chunkSize;
+        this.chunkSize = chunkSize;
     }
     
     protected void createEncryptionInfoEntry(DirectoryNode dir) throws IOException {
@@ -259,12 +259,12 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         @Override
         protected void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile)
         throws IOException, GeneralSecurityException {
-            throw new RuntimeException("createEncryptionInfoEntry not supported");
+            throw new EncryptedDocumentException("createEncryptionInfoEntry not supported");
         }
 
         public CryptoAPICipherOutputStream(OutputStream stream)
         throws IOException, GeneralSecurityException {
-            super(stream, CryptoAPIEncryptor.this._chunkSize);
+            super(stream, CryptoAPIEncryptor.this.chunkSize);
         }
 
         @Override

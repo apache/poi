@@ -449,7 +449,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
                 titlePg.setVal(STOnOff.ON);
             }
-        } else if (type == HeaderFooterType.EVEN) {
+        // } else if (type == HeaderFooterType.EVEN) {
             // TODO Add support for Even/Odd headings and footers
         }
         return hfPolicy.createHeader(STHdrFtr.Enum.forInt(type.toInt()));
@@ -471,7 +471,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
                 titlePg.setVal(STOnOff.ON);
             }
-        } else if (type == HeaderFooterType.EVEN) {
+        // } else if (type == HeaderFooterType.EVEN) {
             // TODO Add support for Even/Odd headings and footers
         }
         return hfPolicy.createFooter(STHdrFtr.Enum.forInt(type.toInt()));

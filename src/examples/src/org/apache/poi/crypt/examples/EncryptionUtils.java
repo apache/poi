@@ -27,6 +27,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 
 public class EncryptionUtils {
+    private EncryptionUtils() {
+    }
+    
     public static InputStream decrypt(final InputStream inputStream, final String pwd) throws Exception {
         try {
             POIFSFileSystem fs = new POIFSFileSystem(inputStream);

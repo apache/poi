@@ -21,7 +21,6 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,11 +67,11 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
             throw new EncryptedDocumentException("Unable to parse keyData", e);
         }
         
-        int keyBits = (int)keyData.getKeyBits();
-        CipherAlgorithm ca = CipherAlgorithm.fromXmlId(keyData.getCipherAlgorithm().toString(), keyBits);
+        int kb = (int)keyData.getKeyBits();
+        CipherAlgorithm ca = CipherAlgorithm.fromXmlId(keyData.getCipherAlgorithm().toString(), kb);
         setCipherAlgorithm(ca);
 
-        setKeySize(keyBits);
+        setKeySize(kb);
         
         int blockSize = keyData.getBlockSize();
         setBlockSize(blockSize);
@@ -230,7 +229,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
     }
 
     @Override
-    protected void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
+    protected final void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
         super.setCipherAlgorithm(cipherAlgorithm);
         if (cipherAlgorithm.allowedKeySize.length == 1) {
             setKeySize(cipherAlgorithm.defaultKeySize);

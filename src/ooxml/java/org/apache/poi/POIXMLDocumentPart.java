@@ -573,8 +573,7 @@ public class POIXMLDocumentPart {
             }
             
             // Default to searching from 1, unless they asked for 0+
-            int idx = minIdx;
-            if (minIdx < 0) idx = 1;
+            int idx = (minIdx < 0) ? 1 : minIdx;
             int maxIdx = minIdx + pkg.getParts().size();
             while (idx <= maxIdx) {
                 name = descriptor.getFileName(idx);

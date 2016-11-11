@@ -32,16 +32,16 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
 public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
-    private final int _chunkSize;
-    private final int _chunkBits;
+    private final int chunkSize;
+    private final int chunkBits;
 
-    private final long _size;
-    private final byte[] _chunk, _plain;
-    private final Cipher _cipher;
+    private final long size;
+    private final byte[] chunk, plain;
+    private final Cipher cipher;
 
-    private int _lastIndex;
-    private long _pos;
-    private boolean _chunkIsValid = false;
+    private int lastIndex;
+    private long pos;
+    private boolean chunkIsValid = false;
 
     public ChunkedCipherInputStream(InputStream stream, long size, int chunkSize)
     throws GeneralSecurityException {
@@ -51,24 +51,24 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     public ChunkedCipherInputStream(InputStream stream, long size, int chunkSize, int initialPos)
     throws GeneralSecurityException {
         super(stream);
-        _size = size;
-        _pos = initialPos;
-        this._chunkSize = chunkSize;
+        this.size = size;
+        this.pos = initialPos;
+        this.chunkSize = chunkSize;
         int cs = chunkSize == -1 ? 4096 : chunkSize;
-        _chunk = new byte[cs];
-        _plain = new byte[cs];
-        _chunkBits = Integer.bitCount(_chunk.length-1);
-        _lastIndex = (int)(_pos >> _chunkBits);
-        _cipher = initCipherForBlock(null, _lastIndex);
+        this.chunk = new byte[cs];
+        this.plain = new byte[cs];
+        this.chunkBits = Integer.bitCount(chunk.length-1);
+        this.lastIndex = (int)(pos >> chunkBits);
+        this.cipher = initCipherForBlock(null, lastIndex);
     }
 
     public final Cipher initCipherForBlock(int block) throws IOException, GeneralSecurityException {
-        if (_chunkSize != -1) {
+        if (chunkSize != -1) {
             throw new GeneralSecurityException("the cipher block can only be set for streaming encryption, e.g. CryptoAPI...");
         }
 
-        _chunkIsValid = false;
-        return initCipherForBlock(_cipher, block);
+        chunkIsValid = false;
+        return initCipherForBlock(cipher, block);
     }
 
     protected abstract Cipher initCipherForBlock(Cipher existing, int block)
@@ -100,28 +100,28 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
         final int chunkMask = getChunkMask();
         while (len > 0) {
-            if (!_chunkIsValid) {
+            if (!chunkIsValid) {
                 try {
                     nextChunk();
-                    _chunkIsValid = true;
+                    chunkIsValid = true;
                 } catch (GeneralSecurityException e) {
                     throw new EncryptedDocumentException(e.getMessage(), e);
                 }
             }
-            int count = (int)(_chunk.length - (_pos & chunkMask));
+            int count = (int)(chunk.length - (pos & chunkMask));
             int avail = available();
             if (avail == 0) {
                 return total;
             }
             count = Math.min(avail, Math.min(count, len));
 
-            System.arraycopy(readPlain ? _plain : _chunk, (int)(_pos & chunkMask), b, off, count);
+            System.arraycopy(readPlain ? plain : chunk, (int)(pos & chunkMask), b, off, count);
 
             off += count;
             len -= count;
-            _pos += count;
-            if ((_pos & chunkMask) == 0) {
-                _chunkIsValid = false;
+            pos += count;
+            if ((pos & chunkMask) == 0) {
+                chunkIsValid = false;
             }
             total += count;
         }
@@ -131,13 +131,13 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     @Override
     public long skip(final long n) throws IOException {
-        long start = _pos;
+        long start = pos;
         long skip = Math.min(remainingBytes(), n);
 
-        if ((((_pos + skip) ^ start) & ~getChunkMask()) != 0) {
-            _chunkIsValid = false;
+        if ((((pos + skip) ^ start) & ~getChunkMask()) != 0) {
+            chunkIsValid = false;
         }
-        _pos += skip;
+        pos += skip;
         return skip;
     }
 
@@ -152,7 +152,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
      * @return the remaining byte until EOF
      */
     private int remainingBytes() {
-        return (int)(_size - _pos);
+        return (int)(size - pos);
     }
 
     @Override
@@ -171,35 +171,35 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     }
 
     protected int getChunkMask() {
-        return _chunk.length-1;
+        return chunk.length-1;
     }
 
     private void nextChunk() throws GeneralSecurityException, IOException {
-        if (_chunkSize != -1) {
-            int index = (int)(_pos >> _chunkBits);
-            initCipherForBlock(_cipher, index);
+        if (chunkSize != -1) {
+            int index = (int)(pos >> chunkBits);
+            initCipherForBlock(cipher, index);
 
-            if (_lastIndex != index) {
-                super.skip((index - _lastIndex) << _chunkBits);
+            if (lastIndex != index) {
+                super.skip((index - lastIndex) << chunkBits);
             }
 
-            _lastIndex = index + 1;
+            lastIndex = index + 1;
         }
 
-        final int todo = (int)Math.min(_size, _chunk.length);
+        final int todo = (int)Math.min(size, chunk.length);
         int readBytes = 0, totalBytes = 0;
         do {
-            readBytes = super.read(_plain, totalBytes, todo-totalBytes);
+            readBytes = super.read(plain, totalBytes, todo-totalBytes);
             totalBytes += Math.max(0, readBytes);
         } while (readBytes != -1 && totalBytes < todo);
 
-        if (readBytes == -1 && _pos+totalBytes < _size && _size < Integer.MAX_VALUE) {
+        if (readBytes == -1 && pos+totalBytes < size && size < Integer.MAX_VALUE) {
             throw new EOFException("buffer underrun");
         }
 
-        System.arraycopy(_plain, 0, _chunk, 0, totalBytes);
+        System.arraycopy(plain, 0, chunk, 0, totalBytes);
 
-        invokeCipher(totalBytes, totalBytes == _chunkSize);
+        invokeCipher(totalBytes, totalBytes == chunkSize);
     }
 
     /**
@@ -212,9 +212,9 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
      */
     protected int invokeCipher(int totalBytes, boolean doFinal) throws GeneralSecurityException {
         if (doFinal) {
-            return _cipher.doFinal(_chunk, 0, totalBytes, _chunk);
+            return cipher.doFinal(chunk, 0, totalBytes, chunk);
         } else {
-            return _cipher.update(_chunk, 0, totalBytes, _chunk);
+            return cipher.update(chunk, 0, totalBytes, chunk);
         }
     }
 
@@ -258,20 +258,20 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
      * @return the chunk bytes
      */
     protected byte[] getChunk() {
-        return _chunk;
+        return chunk;
     }
 
     /**
      * @return the plain bytes
      */
     protected byte[] getPlain() {
-        return _plain;
+        return plain;
     }
 
     /**
      * @return the absolute position in the stream
      */
     public long getPos() {
-        return _pos;
+        return pos;
     }
 }

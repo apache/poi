@@ -67,7 +67,7 @@ public abstract class Decryptor implements Cloneable {
      */
     public InputStream getDataStream(InputStream stream, int size, int initialPos)
         throws IOException, GeneralSecurityException {
-        throw new RuntimeException("this decryptor doesn't support reading from a stream");
+        throw new EncryptedDocumentException("this decryptor doesn't support reading from a stream");
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class Decryptor implements Cloneable {
      * @param chunkSize the chunk size, i.e. the block size with the same encryption key
      */
     public void setChunkSize(int chunkSize) {
-        throw new RuntimeException("this decryptor doesn't support changing the chunk size");
+        throw new EncryptedDocumentException("this decryptor doesn't support changing the chunk size");
     }
 
     /**
@@ -91,7 +91,7 @@ public abstract class Decryptor implements Cloneable {
      */
     public Cipher initCipherForBlock(Cipher cipher, int block)
     throws GeneralSecurityException {
-        throw new RuntimeException("this decryptor doesn't support initCipherForBlock");
+        throw new EncryptedDocumentException("this decryptor doesn't support initCipherForBlock");
     }
     
     public abstract boolean verifyPassword(String password)

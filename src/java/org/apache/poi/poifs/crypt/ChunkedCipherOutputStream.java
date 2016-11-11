@@ -49,47 +49,50 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private static final POILogger LOG = POILogFactory.getLogger(ChunkedCipherOutputStream.class);
     private static final int STREAMING = -1;
 
-    private final int _chunkSize;
-    private final int _chunkBits;
+    private final int chunkSize;
+    private final int chunkBits;
 
-    private final byte[] _chunk;
-    private final BitSet _plainByteFlags;
-    private final File _fileOut;
-    private final DirectoryNode _dir;
+    private final byte[] chunk;
+    private final BitSet plainByteFlags;
+    private final File fileOut;
+    private final DirectoryNode dir;
 
-    private long _pos = 0;
-    private long _totalPos = 0;
-    private long _written = 0;
-    private Cipher _cipher;
+    private long pos = 0;
+    private long totalPos = 0;
+    private long written = 0;
+    
+    // the cipher can't be final, because for the last chunk we change the padding
+    // and therefore need to change the cipher too
+    private Cipher cipher;
 
     public ChunkedCipherOutputStream(DirectoryNode dir, int chunkSize) throws IOException, GeneralSecurityException {
         super(null);
-        this._chunkSize = chunkSize;
+        this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        _chunk = new byte[cs];
-        _plainByteFlags = new BitSet(cs);
-        _chunkBits = Integer.bitCount(cs-1);
-        _fileOut = TempFile.createTempFile("encrypted_package", "crypt");
-        _fileOut.deleteOnExit();
-        this.out = new FileOutputStream(_fileOut);
-        this._dir = dir;
-        _cipher = initCipherForBlock(null, 0, false);
+        this.chunk = new byte[cs];
+        this.plainByteFlags = new BitSet(cs);
+        this.chunkBits = Integer.bitCount(cs-1);
+        this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
+        this.fileOut.deleteOnExit();
+        this.out = new FileOutputStream(fileOut);
+        this.dir = dir;
+        this.cipher = initCipherForBlock(null, 0, false);
     }
 
     public ChunkedCipherOutputStream(OutputStream stream, int chunkSize) throws IOException, GeneralSecurityException {
         super(stream);
-        this._chunkSize = chunkSize;
+        this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        _chunk = new byte[cs];
-        _plainByteFlags = new BitSet(cs);
-        _chunkBits = Integer.bitCount(cs-1);
-        _fileOut = null;
-        _dir = null;
-        _cipher = initCipherForBlock(null, 0, false);
+        this.chunk = new byte[cs];
+        this.plainByteFlags = new BitSet(cs);
+        this.chunkBits = Integer.bitCount(cs-1);
+        this.fileOut = null;
+        this.dir = null;
+        this.cipher = initCipherForBlock(null, 0, false);
     }
 
     public final Cipher initCipherForBlock(int block, boolean lastChunk) throws IOException, GeneralSecurityException {
-        return initCipherForBlock(_cipher, block, lastChunk);
+        return initCipherForBlock(cipher, block, lastChunk);
     }
 
     protected abstract Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk)
@@ -131,40 +134,40 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
 
         final int chunkMask = getChunkMask();
         while (len > 0) {
-            int posInChunk = (int)(_pos & chunkMask);
-            int nextLen = Math.min(_chunk.length-posInChunk, len);
-            System.arraycopy(b, off, _chunk, posInChunk, nextLen);
+            int posInChunk = (int)(pos & chunkMask);
+            int nextLen = Math.min(chunk.length-posInChunk, len);
+            System.arraycopy(b, off, chunk, posInChunk, nextLen);
             if (writePlain) {
-                _plainByteFlags.set(posInChunk, posInChunk+nextLen);
+                plainByteFlags.set(posInChunk, posInChunk+nextLen);
             }
-            _pos += nextLen;
-            _totalPos += nextLen;
+            pos += nextLen;
+            totalPos += nextLen;
             off += nextLen;
             len -= nextLen;
-            if ((_pos & chunkMask) == 0) {
+            if ((pos & chunkMask) == 0) {
                 writeChunk(len > 0);
             }
         }
     }
 
     protected int getChunkMask() {
-        return _chunk.length-1;
+        return chunk.length-1;
     }
 
     protected void writeChunk(boolean continued) throws IOException {
-        if (_pos == 0 || _totalPos == _written) {
+        if (pos == 0 || totalPos == written) {
             return;
         }
 
-        int posInChunk = (int)(_pos & getChunkMask());
+        int posInChunk = (int)(pos & getChunkMask());
 
         // normally posInChunk is 0, i.e. on the next chunk (-> index-1)
         // but if called on close(), posInChunk is somewhere within the chunk data
-        int index = (int)(_pos >> _chunkBits);
+        int index = (int)(pos >> chunkBits);
         boolean lastChunk;
         if (posInChunk==0) {
             index--;
-            posInChunk = _chunk.length;
+            posInChunk = chunk.length;
             lastChunk = false;
         } else {
             // pad the last chunk
@@ -174,27 +177,27 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         int ciLen;
         try {
             boolean doFinal = true;
-            long oldPos = _pos;
+            long oldPos = pos;
             // reset stream (not only) in case we were interrupted by plain stream parts
             // this also needs to be set to prevent an endless loop
-            _pos = 0;
-            if (_chunkSize == STREAMING) {
+            pos = 0;
+            if (chunkSize == STREAMING) {
                 if (continued) {
                     doFinal = false;
                 }
             } else {
-                _cipher = initCipherForBlock(_cipher, index, lastChunk);
+                cipher = initCipherForBlock(cipher, index, lastChunk);
                 // restore pos - only streaming chunks will be reset
-                _pos = oldPos;
+                pos = oldPos;
             }
             ciLen = invokeCipher(posInChunk, doFinal);
         } catch (GeneralSecurityException e) {
             throw new IOException("can't re-/initialize cipher", e);
         }
 
-        out.write(_chunk, 0, ciLen);
-        _plainByteFlags.clear();
-        _written += ciLen;
+        out.write(chunk, 0, ciLen);
+        plainByteFlags.clear();
+        written += ciLen;
     }
 
     /**
@@ -206,14 +209,14 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
      * @throws ShortBufferException 
      */
     protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException {
-        byte plain[] = (_plainByteFlags.isEmpty()) ? null : _chunk.clone();
+        byte plain[] = (plainByteFlags.isEmpty()) ? null : chunk.clone();
 
         int ciLen = (doFinal)
-            ? _cipher.doFinal(_chunk, 0, posInChunk, _chunk)
-            : _cipher.update(_chunk, 0, posInChunk, _chunk);
+            ? cipher.doFinal(chunk, 0, posInChunk, chunk)
+            : cipher.update(chunk, 0, posInChunk, chunk);
         
-        for (int i = _plainByteFlags.nextSetBit(0); i >= 0 && i < posInChunk; i = _plainByteFlags.nextSetBit(i+1)) {
-            _chunk[i] = plain[i];
+        for (int i = plainByteFlags.nextSetBit(0); i >= 0 && i < posInChunk; i = plainByteFlags.nextSetBit(i+1)) {
+            chunk[i] = plain[i];
         }
         
         return ciLen;
@@ -226,11 +229,11 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
 
             super.close();
 
-            if (_fileOut != null) {
-                int oleStreamSize = (int)(_fileOut.length()+LittleEndianConsts.LONG_SIZE);
-                calculateChecksum(_fileOut, (int)_pos);
-                _dir.createDocument(DEFAULT_POIFS_ENTRY, oleStreamSize, new EncryptedPackageWriter());
-                createEncryptionInfoEntry(_dir, _fileOut);
+            if (fileOut != null) {
+                int oleStreamSize = (int)(fileOut.length()+LittleEndianConsts.LONG_SIZE);
+                calculateChecksum(fileOut, (int)pos);
+                dir.createDocument(DEFAULT_POIFS_ENTRY, oleStreamSize, new EncryptedPackageWriter());
+                createEncryptionInfoEntry(dir, fileOut);
             }
         } catch (GeneralSecurityException e) {
             throw new IOException(e);
@@ -238,19 +241,19 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     }
     
     protected byte[] getChunk() {
-        return _chunk;
+        return chunk;
     }
 
     protected BitSet getPlainByteFlags() {
-        return _plainByteFlags;
+        return plainByteFlags;
     }
 
     protected long getPos() {
-        return _pos;
+        return pos;
     }
 
     protected long getTotalPos() {
-        return _totalPos;
+        return totalPos;
     }
 
     /**
@@ -274,17 +277,17 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
                 // Note that the actual size of the \EncryptedPackage stream (1) can be larger than this
                 // value, depending on the block size of the chosen encryption algorithm
                 byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
-                LittleEndian.putLong(buf, 0, _pos);
+                LittleEndian.putLong(buf, 0, pos);
                 os.write(buf);
 
-                FileInputStream fis = new FileInputStream(_fileOut);
+                FileInputStream fis = new FileInputStream(fileOut);
                 IOUtils.copy(fis, os);
                 fis.close();
 
                 os.close();
 
-                if (!_fileOut.delete()) {
-                    LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: "+_fileOut);
+                if (!fileOut.delete()) {
+                    LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);
                 }
             } catch (IOException e) {
                 throw new EncryptedDocumentException(e);

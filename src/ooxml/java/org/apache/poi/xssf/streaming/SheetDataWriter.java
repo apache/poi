@@ -127,7 +127,7 @@ public class SheetDataWriter {
         _out.close();
     }
 
-    File getTempFile(){
+    protected File getTempFile(){
         return _fd;
     }
     
