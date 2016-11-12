@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 
 /**
@@ -60,14 +61,6 @@ public class XSSFDataFormat implements DataFormat {
      */
     @Override
     public String getFormat(short index) {
-        return getFormat(index&0xffff);
-    }
-    /**
-     * get the format string that matches the given format index
-     * @param index of a format
-     * @return string represented at index of format or <code>null</code> if there is not a  format at that index
-     */
-    public String getFormat(int index) {
         // Indices used for built-in formats may be overridden with
         // custom formats, such as locale-specific currency.
         // See org.apache.poi.xssf.usermodel.TestXSSFDataFormat#test49928() 
@@ -77,6 +70,17 @@ public class XSSFDataFormat implements DataFormat {
         String fmt = stylesSource.getNumberFormatAt(index);
         if(fmt == null) fmt = BuiltinFormats.getBuiltinFormat(index);
         return fmt;
+    }
+    /**
+     * get the format string that matches the given format index
+     * @param index of a format
+     * @return string represented at index of format or <code>null</code> if there is not a  format at that index
+     * 
+     * @deprecated POI 3.16 beta 1 - use {@link #getFormat(short)} instead
+     */
+    @Removal(version="3.18")
+    public String getFormat(int index) {
+        return getFormat((short)index);
     }
     
     /**
