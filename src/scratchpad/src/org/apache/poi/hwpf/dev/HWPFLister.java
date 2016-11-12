@@ -380,27 +380,24 @@ public final class HWPFLister
                 }
             }
 
-            if ( true )
+            String text = new Range( chpx.getStart(), chpx.getEnd(),
+                    _doc.getOverallRange() )
             {
-                String text = new Range( chpx.getStart(), chpx.getEnd(),
-                        _doc.getOverallRange() )
+                public String toString()
                 {
-                    public String toString()
-                    {
-                        return "CHPX range (" + super.toString() + ")";
-                    }
-                }.text();
-                StringBuilder stringBuilder = new StringBuilder();
-                for ( char c : text.toCharArray() )
-                {
-                    if ( c < 30 )
-                        stringBuilder
-                                .append( "\\0x" + Integer.toHexString( c ) );
-                    else
-                        stringBuilder.append( c );
+                    return "CHPX range (" + super.toString() + ")";
                 }
-                System.out.println( stringBuilder );
+            }.text();
+            StringBuilder stringBuilder = new StringBuilder();
+            for ( char c : text.toCharArray() )
+            {
+                if ( c < 30 )
+                    stringBuilder
+                            .append( "\\0x" + Integer.toHexString( c ) );
+                else
+                    stringBuilder.append( c );
             }
+            System.out.println( stringBuilder );
         }
     }
 
@@ -584,11 +581,8 @@ public final class HWPFLister
                 System.out.println( paragraph.getProps() );
             }
 
-            if ( true )
-            {
-                SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
-                dumpSprms( sprmIt, "\t" );
-            }
+            SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
+            dumpSprms( sprmIt, "\t" );
         }
     }
 

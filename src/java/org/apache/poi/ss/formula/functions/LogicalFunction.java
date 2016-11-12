@@ -40,12 +40,11 @@ public abstract class LogicalFunction extends Fixed1ArgFunction {
 		try {
 			ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 		} catch (EvaluationException e) {
-			if (false) {
-				// Note - it is more usual to propagate error codes straight to the result like this:
-				return e.getErrorEval();
-				// but logical functions behave a little differently
-			}
-			// this will usually cause a 'FALSE' result except for ISNONTEXT()
+			// Note - it is more usual to propagate error codes straight to the result like this:
+            // but logical functions behave a little differently
+			// return e.getErrorEval();
+
+		    // this will usually cause a 'FALSE' result except for ISNONTEXT()
 			ve = e.getErrorEval();
 		}
 		return BoolEval.valueOf(evaluate(ve));
