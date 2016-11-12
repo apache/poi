@@ -47,7 +47,7 @@ public final class FunctionMetadata {
 		_minParams = minParams;
 		_maxParams = maxParams;
 		_returnClassCode = returnClassCode;
-		_parameterClassCodes = parameterClassCodes;
+		_parameterClassCodes = (parameterClassCodes == null) ? null : parameterClassCodes.clone();
 	}
 	public int getIndex() {
 		return _index;

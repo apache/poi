@@ -318,9 +318,7 @@ public class ExcelComparator {
             
             if (!name1.equals(name2)) {
                 String str = String.format(Locale.ROOT, "%s\nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
-                    "Name of the sheets do not match ::",
-                    loc1.sheet.getSheetName(), name1, i+1,
-                    loc2.sheet.getSheetName(), name2, i+1
+                    "Name of the sheets do not match ::", name1, i+1, name2, i+1
                 );
                 listOfDifferences.add(str);
             }

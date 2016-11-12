@@ -207,8 +207,11 @@ public final class OOXMLLite {
     private static void collectTests(File root, File arg, List<Class<?>> out, String ptrn, String exclude)
     throws ClassNotFoundException {
         if (arg.isDirectory()) {
-            for (File f : arg.listFiles()) {
-                collectTests(root, f, out, ptrn, exclude);
+            File files[] = arg.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    collectTests(root, f, out, ptrn, exclude);
+                }
             }
         } else {
             String path = arg.getAbsolutePath();

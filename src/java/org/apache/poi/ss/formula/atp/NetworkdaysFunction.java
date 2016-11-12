@@ -58,7 +58,7 @@ final class NetworkdaysFunction implements FreeRefFunction {
      * 
      * @return {@link ValueEval} for the number of days between two dates.
      */
-    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) { // NOSONAR
         if (args.length < 2 || args.length > 3) {
             return ErrorEval.VALUE_INVALID;
         }
