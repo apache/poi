@@ -49,7 +49,7 @@ public final class FunctionMetadataRegistry {
 	}
 
 	/* package */ FunctionMetadataRegistry(FunctionMetadata[] functionDataByIndex, Map<String, FunctionMetadata> functionDataByName) {
-		_functionDataByIndex = functionDataByIndex;
+		_functionDataByIndex = (functionDataByIndex == null) ? null : functionDataByIndex.clone();
 		_functionDataByName = functionDataByName;
 	}
 

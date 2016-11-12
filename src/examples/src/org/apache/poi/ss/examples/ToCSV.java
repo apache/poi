@@ -344,23 +344,25 @@ public class ToCSV {
         // (.xls) and the other a SpreadsheetML file (.xlsx), then the names
         // for both CSV files will be identical and one CSV file will,
         // therefore, over-write the other.
-        for(File excelFile : filesList) {
-            // Open the workbook
-            this.openWorkbook(excelFile);
-
-            // Convert it's contents into a CSV file
-            this.convertToCSV();
-
-            // Build the name of the csv folder from that of the Excel workbook.
-            // Simply replace the .xls or .xlsx file extension with .csv
-            destinationFilename = excelFile.getName();
-            destinationFilename = destinationFilename.substring(
-                    0, destinationFilename.lastIndexOf(".")) +
-                    ToCSV.CSV_FILE_EXTENSION;
-
-            // Save the CSV file away using the newly constricted file name
-            // and to the specified directory.
-            this.saveCSVFile(new File(destination, destinationFilename));
+        if (filesList != null) {
+            for(File excelFile : filesList) {
+                // Open the workbook
+                this.openWorkbook(excelFile);
+    
+                // Convert it's contents into a CSV file
+                this.convertToCSV();
+    
+                // Build the name of the csv folder from that of the Excel workbook.
+                // Simply replace the .xls or .xlsx file extension with .csv
+                destinationFilename = excelFile.getName();
+                destinationFilename = destinationFilename.substring(
+                        0, destinationFilename.lastIndexOf(".")) +
+                        ToCSV.CSV_FILE_EXTENSION;
+    
+                // Save the CSV file away using the newly constricted file name
+                // and to the specified directory.
+                this.saveCSVFile(new File(destination, destinationFilename));
+            }
         }
     }
 
