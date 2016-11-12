@@ -258,17 +258,6 @@ public class StylesTable extends POIXMLDocumentPart {
     /**
      * Get number format string given its id
      * 
-     * @param idx number format id
-     * @return number format code
-     * @deprecated POI 3.14-beta2. Use {@link #getNumberFormatAt(short)} instead.
-     */
-    public String getNumberFormatAt(int idx) {
-        return getNumberFormatAt((short) idx);
-    }
-    
-    /**
-     * Get number format string given its id
-     * 
      * @param fmtId number format id
      * @return number format code
      */

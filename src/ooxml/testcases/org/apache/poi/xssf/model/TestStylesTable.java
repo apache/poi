@@ -111,8 +111,8 @@ public final class TestStylesTable {
         assertEquals(2, st.getFills().size());
         assertEquals(1, st.getBorders().size());
 
-        assertEquals("yyyy/mm/dd", st.getNumberFormatAt(165));
-        assertEquals("yy/mm/dd", st.getNumberFormatAt(167));
+        assertEquals("yyyy/mm/dd", st.getNumberFormatAt((short)165));
+        assertEquals("yy/mm/dd", st.getNumberFormatAt((short)167));
 
         assertNotNull(st.getStyleAt(0));
         assertNotNull(st.getStyleAt(1));
@@ -150,7 +150,7 @@ public final class TestStylesTable {
         assertEquals(1, st._getStyleXfsSize());
         assertEquals(2, st.getNumDataFormats());
 
-        assertEquals("yyyy-mm-dd", st.getNumberFormatAt(nf1));
+        assertEquals("yyyy-mm-dd", st.getNumberFormatAt((short)nf1));
         assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
         assertEquals(nf2, st.putNumberFormat("yyyy-mm-DD"));
         
@@ -177,7 +177,7 @@ public final class TestStylesTable {
         assertEquals(1, st._getStyleXfsSize());
         assertEquals(10, st.getNumDataFormats());
 
-        assertEquals("YYYY-mm-dd", st.getNumberFormatAt(nf1));
+        assertEquals("YYYY-mm-dd", st.getNumberFormatAt((short)nf1));
         assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
         assertEquals(nf2, st.putNumberFormat("YYYY-mm-DD"));
         
@@ -216,22 +216,22 @@ public final class TestStylesTable {
     
     @Test
     public void removeNumberFormat() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
         try {
             final String fmt = customDataFormat;
-            final short fmtIdx = (short) wb.getStylesSource().putNumberFormat(fmt);
+            final short fmtIdx = (short) wb1.getStylesSource().putNumberFormat(fmt);
             
-            Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+            Cell cell = wb1.createSheet("test").createRow(0).createCell(0);
             cell.setCellValue(5.25);
-            CellStyle style = wb.createCellStyle();
+            CellStyle style = wb1.createCellStyle();
             style.setDataFormat(fmtIdx);
             cell.setCellStyle(style);
             
             assertEquals(fmt, cell.getCellStyle().getDataFormatString());
-            assertEquals(fmt, wb.getStylesSource().getNumberFormatAt(fmtIdx));
+            assertEquals(fmt, wb1.getStylesSource().getNumberFormatAt(fmtIdx));
             
             // remove the number format from the workbook
-            wb.getStylesSource().removeNumberFormat(fmt);
+            wb1.getStylesSource().removeNumberFormat(fmt);
             
             // number format in CellStyles should be restored to default number format
             final short defaultFmtIdx = 0;
@@ -240,17 +240,17 @@ public final class TestStylesTable {
             assertEquals(defaultFmt, style.getDataFormatString());
             
             // The custom number format should be entirely removed from the workbook
-            Map<Short,String> numberFormats = wb.getStylesSource().getNumberFormats();
+            Map<Short,String> numberFormats = wb1.getStylesSource().getNumberFormats();
             assertNotContainsKey(numberFormats, fmtIdx);
             assertNotContainsValue(numberFormats, fmt);
             
             // The default style shouldn't be added back to the styles source because it's built-in
-            assertEquals(0, wb.getStylesSource().getNumDataFormats());
+            assertEquals(0, wb1.getStylesSource().getNumDataFormats());
             
             cell = null; style = null; numberFormats = null;
-            wb = XSSFTestDataSamples.writeOutCloseAndReadBack(wb);
+            XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutCloseAndReadBack(wb1);
             
-            cell = wb.getSheet("test").getRow(0).getCell(0);
+            cell = wb2.getSheet("test").getRow(0).getCell(0);
             style = cell.getCellStyle();
             
             // number format in CellStyles should be restored to default number format
@@ -258,15 +258,17 @@ public final class TestStylesTable {
             assertEquals(defaultFmt, style.getDataFormatString());
             
             // The custom number format should be entirely removed from the workbook
-            numberFormats = wb.getStylesSource().getNumberFormats();
+            numberFormats = wb2.getStylesSource().getNumberFormats();
             assertNotContainsKey(numberFormats, fmtIdx);
             assertNotContainsValue(numberFormats, fmt);
             
             // The default style shouldn't be added back to the styles source because it's built-in
-            assertEquals(0, wb.getStylesSource().getNumDataFormats());
+            assertEquals(0, wb2.getStylesSource().getNumDataFormats());
+            
+            wb2.close();
             
         } finally {
-            wb.close();
+            wb1.close();
         }
     }
     
