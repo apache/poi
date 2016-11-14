@@ -77,7 +77,7 @@ Before running this, you should execute the "assemble" target in the main build.
 
         <!-- finally call Ant on the extracted source to check if we can build the packages -->
         <echo message="Building in temporary dir ${dirversion}/"/>
-        <ant dir="${dirversion}" target="jar" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/>
+        <ant dir="${dirversion}" target="assemble" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/>
     </target>
 
     <target name="runCompileTest" depends="init" description="Verify that we can compile most examples without including excelant or scratchpad jars">
