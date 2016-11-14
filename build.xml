@@ -2590,7 +2590,7 @@ under the License.
 		</tstamp>
         <!-- TODO: change reltype (dev/release), depending on BETA / FINAL -->
 		<property name="reltype" value="dev"/>
-		<property name="baseurl" value="http://www.apache.org/dist/poi/${reltype}"/>
+		<property name="baseurl" value="https://www.apache.org/dist/poi/${reltype}"/>
 
         <loadChecksum property="bin-tar-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5"/>
         <loadChecksum property="bin-tar-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1"/>
@@ -2611,7 +2611,7 @@ under the License.
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
       <p>A summary of changes is available in the
-        <link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/RELEASE-NOTES.txt">Release Notes</link>.
+        <link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/RELEASE-NOTES.txt">Release Notes</link>.
         A full list of changes is available in the <link href="changes.html">change log</link>.
         People interested should also follow the <link href="mailinglists.html">dev list</link>
         to track progress.</p>
@@ -2623,44 +2623,44 @@ under the License.
       </p>
       <section><title>Binary Distribution</title>
       <ul>
-        <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</link>
-          (${bin-tar-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
+        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</link>
+          (${bin-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
           <br/>
-          MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5">
+          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5">
           ${bin-tar-md5}</link>
           <br/>
-          SHA1 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1">
+          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1">
           ${bin-tar-sha1}</link>
         </li>
-        <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</link>
-          (${bin-zip-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
+        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</link>
+          (${bin-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
           <br/>
-          MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.md5">
+          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.md5">
 	      ${bin-zip-md5}</link>
           <br/>
-          SHA1 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha1">
+          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha1">
 	      ${bin-zip-sha1}</link>
         </li>
       </ul>
       </section>
       <section><title>Source Distribution</title>
       <ul>
-        <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</link>
-          (${src-tar-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
+        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</link>
+          (${src-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
           <br/>
-          MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.md5">
+          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.md5">
           ${src-tar-md5}</link>
           <br/>
-          SHA1 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1">
+          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1">
 	      ${src-tar-sha1}</link>
         </li>
-        <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
-          (${src-zip-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
+        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
+          (${src-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
           <br/>
-          MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.md5">
+          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.md5">
 	      ${src-zip-md5}</link>
           <br/>
-          SHA1 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha1">
+          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha1">
 	      ${src-zip-sha1}</link>
         </li>
       </ul>
