@@ -112,8 +112,10 @@ public class TestTable {
             int col = 0;
             for (TextDirection td : tds) {
                 TableCell<?,?> c = tbl1.getCell(0, col++);
-                c.setTextDirection(td);
-                c.setText("bla");
+                if (c != null) {
+                    c.setTextDirection(td);
+                    c.setText("bla");
+                }
             }
             
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
