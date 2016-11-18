@@ -137,8 +137,10 @@ public class DrawTableShape extends DrawShape {
         for (int row=0; row<rows; row++) {
             for (int col=0; col<cols; col++) {
                 TableCell<?,?> tc = ts.getCell(row, col);
-                DrawTextShape dts = df.getDrawable(tc);
-                dts.drawContent(graphics);
+                if (tc != null) {
+                    DrawTextShape dts = df.getDrawable(tc);
+                    dts.drawContent(graphics);
+                }
             }
         }
     }
@@ -229,6 +231,9 @@ public class DrawTableShape extends DrawShape {
      * @param args the border attributes
      */
     private static void setEdges(TableCell<?,?> cell, BorderEdge edges[], Object... args) {
+        if (cell == null) {
+            return;
+        }
         for (BorderEdge be : edges) {
             if (be != null) {
                 if (args.length == 0) {

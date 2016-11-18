@@ -297,7 +297,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             double maxHeight = 0;
             for (int col=0; col<cols; col++) {
                 XSLFTableCell tc = getCell(row, col);
-                if (tc.getGridSpan() != 1 || tc.getRowSpan() != 1) {
+                if (tc == null || tc.getGridSpan() != 1 || tc.getRowSpan() != 1) {
                     continue;
                 }
                 // need to set the anchor before height calculation
@@ -314,8 +314,10 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             for (int col=0; col<cols; col++) {
                 Rectangle2D bounds = new Rectangle2D.Double(newX, newY, colWidths[col], rowHeights[row]);
                 XSLFTableCell tc = getCell(row, col);
-                tc.setAnchor(bounds);
-                newX += colWidths[col]+DrawTableShape.borderSize;
+                if (tc != null) {
+                    tc.setAnchor(bounds);
+                    newX += colWidths[col]+DrawTableShape.borderSize;
+                }
             }
             newY += rowHeights[row]+DrawTableShape.borderSize;
         }
@@ -324,6 +326,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         for (int row=0; row<rows; row++) {
             for (int col=0; col<cols; col++) {
                 XSLFTableCell tc = getCell(row, col);
+                if (tc == null) {
+                    continue;
+                }
                 Rectangle2D mergedBounds = tc.getAnchor();
                 for (int col2=col+1; col2<col+tc.getGridSpan(); col2++) {
                     assert(col2 < cols);

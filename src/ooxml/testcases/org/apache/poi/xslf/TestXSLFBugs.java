@@ -60,6 +60,10 @@ import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
+import org.apache.poi.xslf.usermodel.XSLFTable;
+import org.apache.poi.xslf.usermodel.XSLFTableCell;
+import org.apache.poi.xslf.usermodel.XSLFTableRow;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -556,4 +560,30 @@ public class TestXSLFBugs {
         rwPptx.close();
         ppt.close();
     }
+
+
+    @Test
+    public void bug60373() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide sl = ppt.createSlide();
+        XSLFTable t = sl.createTable();
+        XSLFTableRow r = t.addRow();
+        bug60373_addCell(r);
+        bug60373_addCell(r);
+        r = t.addRow();
+        XSLFTableCell c = bug60373_addCell(r);
+        // call getTextHeight, when table is not fully populated
+        double th = c.getTextHeight();
+        assertTrue(th > 10);
+        ppt.close();
+    }
+
+    private static XSLFTableCell bug60373_addCell(XSLFTableRow r) {
+        XSLFTableCell cell = r.addCell();
+        XSLFTextParagraph p = cell.addNewTextParagraph();
+        XSLFTextRun tr = p.addNewTextRun();
+        tr.setText("t");
+        return cell;
+    }
+
 }
