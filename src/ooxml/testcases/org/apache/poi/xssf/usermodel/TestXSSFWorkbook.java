@@ -463,10 +463,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         // Should have one style
         assertEquals(1, wb1.getNumCellStyles());
         wb1.getCellStyleAt((short)0);
-        try {
-            wb1.getCellStyleAt((short)1);
-            fail("Shouldn't be able to get style at 1 that doesn't exist");
-        } catch(IndexOutOfBoundsException e) {}
+        assertNull("Shouldn't be able to get style at 0 that doesn't exist",
+                wb1.getCellStyleAt((short)1));
 
         // Add another one
         CellStyle cs = wb1.createCellStyle();
@@ -476,20 +474,16 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         assertEquals(2, wb1.getNumCellStyles());
         wb1.getCellStyleAt((short)0);
         wb1.getCellStyleAt((short)1);
-        try {
-            wb1.getCellStyleAt((short)2);
-            fail("Shouldn't be able to get style at 2 that doesn't exist");
-        } catch(IndexOutOfBoundsException e) {}
+        assertNull("Shouldn't be able to get style at 2 that doesn't exist",
+                wb1.getCellStyleAt((short)2));
 
         // Save and reload
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         assertEquals(2, nwb.getNumCellStyles());
         nwb.getCellStyleAt((short)0);
         nwb.getCellStyleAt((short)1);
-        try {
-            nwb.getCellStyleAt((short)2);
-            fail("Shouldn't be able to get style at 2 that doesn't exist");
-        } catch(IndexOutOfBoundsException e) {}
+        assertNull("Shouldn't be able to get style at 2 that doesn't exist",
+                nwb.getCellStyleAt((short)2));
 
         // Now with an existing file
         XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
@@ -497,10 +491,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         wb2.getCellStyleAt((short)0);
         wb2.getCellStyleAt((short)1);
         wb2.getCellStyleAt((short)2);
-        try {
-            wb2.getCellStyleAt((short)3);
-            fail("Shouldn't be able to get style at 3 that doesn't exist");
-        } catch(IndexOutOfBoundsException e) {}
+        assertNull("Shouldn't be able to get style at 3 that doesn't exist",
+                wb2.getCellStyleAt((short)3));
 
         wb2.close();
         wb1.close();
