@@ -403,9 +403,18 @@ public class StylesTable extends POIXMLDocumentPart {
         return putFont(font, false);
     }
 
+    /**
+     *
+     * @param idx style index
+     * @return XSSFCellStyle or null if idx is out of bounds for xfs array
+     */
     public XSSFCellStyle getStyleAt(int idx) {
         int styleXfId = 0;
 
+        if (idx < 0 || idx >= xfs.size()) {
+            //BUG-60343
+            return null;
+        }
         // 0 is the empty default
         if(xfs.get(idx).getXfId() > 0) {
             styleXfId = (int) xfs.get(idx).getXfId();
