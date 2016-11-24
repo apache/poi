@@ -290,7 +290,7 @@ public class XSSFHyperlink implements Hyperlink {
         _ctHyperlink.setRef(ref);
     }
     @Internal
-    protected void setCellReference(CellReference ref) {
+    public void setCellReference(CellReference ref) {
         setCellReference(ref.formatAsString());
     }
 
