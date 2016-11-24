@@ -711,7 +711,7 @@ public class SXSSFCell implements Cell {
         XSSFHyperlink xssfobj = (XSSFHyperlink)link;
         // Assign to us
         CellReference ref = new CellReference(getRowIndex(), getColumnIndex());
-        xssfobj.getCTHyperlink().setRef( ref.formatAsString()  );
+        xssfobj.setCellReference( ref.formatAsString() );
 
         // Add to the lists
         getSheet()._sh.addHyperlink(xssfobj);
