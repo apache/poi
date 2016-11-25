@@ -110,8 +110,8 @@ public class XSSFDataValidation implements DataValidation {
 		if(text != null && text.length() > 255) {
 			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
 		}
-		ctDdataValidation.setErrorTitle(title);
-		ctDdataValidation.setError(text);
+		ctDdataValidation.setErrorTitle(encodeUtf(title));
+		ctDdataValidation.setError(encodeUtf(text));
 	}
 
 	/* (non-Javadoc)
@@ -125,8 +125,35 @@ public class XSSFDataValidation implements DataValidation {
 		if(text != null && text.length() > 255) {
 			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
 		}
-		ctDdataValidation.setPromptTitle(title);
-		ctDdataValidation.setPrompt(text);
+		ctDdataValidation.setPromptTitle(encodeUtf(title));
+		ctDdataValidation.setPrompt(encodeUtf(text));
+	}
+
+	/**
+	 * For all characters which cannot be represented in XML as defined by the XML 1.0 specification,
+	 * the characters are escaped using the Unicode numerical character representation escape character
+	 * format _xHHHH_, where H represents a hexadecimal character in the character's value.
+	 * <p>
+	 * Example: The Unicode character 0D is invalid in an XML 1.0 document,
+	 * so it shall be escaped as <code>_x000D_</code>.
+	 * </p>
+	 * See section 3.18.9 in the OOXML spec.
+	 *
+	 * @param   text the string to encode
+	 * @return  the encoded string
+	 */
+	private String encodeUtf(String text) {
+		StringBuilder builder = new StringBuilder();
+		for(char c : text.toCharArray()) {
+			// for now only encode characters below 32, we can add more here if needed
+			if(c < 32) {
+				builder.append("_x").append(c < 16 ? "000" : "00").append(Integer.toHexString(c)).append("_");
+			} else {
+				builder.append(c);
+			}
+		}
+
+		return builder.toString();
 	}
 
 	/* (non-Javadoc)

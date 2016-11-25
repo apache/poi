@@ -53,6 +53,8 @@ public abstract class BaseTestBugzillaIssues {
     private static final String TEST_32 = "Some text with 32 characters to ";
     private static final String TEST_255 = "Some very long text that is exactly 255 characters, which are allowed here, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla.....";
     private static final String TEST_256 = "Some very long text that is longer than the 255 characters allowed in HSSF here, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla1";
+    private static final String TEST_SPECIAL_TITLE = "special \n\t\r\u0002characters";
+    private static final String TEST_SPECIAL = "Some text with special \n\t\r\u0002characters to s";
 
     private final ITestDataProvider _testDataProvider;
 
@@ -167,7 +169,7 @@ public abstract class BaseTestBugzillaIssues {
             // fetch the first merged region...EXCEPTION OCCURS HERE
             template.getMergedRegion(0);
        }
-       //make sure we dont exception
+
        wb.close();
     }
 
@@ -989,7 +991,7 @@ public abstract class BaseTestBugzillaIssues {
      * With HSSF, if you create a font, don't change it, and
      *  create a 2nd, you really do get two fonts that you
      *  can alter as and when you want.
-     * With XSSF, that wasn't the case, but this verfies
+     * With XSSF, that wasn't the case, but this verifies
      *  that it now is again
      */
     @Test
@@ -1802,9 +1804,14 @@ public abstract class BaseTestBugzillaIssues {
         // more than 255 fail for all
         checkFailures(dataValidation, TEST_256, TEST_32, true);
         checkFailures(dataValidation, TEST_32, TEST_256, true);
+
         // more than 32 title fail for HSSFWorkbook
         checkFailures(dataValidation, TEST_255, TEST_32, wb instanceof HSSFWorkbook);
-        // 32 length title and 255 length text wrok for both
+
+        // special characters work
+        checkFailures(dataValidation, TEST_SPECIAL_TITLE, TEST_SPECIAL, false);
+
+        // 32 length title and 255 length text work for both
         checkFailures(dataValidation, TEST_32, TEST_255, false);
 
         dataValidation.setShowErrorBox(false);
@@ -1842,5 +1849,39 @@ public abstract class BaseTestBugzillaIssues {
         } catch (IllegalStateException e) {
             assertTrue("Should not fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
         }
+    }
+
+    @Test
+    public void test60370() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        final Sheet sheet = wb.createSheet();
+
+        DataValidation dataValidation;
+        CellRangeAddressList headerCell = new CellRangeAddressList(0, 1, 0, 1);
+        DataValidationConstraint constraint = sheet.getDataValidationHelper().createCustomConstraint("A1<>\"\"");
+
+        dataValidation = sheet.getDataValidationHelper().createValidation(constraint, headerCell);
+        checkFailures(dataValidation, TEST_SPECIAL_TITLE, TEST_SPECIAL, false);
+
+        dataValidation.setShowErrorBox(true);
+        dataValidation.setShowPromptBox(true);
+        sheet.addValidationData(dataValidation);
+
+        // write out and read back in to trigger some more validation
+        final Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
+
+        final Sheet sheetBack = wbBack.getSheetAt(0);
+        final List<? extends DataValidation> dataValidations = sheetBack.getDataValidations();
+        assertEquals(1, dataValidations.size());
+
+        /*String ext = (wb instanceof HSSFWorkbook) ? ".xls" : ".xlsx";
+        OutputStream str = new FileOutputStream("/tmp/60370" + ext);
+        try {
+            wb.write(str);
+        } finally {
+            str.close();
+        }*/
+
+        wb.close();
     }
 }
