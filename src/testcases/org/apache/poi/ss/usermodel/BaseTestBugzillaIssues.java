@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.POILogFactory;
@@ -36,6 +37,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.text.AttributedString;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -46,8 +48,11 @@ import static org.junit.Assert.*;
  * @author Yegor Kozlov
  */
 public abstract class BaseTestBugzillaIssues {
-    
     private static final POILogger logger = POILogFactory.getLogger(BaseTestBugzillaIssues.class);
+
+    private static final String TEST_32 = "Some text with 32 characters to ";
+    private static final String TEST_255 = "Some very long text that is exactly 255 characters, which are allowed here, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla.....";
+    private static final String TEST_256 = "Some very long text that is longer than the 255 characters allowed in HSSF here, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla bla, bla1";
 
     private final ITestDataProvider _testDataProvider;
 
@@ -477,7 +482,7 @@ public abstract class BaseTestBugzillaIssues {
         String txt = lines[0] + "0";
 
         AttributedString str = new AttributedString(txt);
-        copyAttributes(font, str, 0, txt.length());
+        copyAttributes(font, str, txt.length());
 
         // TODO: support rich text fragments
         /*if (rt.numFormattingRuns() > 0) {
@@ -496,18 +501,18 @@ public abstract class BaseTestBugzillaIssues {
     private double computeCellWidthFixed(Font font, String txt) {
         final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);
         AttributedString str = new AttributedString(txt);
-        copyAttributes(font, str, 0, txt.length());
+        copyAttributes(font, str, txt.length());
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
         return getFrameWidth(layout);
     }
 
-    private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
-        str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
+    private static void copyAttributes(Font font, AttributedString str, int endIdx) {
+        str.addAttribute(TextAttribute.FAMILY, font.getFontName(), 0, endIdx);
         str.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints());
-        if (font.getBoldweight() == Font.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
-        if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
-        if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
+        if (font.getBold()) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, 0, endIdx);
+        if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, 0, endIdx);
+        if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, 0, endIdx);
     }
 
     /**
@@ -1020,6 +1025,7 @@ public abstract class BaseTestBugzillaIssues {
         wb.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void bug56981() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -1095,7 +1101,7 @@ public abstract class BaseTestBugzillaIssues {
         Font font = wb.createFont();
         font.setFontName("Arial");
         font.setFontHeightInPoints((short)14);
-        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setBold(true);
         font.setColor(IndexedColors.RED.getIndex());
         str2.applyFont(font);
 
@@ -1276,6 +1282,7 @@ public abstract class BaseTestBugzillaIssues {
         wb2.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void bug58260() throws IOException {
         //Create workbook and worksheet
@@ -1778,5 +1785,62 @@ public abstract class BaseTestBugzillaIssues {
         }
         
         wb.close();
+    }
+
+    @Test
+    public void test59200() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        final Sheet sheet = wb.createSheet();
+
+        DataValidation dataValidation;
+        CellRangeAddressList headerCell = new CellRangeAddressList(0, 1, 0, 1);
+        DataValidationConstraint constraint = sheet.getDataValidationHelper().createCustomConstraint("A1<>\"\"");
+
+        dataValidation = sheet.getDataValidationHelper().createValidation(constraint, headerCell);
+
+        // HSSF has 32/255 limits as part of the Spec, XSSF has no limit in the spec, but Excel applies a 255 length limit!
+        // more than 255 fail for all
+        checkFailures(dataValidation, TEST_256, TEST_32, true);
+        checkFailures(dataValidation, TEST_32, TEST_256, true);
+        // more than 32 title fail for HSSFWorkbook
+        checkFailures(dataValidation, TEST_255, TEST_32, wb instanceof HSSFWorkbook);
+        // 32 length title and 255 length text wrok for both
+        checkFailures(dataValidation, TEST_32, TEST_255, false);
+
+        dataValidation.setShowErrorBox(false);
+        sheet.addValidationData(dataValidation);
+
+        // write out and read back in to trigger some more validation
+        final Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
+
+        final Sheet sheetBack = wbBack.getSheetAt(0);
+        final List<? extends DataValidation> dataValidations = sheetBack.getDataValidations();
+        assertEquals(1, dataValidations.size());
+
+        /*String ext = (wb instanceof HSSFWorkbook) ? ".xls" : ".xlsx";
+        OutputStream str = new FileOutputStream("C:\\temp\\59200" + ext);
+        try {
+            wb.write(str);
+        } finally {
+            str.close();
+        }*/
+
+        wb.close();
+    }
+
+    private void checkFailures(DataValidation dataValidation, String title, String text, boolean shouldFail) {
+        try {
+            dataValidation.createPromptBox(title, text);
+            assertFalse("Should fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+        } catch (IllegalStateException e) {
+            assertTrue("Should not fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+            // expected here
+        }
+        try {
+            dataValidation.createErrorBox(title, text);
+            assertFalse("Should fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+        } catch (IllegalStateException e) {
+            assertTrue("Should not fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+        }
     }
 }
