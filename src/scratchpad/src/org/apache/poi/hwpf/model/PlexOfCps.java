@@ -25,178 +25,148 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Plex of CPs stored in File (PLCF)
- * 
+ * <p>
  * common data structure in a Word file. Contains an array of 4 byte ints in the
  * front that relate to an array of arbitrary data structures in the back.
- * 
+ * <p>
  * See page 184 of official documentation for details
- * 
+ *
  * @author Ryan Ackley
  */
-public final class PlexOfCps
-{
+public final class PlexOfCps {
     private int _iMac;
     private int _offset;
     private int _cbStruct;
     private List<GenericPropertyNode> _props;
 
-    public PlexOfCps( int sizeOfStruct )
-    {
+    public PlexOfCps(int sizeOfStruct) {
         _props = new ArrayList<GenericPropertyNode>();
         _cbStruct = sizeOfStruct;
     }
 
     /**
      * Constructor
-     * 
-     * @param cb
-     *            The size of PLCF in bytes
-     * @param cbStruct
-     *            The size of the data structure type stored in this PlexOfCps.
+     *
+     * @param cb       The size of PLCF in bytes
+     * @param cbStruct The size of the data structure type stored in this PlexOfCps.
      */
-    public PlexOfCps( byte[] buf, int start, int cb, int cbStruct )
-    {
+    public PlexOfCps(byte[] buf, int start, int cb, int cbStruct) {
         // Figure out the number we hold
-        _iMac = ( cb - 4 ) / ( 4 + cbStruct );
+        _iMac = (cb - 4) / (4 + cbStruct);
 
         _cbStruct = cbStruct;
-        _props = new ArrayList<GenericPropertyNode>( _iMac );
+        _props = new ArrayList<GenericPropertyNode>(_iMac);
 
-        for ( int x = 0; x < _iMac; x++ )
-        {
-            _props.add( getProperty( x, buf, start ) );
+        for (int x = 0; x < _iMac; x++) {
+            _props.add(getProperty(x, buf, start));
         }
     }
 
     @Internal
-    void adjust( int startCp, int shift )
-    {
-        for ( GenericPropertyNode node : _props )
-        {
-            if ( node.getStart() > startCp )
-            {
-                if ( node.getStart() + shift < startCp )
-                {
-                    node.setStart( startCp );
-                }
-                else
-                {
-                    node.setStart( node.getStart() + shift );
+    void adjust(int startCp, int shift) {
+        for (GenericPropertyNode node : _props) {
+            if (node.getStart() > startCp) {
+                if (node.getStart() + shift < startCp) {
+                    node.setStart(startCp);
+                } else {
+                    node.setStart(node.getStart() + shift);
                 }
             }
-            if ( node.getEnd() >= startCp )
-            {
-                if ( node.getEnd() + shift < startCp )
-                {
-                    node.setEnd( startCp );
-                }
-                else
-                {
-                    node.setEnd( node.getEnd() + shift );
+            if (node.getEnd() >= startCp) {
+                if (node.getEnd() + shift < startCp) {
+                    node.setEnd(startCp);
+                } else {
+                    node.setEnd(node.getEnd() + shift);
                 }
             }
         }
     }
 
-    public GenericPropertyNode getProperty( int index )
-    {
-        return _props.get( index );
+    public GenericPropertyNode getProperty(int index) {
+        return _props.get(index);
     }
 
-    public void addProperty( GenericPropertyNode node )
-    {
-        _props.add( node );
+    public void addProperty(GenericPropertyNode node) {
+        _props.add(node);
         _iMac++;
     }
 
-    void remove( int index )
-    {
-        _props.remove( index );
+    void remove(int index) {
+        _props.remove(index);
         _iMac--;
     }
 
-    public byte[] toByteArray()
-    {
+    public byte[] toByteArray() {
         int size = _props.size();
-        int cpBufSize = ( ( size + 1 ) * LittleEndian.INT_SIZE );
-        int structBufSize = +( _cbStruct * size );
+        int cpBufSize = ((size + 1) * LittleEndian.INT_SIZE);
+        int structBufSize = +(_cbStruct * size);
         int bufSize = cpBufSize + structBufSize;
 
         byte[] buf = new byte[bufSize];
 
         GenericPropertyNode node = null;
-        for ( int x = 0; x < size; x++ )
-        {
-            node = _props.get( x );
+        for (int x = 0; x < size; x++) {
+            node = _props.get(x);
 
             // put the starting offset of the property into the plcf.
-            LittleEndian.putInt( buf, ( LittleEndian.INT_SIZE * x ),
-                    node.getStart() );
+            LittleEndian.putInt(buf, (LittleEndian.INT_SIZE * x),
+                    node.getStart());
 
             // put the struct into the plcf
-            System.arraycopy( node.getBytes(), 0, buf, cpBufSize
-                    + ( x * _cbStruct ), _cbStruct );
+            System.arraycopy(node.getBytes(), 0, buf, cpBufSize
+                    + (x * _cbStruct), _cbStruct);
         }
         // put the ending offset of the last property into the plcf.
-        LittleEndian.putInt( buf, LittleEndian.INT_SIZE * size, node.getEnd() );
+        LittleEndian.putInt(buf, LittleEndian.INT_SIZE * size, node.getEnd());
 
         return buf;
-
     }
 
-    private GenericPropertyNode getProperty( int index, byte[] buf, int offset )
-    {
-        int start = LittleEndian.getInt( buf, offset + getIntOffset( index ) );
-        int end = LittleEndian.getInt( buf, offset + getIntOffset( index + 1 ) );
+    private GenericPropertyNode getProperty(int index, byte[] buf, int offset) {
+        int start = LittleEndian.getInt(buf, offset + getIntOffset(index));
+        int end = LittleEndian.getInt(buf, offset + getIntOffset(index + 1));
 
         byte[] struct = new byte[_cbStruct];
-        System.arraycopy( buf, offset + getStructOffset( index ), struct, 0,
-                _cbStruct );
+        System.arraycopy(buf, offset + getStructOffset(index), struct, 0,
+                _cbStruct);
 
-        return new GenericPropertyNode( start, end, struct );
+        return new GenericPropertyNode(start, end, struct);
     }
 
-    private int getIntOffset( int index )
-    {
+    private int getIntOffset(int index) {
         return index * 4;
     }
 
     /**
      * returns the number of data structures in this PlexofCps.
-     * 
+     *
      * @return The number of data structures in this PlexofCps
      */
-    public int length()
-    {
+    public int length() {
         return _iMac;
     }
 
     /**
      * Returns the offset, in bytes, from the beginning if this PlexOfCps to the
      * data structure at index.
-     * 
-     * @param index
-     *            The index of the data structure.
-     * 
+     *
+     * @param index The index of the data structure.
      * @return The offset, in bytes, from the beginning if this PlexOfCps to the
-     *         data structure at index.
+     * data structure at index.
      */
-    private int getStructOffset( int index )
-    {
-        return ( 4 * ( _iMac + 1 ) ) + ( _cbStruct * index );
+    private int getStructOffset(int index) {
+        return (4 * (_iMac + 1)) + (_cbStruct * index);
     }
 
-    GenericPropertyNode[] toPropertiesArray()
-    {
-        if ( _props == null || _props.isEmpty() )
+    GenericPropertyNode[] toPropertiesArray() {
+        if (_props == null || _props.isEmpty())
             return new GenericPropertyNode[0];
 
-        return _props.toArray( new GenericPropertyNode[_props.size()] );
+        return _props.toArray(new GenericPropertyNode[_props.size()]);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "PLCF (cbStruct: " + _cbStruct + "; iMac: " + _iMac + ")";
     }
 }

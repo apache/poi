@@ -32,7 +32,7 @@ public class WorkingWithRichText {
         XSSFWorkbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         try {
             XSSFSheet sheet = wb.createSheet();
-            XSSFRow row = sheet.createRow((short) 2);
+            XSSFRow row = sheet.createRow(2);
     
             XSSFCell cell = row.createCell(1);
             XSSFRichTextString rt = new XSSFRichTextString("The quick brown fox");
@@ -53,7 +53,7 @@ public class WorkingWithRichText {
             rt.append(" Jumped over the lazy dog", font3);
     
             cell.setCellValue(rt);
-    
+
             // Write the output to a file
             OutputStream fileOut = new FileOutputStream("xssf-richtext.xlsx");
             try {
