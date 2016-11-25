@@ -42,13 +42,13 @@ public final class DVRecord extends StandardRecord implements Cloneable {
 
 	/** Option flags */
 	private int _option_flags;
-	/** Title of the prompt box */
+	/** Title of the prompt box, cannot be longer than 32 chars */
 	private UnicodeString _promptTitle;
-	/** Title of the error box */
+	/** Title of the error box, cannot be longer than 32 chars */
 	private UnicodeString _errorTitle;
-	/** Text of the prompt box */
+	/** Text of the prompt box, cannot be longer than 255 chars */
 	private UnicodeString _promptText;
-	/** Text of the error box */
+	/** Text of the error box, cannot be longer than 255 chars */
 	private UnicodeString _errorText;
 	/** Not used - Excel seems to always write 0x3FE0 */
 	private short _not_used_1 = 0x3FE0;
@@ -82,6 +82,21 @@ public final class DVRecord extends StandardRecord implements Cloneable {
 			Ptg[] formula1, Ptg[] formula2,
 			CellRangeAddressList regions) {
 		
+		// check length-limits
+		if(promptTitle != null && promptTitle.length() > 32) {
+			throw new IllegalStateException("Prompt-title cannot be longer than 32 characters, but had: " + promptTitle);
+		}
+		if(promptText != null && promptText.length() > 255) {
+			throw new IllegalStateException("Prompt-text cannot be longer than 255 characters, but had: " + promptText);
+		}
+
+		if(errorTitle != null && errorTitle.length() > 32) {
+			throw new IllegalStateException("Error-title cannot be longer than 32 characters, but had: " + errorTitle);
+		}
+		if(errorText != null && errorText.length() > 255) {
+			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + errorText);
+		}
+
 		int flags = 0;
 		flags = opt_data_type.setValue(flags, validationType);
 		flags = opt_condition_operator.setValue(flags, operator);
@@ -267,8 +282,8 @@ public final class DVRecord extends StandardRecord implements Cloneable {
 		}
 		Ptg[] ptgs = f.getTokens();
 		sb.append('\n');
-		for (int i = 0; i < ptgs.length; i++) {
-			sb.append('\t').append(ptgs[i].toString()).append('\n');
+		for (Ptg ptg : ptgs) {
+			sb.append('\t').append(ptg.toString()).append('\n');
 		}
 	}
 

@@ -44,7 +44,9 @@ public final class HSSFDataValidation implements DataValidation {
 	/**
 	 * Constructor which initializes the cell range on which this object will be
 	 * applied
-	 * @param constraint 
+	 *
+	 * @param regions A list of regions where the constraint is validated.
+	 * @param constraint The constraints to apply for this validation.
 	 */
 	public HSSFDataValidation(CellRangeAddressList regions, DataValidationConstraint constraint) {
 		_regions = regions;
@@ -109,6 +111,7 @@ public final class HSSFDataValidation implements DataValidation {
 	 * @see org.apache.poi.hssf.usermodel.DataValidation#getSuppressDropDownArrow()
 	 */
 	public boolean getSuppressDropDownArrow() {
+		//noinspection SimplifiableIfStatement
 		if (_constraint.getValidationType()==ValidationType.LIST) {
 			return _suppress_dropdown_arrow;
 		}
@@ -148,6 +151,13 @@ public final class HSSFDataValidation implements DataValidation {
 	 * @see org.apache.poi.hssf.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
 	 */
 	public void createPromptBox(String title, String text) {
+		// check length-limits
+		if(title != null && title.length() > 32) {
+			throw new IllegalStateException("Prompt-title cannot be longer than 32 characters, but had: " + title);
+		}
+		if(text != null && text.length() > 255) {
+			throw new IllegalStateException("Prompt-text cannot be longer than 255 characters, but had: " + text);
+		}
 		_prompt_title = title;
 		_prompt_text = text;
 		this.setShowPromptBox(true);
@@ -171,6 +181,12 @@ public final class HSSFDataValidation implements DataValidation {
 	 * @see org.apache.poi.hssf.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
 	 */
 	public void createErrorBox(String title, String text) {
+		if(title != null && title.length() > 32) {
+			throw new IllegalStateException("Error-title cannot be longer than 32 characters, but had: " + title);
+		}
+		if(text != null && text.length() > 255) {
+			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
+		}
 		_error_title = title;
 		_error_text = text;
 		this.setShowErrorBox(true);

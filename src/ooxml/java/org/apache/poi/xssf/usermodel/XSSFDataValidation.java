@@ -103,6 +103,13 @@ public class XSSFDataValidation implements DataValidation {
 	 * @see org.apache.poi.ss.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
 	 */
 	public void createErrorBox(String title, String text) {
+		// the spec does not specify a length-limit, however Excel reports files as "corrupt" if they exceed 255 bytes for these texts...
+		if(title != null && title.length() > 255) {
+			throw new IllegalStateException("Error-title cannot be longer than 32 characters, but had: " + title);
+		}
+		if(text != null && text.length() > 255) {
+			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
+		}
 		ctDdataValidation.setErrorTitle(title);
 		ctDdataValidation.setError(text);
 	}
@@ -111,6 +118,13 @@ public class XSSFDataValidation implements DataValidation {
 	 * @see org.apache.poi.ss.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
 	 */
 	public void createPromptBox(String title, String text) {
+		// the spec does not specify a length-limit, however Excel reports files as "corrupt" if they exceed 255 bytes for these texts...
+		if(title != null && title.length() > 255) {
+			throw new IllegalStateException("Error-title cannot be longer than 32 characters, but had: " + title);
+		}
+		if(text != null && text.length() > 255) {
+			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
+		}
 		ctDdataValidation.setPromptTitle(title);
 		ctDdataValidation.setPrompt(text);
 	}
@@ -237,14 +251,12 @@ public class XSSFDataValidation implements DataValidation {
 	}
 	
     private static XSSFDataValidationConstraint getConstraint(CTDataValidation ctDataValidation) {
-    	XSSFDataValidationConstraint constraint = null;
     	String formula1 = ctDataValidation.getFormula1();
     	String formula2 = ctDataValidation.getFormula2();
     	Enum operator = ctDataValidation.getOperator();
     	org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType.Enum type = ctDataValidation.getType();
 		Integer validationType = XSSFDataValidation.validationTypeReverseMappings.get(type);
 		Integer operatorType = XSSFDataValidation.operatorTypeReverseMappings.get(operator);
-		constraint = new XSSFDataValidationConstraint(validationType,operatorType, formula1,formula2);
-    	return constraint;
+		return new XSSFDataValidationConstraint(validationType,operatorType, formula1,formula2);
     }
 }
