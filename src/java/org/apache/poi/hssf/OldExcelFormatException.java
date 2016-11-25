@@ -17,12 +17,7 @@
 package org.apache.poi.hssf;
 
 import org.apache.poi.OldFileFormatException;
-import org.apache.poi.util.Removal;
 
-/**
- * @deprecated POI 3.16 beta 1. Use {@link org.apache.poi.OldFileFormatException}
- */
-@Removal(version="3.18")
 public class OldExcelFormatException extends OldFileFormatException {
 	public OldExcelFormatException(String s) {
 		super(s);

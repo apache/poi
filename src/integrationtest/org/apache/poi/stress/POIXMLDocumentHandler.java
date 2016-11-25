@@ -44,7 +44,7 @@ public final class POIXMLDocumentHandler {
             } finally {
                 poifs.close();
             }
-            throw new IOException("wrong file format or file extension for OO XML file");
+            throw new IOException("Wrong file format or file extension for OO XML file");
         }
         return false;
     }
