@@ -287,7 +287,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
 
         throw new IllegalArgumentException("The supplied POIFSFileSystem does not contain a BIFF8 'Workbook' entry. "
-            + "Is it really an excel file?");
+            + "Is it really an excel file? Had: " + directory.getEntryNames());
     }
 
     /**
