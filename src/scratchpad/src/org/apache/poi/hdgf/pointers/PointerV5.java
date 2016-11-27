@@ -25,33 +25,34 @@ import org.apache.poi.util.LittleEndian;
 public final class PointerV5 extends Pointer {
     // TODO Are these getters correct?
     public boolean destinationHasStrings() {
-        return (0x40 <= format && format < 0x50);
+        return isFormatBetween(0x40, 0x50);
     }
+    
     public boolean destinationHasPointers() {
-        if(type == 20) {
-            return true;
+        switch (getType()) {
+            case 20:
+                return true;
+            case 22:
+                return false;
+            default:
+                return isFormatBetween(0x1d, 0x1f) || isFormatBetween(0x50, 0x60);
         }
-        if(type == 22) {
-            return false;
-        }
-        if(format == 0x1d || format == 0x1e) {
-            return true;
-        }
-        return (0x50 <= format && format < 0x60);
     }
+ 
     public boolean destinationHasChunks() {
-        if (type == 21) {
-            return true;
+        switch (getType()) {
+            case 21:
+                return true;
+            case 24:
+                return true;
+            default:
+                return isFormatBetween(0xd0, 0xdf);
         }
-        if (type == 24) {
-            return true;
-        }
-        return (0xd0 <= format && format < 0xdf);
     }
 
     public boolean destinationCompressed() {
         // Apparently, it's the second least significant bit
-        return (format & 2) > 0;
+        return (getFormat() & 2) > 0;
     }
 
     /**
@@ -63,7 +64,7 @@ public final class PointerV5 extends Pointer {
      * Depends on the type only, not stored
      */
     public int getNumPointersOffset(byte[] data) {
-        switch (type) {
+        switch (getType()) {
             case 0x1d:
             case 0x4e:
                 return 30;

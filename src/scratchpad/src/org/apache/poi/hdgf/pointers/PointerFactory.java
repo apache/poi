@@ -38,20 +38,20 @@ public final class PointerFactory {
         Pointer p;
         if(version >= 6) {
             p = new PointerV6();
-            p.type = LittleEndian.getInt(data, offset+0);
-            p.address = (int)LittleEndian.getUInt(data, offset+4);
-            p.offset = (int)LittleEndian.getUInt(data, offset+8);
-            p.length = (int)LittleEndian.getUInt(data, offset+12);
-            p.format = LittleEndian.getShort(data, offset+16);
+            p.setType(LittleEndian.getInt(data, offset+0));
+            p.setAddress((int)LittleEndian.getUInt(data, offset+4));
+            p.setOffset((int)LittleEndian.getUInt(data, offset+8));
+            p.setLength((int)LittleEndian.getUInt(data, offset+12));
+            p.setFormat(LittleEndian.getShort(data, offset+16));
 
             return p;
         } else if(version == 5) {
             p = new PointerV5();
-            p.type = LittleEndian.getShort(data, offset+0);
-            p.format = LittleEndian.getShort(data, offset+2);
-            p.address = (int)LittleEndian.getUInt(data, offset+4);
-            p.offset = (int)LittleEndian.getUInt(data, offset+8);
-            p.length = (int)LittleEndian.getUInt(data, offset+12);
+            p.setType(LittleEndian.getShort(data, offset+0));
+            p.setFormat(LittleEndian.getShort(data, offset+2));
+            p.setAddress((int)LittleEndian.getUInt(data, offset+4));
+            p.setOffset((int)LittleEndian.getUInt(data, offset+8));
+            p.setLength((int)LittleEndian.getUInt(data, offset+12));
 
             return p;
         } else {

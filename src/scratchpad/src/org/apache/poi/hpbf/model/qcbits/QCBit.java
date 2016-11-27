@@ -21,15 +21,15 @@ package org.apache.poi.hpbf.model.qcbits;
  * Parent of all Quill CONTENTS bits
  */
 public abstract class QCBit {
-	protected String thingType;
-	protected String bitType;
-	protected byte[] data;
+	private String thingType;
+	private String bitType;
+	private byte[] data;
 
-	protected int optA;
-	protected int optB;
-	protected int optC;
+	private int optA;
+	private int optB;
+	private int optC;
 
-	protected int dataOffset;
+	private int dataOffset;
 
 	public QCBit(String thingType, String bitType, byte[] data) {
 		this.thingType = thingType;
@@ -47,7 +47,10 @@ public abstract class QCBit {
 	 *  or PLC
 	 */
 	public String getBitType() { return bitType; }
-	public byte[] getData() { return data; }
+	public final byte[] getData() { return data; }
+	protected final void setData(byte data[]) {
+	    this.data = data.clone();
+	}
 
 	public int getOptA() {
 		return optA;

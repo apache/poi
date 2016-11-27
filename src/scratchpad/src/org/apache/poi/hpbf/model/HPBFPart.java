@@ -31,7 +31,7 @@ import org.apache.poi.util.IOUtils;
  *  for all of them.
  */
 public abstract class HPBFPart {
-	protected byte[] data;
+	private byte[] data;
 	/**
 	 * @param path  the path to the part, eg Contents or Quill, QuillSub, CONTENTS
 	 */
@@ -94,7 +94,11 @@ public abstract class HPBFPart {
 	 * Returns the raw data that makes up
 	 *  this document part.
 	 */
-	public byte[] getData() { return data; }
+	public final byte[] getData() { return data; }
+	
+	protected final void setData(byte data[]) {
+	    this.data = data.clone();
+	}
 
 	/**
 	 * Returns

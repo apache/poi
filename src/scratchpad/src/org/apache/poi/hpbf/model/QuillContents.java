@@ -39,6 +39,7 @@ public final class QuillContents extends HPBFPart {
 
 		// Now parse the first 512 bytes, and produce
 		//  all our bits
+        byte data[] = getData();
 
 		// Check first 8 bytes
 		String f8 = new String(data, 0, 8, LocaleUtil.CHARSET_1252);

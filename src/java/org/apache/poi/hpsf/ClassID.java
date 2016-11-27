@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.StringUtil;
 
@@ -40,12 +42,15 @@ public class ClassID
     public static final ClassID POWERPOINT95  = new ClassID("{EA7BAE70-FB3B-11CD-A903-00AA00510EA3}");
     public static final ClassID EQUATION30    = new ClassID("{0002CE02-0000-0000-C000-000000000046}");
 	
+    /** <p>The number of bytes occupied by this object in the byte
+     * stream.</p> */
+    public static final int LENGTH = 16;
 	
     /**
      * <p>The bytes making out the class ID in correct order,
      * i.e. big-endian.</p>
      */
-    protected byte[] bytes;
+    private final byte[] bytes = new byte[LENGTH];
 
 
 
@@ -56,8 +61,7 @@ public class ClassID
      * @param src The byte array to read from.
      * @param offset The offset of the first byte to read.
      */
-    public ClassID(final byte[] src, final int offset)
-    {
+    public ClassID(final byte[] src, final int offset) {
         read(src, offset);
     }
 
@@ -66,11 +70,8 @@ public class ClassID
      *  <p>Creates a {@link ClassID} and initializes its value with
      *  0x00 bytes.</p>
      */
-    public ClassID()
-    {
-        bytes = new byte[LENGTH];
-        for (int i = 0; i < LENGTH; i++)
-            bytes[i] = 0x00;
+    public ClassID() {
+        Arrays.fill(bytes, (byte)0);
     }
 
 
@@ -81,7 +82,6 @@ public class ClassID
      * @param externalForm representation of the Class ID represented by this object.
      */
     public ClassID(String externalForm) {
-    	bytes = new byte[LENGTH];
         String clsStr = externalForm.replaceAll("[{}-]", "");
         for (int i=0; i<clsStr.length(); i+=2) {
         	bytes[i/2] = (byte)Integer.parseInt(clsStr.substring(i, i+2), 16);
@@ -89,16 +89,11 @@ public class ClassID
     }
     
 
-    /** <p>The number of bytes occupied by this object in the byte
-     * stream.</p> */
-    public static final int LENGTH = 16;
-
     /**
      * @return The number of bytes occupied by this object in the byte
      * stream.
      */
-    public int length()
-    {
+    public int length() {
         return LENGTH;
     }
 
@@ -110,8 +105,7 @@ public class ClassID
      *
      * @return the bytes making out the class ID.
      */
-    public byte[] getBytes()
-    {
+    public byte[] getBytes() {
         return bytes;
     }
 
@@ -123,10 +117,8 @@ public class ClassID
      * @param bytes The bytes making out the class ID in big-endian format. They
      * are copied without their order being changed.
      */
-    public void setBytes(final byte[] bytes)
-    {
-        for (int i = 0; i < this.bytes.length; i++)
-            this.bytes[i] = bytes[i];
+    public void setBytes(final byte[] bytes) {
+        System.arraycopy(bytes, 0, this.bytes, 0, LENGTH);
     }
 
 
@@ -141,10 +133,7 @@ public class ClassID
      *
      * @return A byte array containing the class ID.
      */
-    public byte[] read(final byte[] src, final int offset)
-    {
-        bytes = new byte[16];
-
+    public byte[] read(final byte[] src, final int offset) {
         /* Read double word. */
         bytes[0] = src[3 + offset];
         bytes[1] = src[2 + offset];
@@ -160,8 +149,7 @@ public class ClassID
         bytes[7] = src[6 + offset];
 
         /* Read 8 bytes. */
-        for (int i = 8; i < 16; i++)
-            bytes[i] = src[i + offset];
+        System.arraycopy(src, 8 + offset, bytes, 8, 8);
 
         return bytes;
     }
@@ -180,13 +168,14 @@ public class ClassID
      * ID 16 bytes in the byte array after the <var>offset</var> position.
      */
     public void write(final byte[] dst, final int offset)
-    throws ArrayStoreException
-    {
+    throws ArrayStoreException {
         /* Check array size: */
-        if (dst.length < 16)
+        if (dst.length < LENGTH) {
             throw new ArrayStoreException
                 ("Destination byte[] must have room for at least 16 bytes, " +
                  "but has a length of only " + dst.length + ".");
+        }
+        
         /* Write double word. */
         dst[0 + offset] = bytes[3];
         dst[1 + offset] = bytes[2];
@@ -202,8 +191,7 @@ public class ClassID
         dst[7 + offset] = bytes[6];
 
         /* Write 8 bytes. */
-        for (int i = 8; i < 16; i++)
-            dst[i + offset] = bytes[i];
+        System.arraycopy(bytes, 8, dst, 8 + offset, 8);
     }
 
 
@@ -217,16 +205,19 @@ public class ClassID
      * <code>false</code>.
      */
     @Override
-    public boolean equals(final Object o)
-    {
-        if (o == null || !(o instanceof ClassID))
+    public boolean equals(final Object o) {
+        if (o == null || !(o instanceof ClassID)) {
             return false;
+        }
         final ClassID cid = (ClassID) o;
-        if (bytes.length != cid.bytes.length)
+        if (bytes.length != cid.bytes.length) {
             return false;
-        for (int i = 0; i < bytes.length; i++)
-            if (bytes[i] != cid.bytes[i])
+        }
+        for (int i = 0; i < bytes.length; i++) {
+            if (bytes[i] != cid.bytes[i]) {
                 return false;
+            }
+        }
         return true;
     }
 
@@ -236,8 +227,7 @@ public class ClassID
      * @see Object#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new String(bytes, StringUtil.UTF8).hashCode();
     }
 
@@ -248,18 +238,16 @@ public class ClassID
      * @return String representation of the Class ID represented by this object.
      */
     @Override
-    public String toString()
-    {
-        StringBuffer sbClassId = new StringBuffer(38);
+    public String toString() {
+        StringBuilder sbClassId = new StringBuilder(38);
         sbClassId.append('{');
-        for (int i = 0; i < 16; i++)
-        {
+        for (int i = 0; i < LENGTH; i++) {
             sbClassId.append(HexDump.toHex(bytes[i]));
-            if (i == 3 || i == 5 || i == 7 || i == 9)
+            if (i == 3 || i == 5 || i == 7 || i == 9) {
                 sbClassId.append('-');
+            }
         }
         sbClassId.append('}');
         return sbClassId.toString();
     }
-
 }
