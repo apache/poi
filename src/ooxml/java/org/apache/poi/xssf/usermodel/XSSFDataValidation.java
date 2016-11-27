@@ -35,6 +35,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOpera
  *
  */
 public class XSSFDataValidation implements DataValidation {
+	private static final int MAX_TEXT_LENGTH = 255;
+
 	private CTDataValidation ctDdataValidation;
 	private XSSFDataValidationConstraint validationConstraint;
 	private CellRangeAddressList regions;
@@ -43,15 +45,13 @@ public class XSSFDataValidation implements DataValidation {
 	static Map<STDataValidationOperator.Enum,Integer> operatorTypeReverseMappings = new HashMap<STDataValidationOperator.Enum,Integer>();
 	static Map<Integer,STDataValidationType.Enum> validationTypeMappings = new HashMap<Integer,STDataValidationType.Enum>();
 	static Map<STDataValidationType.Enum,Integer> validationTypeReverseMappings = new HashMap<STDataValidationType.Enum,Integer>();
-    static Map<Integer,STDataValidationErrorStyle.Enum> errorStyleMappings = new HashMap<Integer,STDataValidationErrorStyle.Enum>();
+	static Map<Integer,STDataValidationErrorStyle.Enum> errorStyleMappings = new HashMap<Integer,STDataValidationErrorStyle.Enum>();
+
     static {
 		errorStyleMappings.put(DataValidation.ErrorStyle.INFO, STDataValidationErrorStyle.INFORMATION);
 		errorStyleMappings.put(DataValidation.ErrorStyle.STOP, STDataValidationErrorStyle.STOP);
 		errorStyleMappings.put(DataValidation.ErrorStyle.WARNING, STDataValidationErrorStyle.WARNING);
-    }
-	
-    
-	static {
+
 		operatorTypeMappings.put(DataValidationConstraint.OperatorType.BETWEEN,STDataValidationOperator.BETWEEN);
 		operatorTypeMappings.put(DataValidationConstraint.OperatorType.NOT_BETWEEN,STDataValidationOperator.NOT_BETWEEN);
 		operatorTypeMappings.put(DataValidationConstraint.OperatorType.EQUAL,STDataValidationOperator.EQUAL);
@@ -64,9 +64,7 @@ public class XSSFDataValidation implements DataValidation {
 		for( Map.Entry<Integer,STDataValidationOperator.Enum> entry : operatorTypeMappings.entrySet() ) {
 			operatorTypeReverseMappings.put(entry.getValue(),entry.getKey());
 		}
-	}
 
-	static {
 		validationTypeMappings.put(DataValidationConstraint.ValidationType.FORMULA,STDataValidationType.CUSTOM);
 		validationTypeMappings.put(DataValidationConstraint.ValidationType.DATE,STDataValidationType.DATE);
 		validationTypeMappings.put(DataValidationConstraint.ValidationType.DECIMAL,STDataValidationType.DECIMAL);    	
@@ -81,7 +79,6 @@ public class XSSFDataValidation implements DataValidation {
 		}
 	}
 
-	
 	XSSFDataValidation(CellRangeAddressList regions,CTDataValidation ctDataValidation) {
 	    this(getConstraint(ctDataValidation), regions, ctDataValidation);
 	}	
@@ -104,10 +101,10 @@ public class XSSFDataValidation implements DataValidation {
 	 */
 	public void createErrorBox(String title, String text) {
 		// the spec does not specify a length-limit, however Excel reports files as "corrupt" if they exceed 255 bytes for these texts...
-		if(title != null && title.length() > 255) {
+		if(title != null && title.length() > MAX_TEXT_LENGTH) {
 			throw new IllegalStateException("Error-title cannot be longer than 32 characters, but had: " + title);
 		}
-		if(text != null && text.length() > 255) {
+		if(text != null && text.length() > MAX_TEXT_LENGTH) {
 			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
 		}
 		ctDdataValidation.setErrorTitle(encodeUtf(title));
@@ -119,10 +116,10 @@ public class XSSFDataValidation implements DataValidation {
 	 */
 	public void createPromptBox(String title, String text) {
 		// the spec does not specify a length-limit, however Excel reports files as "corrupt" if they exceed 255 bytes for these texts...
-		if(title != null && title.length() > 255) {
+		if(title != null && title.length() > MAX_TEXT_LENGTH) {
 			throw new IllegalStateException("Error-title cannot be longer than 32 characters, but had: " + title);
 		}
-		if(text != null && text.length() > 255) {
+		if(text != null && text.length() > MAX_TEXT_LENGTH) {
 			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
 		}
 		ctDdataValidation.setPromptTitle(encodeUtf(title));
@@ -143,6 +140,10 @@ public class XSSFDataValidation implements DataValidation {
 	 * @return  the encoded string
 	 */
 	private String encodeUtf(String text) {
+		if(text == null) {
+			return null;
+		}
+
 		StringBuilder builder = new StringBuilder();
 		for(char c : text.toCharArray()) {
 			// for now only encode characters below 32, we can add more here if needed
