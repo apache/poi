@@ -28,10 +28,10 @@ public abstract class StreamTest extends TestCase {
         protected boolean hasPointers = false;
         public TestPointer(boolean compressed, int offset, int length, int type, short format) {
             this.compressed = compressed;
-            this.offset = offset;
-            this.length = length;
-            this.type = type;
-            this.format = format;
+            setOffset(offset);
+            setLength(length);
+            setType(type);
+            setFormat(format);
         }
 
         @Override

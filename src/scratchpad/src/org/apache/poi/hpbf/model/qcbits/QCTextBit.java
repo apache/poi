@@ -32,13 +32,12 @@ public final class QCTextBit extends QCBit {
 	 *  are \r and not \n
 	 */
 	public String getText() {
-		return StringUtil.getFromUnicodeLE(
-				data, 0, data.length/2
-		);
+		return StringUtil.getFromUnicodeLE(getData());
 	}
 
 	public void setText(String text) {
-		data = new byte[text.length()*2];
+		byte data[] = new byte[text.length()*2];
 		StringUtil.putUnicodeLE(text, data, 0);
+		setData(data);
 	}
 }

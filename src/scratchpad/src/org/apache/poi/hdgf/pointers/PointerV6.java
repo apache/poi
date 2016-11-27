@@ -24,20 +24,19 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class PointerV6 extends Pointer {
     public boolean destinationHasStrings() {
-        return (0x40 <= format && format < 0x50);
+        return isFormatBetween(0x40, 0x50);
     }
+    
     public boolean destinationHasPointers() {
-        if(type == 20) return true;
-        if(format == 0x1d || format == 0x1e) return true;
-        return (0x50 <= format && format < 0x60);
+        return (getType() == 20) || isFormatBetween(0x1d, 0x1f) || isFormatBetween(0x50, 0x60);
     }
     public boolean destinationHasChunks() {
-        return (0xd0 <= format && format < 0xdf);
+        return isFormatBetween(0xd0, 0xdf);
     }
 
     public boolean destinationCompressed() {
         // Apparently, it's the second least significant bit
-        return (format & 2) > 0;
+        return (getFormat() & 2) > 0;
     }
 
     /**

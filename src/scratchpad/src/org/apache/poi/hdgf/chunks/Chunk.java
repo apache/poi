@@ -95,7 +95,7 @@ public final class Chunk {
 	public int getOnDiskSize() {
 		int size = header.getSizeInBytes() + contents.length;
 		if(trailer != null) {
-			size += trailer.trailerData.length;
+			size += trailer.getTrailerData().length;
 		}
 		if(separator != null) {
 			size += separator.separatorData.length;

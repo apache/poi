@@ -22,11 +22,11 @@ package org.apache.poi.hdgf.pointers;
  *  blocks elsewhere in the file
  */
 public abstract class Pointer {
-    protected int type;
-    protected int address;
-    protected int offset;
-    protected int length;
-    protected short format;
+    private int type;
+    private int address;
+    private int offset;
+    private int length;
+    private short format;
 
     public int getAddress() {
         return address;
@@ -53,4 +53,25 @@ public abstract class Pointer {
     public abstract boolean destinationHasPointers();
     public abstract boolean destinationHasChunks();
     public abstract boolean destinationCompressed();
+
+    protected void setType(int type) {
+        this.type = type;
+    }
+    protected void setAddress(int address) {
+        this.address = address;
+    }
+    protected void setOffset(int offset) {
+        this.offset = offset;
+    }
+    protected void setLength(int length) {
+        this.length = length;
+    }
+    protected void setFormat(short format) {
+        this.format = format;
+    }
+    
+    protected boolean isFormatBetween(int min, int max) {
+        return (min <= format && format < max);
+    }
+
 }

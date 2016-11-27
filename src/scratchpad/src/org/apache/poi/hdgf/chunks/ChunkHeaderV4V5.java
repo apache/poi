@@ -23,8 +23,8 @@ import java.nio.charset.Charset;
  * A chunk header from v4 or v5
  */
 public final class ChunkHeaderV4V5 extends ChunkHeader {
-	protected short unknown2;
-	protected short unknown3;
+	private short unknown2;
+	private short unknown3;
 
 	public short getUnknown2() {
 		return unknown2;
@@ -61,4 +61,12 @@ public final class ChunkHeaderV4V5 extends ChunkHeader {
 	public Charset getChunkCharset() {
 		return Charset.forName("ASCII");
 	}
+
+	void setUnknown2(short unknown2) {
+        this.unknown2 = unknown2;
+    }
+
+    void setUnknown3(short unknown3) {
+        this.unknown3 = unknown3;
+    }
 }

@@ -30,35 +30,35 @@ import java.io.OutputStream;
  * TODO Fix this, as it starts to go wrong on
  *  large streams 
  */
-final class HDGFLZWCompressor {
+/* package */ final class HDGFLZWCompressor {
 	// We use 12 bit codes:
 	// * 0-255 are real bytes
 	// * 256-4095 are the substring codes
 	// Java handily initialises our buffer / dictionary
 	//  to all zeros
-	byte[] dict = new byte[4096];
+	private byte[] dict = new byte[4096];
 
 	// The next block of data to be written out, minus
 	//  its mask byte
-	byte[] buffer = new byte[16];
+	private byte[] buffer = new byte[16];
 	// And how long it is
 	// (Un-compressed codes are 1 byte each, compressed codes
 	//   are two)
-	int bufferLen = 0;
+	private int bufferLen = 0;
 
 	// The raw length of a code is limited to 4 bits + 2
-	byte[] rawCode = new byte[18];
+	private byte[] rawCode = new byte[18];
 	// And how much we're using
-	int rawCodeLen = 0;
+	private int rawCodeLen = 0;
 
 	// How far through the input and output streams we are
-	int posInp = 0;
-	int posOut = 0;
+	private int posInp = 0;
+	private int posOut = 0;
 
 	// What the next mask byte to output will be
-	int nextMask = 0;
+	private int nextMask = 0;
 	// And how many bits we've already set
-	int maskBitsSet = 0;
+	private int maskBitsSet = 0;
 
 	public HDGFLZWCompressor() {}
 	

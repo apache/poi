@@ -37,8 +37,8 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 public final class VSDDumper {
     final static String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
     
-    final PrintStream ps;
-    final HDGFDiagram hdgf;
+    private final PrintStream ps;
+    private final HDGFDiagram hdgf;
     VSDDumper(PrintStream ps, HDGFDiagram hdgf) {
         this.ps = ps;
         this.hdgf = hdgf;

@@ -130,7 +130,7 @@ public final class ChunkFactory {
 		ChunkHeader header =
 			ChunkHeader.createChunkHeader(version, data, offset);
 		// Sanity check
-		if(header.length < 0) {
+		if(header.getLength() < 0) {
 			throw new IllegalArgumentException("Found a chunk with a negative length, which isn't allowed");
 		}
 
@@ -144,14 +144,14 @@ public final class ChunkFactory {
 				"Header called for " + header.getLength() +" bytes, but that would take us past the end of the data!");
 
 			endOfDataPos = data.length;
-			header.length = data.length - offset - header.getSizeInBytes();
+			header.setLength(data.length - offset - header.getSizeInBytes());
 
 			if(header.hasTrailer()) {
-				header.length -= 8;
+				header.setLength(header.getLength() - 8);
 				endOfDataPos  -= 8;
 			}
 			if(header.hasSeparator()) {
-				header.length -= 4;
+                header.setLength(header.getLength() - 4);
 				endOfDataPos  -= 4;
 			}
 		}

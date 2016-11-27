@@ -25,10 +25,10 @@ import java.nio.charset.Charset;
  * A chunk header
  */
 public abstract class ChunkHeader {
-	protected int type;
-	protected int id;
-	protected int length;
-	protected int unknown1;
+	private int type;
+	private int id;
+	private int length;
+	private int unknown1;
 
 	/**
 	 * Creates the appropriate ChunkHeader for the Chunk Header at
@@ -42,23 +42,23 @@ public abstract class ChunkHeader {
 			} else {
 				ch = new ChunkHeaderV6();
 			}
-			ch.type = (int)LittleEndian.getUInt(data, offset + 0);
-			ch.id   = (int)LittleEndian.getUInt(data, offset + 4);
-			ch.unknown1 = (int)LittleEndian.getUInt(data, offset + 8);
-			ch.length   = (int)LittleEndian.getUInt(data, offset + 12);
-			ch.unknown2 = LittleEndian.getShort(data, offset + 16);
-			ch.unknown3 = LittleEndian.getUByte(data, offset + 18);
+			ch.setType((int)LittleEndian.getUInt(data, offset + 0));
+			ch.setId((int)LittleEndian.getUInt(data, offset + 4));
+			ch.setUnknown1((int)LittleEndian.getUInt(data, offset + 8));
+			ch.setLength((int)LittleEndian.getUInt(data, offset + 12));
+			ch.setUnknown2(LittleEndian.getShort(data, offset + 16));
+			ch.setUnknown3(LittleEndian.getUByte(data, offset + 18));
 
 			return ch;
 		} else if(documentVersion == 5 || documentVersion == 4) {
 			ChunkHeaderV4V5 ch = new ChunkHeaderV4V5();
 
-			ch.type = LittleEndian.getShort(data, offset + 0);
-			ch.id   = LittleEndian.getShort(data, offset + 2);
-			ch.unknown2 = LittleEndian.getUByte(data, offset + 4);
-			ch.unknown3 = LittleEndian.getUByte(data, offset + 5);
-			ch.unknown1 = LittleEndian.getShort(data, offset + 6);
-			ch.length   = (int)LittleEndian.getUInt(data, offset + 8);
+			ch.setType(LittleEndian.getShort(data, offset + 0));
+			ch.setId(LittleEndian.getShort(data, offset + 2));
+			ch.setUnknown2(LittleEndian.getUByte(data, offset + 4));
+			ch.setUnknown3(LittleEndian.getUByte(data, offset + 5));
+			ch.setUnknown1(LittleEndian.getShort(data, offset + 6));
+			ch.setLength((int)LittleEndian.getUInt(data, offset + 8));
 
 			return ch;
 		} else {
@@ -90,6 +90,7 @@ public abstract class ChunkHeader {
 	public int getId() {
 		return id;
 	}
+
 	/**
 	 * Returns the length of the trunk, excluding the length
 	 *  of the header, trailer or separator.
@@ -97,6 +98,7 @@ public abstract class ChunkHeader {
 	public int getLength() {
 		return length;
 	}
+
 	/**
 	 * Returns the type of the chunk, which affects the
 	 *  mandatory information
@@ -104,7 +106,24 @@ public abstract class ChunkHeader {
 	public int getType() {
 		return type;
 	}
+
 	public int getUnknown1() {
 		return unknown1;
 	}
+
+    void setType(int type) {
+        this.type = type;
+    }
+
+    void setId(int id) {
+        this.id = id;
+    }
+
+    void setLength(int length) {
+        this.length = length;
+    }
+
+    void setUnknown1(int unknown1) {
+        this.unknown1 = unknown1;
+    }
 }

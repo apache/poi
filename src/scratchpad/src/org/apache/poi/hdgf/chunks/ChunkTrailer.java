@@ -21,7 +21,7 @@ package org.apache.poi.hdgf.chunks;
  * A trailer that follows a chunk
  */
 public final class ChunkTrailer {
-	protected byte[] trailerData;
+	private byte[] trailerData;
 
 	public ChunkTrailer(byte[] data, int offset) {
 		trailerData = new byte[8];
@@ -31,4 +31,8 @@ public final class ChunkTrailer {
 	public String toString() {
 		return "<ChunkTrailer of length " + trailerData.length + ">";
 	}
+
+    byte[] getTrailerData() {
+        return trailerData;
+    }
 }
