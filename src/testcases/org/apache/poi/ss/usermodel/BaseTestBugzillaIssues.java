@@ -1805,6 +1805,9 @@ public abstract class BaseTestBugzillaIssues {
         checkFailures(dataValidation, TEST_256, TEST_32, true);
         checkFailures(dataValidation, TEST_32, TEST_256, true);
 
+        // null does work
+        checkFailures(dataValidation, null, null, false);
+
         // more than 32 title fail for HSSFWorkbook
         checkFailures(dataValidation, TEST_255, TEST_32, wb instanceof HSSFWorkbook);
 
@@ -1838,16 +1841,16 @@ public abstract class BaseTestBugzillaIssues {
     private void checkFailures(DataValidation dataValidation, String title, String text, boolean shouldFail) {
         try {
             dataValidation.createPromptBox(title, text);
-            assertFalse("Should fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+            assertFalse("Should fail in a length-check, had " + (title == null ? null : title.length()) + " and " + (text == null ? null : text.length()), shouldFail);
         } catch (IllegalStateException e) {
-            assertTrue("Should not fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+            assertTrue("Should not fail in a length-check, had " + (title == null ? null : title.length()) + " and " + (text == null ? null : text.length()), shouldFail);
             // expected here
         }
         try {
             dataValidation.createErrorBox(title, text);
-            assertFalse("Should fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+            assertFalse("Should fail in a length-check, had " + (title == null ? null : title.length()) + " and " + (text == null ? null : text.length()), shouldFail);
         } catch (IllegalStateException e) {
-            assertTrue("Should not fail in a length-check, had " + title.length() + " and " + text.length(), shouldFail);
+            assertTrue("Should not fail in a length-check, had " + (title == null ? null : title.length()) + " and " + (text == null ? null : text.length()), shouldFail);
         }
     }
 
