@@ -216,7 +216,8 @@ public class TestWrite
         final MutablePropertySet ps = new MutablePropertySet();
         final MutableSection si = new MutableSection();
         si.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
-        ps.getSections().set(0, si);
+        ps.clearSections();
+        ps.addSection(si);
 
         final MutableProperty p = new MutableProperty();
         p.setID(PropertyIDMap.PID_AUTHOR);

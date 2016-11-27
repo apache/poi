@@ -20,110 +20,17 @@ package org.apache.poi.hpsf;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.Date;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.SuppressForbidden;
 
 /**
  * <p>Provides various static utility methods.</p>
  */
+@Internal
 public class Util
 {
-
-    /**
-     * <p>Checks whether two byte arrays <var>a</var> and <var>b</var>
-     * are equal. They are equal</p>
-     *
-     * <ul>
-     *
-     *  <li><p>if they have the same length and</p></li>
-     *
-     *  <li><p>if for each <var>i</var> with
-     *  <var>i</var>&nbsp;&gt;=&nbsp;0 and
-     *  <var>i</var>&nbsp;&lt;&nbsp;<var>a.length</var> holds
-     *  <var>a</var>[<var>i</var>]&nbsp;== <var>b</var>[<var>i</var>].</p></li>
-     *
-     * </ul>
-     *
-     * @param a The first byte array
-     * @param b The first byte array
-     * @return <code>true</code> if the byte arrays are equal, else
-     * <code>false</code>
-     */
-    public static boolean equal(final byte[] a, final byte[] b)
-    {
-        if (a.length != b.length)
-            return false;
-        for (int i = 0; i < a.length; i++)
-            if (a[i] != b[i])
-                return false;
-        return true;
-    }
-
-
-
-    /**
-     * <p>Copies a part of a byte array into another byte array.</p>
-     *
-     * @param src The source byte array.
-     * @param srcOffset Offset in the source byte array.
-     * @param length The number of bytes to copy.
-     * @param dst The destination byte array.
-     * @param dstOffset Offset in the destination byte array.
-     */
-    public static void copy(final byte[] src, final int srcOffset,
-                            final int length, final byte[] dst,
-                            final int dstOffset)
-    {
-        for (int i = 0; i < length; i++)
-            dst[dstOffset + i] = src[srcOffset + i];
-    }
-
-
-
-    /**
-     * <p>Concatenates the contents of several byte arrays into a
-     * single one.</p>
-     *
-     * @param byteArrays The byte arrays to be concatened.
-     * @return A new byte array containing the concatenated byte
-     * arrays.
-     */
-    public static byte[] cat(final byte[][] byteArrays)
-    {
-        int capacity = 0;
-        for (int i = 0; i < byteArrays.length; i++)
-            capacity += byteArrays[i].length;
-        final byte[] result = new byte[capacity];
-        int r = 0;
-        for (int i = 0; i < byteArrays.length; i++)
-            for (int j = 0; j < byteArrays[i].length; j++)
-                result[r++] = byteArrays[i][j];
-        return result;
-    }
-
-
-
-    /**
-     * <p>Copies bytes from a source byte array into a new byte
-     * array.</p>
-     *
-     * @param src Copy from this byte array.
-     * @param offset Start copying here.
-     * @param length Copy this many bytes.
-     * @return The new byte array. Its length is number of copied bytes.
-     */
-    public static byte[] copy(final byte[] src, final int offset,
-                              final int length)
-    {
-        final byte[] result = new byte[length];
-        copy(src, offset, length, result, 0);
-        return result;
-    }
-
-
-
     /**
      * <p>The difference between the Windows epoch (1601-01-01
      * 00:00:00) and the Unix epoch (1970-01-01 00:00:00) in
@@ -189,36 +96,6 @@ public class Util
     }
 
 
-    /**
-     * <p>Checks whether two collections are equal. Two collections
-     * C<sub>1</sub> and C<sub>2</sub> are equal, if the following conditions
-     * are true:</p>
-     *
-     * <ul>
-     *
-     * <li><p>For each c<sub>1<em>i</em></sub> (element of C<sub>1</sub>) there
-     * is a c<sub>2<em>j</em></sub> (element of C<sub>2</sub>), and
-     * c<sub>1<em>i</em></sub> equals c<sub>2<em>j</em></sub>.</p></li>
-     *
-     * <li><p>For each c<sub>2<em>i</em></sub> (element of C<sub>2</sub>) there
-     * is a c<sub>1<em>j</em></sub> (element of C<sub>1</sub>) and
-     * c<sub>2<em>i</em></sub> equals c<sub>1<em>j</em></sub>.</p></li>
-     *
-     * </ul>
-     *
-     * @param c1 the first collection
-     * @param c2 the second collection
-     * @return <code>true</code> if the collections are equal, else
-     * <code>false</code>.
-     */
-    public static boolean equals(Collection<?> c1, Collection<?> c2)
-    {
-        Object[] o1 = c1.toArray();
-        Object[] o2 = c2.toArray();
-        return internalEquals(o1, o2);
-    }
-
-
 
     /**
      * <p>Compares to object arrays with regarding the objects' order. For
@@ -231,24 +108,17 @@ public class Util
      */
     public static boolean equals(Object[] c1, Object[] c2)
     {
-        final Object[] o1 = c1.clone();
-        final Object[] o2 = c2.clone();
-        return internalEquals(o1, o2);
-    }
-
-    private static boolean internalEquals(Object[] o1, Object[] o2)
-    {
-        for (int i1 = 0; i1 < o1.length; i1++)
+        for (int i1 = 0; i1 < c1.length; i1++)
         {
-            final Object obj1 = o1[i1];
+            final Object obj1 = c1[i1];
             boolean matchFound = false;
-            for (int i2 = 0; !matchFound && i2 < o1.length; i2++)
+            for (int i2 = 0; !matchFound && i2 < c1.length; i2++)
             {
-                final Object obj2 = o2[i2];
+                final Object obj2 = c2[i2];
                 if (obj1.equals(obj2))
                 {
                     matchFound = true;
-                    o2[i2] = null;
+                    c2[i2] = null;
                 }
             }
             if (!matchFound)
@@ -256,8 +126,6 @@ public class Util
         }
         return true;
     }
-
-
 
     /**
      * <p>Pads a byte array with 0x00 bytes so that its length is a multiple of
@@ -281,46 +149,6 @@ public class Util
         }
         return result;
     }
-
-
-
-    /**
-     * <p>Pads a character array with 0x0000 characters so that its length is a
-     * multiple of 4.</p>
-     *
-     * @param ca The character array to pad.
-     * @return The padded character array.
-     */
-    public static char[] pad4(final char[] ca)
-    {
-        final int PAD = 4;
-        final char[] result;
-        int l = ca.length % PAD;
-        if (l == 0)
-            result = ca;
-        else
-        {
-            l = PAD - l;
-            result = new char[ca.length + l];
-            System.arraycopy(ca, 0, result, 0, ca.length);
-        }
-        return result;
-    }
-
-
-
-    /**
-     * <p>Pads a string with 0x0000 characters so that its length is a
-     * multiple of 4.</p>
-     *
-     * @param s The string to pad.
-     * @return The padded string as a character array.
-     */
-    public static char[] pad4(final String s)
-    {
-        return pad4(s.toCharArray());
-    }
-
 
 
     /**
