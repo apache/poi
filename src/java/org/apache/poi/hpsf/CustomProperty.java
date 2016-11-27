@@ -18,10 +18,10 @@
 package org.apache.poi.hpsf;
 
 /**
- * <p>This class represents custom properties in the document summary
+ * This class represents custom properties in the document summary
  * information stream. The difference to normal properties is that custom
- * properties have an optional name. If the name is not <code>null</code> it
- * will be maintained in the section's dictionary.</p>
+ * properties have an optional name. If the name is not {@code null} it
+ * will be maintained in the section's dictionary.
  */
 public class CustomProperty extends MutableProperty
 {
@@ -29,80 +29,75 @@ public class CustomProperty extends MutableProperty
     private String name;
 
     /**
-     * <p>Creates an empty {@link CustomProperty}. The set methods must be
-     * called to make it usable.</p>
+     * Creates an empty {@link CustomProperty}. The set methods must be
+     * called to make it usable.
      */
-    public CustomProperty()
-    {
+    public CustomProperty() {
         this.name = null;
     }
 
     /**
-     * <p>Creates a {@link CustomProperty} without a name by copying the
-     * underlying {@link Property}' attributes.</p>
+     * Creates a {@link CustomProperty} without a name by copying the
+     * underlying {@link Property}' attributes.
      * 
      * @param property the property to copy
      */
-    public CustomProperty(final Property property)
-    {
+    public CustomProperty(final Property property) {
         this(property, null);
     }
 
     /**
-     * <p>Creates a {@link CustomProperty} with a name.</p>
+     * Creates a {@link CustomProperty} with a name.
      * 
      * @param property This property's attributes are copied to the new custom
      *        property.
      * @param name The new custom property's name.
      */
-    public CustomProperty(final Property property, final String name)
-    {
+    public CustomProperty(final Property property, final String name) {
         super(property);
         this.name = name;
     }
 
     /**
-     * <p>Gets the property's name.</p>
+     * Gets the property's name.
      *
      * @return the property's name.
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
-     * <p>Sets the property's name.</p>
+     * Sets the property's name.
      *
      * @param name The name to set.
      */
-    public void setName(final String name)
-    {
+    public void setName(final String name) {
         this.name = name;
     }
 
 
     /**
-     * <p>Compares two custom properties for equality. The method returns
-     * <code>true</code> if all attributes of the two custom properties are
-     * equal.</p>
+     * Compares two custom properties for equality. The method returns
+     * {@code true} if all attributes of the two custom properties are
+     * equal.
      * 
      * @param o The custom property to compare with.
-     * @return <code>true</code> if both custom properties are equal, else
-     *         <code>false</code>.
+     * @return {@code true} if both custom properties are equal, else
+     *         {@code false}.
      * 
      * @see java.util.AbstractSet#equals(java.lang.Object)
      */
-    public boolean equalsContents(final Object o)
-    {
+    public boolean equalsContents(final Object o) {
         final CustomProperty c = (CustomProperty) o;
         final String name1 = c.getName();
         final String name2 = this.getName();
         boolean equalNames = true;
-        if (name1 == null)
+        if (name1 == null) {
             equalNames = name2 == null;
-        else
+        } else {
             equalNames = name1.equals(name2);
+        }
         return equalNames && c.getID() == this.getID()
                 && c.getType() == this.getType()
                 && c.getValue().equals(this.getValue());
@@ -112,8 +107,7 @@ public class CustomProperty extends MutableProperty
      * @see java.util.AbstractSet#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return (int) this.getID();
     }
 

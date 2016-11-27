@@ -45,26 +45,42 @@ public final class IOUtils {
      * @throws EmptyFileException if the stream is empty
      */
     public static byte[] peekFirst8Bytes(InputStream stream) throws IOException, EmptyFileException {
-        // We want to peek at the first 8 bytes
-        stream.mark(8);
+        return peekFirstNBytes(stream, 8);
+    }
 
-        byte[] header = new byte[8];
-        int read = IOUtils.readFully(stream, header);
+    /**
+     * Peeks at the first N bytes of the stream. Returns those bytes, but
+     *  with the stream unaffected. Requires a stream that supports mark/reset,
+     *  or a PushbackInputStream. If the stream has &gt;0 but &lt;N bytes, 
+     *  remaining bytes will be zero.
+     * @throws EmptyFileException if the stream is empty
+     */
+    public static byte[] peekFirstNBytes(InputStream stream, int limit) throws IOException, EmptyFileException {
+        stream.mark(limit);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(limit);
+        copy(new BoundedInputStream(stream, limit), bos);
 
-        if (read < 1)
+        int readBytes = bos.size();
+        if (readBytes == 0) {
             throw new EmptyFileException();
-
-        // Wind back those 8 bytes
+        }
+        
+        if (readBytes < limit) {
+            bos.write(new byte[limit-readBytes]);
+        }
+        byte peekedBytes[] = bos.toByteArray();
         if(stream instanceof PushbackInputStream) {
             PushbackInputStream pin = (PushbackInputStream)stream;
-            pin.unread(header, 0, read);
+            pin.unread(peekedBytes, 0, readBytes);
         } else {
             stream.reset();
         }
 
-        return header;
+        return peekedBytes;
     }
-
+    
+    
+    
     /**
      * Reads all the data from the input stream, and returns the bytes read.
      */

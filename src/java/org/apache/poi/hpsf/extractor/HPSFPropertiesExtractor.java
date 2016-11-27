@@ -27,6 +27,7 @@ import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SpecialPropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -67,7 +68,7 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         CustomProperties cps = dsi == null ? null : dsi.getCustomProperties();
         if (cps != null) {
             for (String key : cps.nameSet()) {
-                String val = HelperPropertySet.getPropertyValueText(cps.get(key));
+                String val = getPropertyValueText(cps.get(key));
                 text.append(key).append(" = ").append(val).append("\n");
             }
         }
@@ -86,7 +87,7 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         return getPropertiesText(si);
     }
 
-    private static String getPropertiesText(SpecialPropertySet ps) {
+    private static String getPropertiesText(PropertySet ps) {
         if (ps == null) {
             // Not defined, oh well
             return "";
@@ -98,12 +99,12 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         Property[] props = ps.getProperties();
         for (Property prop : props) {
             String type = Long.toString(prop.getID());
-            Object typeObj = idMap.get(prop.getID());
+            Object typeObj = (idMap == null) ? null : idMap.get(prop.getID());
             if (typeObj != null) {
                 type = typeObj.toString();
             }
 
-            String val = HelperPropertySet.getPropertyValueText(prop.getValue());
+            String val = getPropertyValueText(prop.getValue());
             text.append(type).append(" = ").append(val).append("\n");
         }
 
@@ -125,18 +126,12 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
     }
 
-    private static abstract class HelperPropertySet extends SpecialPropertySet {
-        public HelperPropertySet() {
-            super(null);
-        }
-        public static String getPropertyValueText(Object val) {
-            if (val == null) {
-                return "(not set)";
-            }
-            return SpecialPropertySet.getPropertyStringValue(val);
-        }
+    private static String getPropertyValueText(Object val) {
+        return (val == null) 
+            ? "(not set)"
+            : PropertySet.getPropertyStringValue(val);
     }
-
+    
     @Override
     public boolean equals(Object o) {
         return super.equals(o);
