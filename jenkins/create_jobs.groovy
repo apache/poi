@@ -17,7 +17,10 @@ job('POI-DSL-Test') {
 '    <b><a href="https://analysis.apache.org/dashboard/index/221489" target="_blank">Sonar reports</a></b> -\n' +
 '    <b><a href="lastSuccessfulBuild/artifact/build/coverage/index.html" target="_blank">Coverage of latest build</a></b>\n' +
 '</p>\n')
-	logRotator(numToKeep = 5, artifactNumToKeep = 1)
+	logRotator {
+        numToKeep(5)
+        artifactNumToKeep(1)
+    }
 	label('ubuntu&&!cloud-slave')
     environmentVariables {
         env('LANG', 'en_US.UTF-8')
@@ -29,7 +32,7 @@ job('POI-DSL-Test') {
             writeDescription('Build was aborted due to timeout')
         }
     }
-	jdk('JDK 1.6 (latest')
+	jdk('JDK 1.6 (latest)')
     scm {
         svn(svnBase) { svnNode ->
                     svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
@@ -51,7 +54,6 @@ job('POI-DSL-Test') {
             antInstallation('Ant (latest)')
         }
         ant {
-            prop('logging', 'info')
             buildFile('src/integrationtest/build.xml')
             antInstallation('Ant (latest)')
         }
@@ -63,12 +65,10 @@ job('POI-DSL-Test') {
             defaultEncoding('UTF-8')
         }
         archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,build/integration-test-results/**,ooxml-lib/**')
-        archiveJunit('**/target/surefire-reports/*.xml')
         warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
             resolveRelativePaths()
         }
         archiveJunit('build/ooxml-test-results/*.xml,build/scratchpad-test-results/*.xml,build/test-results/*.xml,build/excelant-test-results/*.xml,build/integration-test-results/*.xml') {
-            allowEmptyResults()
             testDataPublishers {
                 publishTestStabilityData()
             }
@@ -79,6 +79,9 @@ job('POI-DSL-Test') {
             sourcePattern('src/java,src/excelant/java,src/ooxml/java,src/scratchpad/src')
             exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
         }
+		configure { project ->
+			project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+		}
         mailer('dev@poi.apache.org', false, false)
     }
 }
