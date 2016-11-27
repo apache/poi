@@ -2076,6 +2076,8 @@ under the License.
               <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
               <exclude name="**/*.iml" />
+              <exclude name="documentation/resources/images/pb-poi.cdr"/>
+           	  <exclude name="scratchpad/models/poi-hdf.zargo"/>
            </fileset>
        </rat:report>
 
