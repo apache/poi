@@ -20,28 +20,23 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.imageio.ImageIO;
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.hslf.blip.EMF;
-import org.apache.poi.hslf.blip.PICT;
-import org.apache.poi.hslf.blip.WMF;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.image.ImageHeaderBitmap;
+import org.apache.poi.sl.image.ImageHeaderEMF;
+import org.apache.poi.sl.image.ImageHeaderPICT;
+import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
@@ -49,8 +44,6 @@ import org.apache.poi.util.Units;
  */
 @Beta
 public final class XSLFPictureData extends POIXMLDocumentPart implements PictureData {
-    private static final POILogger logger = POILogFactory.getLogger(XSLFPictureData.class);
-    
     private Long checksum = null;
 
     // original image dimensions (for formats supported by BufferedImage)
@@ -171,30 +164,18 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
             
             switch (pt) {
             case EMF:
-                origSize = new EMF.NativeHeader(data, 0).getSize();
+                origSize = new ImageHeaderEMF(data, 0).getSize();
                 break;
             case WMF:
                 // wmf files in pptx usually have their placeable header 
                 // stripped away, so this returns only the dummy size
-                origSize = new WMF.NativeHeader(data, 0).getSize();
+                origSize = new ImageHeaderWMF(data, 0).getSize();
                 break;
             case PICT:
-                origSize = new PICT.NativeHeader(data, 0).getSize();
+                origSize = new ImageHeaderPICT(data, 0).getSize();
                 break;
             default:
-                BufferedImage img = null;
-                try {
-                    img = ImageIO.read(new ByteArrayInputStream(data));
-                } catch (IOException e) {
-                    logger.log(POILogger.WARN, "Can't determine image dimensions", e);
-                }
-                // set dummy size, in case of dummy dimension can't be set
-                origSize = (img == null)
-                    ? new Dimension(200,200)
-                    : new Dimension(
-                        (int)Units.pixelToPoints(img.getWidth()),
-                        (int)Units.pixelToPoints(img.getHeight())
-                    );
+                origSize = new ImageHeaderBitmap(data, 0).getSize();
                 break;
             }
         }

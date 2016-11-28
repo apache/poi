@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -34,6 +35,9 @@ import org.apache.poi.hslf.blip.JPEG;
 import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.PNG;
 import org.apache.poi.hslf.blip.WMF;
+import org.apache.poi.sl.image.ImageHeaderEMF;
+import org.apache.poi.sl.image.ImageHeaderPICT;
+import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Units;
 import org.junit.Ignore;
@@ -51,13 +55,13 @@ public final class TestPictures {
      * Test read/write Macintosh PICT
      */
     @Test
-    public void testPICT() throws Exception {
+    public void testPICT() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("cow.pict");
         HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.PICT);
-        PICT.NativeHeader nHeader = new PICT.NativeHeader(src_bytes, 512);
+        ImageHeaderPICT nHeader = new ImageHeaderPICT(src_bytes, 512);
         final int expWidth = 197, expHeight = 137;
         Dimension nDim = nHeader.getSize();
         assertEquals(expWidth, nDim.getWidth(), 0);
@@ -114,13 +118,13 @@ public final class TestPictures {
      * Test read/write WMF
      */
     @Test
-    public void testWMF() throws Exception {
+    public void testWMF() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("santa.wmf");
         HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.WMF);
-        WMF.NativeHeader nHeader = new WMF.NativeHeader(src_bytes, 0);
+        ImageHeaderWMF nHeader = new ImageHeaderWMF(src_bytes, 0);
         final int expWidth = 136, expHeight = 146;
         Dimension nDim = nHeader.getSize();
         assertEquals(expWidth, nDim.getWidth(), 0);
@@ -176,13 +180,13 @@ public final class TestPictures {
      * Test read/write EMF
      */
     @Test
-    public void testEMF() throws Exception {
+    public void testEMF() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("wrench.emf");
         HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.EMF);
-        EMF.NativeHeader nHeader = new EMF.NativeHeader(src_bytes, 0);
+        ImageHeaderEMF nHeader = new ImageHeaderEMF(src_bytes, 0);
         final int expWidth = 190, expHeight = 115;
         Dimension nDim = nHeader.getSize();
         assertEquals(expWidth, nDim.getWidth(), 0);
@@ -233,7 +237,7 @@ public final class TestPictures {
      * Test read/write PNG
      */
     @Test
-    public void testPNG() throws Exception {
+    public void testPNG() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -273,7 +277,7 @@ public final class TestPictures {
      * Test read/write JPEG
      */
     @Test
-    public void testJPEG() throws Exception {
+    public void testJPEG() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -314,7 +318,7 @@ public final class TestPictures {
      * Test read/write DIB
      */
     @Test
-    public void testDIB() throws Exception {
+    public void testDIB() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -354,7 +358,7 @@ public final class TestPictures {
      * Read pictures in different formats from a reference slide show
      */
     @Test
-    public void testReadPictures() throws Exception {
+    public void testReadPictures() throws IOException {
 
         byte[] src_bytes, ppt_bytes, b1, b2;
         HSLFPictureShape pict;
@@ -417,6 +421,7 @@ public final class TestPictures {
         ppt_bytes = slTests.readFile("wrench.emf");
         assertArrayEquals(src_bytes, ppt_bytes);
 
+        ppt.close();
     }
 
 	/**
@@ -424,7 +429,7 @@ public final class TestPictures {
 	 *  crazy pictures of type 0, we do our best.
 	 */
     @Test
-	public void testZeroPictureType() throws Exception {
+	public void testZeroPictureType() throws IOException {
 		HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("PictureTypeZero.ppt"));
 
 		// Should still have 2 real pictures
@@ -452,6 +457,8 @@ public final class TestPictures {
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
         assertEquals(PictureType.WMF, pdata.getType());
+        
+        ppt.close();
 	}
 
     /**
@@ -460,7 +467,7 @@ public final class TestPictures {
      */
     @Test
     @Ignore
-	public void testZeroPictureLength() throws Exception {
+	public void testZeroPictureLength() throws IOException {
         // take the data from www instead of test directory
         URL url = new URL("http://www.cs.sfu.ca/~anoop/courses/CMPT-882-Fall-2002/chris.ppt");
 		HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(url.openStream());
@@ -504,19 +511,21 @@ public final class TestPictures {
         assertEquals(streamSize, offset);
         assertEquals(3, ppt.getPictureData().size());
 
+        ppt.close();
     }
 
     @Test
-    public void testGetPictureName() throws Exception {
+    public void testGetPictureName() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("ppt_with_png.ppt"));
         HSLFSlide slide = ppt.getSlides().get(0);
 
         HSLFPictureShape p = (HSLFPictureShape)slide.getShapes().get(0); //the first slide contains JPEG
         assertEquals("test", p.getPictureName());
+        ppt.close();
     }
 
     @Test
-    public void testSetPictureName() throws Exception {
+    public void testSetPictureName() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
