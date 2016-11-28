@@ -40,13 +40,7 @@ public final class SummaryInformation extends SpecialPropertySet {
     }
 
     /**
-     * Creates a {@link SummaryInformation} from a given {@link
-     * PropertySet}.
-     *
-     * @param ps A property set which should be created from a summary
-     *        information stream.
-     * @throws UnexpectedPropertySetTypeException if {@code ps} does not
-     *         contain a summary information stream.
+     * Creates an empty {@link SummaryInformation}.
      */
     public SummaryInformation() {
         getFirstSection().setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
