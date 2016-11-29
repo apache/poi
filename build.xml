@@ -339,7 +339,7 @@ under the License.
         <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
-        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
     </path>
 
     <path id="test.classpath">
@@ -1415,11 +1415,12 @@ under the License.
                           <exclude name="**/All*Tests.java"/>
                           <exclude name="**/TestSignatureInfo.java"/>
                           <exclude name="**/${testexcludepattern}.java"/>
+                      	  <exclude name="**/TestExtractorFactory.java" if:true="${scratchpad.ignore}"/>
                       </fileset>
                   </batchtest>
               </junit>
             </jacoco:coverage>
-            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-xmlsec.exec">
+        	<jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-xmlsec.exec">
               <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                      failureproperty="ooxml.xmlsec.test.failed">
                   <classpath>
