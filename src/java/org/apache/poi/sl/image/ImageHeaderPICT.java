@@ -29,9 +29,9 @@ public class ImageHeaderPICT {
      * skip the first 512 bytes - they are MAC specific crap
      */
     public static final int PICT_HEADER_OFFSET = 512;
-    
+
     public static final double DEFAULT_RESOLUTION = Units.POINT_DPI;
-    
+
     private static final byte V2_HEADER[] = {
         0x00, 0x11,       // v2 version opcode
         0x02, (byte)0xFF, // version number of new picture
@@ -41,10 +41,10 @@ public class ImageHeaderPICT {
 
     private final Rectangle bounds;
     private final double hRes, vRes;
-    
-    public ImageHeaderPICT(byte data[], int offset) {
-        // http://mirrors.apple2.org.za/apple.cabi.net/Graphics/PICT.and_QT.INFO/PICT.file.format.TI.txt
 
+    public ImageHeaderPICT(byte data[], final int off) {
+        // http://mirrors.apple2.org.za/apple.cabi.net/Graphics/PICT.and_QT.INFO/PICT.file.format.TI.txt
+        int offset = off;
         // low order 16 bits of picture size - can be ignored
         offset += 2;
         // rectangular bounding box of picture, at 72 dpi
@@ -62,7 +62,7 @@ public class ImageHeaderPICT {
                 break;
             }
         }
-        
+
         if (isV2) {
             // 4 bytes - fixed, horizontal resolution (dpi) of source data
             hRes = readFixedPoint(data, offset); offset += 4;
@@ -72,7 +72,7 @@ public class ImageHeaderPICT {
             hRes = DEFAULT_RESOLUTION;
             vRes = DEFAULT_RESOLUTION;
         }
-        
+
         bounds = new Rectangle(x1,y1,x2-x1,y2-y1);
     }
 
@@ -85,7 +85,7 @@ public class ImageHeaderPICT {
     public Rectangle getBounds() {
         return bounds;
     }
-    
+
     private static int readUnsignedShort(byte data[], int offset) {
         int b0 = data[offset] & 0xFF;
         int b1 = data[offset+1] & 0xFF;
