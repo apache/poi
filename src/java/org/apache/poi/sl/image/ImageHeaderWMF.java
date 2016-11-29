@@ -46,7 +46,7 @@ import org.apache.poi.util.Units;
 public class ImageHeaderWMF {
 
     public static final int APMHEADER_KEY = 0x9AC6CDD7;
-    private static POILogger LOG = POILogFactory.getLogger(ImageHeaderWMF.class);
+    private static final POILogger LOG = POILogFactory.getLogger(ImageHeaderWMF.class);
 
     @SuppressWarnings("unused")
     private final int handle;
@@ -55,16 +55,16 @@ public class ImageHeaderWMF {
     /**
      * The number of logical units per inch used to represent the image.
      * This value can be used to scale an image. By convention, an image is
-     * considered to be recorded at 1440 logical units (twips) per inch. 
+     * considered to be recorded at 1440 logical units (twips) per inch.
      * Thus, a value of 720 specifies that the image SHOULD be rendered at
      * twice its normal size, and a value of 2880 specifies that the image
      * SHOULD be rendered at half its normal size.
      */
-    private final int inch; 
+    private final int inch;
     @SuppressWarnings("unused")
     private final int reserved;
     private int checksum;
-    
+
     public ImageHeaderWMF(Rectangle dim) {
         handle = 0;
         left = dim.x;
@@ -75,8 +75,9 @@ public class ImageHeaderWMF {
         reserved = 0;
     }
 
-    public ImageHeaderWMF(byte[] data, int pos) {
-        int key = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE; //header key
+    public ImageHeaderWMF(byte[] data, final int off) {
+        int offset = off;
+        int key = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE; //header key
         if (key != APMHEADER_KEY) {
             LOG.log(POILogger.WARN, "WMF file doesn't contain a placeable header - ignore parsing");
             handle = 0;
@@ -89,16 +90,16 @@ public class ImageHeaderWMF {
             return;
         }
 
-        handle = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-        left = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-        top = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-        right = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-        bottom = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
+        handle = LittleEndian.getUShort(data, offset); offset += LittleEndian.SHORT_SIZE;
+        left = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
+        top = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
+        right = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
+        bottom = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
 
-        inch = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-        reserved = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
+        inch = LittleEndian.getUShort(data, offset); offset += LittleEndian.SHORT_SIZE;
+        reserved = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
 
-        checksum = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
+        checksum = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
         if (checksum != getChecksum()){
             LOG.log(POILogger.WARN, "WMF checksum does not match the header data");
         }
@@ -147,7 +148,7 @@ public class ImageHeaderWMF {
     public Rectangle getBounds() {
         return new Rectangle(left, top, right-left, bottom-top);
     }
-    
+
     public int getLength(){
         return 22;
     }

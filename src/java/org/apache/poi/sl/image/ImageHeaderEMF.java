@@ -28,15 +28,16 @@ import org.apache.poi.util.POILogger;
 
 @Internal
 public class ImageHeaderEMF {
-    private static POILogger LOG = POILogFactory.getLogger(ImageHeaderEMF.class);
+    private static final POILogger LOG = POILogFactory.getLogger(ImageHeaderEMF.class);
 
-    private final static String EMF_SIGNATURE = " EMF"; // 0x464D4520 (LE)
-    
-    // rectangular inclusive-inclusive bounds, in device units, of the smallest 
+    private static final String EMF_SIGNATURE = " EMF"; // 0x464D4520 (LE)
+
+    // rectangular inclusive-inclusive bounds, in device units, of the smallest
     // rectangle that can be drawn around the image stored in the metafile.
     private final Rectangle deviceBounds;
 
-    public ImageHeaderEMF(byte data[], int offset) {
+    public ImageHeaderEMF(final byte data[], final int off) {
+        int offset = off;
         int type = (int)LittleEndian.getUInt(data, offset); offset += 4;
         if (type != 1) {
             LOG.log(POILogger.WARN, "Invalid EMF picture - invalid type");
@@ -61,7 +62,7 @@ public class ImageHeaderEMF {
     public Dimension getSize() {
         return deviceBounds.getSize();
     }
-    
+
     public Rectangle getBounds() {
         return deviceBounds;
     }
