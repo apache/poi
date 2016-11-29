@@ -227,10 +227,15 @@ public final class OOXMLLite {
 
             cls = cls.replace(".class", "");
 
-            Class<?> testclass = Class.forName(cls);
-            if (TestCase.class.isAssignableFrom(testclass)
-                || checkForTestAnnotation(testclass)) {
-                out.add(testclass);
+            try {
+                Class<?> testclass = Class.forName(cls);
+                if (TestCase.class.isAssignableFrom(testclass)
+                    || checkForTestAnnotation(testclass)) {
+                    out.add(testclass);
+                }
+            } catch (Throwable e) {
+                System.out.println("Class " + cls + " is not in classpath");
+                return;
             }
         }
     }

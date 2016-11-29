@@ -89,7 +89,7 @@ under the License.
     </condition>
     <!-- Fix for strange woodstox references in gump build -->
     <property name="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
-	<!-- need to override POILogger property before commons logging works -->
+    <!-- need to override POILogger property before commons logging works -->
     <property name="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Log4JLogger"/>
 
 
@@ -287,7 +287,7 @@ under the License.
         <contains string="${java.version}" substring="1.6"/>
     </condition>
     <property name="findbugs.url" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-${findbugs.version}.zip?download"/>
-	<property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
+    <property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
 
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
@@ -298,8 +298,8 @@ under the License.
         <propertyref name="user.language"/>
         <propertyref name="user.country"/>
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
-    	<propertyref name="org.apache.commons.logging.Log"/>
-        <propertyref name="java.locale.providers"/>		<!-- required for Java 9 compilation -->
+        <propertyref name="org.apache.commons.logging.Log"/>
+        <propertyref name="java.locale.providers"/>        <!-- required for Java 9 compilation -->
         <propertyref name="version.id"/>    <!-- to detect if we are running on slow Gump VM -->
     </propertyset>
 
@@ -381,7 +381,7 @@ under the License.
         <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
         <!--path refid="ooxml.classpath"/-->
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
@@ -393,7 +393,7 @@ under the License.
     <path id="examples.classpath">
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
     </path>
 
     <path id="excelant.classpath">
@@ -434,6 +434,11 @@ under the License.
             <include name="asm-all-*.jar" />
         </fileset>
     </path>
+
+    <patternset id="exclude-scratchpad-test">
+        <exclude name="**/TestExtractorFactory.java" if:true="${scratchpad.ignore}"/>
+        <exclude name="**/OutlookTextExtactor.java" if:true="${scratchpad.ignore}"/>
+    </patternset>
 
     <!-- Prints POI's Ant usage help -->
     <target name="help" description="Prints Apache POI's Ant usage help">
@@ -1264,6 +1269,7 @@ under the License.
                         <exclude name="**/TestUnfixedBugs.java"/>
                         <exclude name="**/TestcaseRecordInputStream.java"/>
                         <exclude name="**/${testexcludepattern}.java"/>
+                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1272,15 +1278,15 @@ under the License.
         <antcall target="-test-main-write-testfile"/>
     </target>
 
-	<target name="test-report" depends="init">
-		<mkdir dir="build/report"/>
-		<junitreport todir="build/report">
-		  <fileset dir="build">
-			<include name="*results/**/TEST-*.xml"/>
-		  </fileset>
-		  <report format="frames" todir="build/report"/>
-		</junitreport>
-	</target>
+    <target name="test-report" depends="init">
+        <mkdir dir="build/report"/>
+        <junitreport todir="build/report">
+          <fileset dir="build">
+            <include name="*results/**/TEST-*.xml"/>
+          </fileset>
+          <report format="frames" todir="build/report"/>
+        </junitreport>
+    </target>
 
     <target name="-test-property-check" unless="testcase">
         <echo message="Please use -Dtestcase=org.your.testcase to run a single test"/>
@@ -1326,6 +1332,7 @@ under the License.
                         <exclude name="**/TestUnfixedBugs.java"/>
                         <exclude name="**/TestcaseRecordInputStream.java"/>
                         <exclude name="**/${testexcludepattern}.java"/>
+                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1371,6 +1378,7 @@ under the License.
                         <include name="**/${testpattern}.java"/>
                         <exclude name="**/AllTests.java"/>
                         <exclude name="**/${testexcludepattern}.java"/>
+                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1415,12 +1423,12 @@ under the License.
                           <exclude name="**/All*Tests.java"/>
                           <exclude name="**/TestSignatureInfo.java"/>
                           <exclude name="**/${testexcludepattern}.java"/>
-                      	  <exclude name="**/TestExtractorFactory.java" if:true="${scratchpad.ignore}"/>
+                          <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                       </fileset>
                   </batchtest>
               </junit>
             </jacoco:coverage>
-        	<jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-xmlsec.exec">
+            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-xmlsec.exec">
               <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                      failureproperty="ooxml.xmlsec.test.failed">
                   <classpath>
@@ -1487,6 +1495,7 @@ under the License.
                           <exclude name="**/TestUnfixedBugs.java"/>
                           <exclude name="**/All*Tests.java"/>
                           <exclude name="**/${testexcludepattern}.java"/>
+                          <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                       </fileset>
                   </batchtest>
               </junit>
@@ -1515,8 +1524,8 @@ under the License.
 
     <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
             unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
-    	<propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
-    	<delete dir="build" includes="test-integration.log*"/>
+        <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
+        <delete dir="build" includes="test-integration.log*"/>
         <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-integration.exec">
             <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                    failureproperty="integration.test.failed" showoutput="true">
@@ -1532,6 +1541,7 @@ under the License.
                     <fileset dir="${integration.src.test}">
                         <include name="**/${testpattern}.java"/>
                         <exclude name="**/${testexcludepattern}.java"/>
+                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -1577,8 +1587,8 @@ under the License.
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${maxpermsize}"/>
             <jvmarg value="-Xmx512m"/>
-			<jvmarg value="${java9addmods}" />
-			<jvmarg value="${java9addmodsvalue}" />
+            <jvmarg value="${java9addmods}" />
+            <jvmarg value="${java9addmodsvalue}" />
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
@@ -1624,6 +1634,7 @@ under the License.
                     <fileset dir="${excelant.src.test}">
                         <include name="**/${testpattern}.java"/>
                         <exclude name="**/${testexcludepattern}.java"/>
+                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -2078,7 +2089,7 @@ under the License.
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
               <exclude name="**/*.iml" />
               <exclude name="documentation/resources/images/pb-poi.cdr"/>
-           	  <exclude name="scratchpad/models/poi-hdf.zargo"/>
+                 <exclude name="scratchpad/models/poi-hdf.zargo"/>
            </fileset>
        </rat:report>
 
@@ -2159,10 +2170,10 @@ under the License.
         <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
 
         <property name="findbugs.home" value="build/findbugs" />
-    	<delete dir="${findbugs.home}"/>
+        <delete dir="${findbugs.home}"/>
         <unzip src="${findbugs.jar}" dest="${findbugs.home}">
-        	<patternset includes="findbugs*/lib/**,findbugs*/plugin/**"/>
-        	<cutdirsmapper dirs="1"/>
+            <patternset includes="findbugs*/lib/**,findbugs*/plugin/**"/>
+            <cutdirsmapper dirs="1"/>
         </unzip>
 
         <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
@@ -2171,10 +2182,10 @@ under the License.
             </classpath>
         </taskdef>
 
-    	<findbugs home="${findbugs.home}"
-    	   output="xml:withMessages"
-    	   outputFile="build/findbugs.xml"
-    	   effort="max"
+        <findbugs home="${findbugs.home}"
+           output="xml:withMessages"
+           outputFile="build/findbugs.xml"
+           effort="max"
            failOnError="true"
            excludeFilter="src/resources/devtools/findbugs-filters.xml">
             <fileset dir="${dist.dir}/maven">
@@ -2201,16 +2212,16 @@ under the License.
             <sourcePath path="src/scratchpad/src" />
         </findbugs>
 
-    	<!-- instead of calling findbugs again, we simply transform the xml -->
-    	<makeurl file="${findbugs.home}/lib/findbugs.jar" property="findbugs.jarurl"/>
+        <!-- instead of calling findbugs again, we simply transform the xml -->
+        <makeurl file="${findbugs.home}/lib/findbugs.jar" property="findbugs.jarurl"/>
         <!-- although there's a findbugs history task too, it doesn't make much sense to provide it, -->
         <!-- as the build directory (i.e. the old findbugs.xml) is deleted regularly -->
-    	<xslt basedir="build" destdir="build" includes="findbugs.xml" force="true">
-    	    <style>
-    	    	<!-- fancy-hist is a bit less bugged than fancy ... -->
-    	        <url url="jar:${findbugs.jarurl}!/fancy-hist.xsl"/>
-    	    </style>
-		</xslt>
+        <xslt basedir="build" destdir="build" includes="findbugs.xml" force="true">
+            <style>
+                <!-- fancy-hist is a bit less bugged than fancy ... -->
+                <url url="jar:${findbugs.jarurl}!/fancy-hist.xsl"/>
+            </style>
+        </xslt>
     </target>
 
     <target name="test-scratchpad-download-resources">
@@ -2489,7 +2500,7 @@ under the License.
             <target name="dist-nexus" />
         </ant>
 
-    	<svn refid="svn.settings">
+        <svn refid="svn.settings">
             <import path="build/release/build/dist"
                 url="https://dist.apache.org/repos/dist/dev/poi"
                 newEntry="${version.id}-${release.rc}"
@@ -2534,74 +2545,74 @@ under the License.
         </pathconvert>
     </target>
 
-	<macrodef name="loadChecksum">
-		<attribute name="url"/>
-		<attribute name="property"/>
-		<sequential>
-	        <loadresource property="@{property}">
-	            <url url="@{url}"/>
-	            <filterchain>
-	            	<striplinebreaks/>
-	                <replaceregex pattern=" .*" replace=""/>
-	            </filterchain>
-	        </loadresource>			
-		</sequential>
-	</macrodef>
+    <macrodef name="loadChecksum">
+        <attribute name="url"/>
+        <attribute name="property"/>
+        <sequential>
+            <loadresource property="@{property}">
+                <url url="@{url}"/>
+                <filterchain>
+                    <striplinebreaks/>
+                    <replaceregex pattern=" .*" replace=""/>
+                </filterchain>
+            </loadresource>
+        </sequential>
+    </macrodef>
 
     <scriptdef name="bytes2mega" language="javascript"
         description="Convert size in bytes to megabytes">
         <attribute name="property"/>
         <attribute name="bytes"/>
-    	var bytes = Number(attributes.get("bytes"));
-    	var mega = String((bytes/(1024.0*1024.0)).toFixed(2));
+        var bytes = Number(attributes.get("bytes"));
+        var mega = String((bytes/(1024.0*1024.0)).toFixed(2));
         project.setProperty(attributes.get("property"), mega);
     </scriptdef>
-	
+
     <macrodef name="loadFilesize">
         <attribute name="url"/>
         <attribute name="property"/>
         <sequential>
-        	<delete file="build/loadFilesize.txt"/>
-        	<record name="build/loadFilesize.txt" action="start" loglevel="verbose" append="false"/>
-        	<http url="@{url}" method="HEAD" expected="200" printrequestheaders="false" printresponseheaders="false"/>
-        	<record name="build/loadFilesize.txt" action="stop"/>
-        	<local name="fileSize"/>
-        	<loadfile property="fileSize" srcFile="build/loadFilesize.txt">
-        		<filterchain>
-        			<tokenfilter>
-        			    <containsstring contains="Content-Length"/>
-        				<replaceregex pattern=".* ([0-9]+)$" replace="\1" flags="gi"/>
-			    	</tokenfilter>
-        		</filterchain>
-    		</loadfile>
-    		<bytes2mega property="@{property}" bytes="${fileSize}"/>
+            <delete file="build/loadFilesize.txt"/>
+            <record name="build/loadFilesize.txt" action="start" loglevel="verbose" append="false"/>
+            <http url="@{url}" method="HEAD" expected="200" printrequestheaders="false" printresponseheaders="false"/>
+            <record name="build/loadFilesize.txt" action="stop"/>
+            <local name="fileSize"/>
+            <loadfile property="fileSize" srcFile="build/loadFilesize.txt">
+                <filterchain>
+                    <tokenfilter>
+                        <containsstring contains="Content-Length"/>
+                        <replaceregex pattern=".* ([0-9]+)$" replace="\1" flags="gi"/>
+                    </tokenfilter>
+                </filterchain>
+            </loadfile>
+            <bytes2mega property="@{property}" bytes="${fileSize}"/>
         </sequential>
     </macrodef>
 
-	<!-- TODO: currently this only saves a copy and paste snipplet to a file ...
-	     would be nice if it really changes status.xml and download.xml
-	     Doesn't work with Java6 - the https urls can't be accessed via loadChecksum
-     --> 
-	<target name="update-download">
+    <!-- TODO: currently this only saves a copy and paste snipplet to a file ...
+         would be nice if it really changes status.xml and download.xml
+         Doesn't work with Java6 - the https urls can't be accessed via loadChecksum
+     -->
+    <target name="update-download">
         <downloadfile src="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/missing-link/ml-ant-http-1.1.3.zip" dest="${compile.lib}/ml-ant-http-1.1.3.zip"/>
         <unzip src="${compile.lib}/ml-ant-http-1.1.3.zip" dest="${compile.lib}">
             <patternset>
                 <include name="ml-ant-http-1.1.3.jar"/>
             </patternset>
-    	</unzip>
+        </unzip>
         <taskdef name="http" classname="org.missinglink.ant.task.http.HttpClientTask">
             <classpath>
                 <path location="${compile.lib}/ml-ant-http-1.1.3.jar"/>
             </classpath>
         </taskdef>
-		
-		<tstamp>
-			<format property="rel_date" pattern="dd MMMM yyyy" locale="US"/>
-			<format property="file_date" pattern="yyyyMMdd" locale="US"/>
-		</tstamp>
+
+        <tstamp>
+            <format property="rel_date" pattern="dd MMMM yyyy" locale="US"/>
+            <format property="file_date" pattern="yyyyMMdd" locale="US"/>
+        </tstamp>
         <!-- TODO: change reltype (dev/release), depending on BETA / FINAL -->
-		<property name="reltype" value="dev"/>
-		<property name="baseurl" value="https://www.apache.org/dist/poi/${reltype}"/>
+        <property name="reltype" value="dev"/>
+        <property name="baseurl" value="https://www.apache.org/dist/poi/${reltype}"/>
 
         <loadChecksum property="bin-tar-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5"/>
         <loadChecksum property="bin-tar-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1"/>
@@ -2612,12 +2623,12 @@ under the License.
         <loadChecksum property="src-zip-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.md5"/>
         <loadChecksum property="src-zip-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha1"/>
 
-		<loadFilesize property="bin-tar-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz"/>
+        <loadFilesize property="bin-tar-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz"/>
         <loadFilesize property="bin-zip-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip"/>
         <loadFilesize property="src-tar-size" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz"/>
         <loadFilesize property="src-zip-size" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip"/>
 
-		<echo file="download-snipplet.xml"><![CDATA[
+        <echo file="download-snipplet.xml"><![CDATA[
     <section id="POI-${version.id}"><title>${rel_date} - POI ${version.id} available</title>
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
@@ -2647,10 +2658,10 @@ under the License.
           (${bin-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
           <br/>
           MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.md5">
-	      ${bin-zip-md5}</link>
+          ${bin-zip-md5}</link>
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha1">
-	      ${bin-zip-sha1}</link>
+          ${bin-zip-sha1}</link>
         </li>
       </ul>
       </section>
@@ -2663,20 +2674,20 @@ under the License.
           ${src-tar-md5}</link>
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1">
-	      ${src-tar-sha1}</link>
+          ${src-tar-sha1}</link>
         </li>
         <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
           (${src-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
           <br/>
           MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.md5">
-	      ${src-zip-md5}</link>
+          ${src-zip-md5}</link>
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha1">
-	      ${src-zip-sha1}</link>
+          ${src-zip-sha1}</link>
         </li>
       </ul>
       </section>
     </section>
 ]]></echo>
-	</target>
+    </target>
 </project>
