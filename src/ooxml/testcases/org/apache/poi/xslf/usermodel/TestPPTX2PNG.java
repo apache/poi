@@ -19,50 +19,84 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.junit.Assume.assumeFalse;
+
 import java.io.File;
+import java.io.FileFilter;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.xslf.util.PPTX2PNG;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Date: 10/26/11
- *
- * @author Yegor Kozlov
+ * Test class for testing PPTX2PNG utility which renderes .ppt and .pptx slideshows
  */
+@RunWith(Parameterized.class)
 public class TestPPTX2PNG {
+    private static boolean xslfOnly = false;
+    private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
+    private static final File basedir = null;
+    private static final String files =
+        "53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx";
+
+        
+    
+    @BeforeClass
+    public static void checkHslf() {
+        try {
+            Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
+        } catch (Exception e) {
+            xslfOnly = true;
+        }
+    }
+    
+    // use filename instead of File object to omit full pathname in test name
+    @Parameter(value = 0)
+    public String pptFile;
+    
+    @Parameters(name="{0}")
+    public static Collection<String> data() {
+        final Set<String> data = new TreeSet<String>();
+        for (String f : files.split(", ?")) {
+            if (basedir == null) {
+                data.add(f);
+            } else {
+                final Pattern p = Pattern.compile(f);
+                basedir.listFiles(new FileFilter(){
+                    public boolean accept(File pathname) {
+                        String name = pathname.getName();
+                        if (p.matcher(name).matches()) {
+                            data.add(name);
+                        }
+                        return false;
+                    }
+                });
+            }
+        }
+                
+        return data;
+    }
     
     @Test
     public void render() throws Exception {
-        POIDataSamples samples = POIDataSamples.getSlideShowInstance();
-
-//        File testFilesX[] = new File("tmp_ppt").listFiles(new FileFilter() {
-//            public boolean accept(File pathname) {
-//                return pathname.getName().toLowerCase().contains("ppt");
-//            }
-//        });
-//        String testFiles[] = new String[testFilesX.length];
-//        for (int i=0; i<testFilesX.length; i++) {
-//            testFiles[i] = testFilesX[i].getPath();
-//        }
+        assumeFalse("ignore HSLF / .ppt files in no-scratchpad run", xslfOnly && pptFile.toLowerCase().endsWith("ppt"));
         
-
-        String[] testFiles = {"53446.ppt", "alterman_security.ppt","alterman_security.pptx","KEY02.pptx","themes.pptx","backgrounds.pptx","layouts.pptx", "sample.pptx", "shapes.pptx",};
         String[] args = {
             "-format", "null", // png,gif,jpg or null for test
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
             "-quiet",
-            "dummyfile"
+            (basedir == null ? samples.getFile(pptFile) : new File(basedir, pptFile)).getAbsolutePath()
         };
-        for(String sampleFile : testFiles){
-            args[args.length-1] = samples.getFile(sampleFile).getCanonicalPath();
-//            args[args.length-1] = new File(sampleFile).getCanonicalPath();
-            try {
-                PPTX2PNG.main(args);
-            } catch (IllegalStateException e) {
-                throw new IllegalStateException("While reading file " + sampleFile, e);
-            }
-        }
+        PPTX2PNG.main(args);
     }
 }

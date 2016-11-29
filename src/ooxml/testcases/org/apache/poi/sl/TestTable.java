@@ -20,6 +20,7 @@
 package org.apache.poi.sl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeFalse;
 
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -35,10 +36,22 @@ import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestTable {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static boolean xslfOnly = false;
+
+    @BeforeClass
+    public static void checkHslf() {
+        try {
+            Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
+        } catch (Exception e) {
+            xslfOnly = true;
+        }
+    }
+    
     
     /** a generic way to open a sample slideshow document **/
     public static SlideShow<?,?> openSampleSlideshow(String sampleName) throws IOException {
@@ -54,6 +67,8 @@ public class TestTable {
     
     @Test
     public void testColWidthRowHeight() throws IOException {
+        assumeFalse(xslfOnly);
+
         // Test of table dimensions of same slideshow saved as ppt/x
         // to check if both return similar (points) value
         SlideShow<?,?> ppt = openSampleSlideshow("table_test.ppt");
@@ -95,7 +110,21 @@ public class TestTable {
     }
 
     @Test
-    public void testTextDirection() throws IOException {
+    public void testTextDirectionHSLF() throws IOException {
+        assumeFalse(xslfOnly);
+        SlideShow<?,?> ppt1 = new HSLFSlideShow();
+        testTextDirection(ppt1);
+        ppt1.close();
+    }
+    
+    @Test
+    public void testTextDirectionXSLF() throws IOException {
+        SlideShow<?,?> ppt1 = new XMLSlideShow();
+        testTextDirection(ppt1);
+        ppt1.close();
+    }
+    
+    private void testTextDirection(SlideShow<?,?> ppt1) throws IOException {
         
         TextDirection tds[] = {
             TextDirection.HORIZONTAL,
@@ -104,34 +133,31 @@ public class TestTable {
             // TextDirection.STACKED is not supported on HSLF
         };
         
-        for (int i=0; i<2; i++) {
-            SlideShow<?,?> ppt1 = (i == 0) ? new HSLFSlideShow() : new XMLSlideShow();
-            TableShape<?,?> tbl1 = ppt1.createSlide().createTable(1, 3);
-            tbl1.setAnchor(new Rectangle2D.Double(50, 50, 200, 200));
-        
-            int col = 0;
-            for (TextDirection td : tds) {
-                TableCell<?,?> c = tbl1.getCell(0, col++);
-                if (c != null) {
-                    c.setTextDirection(td);
-                    c.setText("bla");
-                }
+        TableShape<?,?> tbl1 = ppt1.createSlide().createTable(1, 3);
+        tbl1.setAnchor(new Rectangle2D.Double(50, 50, 200, 200));
+    
+        int col = 0;
+        for (TextDirection td : tds) {
+            TableCell<?,?> c = tbl1.getCell(0, col++);
+            if (c != null) {
+                c.setTextDirection(td);
+                c.setText("bla");
             }
-            
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ppt1.write(bos);
-            ppt1.close();
-            
-            InputStream is = new ByteArrayInputStream(bos.toByteArray());
-            SlideShow<?,?> ppt2 = SlideShowFactory.create(is);
-            TableShape<?,?> tbl2 = (TableShape<?,?>)ppt2.getSlides().get(0).getShapes().get(0);
-            
-            col = 0;
-            for (TextDirection td : tds) {
-                TableCell<?,?> c = tbl2.getCell(0, col++);
-                assertEquals(td, c.getTextDirection());
-            }
-            ppt2.close();
         }
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ppt1.write(bos);
+        ppt1.close();
+        
+        InputStream is = new ByteArrayInputStream(bos.toByteArray());
+        SlideShow<?,?> ppt2 = SlideShowFactory.create(is);
+        TableShape<?,?> tbl2 = (TableShape<?,?>)ppt2.getSlides().get(0).getShapes().get(0);
+        
+        col = 0;
+        for (TextDirection td : tds) {
+            TableCell<?,?> c = tbl2.getCell(0, col++);
+            assertEquals(td, c.getTextDirection());
+        }
+        ppt2.close();
     }
 }
