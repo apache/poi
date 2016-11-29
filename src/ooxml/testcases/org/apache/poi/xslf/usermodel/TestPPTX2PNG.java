@@ -24,6 +24,7 @@ import static org.junit.Assume.assumeFalse;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -88,7 +89,7 @@ public class TestPPTX2PNG {
     
     @Test
     public void render() throws Exception {
-        assumeFalse("ignore HSLF / .ppt files in no-scratchpad run", xslfOnly && pptFile.toLowerCase().endsWith("ppt"));
+        assumeFalse("ignore HSLF / .ppt files in no-scratchpad run", xslfOnly && pptFile.toLowerCase(Locale.ROOT).endsWith("ppt"));
         
         String[] args = {
             "-format", "null", // png,gif,jpg or null for test
