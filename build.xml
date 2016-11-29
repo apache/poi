@@ -436,8 +436,8 @@ under the License.
     </path>
 
     <patternset id="exclude-scratchpad-test">
-        <exclude name="**/TestExtractorFactory.java" if:true="${scratchpad.ignore}"/>
-        <exclude name="**/OutlookTextExtactor.java" if:true="${scratchpad.ignore}"/>
+        <exclude name="**/TestExtractorFactory.java"/>
+        <exclude name="**/OutlookTextExtactor.java"/>
     </patternset>
 
     <!-- Prints POI's Ant usage help -->
