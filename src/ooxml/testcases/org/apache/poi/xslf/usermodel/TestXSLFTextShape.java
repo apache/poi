@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 
 import java.awt.Color;
@@ -38,6 +39,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
@@ -47,6 +49,16 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 public class TestXSLFTextShape {
+    private static boolean xslfOnly = false;
+
+    @BeforeClass
+    public static void checkHslf() {
+        try {
+            Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
+        } catch (Exception e) {
+            xslfOnly = true;
+        }
+    }
 
     @Test
     public void testLayouts() throws IOException {
@@ -919,6 +931,7 @@ public class TestXSLFTextShape {
     
     @Test
     public void metroBlob() throws IOException {
+        assumeFalse(xslfOnly);
         File f = POIDataSamples.getSlideShowInstance().getFile("bug52297.ppt");
         SlideShow<?,?> ppt = SlideShowFactory.create(f);
         HSLFTextShape sh = (HSLFTextShape)ppt.getSlides().get(1).getShapes().get(3);
