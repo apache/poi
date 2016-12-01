@@ -21,13 +21,20 @@
 package org.apache.poi;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that POIDocument correctly loads and saves the common
@@ -35,10 +42,8 @@ import org.apache.poi.poifs.filesystem.*;
  *
  * This is part 2 of 2 of the tests - it only does the POIDocuments
  *  which are part of the scratchpad (not main)
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestPOIDocumentScratchpad extends TestCase {
+public final class TestPOIDocumentScratchpad {
 	// The POI Documents to work on
 	private POIDocument doc;
 	private POIDocument doc2;
@@ -47,23 +52,28 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 	 * Set things up, using a PowerPoint document and
 	 *  a Word Document for our testing
 	 */
-	@Override
-    public void setUp() throws Exception {
+	@Before
+    public void setUp() throws IOException {
 		doc = new HSLFSlideShowImpl(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
-
 		doc2 = HWPFTestDataSamples.openSampleFile("test2.doc");
 	}
 
+	@Test
 	public void testReadProperties() {
+	    testReadPropertiesHelper(doc);
+	}
+	
+	private void testReadPropertiesHelper(POIDocument docPH) {
 		// We should have both sets
-		assertNotNull(doc.getDocumentSummaryInformation());
-		assertNotNull(doc.getSummaryInformation());
+		assertNotNull(docPH.getDocumentSummaryInformation());
+		assertNotNull(docPH.getSummaryInformation());
 
 		// Check they are as expected for the test doc
-		assertEquals("Hogwarts", doc.getSummaryInformation().getAuthor());
-		assertEquals(10598, doc.getDocumentSummaryInformation().getByteCount());
+		assertEquals("Hogwarts", docPH.getSummaryInformation().getAuthor());
+		assertEquals(10598, docPH.getDocumentSummaryInformation().getByteCount());
 	}
 
+	@Test
 	public void testReadProperties2() {
 		// Check again on the word one
 		assertNotNull(doc2.getDocumentSummaryInformation());
@@ -74,7 +84,8 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 		assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
 	}
 
-	public void testWriteProperties() throws Exception {
+	@Test
+	public void testWriteProperties() throws IOException {
 		// Just check we can write them back out into a filesystem
 		NPOIFSFileSystem outFS = new NPOIFSFileSystem();
 		doc.writeProperties(outFS);
@@ -82,9 +93,11 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 		// Should now hold them
 		assertNotNull(outFS.createDocumentInputStream("\005SummaryInformation"));
 		assertNotNull(outFS.createDocumentInputStream("\005DocumentSummaryInformation"));
+		outFS.close();
 	}
 
-    public void testWriteReadProperties() throws Exception {
+	@Test
+    public void testWriteReadProperties() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     	// Write them out
@@ -97,10 +110,13 @@ public final class TestPOIDocumentScratchpad extends TestCase {
     	POIFSFileSystem inFS = new POIFSFileSystem(bais);
 
     	// Check they're still there
-    	doc.directory = inFS.getRoot();
-    	doc.readProperties();
+    	POIDocument ppt = new HPSFPropertiesOnlyDocument(inFS);
+    	ppt.readProperties();
 
     	// Delegate test
-    	testReadProperties();
+    	testReadPropertiesHelper(ppt);
+    	
+    	ppt.close();
+    	inFS.close();
     }
 }

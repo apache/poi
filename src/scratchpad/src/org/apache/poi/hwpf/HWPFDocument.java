@@ -567,10 +567,10 @@ public final class HWPFDocument extends HWPFDocumentCore {
         validateInPlaceWritePossible();
         
         // Update the Document+Properties streams in the file
-        write(directory.getFileSystem(), false);
+        write(getDirectory().getFileSystem(), false);
         
         // Sync with the File on disk
-        directory.getFileSystem().writeFilesystem();
+        getDirectory().getFileSystem().writeFilesystem();
     }
     
     /**
@@ -911,7 +911,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         boolean objectPoolWritten = false;
         boolean tableWritten = false;
         boolean propertiesWritten = false;
-        for (Entry entry : directory) {
+        for (Entry entry : getDirectory()) {
             if ( entry.getName().equals( STREAM_WORD_DOCUMENT ) )
             {
                 if ( !docWritten )
@@ -977,13 +977,11 @@ public final class HWPFDocument extends HWPFDocumentCore {
         if ( !objectPoolWritten && copyOtherEntries )
             _objectPool.writeTo( pfs.getRoot() );
 
-        this.directory = pfs.getRoot();
-
         /*
          * since we updated all references in FIB and etc, using new arrays to
          * access data
          */
-        this.directory = pfs.getRoot();
+        replaceDirectory(pfs.getRoot());
         this._tableStream = tableStream.toByteArray();
         this._dataStream = dataBuf;
     }

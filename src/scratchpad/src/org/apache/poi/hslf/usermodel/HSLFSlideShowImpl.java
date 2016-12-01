@@ -58,6 +58,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * This class contains the main functionality for the Powerpoint file
@@ -87,9 +88,12 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     /**
      * Returns the directory in the underlying POIFSFileSystem for the
      * document that is open.
+     * 
+     * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
      */
+    @Removal(version="3.18")
     protected DirectoryNode getPOIFSDirectory() {
-        return directory;
+        return getDirectory();
     }
 
     /**
@@ -201,11 +205,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void readPowerPointStream() throws IOException {
         // Get the main document stream
         DocumentEntry docProps =
-                (DocumentEntry) directory.getEntry("PowerPoint Document");
+                (DocumentEntry) getDirectory().getEntry("PowerPoint Document");
 
         // Grab the document stream
         int len = docProps.getSize();
-        InputStream is = directory.createDocumentInputStream("PowerPoint Document");
+        InputStream is = getDirectory().createDocumentInputStream("PowerPoint Document");
         try {
             _docstream = IOUtils.toByteArray(is, len);
         } finally {
@@ -334,7 +338,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      */
     private void readCurrentUserStream() {
         try {
-            currentUser = new CurrentUserAtom(directory);
+            currentUser = new CurrentUserAtom(getDirectory());
         } catch (IOException ie) {
             logger.log(POILogger.ERROR, "Error finding Current User Atom:\n" + ie);
             currentUser = new CurrentUserAtom();
@@ -356,12 +360,12 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         _pictures = new ArrayList<HSLFPictureData>();
 
         // if the presentation doesn't contain pictures - will use a null set instead
-        if (!directory.hasEntry("Pictures")) return;
+        if (!getDirectory().hasEntry("Pictures")) return;
 
         HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
 
-        DocumentEntry entry = (DocumentEntry) directory.getEntry("Pictures");
-        DocumentInputStream is = directory.createDocumentInputStream(entry);
+        DocumentEntry entry = (DocumentEntry) getDirectory().getEntry("Pictures");
+        DocumentInputStream is = getDirectory().createDocumentInputStream(entry);
         byte[] pictstream = IOUtils.toByteArray(is, entry.getSize());
         is.close();
 
@@ -562,10 +566,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // Write the PowerPoint streams to the current FileSystem
         // No need to do anything to other streams, already there! 
-        write(directory.getFileSystem(), false);
+        write(getDirectory().getFileSystem(), false);
 
         // Sync with the File on disk
-        directory.getFileSystem().writeFilesystem();
+        getDirectory().getFileSystem().writeFilesystem();
     }
 
     /**
@@ -707,7 +711,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // If requested, copy over any other streams we spot, eg Macros
         if (copyAllOtherNodes) {
-            EntryUtils.copyNodes(directory.getFileSystem(), outFS, writtenEntries);
+            EntryUtils.copyNodes(getDirectory().getFileSystem(), outFS, writtenEntries);
         }
     }
 
@@ -865,7 +869,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     @Override
     public void close() throws IOException {
-        NPOIFSFileSystem fs = directory.getFileSystem();
+        NPOIFSFileSystem fs = getDirectory().getFileSystem();
         if (fs != null) {
             fs.close();
         }

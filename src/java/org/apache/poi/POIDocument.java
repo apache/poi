@@ -53,7 +53,7 @@ public abstract class POIDocument implements Closeable {
     /** Holds further metadata on our document */
     private DocumentSummaryInformation dsInf;
     /**	The directory that our document lives in */
-    protected DirectoryNode directory;
+    private DirectoryNode directory;
 
     /** For our own logging use */
     private static final POILogger logger = POILogFactory.getLogger(POIDocument.class);
@@ -396,7 +396,7 @@ public abstract class POIDocument implements Closeable {
         if (directory != null) {
             if (directory.getNFileSystem() != null) {
                 directory.getNFileSystem().close();
-                directory = null;
+                clearDirectory();
             }
         }
     }
@@ -404,5 +404,42 @@ public abstract class POIDocument implements Closeable {
     @Internal
     public DirectoryNode getDirectory() {
         return directory;
+    }
+    
+    /**
+     * Clear/unlink the attached directory entry
+     */
+    @Internal
+    protected void clearDirectory() {
+        directory = null;
+    }
+    
+    /**
+     * check if we were created by POIFS otherwise create a new dummy POIFS
+     * for storing the package data
+     * 
+     * @return {@code true} if dummy directory was created, {@code false} otherwise
+     */
+    @Internal
+    protected boolean initDirectory() {
+        if (directory == null) {
+            directory = new NPOIFSFileSystem().getRoot();
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Replaces the attached directory, e.g. if this document is written
+     * to a new POIFSFileSystem
+     *
+     * @param newDirectory the new directory
+     * @return the old/previous directory
+     */
+    @Internal
+    protected DirectoryNode replaceDirectory(DirectoryNode newDirectory) {
+        DirectoryNode dn = directory;
+        directory = newDirectory;
+        return dn;
     }
 }
