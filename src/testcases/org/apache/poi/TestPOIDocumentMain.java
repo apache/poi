@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -55,13 +56,17 @@ public final class TestPOIDocumentMain {
 
     @Test
     public void readProperties() {
+        readPropertiesHelper(doc);
+    }
+
+    private void readPropertiesHelper(POIDocument docWB) {
         // We should have both sets
-        assertNotNull(doc.getDocumentSummaryInformation());
-        assertNotNull(doc.getSummaryInformation());
+        assertNotNull(docWB.getDocumentSummaryInformation());
+        assertNotNull(docWB.getSummaryInformation());
 
         // Check they are as expected for the test doc
-        assertEquals("Administrator", doc.getSummaryInformation().getAuthor());
-        assertEquals(0, doc.getDocumentSummaryInformation().getByteCount());
+        assertEquals("Administrator", docWB.getSummaryInformation().getAuthor());
+        assertEquals(0, docWB.getDocumentSummaryInformation().getByteCount());
     }
 
     @Test
@@ -76,7 +81,7 @@ public final class TestPOIDocumentMain {
     }
 
     @Test
-    public void writeProperties() throws Exception {
+    public void writeProperties() throws IOException {
         // Just check we can write them back out into a filesystem
         NPOIFSFileSystem outFS = new NPOIFSFileSystem();
         doc.readProperties();
@@ -92,7 +97,7 @@ public final class TestPOIDocumentMain {
     }
 
     @Test
-    public void WriteReadProperties() throws Exception {
+    public void WriteReadProperties() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         // Write them out
@@ -106,11 +111,12 @@ public final class TestPOIDocumentMain {
         OPOIFSFileSystem inFS = new OPOIFSFileSystem(bais);
 
         // Check they're still there
-        doc.directory = inFS.getRoot();
-        doc.readProperties();
-
+        POIDocument doc3 = new HPSFPropertiesOnlyDocument(inFS);
+        doc3.readProperties();
+        
         // Delegate test
-        readProperties();
+        readPropertiesHelper(doc3);
+        doc3.close();
     }
 
     @Test

@@ -50,7 +50,7 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
      * Write out to the currently open file the properties changes, but nothing else
      */
     public void write() throws IOException {
-        NPOIFSFileSystem fs = directory.getFileSystem();
+        NPOIFSFileSystem fs = getDirectory().getFileSystem();
         
         validateInPlaceWritePossible();        
         writeProperties(fs, null);
@@ -89,7 +89,7 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
         writeProperties(fs, excepts);
         
         // Copy over everything else unchanged
-        FilteringDirectoryNode src = new FilteringDirectoryNode(directory, excepts);
+        FilteringDirectoryNode src = new FilteringDirectoryNode(getDirectory(), excepts);
         FilteringDirectoryNode dest = new FilteringDirectoryNode(fs.getRoot(), excepts);
         EntryUtils.copyNodes(src, dest);
         

@@ -110,6 +110,7 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -334,7 +335,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // If we're not preserving nodes, don't track the
         //  POIFS any more
         if(! preserveNodes) {
-           this.directory = null;
+            clearDirectory();
         }
 
         _sheets = new ArrayList<HSSFSheet>(INITIAL_CAPACITY);
@@ -1349,10 +1350,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     @Override
     public void write() throws IOException {
         validateInPlaceWritePossible();
+        final DirectoryNode dir = getDirectory();
         
         // Update the Workbook stream in the file
-        DocumentNode workbookNode = (DocumentNode)directory.getEntry(
-                getWorkbookDirEntryName(directory));
+        DocumentNode workbookNode = (DocumentNode)dir.getEntry(
+                getWorkbookDirEntryName(dir));
         NPOIFSDocument workbookDoc = new NPOIFSDocument(workbookNode);
         workbookDoc.replaceContents(new ByteArrayInputStream(getBytes()));
         
@@ -1360,7 +1362,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         writeProperties();
         
         // Sync with the File on disk
-        directory.getFileSystem().writeFilesystem();
+        dir.getFileSystem().writeFilesystem();
     }
     
     /**
@@ -1435,13 +1437,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
             // Copy over all the other nodes to our new poifs
             EntryUtils.copyNodes(
-                    new FilteringDirectoryNode(this.directory, excepts)
+                    new FilteringDirectoryNode(getDirectory(), excepts)
                     , new FilteringDirectoryNode(fs.getRoot(), excepts)
                     );
 
             // YK: preserve StorageClsid, it is important for embedded workbooks,
             // see Bugzilla 47920
-            fs.getRoot().setStorageClsid(this.directory.getStorageClsid());
+            fs.getRoot().setStorageClsid(getDirectory().getStorageClsid());
         }
     }
 
@@ -2054,8 +2056,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public int addOlePackage(byte[] oleData, String label, String fileName, String command)
     throws IOException {
     	// check if we were created by POIFS otherwise create a new dummy POIFS for storing the package data
-    	if (directory == null) {
-    		directory = new NPOIFSFileSystem().getRoot();
+    	if (initDirectory()) {
     		preserveNodes = true;
     	}
 
@@ -2064,8 +2065,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         DirectoryEntry oleDir = null;
         do {
             String storageStr = "MBD"+ HexDump.toHex(++storageId);
-            if (!directory.hasEntry(storageStr)) {
-                oleDir = directory.createDirectory(storageStr);
+            if (!getDirectory().hasEntry(storageStr)) {
+                oleDir = getDirectory().createDirectory(storageStr);
                 oleDir.setStorageClsid(ClassID.OLE10_PACKAGE);
             }
         } while (oleDir == null);
@@ -2242,8 +2243,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     	return workbook.changeExternalReference(oldUrl, newUrl);
     }
 
+    /** 
+     * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
+     */
+    @Removal(version="3.18")
     public DirectoryNode getRootDirectory(){
-        return directory;
+        return getDirectory();
     }
     
     @Internal

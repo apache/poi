@@ -233,7 +233,7 @@ public final class OOXMLLite {
                     || checkForTestAnnotation(testclass)) {
                     out.add(testclass);
                 }
-            } catch (Throwable e) {
+            } catch (Throwable e) { // NOSONAR
                 System.out.println("Class " + cls + " is not in classpath");
                 return;
             }

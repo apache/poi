@@ -54,7 +54,7 @@ import org.apache.poi.util.TempFile;
  */
 @Beta
 public class AesZipFileZipEntrySource implements ZipEntrySource {
-    private static POILogger LOG = POILogFactory.getLogger(AesZipFileZipEntrySource.class);
+    private static final POILogger LOG = POILogFactory.getLogger(AesZipFileZipEntrySource.class);
     
     private final File tmpFile;
     private final ZipFile zipFile;

@@ -98,6 +98,6 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 */
     public DirectoryEntry getRoot()
     {
-        return document.directory;
+        return document.getDirectory();
     }
 }
