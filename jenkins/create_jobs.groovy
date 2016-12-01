@@ -9,61 +9,30 @@ H H * * 0
 '''
 
 def poijobs = [
-    [
-        name: 'POI-DSL-1.6',
-        jdks: ["1.6"]
+    [ name: 'POI-DSL-1.6', jdks: ["1.6"] 
     ],
-    [
-        name: 'POI-DSL-1.8',
-        jdks: ["1.8"],
-        trigger: 'H */12 * * *'
+    [ name: 'POI-DSL-1.8', jdks: ["1.8"], trigger: 'H */12 * * *' 
     ],
-    [
-        name: 'POI-DSL-OpenJDK',
-        jdks: ["OpenJDK"],
-        trigger: 'H */12 * * *'
+    [ name: 'POI-DSL-OpenJDK', jdks: ["OpenJDK"], trigger: 'H */12 * * *' 
     ],
-    [
-        name: 'POI-DSL-1.9',
-        jdks: ["1.9"],
-        trigger: triggerSundays,
+    [ name: 'POI-DSL-1.9', jdks: ["1.9"], trigger: triggerSundays,
         properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=-addmods', '-Djava9addmodsvalue=java.xml.bind', '-Djava.locale.providers=JRE,CLDR'],
-        email: 'centic@apache.org'
+        email: 'centic@apache.org' 
     ],
-    [
-        name: 'POI-DSL-old-Xerces',
-        jdks: ["1.9"],
-        trigger: triggerSundays,
+    [ name: 'POI-DSL-old-Xerces', jdks: ["1.6"], trigger: triggerSundays,
         shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
         // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
-        properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar']
+        properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar'] 
     ],
-    [
-        name: 'POI-DSL-Maven',
-        trigger: 'H */4 * * *',
-        maven: true
+    [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true 
     ],
-    [
-		name: 'POI-DSL-regenerate-javadoc',
-        trigger: triggerSundays,
-        javadoc: true
+    [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true 
     ],
-    [
-		name: 'POI-DSL-API-Check',
-		trigger: '@daily',
-		apicheck: true
-	],
-	[
-		name: 'POI-DSL-Gradle',
-		jdks: ["1.7"],
-		trigger: triggerSundays,
-		email: 'centic@apache.org',
-		gradle: true
-	],
-    [
-        name: 'POI-DSL-no-scratchpad',
-        trigger: triggerSundays,
-        noScratchpad: true
+    [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true 
+    ],
+    [ name: 'POI-DSL-Gradle', jdks: ["1.7"], trigger: triggerSundays, email: 'centic@apache.org', gradle: true 
+    ],
+    [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true 
     ],
 ]
 
@@ -136,14 +105,14 @@ Apache POI - the Java API for Microsoft Documents
             }
             
             def shellcmds = '# show which files are currently modified in the working copy\n' +
-				'svn status\n' +
-				'\n' +
-				'echo $JAVA_HOME\n' +
-				'ls -al $JAVA_HOME\n' +
-				'\n' +
-				(poijob.shell ?: '') + '\n' +
-				'# ignore any error message\n' +
-				'exit 0\n'
+                'svn status\n' +
+                '\n' +
+                'echo $JAVA_HOME\n' +
+                'ls -al $JAVA_HOME\n' +
+                '\n' +
+                (poijob.shell ?: '') + '\n' +
+                '# ignore any error message\n' +
+                'exit 0\n'
 
             // Create steps and publishers depending on the type of Job that is selected
             if(poijob.maven) {
@@ -176,7 +145,7 @@ Apache POI - the Java API for Microsoft Documents
                     }
                     mailer(email, false, false)
                 }
-			} else if (poijob.javadoc) {
+            } else if (poijob.javadoc) {
                 steps {
                     shell(shellcmds)
                     ant {
@@ -187,21 +156,21 @@ Apache POI - the Java API for Microsoft Documents
                         antInstallation(defaultAnt)
                     }
                     shell('zip -r build/javadocs.zip build/tmp/site/build/site/apidocs')
-				}
+                }
                 publishers {
                     configure { project ->
                         project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
                     }
                     mailer(email, false, false)
                 }
-			} else if (poijob.apicheck) {
+            } else if (poijob.apicheck) {
                 steps {
                     shell(shellcmds)
-					gradle {
-						tasks('japicmp')
-						useWrapper(false)
-					}
-				}
+                    gradle {
+                        tasks('japicmp')
+                        useWrapper(false)
+                    }
+                }
                 publishers {
                     archiveArtifacts('build/*/build/reports/japi.html')
                     configure { project ->
@@ -214,36 +183,36 @@ Apache POI - the Java API for Microsoft Documents
                     shell(shellcmds)
                     // For Jobs that should still have the default set of publishers we can configure different steps here
                     if(poijob.gradle) {
-						gradle {
-							tasks('check')
-							useWrapper(false)
-						}
-					} else if (poijob.noScratchpad) {
-						ant {
-							targets(['clean', 'compile-all'] + (poijob.properties ?: []))
-							prop('coverage.enabled', true)
-							antInstallation(defaultAnt)
-						}
-						ant {
-							targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-main', 'test-ooxml', 'test-excelant', 'test-ooxml-lite', 'testcoveragereport'] + (poijob.properties ?: []))
-							antInstallation(defaultAnt)
-						}
-					} else {
-						ant {
-							targets(['clean', 'jenkins'] + (poijob.properties ?: []))
-							prop('coverage.enabled', true)
-							// Properties did not work, so I had to use targets instead
-							//properties(poijob.properties ?: '')
-							antInstallation(defaultAnt)
-						}
-						ant {
-							targets(['run'] + (poijob.properties ?: []))
-							buildFile('src/integrationtest/build.xml')
-							// Properties did not work, so I had to use targets instead
-							//properties(poijob.properties ?: '')
-							antInstallation(defaultAnt)
-						}
-					}
+                        gradle {
+                            tasks('check')
+                            useWrapper(false)
+                        }
+                    } else if (poijob.noScratchpad) {
+                        ant {
+                            targets(['clean', 'compile-all'] + (poijob.properties ?: []))
+                            prop('coverage.enabled', true)
+                            antInstallation(defaultAnt)
+                        }
+                        ant {
+                            targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-main', 'test-ooxml', 'test-excelant', 'test-ooxml-lite', 'testcoveragereport'] + (poijob.properties ?: []))
+                            antInstallation(defaultAnt)
+                        }
+                    } else {
+                        ant {
+                            targets(['clean', 'jenkins'] + (poijob.properties ?: []))
+                            prop('coverage.enabled', true)
+                            // Properties did not work, so I had to use targets instead
+                            //properties(poijob.properties ?: '')
+                            antInstallation(defaultAnt)
+                        }
+                        ant {
+                            targets(['run'] + (poijob.properties ?: []))
+                            buildFile('src/integrationtest/build.xml')
+                            // Properties did not work, so I had to use targets instead
+                            //properties(poijob.properties ?: '')
+                            antInstallation(defaultAnt)
+                        }
+                    }
                 }
                 publishers {
                     findbugs('build/findbugs.xml', false) {
