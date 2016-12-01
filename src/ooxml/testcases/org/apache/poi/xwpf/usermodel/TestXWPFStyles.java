@@ -17,13 +17,18 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
@@ -31,7 +36,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
 
-public class TestXWPFStyles extends TestCase {
+public final class TestXWPFStyles {
+    @Test
     public void testGetUsedStyles() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx");
         List<XWPFStyle> testUsedStyleList = new ArrayList<XWPFStyle>();
@@ -47,6 +53,7 @@ public class TestXWPFStyles extends TestCase {
         assertEquals(usedStyleList, testUsedStyleList);
     }
 
+    @Test
     public void testAddStylesToDocument() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
@@ -70,6 +77,7 @@ public class TestXWPFStyles extends TestCase {
      * Bug #52449 - We should be able to write a file containing
      * both regular and glossary styles without error
      */
+    @Test
     public void test52449() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52449.docx");
         XWPFStyles styles = doc.getStyles();
@@ -86,6 +94,7 @@ public class TestXWPFStyles extends TestCase {
      * they exist only to copy xml beans to pi-ooxml-schemas.jar
      */
     @SuppressWarnings("resource")
+    @Test
     public void testLanguages() {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
@@ -97,6 +106,7 @@ public class TestXWPFStyles extends TestCase {
         styles.setDefaultFonts(def);
     }
 
+    @Test
     public void testType() {
         CTStyle ctStyle = CTStyle.Factory.newInstance();
         XWPFStyle style = new XWPFStyle(ctStyle);
@@ -105,6 +115,7 @@ public class TestXWPFStyles extends TestCase {
         assertEquals(STStyleType.PARAGRAPH, style.getType());
     }
 
+    @Test
     public void testLatentStyles() {
         CTLatentStyles latentStyles = CTLatentStyles.Factory.newInstance();
         CTLsdException ex = latentStyles.addNewLsdException();
@@ -114,6 +125,7 @@ public class TestXWPFStyles extends TestCase {
         assertEquals(false, ls.isLatentStyle("notex1"));
     }
 
+    @Test
     public void testSetStyles_Bug57254() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
@@ -133,6 +145,7 @@ public class TestXWPFStyles extends TestCase {
         assertTrue(styles.styleExist(strStyleId));
     }
 
+    @Test
     public void testEasyAccessToStyles() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         XWPFStyles styles = doc.getStyles();
@@ -187,5 +200,23 @@ public class TestXWPFStyles extends TestCase {
 
         assertEquals(11, styles.getDefaultRunStyle().getFontSize());
         assertEquals(200, styles.getDefaultParagraphStyle().getSpacingAfter());
+    }
+    
+    // Bug 60329: style with missing StyleID throws NPE
+    @Test
+    public void testMissingStyleId() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60329.docx");
+        XWPFStyles styles = doc.getStyles();
+        // Styles exist in the test document in this order, EmptyCellLayoutStyle
+        // is missing a StyleId
+        try {
+            assertNotNull(styles.getStyle("NoList"));
+            assertNull(styles.getStyle("EmptyCellLayoutStyle"));
+            assertNotNull(styles.getStyle("BalloonText"));
+        } catch (NullPointerException e) {
+            fail(e.toString());
+        }
+
+        doc.close();
     }
 }
