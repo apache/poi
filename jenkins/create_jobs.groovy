@@ -9,17 +9,17 @@ H H * * 0
 '''
 
 def poijobs = [
-    [ name: 'POI-DSL-1.6', jdks: ["1.6"] 
+    [ name: 'POI-DSL-1.6', jdks: ['1.6'] 
     ],
-    [ name: 'POI-DSL-1.8', jdks: ["1.8"], trigger: 'H */12 * * *' 
+    [ name: 'POI-DSL-1.8', jdks: ['1.8'], trigger: 'H */12 * * *' 
     ],
     [ name: 'POI-DSL-OpenJDK', jdks: ["OpenJDK"], trigger: 'H */12 * * *' 
     ],
-    [ name: 'POI-DSL-1.9', jdks: ["1.9"], trigger: triggerSundays,
+    [ name: 'POI-DSL-1.9', jdks: ['1.9'], trigger: triggerSundays,
         properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=-addmods', '-Djava9addmodsvalue=java.xml.bind', '-Djava.locale.providers=JRE,CLDR'],
         email: 'centic@apache.org' 
     ],
-    [ name: 'POI-DSL-old-Xerces', jdks: ["1.6"], trigger: triggerSundays,
+    [ name: 'POI-DSL-old-Xerces', jdks: ['1.6'], trigger: triggerSundays,
         shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
         // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
         properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar'] 
@@ -28,25 +28,25 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true 
     ],
-    [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true 
+    [ name: 'POI-DSL-API-Check', jdks: ['1.7'], trigger: '@daily', apicheck: true 
     ],
-    [ name: 'POI-DSL-Gradle', jdks: ["1.7"], trigger: triggerSundays, email: 'centic@apache.org', gradle: true 
+    [ name: 'POI-DSL-Gradle', jdks: ['1.7'], trigger: triggerSundays, email: 'centic@apache.org', gradle: true 
     ],
     [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true 
     ],
 ]
 
 def svnBase = "https://svn.apache.org/repos/asf/poi/trunk"
-def defaultJdks = ["1.6"]
+def defaultJdks = ['1.6']
 def defaultTrigger = 'H/15 * * * *'
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant (latest)'
 
 def jdkMapping = [
-    "1.6": "JDK 1.6 (latest)",
-    "1.7": "JDK 1.7 (latest)",
-    "1.8": "JDK 1.8 (latest)",
-    "1.9": "JDK 9 b142 (early access build) with project Jigsaw",
+    '1.6': "JDK 1.6 (latest)",
+    '1.7': "JDK 1.7 (latest)",
+    '1.8': "JDK 1.8 (latest)",
+    '1.9': "JDK 9 b142 (early access build) with project Jigsaw",
     "OpenJDK": "OpenJDK 6 (on Ubuntu only)",
 ]
 
