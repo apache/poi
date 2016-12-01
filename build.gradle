@@ -130,6 +130,7 @@ project('main') {
 	dependencies {
 		compile 'commons-codec:commons-codec:1.10'
 		compile 'commons-logging:commons-logging:1.2'
+		compile 'org.apache.commons:commons-collections4:4.1'
 		
 		testCompile 'junit:junit:4.12'
 	}
