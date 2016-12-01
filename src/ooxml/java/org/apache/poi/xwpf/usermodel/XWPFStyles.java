@@ -195,8 +195,12 @@ public class XWPFStyles extends POIXMLDocumentPart {
      */
     public XWPFStyle getStyle(String styleID) {
         for (XWPFStyle style : listStyle) {
-            if (style.getStyleId().equals(styleID))
-                return style;
+            try {
+                if (style.getStyleId().equals(styleID))
+                    return style;
+            } catch (NullPointerException e) {
+                // Ignore NPE
+            }
         }
         return null;
     }
