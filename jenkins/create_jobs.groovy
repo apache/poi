@@ -1,36 +1,86 @@
 // You can use http://job-dsl.herokuapp.com/ to validate the code before checkin
 // 
 
+// Missing configs:
+//
+// POI-JDK-IBM: Disabled, did not find the JDK on any of the slaves, need to check this again later
+
+/* Missing configs:
+Erfolgreich	20%	Build planen für POI-API-Check
+Erfolgreich	100%	Build planen für POI-Gradle
+Erfolgreich	100%	Build planen für POI-Maven
+Erfolgreich	100%	Build planen für POI-regenerate-javadoc
+*/
+
 def poijobs = [
     [
-        name: 'POI-DSL',
-        jdks: ["1.6","1.8","OpenJDK"]
+        name: 'POI-DSL-1.6',
+        jdks: ["1.6"]
     ],
     [
-		name: 'POI-DSL-OpenJDK'
-	],
+        name: 'POI-DSL-1.8',
+        jdks: ["1.8"],
+        trigger: 'H */12 * * *'
+    ],
     [
-		name: 'POI-DSL-no-scratchpad'
-	],
+        name: 'POI-DSL-OpenJDK',
+        jdks: ["OpenJDK"],
+        trigger: 'H */12 * * *'
+    ],
+    /* Properties do not work?!
+    [
+        name: 'POI-DSL-1.9',
+        jdks: ["1.9"],
+        trigger: '# only run this once per week on Sundays\n' +
+			'H H * * 0',
+		properties: 'maxpermsize=-Dthis.is.a.dummy=true\n' +
+			'java9addmods=-addmods\n' +
+			'java9addmodsvalue=java.xml.bind\n' +
+			'java.locale.providers=JRE,CLDR',
+        email: 'centic@apache.org'
+    ],*/
+    /* Properties do not work?!
+    [
+        name: 'POI-DSL-old-Xerces',
+        jdks: ["1.9"],
+        trigger: '# only run this once per week on Sundays\n' +
+			'H H * * 0',
+		shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
+		properties: '# this triggers using Xerces as XML Parser and previously showed some exception that can occur\n' +
+			'additionaljar=compile-lib/xercesImpl-2.6.1.jar'
+    ],*/
+    /* Not finished yet
+    [
+		name: 'POI-DSL-no-scratchpad',
+        trigger: '# only run this once per week on Sundays\n' +
+			'H H * * 0',
+	],*/
 ]
 
 def svnBase = "https://svn.apache.org/repos/asf/poi/trunk"
 def defaultJdks = ["1.6"]
+def defaultTrigger = 'H/15 * * * *'
+def defaultEmail = 'dev@poi.apache.org'
 
 def jdkMapping = [
     "1.6": "JDK 1.6 (latest)",
     "1.7": "JDK 1.7 (latest)",
     "1.8": "JDK 1.8 (latest)",
-    "1.9": "JDK 1.9 (latest)",
-    "OpenJDK": "OpenJDK xxx",
+    "1.9": "JDK 9 b142 (early access build) with project Jigsaw",
+    "OpenJDK": "OpenJDK 6 (on Ubuntu only)",
 ]
 
 poijobs.each { poijob ->
 	
 	def jdks = poijob.jdks ?: defaultJdks
+	def trigger = poijob.trigger ?: defaultTrigger
+	def email = poijob.email ?: defaultEmail
 
 	jdks.each { jdkKey ->
-		job('POI-DSL-Test') {
+		job(poijob.name) {
+			// for now we create the jobs in disabled state so they do not run for now
+			disabled()
+			
 			description('<img src="http://poi.apache.org/resources/images/project-logo.jpg" />\n' +
 		'<p>\n' +
 		'Apache POI - the Java API for Microsoft Documents\n' +
@@ -69,21 +119,27 @@ poijobs.each { poijob ->
 						}
 			}
 			triggers {
-				scm('H/15 * * * *')
+				scm(trigger)
 			}
 			steps {
 				shell('# show which files are currently modified in the working copy\n' +
 		'svn status\n' +
 		'\n' +
+		'echo $JAVA_HOME\n' +
+		'ls -al $JAVA_HOME\n' +
+		'\n' +
+		(poijob.shell ?: '') + '\n' +
 		'# ignore any error message\n' +
-		'exit 0')
+		'exit 0\n')
 				ant {
 					targets(['clean', 'jenkins'])
 					prop('coverage.enabled', true)
+					//properties(poijob.properties ?: '')
 					antInstallation('Ant (latest)')
 				}
 				ant {
 					buildFile('src/integrationtest/build.xml')
+					//properties(poijob.properties ?: '')
 					antInstallation('Ant (latest)')
 				}
 			}
