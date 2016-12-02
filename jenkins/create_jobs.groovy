@@ -19,10 +19,10 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-1.9', jdks: ['1.9'], trigger: triggerSundays,
         properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=-addmods', '-Djava9addmodsvalue=java.xml.bind', '-Djava.locale.providers=JRE,CLDR'],
-        email: 'centic@apache.org', disabled: true
+        email: 'centic@apache.org', disabled: true, skipcigame: true
     ],
     // This config was not enabled in Jenkins ever because we did not find the JDK on any of the slaves, we can check this again later
-    [ name: 'POI-DSL-IBM-JDK', jdks: ['IBMJDK'], trigger: triggerSundays, noScratchpad: true, disabled: true
+    [ name: 'POI-DSL-IBM-JDK', jdks: ['IBMJDK'], trigger: triggerSundays, noScratchpad: true, disabled: true, skipcigame: true
     ],
     [ name: 'POI-DSL-old-Xerces', jdks: ['1.6'], trigger: triggerSundays,
         shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
@@ -33,7 +33,7 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true, disabled: true
     ],
-    [ name: 'POI-DSL-API-Check', jdks: ['1.7'], trigger: '@daily', apicheck: true, disabled: true
+    [ name: 'POI-DSL-API-Check', jdks: ['1.7'], trigger: '@daily', apicheck: true
     ],
     [ name: 'POI-DSL-Gradle', jdks: ['1.7'], trigger: triggerSundays, email: 'centic@apache.org', gradle: true, disabled: true
     ],
@@ -147,8 +147,10 @@ Apache POI - the Java API for Microsoft Documents
                     }
                 }
                 publishers {
-                    configure { project ->
-                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                    if (!poijob.skipcigame) {
+                        configure { project ->
+                            project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                        }
                     }
                     mailer(email, false, false)
                 }
@@ -165,8 +167,10 @@ Apache POI - the Java API for Microsoft Documents
                     shell('zip -r build/javadocs.zip build/tmp/site/build/site/apidocs')
                 }
                 publishers {
-                    configure { project ->
-                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                    if (!poijob.skipcigame) {
+                        configure { project ->
+                            project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                        }
                     }
                     mailer(email, false, false)
                 }
@@ -180,8 +184,10 @@ Apache POI - the Java API for Microsoft Documents
                 }
                 publishers {
                     archiveArtifacts('build/*/build/reports/japi.html')
-                    configure { project ->
-                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                    if (!poijob.skipcigame) {
+                        configure { project ->
+                            project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                        }
                     }
                     mailer(email, false, false)
                 }
@@ -242,8 +248,11 @@ Apache POI - the Java API for Microsoft Documents
                         sourcePattern('src/java,src/excelant/java,src/ooxml/java,src/scratchpad/src')
                         exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
                     }
-                    configure { project ->
-                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+
+                    if (!poijob.skipcigame) {
+                        configure { project ->
+                            project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                        }
                     }
                     mailer(email, false, false)
                 }
