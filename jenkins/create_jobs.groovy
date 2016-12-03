@@ -68,7 +68,7 @@ poijobs.each { poijob ->
                 disabled()
             }
             
-            description('''
+            def defaultDesc = '''
 <img src="http://poi.apache.org/resources/images/project-logo.jpg" />
 <p>
 Apache POI - the Java API for Microsoft Documents
@@ -78,13 +78,28 @@ Apache POI - the Java API for Microsoft Documents
     Instead change the Jenkins Job DSL at <a href="http://svn.apache.org/repos/asf/poi/trunk/jenkins">http://svn.apache.org/repos/asf/poi/trunk/jenkins</a>,
     see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki">https://github.com/jenkinsci/job-dsl-plugin/wiki</a>
     for more details about the DSL.</b>
+</p>'''
+
+            description( defaultDesc + 
+(poijob.apicheck ? 
+'''
+<p>
+    <b><a href="https://analysis.apache.org/dashboard/index/221489" target="_blank">Sonar reports</a></b> -
+  <p>
+    <b><a href="lastSuccessfulBuild/artifact/build/main/build/reports/japi.html">API Check POI</a></b>
+    <b><a href="lastSuccessfulBuild/artifact/build/ooxml/build/reports/japi.html">API Check POI-OOXML</a></b>
+    <b><a href="lastSuccessfulBuild/artifact/build/excelant/build/reports/japi.html">API Check POI-Excelant</a></b>
+    <b><a href="lastSuccessfulBuild/artifact/build/scratchpad/build/reports/japi.html">API Check POI-Scratchpad</a></b>
+    
 </p>
+''' :
+'''
 <p>
     <b><a href="lastSuccessfulBuild/findbugsResult/" target="_blank">Findbugs report of latest build</a></b> -
     <b><a href="https://analysis.apache.org/dashboard/index/221489" target="_blank">Sonar reports</a></b> -
     <b><a href="lastSuccessfulBuild/artifact/build/coverage/index.html" target="_blank">Coverage of latest build</a></b>
 </p>
-''')
+'''))
             logRotator {
                 numToKeep(5)
                 artifactNumToKeep(1)
