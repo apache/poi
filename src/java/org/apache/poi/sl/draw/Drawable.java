@@ -106,10 +106,25 @@ public interface Drawable {
     int TEXT_AS_SHAPES = 2;
 
     /**
-     * Use this object to resolve unknown / missing fonts when rendering slides
+     * Use this object to resolve unknown / missing fonts when rendering slides.
+     * The font handler must be of type {@link DrawFontManager}.<p>
+     * 
+     * In case a {@code FONT_HANDLER} is register, {@code FONT_FALLBACK} and {@code FONT_MAP} are ignored 
      */
     DrawableHint FONT_HANDLER = new DrawableHint(7);
+    
+    /**
+     * Key for a font fallback map of type {@code Map<String,String>} which maps
+     * the original font family (key) to the fallback font family (value).
+     * In case there is also a {@code FONT_MAP} registered, the original font
+     * is first mapped via the font_map and then the fallback font is determined
+     */
     DrawableHint FONT_FALLBACK = new DrawableHint(8);
+
+    /**
+     * Key for a font map of type {@code Map<String,String>} which maps
+     * the original font family (key) to the mapped font family (value)
+     */
     DrawableHint FONT_MAP = new DrawableHint(9);
     
     DrawableHint GSAVE = new DrawableHint(10);

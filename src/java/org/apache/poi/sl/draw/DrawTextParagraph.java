@@ -18,6 +18,7 @@
 package org.apache.poi.sl.draw;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.font.FontRenderContext;
@@ -500,6 +501,10 @@ public class DrawTextParagraph implements Drawable {
         PlaceableShape<?,?> ps = getParagraphShape();
 
         DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
+        @SuppressWarnings("unchecked")
+        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
+        @SuppressWarnings("unchecked")
+        Map<String,String> fallbackMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_FALLBACK);
 
         for (TextRun run : paragraph){
             String runText = getRenderableText(run);
@@ -507,31 +512,48 @@ public class DrawTextParagraph implements Drawable {
             if (runText.isEmpty()) continue;
 
             // user can pass an custom object to convert fonts
-            String fontFamily = run.getFontFamily();
-            @SuppressWarnings("unchecked")
-            Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
-            if (fontMap != null && fontMap.containsKey(fontFamily)) {
-                fontFamily = fontMap.get(fontFamily);
-            }
-            if(fontHandler != null) {
-                fontFamily = fontHandler.getRendererableFont(fontFamily, run.getPitchAndFamily());
-            }
-            if (fontFamily == null) {
-                fontFamily = paragraph.getDefaultFontFamily();
-            }
+            String mappedFont = run.getFontFamily();
+            String fallbackFont = Font.SANS_SERIF;
 
+            if (mappedFont == null) {
+                mappedFont = paragraph.getDefaultFontFamily();
+            }
+            if (mappedFont == null) {
+                mappedFont = Font.SANS_SERIF;
+            }            
+            if (fontHandler != null) {
+                String font = fontHandler.getRendererableFont(mappedFont, run.getPitchAndFamily());
+                if (font != null) {
+                    mappedFont = font;
+                }
+                font = fontHandler.getFallbackFont(mappedFont, run.getPitchAndFamily());
+                if (font != null) {
+                    fallbackFont = font;
+                }
+            } else {
+                if (fontMap != null && fontMap.containsKey(mappedFont)) {
+                    mappedFont = fontMap.get(mappedFont);
+                }
+                if (fallbackMap != null && fallbackMap.containsKey(mappedFont)) {
+                    fallbackFont = fallbackMap.get(mappedFont);
+                }
+            }
+            
+            runText = mapFontCharset(runText,mappedFont);
             int beginIndex = text.length();
-            text.append(mapFontCharset(runText,fontFamily));
+            text.append(runText);
             int endIndex = text.length();
 
-            attList.add(new AttributedStringData(TextAttribute.FAMILY, fontFamily, beginIndex, endIndex));
+            attList.add(new AttributedStringData(TextAttribute.FAMILY, mappedFont, beginIndex, endIndex));
 
             PaintStyle fgPaintStyle = run.getFontColor();
             Paint fgPaint = new DrawPaint(ps).getPaint(graphics, fgPaintStyle);
             attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgPaint, beginIndex, endIndex));
 
             Double fontSz = run.getFontSize();
-            if (fontSz == null) fontSz = paragraph.getDefaultFontSize();
+            if (fontSz == null) {
+                fontSz = paragraph.getDefaultFontSize();
+            }
             attList.add(new AttributedStringData(TextAttribute.SIZE, fontSz.floatValue(), beginIndex, endIndex));
 
             if(run.isBold()) {
@@ -559,6 +581,33 @@ public class DrawTextParagraph implements Drawable {
                 attList.add(new AttributedStringData(HYPERLINK_HREF, hl.getAddress(), beginIndex, endIndex));
                 attList.add(new AttributedStringData(HYPERLINK_LABEL, hl.getLabel(), beginIndex, endIndex));
             }
+            
+            int style = (run.isBold() ? Font.BOLD : 0) | (run.isItalic() ? Font.ITALIC : 0);
+            Font f = new Font(mappedFont, style, (int)Math.rint(fontSz));
+            
+            // check for unsupported characters and add a fallback font for these
+            char textChr[] = runText.toCharArray();
+            int nextEnd = f.canDisplayUpTo(textChr, 0, textChr.length);
+            int last = nextEnd;
+            boolean isNextValid = (nextEnd == 0);
+            while ( nextEnd != -1 && nextEnd <= textChr.length ) {
+                if (isNextValid) {
+                    nextEnd = f.canDisplayUpTo(textChr, nextEnd, textChr.length);
+                    isNextValid = false;
+                } else {
+                    if (nextEnd >= textChr.length || f.canDisplay(Character.codePointAt(textChr, nextEnd, textChr.length)) ) {
+                        attList.add(new AttributedStringData(TextAttribute.FAMILY, fallbackFont, beginIndex+last, beginIndex+Math.min(nextEnd,textChr.length)));
+                        if (nextEnd >= textChr.length) {
+                            break;
+                        }
+                        last = nextEnd;
+                        isNextValid = true;
+                    } else {
+                        boolean isHS = Character.isHighSurrogate(textChr[nextEnd]);
+                        nextEnd+=(isHS?2:1);
+                    }
+                }
+            } 
         }
 
         // ensure that the paragraph contains at least one character
@@ -576,7 +625,7 @@ public class DrawTextParagraph implements Drawable {
 
         return string;
     }
-
+    
     protected boolean isHSLF() {
         return paragraph.getClass().getName().contains("HSLF");
     }
