@@ -33,7 +33,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.util.EvilUnclosedBRFixingInputStream;
 import org.apache.xmlbeans.XmlCursor;
@@ -119,14 +118,6 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
     protected XSSFVMLDrawing(PackagePart part) throws IOException, XmlException {
         super(part);
         read(getPackagePart().getInputStream());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSSFVMLDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
     }
 
     @SuppressWarnings("resource")

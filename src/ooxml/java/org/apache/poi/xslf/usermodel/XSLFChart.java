@@ -28,7 +28,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
@@ -68,21 +67,6 @@ public final class XSLFChart extends POIXMLDocumentPart {
 
         chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
         chart = chartSpace.getChart();
-    }
-
-    /**
-     * Construct a chart from a package part.
-     *
-     * @param part the package part holding the chart data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-     * @param rel  the package relationship holding this chart,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart
-     * 
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSLFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
     }
 
 	/**

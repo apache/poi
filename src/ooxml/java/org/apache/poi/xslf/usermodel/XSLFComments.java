@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
@@ -59,21 +58,6 @@ public class XSLFComments extends POIXMLDocumentPart {
         _comments = doc.getCmLst();
     }
 
-    /**
-     * Construct a SpreadsheetML slide comments from a package part
-     *
-     * @param part the package part holding the comments data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.comments+xml</code>
-     * @param rel  the package relationship holding this comments,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments
-     * 
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    XSLFComments(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
-    }
-    
     public CTCommentList getCTCommentsList() {
        return _comments;
     }

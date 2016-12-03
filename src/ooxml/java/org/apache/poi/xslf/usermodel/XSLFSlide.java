@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Notes;
@@ -33,7 +32,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.NotImplemented;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
@@ -87,15 +85,6 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         _slide = doc.getSld();
         setCommonSlideData(_slide.getCSld());
     }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    XSLFSlide(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
-    }
-    
     
     private static CTSlide prototype(){
         CTSlide ctSlide = CTSlide.Factory.newInstance();

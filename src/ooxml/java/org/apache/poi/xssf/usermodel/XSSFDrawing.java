@@ -88,14 +88,6 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         options.setLoadReplaceDocumentElement(null);
         drawing = CTDrawing.Factory.parse(part.getInputStream(),options);
     }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
-    }
     
     /**
      * Construct a new CTDrawing bean. By default, it's just an empty placeholder for drawing objects

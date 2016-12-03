@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
@@ -34,8 +33,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 public class XSSFDialogsheet extends XSSFSheet implements Sheet{
     protected CTDialogsheet dialogsheet;
 
-    protected XSSFDialogsheet(XSSFSheet sheet, PackageRelationship rel) {
-        super(sheet.getPackagePart(), rel);
+    protected XSSFDialogsheet(XSSFSheet sheet) {
+        super(sheet.getPackagePart());
         this.dialogsheet = CTDialogsheet.Factory.newInstance();
         this.worksheet = CTWorksheet.Factory.newInstance();
     }

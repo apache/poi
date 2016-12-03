@@ -30,7 +30,6 @@ import javax.xml.namespace.QName;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.xmlbeans.XmlOptions;
@@ -54,14 +53,6 @@ public class XWPFSettings extends POIXMLDocumentPart {
      */
     public XWPFSettings(PackagePart part) throws IOException {
         super(part);
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XWPFSettings(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
     }
     
     public XWPFSettings() {

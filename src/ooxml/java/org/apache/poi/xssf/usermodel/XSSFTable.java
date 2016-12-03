@@ -30,12 +30,11 @@ import java.util.Locale;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
@@ -75,14 +74,6 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public XSSFTable(PackagePart part) throws IOException {
         super(part);
         readFrom(part.getInputStream());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XSSFTable(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
     }
     
     public void readFrom(InputStream is) throws IOException {

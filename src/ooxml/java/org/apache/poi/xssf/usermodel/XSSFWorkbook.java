@@ -873,9 +873,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     protected XSSFDialogsheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
         XSSFSheet sheet = createSheet(sheetname);
-        String sheetRelId = getRelationId(sheet);
-        PackageRelationship pr = getPackagePart().getRelationship(sheetRelId);
-        return new XSSFDialogsheet(sheet, pr);
+        return new XSSFDialogsheet(sheet);
     }
 
     private CTSheet addSheet(String sheetname) {

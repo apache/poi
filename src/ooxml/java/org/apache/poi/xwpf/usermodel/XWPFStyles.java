@@ -31,7 +31,6 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
@@ -67,14 +66,6 @@ public class XWPFStyles extends POIXMLDocumentPart {
      */
     public XWPFStyles(PackagePart part) throws IOException, OpenXML4JException {
         super(part);
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XWPFStyles(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
-        this(part);
     }
     
     /**

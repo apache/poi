@@ -24,7 +24,6 @@ import java.io.InputStream;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
@@ -68,14 +67,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
             NotesMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getNotesMaster();
         setCommonSlideData(_slide.getCSld());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSLFNotesMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
     }
     
     private static CTNotesMaster prototype() {

@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
@@ -53,14 +52,6 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
                 SldLayoutDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _layout = doc.getSldLayout();
         setCommonSlideData(_layout.getCSld());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XSLFSlideLayout(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
     }
 
     public String getName() {

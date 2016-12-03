@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.image.ImageHeaderBitmap;
 import org.apache.poi.sl.image.ImageHeaderEMF;
 import org.apache.poi.sl.image.ImageHeaderPICT;
@@ -67,19 +66,6 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     public XSLFPictureData(PackagePart part) {
         super(part);
     }    
-    
-    /**
-     * Construct XSLFPictureData from a package part
-     *
-     * @param part the package part holding the drawing data,
-     * @param rel  the package relationship holding this drawing,
-     *             the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/image
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XSLFPictureData(PackagePart part, PackageRelationship rel) {
-        this(part);
-    }
 
     /**
      * An InputStream to read the picture data directly

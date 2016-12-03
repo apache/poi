@@ -99,7 +99,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * contain text, numbers, dates, and formulas. Cells can also be formatted.
  * </p>
  */
-public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
+public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
 
     private static final double DEFAULT_ROW_HEIGHT = 15.0;
@@ -152,14 +152,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         dataValidationHelper = new XSSFDataValidationHelper(this);
     }
 
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSSFSheet(PackagePart part, PackageRelationship rel) {
-        this(part);
-    }
-    
     /**
      * Returns the parent XSSFWorkbook
      *

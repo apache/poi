@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 public class XSSFVBAPart extends POIXMLDocumentPart {
 
@@ -39,14 +38,6 @@ public class XSSFVBAPart extends POIXMLDocumentPart {
      */
     protected XSSFVBAPart(PackagePart part) {
         super(part);
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSSFVBAPart(PackagePart part, PackageRelationship rel) {
-        this(part);
     }
     
     /**

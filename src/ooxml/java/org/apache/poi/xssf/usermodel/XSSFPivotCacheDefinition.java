@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -69,14 +68,6 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
     protected XSSFPivotCacheDefinition(PackagePart part) throws IOException {
         super(part);
         readFrom(part.getInputStream());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSSFPivotCacheDefinition(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
     }
     
     @Beta
