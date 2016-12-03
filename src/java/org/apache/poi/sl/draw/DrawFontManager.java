@@ -31,8 +31,26 @@ public interface DrawFontManager {
      *
      * @param typeface the font family as defined in the .pptx file.
      * This can be unknown or missing in the graphic environment.
+     * @param pitchFamily a pitch-and-family,
+     * see {@link org.apache.poi.hwmf.record.HwmfFont#getFamily()} and
+     * {@link org.apache.poi.hwmf.record.HwmfFont#getPitch()}
+     * for how to calculate those (ancient) values
      *
      * @return the font to be used to paint text
      */
     String getRendererableFont(String typeface, int pitchFamily);
+
+    /**
+     * In case the original font doesn't contain a glyph, use the
+     * returned fallback font as an alternative
+     *
+     * @param typeface the font family as defined in the .pptx file.
+     * @param pitchFamily a pitch-and-family,
+     * see {@link org.apache.poi.hwmf.record.HwmfFont#getFamily()} and
+     * {@link org.apache.poi.hwmf.record.HwmfFont#getPitch()}
+     * for how to calculate those (ancient) values
+     * 
+     * @return the font to be used as a fallback for the original typeface
+     */
+    String getFallbackFont(String typeface, int pitchFamily);
 }
