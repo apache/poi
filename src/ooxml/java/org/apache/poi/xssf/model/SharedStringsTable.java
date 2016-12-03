@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -108,13 +107,6 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         readFrom(part.getInputStream());
     }    
     
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    public SharedStringsTable(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
-    }
-
     /**
      * Read this shared strings table from an XML file.
      * 

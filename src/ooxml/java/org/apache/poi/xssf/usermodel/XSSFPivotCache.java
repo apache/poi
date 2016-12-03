@@ -23,7 +23,6 @@ import java.io.InputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -57,14 +56,6 @@ public class XSSFPivotCache extends POIXMLDocumentPart {
     protected XSSFPivotCache(PackagePart part) throws IOException {
         super(part);
         readFrom(part.getInputStream());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSSFPivotCache(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
     }
     
     @Beta

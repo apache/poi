@@ -82,14 +82,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     }    
 
     /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XSLFSheet(PackagePart part, PackageRelationship rel){
-        this(part);
-    }
-
-    /**
      * @return the XMLSlideShow this sheet belongs to
      */
     @Override

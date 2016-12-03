@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -43,7 +44,6 @@ import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.junit.Test;
@@ -95,23 +95,31 @@ public final class TestPOIXMLDocument {
         }
     }
 
+    private static void traverse(POIXMLDocument doc) throws IOException{
+        HashMap<String,POIXMLDocumentPart> context = new HashMap<String,POIXMLDocumentPart>();
+        for (RelationPart p : doc.getRelationParts()){
+            traverse(p, context);
+        }
+    }
+    
     /**
      * Recursively traverse a OOXML document and assert that same logical parts have the same physical instances
      */
-    private static void traverse(POIXMLDocumentPart part, HashMap<String,POIXMLDocumentPart> context) throws IOException{
-        assertEquals(part.getPackageRelationship().getTargetURI().toString(), part.getPackagePart().getPartName().getName());
+    private static void traverse(RelationPart rp, HashMap<String,POIXMLDocumentPart> context) throws IOException{
+        POIXMLDocumentPart dp = rp.getDocumentPart();
+        assertEquals(rp.getRelationship().getTargetURI().toString(), dp.getPackagePart().getPartName().getName());
         
-        context.put(part.getPackagePart().getPartName().getName(), part);
-        for(POIXMLDocumentPart p : part.getRelations()){
-            assertNotNull(p.toString());
+        context.put(dp.getPackagePart().getPartName().getName(), dp);
+        for(RelationPart p : dp.getRelationParts()){
+            assertNotNull(p.getRelationship().toString());
             
-            String uri = p.getPackagePart().getPartName().getURI().toString();
-            assertEquals(uri, p.getPackageRelationship().getTargetURI().toString());
+            String uri = p.getDocumentPart().getPackagePart().getPartName().getURI().toString();
+            assertEquals(uri, p.getRelationship().getTargetURI().toString());
             if (!context.containsKey(uri)) {
                 traverse(p, context);
             } else {
                 POIXMLDocumentPart prev = context.get(uri);
-                assertSame("Duplicate POIXMLDocumentPart instance for targetURI=" + uri, prev, p);
+                assertSame("Duplicate POIXMLDocumentPart instance for targetURI=" + uri, prev, p.getDocumentPart());
             }
         }
     }
@@ -121,9 +129,7 @@ public final class TestPOIXMLDocument {
         OPCParser doc = new OPCParser(pkg1);
         doc.parse(new TestFactory());
 
-        HashMap<String,POIXMLDocumentPart> context = new HashMap<String,POIXMLDocumentPart>();
-        traverse(doc, context);
-        context.clear();
+        traverse(doc);
 
         File tmp = TempFile.createTempFile("poi-ooxml", ".tmp");
         FileOutputStream out = new FileOutputStream(tmp);
@@ -167,9 +173,7 @@ public final class TestPOIXMLDocument {
         doc = new OPCParser(pkg1);
         try {
             doc.parse(new TestFactory());
-            context = new HashMap<String,POIXMLDocumentPart>();
-            traverse(doc, context);
-            context.clear();
+            traverse(doc);
     
             assertEquals(pkg1.getRelationships().size(), pkg2.getRelationships().size());
     

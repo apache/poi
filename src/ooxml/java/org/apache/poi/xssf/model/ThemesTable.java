@@ -23,7 +23,6 @@ import java.io.OutputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
@@ -86,14 +85,6 @@ public class ThemesTable extends POIXMLDocumentPart {
         } catch(XmlException e) {
            throw new IOException(e.getLocalizedMessage(), e);
         }
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public ThemesTable(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
     }
     
     /**

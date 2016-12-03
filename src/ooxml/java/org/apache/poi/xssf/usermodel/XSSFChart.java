@@ -28,7 +28,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
@@ -105,15 +104,6 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
 		chart = chartSpace.getChart();
 	}
-
-	/**
-	 * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-	 */
-	@Deprecated
-	protected XSSFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-	    this(part);
-	}
-
 	
 	/**
 	 * Construct a new CTChartSpace bean.

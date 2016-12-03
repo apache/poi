@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
@@ -65,14 +64,6 @@ public class XSLFTheme extends POIXMLDocumentPart {
             ThemeDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _theme = doc.getTheme();
         initialize();
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XSLFTheme(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
     }
     
     public void importTheme(XSLFTheme theme) {

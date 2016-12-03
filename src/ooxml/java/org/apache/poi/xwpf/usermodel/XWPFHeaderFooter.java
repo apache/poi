@@ -28,7 +28,6 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
@@ -76,14 +75,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         if (this.document == null) {
             throw new NullPointerException();
         }
-    }
-    
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
-        this(parent, part);
     }
 
     @Override

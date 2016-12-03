@@ -28,7 +28,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.xml.sax.Attributes;
@@ -121,15 +120,6 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      */
     public ReadOnlySharedStringsTable(PackagePart part) throws IOException, SAXException {
         readFrom(part.getInputStream());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public ReadOnlySharedStringsTable(PackagePart part, PackageRelationship rel_ignored)
-    throws IOException, SAXException {
-        this(part);
     }
     
     /**

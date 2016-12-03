@@ -37,9 +37,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
@@ -264,8 +262,7 @@ public final class TestXWPFDocument {
         os.write(nature1);
         os.close();
         XWPFHeader xwpfHeader = doc.getHeaderArray(0);
-        PackageRelationship relationship = xwpfHeader.getPackagePart().addRelationship(partName, TargetMode.INTERNAL, jpgRelation.getRelation());
-        XWPFPictureData newPicData = new XWPFPictureData(newImagePart, relationship);
+        XWPFPictureData newPicData = new XWPFPictureData(newImagePart);
         /* new part is now ready to rumble */
 
         assertFalse(xwpfHeader.getAllPictures().contains(newPicData));

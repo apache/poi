@@ -33,7 +33,6 @@ import java.util.TreeMap;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
@@ -144,14 +143,6 @@ public class StylesTable extends POIXMLDocumentPart {
     public StylesTable(PackagePart part) throws IOException {
         super(part);
         readFrom(part.getInputStream());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public StylesTable(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
     }
     
     public void setWorkbook(XSSFWorkbook wb) {

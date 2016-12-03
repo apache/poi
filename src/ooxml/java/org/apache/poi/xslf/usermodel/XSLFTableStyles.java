@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyle;
@@ -56,14 +55,6 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
         for(CTTableStyle c : tblStyleArray){
             _styles.add(new XSLFTableStyle(c));
         }
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XSLFTableStyles(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        this(part);
     }
     
     public CTTableStyleList getXmlObject(){

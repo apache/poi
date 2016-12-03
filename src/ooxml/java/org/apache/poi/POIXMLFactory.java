@@ -92,22 +92,6 @@ public abstract class POIXMLFactory {
      * @since POI 3.14-Beta1
      */
     protected abstract POIXMLRelation getDescriptor(String relationshipType);
-     
-    /**
-     * Create a POIXMLDocumentPart from existing package part and relation. This method is called
-     * from {@link POIXMLDocument#load(POIXMLFactory)} when parsing a document
-     *
-     * @param parent parent part
-     * @param rel   the package part relationship
-     * @param part  the PackagePart representing the created instance
-     * @return A new instance of a POIXMLDocumentPart.
-     * 
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-     @Deprecated
-     public final POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part) {
-         return createDocumentPart(parent, part);
-     }
 
     /**
      * Create a new POIXMLDocumentPart using the supplied descriptor. This method is used when adding new parts

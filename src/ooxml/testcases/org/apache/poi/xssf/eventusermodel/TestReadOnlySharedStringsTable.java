@@ -44,8 +44,8 @@ public final class TestReadOnlySharedStringsTable extends TestCase {
         List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
         assertEquals(1, parts.size());
 
-        SharedStringsTable stbl = new SharedStringsTable(parts.get(0), null);
-        ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0), null);
+        SharedStringsTable stbl = new SharedStringsTable(parts.get(0));
+        ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
 
         assertEquals(stbl.getCount(), rtbl.getCount());
         assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());

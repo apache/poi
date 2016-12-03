@@ -23,7 +23,6 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
@@ -71,14 +70,6 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      */
     protected XSSFPictureData(PackagePart part) {
         super(part);
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSSFPictureData(PackagePart part, PackageRelationship rel) {
-        this(part);
     }
     
     /**

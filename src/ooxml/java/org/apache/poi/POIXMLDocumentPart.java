@@ -166,37 +166,6 @@ public class POIXMLDocumentPart {
     }
 
     /**
-     * Creates an POIXMLDocumentPart representing the given package part and relationship.
-     * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an existing file.
-     *
-     * @param part - The package part that holds xml data representing this sheet.
-     * @param rel - the relationship of the given package part
-     * @see #read(POIXMLFactory, java.util.Map)
-     * 
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public POIXMLDocumentPart(PackagePart part, PackageRelationship rel){
-        this(null, part);
-    }
-
-    /**
-     * Creates an POIXMLDocumentPart representing the given package part, relationship and parent
-     * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an exisiting file.
-     *
-     * @param parent - Parent part
-     * @param part - The package part that holds xml data represenring this sheet.
-     * @param rel - the relationship of the given package part
-     * @see #read(POIXMLFactory, java.util.Map)
-     *
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public POIXMLDocumentPart(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel){
-        this(parent, part);
-    }
-
-    /**
      * When you open something like a theme, call this to
      *  re-base the XML Document onto the core child of the
      *  current core document
@@ -225,34 +194,6 @@ public class POIXMLDocumentPart {
      */
     public final PackagePart getPackagePart(){
         return packagePart;
-    }
-
-    /**
-     * Provides access to the PackageRelationship that identifies this POIXMLDocumentPart
-     *
-     * @return the PackageRelationship that identifies this POIXMLDocumentPart
-     *
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    @SuppressWarnings("resource")
-    public final PackageRelationship getPackageRelationship() {
-        if (this.parent != null) {
-            for (RelationPart rp : parent.getRelationParts()) {
-                if (rp.getDocumentPart() == this) {
-                    return rp.getRelationship();
-                }
-            }
-        } else {
-            OPCPackage pkg = getPackagePart().getPackage();
-            String partName = getPackagePart().getPartName().getName();
-            for (PackageRelationship rel : pkg.getRelationships()) {
-                if (rel.getTargetURI().toASCIIString().equals(partName)) {
-                    return rel;
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -313,20 +254,6 @@ public class POIXMLDocumentPart {
             }
         }
         return null;
-    }
-
-    /**
-     * Add a new child POIXMLDocumentPart
-     *
-     * @param id the id of an existing child to replace
-     * @param part the child to add
-     * 
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public final void addRelation(String id, POIXMLDocumentPart part) {
-        PackageRelationship pr = part.getPackagePart().getRelationship(id);
-        addRelation(pr, part);
     }
 
     /**

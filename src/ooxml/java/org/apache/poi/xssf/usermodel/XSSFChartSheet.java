@@ -29,7 +29,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
@@ -56,14 +55,6 @@ public class XSSFChartSheet extends XSSFSheet  {
      */
     protected XSSFChartSheet(PackagePart part) {
         super(part);
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    protected XSSFChartSheet(PackagePart part, PackageRelationship rel) {
-        this(part);
     }
     
     protected void read(InputStream is) throws IOException {

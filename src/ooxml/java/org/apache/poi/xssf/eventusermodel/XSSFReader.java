@@ -47,7 +47,6 @@ import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
 /**
@@ -94,7 +93,7 @@ public class XSSFReader {
      */
     public SharedStringsTable getSharedStringsTable() throws IOException, InvalidFormatException {
         ArrayList<PackagePart> parts = pkg.getPartsByContentType( XSSFRelation.SHARED_STRINGS.getContentType());
-        return parts.size() == 0 ? null : new SharedStringsTable(parts.get(0), null);
+        return parts.size() == 0 ? null : new SharedStringsTable(parts.get(0));
     }
 
     /**
@@ -106,10 +105,10 @@ public class XSSFReader {
         if(parts.size() == 0) return null;
         
         // Create the Styles Table, and associate the Themes if present
-        StylesTable styles = new StylesTable(parts.get(0), null);
+        StylesTable styles = new StylesTable(parts.get(0));
         parts = pkg.getPartsByContentType( XSSFRelation.THEME.getContentType());
         if(parts.size() != 0) {
-           styles.setTheme(new ThemesTable(parts.get(0), null));
+           styles.setTheme(new ThemesTable(parts.get(0)));
         }
         return styles;
     }
@@ -295,7 +294,7 @@ public class XSSFReader {
                  PackageRelationship comments = commentsList.getRelationship(0);
                  PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
                  PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
-                 return new CommentsTable(commentsPart, comments);
+                 return new CommentsTable(commentsPart);
               }
            } catch (InvalidFormatException e) {
               return null;
@@ -319,7 +318,7 @@ public class XSSFReader {
                   PackageRelationship drawings = drawingsList.getRelationship(i);
                   PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
                   PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
-                  XSSFDrawing drawing = new XSSFDrawing(drawingsPart, drawings);
+                  XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
                   for (XSSFShape shape : drawing.getShapes()){
                       shapes.add(shape);
                   }

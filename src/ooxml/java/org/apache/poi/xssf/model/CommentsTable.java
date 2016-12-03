@@ -28,7 +28,6 @@ import java.util.TreeMap;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -66,14 +65,6 @@ public class CommentsTable extends POIXMLDocumentPart {
     public CommentsTable(PackagePart part) throws IOException {
         super(part);
         readFrom(part.getInputStream());
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public CommentsTable(PackagePart part, PackageRelationship rel) throws IOException {
-        this(part);
     }
     
     public void readFrom(InputStream is) throws IOException {

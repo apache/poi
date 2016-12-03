@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -52,14 +51,6 @@ public class XWPFHeader extends XWPFHeaderFooter {
      */
     public XWPFHeader(POIXMLDocumentPart parent, PackagePart part) throws IOException {
         super(parent, part);
-    }
-    
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XWPFHeader(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
-        this(parent, part);
     }
 
     public XWPFHeader(XWPFDocument doc, CTHdrFtr hdrFtr) {

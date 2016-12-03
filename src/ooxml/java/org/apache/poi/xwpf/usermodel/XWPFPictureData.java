@@ -26,7 +26,6 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.IOUtils;
 
 /**
@@ -77,14 +76,6 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      */
     public XWPFPictureData(PackagePart part) {
         super(part);
-    }
-
-    /**
-     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
-     */
-    @Deprecated
-    public XWPFPictureData(PackagePart part, PackageRelationship rel) {
-        this(part);
     }
     
     @Override
