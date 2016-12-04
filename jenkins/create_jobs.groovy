@@ -18,7 +18,7 @@ def poijobs = [
     [ name: 'POI-DSL-OpenJDK', jdks: ["OpenJDK"], trigger: 'H */12 * * *'
     ],
     [ name: 'POI-DSL-1.9', jdks: ['1.9'], trigger: triggerSundays,
-        properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=-addmods', '-Djava9addmodsvalue=java.xml.bind', '-Djava.locale.providers=JRE,CLDR'],
+        properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=--add-modules=java.xml.bind', '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true', '-Djava.locale.providers=JRE,CLDR'],
         email: 'centic@apache.org', skipcigame: true
     ],
     // This config was not enabled in Jenkins ever because we did not find the JDK on any of the slaves, we can check this again later
