@@ -248,6 +248,7 @@ Apache POI - the Java API for Microsoft Documents
                         thresholdLimit('low')
                         defaultEncoding('UTF-8')
                     }
+                    // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
                     archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,build/integration-test-results/**,ooxml-lib/**,build/*/build/libs/*.jar')
                     warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                         resolveRelativePaths()
@@ -258,8 +259,8 @@ Apache POI - the Java API for Microsoft Documents
                         }
                     }
                     jacocoCodeCoverage {
-                        classPattern('build/classes,build/examples-classes,build/excelant-classes,build/ooxml-classes,build/scratchpad-classes')
-                        execPattern('build/*.exec')
+                        classPattern('build/classes,build/examples-classes,build/excelant-classes,build/ooxml-classes,build/scratchpad-classes,build/*/build/classes')
+                        execPattern('build/*.exec,build/*/build/jacoco/*.exec')
                         sourcePattern('src/java,src/excelant/java,src/ooxml/java,src/scratchpad/src')
                         exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
                     }
