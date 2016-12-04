@@ -17,29 +17,26 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-/**
- * Tests for org.apache.poi.ddf<br/>
- */
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestEscherBSERecord.class,
+    TestEscherBlipRecord.class,
+    TestEscherBoolProperty.class,
+    TestEscherChildAnchorRecord.class,
+    TestEscherClientAnchorRecord.class,
+    TestEscherClientDataRecord.class,
+    TestEscherContainerRecord.class,
+    TestEscherDgRecord.class,
+    TestEscherDggRecord.class,
+    TestEscherOptRecord.class,
+    TestEscherPropertyFactory.class,
+    TestEscherSpRecord.class,
+    TestEscherSpgrRecord.class,
+    TestEscherSplitMenuColorsRecord.class,
+    TestUnknownEscherRecord.class
+})
 public final class AllPOIDDFTests {
-    public static Test suite() {
-        TestSuite result = new TestSuite("Tests for org.apache.poi.ddf");
-        result.addTestSuite(TestEscherBSERecord.class);
-        result.addTestSuite(TestEscherBlipRecord.class);
-        result.addTestSuite(TestEscherBoolProperty.class);
-        result.addTestSuite(TestEscherChildAnchorRecord.class);
-        result.addTestSuite(TestEscherClientAnchorRecord.class);
-        result.addTestSuite(TestEscherClientDataRecord.class);
-        result.addTestSuite(TestEscherContainerRecord.class);
-        result.addTestSuite(TestEscherDgRecord.class);
-        result.addTestSuite(TestEscherDggRecord.class);
-        result.addTestSuite(TestEscherOptRecord.class);
-        result.addTestSuite(TestEscherPropertyFactory.class);
-        result.addTestSuite(TestEscherSpRecord.class);
-        result.addTestSuite(TestEscherSpgrRecord.class);
-        result.addTestSuite(TestEscherSplitMenuColorsRecord.class);
-        result.addTestSuite(TestUnknownEscherRecord.class);
-        return result;
-    }
 }

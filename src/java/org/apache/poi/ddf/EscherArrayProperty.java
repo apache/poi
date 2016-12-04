@@ -63,59 +63,47 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     }
 
     public int getNumberOfElementsInArray() {
-        return (emptyComplexPart) ? 0 : LittleEndian.getUShort(_complexData, 0);
+        return (emptyComplexPart) ? 0 : LittleEndian.getUShort(getComplexData(), 0);
     }
 
     public void setNumberOfElementsInArray(int numberOfElements) {
-        int expectedArraySize = numberOfElements * getActualSizeOfElements(getSizeOfElements()) + FIXED_SIZE;
-        if (expectedArraySize != _complexData.length) {
-            byte[] newArray = new byte[expectedArraySize];
-            System.arraycopy(_complexData, 0, newArray, 0, _complexData.length);
-            _complexData = newArray;
-        }
-        LittleEndian.putShort(_complexData, 0, (short) numberOfElements);
+        int expectedArraySize = getArraySizeInBytes(numberOfElements, getSizeOfElements());
+        resizeComplexData(expectedArraySize, getComplexData().length);
+        LittleEndian.putShort(getComplexData(), 0, (short)numberOfElements);
     }
 
     public int getNumberOfElementsInMemory() {
-        return (emptyComplexPart) ? 0 : LittleEndian.getUShort(_complexData, 2);
+        return (emptyComplexPart) ? 0 : LittleEndian.getUShort(getComplexData(), 2);
     }
 
     public void setNumberOfElementsInMemory(int numberOfElements) {
-        int expectedArraySize = numberOfElements * getActualSizeOfElements(getSizeOfElements()) + FIXED_SIZE;
-        if (expectedArraySize != _complexData.length) {
-            byte[] newArray = new byte[expectedArraySize];
-            System.arraycopy(_complexData, 0, newArray, 0, expectedArraySize);
-            _complexData = newArray;
-        }
-        LittleEndian.putShort(_complexData, 2, (short) numberOfElements);
+        int expectedArraySize = getArraySizeInBytes(numberOfElements, getSizeOfElements());
+        resizeComplexData(expectedArraySize, expectedArraySize);
+        LittleEndian.putShort(getComplexData(), 2, (short) numberOfElements);
     }
 
     public short getSizeOfElements() {
-        return (emptyComplexPart) ? 0 : LittleEndian.getShort( _complexData, 4 );
+        return (emptyComplexPart) ? 0 : LittleEndian.getShort( getComplexData(), 4 );
     }
 
     public void setSizeOfElements(int sizeOfElements) {
-        LittleEndian.putShort( _complexData, 4, (short) sizeOfElements );
+        LittleEndian.putShort( getComplexData(), 4, (short) sizeOfElements );
 
-        int expectedArraySize = getNumberOfElementsInArray() * getActualSizeOfElements(getSizeOfElements()) + FIXED_SIZE;
-        if (expectedArraySize != _complexData.length) {
-            // Keep just the first 6 bytes.  The rest is no good to us anyway.
-            byte[] newArray = new byte[expectedArraySize];
-            System.arraycopy( _complexData, 0, newArray, 0, 6 );
-            _complexData = newArray;
-        }
+        int expectedArraySize = getArraySizeInBytes(getNumberOfElementsInArray(), sizeOfElements);
+        // Keep just the first 6 bytes.  The rest is no good to us anyway.
+        resizeComplexData(expectedArraySize, 6);
     }
 
     public byte[] getElement(int index) {
         int actualSize = getActualSizeOfElements(getSizeOfElements());
         byte[] result = new byte[actualSize];
-        System.arraycopy(_complexData, FIXED_SIZE + index * actualSize, result, 0, result.length );
+        System.arraycopy(getComplexData(), FIXED_SIZE + index * actualSize, result, 0, result.length );
         return result;
     }
 
     public void setElement(int index, byte[] element) {
         int actualSize = getActualSizeOfElements(getSizeOfElements());
-        System.arraycopy( element, 0, _complexData, FIXED_SIZE + index * actualSize, actualSize);
+        System.arraycopy( element, 0, getComplexData(), FIXED_SIZE + index * actualSize, actualSize);
     }
 
     @Override
@@ -152,7 +140,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     /**
      * We have this method because the way in which arrays in escher works
-     * is screwed for seemly arbitary reasons.  While most properties are
+     * is screwed for seemly arbitrary reasons.  While most properties are
      * fairly consistent and have a predictable array size, escher arrays
      * have special cases.
      *
@@ -162,21 +150,25 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
      */
     public int setArrayData(byte[] data, int offset) {
         if (emptyComplexPart){
-            _complexData = new byte[0];
-        } else {
-            short numElements = LittleEndian.getShort(data, offset);
-            // LittleEndian.getShort(data, offset + 2); // numReserved
-            short sizeOfElements = LittleEndian.getShort(data, offset + 4);
-
-            int arraySize = getActualSizeOfElements(sizeOfElements) * numElements;
-            if (arraySize == _complexData.length) {
-                // The stored data size in the simple block excludes the header size
-                _complexData = new byte[arraySize + 6];
-                sizeIncludesHeaderSize = false;
-            }
-            System.arraycopy(data, offset, _complexData, 0, _complexData.length );
+            resizeComplexData(0, 0);
+            return 0;
         }
-        return _complexData.length;
+        
+        short numElements = LittleEndian.getShort(data, offset);
+        // LittleEndian.getShort(data, offset + 2); // numReserved
+        short sizeOfElements = LittleEndian.getShort(data, offset + 4);
+
+        // TODO: this part is strange - it doesn't make sense to compare
+        // the size of the existing data when setting a new data array ...
+        int arraySize = getArraySizeInBytes(numElements, sizeOfElements);
+        if (arraySize - FIXED_SIZE == getComplexData().length) {
+            // The stored data size in the simple block excludes the header size
+            sizeIncludesHeaderSize = false;
+        }
+        int cpySize = Math.min(arraySize, data.length-offset);
+        resizeComplexData(cpySize, 0);
+        System.arraycopy(data, offset, getComplexData(), 0, cpySize);
+        return cpySize;
     }
 
     /**
@@ -188,7 +180,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     @Override
     public int serializeSimplePart(byte[] data, int pos) {
         LittleEndian.putShort(data, pos, getId());
-        int recordSize = _complexData.length;
+        int recordSize = getComplexData().length;
         if(!sizeIncludesHeaderSize) {
             recordSize -= 6;
         }
@@ -207,10 +199,15 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         return sizeOfElements;
     }
 
+    private static int getArraySizeInBytes(int numberOfElements, int sizeOfElements) {
+        return numberOfElements * getActualSizeOfElements((short)(sizeOfElements & 0xFFFF)) + FIXED_SIZE;
+    }
+    
+    
     @Override
     public Iterator<byte[]> iterator() {
         return new Iterator<byte[]>(){
-            int idx = 0;
+            private int idx = 0;
             @Override
             public boolean hasNext() {
                 return (idx < getNumberOfElementsInArray());

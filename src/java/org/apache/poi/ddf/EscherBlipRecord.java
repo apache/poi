@@ -27,7 +27,7 @@ public class EscherBlipRecord extends EscherRecord {
 
     private static final int   HEADER_SIZE               = 8;
 
-    protected              byte[] field_pictureData;
+    private byte[] field_pictureData;
 
     public EscherBlipRecord() {
     }
@@ -81,10 +81,22 @@ public class EscherBlipRecord extends EscherRecord {
      * @param pictureData the picture data
      */
     public void setPictureData(byte[] pictureData) {
-        if (pictureData == null) {
+        setPictureData(pictureData, 0, (pictureData == null ? 0 : pictureData.length));
+    }
+
+    /**
+     * Sets the picture data bytes
+     *
+     * @param pictureData the picture data
+     * @param offset the offset into the picture data
+     * @param length the amount of bytes to be used
+     */
+    public void setPictureData(byte[] pictureData, int offset, int length) {
+        if (pictureData == null || offset < 0 || length < 0 || pictureData.length < offset+length) {
             throw new IllegalArgumentException("picture data can't be null");
         }
-        field_pictureData = pictureData.clone();
+        field_pictureData = new byte[length];
+        System.arraycopy(pictureData, offset, field_pictureData, 0, length);
     }
 
     @Override

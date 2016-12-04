@@ -27,7 +27,7 @@ import org.apache.poi.util.HexDump;
  */
 public class EscherSimpleProperty extends EscherProperty
 {
-    protected int propertyValue;
+    private int propertyValue;
 
     /**
      * The id is distinct from the actual property number.  The id includes the property number the blip id

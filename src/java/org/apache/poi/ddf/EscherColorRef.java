@@ -24,8 +24,9 @@ import org.apache.poi.util.LittleEndian;
  * An OfficeArtCOLORREF structure entry which also handles color extension opid data
  */
 public class EscherColorRef {
-    int opid = -1;
-    int colorRef = 0;
+    @SuppressWarnings("unused")
+    private int opid = -1;
+    private int colorRef = 0;
 
     public enum SysIndexSource {
         /** Use the fill color of the shape. */
@@ -45,7 +46,7 @@ public class EscherColorRef {
         /** If the shape contains a fill, use the fill color of the shape. Otherwise, use the line color. */
         FILL_OR_LINE_COLOR(0xF7)
         ;
-        int value;
+        private int value;
         SysIndexSource(int value) { this.value = value; }
     }
 
@@ -102,7 +103,7 @@ public class EscherColorRef {
          */
         INVERT_HIGHBIT_AFTER(0x40)
         ;
-        BitField mask;
+        private BitField mask;
         SysIndexProcedure(int mask) {
             this.mask = new BitField(mask);
         }

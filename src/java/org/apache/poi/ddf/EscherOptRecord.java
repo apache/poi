@@ -32,7 +32,7 @@ public class EscherOptRecord extends AbstractEscherOptRecord
     @Override
     public short getInstance()
     {
-        setInstance( (short) properties.size() );
+        setInstance( (short) getEscherProperties().size() );
         return super.getInstance();
     }
 

@@ -76,11 +76,11 @@ public final class EscherPictBlip extends EscherBlipRecord {
         // 0xFE means no compression
         if (field_6_fCompression == 0)
         {
-            field_pictureData = inflatePictureData(raw_pictureData);
+        	super.setPictureData(inflatePictureData(raw_pictureData));
         }
         else
         {
-            field_pictureData = raw_pictureData;
+        	super.setPictureData(raw_pictureData);
         }
 
         return bytesAfterHeader + HEADER_SIZE;
@@ -264,7 +264,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
 
     @Override
     public String toString() {
-        String extraData = HexDump.toHex(field_pictureData, 32);
+        String extraData = HexDump.toHex(getPicturedata(), 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
                 "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
