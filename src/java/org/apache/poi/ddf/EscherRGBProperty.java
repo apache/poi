@@ -36,7 +36,7 @@ public class EscherRGBProperty
      */
     public int getRgbColor()
     {
-        return propertyValue;
+        return getPropertyValue();
     }
 
     /**
@@ -44,7 +44,7 @@ public class EscherRGBProperty
      */
     public byte getRed()
     {
-        return (byte) ( propertyValue & 0xFF );
+        return (byte) ( getRgbColor() & 0xFF );
     }
 
     /**
@@ -52,7 +52,7 @@ public class EscherRGBProperty
      */
     public byte getGreen()
     {
-        return (byte) ( (propertyValue >> 8) & 0xFF );
+        return (byte) ( (getRgbColor() >> 8) & 0xFF );
     }
 
     /**
@@ -60,7 +60,7 @@ public class EscherRGBProperty
      */
     public byte getBlue()
     {
-        return (byte) ( (propertyValue >> 16) & 0xFF );
+        return (byte) ( (getRgbColor() >> 16) & 0xFF );
     }
 
     @Override
@@ -68,7 +68,7 @@ public class EscherRGBProperty
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
                 .append("\" name=\"").append(getName()).append("\" blipId=\"")
-                .append(isBlipId()).append("\" value=\"0x").append(HexDump.toHex(propertyValue)).append("\"/>\n");
+                .append(isBlipId()).append("\" value=\"0x").append(HexDump.toHex(getRgbColor())).append("\"/>\n");
         return builder.toString();
     }
 }

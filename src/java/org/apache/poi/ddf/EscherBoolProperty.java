@@ -49,7 +49,7 @@ public class EscherBoolProperty
      */
     public boolean isTrue()
     {
-        return propertyValue != 0;
+        return getPropertyValue() != 0;
     }
 
     /**
@@ -61,7 +61,7 @@ public class EscherBoolProperty
      */
     public boolean isFalse()
     {
-        return propertyValue == 0;
+        return !isTrue();
     }
 
 //    public String toString()

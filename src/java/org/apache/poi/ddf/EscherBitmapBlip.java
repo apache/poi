@@ -38,8 +38,7 @@ public class EscherBitmapBlip extends EscherBlipRecord {
         System.arraycopy( data, pos, field_1_UID, 0, 16 ); pos += 16;
         field_2_marker = data[pos]; pos++;
 
-        field_pictureData = new byte[bytesAfterHeader - 17];
-        System.arraycopy( data, pos, field_pictureData, 0, field_pictureData.length );
+        setPictureData(data, pos, bytesAfterHeader - 17);
 
         return bytesAfterHeader + HEADER_SIZE;
     }
@@ -55,15 +54,16 @@ public class EscherBitmapBlip extends EscherBlipRecord {
 
         System.arraycopy( field_1_UID, 0, data, pos, 16 );
         data[pos + 16] = field_2_marker;
-        System.arraycopy( field_pictureData, 0, data, pos + 17, field_pictureData.length );
+        byte pd[] = getPicturedata();
+        System.arraycopy( pd, 0, data, pos + 17, pd.length );
 
         listener.afterRecordSerialize(offset + getRecordSize(), getRecordId(), getRecordSize(), this);
-        return HEADER_SIZE + 16 + 1 + field_pictureData.length;
+        return HEADER_SIZE + 16 + 1 + pd.length;
     }
 
     @Override
     public int getRecordSize() {
-        return 8 + 16 + 1 + field_pictureData.length;
+        return 8 + 16 + 1 + getPicturedata().length;
     }
 
     /**
@@ -113,7 +113,7 @@ public class EscherBitmapBlip extends EscherBlipRecord {
     public String toString() {
         String nl = System.getProperty( "line.separator" );
 
-        String extraData = HexDump.dump(this.field_pictureData, 0, 0);
+        String extraData = HexDump.dump(getPicturedata(), 0, 0);
 
         return getClass().getName() + ":" + nl +
             "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
@@ -126,7 +126,7 @@ public class EscherBitmapBlip extends EscherBlipRecord {
 
     @Override
     public String toXml(String tab) {
-        String extraData = HexDump.dump(this.field_pictureData, 0, 0);
+        String extraData = HexDump.dump(getPicturedata(), 0, 0);
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
             .append(tab).append("\t").append("<UID>0x").append(HexDump.toHex(field_1_UID)).append("</UID>\n")

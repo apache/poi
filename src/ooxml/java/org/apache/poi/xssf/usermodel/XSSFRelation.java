@@ -368,7 +368,7 @@ public final class XSSFRelation extends POIXMLRelation {
      */
     public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
         PackageRelationshipCollection prc =
-            corePart.getRelationshipsByType(_relation);
+            corePart.getRelationshipsByType(getRelation());
         Iterator<PackageRelationship> it = prc.iterator();
         if(it.hasNext()) {
             PackageRelationship rel = it.next();
@@ -376,7 +376,7 @@ public final class XSSFRelation extends POIXMLRelation {
             PackagePart part = corePart.getPackage().getPart(relName);
             return part.getInputStream();
         }
-        log.log(POILogger.WARN, "No part " + _defaultName + " found");
+        log.log(POILogger.WARN, "No part " + getDefaultFileName() + " found");
         return null;
     }
 

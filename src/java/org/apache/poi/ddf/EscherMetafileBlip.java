@@ -87,9 +87,9 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         // 0 means DEFLATE compression
         // 0xFE means no compression
         if (field_6_fCompression == 0) {
-            field_pictureData = inflatePictureData(raw_pictureData);
+            super.setPictureData(inflatePictureData(raw_pictureData));
         } else {
-            field_pictureData = raw_pictureData;
+            super.setPictureData(raw_pictureData);
         }
 
         int remaining = bytesAfterHeader - pos + offset + HEADER_SIZE;

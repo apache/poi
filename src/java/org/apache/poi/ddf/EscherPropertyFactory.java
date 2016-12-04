@@ -49,24 +49,28 @@ public final class EscherPropertyFactory {
             // boolean isBlipId = ( propId & (short) 0x4000 ) != 0;
 
             byte propertyType = EscherProperties.getPropertyType(propNumber);
-            if ( propertyType == EscherPropertyMetaData.TYPE_BOOLEAN )
-                results.add( new EscherBoolProperty( propId, propData ) );
-            else if ( propertyType == EscherPropertyMetaData.TYPE_RGB )
-                results.add( new EscherRGBProperty( propId, propData ) );
-            else if ( propertyType == EscherPropertyMetaData.TYPE_SHAPEPATH )
-                results.add( new EscherShapePathProperty( propId, propData ) );
-            else
-            {
-                if ( !isComplex )
-                    results.add( new EscherSimpleProperty( propId, propData ) );
-                else
-                {
-                    if ( propertyType == EscherPropertyMetaData.TYPE_ARRAY)
-                        results.add( new EscherArrayProperty( propId, new byte[propData]) );
-                    else
-                        results.add( new EscherComplexProperty( propId, new byte[propData]) );
-                }
+            EscherProperty ep;
+            switch (propertyType) {
+                case EscherPropertyMetaData.TYPE_BOOLEAN:
+                    ep = new EscherBoolProperty( propId, propData );
+                    break;
+                case EscherPropertyMetaData.TYPE_RGB:
+                    ep = new EscherRGBProperty( propId, propData );
+                    break;
+                case EscherPropertyMetaData.TYPE_SHAPEPATH:
+                    ep = new EscherShapePathProperty( propId, propData );
+                    break;
+                default:
+                    if ( !isComplex ) {
+                        ep = new EscherSimpleProperty( propId, propData );
+                    } else if ( propertyType == EscherPropertyMetaData.TYPE_ARRAY) {
+                        ep = new EscherArrayProperty( propId, new byte[propData]);
+                    } else {
+                        ep = new EscherComplexProperty( propId, new byte[propData]);
+                    }
+                    break;
             }
+            results.add( ep );
             pos += 6;
         }
 
