@@ -13,13 +13,13 @@ H H * * 0
 def poijobs = [
     [ name: 'POI-DSL-1.6', jdks: ['1.6'] 
     ],
-    [ name: 'POI-DSL-1.8', jdks: ['1.8'], trigger: 'H */12 * * *', disabled: true
+    [ name: 'POI-DSL-1.8', jdks: ['1.8'], trigger: 'H */12 * * *'
     ],
-    [ name: 'POI-DSL-OpenJDK', jdks: ["OpenJDK"], trigger: 'H */12 * * *', disabled: true
+    [ name: 'POI-DSL-OpenJDK', jdks: ["OpenJDK"], trigger: 'H */12 * * *'
     ],
     [ name: 'POI-DSL-1.9', jdks: ['1.9'], trigger: triggerSundays,
         properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=-addmods', '-Djava9addmodsvalue=java.xml.bind', '-Djava.locale.providers=JRE,CLDR'],
-        email: 'centic@apache.org', disabled: true, skipcigame: true
+        email: 'centic@apache.org', skipcigame: true
     ],
     // This config was not enabled in Jenkins ever because we did not find the JDK on any of the slaves, we can check this again later
     [ name: 'POI-DSL-IBM-JDK', jdks: ['IBMJDK'], trigger: triggerSundays, noScratchpad: true, disabled: true, skipcigame: true
@@ -27,17 +27,17 @@ def poijobs = [
     [ name: 'POI-DSL-old-Xerces', jdks: ['1.6'], trigger: triggerSundays,
         shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
         // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
-        properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar'], disabled: true
+        properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar']
     ],
-    [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true, disabled: true
+    [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
     ],
-    [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true, disabled: true
+    [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
     ],
     [ name: 'POI-DSL-API-Check', jdks: ['1.7'], trigger: '@daily', apicheck: true
     ],
-    [ name: 'POI-DSL-Gradle', jdks: ['1.7'], trigger: triggerSundays, email: 'centic@apache.org', gradle: true, disabled: true
+    [ name: 'POI-DSL-Gradle', jdks: ['1.7'], trigger: triggerSundays, email: 'centic@apache.org', gradle: true
     ],
-    [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, disabled: true
+    [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
     ],
 ]
 
@@ -129,8 +129,8 @@ Apache POI - the Java API for Microsoft Documents
             def shellcmds = '# show which files are currently modified in the working copy\n' +
                 'svn status\n' +
                 '\n' +
-                'echo $JAVA_HOME\n' +
-                'ls -al $JAVA_HOME\n' +
+                'echo Java-Home: $JAVA_HOME\n' +
+                'ls -al $JAVA_HOME/\n' +
                 '\n' +
                 (poijob.shell ?: '') + '\n' +
                 '# ignore any error message\n' +
