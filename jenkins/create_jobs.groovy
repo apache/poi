@@ -52,8 +52,8 @@ def jdkMapping = [
     '1.7': "JDK 1.7 (latest)",
     '1.8': "JDK 1.8 (latest)",
     '1.9': "JDK 9 b142 (early access build) with project Jigsaw",
-    "OpenJDK": "OpenJDK 6 (on Ubuntu only)",
-    "IBMJDK": "IBM 1.7 64-bit (on Ubuntu only)",
+    "OpenJDK": "OpenJDK 6 (on Ubuntu only) ",
+    "IBMJDK": "IBM 1.8 64-bit (on Ubuntu only)",
 ]
 
 poijobs.each { poijob ->
