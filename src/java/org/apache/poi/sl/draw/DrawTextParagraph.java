@@ -531,11 +531,19 @@ public class DrawTextParagraph implements Drawable {
                     fallbackFont = font;
                 }
             } else {
-                if (fontMap != null && fontMap.containsKey(mappedFont)) {
-                    mappedFont = fontMap.get(mappedFont);
+                if (fontMap != null) {
+                    if (fontMap.containsKey(mappedFont)) {
+                        mappedFont = fontMap.get(mappedFont);
+                    } else if (fontMap.containsKey("*")) {
+                        mappedFont = fontMap.get("*");
+                    }
                 }
-                if (fallbackMap != null && fallbackMap.containsKey(mappedFont)) {
-                    fallbackFont = fallbackMap.get(mappedFont);
+                if (fallbackMap != null) {
+                    if (fallbackMap.containsKey(mappedFont)) {
+                        fallbackFont = fallbackMap.get(mappedFont);
+                    } else if (fallbackMap.containsKey("*")) {
+                        fallbackFont = fallbackMap.get("*");
+                    }
                 }
             }
             
