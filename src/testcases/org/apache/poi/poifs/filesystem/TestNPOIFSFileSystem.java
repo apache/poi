@@ -34,6 +34,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
@@ -1482,5 +1483,59 @@ public final class TestNPOIFSFileSystem {
        byte wbDataAct[] = IOUtils.toByteArray(pfs.createDocumentInputStream("Workbook"));
        
        assertThat(wbDataExp, equalTo(wbDataAct));
+   }
+   
+   /**
+    * Ensure that you can recursively delete directories and their
+    *  contents
+    */
+   @Test
+   public void RecursiveDelete() throws Exception {
+       File testFile = POIDataSamples.getSpreadSheetInstance().getFile("SimpleMacro.xls");
+       NPOIFSFileSystem src = new NPOIFSFileSystem(testFile);
+
+       // Starts out with 5 entries:
+       //  _VBA_PROJECT_CUR
+       //  SummaryInformation <(0x05)SummaryInformation>
+       //  DocumentSummaryInformation <(0x05)DocumentSummaryInformation>
+       //  Workbook
+       //  CompObj <(0x01)CompObj>
+       assertEquals(5, _countChildren(src._get_property_table().getRoot()));
+       assertEquals(5, src.getRoot().getEntryCount());
+       
+       // Grab the VBA project root
+       DirectoryEntry vbaProj = (DirectoryEntry)src.getRoot().getEntry("_VBA_PROJECT_CUR");
+       assertEquals(3, vbaProj.getEntryCount());
+       // Can't delete yet, has stuff
+       assertEquals(false, vbaProj.delete());
+       // Recursively delete
+       _recursiveDeletee(vbaProj);
+       
+       // Entries gone
+       assertEquals(4, _countChildren(src._get_property_table().getRoot()));
+       assertEquals(4, src.getRoot().getEntryCount());
+       
+       // Done
+       src.close();
+   }
+   private void _recursiveDeletee(Entry entry) throws IOException {
+       if (entry.isDocumentEntry()) {
+           assertEquals(true, entry.delete());
+           return;
+       }
+       
+       DirectoryEntry dir = (DirectoryEntry)entry;
+       String[] names = dir.getEntryNames().toArray(new String[dir.getEntryCount()]);
+       for (String name : names) {
+           Entry ce = dir.getEntry(name);
+           _recursiveDeletee(ce);
+       }
+       assertEquals(true, dir.delete());
+   }
+   @SuppressWarnings("unused")
+   private int _countChildren(DirectoryProperty p) {
+       int count = 0;
+       for (Property cp : p) { count++; }
+       return count;
    }
 }
