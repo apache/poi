@@ -213,6 +213,8 @@ Apache POI - the Java API for Microsoft Documents
                     shell(shellcmds)
                     // For Jobs that should still have the default set of publishers we can configure different steps here
                     if(poijob.gradle) {
+                        // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
+                        shell("touch --no-create build/*/build/test-results/test/TEST-*.xml")
                         gradle {
                             tasks('check')
                             useWrapper(false)
