@@ -17,7 +17,9 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-OpenJDK', jdks: ["OpenJDK"], trigger: 'H */12 * * *',
         // H16 does not have OpenJDK 6 installed
-        slaveAdd: '&&!H16'
+        slaveAdd: '&&!H16&&!ubuntu-eu2',
+        // the JDK is missing on some slaves so builds are unstable
+        skipcigame: true
     ],
     [ name: 'POI-DSL-1.9', jdks: ['1.9'], trigger: triggerSundays,
         properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=--add-modules=java.xml.bind', '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true', '-Djava.locale.providers=JRE,CLDR'],
@@ -54,7 +56,7 @@ def jdkMapping = [
     '1.7': "JDK 1.7 (latest)",
     '1.8': "JDK 1.8 (latest)",
     '1.9': "JDK 9 b142 (early access build) with project Jigsaw",
-    "OpenJDK": "OpenJDK 6 (on Ubuntu only) ",
+    "OpenJDK": "OpenJDK 6 (on Ubuntu only)",
     "IBMJDK": "IBM 1.8 64-bit (on Ubuntu only)",
 ]
 
