@@ -31,10 +31,8 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Storage for embedded OLE objects.
- *
- * @author Daniel Noll
  */
-public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, PersistRecord {
+public class ExOleObjStg extends PositionDependentRecordAtom implements PersistRecord {
 
     private int _persistId; // Found from PersistPtrHolder
 
@@ -47,7 +45,7 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
      * Record data.
      */
     private byte[] _data;
-
+    
     /**
      * Constructs a new empty storage container.
      */
@@ -177,20 +175,6 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
      */
     public void setPersistId(int id) {
         _persistId = id;
-    }
-
-    /** Our location on the disk, as of the last write out */
-    protected int myLastOnDiskOffset;
-
-    /** Fetch our location on the disk, as of the last write out */
-    public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
-
-    /**
-     * Update the Record's idea of where on disk it lives, after a write out.
-     * Use with care...
-     */
-    public void setLastOnDiskOffset(int offset) {
-        myLastOnDiskOffset = offset;
     }
 
     @Override

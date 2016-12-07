@@ -288,9 +288,9 @@ public class CopyCompare
      * MutablePropertySet#MutablePropertySet(PropertySet)} constructor.</p>
      */
     static class CopyFile implements POIFSReaderListener {
-        String dstName;
-        OutputStream out;
-        POIFSFileSystem poiFs;
+        private String dstName;
+        private OutputStream out;
+        private POIFSFileSystem poiFs;
 
 
         /**

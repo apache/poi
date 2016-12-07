@@ -80,11 +80,11 @@ public final class PPFont {
     public final static byte FF_DECORATIVE  = 80;
 
 
-    protected int charset;
-    protected int type;
-    protected int flags;
-    protected int pitch;
-    protected String name;
+    private int charset;
+    private int type;
+    private int flags;
+    private int pitch;
+    private String name;
 
     /**
      * Creates a new instance of PPFont

@@ -62,7 +62,7 @@ public class VariantSupport extends Variant {
      * Keeps a list of the variant types an "unsupported" message has already
      * been issued for.
      */
-    protected static List<Long> unsupportedMessage;
+    private static List<Long> unsupportedMessage;
 
     
     /**

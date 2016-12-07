@@ -65,11 +65,11 @@ public final class EMF extends Metafile {
         ImageHeaderEMF nHeader = new ImageHeaderEMF(data, 0);
         
         Header header = new Header();
-        header.wmfsize = data.length;
-        header.bounds = nHeader.getBounds();
+        header.setWmfSize(data.length);
+        header.setBounds(nHeader.getBounds());
         Dimension nDim = nHeader.getSize();
-        header.size = new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight()));
-        header.zipsize = compressed.length;
+        header.setDimension(new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight())));
+        header.setZipSize(compressed.length);
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

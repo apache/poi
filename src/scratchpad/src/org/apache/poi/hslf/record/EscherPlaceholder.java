@@ -26,13 +26,13 @@ import org.apache.poi.util.*;
  * the slide layout as specified in the SlideAtom record.
  */
 public class EscherPlaceholder extends EscherRecord {
-    public static final short RECORD_ID = (short)RecordTypes.OEPlaceholderAtom.typeID;
+    public static final short RECORD_ID = RecordTypes.OEPlaceholderAtom.typeID;
     public static final String RECORD_DESCRIPTION = "msofbtClientTextboxPlaceholder";
 
-    int position = -1;
-    byte placementId = 0;
-    byte size = 0;
-    short unused = 0;
+    private int position = -1;
+    private byte placementId = 0;
+    private byte size = 0;
+    private short unused = 0;
     
     public EscherPlaceholder() {}
     

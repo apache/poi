@@ -31,10 +31,10 @@ import java.util.Locale;
  *  TextProps is stored in the different record classes 
  */
 public class TextProp implements Cloneable {
-	protected int sizeOfDataBlock; // Number of bytes the data part uses
-	protected String propName;
-	protected int dataValue;
-	protected int maskInHeader;
+	private int sizeOfDataBlock; // Number of bytes the data part uses
+	private String propName;
+	private int dataValue;
+	private int maskInHeader;
 
 	/** 
 	 * Generate the definition of a given type of text property.
