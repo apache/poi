@@ -22,14 +22,12 @@ import java.util.Map;
  * A special (and dangerous) kind of Record Atom that cares about where
  *  it lives on the disk, or who has other Atoms that care about where
  *  this is on the disk.
- *
- * @author Nick Burch
  */
 
 public abstract class PositionDependentRecordAtom extends RecordAtom implements PositionDependentRecord
 {
 	/** Our location on the disk, as of the last write out */
-	protected int myLastOnDiskOffset;
+	private int myLastOnDiskOffset;
 
 	/** Fetch our location on the disk, as of the last write out */
 	public int getLastOnDiskOffset() { return myLastOnDiskOffset; }

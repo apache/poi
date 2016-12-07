@@ -65,7 +65,7 @@ public class Property {
     private long type;
 
     /** The property's value. */
-    protected Object value;
+    private Object value;
 
 
     /**

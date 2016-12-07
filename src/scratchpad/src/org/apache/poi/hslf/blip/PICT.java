@@ -94,12 +94,13 @@ public final class PICT extends Metafile {
         ImageHeaderPICT nHeader = new ImageHeaderPICT(data, nOffset);
         
         Header header = new Header();
-        header.wmfsize = data.length - nOffset;
-        byte[] compressed = compress(data, nOffset, header.wmfsize);
-        header.zipsize = compressed.length;
-        header.bounds = nHeader.getBounds();
+        int wmfSize = data.length - nOffset;
+        header.setWmfSize(wmfSize);
+        byte[] compressed = compress(data, nOffset, wmfSize);
+        header.setZipSize(compressed.length);
+        header.setBounds(nHeader.getBounds());
         Dimension nDim = nHeader.getSize();
-        header.size = new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight()));
+        header.setDimension(new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight())));
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

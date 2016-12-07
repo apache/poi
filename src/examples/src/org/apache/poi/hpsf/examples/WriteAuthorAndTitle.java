@@ -131,9 +131,9 @@ public class WriteAuthorAndTitle
      */
     static class ModifySICopyTheRest implements POIFSReaderListener
     {
-        String dstName;
-        OutputStream out;
-        POIFSFileSystem poiFs;
+        private String dstName;
+        private OutputStream out;
+        private POIFSFileSystem poiFs;
 
 
         /**

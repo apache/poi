@@ -38,11 +38,9 @@ import org.apache.poi.util.POILogger;
 
 /**
  * A shape representing embedded OLE obejct.
- *
- * @author Yegor Kozlov
  */
 public final class OLEShape extends HSLFPictureShape {
-    protected ExEmbed _exEmbed;
+    private ExEmbed _exEmbed;
 
     /**
      * Create a new <code>OLEShape</code>

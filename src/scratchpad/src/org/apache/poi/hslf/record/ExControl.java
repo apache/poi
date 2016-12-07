@@ -50,9 +50,7 @@ public final class ExControl extends ExEmbed {
      * Create a new ExEmbed, with blank fields
      */
     public ExControl() {
-        super();
-
-        _children[0] = embedAtom = new ExControlAtom();
+        super(new ExControlAtom());
     }
 
     /**

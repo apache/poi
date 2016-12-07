@@ -25,8 +25,6 @@ import org.apache.poi.util.POILogger;
 
 /**
  * This data represents an embedded object in the document.
- *
- * @author Daniel Noll
  */
 public class ExEmbed extends RecordContainer {
 
@@ -36,7 +34,7 @@ public class ExEmbed extends RecordContainer {
     private byte[] _header;
 
     // Links to our more interesting children
-    protected RecordAtom embedAtom;
+    private RecordAtom embedAtom;
     private ExOleObjAtom oleObjAtom;
     private CString menuName;
     private CString progId;
@@ -59,6 +57,18 @@ public class ExEmbed extends RecordContainer {
         findInterestingChildren();
     }
 
+    /**
+     * Constructor for derived classes
+     *
+     * @param embedAtom the new embedAtom
+     */
+    protected ExEmbed(RecordAtom embedAtom) {
+        this();
+        _children[0] = this.embedAtom = embedAtom;
+    }
+    
+    
+    
     /**
      * Create a new ExEmbed, with blank fields
      */
@@ -182,6 +192,7 @@ public class ExEmbed extends RecordContainer {
     {
         if(clipboardName != null) clipboardName.setText(s);
     }
+    
     /**
      * Returns the type (held as a little endian in bytes 3 and 4)
      * that this class handles.

@@ -40,9 +40,8 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	public boolean[] getSubPropMatches() { return subPropMatches; }
 
 	protected BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String overallName, String... subPropNames) {
-		super(sizeOfDataBlock,maskInHeader,"bitmask");
+		super(sizeOfDataBlock,maskInHeader,overallName);
 		this.subPropNames = subPropNames;
-		this.propName = overallName;
 		subPropMasks = new int[subPropNames.length];
 		subPropMatches = new boolean[subPropNames.length];
 		
@@ -91,7 +90,7 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 */
 	@Override
 	public int getValue() {
-	    return maskValue(dataValue);
+	    return maskValue(super.getValue());
 	}
 
 	private int maskValue(int pVal) {
@@ -111,7 +110,7 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 */
 	@Override
 	public void setValue(int val) { 
-		dataValue = val;
+		super.setValue(val);
 
 		// Figure out the values of the sub properties
 		int i = 0;
@@ -128,8 +127,8 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 */
 	public void setValueWithMask(int val, int writeMask) {
 	    setWriteMask(writeMask);
-	    dataValue = maskValue(val);
-	    if (val != dataValue) {
+	    super.setValue(maskValue(val));
+	    if (val != super.getValue()) {
 	        logger.log(POILogger.WARN, "Style properties of '"+getName()+"' don't match mask - output will be sanitized");
 	        if (logger.check(POILogger.DEBUG)) {
 	            StringBuilder sb = new StringBuilder("The following style attributes of the '"+getName()+"' property will be ignored:\n");
@@ -149,7 +148,7 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 * Fetch the true/false status of the subproperty with the given index
 	 */
 	public boolean getSubValue(int idx) {
-		return subPropMatches[idx] && ((dataValue & subPropMasks[idx]) != 0);
+		return subPropMatches[idx] && ((super.getValue() & subPropMasks[idx]) != 0);
 	}
 
 	/**
@@ -157,11 +156,13 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 */
 	public void setSubValue(boolean value, int idx) {
         subPropMatches[idx] = true;
+        int newVal = super.getValue();
         if (value) {
-            dataValue |= subPropMasks[idx];
+            newVal |= subPropMasks[idx];
         } else {
-            dataValue &= ~subPropMasks[idx];
+            newVal &= ~subPropMasks[idx];
         }
+        super.setValue(newVal);
 	}
 	
 	@Override

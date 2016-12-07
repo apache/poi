@@ -155,7 +155,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      */
     public int getCharactersCovered(){
         int covered = 0;
-        for (TextSpecInfoRun r : getTextSpecInfoRuns()) covered += r.length;
+        for (TextSpecInfoRun r : getTextSpecInfoRuns()) covered += r.getLength();
         return covered;
     }
 

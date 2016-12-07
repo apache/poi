@@ -45,7 +45,7 @@ public final class WMF extends Metafile {
             long len = is.skip(header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
             assert(len == header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
 
-            ImageHeaderWMF aldus = new ImageHeaderWMF(header.bounds);
+            ImageHeaderWMF aldus = new ImageHeaderWMF(header.getBounds());
             aldus.write(out);
 
             InflaterInputStream inflater = new InflaterInputStream( is );
@@ -70,11 +70,11 @@ public final class WMF extends Metafile {
         byte[] compressed = compress(data, pos, data.length-pos);
 
         Header header = new Header();
-        header.wmfsize = data.length - nHeader.getLength();
-        header.bounds = nHeader.getBounds();
+        header.setWmfSize(data.length - nHeader.getLength());
+        header.setBounds(nHeader.getBounds());
         Dimension nDim = nHeader.getSize();
-        header.size = new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight()));
-        header.zipsize = compressed.length;
+        header.setDimension(new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight())));
+        header.setZipSize(compressed.length);
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
