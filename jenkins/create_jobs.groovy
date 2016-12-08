@@ -11,7 +11,10 @@ H H * * 0
 '''
 
 def poijobs = [
-    [ name: 'POI-DSL-1.6', jdks: ['1.6'] 
+    [ name: 'POI-DSL-1.6', jdks: ['1.6'],
+            // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
+            // as part of the Ant build
+            addShell: 'wget -O lib/findbugs-noUpdateChecks-2.0.3.zip http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
     ],
     [ name: 'POI-DSL-1.8', jdks: ['1.8'], trigger: 'H */12 * * *',
         // ubuntu-4 repeatedely failed during Findbugs results collection
@@ -236,6 +239,9 @@ Apache POI - the Java API for Microsoft Documents
                             antInstallation(defaultAnt)
                         }
                     } else {
+                        if(poijob.addShell) {
+                            shell(poijob.addShell)
+                        }
                         ant {
                             targets(['clean', 'jenkins'] + (poijob.properties ?: []))
                             prop('coverage.enabled', true)
