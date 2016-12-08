@@ -13,9 +13,11 @@ H H * * 0
 def poijobs = [
     [ name: 'POI-DSL-1.6', jdks: ['1.6'] 
     ],
-    [ name: 'POI-DSL-1.8', jdks: ['1.8'], trigger: 'H */12 * * *'
+    [ name: 'POI-DSL-1.8', jdks: ['1.8'], trigger: 'H */12 * * *',
+        // ubuntu-4 repeatedely failed during Findbugs results collection
+        slaveAdd: '&&!ubuntu-4'
     ],
-    [ name: 'POI-DSL-OpenJDK', jdks: ["OpenJDK"], trigger: 'H */12 * * *',
+    [ name: 'POI-DSL-OpenJDK', jdks: ['OpenJDK'], trigger: 'H */12 * * *',
         // H16 does not have OpenJDK 6 installed
         slaveAdd: '&&!H16&&!ubuntu-eu2',
         // the JDK is missing on some slaves so builds are unstable
@@ -45,19 +47,20 @@ def poijobs = [
     ],
 ]
 
-def svnBase = "https://svn.apache.org/repos/asf/poi/trunk"
+def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
 def defaultJdks = ['1.6']
 def defaultTrigger = 'H/15 * * * *'
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant (latest)'
+def defaultSlaves = 'ubuntu&&!cloud-slave'
 
 def jdkMapping = [
-    '1.6': "JDK 1.6 (latest)",
-    '1.7': "JDK 1.7 (latest)",
-    '1.8': "JDK 1.8 (latest)",
-    '1.9': "JDK 9 b142 (early access build) with project Jigsaw",
-    "OpenJDK": "OpenJDK 6 (on Ubuntu only)",
-    "IBMJDK": "IBM 1.8 64-bit (on Ubuntu only)",
+    '1.6': 'JDK 1.6 (latest)',
+    '1.7': 'JDK 1.7 (latest)',
+    '1.8': 'JDK 1.8 (latest)',
+    '1.9': 'JDK 9 b142 (early access build) with project Jigsaw',
+    'OpenJDK': 'OpenJDK 6 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
+    'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
 
 poijobs.each { poijob ->
@@ -65,6 +68,7 @@ poijobs.each { poijob ->
     def jdks = poijob.jdks ?: defaultJdks
     def trigger = poijob.trigger ?: defaultTrigger
     def email = poijob.email ?: defaultEmail
+    def slaves = defaultSlaves + (poijob.slaveAdd ?: '')
 
     jdks.each { jdkKey ->
         job(poijob.name) {
@@ -108,7 +112,7 @@ Apache POI - the Java API for Microsoft Documents
                 numToKeep(5)
                 artifactNumToKeep(1)
             }
-            label('ubuntu&&!cloud-slave' + (poijob.slaveAdd ?: ''))
+            label(slaves)
             environmentVariables {
                 env('LANG', 'en_US.UTF-8')
             }
