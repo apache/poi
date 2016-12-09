@@ -37,7 +37,7 @@ public abstract class Bitmap extends HSLFPictureData {
     @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
-        int prefixLen = 16*uidInstanceCount+1;
+        int prefixLen = 16*getUIDInstanceCount()+1;
         byte[] imgdata = new byte[rawdata.length-prefixLen];
         System.arraycopy(rawdata, prefixLen, imgdata, 0, imgdata.length);
         return imgdata;
@@ -45,9 +45,10 @@ public abstract class Bitmap extends HSLFPictureData {
 
     @Override
     public void setData(byte[] data) throws IOException {
+        byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        for (int i=0; i<uidInstanceCount; i++) {
-            byte[] checksum = getChecksum(data);
+        out.write(checksum);
+        if (getUIDInstanceCount() == 2) {
             out.write(checksum);
         }
         out.write(0);

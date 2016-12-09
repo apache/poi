@@ -152,7 +152,7 @@ public abstract class Metafile extends HSLFPictureData {
 
     @Override
     public Dimension getImageDimension() {
-        int prefixLen = 16*uidInstanceCount;
+        int prefixLen = 16*getUIDInstanceCount();
         Header header = new Header();
         header.read(getRawData(), prefixLen);
         return new Dimension(

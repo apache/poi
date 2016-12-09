@@ -65,9 +65,12 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
 
     enum PathInfo {
         lineTo(0),curveTo(1),moveTo(2),close(3),end(4),escape(5),clientEscape(6);
-        int flag;
+        private final int flag;
         PathInfo(int flag) {
             this.flag = flag;
+        }
+        public int getFlag() {
+            return flag;
         }
         static PathInfo valueOf(int flag) {
             for (PathInfo v : values()) {
@@ -104,9 +107,12 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         FILL_COLOR(0X0015),
         LINE_COLOR(0X0016);
 
-        int flag;
+        private final int flag;
         EscapeInfo(int flag) {
             this.flag = flag;
+        }
+        public int getFlag() {
+            return flag;
         }
         static EscapeInfo valueOf(int flag) {
             for (EscapeInfo v : values()) {
@@ -125,9 +131,12 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         CURVES_CLOSED(3),
         COMPLEX(4);
 
-        int flag;
+        private final int flag;
         ShapePath(int flag) {
             this.flag = flag;
+        }
+        public int getFlag() {
+            return flag;
         }
         static ShapePath valueOf(int flag) {
             for (ShapePath v : values()) {
