@@ -30,8 +30,9 @@ def poijobs = [
         properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=--add-modules=java.xml.bind', '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true', '-Djava.locale.providers=JRE,CLDR'],
         email: 'centic@apache.org', skipcigame: true
     ],
-    // This config was not enabled in Jenkins ever because we did not find the JDK on any of the slaves, we can check this again later
-    [ name: 'POI-DSL-IBM-JDK', jdks: ['IBMJDK'], trigger: triggerSundays, noScratchpad: true, disabled: true, skipcigame: true
+    [ name: 'POI-DSL-IBM-JDK', jdks: ['IBMJDK'], trigger: triggerSundays, noScratchpad: true,
+        // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
+        disabled: true, skipcigame: true
     ],
     [ name: 'POI-DSL-old-Xerces', jdks: ['1.6'], trigger: triggerSundays,
         shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
@@ -44,7 +45,9 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-API-Check', jdks: ['1.7'], trigger: '@daily', apicheck: true
     ],
-    [ name: 'POI-DSL-Gradle', jdks: ['1.7'], trigger: triggerSundays, email: 'centic@apache.org', gradle: true
+    [ name: 'POI-DSL-Gradle', jdks: ['1.7'], trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
+        // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
+        addShell: 'touch --no-create build/*/build/test-results/test/TEST-*.xml'
     ],
     [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
     ],
@@ -220,10 +223,11 @@ Apache POI - the Java API for Microsoft Documents
             } else {
                 steps {
                     shell(shellcmds)
+                    if(poijob.addShell) {
+                        shell(poijob.addShell)
+                    }
                     // For Jobs that should still have the default set of publishers we can configure different steps here
                     if(poijob.gradle) {
-                        // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
-                        shell("touch --no-create build/*/build/test-results/test/TEST-*.xml")
                         gradle {
                             tasks('check')
                             useWrapper(false)
@@ -239,9 +243,6 @@ Apache POI - the Java API for Microsoft Documents
                             antInstallation(defaultAnt)
                         }
                     } else {
-                        if(poijob.addShell) {
-                            shell(poijob.addShell)
-                        }
                         ant {
                             targets(['clean', 'jenkins'] + (poijob.properties ?: []))
                             prop('coverage.enabled', true)
