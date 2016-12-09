@@ -74,7 +74,7 @@ public final class EMF extends Metafile {
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(checksum);
-        if (uidInstanceCount == 2) {
+        if (getUIDInstanceCount() == 2) {
             out.write(checksum);
         }
         header.write(out);
@@ -94,7 +94,7 @@ public final class EMF extends Metafile {
      * @return EMF signature ({@code 0x3D40} or {@code 0x3D50})
      */
     public int getSignature(){
-        return (uidInstanceCount == 1 ? 0x3D40 : 0x3D50);
+        return (getUIDInstanceCount() == 1 ? 0x3D40 : 0x3D50);
     }
     
     /**
@@ -103,10 +103,10 @@ public final class EMF extends Metafile {
     public void setSignature(int signature) {
         switch (signature) {
             case 0x3D40:
-                uidInstanceCount = 1;
+                setUIDInstanceCount(1);
                 break;
             case 0x3D50:
-                uidInstanceCount = 2;
+                setUIDInstanceCount(2);
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for EMF");

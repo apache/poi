@@ -43,7 +43,7 @@ public final class PICT extends Metafile {
             byte[] macheader = new byte[512];
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(macheader);
-            int pos = CHECKSUM_SIZE*uidInstanceCount;
+            int pos = CHECKSUM_SIZE*getUIDInstanceCount();
             byte[] pict = read(rawdata, pos);
             out.write(pict);
             return out.toByteArray();
@@ -105,7 +105,7 @@ public final class PICT extends Metafile {
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(checksum);
-        if (uidInstanceCount == 2) {
+        if (getUIDInstanceCount() == 2) {
             out.write(checksum);
         }
         header.write(out);
@@ -125,7 +125,7 @@ public final class PICT extends Metafile {
      * @return PICT signature ({@code 0x5420} or {@code 0x5430})
      */
     public int getSignature(){
-        return (uidInstanceCount == 1 ? 0x5420 : 0x5430);
+        return (getUIDInstanceCount() == 1 ? 0x5420 : 0x5430);
     }
 
     /**
@@ -134,10 +134,10 @@ public final class PICT extends Metafile {
     public void setSignature(int signature) {
         switch (signature) {
             case 0x5420:
-                uidInstanceCount = 1;
+                setUIDInstanceCount(1);
                 break;
             case 0x5430:
-                uidInstanceCount = 2;
+                setUIDInstanceCount(2);
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");

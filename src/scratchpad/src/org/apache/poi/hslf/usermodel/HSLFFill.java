@@ -47,8 +47,7 @@ import org.apache.poi.util.Units;
  * Represents functionality provided by the 'Fill Effects' dialog in PowerPoint.
  */
 public final class HSLFFill {
-    // For logging
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFFill.class);
 
     /**
      *  Fill with a solid color
@@ -107,7 +106,7 @@ public final class HSLFFill {
     /**
      * The shape this background applies to
      */
-    protected HSLFShape shape;
+    private HSLFShape shape;
 
     /**
      * Construct a <code>Fill</code> object for a shape.
@@ -141,7 +140,7 @@ public final class HSLFFill {
                     case FILL_PICTURE:
                         return getTexturePaint();
                     default:
-                        logger.log(POILogger.WARN, "unsuported fill type: " + fillType);
+                        LOG.log(POILogger.WARN, "unsuported fill type: " + fillType);
                         return null;
                 }
             }
@@ -255,7 +254,7 @@ public final class HSLFFill {
     protected EscherBSERecord getEscherBSERecord(int idx){
         HSLFSheet sheet = shape.getSheet();
         if(sheet == null) {
-            logger.log(POILogger.DEBUG, "Fill has not yet been assigned to a sheet");
+            LOG.log(POILogger.DEBUG, "Fill has not yet been assigned to a sheet");
             return null;
         }
         HSLFSlideShow ppt = sheet.getSlideShow();
@@ -263,7 +262,7 @@ public final class HSLFFill {
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
-            logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
+            LOG.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
         List<EscherRecord> lst = bstore.getChildRecords();
@@ -362,7 +361,7 @@ public final class HSLFFill {
         java.util.List<EscherRecord> lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
         if (idx == 0){
-            logger.log(POILogger.WARN, "no reference to picture data found ");
+            LOG.log(POILogger.WARN, "no reference to picture data found ");
         } else {
             EscherBSERecord bse = (EscherBSERecord)lst.get(idx - 1);
             for (HSLFPictureData pd : pict) {

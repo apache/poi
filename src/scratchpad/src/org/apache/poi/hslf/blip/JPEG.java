@@ -47,8 +47,8 @@ public final class JPEG extends Bitmap {
      */
     public int getSignature(){
         return (colorSpace == ColorSpace.rgb)
-            ? (uidInstanceCount == 1 ? 0x46A0 :  0x46B0)
-            : (uidInstanceCount == 1 ? 0x6E20 :  0x6E30);
+            ? (getUIDInstanceCount() == 1 ? 0x46A0 :  0x46B0)
+            : (getUIDInstanceCount() == 1 ? 0x6E20 :  0x6E30);
     }
     
     /**
@@ -57,19 +57,19 @@ public final class JPEG extends Bitmap {
     public void setSignature(int signature) {
         switch (signature) {
             case 0x46A0:
-                uidInstanceCount = 1;
+                setUIDInstanceCount(1);
                 colorSpace = ColorSpace.rgb;
                 break;
             case 0x46B0:
-                uidInstanceCount = 2;
+                setUIDInstanceCount(2);
                 colorSpace = ColorSpace.rgb;
                 break;
             case 0x6E20:
-                uidInstanceCount = 1;
+                setUIDInstanceCount(1);
                 colorSpace = ColorSpace.cymk;
                 break;
             case 0x6E30:
-                uidInstanceCount = 2;
+                setUIDInstanceCount(2);
                 colorSpace = ColorSpace.cymk;
                 break;
             default:

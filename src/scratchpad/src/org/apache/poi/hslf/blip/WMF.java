@@ -41,9 +41,9 @@ public final class WMF extends Metafile {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
-            header.read(rawdata, CHECKSUM_SIZE*uidInstanceCount);
-            long len = is.skip(header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
-            assert(len == header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
+            header.read(rawdata, CHECKSUM_SIZE*getUIDInstanceCount());
+            long len = is.skip(header.getSize() + CHECKSUM_SIZE*getUIDInstanceCount());
+            assert(len == header.getSize() + CHECKSUM_SIZE*getUIDInstanceCount());
 
             ImageHeaderWMF aldus = new ImageHeaderWMF(header.getBounds());
             aldus.write(out);
@@ -78,7 +78,8 @@ public final class WMF extends Metafile {
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        for (int i=0; i<uidInstanceCount; i++) {
+        out.write(checksum);
+        if (getUIDInstanceCount() == 2) {
             out.write(checksum);
         }
         header.write(out);
@@ -96,7 +97,7 @@ public final class WMF extends Metafile {
      * WMF signature is either {@code 0x2160} or {@code 0x2170}
      */
     public int getSignature(){
-        return (uidInstanceCount == 1 ? 0x2160 : 0x2170);
+        return (getUIDInstanceCount() == 1 ? 0x2160 : 0x2170);
     }
 
     /**
@@ -105,10 +106,10 @@ public final class WMF extends Metafile {
     public void setSignature(int signature) {
         switch (signature) {
             case 0x2160:
-                uidInstanceCount = 1;
+                setUIDInstanceCount(1);
                 break;
             case 0x2170:
-                uidInstanceCount = 2;
+                setUIDInstanceCount(2);
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for WMF");

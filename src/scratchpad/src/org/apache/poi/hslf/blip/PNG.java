@@ -50,7 +50,7 @@ public final class PNG extends Bitmap {
      * @return PNG signature ({@code 0x6E00} or {@code 0x6E10})
      */
     public int getSignature(){
-        return (uidInstanceCount == 1 ? 0x6E00 : 0x6E10);
+        return (getUIDInstanceCount() == 1 ? 0x6E00 : 0x6E10);
     }
     
     /**
@@ -59,10 +59,10 @@ public final class PNG extends Bitmap {
     public void setSignature(int signature) {
         switch (signature) {
             case 0x6E00:
-                uidInstanceCount = 1;
+                setUIDInstanceCount(1);
                 break;
             case 0x6E10:
-                uidInstanceCount = 2;
+                setUIDInstanceCount(2);
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PNG");

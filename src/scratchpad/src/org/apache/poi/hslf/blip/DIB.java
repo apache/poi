@@ -41,7 +41,7 @@ public final class DIB extends Bitmap {
      * @return DIB signature ({@code 0x7A80} or {@code 0x7A90})
      */
     public int getSignature(){
-        return (uidInstanceCount == 1 ? 0x7A80 : 0x7A90);
+        return (getUIDInstanceCount() == 1 ? 0x7A80 : 0x7A90);
     }
 
     /**
@@ -50,10 +50,10 @@ public final class DIB extends Bitmap {
     public void setSignature(int signature) {
         switch (signature) {
             case 0x7A80:
-                uidInstanceCount = 1;
+                setUIDInstanceCount(1);
                 break;
             case 0x7A90:
-                uidInstanceCount = 2;
+                setUIDInstanceCount(2);
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for DIB");
