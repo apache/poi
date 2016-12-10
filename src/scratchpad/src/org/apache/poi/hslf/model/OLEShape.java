@@ -33,6 +33,7 @@ import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 
@@ -40,6 +41,8 @@ import org.apache.poi.util.POILogger;
  * A shape representing embedded OLE obejct.
  */
 public final class OLEShape extends HSLFPictureShape {
+    private static final POILogger LOG = POILogFactory.getLogger(OLEShape.class);
+
     private ExEmbed _exEmbed;
 
     /**
@@ -133,7 +136,7 @@ public final class OLEShape extends HSLFPictureShape {
             }
         }
         if (data==null) {
-            logger.log(POILogger.WARN, "OLE data not found");
+            LOG.log(POILogger.WARN, "OLE data not found");
         }
 
         return data;
@@ -160,7 +163,7 @@ public final class OLEShape extends HSLFPictureShape {
 
             ExObjList lst = ppt.getDocumentRecord().getExObjList(false);
             if(lst == null){
-                logger.log(POILogger.WARN, "ExObjList not found");
+                LOG.log(POILogger.WARN, "ExObjList not found");
                 return null;
             }
 

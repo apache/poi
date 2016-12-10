@@ -45,11 +45,12 @@ public final class HSLFPlaceholder extends HSLFTextBox {
      *
      * @return the created <code>EscherContainerRecord</code> which holds shape data
      */
+    @Override
     protected EscherContainerRecord createSpContainer(boolean isChild){
-        _escherContainer = super.createSpContainer(isChild);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
         
         setPlaceholder(Placeholder.BODY);
 
-        return _escherContainer;
+        return ecr;
     }
 }

@@ -52,7 +52,7 @@ implements ConnectorShape<HSLFShape,HSLFTextParagraph> {
      */
     public HSLFConnectorShape(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
+        createSpContainer(parent instanceof HSLFGroupShape);
     }
 
     /**

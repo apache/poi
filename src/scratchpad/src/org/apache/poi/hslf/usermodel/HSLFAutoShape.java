@@ -39,7 +39,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
     public HSLFAutoShape(ShapeType type, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(type, parent instanceof HSLFGroupShape);
+        createSpContainer(type, parent instanceof HSLFGroupShape);
     }
 
     public HSLFAutoShape(ShapeType type){
@@ -47,7 +47,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     }
 
     protected EscherContainerRecord createSpContainer(ShapeType shapeType, boolean isChild){
-        _escherContainer = super.createSpContainer(isChild);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
 
         setShapeType(shapeType);
 
@@ -61,9 +61,10 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
         setEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80008);
         setEscherProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
 
-        return _escherContainer;
+        return ecr;
     }
 
+    @Override
     protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
         setVerticalAlignment(VerticalAlignment.MIDDLE);
         setHorizontalCentered(true);

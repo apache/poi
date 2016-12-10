@@ -38,6 +38,7 @@ import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
@@ -50,6 +51,7 @@ import org.apache.poi.util.Units;
  * </p>
  */
 public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformShape<HSLFShape,HSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFFreeformShape.class);
 
     public static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
     public static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
@@ -167,7 +169,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
      */
     public HSLFFreeformShape(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super((EscherContainerRecord)null, parent);
-        _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
+        createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
 
     /**
@@ -212,7 +214,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                     break;
                 case PathIterator.SEG_QUADTO:
                     //TODO: figure out how to convert SEG_QUADTO into SEG_CUBICTO
-                    logger.log(POILogger.WARN, "SEG_QUADTO is not supported");
+                    LOG.log(POILogger.WARN, "SEG_QUADTO is not supported");
                     break;
                 case PathIterator.SEG_CLOSE:
                     pntInfo.add(pntInfo.get(0));
@@ -224,7 +226,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                     numPoints++;
                     break;
                 default:
-                    logger.log(POILogger.WARN, "Ignoring invalid segment type "+type);
+                    LOG.log(POILogger.WARN, "Ignoring invalid segment type "+type);
                     break;
             }
 
@@ -281,11 +283,11 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
 
         //sanity check
         if(verticesProp == null) {
-            logger.log(POILogger.WARN, "Freeform is missing GEOMETRY__VERTICES ");
+            LOG.log(POILogger.WARN, "Freeform is missing GEOMETRY__VERTICES ");
             return path;
         }
         if(segmentsProp == null) {
-            logger.log(POILogger.WARN, "Freeform is missing GEOMETRY__SEGMENTINFO ");
+            LOG.log(POILogger.WARN, "Freeform is missing GEOMETRY__SEGMENTINFO ");
             return path;
         }
 
@@ -358,7 +360,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         int masterCnt = (xyMaster == null) ? 0 : xyMaster.length;
         int pointCnt = (xyPoints == null) ? 0 : xyPoints.length;
         if ((masterCnt != 4 && masterCnt != 8) || pointCnt != 2) {
-            logger.log(POILogger.WARN, "Invalid number of master bytes for a single point - ignore point");
+            LOG.log(POILogger.WARN, "Invalid number of master bytes for a single point - ignore point");
             return;
         }
         

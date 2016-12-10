@@ -33,6 +33,7 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
@@ -43,13 +44,15 @@ import org.apache.poi.util.Units;
  */
 public class HSLFGroupShape extends HSLFShape
 implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFGroupShape.class);
+
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
       *
       */
     public HSLFGroupShape(){
         this(null, null);
-        _escherContainer = createSpContainer(false);
+        createSpContainer(false);
     }
 
     /**
@@ -59,7 +62,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
       */
     public HSLFGroupShape(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         this(null, parent);
-        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
+        createSpContainer(parent instanceof HSLFGroupShape);
     }
 
     /**
@@ -133,10 +136,10 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     /**
      * Create a new ShapeGroup and create an instance of <code>EscherSpgrContainer</code> which represents a group of shapes
      */
+    @Override
     protected EscherContainerRecord createSpContainer(boolean isChild) {
-        EscherContainerRecord spgr = new EscherContainerRecord();
-        spgr.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
-        spgr.setOptions((short)15);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
+        ecr.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
 
         //The group itself is a shape, and always appears as the first EscherSpContainer in the group container.
         EscherContainerRecord spcont = new EscherContainerRecord();
@@ -156,8 +159,8 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         EscherClientAnchorRecord anchor = new EscherClientAnchorRecord();
         spcont.addChildRecord(anchor);
 
-        spgr.addChildRecord(spcont);
-        return spgr;
+        ecr.addChildRecord(spcont);
+        return ecr;
     }
 
     /**
@@ -165,8 +168,9 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
      *
      * @param shape - the Shape to add
      */
+    @Override
     public void addShape(HSLFShape shape){
-        _escherContainer.addChildRecord(shape.getSpContainer());
+        getSpContainer().addChildRecord(shape.getSpContainer());
 
         HSLFSheet sheet = getSheet();
         shape.setSheet(sheet);
@@ -200,11 +204,12 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return the anchor of this shape group
      */
+    @Override
     public Rectangle2D getAnchor(){
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         int x1,y1,x2,y2;
         if(clientAnchor == null){
-            logger.log(POILogger.INFO, "EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
+            LOG.log(POILogger.INFO, "EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
             EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
             x1 = rec.getDx1();
             y1 = rec.getDy1();
@@ -232,6 +237,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return type of the shape.
      */
+    @Override
     public ShapeType getShapeType(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int nativeId = spRecord.getOptions() >> 4;
@@ -249,14 +255,16 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public <T extends EscherRecord> T getEscherChild(int recordId){
-        EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
+        EscherContainerRecord groupInfoContainer = (EscherContainerRecord)getSpContainer().getChild(0);
         return groupInfoContainer.getChildById((short)recordId);
     }
 
+    @Override
     public Iterator<HSLFShape> iterator() {
         return getShapes().iterator();
     }
 
+    @Override
     public boolean removeShape(HSLFShape shape) {
         // TODO: implement!
         throw new UnsupportedOperationException();
@@ -266,7 +274,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     public List<HSLFShape> getShapes() {
         // Out escher container record should contain several
         //  SpContainers, the first of which is the group shape itself
-        Iterator<EscherRecord> iter = _escherContainer.getChildIterator();
+        Iterator<EscherRecord> iter = getSpContainer().getChildIterator();
 
         // Don't include the first SpContainer, it is always NotPrimitive
         if (iter.hasNext()) {
@@ -284,7 +292,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             } else {
                 // Should we do anything special with these non
                 //  Container records?
-                logger.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
+                LOG.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
             }
         }
 

@@ -147,6 +147,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         return cells.length;
     }
 
+    @Override
     protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
@@ -335,6 +336,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
      *
      * @param sheet owner of this shape
      */
+    @Override
     public void setSheet(HSLFSheet sheet){
         super.setSheet(sheet);
         if (cells == null) {

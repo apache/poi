@@ -46,6 +46,7 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
@@ -54,6 +55,7 @@ import org.apache.poi.util.Units;
  */
 public abstract class HSLFTextShape extends HSLFSimpleShape
 implements TextShape<HSLFShape,HSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFTextShape.class);
 
     /**
      * How to anchor the text
@@ -161,7 +163,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      */
     public HSLFTextShape(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
+        createSpContainer(parent instanceof HSLFGroupShape);
     }
 
     /**
@@ -189,6 +191,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      *
      * @param sh the sheet we are adding to
      */
+    @Override
     protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
@@ -196,7 +199,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
         EscherTextboxWrapper thisTxtbox = getEscherTextboxWrapper();
         if(thisTxtbox != null){
-            _escherContainer.addChildRecord(thisTxtbox.getEscherRecord());
+            getSpContainer().addChildRecord(thisTxtbox.getEscherRecord());
 
             PPDrawing ppdrawing = sh.getPPDrawing();
             ppdrawing.addTextboxWrapper(thisTxtbox);
@@ -253,7 +256,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     public Rectangle2D resizeToFitText(){
         Rectangle2D anchor = getAnchor();
         if(anchor.getWidth() == 0.) {
-            logger.log(POILogger.WARN, "Width of shape wasn't set. Defaulting to 200px");
+            LOG.log(POILogger.WARN, "Width of shape wasn't set. Defaulting to 200px");
             anchor.setRect(anchor.getX(), anchor.getY(), 200., anchor.getHeight());
             setAnchor(anchor);
         }
@@ -573,7 +576,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             }
 
             if (_paragraphs.isEmpty()) {
-                logger.log(POILogger.WARN, "TextRecord didn't contained any text lines");
+                LOG.log(POILogger.WARN, "TextRecord didn't contained any text lines");
             }
         }
 
@@ -584,8 +587,9 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         return _paragraphs;
     }
 
+    @Override
     public void setSheet(HSLFSheet sheet) {
-        _sheet = sheet;
+        super.setSheet(sheet);
 
         // Initialize _txtrun object.
         // (We can't do it in the constructor because the sheet

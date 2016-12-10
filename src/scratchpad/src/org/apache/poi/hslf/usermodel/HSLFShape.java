@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherColorRef.SysIndexProcedure;
 import org.apache.poi.ddf.EscherColorRef.SysIndexSource;
@@ -65,31 +66,29 @@ import org.apache.poi.util.Units;
  * <p>
  */
 public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
-
-    // For logging
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFShape.class);
 
     /**
      * Either EscherSpContainer or EscheSpgrContainer record
      * which holds information about this shape.
      */
-    protected EscherContainerRecord _escherContainer;
+    private EscherContainerRecord _escherContainer;
 
     /**
      * Parent of this shape.
      * <code>null</code> for the topmost shapes.
      */
-    protected ShapeContainer<HSLFShape,HSLFTextParagraph> _parent;
+    private ShapeContainer<HSLFShape,HSLFTextParagraph> _parent;
 
     /**
      * The <code>Sheet</code> this shape belongs to
      */
-    protected HSLFSheet _sheet;
+    private HSLFSheet _sheet;
 
     /**
      * Fill
      */
-    protected HSLFFill _fill;
+    private HSLFFill _fill;
     
     /**
      * Create a Shape object. This constructor is used when an existing Shape is read from from a PowerPoint document.
@@ -103,13 +102,20 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      }
 
     /**
-     * Creates the lowerlevel escher records for this shape.
+     * Create and assign the lower level escher record to this shape
      */
-    protected abstract EscherContainerRecord createSpContainer(boolean isChild);
+    protected EscherContainerRecord createSpContainer(boolean isChild) {
+        if (_escherContainer == null) {
+            _escherContainer = new EscherContainerRecord();
+            _escherContainer.setOptions((short)15);
+        }
+        return _escherContainer;
+    }
 
     /**
      *  @return the parent of this shape
      */
+    @Override
     public ShapeContainer<HSLFShape,HSLFTextParagraph> getParent(){
         return _parent;
     }
@@ -138,6 +144,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      *
      * @return the anchor of this shape
      */
+    @Override
     public Rectangle2D getAnchor() {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
@@ -151,7 +158,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
             y2 = childRec.getDy2();
         } else {
             if (useChildRec) {
-                logger.log(POILogger.WARN, "EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
+                LOG.log(POILogger.WARN, "EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
             }
             EscherClientAnchorRecord clientRec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
             x1 = clientRec.getCol1();
@@ -329,6 +336,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     /**
      *  @return the <code>SlideShow</code> this shape belongs to
      */
+    @Override
     public HSLFSheet getSheet(){
         return _sheet;
     }
@@ -639,11 +647,11 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @return the client record or null if it was missing and create wasn't activated
      */
     protected HSLFEscherClientDataRecord getClientData(boolean create) {
-        HSLFEscherClientDataRecord clientData = getEscherChild(HSLFEscherClientDataRecord.RECORD_ID);
+        HSLFEscherClientDataRecord clientData = getEscherChild(EscherClientDataRecord.RECORD_ID);
         if (clientData == null && create) {
             clientData = new HSLFEscherClientDataRecord();
             clientData.setOptions((short)15);
-            clientData.setRecordId(HSLFEscherClientDataRecord.RECORD_ID);
+            clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
             getSpContainer().addChildBefore(clientData, EscherTextboxRecord.RECORD_ID);
         }
         return clientData;

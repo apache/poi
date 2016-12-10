@@ -51,7 +51,7 @@ public final class Polygon extends HSLFAutoShape {
      */
     public Polygon(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super((EscherContainerRecord)null, parent);
-        _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
+        createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
 
     /**

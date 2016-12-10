@@ -86,8 +86,9 @@ public final class MovieShape extends HSLFPictureShape {
      *
      * @return the created <code>EscherContainerRecord</code> which holds shape data
      */
+    @Override
     protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {
-        _escherContainer = super.createSpContainer(idx, isChild);
+        EscherContainerRecord ecr = super.createSpContainer(idx, isChild);
 
         setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x1000100);
         setEscherProperty(EscherProperties.FILL__NOFILLHITTEST, 0x10001);
@@ -107,7 +108,7 @@ public final class MovieShape extends HSLFPictureShape {
         cldata.addChild(an);
         cldata.addChild(info);
 
-        return _escherContainer;
+        return ecr;
     }
 
     /**
