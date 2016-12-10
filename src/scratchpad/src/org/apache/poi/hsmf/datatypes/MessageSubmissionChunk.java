@@ -31,100 +31,106 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * A Chunk that holds the details given back by the
- *  server at submission time.
- * This includes the date the message was given to the
- *  server, and an ID that's used if you want to cancel
- *  a message or similar
+ * A Chunk that holds the details given back by the server at submission time.
+ * This includes the date the message was given to the server, and an ID that's
+ * used if you want to cancel a message or similar
  */
 public class MessageSubmissionChunk extends Chunk {
-   private static POILogger logger = POILogFactory.getLogger(MessageSubmissionChunk.class);
-   private String rawId;
-   private Calendar date;
+    private static POILogger logger = POILogFactory
+            .getLogger(MessageSubmissionChunk.class);
+    private String rawId;
+    private Calendar date;
 
-   private static final Pattern datePatern = 
-            Pattern.compile("(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)Z?"); 
+    private static final Pattern datePatern = Pattern
+        .compile("(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)Z?");
 
-   /**
-    * Creates a Byte Chunk.
-    */
-   public MessageSubmissionChunk(String namePrefix, int chunkId, MAPIType type) {
-      super(namePrefix, chunkId, type);
-   }
+    /**
+     * Creates a Byte Chunk.
+     */
+    public MessageSubmissionChunk(String namePrefix, int chunkId,
+            MAPIType type) {
+        super(namePrefix, chunkId, type);
+    }
 
-   /**
-    * Create a Byte Chunk, with the specified
-    *  type.
-    */
-   public MessageSubmissionChunk(int chunkId, MAPIType type) {
-      super(chunkId, type);
-   }
+    /**
+     * Create a Byte Chunk, with the specified type.
+     */
+    public MessageSubmissionChunk(int chunkId, MAPIType type) {
+        super(chunkId, type);
+    }
 
-   public void readValue(InputStream value) throws IOException {
-      // Stored in the file as us-ascii
-     byte[] data = IOUtils.toByteArray(value); 
-     rawId = new String(data, Charset.forName("ASCII"));
-      
-      // Now process the date
-      String[] parts = rawId.split(";");
-      for(String part : parts) {
-         if(part.startsWith("l=")) {
-            // Format of this bit appears to be l=<id>-<time>-<number>
-            // ID may contain hyphens.
+    public void readValue(InputStream value) throws IOException {
+        // Stored in the file as us-ascii
+        byte[] data = IOUtils.toByteArray(value);
+        rawId = new String(data, Charset.forName("ASCII"));
 
-            String dateS = null;
-            final int numberPartBegin = part.lastIndexOf('-');
-            if (numberPartBegin != -1) {
-                final int datePartBegin = part.lastIndexOf('-', numberPartBegin-1);
-                if (datePartBegin != -1 && 
-                        // cannot extract date if only one hyphen is in the string...
-                        numberPartBegin > datePartBegin) {
-                    dateS = part.substring(datePartBegin + 1, numberPartBegin);
+        // Now process the date
+        String[] parts = rawId.split(";");
+        for (String part : parts) {
+            if (part.startsWith("l=")) {
+                // Format of this bit appears to be l=<id>-<time>-<number>
+                // ID may contain hyphens.
+
+                String dateS = null;
+                final int numberPartBegin = part.lastIndexOf('-');
+                if (numberPartBegin != -1) {
+                    final int datePartBegin = part.lastIndexOf('-',
+                            numberPartBegin - 1);
+                    if (datePartBegin != -1 &&
+                    // cannot extract date if only one hyphen is in the
+                    // string...
+                            numberPartBegin > datePartBegin) {
+                        dateS = part.substring(datePartBegin + 1,
+                                numberPartBegin);
+                    }
+                }
+                if (dateS != null) {
+                    // Should be yymmddhhmmssZ
+                    Matcher m = datePatern.matcher(dateS);
+                    if (m.matches()) {
+                        date = LocaleUtil.getLocaleCalendar();
+
+                        // work around issues with dates like 1989, which appear as "89" here
+                        int year = Integer.parseInt(m.group(1));
+                        date.set(Calendar.YEAR, year + (year > 80 ? 1900 : 2000));
+
+                        // Java is 0 based
+                        date.set(Calendar.MONTH, Integer.parseInt(m.group(2)) - 1);
+                        date.set(Calendar.DATE, Integer.parseInt(m.group(3)));
+                        date.set(Calendar.HOUR_OF_DAY,
+                                Integer.parseInt(m.group(4)));
+                        date.set(Calendar.MINUTE, Integer.parseInt(m.group(5)));
+                        date.set(Calendar.SECOND, Integer.parseInt(m.group(6)));
+                        date.clear(Calendar.MILLISECOND);
+                    } else {
+                        logger.log(POILogger.WARN,
+                                "Warning - unable to make sense of date "
+                                        + dateS);
+                    }
                 }
             }
-            if (dateS != null) {
-               // Should be yymmddhhmmssZ
-               Matcher m = datePatern.matcher(dateS);
-               if(m.matches()) {
-                  date = LocaleUtil.getLocaleCalendar();
+        }
+    }
 
-                  // work around issues with dates like 1989, which appear as "89" here
-                  int year = Integer.parseInt(m.group(1));
-                  date.set(Calendar.YEAR,  year + (year > 80 ? 1900 : 2000));
+    public void writeValue(OutputStream out) throws IOException {
+        byte[] data = rawId.getBytes(Charset.forName("ASCII"));
+        out.write(data);
+    }
 
-                  date.set(Calendar.MONTH, Integer.parseInt(m.group(2)) - 1); // Java is 0 based
-                  date.set(Calendar.DATE,  Integer.parseInt(m.group(3)));
-                  date.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));
-                  date.set(Calendar.MINUTE,      Integer.parseInt(m.group(5)));
-                  date.set(Calendar.SECOND,      Integer.parseInt(m.group(6)));
-                  date.clear(Calendar.MILLISECOND);
-               } else {
-            	   logger.log(POILogger.WARN, "Warning - unable to make sense of date " + dateS);
-               }
-            }
-         }
-      }
-   }
+    /**
+     * @return the date that the server accepted the message, as found from the
+     *         message ID it generated.
+     *
+     */
+    public Calendar getAcceptedAtTime() {
+        return date;
+    }
 
-   public void writeValue(OutputStream out) throws IOException {
-     byte[] data = rawId.getBytes(Charset.forName("ASCII")); 
-     out.write(data);
-   }
-   
-   /**
-    * @return the date that the server accepted the
-    *  message, as found from the message ID it generated.
-    *
-    */
-   public Calendar getAcceptedAtTime() {
-      return date;
-   }
-   
-   /**
-    * @return the full ID that the server generated when
-    *  it accepted the message.
-    */
-   public String getSubmissionId() {
-      return rawId;
-   }
+    /**
+     * @return the full ID that the server generated when it accepted the
+     *         message.
+     */
+    public String getSubmissionId() {
+        return rawId;
+    }
 }

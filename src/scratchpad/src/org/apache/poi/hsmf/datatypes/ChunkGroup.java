@@ -18,15 +18,13 @@
 package org.apache.poi.hsmf.datatypes;
 
 /**
- * A group of chunks, that are at the same point in the
- *  file structure.
+ * A group of chunks, that are at the same point in the file structure.
  */
 public interface ChunkGroup {
-   /**
-    * Returns the chunks that make up the group.
-    * Should certainly contain all the interesting Chunks,
-    *  but needn't always contain all of the Chunks.
-    */
+    /**
+     * Returns the chunks that make up the group. Should certainly contain all
+     * the interesting Chunks, but needn't always contain all of the Chunks.
+     */
     public Chunk[] getChunks();
 
     /**

@@ -34,134 +34,132 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * Collection of convenience chunks for standard parts of the MSG file attachment.
+ * Collection of convenience chunks for standard parts of the MSG file
+ * attachment.
  */
 public class AttachmentChunks implements ChunkGroup {
-   private static POILogger logger = POILogFactory.getLogger(AttachmentChunks.class);
-   public static final String PREFIX = "__attach_version1.0_#";
-   
-   public ByteChunk attachData;
-   public StringChunk attachExtension;
-   public StringChunk attachFileName;
-   public StringChunk attachLongFileName;
-   public StringChunk attachMimeTag;
-   public DirectoryChunk attachmentDirectory;
-   
-   /** 
-    * This is in WMF Format. You'll probably want to pass it
-    *  to Apache Batik to turn it into a SVG that you can
-    *  then display. 
-    */
-   public ByteChunk attachRenderingWMF;
-   
-   /**
-    * What the POIFS name of this attachment is.
-    */
-   private String poifsName;
+    private static POILogger logger = POILogFactory.getLogger(AttachmentChunks.class);
+    public static final String PREFIX = "__attach_version1.0_#";
 
-   /** Holds all the chunks that were found. */
-   private List<Chunk> allChunks = new ArrayList<Chunk>();
+    public ByteChunk attachData;
+    public StringChunk attachExtension;
+    public StringChunk attachFileName;
+    public StringChunk attachLongFileName;
+    public StringChunk attachMimeTag;
+    public DirectoryChunk attachmentDirectory;
 
-   
-   public AttachmentChunks(String poifsName) {
-      this.poifsName = poifsName;
-   }
-   
-   
-   /**
-    * Is this Attachment an embedded MAPI message?
-    */
-   public boolean isEmbeddedMessage() {
-      return (attachmentDirectory != null);
-   }
-   /**
-    * Returns the embedded MAPI message, if the attachment
-    *  is an embedded message, or null otherwise
-    */
-   public MAPIMessage getEmbeddedMessage() throws IOException {
-      if (attachmentDirectory != null) {
-         return attachmentDirectory.getAsEmbededMessage();
-      }
-      return null;
-   }
-   
-   /**
-    * Returns the embedded object, if the attachment is an
-    *  object based embedding (image, document etc), or null
-    *  if it's an embedded message
-    */
-   public byte[] getEmbeddedAttachmentObject() {
-      if (attachData != null) {
-         return attachData.getValue();
-      }
-      return null;
-   }
-   
-   public Chunk[] getAll() {
-      return allChunks.toArray(new Chunk[allChunks.size()]);
-   }
-   public Chunk[] getChunks() {
-      return getAll();
-   }
-   
-   public String getPOIFSName() {
-      return poifsName;
-   }
-   
-   /**
-    * Called by the parser whenever a chunk is found.
-    */
-   public void record(Chunk chunk) {
-      // TODO: add further members for other properties like:
-      // - ATTACH_ADDITIONAL_INFO
-      // - ATTACH_CONTENT_BASE
-      // - ATTACH_CONTENT_LOCATION
-      // - ATTACH_DISPOSITION
-      // - ATTACH_ENCODING
-      // - ATTACH_FLAGS
-      // - ATTACH_LONG_PATHNAME
-      // - ATTACH_SIZE
-      final int chunkId = chunk.getChunkId();
-      if (chunkId == ATTACH_DATA.id) {
-         if(chunk instanceof ByteChunk) {
-             attachData = (ByteChunk)chunk;
-         } else if(chunk instanceof DirectoryChunk) {
-             attachmentDirectory = (DirectoryChunk)chunk;
-         } else {
-        	 logger.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk);
-         }
-      } else if(chunkId == ATTACH_EXTENSION.id) {
-         attachExtension = (StringChunk)chunk;
-      } else if(chunkId == ATTACH_FILENAME.id) {
-         attachFileName = (StringChunk)chunk;
-      } else if(chunkId == ATTACH_LONG_FILENAME.id) {
-         attachLongFileName = (StringChunk)chunk;
-      } else if(chunkId == ATTACH_MIME_TAG.id) {
-         attachMimeTag = (StringChunk)chunk;
-      } else if(chunkId == ATTACH_RENDERING.id) {
-         attachRenderingWMF = (ByteChunk)chunk;
-      }
+    /**
+     * This is in WMF Format. You'll probably want to pass it to Apache Batik to
+     * turn it into a SVG that you can then display.
+     */
+    public ByteChunk attachRenderingWMF;
 
-      // And add to the main list
-      allChunks.add(chunk);
-   }
+    /**
+     * What the POIFS name of this attachment is.
+     */
+    private String poifsName;
 
-   /**
-    * Used to flag that all the chunks of the attachment
-    *  have now been located.
-    */
-   public void chunksComplete() {
-      // Currently, we don't need to do anything special once
-      //  all the chunks have been located
-   }
+    /** Holds all the chunks that were found. */
+    private List<Chunk> allChunks = new ArrayList<Chunk>();
 
+    public AttachmentChunks(String poifsName) {
+        this.poifsName = poifsName;
+    }
 
-   /**
-    * Orders by the attachment number.
-    */
-   public static class AttachmentChunksSorter implements Comparator<AttachmentChunks>, Serializable {
-      public int compare(AttachmentChunks a, AttachmentChunks b) {
-         return a.poifsName.compareTo(b.poifsName);
-      }
-   }
+    /**
+     * Is this Attachment an embedded MAPI message?
+     */
+    public boolean isEmbeddedMessage() {
+        return (attachmentDirectory != null);
+    }
+
+    /**
+     * Returns the embedded MAPI message, if the attachment is an embedded
+     * message, or null otherwise
+     */
+    public MAPIMessage getEmbeddedMessage() throws IOException {
+        if (attachmentDirectory != null) {
+            return attachmentDirectory.getAsEmbededMessage();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the embedded object, if the attachment is an object based
+     * embedding (image, document etc), or null if it's an embedded message
+     */
+    public byte[] getEmbeddedAttachmentObject() {
+        if (attachData != null) {
+            return attachData.getValue();
+        }
+        return null;
+    }
+
+    public Chunk[] getAll() {
+        return allChunks.toArray(new Chunk[allChunks.size()]);
+    }
+
+    public Chunk[] getChunks() {
+        return getAll();
+    }
+
+    public String getPOIFSName() {
+        return poifsName;
+    }
+
+    /**
+     * Called by the parser whenever a chunk is found.
+     */
+    public void record(Chunk chunk) {
+        // TODO: add further members for other properties like:
+        // - ATTACH_ADDITIONAL_INFO
+        // - ATTACH_CONTENT_BASE
+        // - ATTACH_CONTENT_LOCATION
+        // - ATTACH_DISPOSITION
+        // - ATTACH_ENCODING
+        // - ATTACH_FLAGS
+        // - ATTACH_LONG_PATHNAME
+        // - ATTACH_SIZE
+        final int chunkId = chunk.getChunkId();
+        if (chunkId == ATTACH_DATA.id) {
+            if (chunk instanceof ByteChunk) {
+                attachData = (ByteChunk) chunk;
+            } else if (chunk instanceof DirectoryChunk) {
+                attachmentDirectory = (DirectoryChunk) chunk;
+            } else {
+                logger.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk);
+            }
+        } else if (chunkId == ATTACH_EXTENSION.id) {
+            attachExtension = (StringChunk) chunk;
+        } else if (chunkId == ATTACH_FILENAME.id) {
+            attachFileName = (StringChunk) chunk;
+        } else if (chunkId == ATTACH_LONG_FILENAME.id) {
+            attachLongFileName = (StringChunk) chunk;
+        } else if (chunkId == ATTACH_MIME_TAG.id) {
+            attachMimeTag = (StringChunk) chunk;
+        } else if (chunkId == ATTACH_RENDERING.id) {
+            attachRenderingWMF = (ByteChunk) chunk;
+        }
+
+        // And add to the main list
+        allChunks.add(chunk);
+    }
+
+    /**
+     * Used to flag that all the chunks of the attachment have now been located.
+     */
+    public void chunksComplete() {
+        // Currently, we don't need to do anything special once
+        // all the chunks have been located
+    }
+
+    /**
+     * Orders by the attachment number.
+     */
+    public static class AttachmentChunksSorter
+            implements Comparator<AttachmentChunks>, Serializable {
+        public int compare(AttachmentChunks a, AttachmentChunks b) {
+            return a.poifsName.compareTo(b.poifsName);
+        }
+    }
 }
