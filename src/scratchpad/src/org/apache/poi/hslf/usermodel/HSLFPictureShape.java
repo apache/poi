@@ -34,6 +34,7 @@ import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -41,10 +42,9 @@ import org.apache.poi.util.Units;
 
 /**
  * Represents a picture in a PowerPoint document.
- *
- * @author Yegor Kozlov
  */
 public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HSLFShape,HSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFPictureShape.class);
 
     /**
      * Create a new <code>Picture</code>
@@ -63,7 +63,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
      */
     public HSLFPictureShape(HSLFPictureData data, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(null, parent);
-        _escherContainer = createSpContainer(data.getIndex(), parent instanceof HSLFGroupShape);
+        createSpContainer(data.getIndex(), parent instanceof HSLFGroupShape);
     }
 
     /**
@@ -97,10 +97,9 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
      * @return the create Picture object
      */
     protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {
-        _escherContainer = super.createSpContainer(isChild);
-        _escherContainer.setOptions((short)15);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
 
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setOptions((short)((ShapeType.FRAME.nativeId << 4) | 0x2));
 
         //set default properties for a picture
@@ -110,7 +109,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         //another weird feature of powerpoint: for picture id we must add 0x4000.
         setEscherProperty(opt, (short)(EscherProperties.BLIP__BLIPTODISPLAY + 0x4000), idx);
 
-        return _escherContainer;
+        return ecr;
     }
 
     @SuppressWarnings("resource")
@@ -121,14 +120,14 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
 
         EscherBSERecord bse = getEscherBSERecord();
         if (bse == null){
-            logger.log(POILogger.ERROR, "no reference to picture data found ");
+            LOG.log(POILogger.ERROR, "no reference to picture data found ");
         } else {
             for (HSLFPictureData pd : pict) {
                 if (pd.getOffset() ==  bse.getOffset()){
                     return pd;
                 }
             }
-            logger.log(POILogger.ERROR, "no picture found for our BSE offset " + bse.getOffset());
+            LOG.log(POILogger.ERROR, "no picture found for our BSE offset " + bse.getOffset());
         }
         return null;
     }
@@ -140,13 +139,13 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
-            logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
+            LOG.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
         List<EscherRecord> lst = bstore.getChildRecords();
         int idx = getPictureIndex();
         if (idx == 0){
-            logger.log(POILogger.DEBUG, "picture index was not found, returning ");
+            LOG.log(POILogger.DEBUG, "picture index was not found, returning ");
             return null;
         }
         return (EscherBSERecord)lst.get(idx-1);
@@ -180,6 +179,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     /**
      * By default set the orininal image size
      */
+    @Override
     protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 

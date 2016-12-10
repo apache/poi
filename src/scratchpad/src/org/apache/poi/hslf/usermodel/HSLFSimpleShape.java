@@ -54,16 +54,16 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
  *  An abstract simple (non-group) shape.
  *  This is the parent class for all primitive shapes like Line, Rectangle, etc.
- *
- *  @author Yegor Kozlov
  */
 public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<HSLFShape,HSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFSimpleShape.class);
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
 
@@ -88,20 +88,22 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      * @param isChild   <code>true</code> if the Line is inside a group, <code>false</code> otherwise
      * @return the record container which holds this shape
      */
+    @Override
     protected EscherContainerRecord createSpContainer(boolean isChild) {
-        _escherContainer = new EscherContainerRecord();
-        _escherContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
-        _escherContainer.setOptions((short)15);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
+        ecr.setRecordId( EscherContainerRecord.SP_CONTAINER );
 
         EscherSpRecord sp = new EscherSpRecord();
         int flags = EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE;
-        if (isChild) flags |= EscherSpRecord.FLAG_CHILD;
+        if (isChild) {
+            flags |= EscherSpRecord.FLAG_CHILD;
+        }
         sp.setFlags(flags);
-        _escherContainer.addChildRecord(sp);
+        ecr.addChildRecord(sp);
 
         AbstractEscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId(EscherOptRecord.RECORD_ID);
-        _escherContainer.addChildRecord(opt);
+        ecr.addChildRecord(opt);
 
         EscherRecord anchor;
         if(isChild) {
@@ -117,9 +119,9 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             LittleEndian.putInt(header, 4, 8);
             anchor.fillFields(header, 0, null);
         }
-        _escherContainer.addChildRecord(anchor);
+        ecr.addChildRecord(anchor);
 
-        return _escherContainer;
+        return ecr;
     }
 
     /**
@@ -268,24 +270,30 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      *
      * @return style of the line.
      */
+    @Override
     public StrokeStyle getStrokeStyle(){
         return new StrokeStyle() {
+            @Override
             public PaintStyle getPaint() {
                 return DrawPaint.createSolidPaint(HSLFSimpleShape.this.getLineColor());
             }
 
+            @Override
             public LineCap getLineCap() {
                 return null;
             }
 
+            @Override
             public LineDash getLineDash() {
                 return HSLFSimpleShape.this.getLineDash();
             }
 
+            @Override
             public LineCompound getLineCompound() {
                 return HSLFSimpleShape.this.getLineCompound();
             }
 
+            @Override
             public double getLineWidth() {
                 return HSLFSimpleShape.this.getLineWidth();
             }
@@ -303,9 +311,10 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         getFill().setForegroundColor(color);
     }
 
+    @Override
     public Guide getAdjustValue(String name) {
         if (name == null || !name.matches("adj([1-9]|10)?")) {
-            logger.log(POILogger.INFO, "Adjust value '"+name+"' not supported. Using default value.");
+            LOG.log(POILogger.INFO, "Adjust value '"+name+"' not supported. Using default value.");
             return null;
         }
 
@@ -337,6 +346,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         return (adjval == -1) ? null : new Guide(name, "val "+adjval);
     }
 
+    @Override
     public CustomGeometry getGeometry() {
         PresetGeometries dict = PresetGeometries.getInstance();
         ShapeType st = getShapeType();
@@ -346,7 +356,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             if (name == null) {
                 name = (st != null) ? st.toString() : "<unknown>";
             }
-            logger.log(POILogger.WARN, "No preset shape definition for shapeType: "+name);
+            LOG.log(POILogger.WARN, "No preset shape definition for shapeType: "+name);
         }
 
         return geom;
@@ -379,6 +389,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         return clr == null ? Color.black : clr;
     }
 
+    @Override
     public Shadow<HSLFShape,HSLFTextParagraph> getShadow() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
         if (opt == null) return null;
@@ -386,23 +397,28 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         if (shadowType == null) return null;
 
         return new Shadow<HSLFShape,HSLFTextParagraph>(){
+            @Override
             public SimpleShape<HSLFShape,HSLFTextParagraph> getShadowParent() {
                 return HSLFSimpleShape.this;
             }
 
+            @Override
             public double getDistance() {
                 return getShadowDistance();
             }
 
+            @Override
             public double getAngle() {
                 return getShadowAngle();
             }
 
+            @Override
             public double getBlur() {
                 // TODO Auto-generated method stub
                 return 0;
             }
 
+            @Override
             public SolidPaint getFillStyle() {
                 return DrawPaint.createSolidPaint(getShadowColor());
             }
@@ -478,29 +494,36 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
 
 
+    @Override
     public LineDecoration getLineDecoration() {
         return new LineDecoration() {
 
+            @Override
             public DecorationShape getHeadShape() {
                 return HSLFSimpleShape.this.getLineHeadDecoration();
             }
 
+            @Override
             public DecorationSize getHeadWidth() {
                 return HSLFSimpleShape.this.getLineHeadWidth();
             }
 
+            @Override
             public DecorationSize getHeadLength() {
                 return HSLFSimpleShape.this.getLineHeadLength();
             }
 
+            @Override
             public DecorationShape getTailShape() {
                 return HSLFSimpleShape.this.getLineTailDecoration();
             }
 
+            @Override
             public DecorationSize getTailWidth() {
                 return HSLFSimpleShape.this.getLineTailWidth();
             }
 
+            @Override
             public DecorationSize getTailLength() {
                 return HSLFSimpleShape.this.getLineTailLength();
             }

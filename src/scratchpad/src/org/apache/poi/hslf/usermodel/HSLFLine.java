@@ -37,19 +37,20 @@ public final class HSLFLine extends HSLFTextShape implements Line<HSLFShape,HSLF
 
     public HSLFLine(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
+        createSpContainer(parent instanceof HSLFGroupShape);
     }
 
     public HSLFLine(){
         this(null);
     }
 
+    @Override
     protected EscherContainerRecord createSpContainer(boolean isChild){
-        _escherContainer = super.createSpContainer(isChild);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
         
         setShapeType(ShapeType.LINE);
 
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
         short type = (short)((ShapeType.LINE.nativeId << 4) | 0x2);
         spRecord.setOptions(type);
 
@@ -64,7 +65,7 @@ public final class HSLFLine extends HSLFTextShape implements Line<HSLFShape,HSLF
         setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0xA0008);
         setEscherProperty(opt, EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
 
-        return _escherContainer;
+        return ecr;
     }
     
 //    /**

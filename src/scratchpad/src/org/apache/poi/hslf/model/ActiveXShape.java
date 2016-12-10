@@ -41,9 +41,6 @@ import org.apache.poi.util.StringUtil;
 
 /**
  * Represents an ActiveX control in a PowerPoint document.
- *
- * TODO: finish
- * @author Yegor Kozlov
  */
 public final class ActiveXShape extends HSLFPictureShape {
     public static final int DEFAULT_ACTIVEX_THUMBNAIL = -1;
@@ -74,10 +71,11 @@ public final class ActiveXShape extends HSLFPictureShape {
      *
      * @return the created <code>EscherContainerRecord</code> which holds shape data
      */
+    @Override
     protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {
-        _escherContainer = super.createSpContainer(idx, isChild);
+        EscherContainerRecord ecr = super.createSpContainer(idx, isChild);
 
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE | EscherSpRecord.FLAG_OLESHAPE);
 
         setShapeType(ShapeType.HOST_CONTROL);
@@ -90,7 +88,7 @@ public final class ActiveXShape extends HSLFPictureShape {
         HSLFEscherClientDataRecord cldata = getClientData(true);
         cldata.addChild(new ExObjRefAtom());
 
-        return _escherContainer;
+        return ecr;
     }
 
     /**
@@ -148,6 +146,7 @@ public final class ActiveXShape extends HSLFPictureShape {
         return ctrl;
     }
 
+    @Override
     protected void afterInsert(HSLFSheet sheet){
         ExControl ctrl = getExControl();
         ctrl.getExControlAtom().setSlideId(sheet._getSheetNumber());

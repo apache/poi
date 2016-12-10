@@ -77,8 +77,9 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
         //_txtrun.getRichTextRuns()[0].setFlag(false, 0, false);
     }
 
+    @Override
     protected EscherContainerRecord createSpContainer(boolean isChild){
-        _escherContainer = super.createSpContainer(isChild);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.TEXT__TEXTID, 0);
         setEscherProperty(opt, EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20000);
@@ -86,7 +87,7 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
         setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x40000);
 
-        return _escherContainer;
+        return ecr;
     }
 
     private void anchorBorder(BorderEdge edge, final HSLFLine line) {
@@ -126,6 +127,7 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
         line.setAnchor(new Rectangle2D.Double(x,y,w,h));
     }
 
+    @Override
     public void setAnchor(Rectangle2D anchor){
         super.setAnchor(anchor);
 
@@ -139,22 +141,27 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
     public StrokeStyle getBorderStyle(final BorderEdge edge) {
         final Double width = getBorderWidth(edge);
         return (width == null) ? null : new StrokeStyle() {
+            @Override
             public PaintStyle getPaint() {
                 return DrawPaint.createSolidPaint(getBorderColor(edge));
             }
 
+            @Override
             public LineCap getLineCap() {
                 return null;
             }
 
+            @Override
             public LineDash getLineDash() {
                 return getBorderDash(edge);
             }
 
+            @Override
             public LineCompound getLineCompound() {
                 return getBorderCompound(edge);
             }
 
+            @Override
             public double getLineWidth() {
                 return width;
             }

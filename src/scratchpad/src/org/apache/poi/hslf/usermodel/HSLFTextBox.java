@@ -69,8 +69,9 @@ public class HSLFTextBox extends HSLFTextShape implements TextBox<HSLFShape,HSLF
      *
      * @return the created <code>EscherContainerRecord</code> which holds shape data
      */
+    @Override
     protected EscherContainerRecord createSpContainer(boolean isChild){
-        _escherContainer = super.createSpContainer(isChild);
+        EscherContainerRecord ecr = super.createSpContainer(isChild);
 
         setShapeType(ShapeType.TEXT_BOX);
 
@@ -85,9 +86,10 @@ public class HSLFTextBox extends HSLFTextShape implements TextBox<HSLFShape,HSLF
         // init paragraphs
         getTextParagraphs();
 
-        return _escherContainer;
+        return ecr;
     }
 
+    @Override
     protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
         setVerticalAlignment(VerticalAlignment.TOP);
         setEscherProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20002);
