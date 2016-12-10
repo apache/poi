@@ -24,66 +24,68 @@ import java.io.OutputStream;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * A {@link PropertiesChunk} for a Message or Embedded-Message.
- * This has a 32 byte header
+ * A {@link PropertiesChunk} for a Message or Embedded-Message. This has a 32
+ * byte header
  */
 public class MessagePropertiesChunk extends PropertiesChunk {
-   private long nextRecipientId;
-   private long nextAttachmentId;
-   private long recipientCount;
-   private long attachmentCount;
+    private long nextRecipientId;
+    private long nextAttachmentId;
+    private long recipientCount;
+    private long attachmentCount;
 
-   public MessagePropertiesChunk(ChunkGroup parentGroup) {
-      super(parentGroup);
-   }
-   
-   public long getNextRecipientId() {
-      return nextRecipientId;
-   }
-   public long getNextAttachmentId() {
-      return nextAttachmentId;
-   }
+    public MessagePropertiesChunk(ChunkGroup parentGroup) {
+        super(parentGroup);
+    }
 
-   public long getRecipientCount() {
-      return recipientCount;
-   }
-   public long getAttachmentCount() {
-      return attachmentCount;
-   }
+    public long getNextRecipientId() {
+        return nextRecipientId;
+    }
 
-   @Override
-   public void readValue(InputStream stream) throws IOException {
-      // 8 bytes of reserved zeros
-      LittleEndian.readLong(stream);
-      
-      // Nexts and counts
-      nextRecipientId = LittleEndian.readUInt(stream);
-      nextAttachmentId = LittleEndian.readUInt(stream);
-      recipientCount = LittleEndian.readUInt(stream);
-      attachmentCount = LittleEndian.readUInt(stream);
-      
-      // 8 bytes of reserved zeros
-      LittleEndian.readLong(stream);
-      
-      // Now properties
-      readProperties(stream);
-   }
+    public long getNextAttachmentId() {
+        return nextAttachmentId;
+    }
 
-   @Override
-   public void writeValue(OutputStream out) throws IOException {
-      // 8 bytes of reserved zeros
-      out.write(new byte[8]);
-      
-      // Nexts and counts
-      LittleEndian.putUInt(nextRecipientId, out);
-      LittleEndian.putUInt(nextAttachmentId, out);
-      LittleEndian.putUInt(recipientCount, out);
-      LittleEndian.putUInt(attachmentCount, out);
-      
-      // 8 bytes of reserved zeros
-      out.write(new byte[8]);
-      
-      // Now properties
-      writeProperties(out);
-   }
+    public long getRecipientCount() {
+        return recipientCount;
+    }
+
+    public long getAttachmentCount() {
+        return attachmentCount;
+    }
+
+    @Override
+    public void readValue(InputStream stream) throws IOException {
+        // 8 bytes of reserved zeros
+        LittleEndian.readLong(stream);
+
+        // Nexts and counts
+        nextRecipientId = LittleEndian.readUInt(stream);
+        nextAttachmentId = LittleEndian.readUInt(stream);
+        recipientCount = LittleEndian.readUInt(stream);
+        attachmentCount = LittleEndian.readUInt(stream);
+
+        // 8 bytes of reserved zeros
+        LittleEndian.readLong(stream);
+
+        // Now properties
+        readProperties(stream);
+    }
+
+    @Override
+    public void writeValue(OutputStream out) throws IOException {
+        // 8 bytes of reserved zeros
+        out.write(new byte[8]);
+
+        // Nexts and counts
+        LittleEndian.putUInt(nextRecipientId, out);
+        LittleEndian.putUInt(nextAttachmentId, out);
+        LittleEndian.putUInt(recipientCount, out);
+        LittleEndian.putUInt(attachmentCount, out);
+
+        // 8 bytes of reserved zeros
+        out.write(new byte[8]);
+
+        // Now properties
+        writeProperties(out);
+    }
 }

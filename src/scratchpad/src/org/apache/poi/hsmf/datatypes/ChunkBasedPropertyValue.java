@@ -17,28 +17,26 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-
 /**
- * A variable length {@link PropertyValue} that is
- *  backed by a {@link Chunk}
+ * A variable length {@link PropertyValue} that is backed by a {@link Chunk}
  * TODO Provide a way to link these up with the chunks
  */
 public class ChunkBasedPropertyValue extends PropertyValue {
-   public ChunkBasedPropertyValue(MAPIProperty property, long flags, byte[] offsetData) {
-      super(property, flags, offsetData);
-   }
+    public ChunkBasedPropertyValue(MAPIProperty property, long flags, byte[] offsetData) {
+        super(property, flags, offsetData);
+    }
 
-   @Override
-   public Chunk getValue() {
-      // TODO Decode the value into an offset
-      // TODO Look up the chunk based on that
-      return null;
-   }
-   
-   /**
-    * Stores the offset of the chunk as the property value
-    */
-   public void setValue(Chunk chunk) {
-      // TODO
-   }
+    @Override
+    public Chunk getValue() {
+        // TODO Decode the value into an offset
+        // TODO Look up the chunk based on that
+        return null;
+    }
+
+    /**
+     * Stores the offset of the chunk as the property value
+     */
+    public void setValue(Chunk chunk) {
+        // TODO
+    }
 }
