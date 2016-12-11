@@ -240,6 +240,8 @@ under the License.
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
     <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*"/>
+    
+    <property name="file.leak.detector" value="-javaagent:/opt/file-leak-detector/target/file-leak-detector-1.9-SNAPSHOT-jar-with-dependencies.jar=http=19998,strong,excludes=/opt/poi/file-leak-detector.exclude,dumpatshutdown"/>
 
     <!-- Apache RAT license check properties -->
     <property name="rat.reportdir" value="build/rat"/>
@@ -1260,6 +1262,7 @@ under the License.
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
+                <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1365,6 +1368,7 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <jvmarg value="${file.leak.detector}" />
                 <!--
                   YK: ensure that JUnit has enough memory to run tests.
                   Without the line below tests fail on Mac OS X with jdk-1.6.26
@@ -1418,6 +1422,7 @@ under the License.
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                  <jvmarg value="${file.leak.detector}" />
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1600,6 +1605,7 @@ under the License.
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="${java9addmods}" />
             <jvmarg value="${java9addmodsvalue}" />
+			<jvmarg value="${file.leak.detector}" />
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
@@ -1639,6 +1645,7 @@ under the License.
                 <jvmarg value="-ea"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
+                <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${excelant.reports.test}">
