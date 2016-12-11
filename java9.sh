@@ -18,8 +18,6 @@ ant  \
     -Duser.language=en \
     -Duser.country=US \
     -Dmaxpermsize=-Dthis.is.a.dummy=true \
-    -Djava9addmods=-addmods \
-    -Djava9addmodsvalue=java.xml.bind \
 	-Djava.locale.providers=JRE,CLDR \
 	-Dcoverage.enabled=true \
 	-Dorg.apache.poi.util.POILogger=org.apache.poi.util.NullLogger \
@@ -87,29 +85,3 @@ exit 0
 # ant javascript fails: <scriptdef name="propertyreset" language="javascript">, probably need to manually include the Javascript Engine
 # => see https://bugs.openjdk.java.net/browse/JDK-8152533, probably fixed in b113
 # => Ant 1.9.5 fixes this: https://bz.apache.org/bugzilla/show_bug.cgi?id=58271
-
-
-# JaCoCo is failing:
-
-test-main:
-[jacoco:coverage] Enhancing junit with coverage
-    [junit] File leak detector installed
-    [junit] Serving file leak stats on http://localhost:19998/ for stats
-    [junit] FATAL ERROR in native method: processing of -javaagent failed
-    [junit] Exception in thread "main" java.lang.reflect.InvocationTargetException
-    [junit]     at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(java.base@9-ea/Native Method)
-    [junit]     at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(java.base@9-ea/NativeMethodAccessorImpl.java:62)
-    [junit]     at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(java.base@9-ea/DelegatingMethodAccessorImpl.java:43)
-    [junit]     at java.lang.reflect.Method.invoke(java.base@9-ea/Method.java:531)
-    [junit]     at sun.instrument.InstrumentationImpl.loadClassAndStartAgent(java.instrument@9-ea/InstrumentationImpl.java:396)
-    [junit]     at sun.instrument.InstrumentationImpl.loadClassAndCallPremain(java.instrument@9-ea/InstrumentationImpl.java:408)
-    [junit] Caused by: java.lang.RuntimeException: Class java/util/UUID could not be instrumented.
-    [junit]     at org.jacoco.agent.rt.internal_14f7ee5.core.runtime.ModifiedSystemClassRuntime.createFor(ModifiedSystemClassRuntime.java:139)
-    [junit]     at org.jacoco.agent.rt.internal_14f7ee5.core.runtime.ModifiedSystemClassRuntime.createFor(ModifiedSystemClassRuntime.java:100)
-    [junit]     at org.jacoco.agent.rt.internal_14f7ee5.PreMain.createRuntime(PreMain.java:55)
-    [junit]     at org.jacoco.agent.rt.internal_14f7ee5.PreMain.premain(PreMain.java:47)
-    [junit]     ... 6 more
-    [junit] Caused by: java.lang.NoSuchFieldException: $jacocoAccess
-    [junit]     at java.lang.Class.getField(java.base@9-ea/Class.java:1881)
-    [junit]     at org.jacoco.agent.rt.internal_14f7ee5.core.runtime.ModifiedSystemClassRuntime.createFor(ModifiedSystemClassRuntime.java:137)
-    [junit]     ... 9 more
