@@ -8,3 +8,6 @@ ooxml-lib/
 sonar/main/src/
 sonar/ooxml/src/
 sonar/scratchpad/src/
+sonar/ooxml-schema-security/src/
+sonar/examples/src/
+sonar/excelant/src/
