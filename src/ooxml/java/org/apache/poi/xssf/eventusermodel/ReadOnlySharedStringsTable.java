@@ -96,10 +96,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     private List<String> strings;
 
     /**
-     * @param pkg
-     * @throws IOException
-     * @throws SAXException
-     * @throws ParserConfigurationException
+     * @param pkg The {@link OPCPackage} to use as basis for the shared-strings table.
+     * @throws IOException If reading the data from the package fails.
+     * @throws SAXException if parsing the XML data fails.
      */
     public ReadOnlySharedStringsTable(OPCPackage pkg)
             throws IOException, SAXException {
@@ -126,9 +125,8 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      * Read this shared strings table from an XML file.
      *
      * @param is The input stream containing the XML document.
-     * @throws IOException                  if an error occurs while reading.
-     * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws IOException if an error occurs while reading.
+     * @throws SAXException if parsing the XML data fails.
      */
     public void readFrom(InputStream is) throws IOException, SAXException {
         // test if the file is empty, otherwise parse it

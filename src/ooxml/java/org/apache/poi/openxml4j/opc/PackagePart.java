@@ -228,9 +228,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 * @throws InvalidOperationException
 	 *             If a writing operation is done on a read only package or 
 	 *             invalid nested relations are created.
-	 * @throws InvalidFormatException
-	 *             If the URI point to a relationship part URI.
-	 * @throws IllegalArgumentException if targetPartName, targetMode 
+	 * @throws IllegalArgumentException if targetPartName, targetMode
 	 *             or relationshipType are passed as null
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
 	 *      org.apache.poi.openxml4j.opc.TargetMode, java.lang.String, java.lang.String)
@@ -300,7 +298,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
 	 *
-	 * @throws InvalidFormatException
+	 * @throws InvalidOperationException
 	 *             If the URI point to a relationship part URI.
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
 	 *      org.apache.poi.openxml4j.opc.TargetMode, java.lang.String, java.lang.String)
@@ -361,7 +359,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 * Retrieve all the relationships attached to this part.
 	 *
 	 * @return This part's relationships.
-	 * @throws OpenXML4JException
+	 * @throws InvalidOperationException
+	 *             Throws if the package is open en write only mode.
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationships()
 	 */
 	public PackageRelationshipCollection getRelationships()
@@ -491,6 +490,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 *
 	 * @return The input stream of the content of this part, else
 	 *         <code>null</code>.
+	 *
+	 * @throws IOException If creating the input-stream fails.
 	 */
 	public InputStream getInputStream() throws IOException {
 		InputStream inStream = this.getInputStreamImpl();
@@ -503,7 +504,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 
 	/**
 	 * Get the output stream of this part. If the part is originally embedded in
-	 * Zip package, it'll be transform intot a <i>MemoryPackagePart</i> in
+	 * Zip package, it'll be transform into a <i>MemoryPackagePart</i> in
 	 * order to write inside (the standard Java API doesn't allow to write in
 	 * the file)
 	 *
@@ -643,7 +644,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	@Override
 	public String toString() {
 		return "Name: " + this._partName + " - Content Type: "
-				+ this._contentType.toString();
+				+ this._contentType;
 	}
 
 	/**
@@ -662,7 +663,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	/*-------------- Abstract methods ------------- */
 
 	/**
-	 * Abtract method that get the input stream of this part.
+	 * Abstract method that get the input stream of this part.
 	 *
 	 * @exception IOException
 	 *                Throws if an IO Exception occur in the implementation

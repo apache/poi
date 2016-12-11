@@ -126,6 +126,7 @@ public class XLSX2CSV {
             
             // Number or string?
             try {
+                //noinspection ResultOfMethodCallIgnored
                 Double.parseDouble(formattedValue);
                 output.append(formattedValue);
             } catch (NumberFormatException e) {
@@ -173,16 +174,20 @@ public class XLSX2CSV {
      * Parses and shows the content of one sheet
      * using the specified styles and shared-strings tables.
      *
-     * @param styles
-     * @param strings
-     * @param sheetInputStream
+     * @param styles The table of styles that may be referenced by cells in the sheet
+     * @param strings The table of strings that may be referenced by cells in the sheet
+     * @param sheetInputStream The stream to read the sheet-data from.
+
+     * @exception java.io.IOException An IO exception from the parser,
+     *            possibly from a byte stream or character stream
+     *            supplied by the application.
+     * @throws SAXException if parsing the XML data fails.
      */
     public void processSheet(
             StylesTable styles,
             ReadOnlySharedStringsTable strings,
             SheetContentsHandler sheetHandler, 
-            InputStream sheetInputStream)
-            throws IOException, ParserConfigurationException, SAXException {
+            InputStream sheetInputStream) throws IOException, SAXException {
         DataFormatter formatter = new DataFormatter();
         InputSource sheetSource = new InputSource(sheetInputStream);
         try {
@@ -199,13 +204,10 @@ public class XLSX2CSV {
     /**
      * Initiates the processing of the XLS workbook file to CSV.
      *
-     * @throws IOException
-     * @throws OpenXML4JException
-     * @throws ParserConfigurationException
-     * @throws SAXException
+     * @throws IOException If reading the data from the package fails.
+     * @throws SAXException if parsing the XML data fails.
      */
-    public void process()
-            throws IOException, OpenXML4JException, ParserConfigurationException, SAXException {
+    public void process() throws IOException, OpenXML4JException, SAXException {
         ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(this.xlsxPackage);
         XSSFReader xssfReader = new XSSFReader(this.xlsxPackage);
         StylesTable styles = xssfReader.getStylesTable();
