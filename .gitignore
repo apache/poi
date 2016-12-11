@@ -1,4 +1,3 @@
 /bin
 .sonar
 junit*.properties
-sonar/*/target
