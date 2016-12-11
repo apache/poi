@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export JAVA_HOME=/usr/lib/jvm/java-6-sun
+export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64
 
 # use this JVM for creating javadocs:
 #export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
