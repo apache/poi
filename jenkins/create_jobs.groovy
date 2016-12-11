@@ -11,7 +11,7 @@ H H * * 0
 '''
 
 def poijobs = [
-    [ name: 'POI-DSL-1.6', jdks: ['1.6'],
+    [ name: 'POI-DSL-1.6',
             // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
             // as part of the Ant build
             addShell: 'wget -O lib/findbugs-noUpdateChecks-2.0.3.zip http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
@@ -34,10 +34,13 @@ def poijobs = [
         // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
         disabled: true, skipcigame: true
     ],
-    [ name: 'POI-DSL-old-Xerces', jdks: ['1.6'], trigger: triggerSundays,
+    [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
         shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
         // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
-        properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar']
+        properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar'],
+        // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
+        // as part of the Ant build
+        addShell: 'wget -O lib/findbugs-noUpdateChecks-2.0.3.zip http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
     ],
     [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
     ],
