@@ -13,6 +13,7 @@ export ANT_OPTS="-Xmx1024m"
 ant -version
 
 # disable file-leak-detector:	-Dfile.leak.detector=-Da=b \
+# option to try to avoid sigsev:    -Djava9addarg=-XX:-PartialPeelLoop \
 
 ant  \
     -Duser.language=en \
@@ -89,8 +90,7 @@ exit 0
 # => Ant 1.9.5 fixes this: https://bz.apache.org/bugzilla/show_bug.cgi?id=58271
 
 
-# JaCoCo is failing:
-
+# JaCoCo is failing, fixed with newer JaCoCo:
 test-main:
 [jacoco:coverage] Enhancing junit with coverage
     [junit] File leak detector installed
