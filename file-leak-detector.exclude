@@ -1,3 +1,18 @@
+# JaCoCo Agent
+sun.instrument.InstrumentationImpl.loadClassAndStartAgent
+
+# Ant Junit
+org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter.getDocumentBuilder
+
+# XMLBeans
+org.apache.xmlbeans.impl.regex.RegexParser.setLocale
+org.apache.xmlbeans.impl.schema.SchemaTypeSystemImpl$XsbReader.getLoaderStream
+
+# JVM
+sun.security.jca.ProviderConfig.doLoadProvider
+javax.xml.parsers.FactoryFinder.findJarServiceProvider
+com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
+
 # Codepage support loads classes
 java.nio.charset.Charset.lookupViaProviders
 
@@ -9,6 +24,9 @@ org.apache.tools.ant.taskdefs.Antlib.createAntlib
 # XML Parser
 com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
 com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory.loadPropertiesFile
+com.sun.xml.internal.bind.v2.runtime.property.ArrayElementNodeProperty.<init>
+com.sun.xml.internal.bind.v2.runtime.property.AttributeProperty.<init>
+com.sun.xml.internal.bind.v2.runtime.property.SingleElementNodeProperty.<init>
 
 # XMLBeans
 org.apache.xmlbeans.impl.regex.RegexParser.setLocale
@@ -20,6 +38,10 @@ javax.crypto.JceSecurity.setupJurisdictionPolicies
 javax.crypto.Cipher.getMaxAllowedKeyLength
 
 # Java
+sun.util.resources.LocaleData.getBundle
+sun.util.LocaleServiceProviderPool.<init>
+sun.util.calendar.LocalGregorianCalendar.getLocalGregorianCalendar
+sun.net.www.protocol.jar.JarURLConnection.getInputStream
 sun.text.normalizer.ICUData.getStream
 sun.font.T2KFontScaler.initNativeScaler
 sun.font.SunFontManager.loadFonts
