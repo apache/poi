@@ -27,3 +27,5 @@ sun.font.FontManagerFactory.getInstance
 sun.font.TrueTypeFont.open
 sun.reflect.misc.MethodUtil.<clinit>
 java.util.logging.Logger.findSystemResourceBundle
+java.text.BreakIterator.getBundle
+sun.java2d.SunGraphicsEnvironment.<init>
