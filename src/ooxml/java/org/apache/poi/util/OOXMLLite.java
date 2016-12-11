@@ -76,13 +76,6 @@ public final class OOXMLLite {
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        System.out.println("Free memory (bytes): " + 
-                Runtime.getRuntime().freeMemory());
-        long maxMemory = Runtime.getRuntime().maxMemory();
-        System.out.println("Maximum memory (bytes): " + 
-        (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
-        System.out.println("Total memory (bytes): " + 
-                Runtime.getRuntime().totalMemory());
 
         String dest = null, test = null, ooxml = null;
 
