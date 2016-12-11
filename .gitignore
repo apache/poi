@@ -3,5 +3,3 @@
 junit*.properties
 sonar/*/target
 forrest.properties
-compile-lib/
-ooxml-lib/
