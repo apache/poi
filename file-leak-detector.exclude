@@ -8,6 +8,7 @@ org.apache.tools.ant.taskdefs.Antlib.createAntlib
 
 # XML Parser
 com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
+com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory.loadPropertiesFile
 
 # XMLBeans
 org.apache.xmlbeans.impl.regex.RegexParser.setLocale
@@ -16,6 +17,7 @@ org.apache.xmlbeans.impl.schema.SchemaTypeSystemImpl$XsbReader.getLoaderStream
 # JCA
 sun.security.jca.ProviderConfig.getProvider
 javax.crypto.JceSecurity.setupJurisdictionPolicies
+javax.crypto.Cipher.getMaxAllowedKeyLength
 
 # Java
 sun.text.normalizer.ICUData.getStream
