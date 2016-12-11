@@ -5,6 +5,3 @@ sonar/*/target
 forrest.properties
 compile-lib/
 ooxml-lib/
-sonar/main/src/
-sonar/ooxml/src/
-sonar/scratchpad/src/
