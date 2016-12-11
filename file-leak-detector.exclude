@@ -1,6 +1,5 @@
 # JaCoCo Agent
 sun.instrument.InstrumentationImpl.loadClassAndStartAgent
-org.jacoco.agent.rt.internal_14f7ee5.output.FileOutput.openFile
 
 # Ant Junit
 org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter.getDocumentBuilder
