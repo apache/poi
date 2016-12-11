@@ -29,3 +29,4 @@ sun.reflect.misc.MethodUtil.<clinit>
 java.util.logging.Logger.findSystemResourceBundle
 java.text.BreakIterator.getBundle
 sun.java2d.SunGraphicsEnvironment.<init>
+org.kohsuke.file_leak_detector.AgentMain.runHttpServer
