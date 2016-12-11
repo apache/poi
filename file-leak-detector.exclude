@@ -5,6 +5,10 @@ org.jacoco.agent.rt.internal_14f7ee5.output.FileOutput.openFile
 # Ant Junit
 org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter.getDocumentBuilder
 
+# XMLBeans
+org.apache.xmlbeans.impl.regex.RegexParser.setLocale
+org.apache.xmlbeans.impl.schema.SchemaTypeSystemImpl$XsbReader.getLoaderStream
+
 # JVM
 sun.security.jca.ProviderConfig.doLoadProvider
 javax.xml.parsers.FactoryFinder.findJarServiceProvider
@@ -24,7 +28,6 @@ com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory.loadPropertie
 com.sun.xml.internal.bind.v2.runtime.property.ArrayElementNodeProperty.<init>
 com.sun.xml.internal.bind.v2.runtime.property.AttributeProperty.<init>
 com.sun.xml.internal.bind.v2.runtime.property.SingleElementNodeProperty.<init>
-javax.xml.stream.FactoryFinder.findJarServiceProvider
 
 # XMLBeans
 org.apache.xmlbeans.impl.regex.RegexParser.setLocale
