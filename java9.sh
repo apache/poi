@@ -53,7 +53,7 @@ Main issue now: https://bugs.openjdk.java.net/browse/JDK-8041480
 => Review ID: JI-9038016
 
 
-# Java crashed once when running our tests, during the next run the same test did succeed, so it seems to be intermittent
+# Java crashed twice when running our tests, during the next run the same test did succeed, so it seems to be intermittent
 
     [junit] Reading document/53379.doc with class org.apache.poi.stress.HWPFFileHandler
     [junit] #
