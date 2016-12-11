@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.hssf.record.ArrayRecord;
@@ -246,11 +245,6 @@ public final class BiffViewer {
             }
             Record record;
             if (dumpInterpretedRecords) {
-			    ps.println();
-			    ps.println("Remainging: " + recStream.remaining());
-			    byte[] data = ((BiffDumpingStream)is).getData();
-			    ps.println("Record-Data: " + HexDump.toHex(Arrays.copyOfRange(data, 0, Math.min(100, data.length))));
-
                 record = createRecord (recStream);
                 if (record.getSid() == ContinueRecord.sid) {
                     continue;
@@ -755,10 +749,6 @@ public final class BiffViewer {
 		public void close() throws IOException {
 			_is.close();
 		}
-       
-       public byte[] getData() {
-           return _data;
-       }		
 	}
 
 	private static final int DUMP_LINE_LEN = 16;

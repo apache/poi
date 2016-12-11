@@ -11,7 +11,6 @@
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.apache.poi.hssf.dev.BiffViewer"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--escher test-data/spreadsheet/57456.xls"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="/tmp/45312.xls"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ApachePOI"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:/opt/file-leak-detector/target/file-leak-detector-1.9-SNAPSHOT-jar-with-dependencies.jar=http=19998,strong,excludes=file-leak-detector.exclude,dumpatshutdown"/>
 </launchConfiguration>
