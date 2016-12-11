@@ -124,6 +124,3 @@ test-main:
     [junit]     at java.lang.Class.getField(java.base@9-ea/Class.java:1881)
     [junit]     at org.jacoco.agent.rt.internal_14f7ee5.core.runtime.ModifiedSystemClassRuntime.createFor(ModifiedSystemClassRuntime.java:137)
     [junit]     ... 9 more
-
-
-# Jira at apache.org for updating Ant on Jenkins to the latest version: https://issues.apache.org/jira/browse/INFRA-12360
