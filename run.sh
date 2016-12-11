@@ -21,3 +21,4 @@ ant \
 	-Dorg.apache.poi.util.POILogger=org.apache.poi.util.NullLogger \
 	-Dhalt.on.test.failure=false \
 	$*
+/opt/apache/apache-ant/apache-ant-1.7.1/bin/ant -Dcoverage.enabled=true $*
