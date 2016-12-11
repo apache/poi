@@ -24,5 +24,6 @@ sun.text.normalizer.ICUData.getStream
 sun.font.T2KFontScaler.initNativeScaler
 sun.font.SunFontManager.loadFonts
 sun.font.FontManagerFactory.getInstance
+sun.font.TrueTypeFont.open
 sun.reflect.misc.MethodUtil.<clinit>
 java.util.logging.Logger.findSystemResourceBundle
