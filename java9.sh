@@ -31,6 +31,15 @@ exit 0
 
 # running with: Java(TM) SE Runtime Environment (build 9-ea+112)
 #
+#
+
+Link to bugs relevant to us: 
+https://bugs.openjdk.java.net/browse/JDK-8152533?jql=labels%20%3D%20apache-poi-interest
+https://bugs.openjdk.java.net/secure/IssueNavigator.jspa?reset=true&jqlQuery=labels+%3D+apache-poi-found
+https://bugs.openjdk.java.net/browse/JDK-8157678?jql=labels%20in%20%28apache-poi-interest%2C%20apache-poi-found%29
+
+
+#
 # things found:
 
 # Assertion when doing reflection: *** java.lang.instrument ASSERTION FAILED ***: "!errorOutstanding" with message transform method call failed at JPLISAgent.c line: 884, seems to continue to run, though
@@ -39,39 +48,41 @@ exit 0
 # Affected tests
 # * org.apache.poi.xslf.usermodel.TestPPTX2PNG
 # => see https://bugs.openjdk.java.net/browse/JDK-8151725, https://bugs.openjdk.java.net/browse/JDK-8145542, https://bugs.openjdk.java.net/browse/JDK-8041480
+Main issue now: https://bugs.openjdk.java.net/browse/JDK-8041480
 
 => Review ID: JI-9038016
 
 
 # Java crashed once when running our tests, during the next run the same test did succeed, so it seems to be intermittent
 
-    [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.232 sec
-    [junit] Running org.apache.poi.hwpf.converter.TestWordToConverterSuite
+    [junit] Reading document/53379.doc with class org.apache.poi.stress.HWPFFileHandler
     [junit] #
     [junit] # A fatal error has been detected by the Java Runtime Environment:
     [junit] #
-    [junit] #  SIGSEGV (0xb) at pc=0x00007f313e7c7441, pid=2589690, tid=2589706
+    [junit] #  SIGSEGV (0xb) at pc=0x00007fa7e71ba451, pid=3467195, tid=3467211
     [junit] #
-    [junit] # JRE version: Java(TM) SE Runtime Environment (9.0+112) (build 9-ea+112)
-    [junit] # Java VM: Java HotSpot(TM) 64-Bit Server VM (9-ea+112, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+    [junit] # JRE version: Java(TM) SE Runtime Environment (9.0+119) (build 9-ea+119)
+    [junit] # Java VM: Java HotSpot(TM) 64-Bit Server VM (9-ea+119, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
     [junit] # Problematic frame:
-    [junit] # V  [libjvm.so+0x99b441]  PhaseIdealLoop::idom_no_update(Node*) const [clone .isra.105]+0x11
+    [junit] # V  [libjvm.so+0x9a5451]  PhaseIdealLoop::idom_no_update(Node*) const [clone .isra.113]+0x11
     [junit] #
-    [junit] # Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %P" (or dumping to /opt/apache/poi/git-svn/core.2589690)
+    [junit] # Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %P" (or dumping to /opt/apache/poi/git-svn/core.3467195)
     [junit] #
     [junit] # An error report file with more information is saved as:
-    [junit] # /opt/apache/poi/git-svn/hs_err_pid2589690.log
+    [junit] # /opt/apache/poi/git-svn/hs_err_pid3467195.log
     [junit] #
     [junit] # Compiler replay data is saved as:
-    [junit] # /opt/apache/poi/git-svn/replay_pid2589690.log
+    [junit] # /opt/apache/poi/git-svn/replay_pid3467195.log
     [junit] #
     [junit] # If you would like to submit a bug report, please visit:
     [junit] #   http://bugreport.java.com/bugreport/crash.jsp
     [junit] #
-    [junit] Running org.apache.poi.hwpf.usermodel.TestTableRow
+    [junit] Running org.apache.poi.TestAllFiles
     [junit] Tests run: 1, Failures: 0, Errors: 1, Time elapsed: 0 sec
-    [junit] Tests FAILED (crashed)
+    [junit] Test org.apache.poi.TestAllFiles FAILED (crashed)
 
+Also happened at 
+    [junit] Reading document/Bug47731.doc with class org.apache.poi.stress.HWPFFileHandler
 
 
 # Solved issues:
