@@ -11,3 +11,16 @@ sonar/scratchpad/src/
 sonar/ooxml-schema-security/src/
 sonar/examples/src/
 sonar/excelant/src/
+
+### JetBrains template
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
+
+*.iml
+
+## Directory-based project format:
+.idea/
+
+## Plugin-specific files:
+
+# IntelliJ
+/out/
