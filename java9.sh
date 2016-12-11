@@ -15,6 +15,8 @@ ant -version
 # disable file-leak-detector:	-Dfile.leak.detector=-Da=b \
 # option to try to avoid sigsev:    -Djava9addarg=-XX:-PartialPeelLoop \
 
+# disabled jacoco until we use 0.7.8, see https://github.com/jacoco/jacoco/pull/434
+
 ant  \
     -Duser.language=en \
     -Duser.country=US \
@@ -22,7 +24,7 @@ ant  \
     -Djava9addmods=-addmods \
     -Djava9addmodsvalue=java.xml.bind \
 	-Djava.locale.providers=JRE,CLDR \
-	-Dcoverage.enabled=true \
+	-Dcoverage.enabled=false \
 	-Dorg.apache.poi.util.POILogger=org.apache.poi.util.NullLogger \
 	-Dhalt.on.test.failure=false \
 	$*
