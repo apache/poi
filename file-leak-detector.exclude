@@ -35,6 +35,9 @@ sun.security.jca.ProviderConfig.getProvider
 javax.crypto.JceSecurity.setupJurisdictionPolicies
 javax.crypto.Cipher.getMaxAllowedKeyLength
 
+# IntelliJ
+com.intellij.junit4.JUnit4TestRunnerUtil.<clinit>
+
 # Java
 sun.util.resources.LocaleData.getBundle
 sun.util.LocaleServiceProviderPool.<init>
