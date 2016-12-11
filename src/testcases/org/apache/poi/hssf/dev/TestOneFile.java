@@ -16,8 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import java.io.File;
-
+import org.apache.poi.POIDataSamples;
 import org.junit.Test;
 
 public class TestOneFile {
@@ -25,7 +24,7 @@ public class TestOneFile {
     public void test() throws Exception {
         //Biff8EncryptionKey.setCurrentUserPassword("blabla");
         TestEFBiffViewer test = new TestEFBiffViewer();
-        test.file = new File("test-data/spreadsheet/50833.xls"); 
+        test.file = POIDataSamples.getSpreadSheetInstance().getFile("50833.xls");
         test.testMain();
     }
 }
