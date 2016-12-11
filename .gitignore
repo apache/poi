@@ -2,4 +2,3 @@
 .sonar
 junit*.properties
 sonar/*/target
-forrest.properties
