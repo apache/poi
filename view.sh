@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # find jar-file with highest version number
-for i in `ls build/dist/poi-*.jar | grep -v -- "-sources" | grep -v -- "-examples" | grep -v -- "-excelant" | grep -v -- "-ooxml" | grep -v -- "-javadoc"`;do
+for i in `ls build/dist/maven/*/poi-*.jar | grep -v -- "-sources" | grep -v -- "-examples" | grep -v -- "-excelant" | grep -v -- "-ooxml" | grep -v -- "-javadoc"`;do
 	CP=$i:$CP
 done
 
