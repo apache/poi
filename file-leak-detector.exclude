@@ -1,0 +1,26 @@
+# Codepage support loads classes
+java.nio.charset.Charset.lookupViaProviders
+
+# Ant
+org.apache.tools.ant.Main.getAntVersion
+javax.xml.parsers.FactoryFinder.findJarServiceProvider
+org.apache.tools.ant.taskdefs.Antlib.createAntlib
+
+# XML Parser
+com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
+
+# XMLBeans
+org.apache.xmlbeans.impl.regex.RegexParser.setLocale
+org.apache.xmlbeans.impl.schema.SchemaTypeSystemImpl$XsbReader.getLoaderStream
+
+# JCA
+sun.security.jca.ProviderConfig.getProvider
+javax.crypto.JceSecurity.setupJurisdictionPolicies
+
+# Java
+sun.text.normalizer.ICUData.getStream
+sun.font.T2KFontScaler.initNativeScaler
+sun.font.SunFontManager.loadFonts
+sun.font.FontManagerFactory.getInstance
+sun.reflect.misc.MethodUtil.<clinit>
+java.util.logging.Logger.findSystemResourceBundle
