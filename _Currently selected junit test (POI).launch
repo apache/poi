@@ -27,5 +27,5 @@
 <stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="${java_type_name}"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ApachePOI"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea&#10;-Dnotused=agentpath:/opt/dynaTrace/dynatrace-5.6.0/agent/lib64/libdtagent.so=name=ApachePOI,server=localhost:9998,transformationmaxavgwait=400,wait=5&#10;-javaagent:/opt/file-leak-detector/target/file-leak-detector-1.9-SNAPSHOT-jar-with-dependencies.jar=http=19998,strong,excludes=file-leak-detector.exclude,dumpatshutdown"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-ea&#10;-Dnotused=agentpath:/opt/dynaTrace/dynatrace-5.6.0/agent/lib64/libdtagent.so=name=ApachePOI,server=localhost:9998,transformationmaxavgwait=400,wait=5"/>
 </launchConfiguration>
