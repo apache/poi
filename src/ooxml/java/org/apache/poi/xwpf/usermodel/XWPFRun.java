@@ -1003,7 +1003,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
             CTBlipFillProperties blipFill = pic.addNewBlipFill();
             CTBlip blip = blipFill.addNewBlip();
-            blip.setEmbed(parent.getDocument().getRelationId(picData));
+            blip.setEmbed(parent.getPart().getRelationId(picData));
             blipFill.addNewStretch().addNewFillRect();
 
             CTShapeProperties spPr = pic.addNewSpPr();
