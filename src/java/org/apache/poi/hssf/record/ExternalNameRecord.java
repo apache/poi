@@ -214,15 +214,15 @@ public final class ExternalNameRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("[EXTERNALNAME]\n");
-        sb.append("    .options      = ").append(field_1_option_flag).append("\n");
+        sb.append("    .options = ").append(field_1_option_flag).append("\n");
 		sb.append("    .ix      = ").append(field_2_ixals).append("\n");
 		sb.append("    .name    = ").append(field_4_name).append("\n");
 		if(field_5_name_definition != null) {
             Ptg[] ptgs = field_5_name_definition.getTokens();
             for (Ptg ptg : ptgs) {
-                sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
+                sb.append("    .namedef = ").append(ptg.toString()).append(ptg.getRVAType()).append("\n");
             }
 		}
 		sb.append("[/EXTERNALNAME]\n");

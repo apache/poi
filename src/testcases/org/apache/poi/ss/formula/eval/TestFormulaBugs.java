@@ -118,7 +118,6 @@ public final class TestFormulaBugs {
 
 	/**
 	 * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p/>
-	 * @throws IOException 
 	 */
     @Test
 	public void test42448() throws IOException {

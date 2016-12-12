@@ -163,6 +163,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private void init() {
        if (commentsTable != null) {
            commentCellRefs = new LinkedList<CellAddress>();
+           //noinspection deprecation
            for (CTComment comment : commentsTable.getCTComments().getCommentList().getCommentArray()) {
                commentCellRefs.add(new CellAddress(comment.getRef()));
            }
@@ -228,10 +229,10 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                 //  match the current cell
                 if(formulasNotResults) {
                     logger.log(POILogger.WARN, "shared formulas not yet supported!");
-                } else {
+                } /*else {
                    // It's a shared formula, so we can't get at the formula string yet
                    // However, they don't care about the formula string, so that's ok!
-                }
+                }*/
              }
           } else {
              fIsOpen = true;
@@ -334,7 +335,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                             thisStr = fv;
                          }
                       } else {
-                         // No formating applied, just do raw value in all cases
+                         // No formatting applied, just do raw value in all cases
                          thisStr = fv;
                       }
                    }
