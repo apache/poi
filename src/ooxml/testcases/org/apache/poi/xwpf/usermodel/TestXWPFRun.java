@@ -16,14 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.Units;
-import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,8 +25,26 @@ import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 
 /**
  * Tests for XWPF Run
@@ -470,6 +482,46 @@ public class TestXWPFRun {
         XWPFRun rBack = pBack.getRuns().get(0);
         
         assertEquals(1, docBack.getAllPictures().size());
+        assertEquals(1, rBack.getEmbeddedPictures().size());
+    }
+    
+    /**
+     * Bugzilla #58237 - Unable to add image to word document header
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddPictureInHeader() throws Exception {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+        XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
+        XWPFParagraph p = hdr.createParagraph();
+        XWPFRun r = p.createRun();
+        
+        assertEquals(0, hdr.getAllPictures().size());
+        assertEquals(0, r.getEmbeddedPictures().size());
+
+        r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+
+        assertEquals(1, hdr.getAllPictures().size());
+        assertEquals(1, r.getEmbeddedPictures().size());
+        
+        XWPFPicture pic = r.getEmbeddedPictures().get(0);
+        CTPicture ctPic = pic.getCTPicture();
+        CTBlipFillProperties ctBlipFill = ctPic.getBlipFill();
+        
+        assertNotNull(ctBlipFill);
+        
+        CTBlip ctBlip = ctBlipFill.getBlip();
+        
+        assertNotNull(ctBlip);
+        assertEquals("rId1", ctBlip.getEmbed());
+        
+        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        XWPFHeader hdrBack = docBack.getHeaderArray(0);
+        XWPFParagraph pBack = hdrBack.getParagraphArray(0);
+        XWPFRun rBack = pBack.getRuns().get(0);
+        
+        assertEquals(1, hdrBack.getAllPictures().size());
         assertEquals(1, rBack.getEmbeddedPictures().size());
     }
 
