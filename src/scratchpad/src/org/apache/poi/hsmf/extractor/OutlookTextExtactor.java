@@ -151,13 +151,13 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       // Display attachment names
       // To get the attachments, use ExtractorFactory
       for(AttachmentChunks att : msg.getAttachmentFiles()) {
-         StringChunk name = att.attachLongFileName;
-         if (name == null) name = att.attachFileName;
+         StringChunk name = att.getAttachLongFileName();
+         if (name == null) name = att.getAttachFileName();
          String attName = name == null ? null : name.getValue();
           
-         if(att.attachMimeTag != null && 
-               att.attachMimeTag.getValue() != null) {
-             attName = att.attachMimeTag.getValue() + " = " + attName; 
+         if(att.getAttachMimeTag() != null && 
+               att.getAttachMimeTag().getValue() != null) {
+             attName = att.getAttachMimeTag().getValue() + " = " + attName; 
          }
          s.append("Attachment: " + attName + "\n");
       }

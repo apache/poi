@@ -191,7 +191,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getTextBody() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.textBodyChunk);
+      return getStringFromChunk(mainChunks.getTextBodyChunk());
    }
 
    /**
@@ -201,10 +201,10 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getHtmlBody() throws ChunkNotFoundException {
-      if(mainChunks.htmlBodyChunkBinary != null) {
-         return mainChunks.htmlBodyChunkBinary.getAs7bitString();
+      if(mainChunks.getHtmlBodyChunkBinary() != null) {
+         return mainChunks.getHtmlBodyChunkBinary().getAs7bitString();
       }
-      return getStringFromChunk(mainChunks.htmlBodyChunkString);
+      return getStringFromChunk(mainChunks.getHtmlBodyChunkString());
    }
    @Deprecated
    public String getHmtlBody() throws ChunkNotFoundException {
@@ -218,7 +218,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getRtfBody() throws ChunkNotFoundException {
-      ByteChunk chunk = mainChunks.rtfBodyChunk;
+      ByteChunk chunk = mainChunks.getRtfBodyChunk();
       if(chunk == null) {
          if(returnNullOnMissingChunk) {
             return null;
@@ -242,7 +242,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getSubject() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.subjectChunk);
+      return getStringFromChunk(mainChunks.getSubjectChunk());
    }
 
    /**
@@ -251,7 +251,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getDisplayFrom() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.displayFromChunk);
+      return getStringFromChunk(mainChunks.getDisplayFromChunk());
    }
 
    /**
@@ -264,7 +264,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getDisplayTo() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.displayToChunk);
+      return getStringFromChunk(mainChunks.getDisplayToChunk());
    }
 
    /**
@@ -277,7 +277,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getDisplayCC() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.displayCCChunk);
+      return getStringFromChunk(mainChunks.getDisplayCCChunk());
    }
 
    /**
@@ -291,7 +291,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getDisplayBCC() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.displayBCCChunk);
+      return getStringFromChunk(mainChunks.getDisplayBCCChunk());
    }
 
    /**
@@ -516,7 +516,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Returns all the headers, one entry per line
     */
    public String[] getHeaders() throws ChunkNotFoundException {
-      String headers = getStringFromChunk(mainChunks.messageHeaders);
+      String headers = getStringFromChunk(mainChunks.getMessageHeaders());
       if(headers == null) {
          return null;
       }
@@ -529,7 +529,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getConversationTopic() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.conversationTopic);
+      return getStringFromChunk(mainChunks.getConversationTopic());
    }
 
    /**
@@ -541,7 +541,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public String getMessageClass() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.messageClass);
+      return getStringFromChunk(mainChunks.getMessageClass());
    }
 
    /**
@@ -549,8 +549,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
     *  server on.
     */
    public Calendar getMessageDate() throws ChunkNotFoundException {
-      if (mainChunks.submissionChunk != null) {
-         return mainChunks.submissionChunk.getAcceptedAtTime();
+      if (mainChunks.getSubmissionChunk() != null) {
+         return mainChunks.getSubmissionChunk().getAcceptedAtTime();
       }
       else {
          // Try a few likely suspects...
