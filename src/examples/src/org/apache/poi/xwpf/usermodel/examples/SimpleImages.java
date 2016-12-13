@@ -18,23 +18,23 @@
  */
 package org.apache.poi.xwpf.usermodel.examples;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 /**
  * Demonstrates how to add pictures in a .docx document
- *
- * @author Yegor Kozlov
  */
 public class SimpleImages {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, InvalidFormatException {
         XWPFDocument doc = new XWPFDocument();
         XWPFParagraph p = doc.createParagraph();
 
@@ -69,6 +69,7 @@ public class SimpleImages {
         FileOutputStream out = new FileOutputStream("images.docx");
         doc.write(out);
         out.close();
+        doc.close();
     }
 
 

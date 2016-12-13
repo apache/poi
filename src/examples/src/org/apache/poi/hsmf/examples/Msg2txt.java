@@ -131,16 +131,16 @@ public class Msg2txt {
 	 */
 	public void processAttachment(AttachmentChunks attachment, 
 	      File dir) throws IOException {
-	   String fileName = attachment.attachFileName.toString();
-	   if(attachment.attachLongFileName != null) {
-	      fileName = attachment.attachLongFileName.toString();
+	   String fileName = attachment.getAttachFileName().toString();
+	   if(attachment.getAttachLongFileName() != null) {
+	      fileName = attachment.getAttachLongFileName().toString();
 	   }
 	   
 		File f = new File(dir, fileName);
 		OutputStream fileOut = null;
 		try {
 			fileOut = new FileOutputStream(f);
-			fileOut.write(attachment.attachData.getValue());
+			fileOut.write(attachment.getAttachData().getValue());
 		} finally {
 			if(fileOut != null) {
 				fileOut.close();

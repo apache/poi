@@ -133,11 +133,11 @@ public class OLE2ScratchpadExtractorFactory {
             // Stored in the Attachment blocks
             MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
             for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
-                if (attachment.attachData != null) {
-                    byte[] data = attachment.attachData.getValue();
+                if (attachment.getAttachData() != null) {
+                    byte[] data = attachment.getAttachData().getValue();
                     nonPOIFS.add( new ByteArrayInputStream(data) );
-                } else if (attachment.attachmentDirectory != null) {
-                    dirs.add(attachment.attachmentDirectory.getDirectory());
+                } else if (attachment.getAttachmentDirectory() != null) {
+                    dirs.add(attachment.getAttachmentDirectory().getDirectory());
                 }
             }
         }

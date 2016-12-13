@@ -420,6 +420,7 @@ public abstract class POIDocument implements Closeable {
      * 
      * @return {@code true} if dummy directory was created, {@code false} otherwise
      */
+    @SuppressWarnings("resource")
     @Internal
     protected boolean initDirectory() {
         if (directory == null) {
