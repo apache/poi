@@ -77,7 +77,7 @@ public class TestDocumentEncryption {
             try {
                 NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
                 HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
-                new HSLFSlideShow(hss);
+                new HSLFSlideShow(hss).close();
                 fs.close();
             } catch (EncryptedPowerPointFileException e) {
                 fail(pptFile+" can't be decrypted");
@@ -99,17 +99,19 @@ public class TestDocumentEncryption {
         
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         hss.write(bos);
+        hss.close();
         fs.close();
         
         fs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
         hss = new HSLFSlideShowImpl(fs);
         List<HSLFPictureData> picsActual = hss.getPictureData();
-        fs.close();
         
         assertEquals(picsExpected.size(), picsActual.size());
         for (int i=0; i<picsExpected.size(); i++) {
             assertArrayEquals(picsExpected.get(i).getRawData(), picsActual.get(i).getRawData());
         }
+        hss.close();
+        fs.close();
     }
 
     @Test
@@ -128,6 +130,7 @@ public class TestDocumentEncryption {
         Biff8EncryptionKey.setCurrentUserPassword("hello");
         ByteArrayOutputStream encrypted = new ByteArrayOutputStream();
         hss.write(encrypted);
+        hss.close();
         fs.close();
 
         // decrypted
@@ -137,6 +140,7 @@ public class TestDocumentEncryption {
         Biff8EncryptionKey.setCurrentUserPassword(null);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         hss.write(actual);
+        hss.close();
         fs.close();
         
         assertArrayEquals(expected.toByteArray(), actual.toByteArray());
@@ -184,6 +188,7 @@ public class TestDocumentEncryption {
         ps = PropertySetFactory.create(fs2.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         assertTrue(ps.isDocumentSummaryInformation());
         assertEquals("On-screen Show (4:3)", ps.getProperties()[1].getValue());
+        ss.close();
         fs.close();
         fs2.close();
     }

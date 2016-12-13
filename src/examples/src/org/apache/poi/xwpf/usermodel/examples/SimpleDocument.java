@@ -32,8 +32,6 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 /**
  * A simple WOrdprocessingML document created by POI XWPF API
- *
- * @author Yegor Kozlov
  */
 public class SimpleDocument {
 
@@ -71,18 +69,18 @@ public class SimpleDocument {
 
         XWPFRun r2 = p2.createRun();
         r2.setText("jumped over the lazy dog");
-        r2.setStrike(true);
+        r2.setStrikeThrough(true);
         r2.setFontSize(20);
 
         XWPFRun r3 = p2.createRun();
         r3.setText("and went away");
-        r3.setStrike(true);
+        r3.setStrikeThrough(true);
         r3.setFontSize(20);
         r3.setSubscript(VerticalAlign.SUPERSCRIPT);
 
 
         XWPFParagraph p3 = doc.createParagraph();
-        p3.setWordWrap(true);
+        p3.setWordWrapped(true);
         p3.setPageBreak(true);
                 
         //p3.setAlignment(ParagraphAlignment.DISTRIBUTE);
@@ -127,6 +125,6 @@ public class SimpleDocument {
         FileOutputStream out = new FileOutputStream("simple.docx");
         doc.write(out);
         out.close();
-
+        doc.close();
     }
 }

@@ -260,14 +260,14 @@ public final class TestPOIFSChunkParser {
       assertTrue(groups[4] instanceof NameIdChunks);
       
       attachment = (AttachmentChunks)groups[2];
-      assertEquals("TEST-U~1.DOC", attachment.attachFileName.toString());
-      assertEquals("test-unicode.doc", attachment.attachLongFileName.toString());
-      assertEquals(24064, attachment.attachData.getValue().length);
+      assertEquals("TEST-U~1.DOC", attachment.getAttachFileName().toString());
+      assertEquals("test-unicode.doc", attachment.getAttachLongFileName().toString());
+      assertEquals(24064, attachment.getAttachData().getValue().length);
       
       attachment = (AttachmentChunks)groups[3];
-      assertEquals("pj1.txt", attachment.attachFileName.toString());
-      assertEquals("pj1.txt", attachment.attachLongFileName.toString());
-      assertEquals(89, attachment.attachData.getValue().length);
+      assertEquals("pj1.txt", attachment.getAttachFileName().toString());
+      assertEquals("pj1.txt", attachment.getAttachLongFileName().toString());
+      assertEquals(89, attachment.getAttachData().getValue().length);
 	   
       
       // Check raw details on one without
@@ -279,14 +279,14 @@ public final class TestPOIFSChunkParser {
       assertEquals(2, msgWith.getAttachmentFiles().length);
 
       attachment = msgWith.getAttachmentFiles()[0];
-      assertEquals("TEST-U~1.DOC", attachment.attachFileName.toString());
-      assertEquals("test-unicode.doc", attachment.attachLongFileName.toString());
-      assertEquals(24064, attachment.attachData.getValue().length);
+      assertEquals("TEST-U~1.DOC", attachment.getAttachFileName().toString());
+      assertEquals("test-unicode.doc", attachment.getAttachLongFileName().toString());
+      assertEquals(24064, attachment.getAttachData().getValue().length);
       
       attachment = msgWith.getAttachmentFiles()[1];
-      assertEquals("pj1.txt", attachment.attachFileName.toString());
-      assertEquals("pj1.txt", attachment.attachLongFileName.toString());
-      assertEquals(89, attachment.attachData.getValue().length);
+      assertEquals("pj1.txt", attachment.getAttachFileName().toString());
+      assertEquals("pj1.txt", attachment.getAttachLongFileName().toString());
+      assertEquals(89, attachment.getAttachData().getValue().length);
       
       // Plus check core details are there
       assertEquals("'nicolas1.23456@free.fr'", msgWith.getDisplayTo());

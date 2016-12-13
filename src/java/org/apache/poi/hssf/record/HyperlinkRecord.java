@@ -17,14 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
-import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -107,15 +103,14 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 		}
 
 		public long getD4() {
-			//
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(8);
-			try {
-				new DataOutputStream(baos).writeLong(_d4);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			byte[] buf = baos.toByteArray();
-			return new LittleEndianByteArrayInputStream(buf).readLong();
+		    byte[] result = new byte[Long.SIZE/Byte.SIZE];
+		    long l = _d4;
+		    for (int i = result.length-1; i >= 0; i--) {
+		        result[i] = (byte)(l & 0xFF);
+		        l >>= 8;
+		    }
+		    
+			return LittleEndian.getLong(result, 0);
 		}
 
 		public String formatAsString() {

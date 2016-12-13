@@ -847,7 +847,6 @@ public final class TestBugs {
     }
 
     @Test
-    @SuppressWarnings("resource")
     public void bug57796() throws IOException {
         HSLFSlideShow ppt = open("WithLinks.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
@@ -859,7 +858,7 @@ public final class TestBugs {
         assertEquals(hlRun.getId(), hlShape.getId());
         assertEquals(hlRun.getAddress(), hlShape.getAddress());
         assertEquals(hlRun.getLabel(), hlShape.getLabel());
-        assertEquals(hlRun.getType(), hlShape.getType());
+        assertEquals(hlRun.getTypeEnum(), hlShape.getTypeEnum());
         assertEquals(hlRun.getStartIndex(), hlShape.getStartIndex());
         assertEquals(hlRun.getEndIndex(), hlShape.getEndIndex());
 
@@ -999,9 +998,16 @@ public final class TestBugs {
             long persistId = vbaAtom.getPersistIdRef();
             for (HSLFObjectData objData : ppt.getEmbeddedObjects()) {
                 if (objData.getExOleObjStg().getPersistId() == persistId) {
-                    return new VBAMacroReader(objData.getData()).readMacros();
+                    VBAMacroReader mr = new VBAMacroReader(objData.getData());
+                    try {
+                        return mr.readMacros();
+                    } finally {
+                        mr.close();
+                    }
                 }
             }
+            
+            ppt.close();
 
         } finally {
             IOUtils.closeQuietly(npoifs);

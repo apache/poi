@@ -64,11 +64,15 @@ public final class FileHelper {
 	 *             If an I/O error occur.
 	 */
 	public static void copyFile(File in, File out) throws IOException {
-		FileChannel sourceChannel = new FileInputStream(in).getChannel();
-		FileChannel destinationChannel = new FileOutputStream(out).getChannel();
+	    FileInputStream fis = new FileInputStream(in);
+	    FileOutputStream fos = new FileOutputStream(out);
+		FileChannel sourceChannel = fis.getChannel();
+		FileChannel destinationChannel = fos.getChannel();
 		sourceChannel.transferTo(0, sourceChannel.size(), destinationChannel);
 		sourceChannel.close();
 		destinationChannel.close();
+		fos.close();
+		fis.close();
 	}
 
 	/**

@@ -17,20 +17,27 @@
 
 package org.apache.poi.hpbf.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpbf.HPBFDocument;
-import org.apache.poi.hpbf.model.qcbits.QCTextBit;
-import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type0;
+import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type4;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type8;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpbf.model.qcbits.QCTextBit;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public final class TestQuillContents extends TestCase {
+public final class TestQuillContents {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
-	public void testBasics() throws Exception {
+    @Test
+    public void testBasics() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
 		    _samples.openResourceAsStream("Sample.pub")
 		);
@@ -59,9 +66,12 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("STSH", qc.getBits()[3].getThingType());
 		assertEquals("STSH", qc.getBits()[3].getBitType());
 		assertEquals(2, qc.getBits()[3].getOptA());
+		
+		doc.close();
 	}
 
-	public void testText() throws Exception {
+    @Test
+	public void testText() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("Sample.pub")
 		);
@@ -73,9 +83,12 @@ public final class TestQuillContents extends TestCase {
 		String t = text.getText();
 		assertTrue(t.startsWith("This is some text on the first page"));
 		assertTrue(t.endsWith("Within doc to page 1\r"));
+		
+      doc.close();
 	}
 
-	public void testPLC() throws Exception {
+    @Test
+	public void testPLC() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("Simple.pub")
 		);
@@ -133,9 +146,13 @@ public final class TestQuillContents extends TestCase {
 		assertEquals(0x22000000, plc12.getPlcValB()[0]);
 		assertEquals(0x05, plc12.getPlcValA()[1]);
 		assertEquals(0x04, plc12.getPlcValB()[1]);
+		
+		doc.close();
 	}
 
-	public void testComplexPLC() throws Exception {
+    @SuppressWarnings("unused")
+    @Test
+	public void testComplexPLC() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("Sample.pub")
 		);
@@ -234,9 +251,12 @@ public final class TestQuillContents extends TestCase {
 		assertEquals(0x000004, plc16.getPlcValB()[4]);
 		assertEquals(0x000004, plc16.getPlcValA()[5]);
 		assertEquals(0x000004, plc16.getPlcValB()[5]);
+		
+      doc.close();
 	}
 
-	public void testNoHyperlinks() throws Exception {
+    @Test
+	public void testNoHyperlinks() throws IOException {
 		HPBFDocument doc = new HPBFDocument(
                 _samples.openResourceAsStream("SampleNewsletter.pub")
 		);
@@ -250,9 +270,12 @@ public final class TestQuillContents extends TestCase {
 		assertEquals(0, plc18.getNumberOfHyperlinks());
 		assertEquals(0, plc18.getTextStartAt(0));
 		assertEquals(601, plc18.getAllTextEndAt());
+		
+      doc.close();
 	}
 
-	public void testSimpleHyperlink() throws Exception {
+    @Test
+	public void testSimpleHyperlink() throws IOException {
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBit;
@@ -270,6 +293,7 @@ public final class TestQuillContents extends TestCase {
 		assertEquals(10, hlBit.getTextStartAt(0));
 		assertEquals(15, hlBit.getAllTextEndAt());
 		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
+        doc.close();
 
 		// Longer link at 10
 		doc = new HPBFDocument(
@@ -284,6 +308,7 @@ public final class TestQuillContents extends TestCase {
 		assertEquals(10, hlBit.getTextStartAt(0));
 		assertEquals(15, hlBit.getAllTextEndAt());
 		assertEquals("http://poi.apache.org/hpbf/", hlBit.getHyperlink(0));
+        doc.close();
 
 		// Link at 20
 		doc = new HPBFDocument(
@@ -298,9 +323,11 @@ public final class TestQuillContents extends TestCase {
 		assertEquals(20, hlBit.getTextStartAt(0));
 		assertEquals(25, hlBit.getAllTextEndAt());
 		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
+		doc.close();
 	}
 
-	public void testManyHyperlinks() throws Exception {
+    @Test
+	public void testManyHyperlinks() throws IOException {
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBit;
@@ -318,10 +345,12 @@ public final class TestQuillContents extends TestCase {
 		assertEquals(10, hlBit.getTextStartAt(0));
 		assertEquals(15, hlBit.getAllTextEndAt());
 		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
-
+		
+      doc.close();
 	}
 
-	public void testHyperlinkDifferentVersions() throws Exception {
+    @Test
+	public void testHyperlinkDifferentVersions() throws IOException {
 		HPBFDocument doc;
 		QuillContents qc;
 		Type12 hlBitA;
@@ -354,6 +383,7 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("", hlBitB.getHyperlink(0));
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(1));
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
+        doc.close();
 
 		// 2000 version
 		doc = new HPBFDocument(
@@ -382,6 +412,7 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("", hlBitB.getHyperlink(0));
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(1));
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
+        doc.close();
 
 		// 98 version
 		doc = new HPBFDocument(
@@ -410,5 +441,6 @@ public final class TestQuillContents extends TestCase {
 		assertEquals("", hlBitB.getHyperlink(0));
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(1));
 		assertEquals("mailto:dev@poi.apache.org?subject=HPBF", hlBitB.getHyperlink(2));
-	}
+        doc.close();
+    }
 }

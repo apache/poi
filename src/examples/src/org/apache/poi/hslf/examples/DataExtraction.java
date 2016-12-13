@@ -36,8 +36,6 @@ import org.apache.poi.hwpf.usermodel.Range;
 
 /**
  * Demonstrates how you can extract misc embedded data from a ppt file
- *
- * @author Yegor Kozlov
  */
 public final class DataExtraction {
 
@@ -93,6 +91,7 @@ public final class DataExtraction {
                         FileOutputStream out = new FileOutputStream(name + "-("+(oleIdx)+").doc");
                         doc.write(out);
                         out.close();
+                        doc.close();
                      }  else {
                         FileOutputStream out = new FileOutputStream(ole.getProgID() + "-"+(oleIdx+1)+".dat");
                         InputStream dis = data.getData();
@@ -117,8 +116,8 @@ public final class DataExtraction {
                     out.close();
                 }
             }
-
         }
+        ppt.close();
     }
 
     private static void usage(){
