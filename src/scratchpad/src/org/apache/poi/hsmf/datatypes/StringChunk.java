@@ -66,11 +66,12 @@ public class StringChunk extends Chunk {
         this.encoding7Bit = encoding;
 
         // Re-read the String if we're a 7 bit one
-        if (type == Types.ASCII_STRING) {
+        if (getType() == Types.ASCII_STRING) {
             parseString();
         }
     }
 
+    @Override
     public void readValue(InputStream value) throws IOException {
         rawValue = IOUtils.toByteArray(value);
         parseString();
@@ -78,29 +79,30 @@ public class StringChunk extends Chunk {
 
     private void parseString() {
         String tmpValue;
-        if (type == Types.ASCII_STRING) {
+        if (getType() == Types.ASCII_STRING) {
             tmpValue = parseAs7BitData(rawValue, encoding7Bit);
-        } else if (type == Types.UNICODE_STRING) {
+        } else if (getType() == Types.UNICODE_STRING) {
             tmpValue = StringUtil.getFromUnicodeLE(rawValue);
         } else {
-            throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
+            throw new IllegalArgumentException("Invalid type " + getType() + " for String Chunk");
         }
 
         // Clean up
         this.value = tmpValue.replace("\0", "");
     }
 
+    @Override
     public void writeValue(OutputStream out) throws IOException {
         out.write(rawValue);
     }
 
     private void storeString() {
-        if (type == Types.ASCII_STRING) {
+        if (getType() == Types.ASCII_STRING) {
             rawValue = value.getBytes(Charset.forName(encoding7Bit));
-        } else if (type == Types.UNICODE_STRING) {
+        } else if (getType() == Types.UNICODE_STRING) {
             rawValue = StringUtil.getToUnicodeLE(value);
         } else {
-            throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
+            throw new IllegalArgumentException("Invalid type " + getType() + " for String Chunk");
         }
     }
 
@@ -120,6 +122,7 @@ public class StringChunk extends Chunk {
         storeString();
     }
 
+    @Override
     public String toString() {
         return this.value;
     }

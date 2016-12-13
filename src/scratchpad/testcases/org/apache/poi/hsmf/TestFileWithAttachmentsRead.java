@@ -69,11 +69,11 @@ public class TestFileWithAttachmentsRead extends TestCase {
 
       // Basic checks
       for (AttachmentChunks attachment : attachments) {
-         assertTrue(attachment.attachFileName.getValue().length() > 0);
-         assertTrue(attachment.attachLongFileName.getValue().length() > 0);
-         assertTrue(attachment.attachExtension.getValue().length() > 0);
-         if(attachment.attachMimeTag != null) {
-            assertTrue(attachment.attachMimeTag.getValue().length() > 0);
+         assertTrue(attachment.getAttachFileName().getValue().length() > 0);
+         assertTrue(attachment.getAttachLongFileName().getValue().length() > 0);
+         assertTrue(attachment.getAttachExtension().getValue().length() > 0);
+         if(attachment.getAttachMimeTag() != null) {
+            assertTrue(attachment.getAttachMimeTag().getValue().length() > 0);
          }
       }
 
@@ -81,18 +81,18 @@ public class TestFileWithAttachmentsRead extends TestCase {
 
       // Now check in detail
       attachment = twoSimpleAttachments.getAttachmentFiles()[0];
-      assertEquals("TEST-U~1.DOC", attachment.attachFileName.toString());
-      assertEquals("test-unicode.doc", attachment.attachLongFileName.toString());
-      assertEquals(".doc", attachment.attachExtension.getValue());
-      assertEquals(null, attachment.attachMimeTag);
-      assertEquals(24064, attachment.attachData.getValue().length);
+      assertEquals("TEST-U~1.DOC", attachment.getAttachFileName().toString());
+      assertEquals("test-unicode.doc", attachment.getAttachLongFileName().toString());
+      assertEquals(".doc", attachment.getAttachExtension().getValue());
+      assertEquals(null, attachment.getAttachMimeTag());
+      assertEquals(24064, attachment.getAttachData().getValue().length);
 
       attachment = twoSimpleAttachments.getAttachmentFiles()[1];
-      assertEquals("pj1.txt", attachment.attachFileName.toString());
-      assertEquals("pj1.txt", attachment.attachLongFileName.toString());
-      assertEquals(".txt", attachment.attachExtension.getValue());
-      assertEquals(null, attachment.attachMimeTag);
-      assertEquals(89, attachment.attachData.getValue().length);
+      assertEquals("pj1.txt", attachment.getAttachFileName().toString());
+      assertEquals("pj1.txt", attachment.getAttachLongFileName().toString());
+      assertEquals(".txt", attachment.getAttachExtension().getValue());
+      assertEquals(null, attachment.getAttachMimeTag());
+      assertEquals(89, attachment.getAttachData().getValue().length);
    }
    
    /**
@@ -106,24 +106,24 @@ public class TestFileWithAttachmentsRead extends TestCase {
 
        // Second is a PDF
        attachment = pdfMsgAttachments.getAttachmentFiles()[1];
-       assertEquals("smbprn~1.pdf", attachment.attachFileName.toString());
-       assertEquals("smbprn.00009008.KdcPjl.pdf", attachment.attachLongFileName.toString());
-       assertEquals(".pdf", attachment.attachExtension.getValue());
-       assertEquals(null, attachment.attachMimeTag);
-       assertEquals(null, attachment.attachmentDirectory);
-       assertEquals(13539, attachment.attachData.getValue().length);
+       assertEquals("smbprn~1.pdf", attachment.getAttachFileName().toString());
+       assertEquals("smbprn.00009008.KdcPjl.pdf", attachment.getAttachLongFileName().toString());
+       assertEquals(".pdf", attachment.getAttachExtension().getValue());
+       assertEquals(null, attachment.getAttachMimeTag());
+       assertEquals(null, attachment.getAttachmentDirectory());
+       assertEquals(13539, attachment.getAttachData().getValue().length);
        
        // First in a nested message
        attachment = pdfMsgAttachments.getAttachmentFiles()[0];
-       assertEquals("Test Attachment", attachment.attachFileName.toString());
-       assertEquals(null, attachment.attachLongFileName);
-       assertEquals(null, attachment.attachExtension);
-       assertEquals(null, attachment.attachMimeTag);
-       assertEquals(null, attachment.attachData);
-       assertNotNull(attachment.attachmentDirectory);
+       assertEquals("Test Attachment", attachment.getAttachFileName().toString());
+       assertEquals(null, attachment.getAttachLongFileName());
+       assertEquals(null, attachment.getAttachExtension());
+       assertEquals(null, attachment.getAttachMimeTag());
+       assertEquals(null, attachment.getAttachData());
+       assertNotNull(attachment.getAttachmentDirectory());
        
        // Check we can see some bits of it
-       MAPIMessage nested = attachment.attachmentDirectory.getAsEmbededMessage();
+       MAPIMessage nested = attachment.getAttachmentDirectory().getAsEmbededMessage();
        assertEquals(1, nested.getRecipientNamesList().length);
        assertEquals("Nick Booth", nested.getRecipientNames());
        assertEquals("Test Attachment", nested.getConversationTopic());

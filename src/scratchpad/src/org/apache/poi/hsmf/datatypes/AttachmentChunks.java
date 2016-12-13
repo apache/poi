@@ -38,15 +38,15 @@ import org.apache.poi.util.POILogger;
  * attachment.
  */
 public class AttachmentChunks implements ChunkGroup {
-    private static POILogger logger = POILogFactory.getLogger(AttachmentChunks.class);
+    private static final POILogger LOG = POILogFactory.getLogger(AttachmentChunks.class);
     public static final String PREFIX = "__attach_version1.0_#";
 
-    public ByteChunk attachData;
-    public StringChunk attachExtension;
-    public StringChunk attachFileName;
-    public StringChunk attachLongFileName;
-    public StringChunk attachMimeTag;
-    public DirectoryChunk attachmentDirectory;
+    private ByteChunk attachData;
+    private StringChunk attachExtension;
+    private StringChunk attachFileName;
+    private StringChunk attachLongFileName;
+    private StringChunk attachMimeTag;
+    private DirectoryChunk attachmentDirectory;
 
     /**
      * This is in WMF Format. You'll probably want to pass it to Apache Batik to
@@ -99,6 +99,7 @@ public class AttachmentChunks implements ChunkGroup {
         return allChunks.toArray(new Chunk[allChunks.size()]);
     }
 
+    @Override
     public Chunk[] getChunks() {
         return getAll();
     }
@@ -108,8 +109,58 @@ public class AttachmentChunks implements ChunkGroup {
     }
 
     /**
+     * @return the ATTACH_DATA chunk
+     */
+    public ByteChunk getAttachData() {
+        return attachData;
+    }
+
+    /**
+     * @return the attachment extension
+     */
+    public StringChunk getAttachExtension() {
+        return attachExtension;
+    }
+
+    /**
+     * @return the attachment (short) filename
+     */
+    public StringChunk getAttachFileName() {
+        return attachFileName;
+    }
+
+    /**
+     * @return the attachment (long) filename
+     */
+    public StringChunk getAttachLongFileName() {
+        return attachLongFileName;
+    }
+
+    /**
+     * @return the attachment mimetag
+     */
+    public StringChunk getAttachMimeTag() {
+        return attachMimeTag;
+    }
+
+    /**
+     * @return the attachment directory
+     */
+    public DirectoryChunk getAttachmentDirectory() {
+        return attachmentDirectory;
+    }
+
+    /**
+     * @return the attachment preview bytes
+     */
+    public ByteChunk getAttachRenderingWMF() {
+        return attachRenderingWMF;
+    }
+
+    /**
      * Called by the parser whenever a chunk is found.
      */
+    @Override
     public void record(Chunk chunk) {
         // TODO: add further members for other properties like:
         // - ATTACH_ADDITIONAL_INFO
@@ -127,7 +178,7 @@ public class AttachmentChunks implements ChunkGroup {
             } else if (chunk instanceof DirectoryChunk) {
                 attachmentDirectory = (DirectoryChunk) chunk;
             } else {
-                logger.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk);
+                LOG.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk);
             }
         } else if (chunkId == ATTACH_EXTENSION.id) {
             attachExtension = (StringChunk) chunk;
@@ -148,6 +199,7 @@ public class AttachmentChunks implements ChunkGroup {
     /**
      * Used to flag that all the chunks of the attachment have now been located.
      */
+    @Override
     public void chunksComplete() {
         // Currently, we don't need to do anything special once
         // all the chunks have been located
@@ -157,7 +209,8 @@ public class AttachmentChunks implements ChunkGroup {
      * Orders by the attachment number.
      */
     public static class AttachmentChunksSorter
-            implements Comparator<AttachmentChunks>, Serializable {
+    implements Comparator<AttachmentChunks>, Serializable {
+        @Override
         public int compare(AttachmentChunks a, AttachmentChunks b) {
             return a.poifsName.compareTo(b.poifsName);
         }

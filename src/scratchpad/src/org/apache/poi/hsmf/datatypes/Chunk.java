@@ -27,9 +27,9 @@ import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 public abstract class Chunk {
     public static final String DEFAULT_NAME_PREFIX = "__substg1.0_";
 
-    protected int chunkId;
-    protected MAPIType type;
-    protected String namePrefix;
+    private int chunkId;
+    private MAPIType type;
+    private String namePrefix;
 
     protected Chunk(String namePrefix, int chunkId, MAPIType type) {
         this.namePrefix = namePrefix;
@@ -63,8 +63,9 @@ public abstract class Chunk {
         String type = this.type.asFileEnding();
 
         String chunkId = Integer.toHexString(this.chunkId);
-        while (chunkId.length() < 4)
+        while (chunkId.length() < 4) {
             chunkId = "0" + chunkId;
+        }
 
         return this.namePrefix
             + chunkId.toUpperCase(Locale.ROOT)

@@ -46,10 +46,12 @@ public class ByteChunk extends Chunk {
         super(chunkId, type);
     }
 
+    @Override
     public void readValue(InputStream value) throws IOException {
         this.value = IOUtils.toByteArray(value);
     }
 
+    @Override
     public void writeValue(OutputStream out) throws IOException {
         out.write(value);
     }
@@ -65,6 +67,7 @@ public class ByteChunk extends Chunk {
     /**
      * Returns the data in a debug-friendly string format
      */
+    @Override
     public String toString() {
         return toDebugFriendlyString(value);
     }
@@ -74,8 +77,9 @@ public class ByteChunk extends Chunk {
      * array, and the start of a longer one.
      */
     protected static String toDebugFriendlyString(byte[] value) {
-        if (value == null)
+        if (value == null) {
             return "(Null Byte Array)";
+        }
 
         StringBuffer text = new StringBuffer();
         text.append("Bytes len=").append(value.length);
@@ -86,8 +90,9 @@ public class ByteChunk extends Chunk {
             limit = 12;
         }
         for (int i = 0; i < limit; i++) {
-            if (i > 0)
+            if (i > 0) {
                 text.append(',');
+            }
             text.append(value[i]);
         }
         if (value.length > 16) {
