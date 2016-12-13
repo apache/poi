@@ -17,24 +17,22 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.IOException;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
-import org.apache.poi.poifs.filesystem.POIFSWriterListener;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.junit.Test;
 
-public final class TestEmptyDocument extends TestCase {
-    private static POILogger _logger = POILogFactory.getLogger(TestEmptyDocument.class);
+public final class TestEmptyDocument {
+    private static final POILogger LOG = POILogFactory.getLogger(TestEmptyDocument.class);
 
+    @Test
 	public void testSingleEmptyDocument() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
@@ -42,24 +40,28 @@ public final class TestEmptyDocument extends TestCase {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
 	}
 
+    @Test
 	public void testSingleEmptyDocumentEvent() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
 		dir.createDocument("Foo", 0, new POIFSWriterListener() {
 			@Override
             public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-				_logger.log(POILogger.WARN, "written");
+				LOG.log(POILogger.WARN, "written");
 			}
 		});
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
 	}
 
+    @Test
 	public void testEmptyDocumentWithFriend() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
@@ -68,9 +70,11 @@ public final class TestEmptyDocument extends TestCase {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
 	}
 
+    @Test
 	public void testEmptyDocumentEventWithFriend() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
@@ -92,9 +96,11 @@ public final class TestEmptyDocument extends TestCase {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fs.writeFilesystem(out);
-		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
 	}
 
+    @Test
 	public void testEmptyDocumentBug11744() throws Exception {
 		byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -104,6 +110,7 @@ public final class TestEmptyDocument extends TestCase {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fs.writeFilesystem(out);
 		out.toByteArray();
+		fs.close();
 
 		// This line caused the error.
 		fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
@@ -117,7 +124,7 @@ public final class TestEmptyDocument extends TestCase {
 		entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
 		actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
 		assertEquals("Expected size was wrong", testData.length, entry.getSize());
-		assertTrue("Expected different data read from stream", Arrays.equals(testData,
-				actualReadbackData));
+		assertArrayEquals("Expected same data read from stream", testData, actualReadbackData);
+		fs.close();
 	}
 }

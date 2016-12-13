@@ -17,28 +17,22 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests the record factory
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
-public final class TestRecordFactory extends TestCase {
+public final class TestRecordFactory {
 
 
 	/**
@@ -49,6 +43,7 @@ public final class TestRecordFactory extends TestCase {
 	 * FAILURE:	The wrong records are creates or contain the wrong values <P>
 	 *
 	 */
+    @Test
 	public void testBasicRecordConstruction() {
 		short recType = BOFRecord.sid;
 		byte[]   data	= {
@@ -91,7 +86,8 @@ public final class TestRecordFactory extends TestCase {
 	 * FAILURE:	The wrong records are created or contain the wrong values <P>
 	 *
 	 */
-	public void testSpecial() {
+    @Test
+    public void testSpecial() {
 		short recType = RKRecord.sid;
 		byte[] data = {
 			0, 0, 0, 0, 21, 0, 0, 0, 0, 0
@@ -117,6 +113,7 @@ public final class TestRecordFactory extends TestCase {
 	 * SUCCESS:	Record factory creates the expected records.<P>
 	 * FAILURE:	The wrong records are created or contain the wrong values <P>
 	 */
+    @Test
 	public void testContinuedUnknownRecord() {
 		byte[] data = {
 			0, -1, 0, 0, // an unknown record with 0 length
@@ -152,7 +149,8 @@ public final class TestRecordFactory extends TestCase {
 	 * There can actually be OBJ records mixed between the continues.
 	 * Record factory must preserve this structure when reading records.
 	 */
-	public void testMixedContinue() throws Exception {
+    @Test
+	public void testMixedContinue() throws IOException {
 		/**
 		 *  Adapted from a real test sample file 39512.xls (Offset 0x4854).
 		 *  See Bug 39512 for details.
@@ -184,7 +182,7 @@ public final class TestRecordFactory extends TestCase {
 				"00 00 00 00 00 00 00";
 		byte[] data = HexRead.readFromString(dump);
 
-		List records = RecordFactory.createRecords(new ByteArrayInputStream(data));
+		List<Record> records = RecordFactory.createRecords(new ByteArrayInputStream(data));
 		assertEquals(5, records.size());
 		assertTrue(records.get(0) instanceof ObjRecord);
 		assertTrue(records.get(1) instanceof DrawingRecord);
@@ -194,8 +192,7 @@ public final class TestRecordFactory extends TestCase {
 
 		//serialize and verify that the serialized data is the same as the original
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		for(Iterator it = records.iterator(); it.hasNext(); ){
-			Record rec = (Record)it.next();
+		for(Record rec : records){
 			out.write(rec.serialize());
 		}
 
@@ -204,7 +201,8 @@ public final class TestRecordFactory extends TestCase {
 		assertArrayEquals(data, ser);
 	}
 
-	public void testNonZeroPadding_bug46987() {
+    @Test
+	public void testNonZeroPadding_bug46987() throws IOException {
 		Record[] recs = {
 			new BOFRecord(),
 			new WriteAccessRecord(), // need *something* between BOF and EOF
@@ -231,23 +229,12 @@ public final class TestRecordFactory extends TestCase {
 
 
 		POIFSFileSystem fs = new POIFSFileSystem();
-		InputStream is;
-		try {
-			fs.createDocument(new ByteArrayInputStream(baos.toByteArray()), "dummy");
-			is = fs.getRoot().createDocumentInputStream("dummy");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        fs.createDocument(new ByteArrayInputStream(baos.toByteArray()), "dummy");
+		InputStream is = fs.getRoot().createDocumentInputStream("dummy");
 
-		List<Record> outRecs;
-		try {
-			outRecs = RecordFactory.createRecords(is);
-		} catch (RuntimeException e) {
-			if (e.getMessage().equals("Buffer underrun - requested 512 bytes but 192 was available")) {
-				throw new AssertionFailedError("Identified bug 46987");
-			}
-			throw e;
-		}
+		List<Record> outRecs = RecordFactory.createRecords(is);
+		// Buffer underrun - requested 512 bytes but 192 was available
 		assertEquals(5, outRecs.size());
+		fs.close();
 	}
 }

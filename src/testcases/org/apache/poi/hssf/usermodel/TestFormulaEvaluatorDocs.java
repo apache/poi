@@ -17,9 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Iterator;
-
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import junit.framework.TestCase;
 
@@ -68,15 +69,10 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 		
 		// Do a full evaluate, as per our docs
 		// uses evaluateFormulaCell()
-		for(int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
-			HSSFSheet sheet = wb.getSheetAt(sheetNum);
+		for(Sheet sheet : wb) {
 			HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
-
-			for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
-				HSSFRow r = (HSSFRow)rit.next();
-
-				for(Iterator cit = r.cellIterator(); cit.hasNext();) {
-					HSSFCell c = (HSSFCell)cit.next();
+			for(Row r : sheet) {
+				for(Cell c : r) {
 					if(c.getCellTypeEnum() == CellType.FORMULA) {
 						evaluator.evaluateFormulaCellEnum(c);
 						
@@ -103,15 +99,11 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 		
 		// Now do the alternate call, which zaps the formulas
 		// uses evaluateInCell()
-		for(int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
-			HSSFSheet sheet = wb.getSheetAt(sheetNum);
+		for(Sheet sheet : wb) {
 			HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 
-			for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
-				HSSFRow r = (HSSFRow)rit.next();
-
-				for(Iterator cit = r.cellIterator(); cit.hasNext();) {
-					HSSFCell c = (HSSFCell)cit.next();
+			for(Row r : sheet) {
+				for(Cell c : r) {
 					if(c.getCellTypeEnum() == CellType.FORMULA) {
 						evaluator.evaluateInCell(c);
 					}
