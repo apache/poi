@@ -33,6 +33,7 @@ public final class NameIdChunks implements ChunkGroup {
         return allChunks.toArray(new Chunk[allChunks.size()]);
     }
 
+    @Override
     public Chunk[] getChunks() {
         return getAll();
     }
@@ -40,6 +41,7 @@ public final class NameIdChunks implements ChunkGroup {
     /**
      * Called by the parser whenever a chunk is found.
      */
+    @Override
     public void record(Chunk chunk) {
         allChunks.add(chunk);
     }
@@ -47,6 +49,7 @@ public final class NameIdChunks implements ChunkGroup {
     /**
      * Used to flag that all the chunks of the NameID have now been located.
      */
+    @Override
     public void chunksComplete() {
         // Currently, we don't need to do anything special once
         // all the chunks have been located

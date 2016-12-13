@@ -36,8 +36,7 @@ import org.apache.poi.util.POILogger;
  * used if you want to cancel a message or similar
  */
 public class MessageSubmissionChunk extends Chunk {
-    private static POILogger logger = POILogFactory
-            .getLogger(MessageSubmissionChunk.class);
+    private static final POILogger LOG = POILogFactory.getLogger(MessageSubmissionChunk.class);
     private String rawId;
     private Calendar date;
 
@@ -59,6 +58,7 @@ public class MessageSubmissionChunk extends Chunk {
         super(chunkId, type);
     }
 
+    @Override
     public void readValue(InputStream value) throws IOException {
         // Stored in the file as us-ascii
         byte[] data = IOUtils.toByteArray(value);
@@ -103,7 +103,7 @@ public class MessageSubmissionChunk extends Chunk {
                         date.set(Calendar.SECOND, Integer.parseInt(m.group(6)));
                         date.clear(Calendar.MILLISECOND);
                     } else {
-                        logger.log(POILogger.WARN,
+                        LOG.log(POILogger.WARN,
                                 "Warning - unable to make sense of date "
                                         + dateS);
                     }
@@ -112,6 +112,7 @@ public class MessageSubmissionChunk extends Chunk {
         }
     }
 
+    @Override
     public void writeValue(OutputStream out) throws IOException {
         byte[] data = rawId.getBytes(Charset.forName("ASCII"));
         out.write(data);

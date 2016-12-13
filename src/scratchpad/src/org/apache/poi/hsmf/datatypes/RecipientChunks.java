@@ -33,7 +33,7 @@ import org.apache.poi.util.POILogger;
  * If a message has multiple recipients, there will be several of these.
  */
 public final class RecipientChunks implements ChunkGroupWithProperties {
-    private static POILogger logger = POILogFactory.getLogger(RecipientChunks.class);
+    private static final POILogger LOG = POILogFactory.getLogger(RecipientChunks.class);
 
     public static final String PREFIX = "__recip_version1.0_#";
 
@@ -88,7 +88,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
             try {
                 recipientNumber = Integer.parseInt(number, 16);
             } catch (NumberFormatException e) {
-                logger.log(POILogger.ERROR,
+                LOG.log(POILogger.ERROR,
                         "Invalid recipient number in name " + name);
             }
         }
@@ -161,17 +161,20 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
     /** Holds all the chunks that were found. */
     private List<Chunk> allChunks = new ArrayList<Chunk>();
 
+    @Override
     public Map<MAPIProperty, List<PropertyValue>> getProperties() {
         if (recipientProperties != null) {
             return recipientProperties.getProperties();
-        } else
+        } else {
             return Collections.emptyMap();
+        }
     }
 
     public Chunk[] getAll() {
         return allChunks.toArray(new Chunk[allChunks.size()]);
     }
 
+    @Override
     public Chunk[] getChunks() {
         return getAll();
     }
@@ -179,6 +182,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
     /**
      * Called by the parser whenever a chunk is found.
      */
+    @Override
     public void record(Chunk chunk) {
         if (chunk.getChunkId() == RECIPIENT_SEARCH.id) {
             // TODO - parse
@@ -201,11 +205,12 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
         allChunks.add(chunk);
     }
 
+    @Override
     public void chunksComplete() {
         if (recipientProperties != null) {
             recipientProperties.matchVariableSizedPropertiesToChunks();
         } else {
-            logger.log(POILogger.WARN, "Recipeints Chunk didn't contain a list of properties!");
+            LOG.log(POILogger.WARN, "Recipeints Chunk didn't contain a list of properties!");
         }
     }
 
@@ -214,11 +219,14 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
      */
     public static class RecipientChunksSorter
             implements Comparator<RecipientChunks>, Serializable {
+        @Override
         public int compare(RecipientChunks a, RecipientChunks b) {
-            if (a.recipientNumber < b.recipientNumber)
+            if (a.recipientNumber < b.recipientNumber) {
                 return -1;
-            if (a.recipientNumber > b.recipientNumber)
+            }
+            if (a.recipientNumber > b.recipientNumber) {
                 return +1;
+            }
             return 0;
         }
     }

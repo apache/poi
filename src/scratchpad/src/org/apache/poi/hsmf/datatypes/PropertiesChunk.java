@@ -137,7 +137,7 @@ public abstract class PropertiesChunk extends Chunk {
         // TODO Is this the right way?
         Map<Integer, Chunk> chunks = new HashMap<Integer, Chunk>();
         for (Chunk chunk : parentGroup.getChunks()) {
-            chunks.put(chunk.chunkId, chunk);
+            chunks.put(chunk.getChunkId(), chunk);
         }
 
         // Loop over our values, looking for chunk based ones

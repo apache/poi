@@ -60,10 +60,12 @@ public class PropertyValue {
         this.data = value;
     }
 
+    @Override
     public String toString() {
         Object v = getValue();
-        if (v == null)
+        if (v == null) {
             return "(No value available)";
+        }
 
         if (v instanceof byte[]) {
             return ByteChunk.toDebugFriendlyString((byte[]) v);
@@ -79,6 +81,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Void getValue() {
             return null;
         }
@@ -90,6 +93,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Boolean getValue() {
             short val = LittleEndian.getShort(data);
             return val > 0;
@@ -111,6 +115,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Short getValue() {
             return LittleEndian.getShort(data);
         }
@@ -128,6 +133,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Integer getValue() {
             return LittleEndian.getInt(data);
         }
@@ -146,6 +152,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Long getValue() {
             return LittleEndian.getLong(data);
         }
@@ -164,6 +171,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Float getValue() {
             return LittleEndian.getFloat(data);
         }
@@ -181,6 +189,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Double getValue() {
             return LittleEndian.getDouble(data);
         }
@@ -204,6 +213,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public BigInteger getValue() {
             long unshifted = LittleEndian.getLong(data);
             return BigInteger.valueOf(unshifted).divide(SHIFT);
@@ -229,6 +239,7 @@ public class PropertyValue {
             super(property, flags, data);
         }
 
+        @Override
         public Calendar getValue() {
             long time = LittleEndian.getLong(data);
             time = (time / 10 / 1000) - OFFSET;

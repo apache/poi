@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
  * TODO Deprecate the public Chunks in favour of Property Lookups
  */
 public final class Chunks implements ChunkGroupWithProperties {
-    private static POILogger logger = POILogFactory.getLogger(Chunks.class);
+    private static final POILogger LOG = POILogFactory.getLogger(Chunks.class);
 
     /**
      * Holds all the chunks that were found, indexed by their MAPIProperty.
@@ -47,60 +47,64 @@ public final class Chunks implements ChunkGroupWithProperties {
     private Map<MAPIProperty, List<Chunk>> allChunks = new HashMap<MAPIProperty, List<Chunk>>();
 
     /** Type of message that the MSG represents (ie. IPM.Note) */
-    public StringChunk messageClass;
+    private StringChunk messageClass;
     /** BODY Chunk, for plain/text messages */
-    public StringChunk textBodyChunk;
+    private StringChunk textBodyChunk;
     /** BODY Html Chunk, for html messages */
-    public StringChunk htmlBodyChunkString;
-    public ByteChunk htmlBodyChunkBinary;
+    private StringChunk htmlBodyChunkString;
+    private ByteChunk htmlBodyChunkBinary;
     /** BODY Rtf Chunk, for Rtf (Rich) messages */
-    public ByteChunk rtfBodyChunk;
+    private ByteChunk rtfBodyChunk;
     /** Subject link chunk, in plain/text */
-    public StringChunk subjectChunk;
+    private StringChunk subjectChunk;
     /**
      * Value that is in the TO field (not actually the addresses as they are
      * stored in recip directory nodes
      */
-    public StringChunk displayToChunk;
+    private StringChunk displayToChunk;
     /** Value that is in the FROM field */
-    public StringChunk displayFromChunk;
+    private StringChunk displayFromChunk;
     /** value that shows in the CC field */
-    public StringChunk displayCCChunk;
+    private StringChunk displayCCChunk;
     /** Value that shows in the BCC field */
-    public StringChunk displayBCCChunk;
+    private StringChunk displayBCCChunk;
     /** Sort of like the subject line, but without the RE: and FWD: parts. */
-    public StringChunk conversationTopic;
+    private StringChunk conversationTopic;
     /** Type of server that the message originated from (SMTP, etc). */
-    public StringChunk sentByServerType;
+    private StringChunk sentByServerType;
     /** The email headers */
-    public StringChunk messageHeaders;
+    private StringChunk messageHeaders;
     /** TODO */
-    public MessageSubmissionChunk submissionChunk;
+    private MessageSubmissionChunk submissionChunk;
     /** TODO */
-    public StringChunk emailFromChunk;
+    private StringChunk emailFromChunk;
     /** The message ID */
-    public StringChunk messageId;
+    private StringChunk messageId;
     /** The message properties */
     private MessagePropertiesChunk messageProperties;
 
+    @Override
     public Map<MAPIProperty, List<PropertyValue>> getProperties() {
         if (messageProperties != null) {
             return messageProperties.getProperties();
-        } else
+        } else {
             return Collections.emptyMap();
+        }
     }
 
     public Map<MAPIProperty, PropertyValue> getRawProperties() {
         if (messageProperties != null) {
             return messageProperties.getRawProperties();
-        } else
+        } else {
             return Collections.emptyMap();
+        }
     }
 
     public Map<MAPIProperty, List<Chunk>> getAll() {
         return allChunks;
     }
 
+    @Override
     public Chunk[] getChunks() {
         ArrayList<Chunk> chunks = new ArrayList<Chunk>(allChunks.size());
         for (List<Chunk> c : allChunks.values()) {
@@ -109,9 +113,78 @@ public final class Chunks implements ChunkGroupWithProperties {
         return chunks.toArray(new Chunk[chunks.size()]);
     }
 
+    public StringChunk getMessageClass() {
+        return messageClass;
+    }
+
+    public StringChunk getTextBodyChunk() {
+        return textBodyChunk;
+    }
+
+    public StringChunk getHtmlBodyChunkString() {
+        return htmlBodyChunkString;
+    }
+
+    public ByteChunk getHtmlBodyChunkBinary() {
+        return htmlBodyChunkBinary;
+    }
+
+    public ByteChunk getRtfBodyChunk() {
+        return rtfBodyChunk;
+    }
+
+    public StringChunk getSubjectChunk() {
+        return subjectChunk;
+    }
+
+    public StringChunk getDisplayToChunk() {
+        return displayToChunk;
+    }
+
+    public StringChunk getDisplayFromChunk() {
+        return displayFromChunk;
+    }
+
+    public StringChunk getDisplayCCChunk() {
+        return displayCCChunk;
+    }
+
+    public StringChunk getDisplayBCCChunk() {
+        return displayBCCChunk;
+    }
+
+    public StringChunk getConversationTopic() {
+        return conversationTopic;
+    }
+
+    public StringChunk getSentByServerType() {
+        return sentByServerType;
+    }
+
+    public StringChunk getMessageHeaders() {
+        return messageHeaders;
+    }
+
+    public MessageSubmissionChunk getSubmissionChunk() {
+        return submissionChunk;
+    }
+
+    public StringChunk getEmailFromChunk() {
+        return emailFromChunk;
+    }
+
+    public StringChunk getMessageId() {
+        return messageId;
+    }
+
+    public MessagePropertiesChunk getMessageProperties() {
+        return messageProperties;
+    }
+
     /**
      * Called by the parser whenever a chunk is found.
      */
+    @Override
     public void record(Chunk chunk) {
         // Work out what MAPIProperty this corresponds to
         MAPIProperty prop = MAPIProperty.get(chunk.getChunkId());
@@ -172,11 +245,12 @@ public final class Chunks implements ChunkGroupWithProperties {
         allChunks.get(prop).add(chunk);
     }
 
+    @Override
     public void chunksComplete() {
         if (messageProperties != null) {
             messageProperties.matchVariableSizedPropertiesToChunks();
         } else {
-            logger.log(POILogger.WARN,
+            LOG.log(POILogger.WARN,
                     "Message didn't contain a root list of properties!");
         }
     }

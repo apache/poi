@@ -21,48 +21,43 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
-public abstract class HWPFTestCase extends TestCase {
-	protected HWPFDocFixture _hWPFDocFixture;
+public abstract class HWPFTestCase {
+    protected HWPFDocFixture _hWPFDocFixture;
 
-	protected HWPFTestCase() {
-	}
+    @Before
+    public void setUp() throws Exception {
+        /** @todo verify the constructors */
+        _hWPFDocFixture = new HWPFDocFixture(this, getTestFile());
 
-	@Override
-    protected void setUp() throws Exception {
-		super.setUp();
-		/** @todo verify the constructors */
-		_hWPFDocFixture = new HWPFDocFixture(this, getTestFile());
+        _hWPFDocFixture.setUp();
+    }
 
-		_hWPFDocFixture.setUp();
-	}
+    protected String getTestFile() {
+        return HWPFDocFixture.DEFAULT_TEST_FILE;
+    }
 
-	protected String getTestFile()
-	{
-	  return HWPFDocFixture.DEFAULT_TEST_FILE;
-	}
+    @After
+    public void tearDown() throws Exception {
+        if (_hWPFDocFixture != null) {
+            _hWPFDocFixture.tearDown();
+        }
 
-	@Override
-    protected void tearDown() throws Exception {
-		if (_hWPFDocFixture != null) {
-			_hWPFDocFixture.tearDown();
-		}
+        _hWPFDocFixture = null;
+    }
 
-		_hWPFDocFixture = null;
-		super.tearDown();
-	}
-
-	public HWPFDocument writeOutAndRead(HWPFDocument doc) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		HWPFDocument newDoc;
-		try {
-			doc.write(baos);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			newDoc = new HWPFDocument(bais);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return newDoc;
-	}
+    public HWPFDocument writeOutAndRead(HWPFDocument doc) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        HWPFDocument newDoc;
+        try {
+            doc.write(baos);
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            newDoc = new HWPFDocument(bais);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return newDoc;
+    }
 }

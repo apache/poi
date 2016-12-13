@@ -1071,6 +1071,7 @@ public class MAPIProperty {
         return str + usualType.asFileEnding();
     }
 
+    @Override
     public String toString() {
         StringBuffer str = new StringBuffer();
         str.append(name);
