@@ -17,22 +17,25 @@
 
 package org.apache.poi.poifs.property;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.poifs.storage.RawDataBlock;
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.junit.Test;
 
 /**
  * Class to test PropertyFactory functionality
- *
- * @author Marc Johnson
  */
-public final class TestPropertyFactory extends TestCase {
+public final class TestPropertyFactory {
 
+    @Test
     public void testConvertToProperties() throws IOException {
 
 		// real data from a real file!
@@ -302,7 +305,7 @@ public final class TestPropertyFactory extends TestCase {
 		for (int j = 0; j < raw_data.length; j++) {
 			raw_data[j] = new RawDataBlock(stream);
 		}
-		List properties = PropertyFactory.convertToProperties(raw_data);
+		List<Property> properties = PropertyFactory.convertToProperties(raw_data);
 
 		assertEquals(64, properties.size());
 		String[] names = {
@@ -388,8 +391,7 @@ public final class TestPropertyFactory extends TestCase {
 					assertTrue("Checking property " + j,
 							properties.get(j) instanceof DocumentProperty);
 				}
-				assertEquals("Checking property " + j, names[j], ((Property) properties.get(j))
-						.getName());
+				assertEquals("Checking property " + j, names[j], properties.get(j).getName());
 			}
 		}
 	}
