@@ -17,26 +17,25 @@
 
 package org.apache.poi.poifs.property;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.junit.Test;
 
 /**
  * Class to test PropertyTable functionality
- *
- * @author Marc Johnson
  */
-public final class TestPropertyTable extends TestCase {
+public final class TestPropertyTable {
 
 	private static void confirmBlockEncoding(String[] expectedDataHexDumpLines, PropertyTable table) {
 		byte[] expectedData = RawDataUtil.decode(expectedDataHexDumpLines);
@@ -68,6 +67,7 @@ public final class TestPropertyTable extends TestCase {
 	 * the preWrite phase first), and comparing it against a real property table
 	 * extracted from a file known to be acceptable to Excel.
 	 */
+	@Test
 	public void testWriterPropertyTable() throws IOException {
 
 		// create the PropertyTable
@@ -450,21 +450,17 @@ public final class TestPropertyTable extends TestCase {
 		assertEquals(30 * 64, table.getRoot().getSize());
 		int count = 0;
 		Property child = null;
-		Iterator iter = table.getRoot().getChildren();
-
-		while (iter.hasNext()) {
-			child = (Property) iter.next();
+		for (Property p : table.getRoot()) {
+			child = p;
 			++count;
 		}
-		if (child == null) {
-			throw new AssertionFailedError("no children found");
-		}
+		
+		assertNotNull("no children found", child);
 		assertEquals(1, count);
 		assertTrue(child.isDirectory());
-		iter = ((DirectoryProperty) child).getChildren();
 		count = 0;
-		while (iter.hasNext()) {
-			iter.next();
+		for (Property p : (DirectoryProperty) child) {
+		    child = p;
 			++count;
 		}
 		assertEquals(35, count);
