@@ -17,25 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.InputStream;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 /**
  * 
  */
-public final class TestBOFRecord extends TestCase {
-    public void testBOFRecord() throws Exception {
-        InputStream is = HSSFTestDataSamples.openSampleFileStream("bug_42794.xls");
-        
-        // This used to throw an error before
-        try {
-            new HSSFWorkbook(is);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new AssertionFailedError("Identified bug 42794");
-        }
+public final class TestBOFRecord {
+    @Test
+    public void testBOFRecord() throws IOException {
+        // This used to throw an error before - #42794
+        HSSFTestDataSamples.openSampleWorkbook("bug_42794.xls").close();
     }
 }
