@@ -20,14 +20,14 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 
 public final class WMLHelper {
     
-    public static boolean STOnOffToBoolean (STOnOff.Enum value) {
+    public static boolean convertSTOnOffToBoolean (STOnOff.Enum value) {
         if (value == STOnOff.TRUE || value == STOnOff.ON || value == STOnOff.X_1) {
             return true;
         }
         return false;
     }
     
-    public static STOnOff.Enum BooleanToSTOnOff (boolean value) {
+    public static STOnOff.Enum convertBooleanToSTOnOff (boolean value) {
         return (value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 }
