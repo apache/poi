@@ -21,8 +21,8 @@ def poijobs = [
         slaveAdd: '&&!ubuntu-4'
     ],
     [ name: 'POI-DSL-OpenJDK', jdks: ['OpenJDK'], trigger: 'H */12 * * *',
-        // H16 does not have OpenJDK 6 installed
-        slaveAdd: '&&!H16&&!ubuntu-eu2',
+        // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
+        slaveAdd: '&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!ubuntu-eu2',
         // the JDK is missing on some slaves so builds are unstable
         skipcigame: true
     ],
