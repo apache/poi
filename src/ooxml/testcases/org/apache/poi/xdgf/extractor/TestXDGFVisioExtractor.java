@@ -53,4 +53,17 @@ public class TestXDGFVisioExtractor extends TestCase {
         
         extractor.close();
     }
+
+
+    //the point of this is to trigger the addition of
+    //some common visio classes -- ConnectsType
+    public void testVisioConnects() throws Exception {
+
+        XmlVisioDocument document =
+                new XmlVisioDocument(diagrams.
+                        openResourceAsStream("60489.vsdx"));
+        XDGFVisioExtractor extractor = new XDGFVisioExtractor(document);
+        String text = extractor.getText();
+        assertTrue(text.indexOf("Arrears") > -1);
+    }
 }
