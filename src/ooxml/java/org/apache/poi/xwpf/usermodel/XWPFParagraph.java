@@ -828,10 +828,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public boolean isPageBreak() {
         CTPPr ppr = getCTPPr();
-        CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
+        CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr
                 .getPageBreakBefore() : null;
-        if (ct_pageBreak != null
-                && ct_pageBreak.getVal().intValue() == STOnOff.INT_TRUE) {
+        if (ctPageBreak != null
+                && ctPageBreak.getVal().intValue() == STOnOff.INT_TRUE) {
             return true;
         }
         return false;
@@ -855,12 +855,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setPageBreak(boolean pageBreak) {
         CTPPr ppr = getCTPPr();
-        CTOnOff ct_pageBreak = ppr.isSetPageBreakBefore() ? ppr
+        CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr
                 .getPageBreakBefore() : ppr.addNewPageBreakBefore();
         if (pageBreak)
-            ct_pageBreak.setVal(STOnOff.TRUE);
+            ctPageBreak.setVal(STOnOff.TRUE);
         else
-            ct_pageBreak.setVal(STOnOff.FALSE);
+            ctPageBreak.setVal(STOnOff.FALSE);
     }
 
     /**
@@ -1463,10 +1463,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     if (o instanceof CTText) {
                         if (textPos >= startText) {
                             String candidate = ((CTText) o).getStringValue();
-                            if (runPos == startRun)
+                            if (runPos == startRun) {
                                 charPos = startChar;
-                            else
+                            } else {
                                 charPos = 0;
+                            }
     
                             for (; charPos < candidate.length(); charPos++) {
                                 if ((candidate.charAt(charPos) == searched.charAt(0)) && (candCharPos == 0)) {
@@ -1476,9 +1477,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                                     newList = true;
                                 }
                                 if (candidate.charAt(charPos) == searched.charAt(candCharPos)) {
-                                    if (candCharPos + 1 < searched.length())
+                                    if (candCharPos + 1 < searched.length()) {
                                         candCharPos++;
-                                    else if (newList) {
+                                    } else if (newList) {
                                         TextSegement segement = new TextSegement();
                                         segement.setBeginRun(beginRunPos);
                                         segement.setBeginText(beginTextPos);
@@ -1496,10 +1497,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                         textPos++;
                     } else if (o instanceof CTProofErr) {
                         c.removeXml();
-                    } else if (o instanceof CTRPr) ;
+                    } else if (o instanceof CTRPr) {
                         //do nothing
-                    else
+                    } else {
                         candCharPos = 0;
+                    }
                 }
             } finally {
                 c.dispose();
@@ -1525,10 +1527,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         for (int i = runBegin; i <= runEnd; i++) {
             CTText[] tArray = rArray[i].getTArray();
             int startText = 0, endText = tArray.length - 1;
-            if (i == runBegin)
+            if (i == runBegin) {
                 startText = textBegin;
-            if (i == runEnd)
+            }
+            if (i == runEnd) {
                 endText = textEnd;
+            }
             for (int j = startText; j <= endText; j++) {
                 String tmpText = tArray[j].getStringValue();
                 int startChar = 0, endChar = tmpText.length() - 1;
@@ -1566,8 +1570,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             int rPos = 0;
             for(int i=0;i<pos;i++) {
               XWPFRun currRun = runs.get(i);
-              if(!(currRun instanceof XWPFHyperlinkRun || currRun instanceof XWPFFieldRun))
+              if(!(currRun instanceof XWPFHyperlinkRun || currRun instanceof XWPFFieldRun)) {
                 rPos++;
+              }
             }
             getCTP().removeR(rPos);
             return true;
