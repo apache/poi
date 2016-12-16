@@ -85,7 +85,7 @@ public class SimpleDocument {
                 
         //p3.setAlignment(ParagraphAlignment.DISTRIBUTE);
         p3.setAlignment(ParagraphAlignment.BOTH);
-        p3.setSpacingLineRule(LineSpacingRule.EXACT);
+        p3.setSpacingBetween(15, LineSpacingRule.EXACT);
 
         p3.setIndentationFirstLine(600);
         

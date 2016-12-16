@@ -160,14 +160,34 @@ public final class TestXWPFParagraph {
         CTP ctp = p.getCTP();
         CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
+        assertEquals(-1, p.getSpacingBefore());
         assertEquals(-1, p.getSpacingAfter());
+        assertEquals(-1, p.getSpacingBetween(), 0.1);
+        assertEquals(LineSpacingRule.AUTO, p.getSpacingLineRule());
 
         CTSpacing spacing = ppr.addNewSpacing();
         spacing.setAfter(new BigInteger("10"));
         assertEquals(10, p.getSpacingAfter());
+        spacing.setBefore(new BigInteger("10"));
+        assertEquals(10, p.getSpacingBefore());
 
         p.setSpacingAfter(100);
         assertEquals(100, spacing.getAfter().intValue());
+        p.setSpacingBefore(100);
+        assertEquals(100, spacing.getBefore().intValue());
+        
+        p.setSpacingBetween(.25, LineSpacingRule.EXACT);
+        assertEquals(.25, p.getSpacingBetween(), 0.01);
+        assertEquals(LineSpacingRule.EXACT, p.getSpacingLineRule());
+        p.setSpacingBetween(1.25, LineSpacingRule.AUTO);
+        assertEquals(1.25, p.getSpacingBetween(), 0.01);
+        assertEquals(LineSpacingRule.AUTO, p.getSpacingLineRule());
+        p.setSpacingBetween(.5, LineSpacingRule.AT_LEAST);
+        assertEquals(.5, p.getSpacingBetween(), 0.01);
+        assertEquals(LineSpacingRule.AT_LEAST, p.getSpacingLineRule());
+        p.setSpacingBetween(1.15);
+        assertEquals(1.15, p.getSpacingBetween(), 0.01);
+        assertEquals(LineSpacingRule.AUTO, p.getSpacingLineRule());
         
         doc.close();
     }
