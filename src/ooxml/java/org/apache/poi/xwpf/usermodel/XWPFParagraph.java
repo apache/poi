@@ -899,7 +899,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Specifies the spacing that should be added after the last line in this
      * paragraph in the document in absolute units.
      *
-     * @return bigInteger - value representing the spacing after the paragraph
+     * @return int - value representing the spacing after the paragraph
      * @see #setSpacingAfterLines(int)
      */
     public int getSpacingAfterLines() {
@@ -922,7 +922,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @param spaces -
      *               a positive whole number, whose contents consist of a
-     *               measurement in twentieths of a
+     *               measurement in hundredths of a line
      */
     public void setSpacingAfterLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
@@ -1012,11 +1012,66 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @param rule
      * @see LineSpacingRule
      */
+     // TODO Fix this to convert line to equivalent value, or deprecate this in
+     //      favor of setSpacingLine(double, LineSpacingRule)
     public void setSpacingLineRule(LineSpacingRule rule) {
         CTSpacing spacing = getCTSpacing(true);
         spacing.setLineRule(STLineSpacingRule.Enum.forInt(rule.getValue()));
     }
 
+    /**
+     * Return the spacing between lines of a paragraph. The units of the return value depends on the
+     * {@link LineSpacingRule}. If AUTO, the return value is in lines, otherwise the return
+     * value is in points
+     *
+     * @return a double specifying points or lines.
+     */
+    public double getSpacingBetween() {
+        CTSpacing spacing = getCTSpacing(false);
+        if (spacing == null || !spacing.isSetLine()) {
+            return -1;
+        } else if (spacing.getLineRule() == null || spacing.getLineRule() == STLineSpacingRule.AUTO) {
+            BigInteger[] val = spacing.getLine().divideAndRemainder(BigInteger.valueOf(240L));
+            return val[0].doubleValue() + (val[1].doubleValue() / 240L);
+        }
+        BigInteger[] val = spacing.getLine().divideAndRemainder(BigInteger.valueOf(20L));
+        return val[0].doubleValue() + (val[1].doubleValue() / 20L);        
+    }
+
+    /**
+     * Sets the spacing between lines in a paragraph
+     *
+     * @param spacing - A double specifying spacing in inches or lines. If rule is
+     *                  AUTO, then spacing is in lines. Otherwise spacing is in points.
+     * @param rule - {@link LineSpacingRule} indicating how spacing is interpreted. If
+     *               AUTO, then spacing value is in lines, and the height depends on the
+     *               font size. If AT_LEAST, then spacing value is in inches, and is the
+     *               minimum size of the line. If the line height is taller, then the
+     *               line expands to match. If EXACT, then spacing is the exact line
+     *               height. If the text is taller than the line height, then it is 
+     *               clipped at the top. 
+     */
+    public void setSpacingBetween(double spacing, LineSpacingRule rule) {
+        CTSpacing ctSp = getCTSpacing(true);
+        switch (rule) {
+        case AUTO:
+            ctSp.setLine(new BigInteger(String.valueOf(Math.round(spacing * 240.0))));
+            break;
+        default:
+            ctSp.setLine(new BigInteger(String.valueOf(Math.round(spacing * 20.0))));
+        }
+        ctSp.setLineRule(STLineSpacingRule.Enum.forInt(rule.getValue()));
+    }
+    
+    /**
+     * Sets the spacing between lines in a paragraph
+     *
+     * @param spacing - A double specifying spacing in lines.
+     */
+    public void setSpacingBetween(double spacing) {
+        setSpacingBetween(spacing, LineSpacingRule.AUTO);
+    }
+    
     /**
      * Specifies the indentation which shall be placed between the left text
      * margin for this paragraph and the left edge of that paragraph's content
