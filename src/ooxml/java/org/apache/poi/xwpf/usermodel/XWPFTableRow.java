@@ -30,7 +30,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 
 
 /**
@@ -197,7 +196,7 @@ public class XWPFTableRow {
             CTTrPr trpr = getTrPr();
             if (trpr.sizeOfCantSplitArray() > 0) {
                 CTOnOff onoff = trpr.getCantSplitArray(0);
-                isCant = (onoff.isSetVal() ? WMLHelper.STOnOffToBoolean(onoff.getVal()) : true);
+                isCant = (onoff.isSetVal() ? WMLHelper.convertSTOnOffToBoolean(onoff.getVal()) : true);
             }
         }
         return isCant;
@@ -214,7 +213,7 @@ public class XWPFTableRow {
     public void setCantSplitRow(boolean split) {
         CTTrPr trpr = getTrPr();
         CTOnOff onoff = (trpr.sizeOfCantSplitArray() > 0 ? trpr.getCantSplitArray(0) : trpr.addNewCantSplit());
-        onoff.setVal(WMLHelper.BooleanToSTOnOff(split));
+        onoff.setVal(WMLHelper.convertBooleanToSTOnOff(split));
     }
 
     /**
@@ -244,7 +243,7 @@ public class XWPFTableRow {
             CTTrPr trpr = getTrPr();
             if (trpr.sizeOfTblHeaderArray() > 0) {
                 CTOnOff rpt = trpr.getTblHeaderArray(0);
-                repeat = (rpt.isSetVal() ? WMLHelper.STOnOffToBoolean(rpt.getVal()) : true);
+                repeat = (rpt.isSetVal() ? WMLHelper.convertSTOnOffToBoolean(rpt.getVal()) : true);
             }
         }
         return repeat;
@@ -261,6 +260,6 @@ public class XWPFTableRow {
     public void setRepeatHeader(boolean repeat) {
         CTTrPr trpr = getTrPr();
         CTOnOff onoff = (trpr.sizeOfTblHeaderArray() > 0 ? trpr.getTblHeaderArray(0) : trpr.addNewTblHeader());
-        onoff.setVal(WMLHelper.BooleanToSTOnOff(repeat));
+        onoff.setVal(WMLHelper.convertBooleanToSTOnOff(repeat));
     }
 }
