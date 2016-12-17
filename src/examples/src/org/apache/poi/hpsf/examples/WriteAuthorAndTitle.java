@@ -166,53 +166,42 @@ public class WriteAuthorAndTitle
 
             Throwable t = null;
 
-            try
-            {
+            try {
                 /* Find out whether the current document is a property set
                  * stream or not. */
-                if (PropertySet.isPropertySetStream(stream))
-                {
-                    /* Yes, the current document is a property set stream.
-                     * Let's create a PropertySet instance from it. */
-                    PropertySet ps = null;
-                    try
-                    {
-                        ps = PropertySetFactory.create(stream);
-                    }
-                    catch (NoPropertySetStreamException ex)
-                    {
+                if (PropertySet.isPropertySetStream(stream)) {
+                    try {
+                        /* Yes, the current document is a property set stream.
+                         * Let's create a PropertySet instance from it. */
+                        PropertySet ps = PropertySetFactory.create(stream);
+
+                        /* Now we know that we really have a property set. The next
+                         * step is to find out whether it is a summary information
+                         * or not. */
+                        if (ps.isSummaryInformation()) {
+                            /* Yes, it is a summary information. We will modify it
+                             * and write the result to the destination POIFS. */
+                            editSI(poiFs, path, name, ps);
+                        } else {
+                            /* No, it is not a summary information. We don't care
+                             * about its internals and copy it unmodified to the
+                             * destination POIFS. */
+                            copy(poiFs, path, name, ps);
+                        }
+                    } catch (NoPropertySetStreamException ex) {
                         /* This exception will not be thrown because we already
                          * checked above. */
                     }
-
-                    /* Now we know that we really have a property set. The next
-                     * step is to find out whether it is a summary information
-                     * or not. */
-                    if (ps.isSummaryInformation())
-                        /* Yes, it is a summary information. We will modify it
-                         * and write the result to the destination POIFS. */
-                        editSI(poiFs, path, name, ps);
-                    else
-                        /* No, it is not a summary information. We don't care
-                         * about its internals and copy it unmodified to the
-                         * destination POIFS. */
-                        copy(poiFs, path, name, ps);
-                }
-                else
+                } else {
                     /* No, the current document is not a property set stream. We
                      * copy it unmodified to the destination POIFS. */
                     copy(poiFs, event.getPath(), event.getName(), stream);
-            }
-            catch (MarkUnsupportedException ex)
-            {
+                }
+            } catch (MarkUnsupportedException ex) {
                 t = ex;
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 t = ex;
-            }
-            catch (WritingNotSupportedException ex)
-            {
+            } catch (WritingNotSupportedException ex) {
                 t = ex;
             }
 
@@ -221,8 +210,7 @@ public class WriteAuthorAndTitle
              * lines check whether a checked exception occured and throws an
              * unchecked exception. The message of that exception is that of
              * the underlying checked exception. */
-            if (t != null)
-            {
+            if (t != null) {
                 throw new HPSFRuntimeException
                     ("Could not read file \"" + path + "/" + name +
                      "\". Reason: " + Util.toString(t));

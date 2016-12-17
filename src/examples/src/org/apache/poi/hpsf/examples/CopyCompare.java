@@ -243,7 +243,6 @@ public class CopyCompare
     throws NoPropertySetStreamException, MarkUnsupportedException,
            UnsupportedEncodingException, IOException
     {
-        boolean equal = true;
         final DocumentInputStream dis1 = new DocumentInputStream(d1);
         final DocumentInputStream dis2 = new DocumentInputStream(d2);
         try {
@@ -251,23 +250,20 @@ public class CopyCompare
                 PropertySet.isPropertySetStream(dis2)) {
                 final PropertySet ps1 = PropertySetFactory.create(dis1);
                 final PropertySet ps2 = PropertySetFactory.create(dis2);
-                equal = ps1.equals(ps2);
-                if (!equal) {
+                if (!ps1.equals(ps2)) {
                     msg.append("Property sets are not equal.\n");
-                    return equal;
+                    return false;
                 }
             } else {
-                int i1;
-                int i2;
+                int i1, i2;
                 do {
                     i1 = dis1.read();
                     i2 = dis2.read();
                     if (i1 != i2) {
-                        equal = false;
                         msg.append("Documents are not equal.\n");
-                        break;
+                        return false;
                     }
-                } while (equal && i1 == -1);
+                } while (i1 > -1);
             }
         } finally {
             dis2.close();

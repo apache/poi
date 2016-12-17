@@ -424,7 +424,7 @@ public abstract class POIDocument implements Closeable {
     @Internal
     protected boolean initDirectory() {
         if (directory == null) {
-            directory = new NPOIFSFileSystem().getRoot();
+            directory = new NPOIFSFileSystem().getRoot(); // NOSONAR
             return true;
         }
         return false;
