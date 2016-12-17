@@ -101,7 +101,7 @@ Apache POI - the Java API for Microsoft Documents
 (poijob.apicheck ? 
 '''
 <p>
-    <b><a href="https://analysis.apache.org/dashboard/index/221489" target="_blank">Sonar reports</a></b> -
+    <b><a href="https://builds.apache.org/analysis/overview?id=org.apache.poi%3Apoi-parent" target="_blank">Sonar reports</a></b> -
   <p>
     <b><a href="lastSuccessfulBuild/artifact/build/main/build/reports/japi.html">API Check POI</a></b>
     <b><a href="lastSuccessfulBuild/artifact/build/ooxml/build/reports/japi.html">API Check POI-OOXML</a></b>
@@ -113,7 +113,7 @@ Apache POI - the Java API for Microsoft Documents
 '''
 <p>
     <b><a href="lastSuccessfulBuild/findbugsResult/" target="_blank">Findbugs report of latest build</a></b> -
-    <b><a href="https://analysis.apache.org/dashboard/index/221489" target="_blank">Sonar reports</a></b> -
+    <b><a href="https://builds.apache.org/analysis/overview?id=org.apache.poi%3Apoi-parent" target="_blank">Sonar reports</a></b> -
     <b><a href="lastSuccessfulBuild/artifact/build/coverage/index.html" target="_blank">Coverage of latest build</a></b>
 </p>
 '''))
