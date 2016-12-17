@@ -97,7 +97,10 @@ public class WriteTitle
         poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);
 
         /* Write the whole POI file system to a disk file. */
-        poiFs.writeFilesystem(new FileOutputStream(fileName));
+        FileOutputStream fos = new FileOutputStream(fileName);
+        poiFs.writeFilesystem(fos);
+        fos.close();
+        poiFs.close();
     }
 
 }

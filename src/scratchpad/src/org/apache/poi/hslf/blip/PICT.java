@@ -20,6 +20,7 @@ package org.apache.poi.hslf.blip;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
@@ -56,7 +57,11 @@ public final class PICT extends Metafile {
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         Header header = new Header();
         header.read(data, pos);
-        bis.skip(pos + header.getSize());
+        long bs_exp = pos + header.getSize();
+        long bs_act = bis.skip(bs_exp);
+        if (bs_exp != bs_act) {
+            throw new EOFException();
+        }
         byte[] chunk = new byte[4096];
         ByteArrayOutputStream out = new ByteArrayOutputStream(header.getWmfSize());
         InflaterInputStream inflater = new InflaterInputStream( bis );
