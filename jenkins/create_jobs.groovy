@@ -54,6 +54,8 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
     ],
+    [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, disabled: true
+    ],
 ]
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
@@ -131,6 +133,11 @@ Apache POI - the Java API for Microsoft Documents
                     abortBuild()
                     writeDescription('Build was aborted due to timeout')
                 }
+                if(poijob.sonar) {
+                    configure { project ->
+                        project / buildWrappers << 'hudson.plugins.sonar.SonarBuildWrapper' {}
+                    }
+                }
             }
             jdk(jdkMapping.get(jdkKey))
             scm {
@@ -168,7 +175,11 @@ Apache POI - the Java API for Microsoft Documents
                         mkdir -p sonar/ooxml-schema-security/target/schemas && wget -O sonar/ooxml-schema-security/target/schemas/xmldsig-core-schema.xsd http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
                     */
                     maven {
-                        goals('package')
+                    	if(poijob.sonar) {
+                    		goals('compile $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL')
+                    	} else {
+	                        goals('package')
+                        }
                         rootPOM('sonar/pom.xml')
                         mavenOpts('-Xmx2g')
                         mavenOpts('-Xms256m')
