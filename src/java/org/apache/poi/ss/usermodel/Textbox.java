@@ -17,6 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Removal;
+
+/**
+ * @deprecated 3.16 beta1. This interface isn't implemented ...
+ */
+@Deprecated
+@Removal(version="3.18")
 public interface Textbox {
 
     public final static short OBJECT_TYPE_TEXT = 6;

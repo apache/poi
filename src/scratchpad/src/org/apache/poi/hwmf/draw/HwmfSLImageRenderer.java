@@ -29,10 +29,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Units;
 
+/**
+ * Helper class which is instantiated by {@link DrawPictureShape}
+ * via reflection
+ */
 public class HwmfSLImageRenderer implements ImageRenderer {
     HwmfPicture image = null;
     double alpha = 0;
