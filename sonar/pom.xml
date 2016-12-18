@@ -36,8 +36,8 @@
 	</organization>
 	
 	<issueManagement>
-		<system>bugzilla</system>
-		<url>https://issues.apache.org/bugzilla/</url>
+		<system>Bugzilla</system>
+		<url>https://bz.apache.org/bugzilla/</url>
 	</issueManagement>
 	
 	<scm>
