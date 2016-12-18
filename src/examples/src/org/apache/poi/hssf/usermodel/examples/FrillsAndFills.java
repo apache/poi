@@ -17,16 +17,19 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.FillPatternType;
+
 /**
  * Shows how to use various fills.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class FrillsAndFills {
     public static void main(String[] args) throws IOException {
@@ -39,7 +42,7 @@ public class FrillsAndFills {
         // Aqua background
         HSSFCellStyle style = wb.createCellStyle();
         style.setFillBackgroundColor(HSSFColor.AQUA.index);
-        style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
+        style.setFillPattern(FillPatternType.BIG_SPOTS);
         HSSFCell cell = row.createCell(1);
         cell.setCellValue("X");
         cell.setCellStyle(style);
@@ -47,7 +50,7 @@ public class FrillsAndFills {
         // Orange "foreground", foreground being the fill foreground not the font color.
         style = wb.createCellStyle();
         style.setFillForegroundColor(HSSFColor.ORANGE.index);
-        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cell = row.createCell(2);
         cell.setCellValue("X");
         cell.setCellStyle(style);
@@ -56,5 +59,7 @@ public class FrillsAndFills {
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        
+        wb.close();
     }
 }

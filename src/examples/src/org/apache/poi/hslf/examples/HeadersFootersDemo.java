@@ -44,6 +44,7 @@ public abstract class HeadersFootersDemo {
         ppt.write(out);
         out.close();
 
+        ppt.close();
     }
 
 }

@@ -29,6 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Demonstrates how to create hyperlinks.
@@ -45,7 +46,7 @@ public class Hyperlinks {
         //by default hyperlinks are blue and underlined
         HSSFCellStyle hlink_style = wb.createCellStyle();
         HSSFFont hlink_font = wb.createFont();
-        hlink_font.setUnderline(HSSFFont.U_SINGLE);
+        hlink_font.setUnderline(Font.U_SINGLE);
         hlink_font.setColor(HSSFColor.BLUE.index);
         hlink_style.setFont(hlink_font);
 
@@ -93,5 +94,6 @@ public class Hyperlinks {
         FileOutputStream out = new FileOutputStream("hssf-links.xls");
         wb.write(out);
         out.close();
+        wb.close();
     }
 }

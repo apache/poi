@@ -18,34 +18,38 @@
 package org.apache.poi.ss.examples;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hssf.usermodel.HSSFObjectData;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlbeans.XmlException;
 
 /**
  * Loads embedded resources from Workbooks. Code taken from the website:
  *  https://poi.apache.org/spreadsheet/quick-guide.html#Embedded
  */
 public class LoadEmbedded {
-   public static void main(String[] args) throws Exception {
+   public static void main(String[] args) throws IOException, EncryptedDocumentException, OpenXML4JException, XmlException {
        Workbook wb = WorkbookFactory.create(new File(args[0]));
        loadEmbedded(wb);
    }
    
-   public static void loadEmbedded(Workbook wb) throws Exception {
+   public static void loadEmbedded(Workbook wb) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
        if (wb instanceof HSSFWorkbook) {
            loadEmbedded((HSSFWorkbook)wb);
        }
@@ -57,22 +61,22 @@ public class LoadEmbedded {
        }
    }
    
-   public static void loadEmbedded(HSSFWorkbook workbook) throws Exception {
+   public static void loadEmbedded(HSSFWorkbook workbook) throws IOException {
        for (HSSFObjectData obj : workbook.getAllEmbeddedObjects()) {
            //the OLE2 Class Name of the object
            String oleName = obj.getOLE2ClassName();
            if (oleName.equals("Worksheet")) {
                DirectoryNode dn = (DirectoryNode) obj.getDirectory();
                HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(dn, false);
-               //System.out.println(entry.getName() + ": " + embeddedWorkbook.getNumberOfSheets());
+               embeddedWorkbook.close();
            } else if (oleName.equals("Document")) {
                DirectoryNode dn = (DirectoryNode) obj.getDirectory();
                HWPFDocument embeddedWordDocument = new HWPFDocument(dn);
-               //System.out.println(entry.getName() + ": " + embeddedWordDocument.getRange().text());
+               embeddedWordDocument.close();
            }  else if (oleName.equals("Presentation")) {
                DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-               SlideShow<?,?> embeddedPowerPointDocument = new HSLFSlideShow(dn);
-               //System.out.println(entry.getName() + ": " + embeddedPowerPointDocument.getSlides().length);
+               SlideShow<?,?> embeddedSlieShow = new HSLFSlideShow(dn);
+               embeddedSlieShow.close();
            } else {
                if(obj.hasDirectoryEntry()){
                    // The DirectoryEntry is a DocumentNode. Examine its entries to find out what it is
@@ -89,40 +93,38 @@ public class LoadEmbedded {
        }
    }
    
-   public static void loadEmbedded(XSSFWorkbook workbook) throws Exception {
+   public static void loadEmbedded(XSSFWorkbook workbook) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
        for (PackagePart pPart : workbook.getAllEmbedds()) {
            String contentType = pPart.getContentType();
-           // Excel Workbook - either binary or OpenXML
            if (contentType.equals("application/vnd.ms-excel")) {
+               // Excel Workbook - either binary or OpenXML
                HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(pPart.getInputStream());
-           }
-           // Excel Workbook - OpenXML file format
-           else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
-               OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
-               XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(docPackage);
-           }
-           // Word Document - binary (OLE2CDF) file format
-           else if (contentType.equals("application/msword")) {
+               embeddedWorkbook.close();
+           } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+               // Excel Workbook - OpenXML file format
+               XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(pPart.getInputStream());
+               embeddedWorkbook.close();
+           } else if (contentType.equals("application/msword")) {
+               // Word Document - binary (OLE2CDF) file format
                HWPFDocument document = new HWPFDocument(pPart.getInputStream());
-           }
-           // Word Document - OpenXML file format
-           else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-               OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
-               XWPFDocument document = new XWPFDocument(docPackage);
-           }
-           // PowerPoint Document - binary file format
-           else if (contentType.equals("application/vnd.ms-powerpoint")) {
+               document.close();
+           } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+               // Word Document - OpenXML file format
+               XWPFDocument document = new XWPFDocument(pPart.getInputStream());
+               document.close();
+           } else if (contentType.equals("application/vnd.ms-powerpoint")) {
+               // PowerPoint Document - binary file format
                HSLFSlideShow slideShow = new HSLFSlideShow(pPart.getInputStream());
-           }
-           // PowerPoint Document - OpenXML file format
-           else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
-               OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
-               XSLFSlideShow slideShow = new XSLFSlideShow(docPackage);
-           }
-           // Any other type of embedded object.
-           else {
+               slideShow.close();
+           } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+               // PowerPoint Document - OpenXML file format
+               XMLSlideShow slideShow = new XMLSlideShow(pPart.getInputStream());
+               slideShow.close();
+           } else {
+               // Any other type of embedded object.
                System.out.println("Unknown Embedded Document: " + contentType);
                InputStream inputStream = pPart.getInputStream();
+               inputStream.close();
            }
        }
    }

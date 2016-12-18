@@ -176,7 +176,7 @@ public final class ObjRecord extends Record implements Cloneable {
 	public int serialize(int offset, byte[] data) {
 		int recSize = getRecordSize();
 		int dataSize = recSize - 4;
-		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize); // NOSONAR
 
 		out.writeShort(sid);
 		out.writeShort(dataSize);

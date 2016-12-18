@@ -191,7 +191,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
         decryptInit();
         dec.setChunkSize(-1);
-        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(docstream, offset);
+        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(docstream, offset); // NOSONAR
         ChunkedCipherInputStream ccis = null;
         try {
             ccis = dec.getDataStream(lei, docstream.length-offset, 0);
@@ -309,7 +309,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
         encryptInit();
 
-        LittleEndianByteArrayOutputStream los = new LittleEndianByteArrayOutputStream(pictstream, offset);
+        LittleEndianByteArrayOutputStream los = new LittleEndianByteArrayOutputStream(pictstream, offset); // NOSONAR
         ChunkedCipherOutputStream ccos = null;
 
         try {
@@ -572,6 +572,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (cyos != null) {
             cyos.close();

@@ -31,6 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -77,7 +78,7 @@ public final class HSSFReadWrite {
 		cs.setFont(f);
 		cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
 		cs2.setBorderBottom(BorderStyle.THIN);
-		cs2.setFillPattern((short) 1); // fill w fg
+		cs2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		cs2.setFillForegroundColor((short) 0xA);
 		cs2.setFont(f2);
 		wb.setSheetName(0, "HSSF Test");
@@ -128,9 +129,8 @@ public final class HSSFReadWrite {
 		    wb.write(out);
 		} finally {
 		    out.close();
+	        wb.close();
 		}
-		
-		wb.close();
 	}
 
 	/**

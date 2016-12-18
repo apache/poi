@@ -19,20 +19,15 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
-/**
- * @author Glen Stampoultzis (glens at apache.org)
- */
-public class SplitAndFreezePanes
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+
+public class SplitAndFreezePanes {
+    public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
         HSSFSheet sheet2 = wb.createSheet("second sheet");
@@ -46,10 +41,11 @@ public class SplitAndFreezePanes
         // Freeze the columns and rows (forget about scrolling position of the lower right quadrant).
         sheet3.createFreezePane( 2, 2 );
         // Create a split with the lower left side being the active quadrant
-        sheet4.createSplitPane( 2000, 2000, 0, 0, HSSFSheet.PANE_LOWER_LEFT );
+        sheet4.createSplitPane( 2000, 2000, 0, 0, Sheet.PANE_LOWER_LEFT );
 
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

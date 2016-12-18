@@ -77,6 +77,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      * Gets the record type.
      * @return the record type.
      */
+    @Override
     public long getRecordType() { return _type; }
 
     /**
@@ -86,6 +87,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      * @param out the output stream to write to.
      * @throws java.io.IOException if an error occurs.
      */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         out.write(_data);
@@ -155,12 +157,14 @@ public final class TextSpecInfoAtom extends RecordAtom {
      */
     public int getCharactersCovered(){
         int covered = 0;
-        for (TextSpecInfoRun r : getTextSpecInfoRuns()) covered += r.getLength();
+        for (TextSpecInfoRun r : getTextSpecInfoRuns()) {
+            covered += r.getLength();
+        }
         return covered;
     }
 
     public TextSpecInfoRun[] getTextSpecInfoRuns(){
-        LittleEndianByteArrayInputStream bis = new LittleEndianByteArrayInputStream(_data);
+        LittleEndianByteArrayInputStream bis = new LittleEndianByteArrayInputStream(_data); // NOSONAR
         List<TextSpecInfoRun> lst = new ArrayList<TextSpecInfoRun>();
         while (bis.available() > 0) {
             lst.add(new TextSpecInfoRun(bis));

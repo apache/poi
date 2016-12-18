@@ -17,17 +17,19 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.CellType;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
+
 /**
  * Demonstrates how to use newlines in cells.
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Fauzia Lala <fauzia.lala at wcom.com>
  */
 public class NewLinesInCells {
     public static void main( String[] args ) throws IOException {
@@ -56,5 +58,6 @@ public class NewLinesInCells {
 		FileOutputStream fileOut = new FileOutputStream("workbook.xls");
 		wb.write(fileOut);
 		fileOut.close();
+		wb.close();
     }
 }

@@ -16,57 +16,57 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.InputStream;
+
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import java.io.InputStream;
 
 /**
  * Demonstrates how you can extract embedded data from a .xlsx file
  */
 public class EmbeddedObjects {
     public static void main(String[] args) throws Exception {
-        OPCPackage pkg = OPCPackage.open(args[0]);
-        XSSFWorkbook workbook = new XSSFWorkbook(pkg);
+        XSSFWorkbook workbook = new XSSFWorkbook(args[0]);
         for (PackagePart pPart : workbook.getAllEmbedds()) {
             String contentType = pPart.getContentType();
-            // Excel Workbook - either binary or OpenXML
             if (contentType.equals("application/vnd.ms-excel")) {
+                // Excel Workbook - either binary or OpenXML
                 HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(pPart.getInputStream());
-            }
-            // Excel Workbook - OpenXML file format
-            else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+                embeddedWorkbook.close();
+            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+                // Excel Workbook - OpenXML file format
                 XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(pPart.getInputStream());
-            }
-            // Word Document - binary (OLE2CDF) file format
-            else if (contentType.equals("application/msword")) {
+                embeddedWorkbook.close();
+            } else if (contentType.equals("application/msword")) {
+                // Word Document - binary (OLE2CDF) file format
                 HWPFDocument document = new HWPFDocument(pPart.getInputStream());
-            }
-            // Word Document - OpenXML file format
-            else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                document.close();
+            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                // Word Document - OpenXML file format
                 XWPFDocument document = new XWPFDocument(pPart.getInputStream());
-            }
-            // PowerPoint Document - binary file format
-            else if (contentType.equals("application/vnd.ms-powerpoint")) {
+                document.close();
+            } else if (contentType.equals("application/vnd.ms-powerpoint")) {
+                // PowerPoint Document - binary file format
                 HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(pPart.getInputStream());
-            }
-            // PowerPoint Document - OpenXML file format
-            else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+                slideShow.close();
+            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+                // PowerPoint Document - OpenXML file format
                 OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
                 XSLFSlideShow slideShow = new XSLFSlideShow(docPackage);
-            }
-            // Any other type of embedded object.
-            else {
+                slideShow.close();
+            } else {
+                // Any other type of embedded object.
                 System.out.println("Unknown Embedded Document: " + contentType);
                 InputStream inputStream = pPart.getInputStream();
+                inputStream.close();
             }
         }
-        pkg.close();
+        workbook.close();
     }
 }

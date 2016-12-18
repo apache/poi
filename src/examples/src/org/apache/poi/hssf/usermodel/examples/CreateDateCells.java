@@ -17,18 +17,21 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * An example on how to cells with dates.  The important thing to note
  * about dates is that they are really normal numeric cells that are
  * formatted specially.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class CreateDateCells {
     public static void main(String[] args) throws IOException {
@@ -54,5 +57,7 @@ public class CreateDateCells {
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        
+        wb.close();
     }
 }

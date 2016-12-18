@@ -17,16 +17,19 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.BorderStyle;
+
 /**
  * Demonstrates how to create borders around cells.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class Borders {
     public static void main(String[] args) throws IOException {
@@ -42,13 +45,13 @@ public class Borders {
 
         // Style the cell with borders all around.
         HSSFCellStyle style = wb.createCellStyle();
-        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        style.setBorderBottom(BorderStyle.THIN);
         style.setBottomBorderColor(HSSFColor.BLACK.index);
-        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        style.setBorderLeft(BorderStyle.THIN);
         style.setLeftBorderColor(HSSFColor.GREEN.index);
-        style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        style.setBorderRight(BorderStyle.THIN);
         style.setRightBorderColor(HSSFColor.BLUE.index);
-        style.setBorderTop(HSSFCellStyle.BORDER_MEDIUM_DASHED);
+        style.setBorderTop(BorderStyle.MEDIUM_DASHED);
         style.setTopBorderColor(HSSFColor.ORANGE.index);
         cell.setCellStyle(style);
 
@@ -56,5 +59,7 @@ public class Borders {
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        
+        wb.close();
     }
 }

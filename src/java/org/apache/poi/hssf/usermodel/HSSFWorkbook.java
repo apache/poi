@@ -435,8 +435,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
      private void convertLabelRecords(List<Record> records, int offset)
      {
-         if (log.check( POILogger.DEBUG ))
-             log.log(POILogger.DEBUG, "convertLabelRecords called");
+         if (log.check( POILogger.DEBUG )) {
+            log.log(POILogger.DEBUG, "convertLabelRecords called");
+        }
          for (int k = offset; k < records.size(); k++)
          {
              Record rec = records.get(k);
@@ -457,8 +458,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                        records.add(k, newrec);
              }
          }
-         if (log.check( POILogger.DEBUG ))
-             log.log(POILogger.DEBUG, "convertLabelRecords exit");
+         if (log.check( POILogger.DEBUG )) {
+            log.log(POILogger.DEBUG, "convertLabelRecords exit");
+        }
      }
 
     /**
@@ -918,8 +920,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             throw new IllegalArgumentException("sheetName must not be null");
         }
 
-        if (workbook.doesContainsSheetName( sheetname, _sheets.size() ))
+        if (workbook.doesContainsSheetName( sheetname, _sheets.size() )) {
             throw new IllegalArgumentException("The workbook already contains a sheet named '" + sheetname + "'");
+        }
 
         HSSFSheet sheet = new HSSFSheet(this);
 
@@ -1190,7 +1193,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         short numberOfFonts = getNumberOfFonts();
         for (short i=0; i<=numberOfFonts; i++) {
             // Remember - there is no 4!
-            if(i == 4) continue;
+            if(i == 4) {
+                continue;
+            }
 
             HSSFFont hssfFont = getFontAt(i);
             if (hssfFont.getBoldweight() == boldWeight
@@ -1219,7 +1224,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         short numberOfFonts = getNumberOfFonts();
         for (short i=0; i<=numberOfFonts; i++) {
             // Remember - there is no 4!
-            if(i == 4) continue;
+            if(i == 4) {
+                continue;
+            }
 
             HSSFFont hssfFont = getFontAt(i);
             if (hssfFont.getBold() == bold
@@ -1256,7 +1263,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public HSSFFont getFontAt(short idx) {
-        if(fonts == null) fonts = new HashMap<Short, HSSFFont>();
+        if(fonts == null) {
+            fonts = new HashMap<Short, HSSFFont>();
+        }
 
         // So we don't confuse users, give them back
         //  the same object every time, but create
@@ -1553,8 +1562,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             return;
         }
         
-        LittleEndianByteArrayInputStream plain = new LittleEndianByteArrayInputStream(buf, 0);
-        LittleEndianByteArrayOutputStream leos = new LittleEndianByteArrayOutputStream(buf, 0);
+        LittleEndianByteArrayInputStream plain = new LittleEndianByteArrayInputStream(buf, 0); // NOSONAR
+        LittleEndianByteArrayOutputStream leos = new LittleEndianByteArrayOutputStream(buf, 0); // NOSONAR
         Encryptor enc = fpr.getEncryptionInfo().getEncryptor();
         enc.setChunkSize(Biff8DecryptingStream.RC4_REKEYING_INTERVAL);
         byte tmp[] = new byte[1024];
@@ -1796,8 +1805,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public HSSFDataFormat createDataFormat() {
-    if (formatter == null)
+    if (formatter == null) {
         formatter = new HSSFDataFormat(workbook);
+    }
     return formatter;
     }
 
@@ -1864,10 +1874,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         List<EscherRecord> escherRecords = r.getEscherRecords();
         PrintWriter w = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
         for (EscherRecord escherRecord : escherRecords) {
-            if (fat)
+            if (fat) {
                 System.out.println(escherRecord.toString());
-            else
+            } else {
                 escherRecord.display(w, 0);
+            }
         }
         w.flush();
     }
@@ -2246,6 +2257,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /** 
      * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
      */
+    @Deprecated
     @Removal(version="3.18")
     public DirectoryNode getRootDirectory(){
         return getDirectory();

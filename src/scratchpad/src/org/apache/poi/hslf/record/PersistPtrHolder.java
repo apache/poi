@@ -62,6 +62,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
     /**
      * Return the value we were given at creation, be it 6001 or 6002
      */
+    @Override
     public long getRecordType() { return _type; }
 
 	/**
@@ -181,7 +182,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
         TreeMap<Integer,Integer> orderedSlideLocations = new TreeMap<Integer,Integer>(_slideLocations);
         
         @SuppressWarnings("resource")
-        BufAccessBAOS bos = new BufAccessBAOS();
+        BufAccessBAOS bos = new BufAccessBAOS(); // NOSONAR
         byte intbuf[] = new byte[4];
         int lastPersistEntry = -1;
         int lastSlideId = -1;
@@ -229,7 +230,8 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 	    normalizePersistDirectory();
 		out.write(_header);
 		out.write(_ptrData);
