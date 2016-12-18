@@ -54,7 +54,7 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
     ],
-    [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, disabled: true
+    [ name: 'POI-DSL-SonarQube', jdks: ['1.8'], trigger: 'H 9 * * *', maven: true, sonar: true
     ],
 ]
 
