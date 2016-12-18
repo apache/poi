@@ -89,7 +89,7 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
         out.writeShort(encryptionType);
 
         byte data[] = new byte[1024];
-        LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(data, 0);
+        LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(data, 0); // NOSONAR
 
         switch (encryptionInfo.getEncryptionMode()) {
             case xor:

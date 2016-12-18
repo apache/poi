@@ -56,6 +56,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
@@ -91,6 +92,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * 
      * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
      */
+    @Deprecated
     @Removal(version="3.18")
     protected DirectoryNode getPOIFSDirectory() {
         return getDirectory();
@@ -172,7 +174,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private static DirectoryNode handleDualStorage(DirectoryNode dir) throws IOException {
         // when there's a dual storage entry, use it, as the outer document can't be read quite probably ...
         String dualName = "PP97_DUALSTORAGE";
-        if (!dir.hasEntry(dualName)) return dir;
+        if (!dir.hasEntry(dualName)) {
+            return dir;
+        }
         dir = (DirectoryNode) dir.getEntry(dualName);
         return dir;
     }
@@ -221,7 +225,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Builds the list of records, based on the contents
      * of the PowerPoint stream
      */
-    private void buildRecords() {
+    private void buildRecords() throws IOException {
         // The format of records in a powerpoint file are:
         //   <little endian 2 byte "info">
         //   <little endian 2 byte "type">
@@ -258,7 +262,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         _records = read(_docstream, (int) currentUser.getCurrentEditOffset());
     }
 
-    private Record[] read(byte[] docstream, int usrOffset) {
+    private Record[] read(byte[] docstream, int usrOffset) throws IOException {
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
         NavigableMap<Integer, Record> records = new TreeMap<Integer, Record>(); // offset -> record
@@ -283,6 +287,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             }
         }
 
+        decryptData.close();
         return records.values().toArray(new Record[records.size()]);
     }
 
@@ -360,77 +365,84 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         _pictures = new ArrayList<HSLFPictureData>();
 
         // if the presentation doesn't contain pictures - will use a null set instead
-        if (!getDirectory().hasEntry("Pictures")) return;
-
-        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
+        if (!getDirectory().hasEntry("Pictures")) {
+            return;
+        }
 
         DocumentEntry entry = (DocumentEntry) getDirectory().getEntry("Pictures");
         DocumentInputStream is = getDirectory().createDocumentInputStream(entry);
         byte[] pictstream = IOUtils.toByteArray(is, entry.getSize());
         is.close();
 
-        int pos = 0;
-        // An empty picture record (length 0) will take up 8 bytes
-        while (pos <= (pictstream.length - 8)) {
-            int offset = pos;
-
-            decryptData.decryptPicture(pictstream, offset);
-
-            // Image signature
-            int signature = LittleEndian.getUShort(pictstream, pos);
-            pos += LittleEndian.SHORT_SIZE;
-            // Image type + 0xF018
-            int type = LittleEndian.getUShort(pictstream, pos);
-            pos += LittleEndian.SHORT_SIZE;
-            // Image size (excluding the 8 byte header)
-            int imgsize = LittleEndian.getInt(pictstream, pos);
-            pos += LittleEndian.INT_SIZE;
-
-            // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
-            //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
-            if (!((type == 0xf007) || (type >= 0xf018 && type <= 0xf117)))
-                break;
-
-            // The image size must be 0 or greater
-            // (0 is allowed, but odd, since we do wind on by the header each
-            //  time, so we won't get stuck)
-            if (imgsize < 0) {
-                throw new CorruptPowerPointFileException("The file contains a picture, at position " + _pictures.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
-            }
-
-            // If they type (including the bonus 0xF018) is 0, skip it
-            PictureType pt = PictureType.forNativeID(type - 0xF018);
-            if (pt == null) {
-                logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
-                logger.log(POILogger.ERROR, "" + pos);
-            } else {
-                //The pictstream can be truncated halfway through a picture.
-                //This is not a problem if the pictstream contains extra pictures
-                //that are not used in any slide -- BUG-60305
-                if (pos+imgsize > pictstream.length) {
-                    logger.log(POILogger.WARN, "\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
-                            "in others, this could indicate a corrupt file");
+        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
+        try {
+    
+            int pos = 0;
+            // An empty picture record (length 0) will take up 8 bytes
+            while (pos <= (pictstream.length - 8)) {
+                int offset = pos;
+    
+                decryptData.decryptPicture(pictstream, offset);
+    
+                // Image signature
+                int signature = LittleEndian.getUShort(pictstream, pos);
+                pos += LittleEndianConsts.SHORT_SIZE;
+                // Image type + 0xF018
+                int type = LittleEndian.getUShort(pictstream, pos);
+                pos += LittleEndianConsts.SHORT_SIZE;
+                // Image size (excluding the 8 byte header)
+                int imgsize = LittleEndian.getInt(pictstream, pos);
+                pos += LittleEndianConsts.INT_SIZE;
+    
+                // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
+                //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
+                if (!((type == 0xf007) || (type >= 0xf018 && type <= 0xf117))) {
                     break;
                 }
-                // Build the PictureData object from the data
-                try {
-                    HSLFPictureData pict = HSLFPictureData.create(pt);
-                    pict.setSignature(signature);
-
-                    // Copy the data, ready to pass to PictureData
-                    byte[] imgdata = new byte[imgsize];
-                    System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
-                    pict.setRawData(imgdata);
-
-                    pict.setOffset(offset);
-                    pict.setIndex(_pictures.size());
-                    _pictures.add(pict);
-                } catch (IllegalArgumentException e) {
-                    logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+    
+                // The image size must be 0 or greater
+                // (0 is allowed, but odd, since we do wind on by the header each
+                //  time, so we won't get stuck)
+                if (imgsize < 0) {
+                    throw new CorruptPowerPointFileException("The file contains a picture, at position " + _pictures.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
                 }
+    
+                // If they type (including the bonus 0xF018) is 0, skip it
+                PictureType pt = PictureType.forNativeID(type - 0xF018);
+                if (pt == null) {
+                    logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
+                    logger.log(POILogger.ERROR, "" + pos);
+                } else {
+                    //The pictstream can be truncated halfway through a picture.
+                    //This is not a problem if the pictstream contains extra pictures
+                    //that are not used in any slide -- BUG-60305
+                    if (pos+imgsize > pictstream.length) {
+                        logger.log(POILogger.WARN, "\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
+                                "in others, this could indicate a corrupt file");
+                        break;
+                    }
+                    // Build the PictureData object from the data
+                    try {
+                        HSLFPictureData pict = HSLFPictureData.create(pt);
+                        pict.setSignature(signature);
+    
+                        // Copy the data, ready to pass to PictureData
+                        byte[] imgdata = new byte[imgsize];
+                        System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
+                        pict.setRawData(imgdata);
+    
+                        pict.setOffset(offset);
+                        pict.setIndex(_pictures.size());
+                        _pictures.add(pict);
+                    } catch (IllegalArgumentException e) {
+                        logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+                    }
+                }
+    
+                pos += imgsize;
             }
-
-            pos += imgsize;
+        } finally {
+            decryptData.close();
         }
     }
 
@@ -522,7 +534,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             // Tell them of the positions of the other records though
             PositionDependentRecord pdr = (PositionDependentRecord) record;
             Integer persistId = persistIds.get(pdr.getLastOnDiskOffset());
-            if (persistId == null) persistId = 0;
+            if (persistId == null) {
+                persistId = 0;
+            }
 
             // For now, we're only handling PositionDependentRecord's that
             // happen at the top level.
@@ -709,6 +723,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             pict.close();
         }
 
+        encryptedSS.close();
+        
         // If requested, copy over any other streams we spot, eg Macros
         if (copyAllOtherNodes) {
             EntryUtils.copyNodes(getDirectory().getFileSystem(), outFS, writtenEntries);
@@ -722,6 +738,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @param setName The property to read
      * @return The value of the given property or null if it wasn't found.
      */
+    @Override
     protected PropertySet getPropertySet(String setName) {
         DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
         return (dea == null)
@@ -737,6 +754,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @throws IOException if an error when writing to the
      *                     {@link POIFSFileSystem} occurs
      */
+    @Override
     protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         super.writeProperties(outFS, writtenEntries);
         DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
@@ -885,14 +903,17 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private static class CountingOS extends OutputStream {
         int count = 0;
 
+        @Override
         public void write(int b) throws IOException {
             count++;
         }
 
+        @Override
         public void write(byte[] b) throws IOException {
             count += b.length;
         }
 
+        @Override
         public void write(byte[] b, int off, int len) throws IOException {
             count += len;
         }

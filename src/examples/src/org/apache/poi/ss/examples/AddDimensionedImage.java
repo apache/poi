@@ -19,14 +19,13 @@
 package org.apache.poi.ss.examples;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -813,50 +812,28 @@ public class AddDimensionedImage {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
     	String imageFile = null;
     	String outputFile = null;
         FileOutputStream fos = null;
         Workbook workbook = null;
         Sheet sheet = null;
-        try {
-        	if(args.length < 2){
-        		System.err.println("Usage: AddDimensionedImage imageFile outputFile");
-        		return;
-        	}
-        	workbook = new HSSFWorkbook();   // OR XSSFWorkbook
-        	sheet = workbook.createSheet("Picture Test");
-               	imageFile = args[0];
-        	outputFile = args[1];
-        	new AddDimensionedImage().addImageToSheet("B5", sheet, sheet.createDrawingPatriarch(),
-        		new File(imageFile).toURI().toURL(), 100, 40,
-        		AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
-      		fos = new FileOutputStream(outputFile);
-            workbook.write(fos);
-        }
-        catch(FileNotFoundException fnfEx) {
-            System.out.println("Caught an: " + fnfEx.getClass().getName());
-            System.out.println("Message: " + fnfEx.getMessage());
-            System.out.println("Stacktrace follows...........");
-            fnfEx.printStackTrace(System.out);
-        }
-        catch(IOException ioEx) {
-            System.out.println("Caught an: " + ioEx.getClass().getName());
-            System.out.println("Message: " + ioEx.getMessage());
-            System.out.println("Stacktrace follows...........");
-            ioEx.printStackTrace(System.out);
-        }
-        finally {
-            if(fos != null) {
-                try {
-                    fos.close();
-                    fos = null;
-                }
-                catch(IOException ioEx) {
-                    // I G N O R E
-                }
-            }
-        }
+
+        if(args.length < 2){
+    		System.err.println("Usage: AddDimensionedImage imageFile outputFile");
+    		return;
+    	}
+    	workbook = new HSSFWorkbook();   // OR XSSFWorkbook
+    	sheet = workbook.createSheet("Picture Test");
+       	imageFile = args[0];
+    	outputFile = args[1];
+    	new AddDimensionedImage().addImageToSheet("B5", sheet, sheet.createDrawingPatriarch(),
+    		new File(imageFile).toURI().toURL(), 100, 40,
+    		AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
+  		fos = new FileOutputStream(outputFile);
+        workbook.write(fos);
+        fos.close();
+        workbook.close();
     }
 
     /**

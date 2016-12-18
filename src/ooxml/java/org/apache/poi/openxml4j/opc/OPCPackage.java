@@ -254,7 +254,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			throw new IllegalArgumentException("path must not be a directory");
 		}
 
-		OPCPackage pack = new ZipPackage(path, access);
+		OPCPackage pack = new ZipPackage(path, access); // NOSONAR
 		boolean success = false;
 		if (pack.partList == null && access != PackageAccess.WRITE) {
 			try {
@@ -561,9 +561,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
 
         // Check if part already exist
-        if (this.getPart(thumbnailPartName) != null)
+        if (this.getPart(thumbnailPartName) != null) {
             throw new InvalidOperationException(
                     "You already add a thumbnail named '" + filename + "'");
+        }
 
         // Add the thumbnail part to this package.
         PackagePart thumbnailPart = this.createPart(thumbnailPartName,
@@ -1533,7 +1534,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			fos = new FileOutputStream(targetFile);
 			this.save(fos);
 		} finally {
-			if (fos != null) fos.close();
+			if (fos != null) {
+                fos.close();
+            }
 		}
 	}
 

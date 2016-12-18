@@ -28,8 +28,6 @@ import org.apache.poi.ss.usermodel.CellType;
 
 /**
  * Test if hyperlink formula, with url that got more than 127 characters, works
- *
- * @author Bernard Chesnoy
  */
 public class HyperlinkFormula {
     public static void main(String[] args) throws IOException {
@@ -44,5 +42,6 @@ public class HyperlinkFormula {
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

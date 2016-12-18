@@ -65,11 +65,13 @@ public class POIFSLister {
    public static void viewFile(final String filename, boolean withSizes) throws IOException {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(new File(filename));
       displayDirectory(fs.getRoot(), "", withSizes);
+      fs.close();
    }
 
    public static void viewFileOld(final String filename, boolean withSizes) throws IOException {
       POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filename));
       displayDirectory(fs.getRoot(), "", withSizes);
+      fs.close();
    }
 
    public static void displayDirectory(DirectoryNode dir, String indent, boolean withSizes) {

@@ -17,10 +17,17 @@
 
 package org.apache.poi.hslf.dev;
 
+import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.hslf.model.textproperties.*;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 /**
@@ -28,7 +35,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
  * Having found them, it shows the contents
  */
 public final class TextStyleListing {
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
@@ -65,6 +72,8 @@ public final class TextStyleListing {
 				}
 			}
 		}
+		
+		ss.close();
 	}
 
 	public static void showStyleTextPropAtom(StyleTextPropAtom stpa) {

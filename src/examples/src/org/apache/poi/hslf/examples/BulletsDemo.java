@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -27,12 +28,10 @@ import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 /**
  * How to create a single-level bulleted list
  * and change some of the bullet attributes
- *
- * @author Yegor Kozlov
  */
 public final class BulletsDemo {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
 
         HSLFSlideShow ppt = new HSLFSlideShow();
 
@@ -58,5 +57,7 @@ public final class BulletsDemo {
         FileOutputStream out = new FileOutputStream("bullets.ppt");
         ppt.write(out);
         out.close();
+        
+        ppt.close();
    }
 }

@@ -19,7 +19,6 @@ package org.apache.poi.hslf.extractor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -28,8 +27,6 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 /**
  * Utility to extract pictures from a PowerPoint file.
- *
- * @author Yegor Kozlov
  */
 public final class ImageExtractor {
     public static void main(String args[]) throws IOException {
@@ -41,17 +38,17 @@ public final class ImageExtractor {
         HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl(args[0]));
 
         //extract all pictures contained in the presentation
-        List<HSLFPictureData> pdata = ppt.getPictureData();
-        for (int i = 0; i < pdata.size(); i++) {
-            HSLFPictureData pict = pdata.get(i);
-
+        int i = 0;
+        for (HSLFPictureData pict : ppt.getPictureData()) {
             // picture data
             byte[] data = pict.getData();
 
             PictureType type = pict.getType();
-            FileOutputStream out = new FileOutputStream("pict_" + i + type.extension);
+            FileOutputStream out = new FileOutputStream("pict_" + i++ + type.extension);
             out.write(data);
             out.close();
         }
+        
+        ppt.close();
     }
 }

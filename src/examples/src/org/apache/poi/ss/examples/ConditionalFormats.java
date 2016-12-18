@@ -19,15 +19,29 @@
 
 package org.apache.poi.ss.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
-import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ColorScaleFormatting;
+import org.apache.poi.ss.usermodel.ComparisonOperator;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.DataBarFormatting;
+import org.apache.poi.ss.usermodel.ExtendedColor;
+import org.apache.poi.ss.usermodel.FontFormatting;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.PatternFormatting;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Excel Conditional Formatting -- Examples
@@ -42,8 +56,11 @@ public class ConditionalFormats {
     public static void main(String[] args) throws IOException {
         Workbook wb;
 
-        if(args.length > 0 && args[0].equals("-xls")) wb = new HSSFWorkbook();
-        else wb = new XSSFWorkbook();
+        if(args.length > 0 && args[0].equals("-xls")) {
+            wb = new HSSFWorkbook();
+        } else {
+            wb = new XSSFWorkbook();
+        }
 
         sameCell(wb.createSheet("Same Cell"));
         multiCell(wb.createSheet("MultiCell"));
@@ -61,11 +78,14 @@ public class ConditionalFormats {
 
         // Write the output to a file
         String file = "cf-poi.xls";
-        if(wb instanceof XSSFWorkbook) file += "x";
+        if(wb instanceof XSSFWorkbook) {
+            file += "x";
+        }
         FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
         System.out.println("Generated: " + file);
+        wb.close();
     }
 
     /**
@@ -157,11 +177,21 @@ public class ConditionalFormats {
             Row r = sheet.createRow(i);
             r.createCell(0).setCellValue("This is row " + rn + " (" + i + ")");
             String str = "";
-            if (rn%2 == 0) str = str + "even ";
-            if (rn%3 == 0) str = str + "x3 ";
-            if (rn%5 == 0) str = str + "x5 ";
-            if (rn%10 == 0) str = str + "x10 ";
-            if (str.length() == 0) str = "nothing special...";
+            if (rn%2 == 0) {
+                str = str + "even ";
+            }
+            if (rn%3 == 0) {
+                str = str + "x3 ";
+            }
+            if (rn%5 == 0) {
+                str = str + "x5 ";
+            }
+            if (rn%10 == 0) {
+                str = str + "x10 ";
+            }
+            if (str.length() == 0) {
+                str = "nothing special...";
+            }
             r.createCell(1).setCellValue("It is " + str);
         }
         sheet.autoSizeColumn(0);
@@ -353,7 +383,9 @@ public class ConditionalFormats {
         sheet.createRow(2).createCell(0).setCellFormula("A2+1");
         sheet.createRow(3).createCell(0).setCellFormula("A3+1");
 
-        for(int rownum = 1; rownum <= 3; rownum++) sheet.getRow(rownum).getCell(0).setCellStyle(style);
+        for(int rownum = 1; rownum <= 3; rownum++) {
+            sheet.getRow(rownum).getCell(0).setCellStyle(style);
+        }
 
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
 
