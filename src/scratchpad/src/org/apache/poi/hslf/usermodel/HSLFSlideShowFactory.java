@@ -24,6 +24,10 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Internal;
 
+/**
+ * Helper class which is instantiated by reflection from
+ * {@link SlideShowFactory#create(java.io.File)} and similar
+ */
 @Internal
 public class HSLFSlideShowFactory extends SlideShowFactory {
     /**

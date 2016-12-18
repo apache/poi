@@ -16,13 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xwpf.model;
 
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 /**
  * Base class for XWPF paragraphs
- *
- * @author Yury Batrakov (batrakov at gmail.com)
+ * 
+ * @deprecated 3.16 beta1. This class isn't used ...
  */
+@Deprecated
+@Removal(version="3.18")
 public class XMLParagraph {
     protected CTP paragraph;
 
