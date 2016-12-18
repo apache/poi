@@ -17,6 +17,8 @@
 
 package org.apache.poi.hslf.dev;
 
+import java.io.IOException;
+
 import org.apache.poi.hslf.record.Notes;
 import org.apache.poi.hslf.record.NotesAtom;
 import org.apache.poi.hslf.record.Record;
@@ -32,7 +34,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
  *  Slides, Master Slides and Notes
  */
 public final class SlideAndNotesAtomListing {
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
@@ -63,5 +65,7 @@ public final class SlideAndNotesAtomListing {
 				System.out.println("");
 			}
 		}
+		
+		ss.close();
 	}
 }

@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.dev;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.poi.hslf.record.Document;
@@ -42,7 +43,7 @@ import org.apache.poi.util.LittleEndian;
 public final class SlideIdListing {
 	private static byte[] fileContents;
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
@@ -154,6 +155,8 @@ public final class SlideIdListing {
 			pos += baos.size();
 		}
 
+		ss.close();
+		
 		System.out.println("");
 	}
 
