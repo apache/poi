@@ -17,6 +17,8 @@
 
 package org.apache.poi.hslf.dev;
 
+import java.io.IOException;
+
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
@@ -29,7 +31,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
  *  and reports how many, and what sorts of things they contain
  */
 public final class SLWTListing {
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
@@ -85,5 +87,7 @@ public final class SLWTListing {
 				}
 			}
 		}
+		
+		ss.close();
 	}
 }
