@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
@@ -241,7 +240,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @throws InvalidFormatException
 	 *             If the specified file doesn't exist, and a parsing error
 	 *             occur.
-	 * @throws InvalidOperationException
+	 * @throws InvalidOperationException If the zip file cannot be opened.
+	 * @throws InvalidFormatException if the package is not valid.
 	 */
 	public static OPCPackage open(String path, PackageAccess access)
 			throws InvalidFormatException, InvalidOperationException {
@@ -262,11 +262,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				success = true;
 			} finally {
 				if (! success) {
-					try {
-						pack.close();
-					} catch (final IOException e) {
-						throw new InvalidOperationException("Could not close OPCPackage while cleaning up", e);
-					}
+					IOUtils.closeQuietly(pack);
 				}
 			}
 		}
@@ -403,11 +399,6 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		return pkg;
 	}
 
-	/**
-	 * Configure the package.
-	 *
-	 * @param pkg
-	 */
 	private static void configurePackage(OPCPackage pkg) {
 		try {
 			// Content type manager
@@ -598,8 +589,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * (PackageAccess.Write). This method is call when other methods need write
 	 * right.
 	 *
-	 * @throws InvalidOperationException
-	 *             Throws if a read operation is done on a write only package.
+	 * @throws InvalidOperationException if a read operation is done on a write only package.
 	 * @see org.apache.poi.openxml4j.opc.PackageAccess
 	 */
 	void throwExceptionIfWriteOnly() throws InvalidOperationException {
@@ -750,6 +740,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *  Compliance with Rule M4.1, and ignore all others silently too. 
 	 *
 	 * @return All this package's parts.
+	 * @throws InvalidFormatException if the package is not valid.
 	 */
 	public ArrayList<PackagePart> getParts() throws InvalidFormatException {
 		throwExceptionIfWriteOnly();
@@ -960,7 +951,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param part
 	 *            The part to add (or replace).
 	 * @return The part added to the package, the same as the one specified.
-	 * @throws InvalidFormatException
+	 * @throws InvalidOperationException
 	 *             If rule M1.12 is not verified : Packages shall not contain
 	 *             equivalent part names and package implementers shall neither
 	 *             create nor recognize packages with equivalent part names.
@@ -1327,7 +1318,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * Retrieves all package relationships.
 	 *
 	 * @return All package relationships of this package.
-	 * @throws OpenXML4JException
+     * @throws InvalidOperationException if a read operation is done on a write only package.
 	 * @see #getRelationshipsHelper(String)
 	 */
 	@Override
