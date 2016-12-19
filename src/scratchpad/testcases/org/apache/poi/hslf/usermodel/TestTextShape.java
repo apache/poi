@@ -17,24 +17,29 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
 
 /**
  * Verify behavior of <code>TextShape</code> and its sub-classes
- *
- * @author Yegor Kozlov
  */
 public final class TestTextShape {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-
     @Test
     public void createAutoShape(){
         HSLFTextShape shape = new HSLFAutoShape(ShapeType.TRAPEZOID);
@@ -67,7 +72,7 @@ public final class TestTextShape {
      */
     @Test
     public void read() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("text_shapes.ppt"));
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("text_shapes.ppt");
 
         List<String> lst1 = new ArrayList<String>();
         HSLFSlide slide = ppt.getSlides().get(0);
@@ -85,10 +90,11 @@ public final class TestTextShape {
                     assertEquals("Text in a TextBox", rawText);
                     break;
                 case RECT:
-                    if(runType == TextHeaderAtom.OTHER_TYPE)
+                    if(runType == TextHeaderAtom.OTHER_TYPE) {
                         assertEquals("Rectangle", rawText);
-                    else if(runType == TextHeaderAtom.TITLE_TYPE)
+                    } else if(runType == TextHeaderAtom.TITLE_TYPE) {
                         assertEquals("Title Placeholder", rawText);
+                    }
                     break;
                 case OCTAGON:
                     assertEquals("Octagon", rawText);
@@ -112,6 +118,7 @@ public final class TestTextShape {
         }
 
         assertTrue(lst1.containsAll(lst2));
+        ppt.close();
     }
 
     @Test
@@ -147,11 +154,12 @@ public final class TestTextShape {
         shape1 = (HSLFTextShape)shape.get(1);
         assertEquals(ShapeType.RIGHT_ARROW, shape1.getShapeType());
         assertEquals("Testing TextShape", shape1.getText());
+        ppt.close();
     }
 
     @Test
     public void margins() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("text-margins.ppt"));
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("text-margins.ppt");
 
         HSLFSlide slide = ppt.getSlides().get(0);
 
@@ -188,11 +196,13 @@ public final class TestTextShape {
         assertEquals(28.34, tx.getRightInset(), 0.01);
         assertEquals(3.6, tx.getTopInset(), 0);
         assertEquals(3.6, tx.getBottomInset(), 0);
+        
+        ppt.close();
     }
 
     @Test
     public void bug52599() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("52599.ppt"));
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("52599.ppt");
 
         HSLFSlide slide = ppt.getSlides().get(0);
         List<HSLFShape> sh = slide.getShapes();
@@ -209,5 +219,6 @@ public final class TestTextShape {
         HSLFTextShape sh2 = (HSLFTextShape)sh.get(2);
         assertEquals("this box should be shown just once", sh2.getText());
         assertEquals(-1, sh2.getTextParagraphs().get(0).getIndex());
+        ppt.close();
     }
 }

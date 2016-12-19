@@ -19,32 +19,33 @@ package org.apache.poi.hslf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests that SlideShow returns Sheets in the right order
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestSlideOrdering {
-    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-
 	// Simple slideshow, record order matches slide order
 	private HSLFSlideShow ssA;
 	// Complex slideshow, record order doesn't match slide order
 	private HSLFSlideShow ssB;
 
 	@Before
-	public void init() throws Exception {
-		HSLFSlideShowImpl hssA = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ssA = new HSLFSlideShow(hssA);
+	public void init() throws IOException {
+		ssA = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
+		ssB = HSLFTestDataSamples.getSlideShow("incorrect_slide_order.ppt");
+	}
 
-		HSLFSlideShowImpl hssB = new HSLFSlideShowImpl(slTests.openResourceAsStream("incorrect_slide_order.ppt"));
-		ssB = new HSLFSlideShow(hssB);
+	@After
+	public void tearDown() throws IOException {
+	    ssA.close();
+	    ssB.close();
 	}
 
 	/**
@@ -83,10 +84,8 @@ public final class TestSlideOrdering {
 	 * @param titles
 	 *            array of reference slide titles
 	 */
-	protected void assertSlideOrdering(String filename, String[] titles) throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-
-        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream(filename));
+	protected void assertSlideOrdering(String filename, String[] titles) throws IOException {
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow(filename);
 		List<HSLFSlide> slide = ppt.getSlides();
 
 		assertEquals(titles.length, slide.size());
@@ -94,6 +93,7 @@ public final class TestSlideOrdering {
 			String title = slide.get(i).getTitle();
 			assertEquals("Wrong slide title in " + filename, titles[i], title);
 		}
+		ppt.close();
 	}
 
     @Test

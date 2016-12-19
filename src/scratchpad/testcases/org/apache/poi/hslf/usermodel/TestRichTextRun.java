@@ -17,16 +17,25 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,46 +45,43 @@ import org.junit.Test;
  * (model.TestTextRun tests the other functionality)
  */
 public final class TestRichTextRun {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-
     // SlideShow primed on the test data
     private HSLFSlideShow ss;
     private HSLFSlideShow ssRichA;
     private HSLFSlideShow ssRichB;
     private HSLFSlideShow ssRichC;
     private HSLFSlideShow ssChinese;
-    private HSLFSlideShowImpl hss;
-    private HSLFSlideShowImpl hssRichA;
-    private HSLFSlideShowImpl hssRichB;
-    private HSLFSlideShowImpl hssRichC;
-    private HSLFSlideShowImpl hssChinese;
     private static String filenameC;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws IOException {
         // Basic (non rich) test file
-        hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-        ss = new HSLFSlideShow(hss);
+        ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 
         // Rich test file A
-        hssRichA = new HSLFSlideShowImpl(_slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
-        ssRichA = new HSLFSlideShow(hssRichA);
+        ssRichA = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page.ppt");
         
         // Rich test file B
-        hssRichB = new HSLFSlideShowImpl(_slTests.openResourceAsStream("Single_Coloured_Page_With_Fonts_and_Alignments.ppt"));
-        ssRichB = new HSLFSlideShow(hssRichB);
+        ssRichB = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page_With_Fonts_and_Alignments.ppt");
         
         // Rich test file C - has paragraph styles that run out before
         //   the character ones do
         filenameC = "ParagraphStylesShorterThanCharStyles.ppt";
-        hssRichC = new HSLFSlideShowImpl(_slTests.openResourceAsStream(filenameC));
-        ssRichC = new HSLFSlideShow(hssRichC);
+        ssRichC = HSLFTestDataSamples.getSlideShow(filenameC);
         
         // Rich test file with Chinese + English text in it
-        hssChinese = new HSLFSlideShowImpl(_slTests.openResourceAsStream("54880_chinese.ppt"));
-        ssChinese = new HSLFSlideShow(hssChinese);
+        ssChinese = HSLFTestDataSamples.getSlideShow("54880_chinese.ppt");
     }
 
+    @After
+    public void tearDown() throws IOException {
+        ss.close();
+        ssRichA.close();
+        ssRichB.close();
+        ssRichC.close();
+        ssChinese.close();
+    }
+    
 	/**
 	 * Test the stuff about getting/setting bold
 	 *  on a non rich text run
@@ -201,7 +207,7 @@ public final class TestRichTextRun {
 	}
 
     @Test
-	public void testChangeWriteRead() throws Exception {
+	public void testChangeWriteRead() throws IOException {
 		for(HSLFSlideShow h : new HSLFSlideShow[] { ss, ssRichA, ssRichB }) {
 			// Change
 			HSLFSlide slideOne = h.getSlides().get(0);
@@ -219,12 +225,7 @@ public final class TestRichTextRun {
 			assertEquals("Courier", rtr.getFontFamily());
 
 			// Write out and back in
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			h.write(baos);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-			HSLFSlideShowImpl readHSLF = new HSLFSlideShowImpl(bais);
-			HSLFSlideShow readS = new HSLFSlideShow(readHSLF);
+			HSLFSlideShow readS = HSLFTestDataSamples.writeOutAndReadBack(h);
 
 			// Tweak existing one again, to ensure really worked
 			rtr.setBold(false);
@@ -246,6 +247,7 @@ public final class TestRichTextRun {
 			assertTrue(rtrRRa.isBold());
 			assertEquals(18., rtrRRa.getFontSize(), 0);
 			assertEquals("Courier", rtrRRa.getFontFamily());
+			readS.close();
 		}
 	}
 
@@ -314,7 +316,7 @@ public final class TestRichTextRun {
 	 */
     @Test
 	@SuppressWarnings("unused")
-    public void testParagraphStylesShorterTheCharStylesWrite() throws Exception {
+    public void testParagraphStylesShorterTheCharStylesWrite() throws IOException {
 		assertMatchesSLTWC(ssRichC);
 		assertMatchesFileC(ssRichC);
 
@@ -361,9 +363,9 @@ public final class TestRichTextRun {
 	 *  contents.
 	 * @param s
 	 */
-	private void assertMatchesSLTWC(HSLFSlideShow s) throws Exception {
+	private void assertMatchesSLTWC(HSLFSlideShow s) throws IOException {
 		// Grab a new copy of slideshow C
-		HSLFSlideShow refC = new HSLFSlideShow(_slTests.openResourceAsStream(filenameC));
+		HSLFSlideShow refC = HSLFTestDataSamples.getSlideShow(filenameC);
 
 		// Write out the 2nd SLWT in the active document
 		SlideListWithText refSLWT = refC.getDocumentRecord().getSlideListWithTexts()[1];
@@ -392,26 +394,22 @@ public final class TestRichTextRun {
 	 * Checks that the supplied slideshow still matches the bytes
 	 *  of slideshow c
 	 */
-	private static void assertMatchesFileC(HSLFSlideShow s) throws Exception {
+	private static void assertMatchesFileC(HSLFSlideShow s) throws IOException {
 		// Grab the bytes of the file
-	    NPOIFSFileSystem fs = new NPOIFSFileSystem(_slTests.getFile(filenameC));
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    NPOIFSFileSystem fs = new NPOIFSFileSystem(HSLFTestDataSamples.openSampleFileStream(filenameC));
 	    InputStream is = fs.createDocumentInputStream("PowerPoint Document");
-	    IOUtils.copy(is, baos);
+	    byte[] raw_file = IOUtils.toByteArray(is);
 	    is.close();
 	    fs.close();
-	    byte[] raw_file = baos.toByteArray();
 
 		// Now write out the slideshow
-		baos.reset();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		s.write(baos);
 		fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
-		baos.reset();
 		is = fs.createDocumentInputStream("PowerPoint Document");
-        IOUtils.copy(is, baos);
+		byte[] raw_ss = IOUtils.toByteArray(is);
         is.close();
         fs.close();		
-		byte[] raw_ss = baos.toByteArray();
 		
 		// different paragraph mask, because of sanitizing
 		raw_ss[169030] = 0x0a;
@@ -420,7 +418,7 @@ public final class TestRichTextRun {
 		assertArrayEquals(raw_file, raw_ss);
 	}
 
-	private byte[] writeRecord(Record r) throws Exception {
+	private byte[] writeRecord(Record r) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		r.writeOut(baos);
 		return baos.toByteArray();
@@ -428,7 +426,7 @@ public final class TestRichTextRun {
 
     @Test
 	public void testIndentationLevel() throws Exception {
-		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("ParagraphStylesShorterThanCharStyles.ppt"));
+		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ParagraphStylesShorterThanCharStyles.ppt");
 		for (HSLFSlide sl : ppt.getSlides()) {
 			for (List<HSLFTextParagraph> txt : sl.getTextParagraphs()) {
 				for (HSLFTextParagraph p : txt) {
@@ -438,11 +436,12 @@ public final class TestRichTextRun {
 
 			}
 		}
+		ppt.close();
 	}
 
     @Test
 	public void testReadParagraphStyles() throws Exception {
-		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bullets.ppt"));
+		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("bullets.ppt");
 		assertTrue("No Exceptions while reading file", true);
 
 		HSLFTextParagraph rt;
@@ -492,13 +491,14 @@ public final class TestRichTextRun {
 		rt = txt.get(1).get(0);
 		assertTrue(rt.isBullet());
 		assertEquals('\u263A', (char)rt.getBulletChar());
+		ppt.close();
 	}
 
     @Test
-	public void testSetParagraphStyles() throws Exception {
-		HSLFSlideShow ppt = new HSLFSlideShow();
+	public void testSetParagraphStyles() throws IOException {
+		HSLFSlideShow ppt1 = new HSLFSlideShow();
 
-		HSLFSlide slide = ppt.createSlide();
+		HSLFSlide slide = ppt1.createSlide();
 
 		HSLFTextBox shape = new HSLFTextBox();
 		shape.setText(
@@ -524,12 +524,8 @@ public final class TestRichTextRun {
 		slide.addShape(shape);
 
 		//serialize and read again
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ppt.write(out);
-		out.close();
-
-		ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
-		slide = ppt.getSlides().get(0);
+		HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+		slide = ppt2.getSlides().get(0);
 		shape = (HSLFTextBox)slide.getShapes().get(0);
 		rt = shape.getTextParagraphs().get(0);
 		tr = rt.getTextRuns().get(0);
@@ -538,17 +534,19 @@ public final class TestRichTextRun {
 		assertEquals(50.0, rt.getLeftMargin(), 0);
 		assertEquals(0, rt.getIndent(), 0);
 		assertEquals('\u263A', (char)rt.getBulletChar());
+		ppt2.close();
+		ppt1.close();
 	}
 
     @Test
 	public void testAddText() throws Exception {
-		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bullets.ppt"));
+		HSLFSlideShow ppt1 = HSLFTestDataSamples.getSlideShow("bullets.ppt");
 		assertTrue("No Exceptions while reading file", true);
 
 		HSLFTextParagraph rt;
 		HSLFTextRun tr;
 		List<List<HSLFTextParagraph>> txt;
-		List<HSLFSlide> slides = ppt.getSlides();
+		List<HSLFSlide> slides = ppt1.getSlides();
 
 		assertEquals(2, slides.size());
 		txt = slides.get(0).getTextParagraphs();
@@ -592,12 +590,8 @@ public final class TestRichTextRun {
 		assertEquals("Me too!", tr.getRawText());
 
 		// Save and re-open
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ppt.write(out);
-		out.close();
-
-		ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
-		slides = ppt.getSlides();
+		HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+		slides = ppt2.getSlides();
 
 		assertEquals(2, slides.size());
 
@@ -616,9 +610,8 @@ public final class TestRichTextRun {
 		tr = rt.getTextRuns().get(0);
 		assertTrue(tr.isBold());
 		assertEquals("Me too!", tr.getRawText());
-
-//		FileOutputStream fout = new FileOutputStream("/tmp/foo.ppt");
-//		ppt.write(fout);
+		ppt2.close();
+		ppt1.close();
 	}
 	
     @Test

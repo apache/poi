@@ -19,28 +19,31 @@ package org.apache.poi.hslf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests that SlideShow returns Sheets which have the right text in them
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestSheetText {
 	// SlideShow primed on the test data
 	private HSLFSlideShow ss;
 
 	@Before
-	public void init() throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShow(hss);
+	public void init() throws IOException {
+		ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 	}
 
+	@After
+	public void tearDown() throws IOException {
+	    ss.close();
+	}
+	
 	@Test
 	public void testSheetOne() {
 		HSLFSheet slideOne = ss.getSlides().get(0);
@@ -68,10 +71,8 @@ public final class TestSheetText {
 	 *  TextProps don't have enough data.
 	 * (Make sure we don't screw up / throw an exception etc)
 	 */
-	public void testWithShortTextPropData() throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("iisd_report.ppt"));
-		HSLFSlideShow sss = new HSLFSlideShow(hss);
+	public void testWithShortTextPropData() throws IOException {
+		HSLFSlideShow sss = HSLFTestDataSamples.getSlideShow("iisd_report.ppt");
 
 		// Should come out with 10 slides, no notes
 		assertEquals(10, sss.getSlides().size());
@@ -90,5 +91,6 @@ public final class TestSheetText {
 
 		assertEquals(1, s.getTextParagraphs().size());
 		assertEquals(exp, HSLFTextParagraph.getRawText(s.getTextParagraphs().get(0)));
+		sss.close();
 	}
 }

@@ -34,11 +34,22 @@ public class HSLFTestDataSamples {
 	public static InputStream openSampleFileStream(String sampleFileName) {
 		return _inst.openResourceAsStream(sampleFileName);
 	}
+	
 	public static File getSampleFile(String sampleFileName) {
 	   return _inst.getFile(sampleFileName);
 	}
+	
 	public static byte[] getTestDataFileContent(String fileName) {
 		return _inst.readFile(fileName);
+	}
+	
+	public static HSLFSlideShow getSlideShow(String fileName) throws IOException {
+	    InputStream is = openSampleFileStream(fileName);
+	    try {
+	        return new HSLFSlideShow(is);
+	    } finally {
+	        is.close();
+	    }
 	}
 
 	/**

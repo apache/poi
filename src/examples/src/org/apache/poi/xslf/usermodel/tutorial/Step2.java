@@ -30,13 +30,10 @@ import java.io.FileOutputStream;
 
 /**
  * Create slides from pre-defined slide layouts
- *
- * @author Yegor Kozlov
  */
 public class Step2 {
     public static void main(String[] args) throws Exception{
         XMLSlideShow ppt = new XMLSlideShow();
-
 
         // first see what slide layouts are available by default
         System.out.println("Available slide layouts:");
@@ -75,6 +72,6 @@ public class Step2 {
         FileOutputStream out = new FileOutputStream("step2.pptx");
         ppt.write(out);
         out.close();
-
+        ppt.close();
     }
 }

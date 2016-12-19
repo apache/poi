@@ -26,42 +26,42 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests for TextRuns
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestTextRun {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-
 	// SlideShow primed on the test data
 	private HSLFSlideShow ss;
 	private HSLFSlideShow ssRich;
 
 	@Before
 	public void setUp() throws IOException {
-
 		// Basic (non rich) test file
-		ss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 
 		// Rich test file
-		ssRich = new HSLFSlideShow(_slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
+		ssRich = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page.ppt");
 	}
 
+	@After
+	public void tearDown() throws IOException {
+	    ssRich.close();
+	    ss.close();
+	}
+	
 	/**
 	 * Test to ensure that getting the text works correctly
 	 */
@@ -441,7 +441,7 @@ public final class TestTextRun {
 	public void testBug41015() throws IOException {
 		List<HSLFTextRun> rt;
 
-		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug-41015.ppt"));
+		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("bug-41015.ppt");
 		HSLFSlide sl = ppt.getSlides().get(0);
         List<List<HSLFTextParagraph>> textParass = sl.getTextParagraphs();
 		assertEquals(2, textParass.size());
@@ -461,13 +461,14 @@ public final class TestTextRun {
 		    assertEquals(indents[i], p.getIndentLevel());
 		    i++;
 		}
+		ppt.close();
 	}
 
 	/**
 	 * Test creation of TextRun objects.
 	 */
 	@Test
-	public void testAddTextRun() {
+	public void testAddTextRun() throws IOException {
 		HSLFSlideShow ppt = new HSLFSlideShow();
 		HSLFSlide slide = ppt.createSlide();
 
@@ -511,12 +512,13 @@ public final class TestTextRun {
 		runs = slide2.getTextParagraphs();
 		assertNotNull(runs);
 		assertEquals(4, runs.size());
+		ppt.close();
 	}
 
 	@Test
 	public void test48916() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
-        List<HSLFSlide> slides = ppt.getSlides();
+        HSLFSlideShow ppt1 = HSLFTestDataSamples.getSlideShow("SampleShow.ppt");
+        List<HSLFSlide> slides = ppt1.getSlides();
         for(HSLFSlide slide : slides){
             for(HSLFShape sh : slide.getShapes()){
                 if (!(sh instanceof HSLFTextShape)) continue;
@@ -539,11 +541,9 @@ public final class TestTextRun {
                 // tx.storeText();
             }
         }
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ppt.write(out);
         
-        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
-        for(HSLFSlide slide : ppt.getSlides()){
+        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        for(HSLFSlide slide : ppt2.getSlides()){
             for(HSLFShape sh : slide.getShapes()){
                 if(sh instanceof HSLFTextShape){
                     HSLFTextShape tx = (HSLFTextShape)sh;
@@ -554,12 +554,13 @@ public final class TestTextRun {
                 }
             }
         }
-
+        ppt2.close();
+        ppt1.close();
     }
 
 	@Test
 	public void test52244() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("52244.ppt"));
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("52244.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
 
         int sizes[] = { 36, 24, 12, 32, 12, 12 };
@@ -569,6 +570,7 @@ public final class TestTextRun {
             assertEquals("Arial", textParas.get(0).getTextRuns().get(0).getFontFamily());
             assertEquals(sizes[i++], textParas.get(0).getTextRuns().get(0).getFontSize().intValue());
         }
+        ppt.close();
     }
 
 	@Test
@@ -579,5 +581,6 @@ public final class TestTextRun {
         title.setText("");
         title.appendText("\n", true);
         title.appendText("para", true);
+        ppt.close();
 	}
 }

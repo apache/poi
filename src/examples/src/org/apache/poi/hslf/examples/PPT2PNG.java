@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -33,12 +34,10 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Demonstrates how you can use HSLF to convert each slide into a PNG image
- *
- * @author Yegor Kozlov
  */
 public final class PPT2PNG {
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) throws IOException {
 
         if (args.length == 0) {
             usage();
@@ -74,7 +73,9 @@ public final class PPT2PNG {
         int height = (int)(pgsize.height*scale);
 
         for (HSLFSlide slide : ppt.getSlides()) {
-            if (slidenum != -1 && slidenum != slide.getSlideNumber()) continue;
+            if (slidenum != -1 && slidenum != slide.getSlideNumber()) {
+                continue;
+            }
 
             String title = slide.getTitle();
             System.out.println("Rendering slide "+slide.getSlideNumber() + (title == null ? "" : ": " + title));
@@ -98,6 +99,8 @@ public final class PPT2PNG {
             ImageIO.write(img, "png", out);
             out.close();
         }
+        
+        ppt.close();
     }
 
     private static void usage(){

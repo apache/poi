@@ -31,7 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.sl.draw.DrawTableShape;
 import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.junit.Test;
@@ -41,8 +41,6 @@ import org.junit.Test;
  * Table related tests
  */
 public class TestTable {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-
     @Test
     public void moveTable() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
@@ -68,7 +66,7 @@ public class TestTable {
 
     @Test
     public void testTable() throws IOException {
-		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("54111.ppt"));
+		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("54111.ppt");
 		assertTrue("No Exceptions while reading file", true);
 
 		List<HSLFSlide> slides = ppt.getSlides();

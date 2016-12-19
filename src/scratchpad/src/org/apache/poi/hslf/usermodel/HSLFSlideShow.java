@@ -52,6 +52,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
@@ -61,9 +62,6 @@ import org.apache.poi.util.Units;
  *
  * TODO: - figure out how to match notes to their correct sheet (will involve
  * understanding DocSlideList and DocNotesList) - handle Slide creation cleaner
- *
- * @author Nick Burch
- * @author Yegor kozlov
  */
 public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable {
     enum LoadSavePhase {
@@ -211,14 +209,18 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		
 		// Now convert the byte offsets back into record offsets
 		for (Record record : _hslfSlideShow.getRecords()) {
-			if (!(record instanceof PositionDependentRecord)) continue;
+			if (!(record instanceof PositionDependentRecord)) {
+                continue;
+            }
 			
 			PositionDependentRecord pdr = (PositionDependentRecord) record;
 			int recordAt = pdr.getLastOnDiskOffset();
 
 			Integer thisID = mostRecentByBytesRev.get(recordAt);
 			
-			if (thisID == null) continue;
+			if (thisID == null) {
+                continue;
+            }
 			
 			// Bingo. Now, where do we store it?
 			int storeAt = _sheetIdToCoreRecordsLookup.get(thisID);
@@ -470,7 +472,9 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
                 for (HSLFTextParagraph p : hts.getTextParagraphs()) {
                     isDirty |= p.isDirty();
                 }
-                if (isDirty) hts.storeText();
+                if (isDirty) {
+                    hts.storeText();
+                }
             }
         }
 	}
@@ -632,7 +636,9 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		sa.remove(index);
 		
 		int i=0;
-		for (HSLFSlide s : _slides) s.setSlideNumber(i++);
+		for (HSLFSlide s : _slides) {
+            s.setSlideNumber(i++);
+        }
 		
 		for (SlideAtomsSet s : sa) {
             records.add(s.getSlidePersistAtom());
@@ -653,7 +659,9 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 			records = new ArrayList<Record>();
 			ArrayList<SlideAtomsSet> na = new ArrayList<SlideAtomsSet>();
 			for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()) {
-				if (ns.getSlidePersistAtom().getSlideIdentifier() == notesId) continue;
+				if (ns.getSlidePersistAtom().getSlideIdentifier() == notesId) {
+                    continue;
+                }
 				na.add(ns);
 				records.add(ns.getSlidePersistAtom());
 				if (ns.getSlideRecords() != null) {
@@ -1115,16 +1123,26 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		return psrId;
     }
 
+    @Override
     public MasterSheet<HSLFShape,HSLFTextParagraph> createMasterSheet() throws IOException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public Resources getResources() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * @return the handler class which holds the hslf records
+     */
+    @Internal
+    public HSLFSlideShowImpl getSlideShowImpl() {
+        return _hslfSlideShow;
+    }
+    
     @Override
     public void close() throws IOException {
         _hslfSlideShow.close();

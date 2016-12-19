@@ -21,8 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
@@ -32,6 +31,7 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.usermodel.HSLFAutoShape;
 import org.apache.poi.hslf.usermodel.HSLFFill;
@@ -40,7 +40,6 @@ import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSheet;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
@@ -58,7 +57,7 @@ public final class TestBackground {
      * Default background for slide, shape and slide master.
      */
     @Test
-    public void defaults() {
+    public void defaults() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         assertEquals(HSLFFill.FILL_SOLID, ppt.getSlideMasters().get(0).getBackground().getFill().getFillType());
@@ -69,14 +68,15 @@ public final class TestBackground {
 
         HSLFShape shape = new HSLFAutoShape(ShapeType.RECT);
         assertEquals(HSLFFill.FILL_SOLID, shape.getFill().getFillType());
+        ppt.close();
     }
 
     /**
      * Read fill information from an reference ppt file
      */
     @Test
-    public void readBackground() throws Exception {
-        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("backgrounds.ppt"));
+    public void readBackground() throws IOException {
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("backgrounds.ppt");
         HSLFFill fill;
         HSLFShape shape;
 
@@ -101,24 +101,25 @@ public final class TestBackground {
         assertEquals(HSLFFill.FILL_SHADE_CENTER, fill.getFillType());
         shape = slide.get(3).getShapes().get(0);
         assertEquals(HSLFFill.FILL_SHADE, shape.getFill().getFillType());
+        ppt.close();
     }
 
     /**
      * Create a ppt with various fill effects
      */
     @Test
-    public void backgroundPicture() throws Exception {
-        HSLFSlideShow ppt = new HSLFSlideShow();
+    public void backgroundPicture() throws IOException {
+        HSLFSlideShow ppt1 = new HSLFSlideShow();
         HSLFSlide slide;
         HSLFFill fill;
         HSLFShape shape;
         HSLFPictureData data;
 
         //slide 1
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        data = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
+        data = ppt1.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
         fill.setFillType(HSLFFill.FILL_PICTURE);
         fill.setPictureData(data);
 
@@ -129,10 +130,10 @@ public final class TestBackground {
         slide.addShape(shape);
 
         //slide 2
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        data = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
+        data = ppt1.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
         fill.setFillType(HSLFFill.FILL_PATTERN);
         fill.setPictureData(data);
         fill.setBackgroundColor(Color.green);
@@ -145,10 +146,10 @@ public final class TestBackground {
         slide.addShape(shape);
 
         //slide 3
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        data = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
+        data = ppt1.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
         fill.setFillType(HSLFFill.FILL_TEXTURE);
         fill.setPictureData(data);
 
@@ -156,12 +157,12 @@ public final class TestBackground {
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
         fill.setFillType(HSLFFill.FILL_PICTURE);
-        data = ppt.addPicture(_slTests.readFile("clock.jpg"), PictureType.JPEG);
+        data = ppt1.addPicture(_slTests.readFile("clock.jpg"), PictureType.JPEG);
         fill.setPictureData(data);
         slide.addShape(shape);
 
         // slide 4
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
         fill.setFillType(HSLFFill.FILL_SHADE_CENTER);
@@ -177,12 +178,8 @@ public final class TestBackground {
         slide.addShape(shape);
 
         //serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ppt.write(out);
-        out.close();
-
-        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
-        List<HSLFSlide> slides = ppt.getSlides();
+        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        List<HSLFSlide> slides = ppt2.getSlides();
 
         fill = slides.get(0).getBackground().getFill();
         assertEquals(HSLFFill.FILL_PICTURE, fill.getFillType());
@@ -206,6 +203,8 @@ public final class TestBackground {
         assertEquals(HSLFFill.FILL_SHADE_CENTER, fill.getFillType());
         shape = slides.get(3).getShapes().get(0);
         assertEquals(HSLFFill.FILL_SHADE, shape.getFill().getFillType());
+        ppt2.close();
+        ppt1.close();
     }
 
     private int getFillPictureRefCount(HSLFShape shape, HSLFFill fill) {
