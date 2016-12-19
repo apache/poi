@@ -114,7 +114,7 @@ public final class ZipPackage extends OPCPackage {
      *            The path of the file to open or create.
      * @param access
      *            The package access mode.
-     * @throws InvalidOperationException
+     * @throws InvalidOperationException If the zip file cannot be opened.
      */
     ZipPackage(String path, PackageAccess access) throws InvalidOperationException {
         this(new File(path), access);
@@ -127,7 +127,7 @@ public final class ZipPackage extends OPCPackage {
      *            The file to open or create.
      * @param access
      *            The package access mode.
-     * @throws InvalidOperationException
+     * @throws InvalidOperationException If the zip file cannot be opened.
      */
     ZipPackage(File file, PackageAccess access) throws InvalidOperationException {
         super(access);
@@ -231,8 +231,7 @@ public final class ZipPackage extends OPCPackage {
      * list is not empty, it will be emptied.
      *
      * @return All parts contain in this package.
-     * @throws InvalidFormatException
-     *             Throws if the package is not valid.
+     * @throws InvalidFormatException if the package is not valid.
      */
     @Override
     protected PackagePart[] getPartsImpl() throws InvalidFormatException {
