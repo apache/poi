@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.usermodel.tutorial;
 
+import java.io.FileInputStream;
+
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
@@ -26,12 +28,8 @@ import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
 
-import java.io.FileInputStream;
-
 /**
  * Reading a .pptx presentation and printing basic shape properties
- *
- * @author Yegor Kozlov
  */
 public class Step1 {
 
@@ -41,7 +39,9 @@ public class Step1 {
             return;
         }
 
-        XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(args[0]));
+        FileInputStream fis = new FileInputStream(args[0]);
+        XMLSlideShow ppt = new XMLSlideShow(fis);
+        fis.close();
 
         for(XSLFSlide slide : ppt.getSlides()){
             System.out.println("Title: " + slide.getTitle());
@@ -64,5 +64,7 @@ public class Step1 {
                 }
             }
         }
+        
+        ppt.close();
     }
 }

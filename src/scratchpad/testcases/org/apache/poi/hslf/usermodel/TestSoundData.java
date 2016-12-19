@@ -18,30 +18,29 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.junit.Test;
 
 /**
  * Test reading sound data from a ppt
- *
- * @author Yegor Kozlov
  */
-public final class TestSoundData extends TestCase{
-    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-
+public final class TestSoundData {
     /**
      * Read a reference sound file from disk and compare it from the data extracted from the slide show
      */
+    @Test
     public void testSounds() throws Exception {
         //read the reference sound file
-        byte[] ref_data = slTests.readFile("ringin.wav");
+        byte[] ref_data = HSLFTestDataSamples.getTestDataFileContent("ringin.wav");
 
-        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("sound.ppt");
 
         HSLFSoundData[] sound = ppt.getSoundData();
         assertEquals("Expected 1 sound", 1, sound.length);
 
         assertArrayEquals(ref_data, sound[0].getData());
+        ppt.close();
     }
 }
