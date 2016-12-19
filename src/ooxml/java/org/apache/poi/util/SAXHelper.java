@@ -88,10 +88,8 @@ public final class SAXHelper {
                 xmlReader.setProperty("http://apache.org/xml/properties/security-manager", mgr);
                 // Stop once one can be setup without error
                 return;
-            } catch (Exception e) {
+            } catch (Throwable e) {     // NOSONAR - also catch things like NoClassDefError here
                 logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
-            } catch (Error err) {
-                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", err);
             }
         }
     }

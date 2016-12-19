@@ -121,8 +121,8 @@ public final class DocumentHelper {
                 dbf.setAttribute("http://apache.org/xml/properties/security-manager", mgr);
                 // Stop once one can be setup without error
                 return;
-            } catch (Throwable t) {
-                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", t);
+            } catch (Throwable e) {     // NOSONAR - also catch things like NoClassDefError here
+                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
             }
         }
     }
@@ -172,5 +172,4 @@ public final class DocumentHelper {
     public static void addNamespaceDeclaration(Element element, Namespace namespace) {
         addNamespaceDeclaration(element, namespace.getPrefix(), namespace.getNamespaceURI());
     }
-
 }
