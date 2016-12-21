@@ -134,7 +134,9 @@ public class DocumentNode
         List<Object> components = new ArrayList<Object>();
 
         components.add(getProperty());
-        components.add(_document);
+        if (_document != null) {
+            components.add(_document);
+        }
         return components.iterator();
     }
 
