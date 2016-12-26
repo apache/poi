@@ -20,6 +20,7 @@ package org.apache.poi.util;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +37,7 @@ import org.xml.sax.XMLReader;
  */
 public final class SAXHelper {
     private static POILogger logger = POILogFactory.getLogger(SAXHelper.class);
+    private static long lastLog = 0;
 
     private SAXHelper() {}
 
@@ -89,7 +91,10 @@ public final class SAXHelper {
                 // Stop once one can be setup without error
                 return;
             } catch (Throwable e) {     // NOSONAR - also catch things like NoClassDefError here
-                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
+                // throttle the log somewhat as it can spam the log otherwise
+                if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
+                    logger.log(POILogger.WARN, "SAX Security Manager could not be setup [log suppressed for 5 minutes]", e);
+                }
             }
         }
     }
