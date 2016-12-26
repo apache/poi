@@ -106,7 +106,7 @@
 						<org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
 					</systemPropertyVariables>
 					<!-- use to following to analyze OOM issues:	-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
-					<argLine>-Duser.language=en -Duser.country=US -Xmx1024m</argLine>
+					<argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m</argLine>
 					<excludes>
 						<exclude>**/All*Tests.java</exclude>
 						<exclude>**/TestUnfixedBugs.java</exclude>
@@ -120,6 +120,11 @@
 					<!--parallel>both</parallel>
 				<threadCount>10</threadCount-->
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.8</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -151,7 +156,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>512m</maven.compiler.maxmem>
-                <argLine>-Xmx768m -XX:MaxPermSize=128m @{argLine}</argLine>
+                <argLine>-Xmx768m -XX:MaxPermSize=128m</argLine>
 			</properties>
 		</profile>
 		
@@ -165,7 +170,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>768m</maven.compiler.maxmem>
-                <argLine>-Xmx1024m -XX:MaxPermSize=256m @{argLine}</argLine>
+                <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
 			</properties>
 		</profile>
 
