@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -59,7 +58,7 @@ public abstract class POIDocument implements Closeable {
     private static final POILogger logger = POILogFactory.getLogger(POIDocument.class);
 
     /* Have the property streams been read yet? (Only done on-demand) */
-    private boolean initialized = false;
+    private boolean initialized;
 
     private static final String[] encryptedStreamNames = { "EncryptedSummary" };
     
@@ -299,7 +298,7 @@ public abstract class POIDocument implements Closeable {
      */
     protected void writePropertySet(String name, PropertySet set, NPOIFSFileSystem outFS) throws IOException {
         try {
-            MutablePropertySet mSet = new MutablePropertySet(set);
+            PropertySet mSet = new PropertySet(set);
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
             mSet.write(bOut);
@@ -392,6 +391,7 @@ public abstract class POIDocument implements Closeable {
      * <p>Once {@link #close()} has been called, no further operations
      *  should be called on the document.
      */
+    @Override
     public void close() throws IOException {
         if (directory != null) {
             if (directory.getNFileSystem() != null) {
