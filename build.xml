@@ -286,7 +286,7 @@ under the License.
     <condition property="findbugs.version" value="2.0.3" else="3.0.1">
         <contains string="${java.version}" substring="1.6"/>
     </condition>
-    <property name="findbugs.url" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-${findbugs.version}.zip?download"/>
+    <property name="findbugs.url" value="http://downloads.sourceforge.net/project/findbugs/findbugs/${findbugs.version}/findbugs-noUpdateChecks-${findbugs.version}.zip?download="/>
     <property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
 
     <propertyset id="junit.properties">
