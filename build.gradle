@@ -24,6 +24,10 @@ buildscript {
 	}
 }
 
+plugins {
+  id "org.sonarqube" version "2.2.1"
+}
+
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html
 
