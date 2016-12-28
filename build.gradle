@@ -24,9 +24,11 @@ buildscript {
 	}
 }
 
+/* We cannot add this here as the Sonar-plugin requires Java 8, but
+ * we want to at least keep Java 7 compatibility for building POI via Gradle for now
 plugins {
   id "org.sonarqube" version "2.2.1"
-}
+}*/
 
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html
