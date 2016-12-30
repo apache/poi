@@ -25,8 +25,7 @@ import java.util.ArrayList;
  * Utilities to read hex from files.
  * TODO - move to test packages
  */
-public class HexRead
-{
+public class HexRead {
     /**
      * This method reads hex data from a filename and returns a byte array.
      * The file may contain line comments that are preceeded with a # symbol.
@@ -35,16 +34,12 @@ public class HexRead
      * @return The bytes read from the file.
      * @throws IOException If there was a problem while reading the file.
      */
-    public static byte[] readData( String filename ) throws IOException
-    {
+    public static byte[] readData( String filename ) throws IOException {
         File file = new File( filename );
-        FileInputStream stream = new FileInputStream( file );
-        try
-        {
+        InputStream stream = new FileInputStream( file );
+        try {
             return readData( stream, -1 );
-        }
-        finally
-        {
+        } finally {
             stream.close();
         }
     }
@@ -59,16 +54,12 @@ public class HexRead
      * @see #readData(String)
      */
     public static byte[] readData(InputStream stream, String section ) throws IOException {
-
-        try
-        {
+        try {
             StringBuffer sectionText = new StringBuffer();
             boolean inSection = false;
             int c = stream.read();
-            while ( c != -1 )
-            {
-                switch ( c )
-                {
+            while ( c != -1 ) {
+                switch ( c ) {
                     case '[':
                         inSection = true;
                         break;
@@ -87,18 +78,15 @@ public class HexRead
                 }
                 c = stream.read();
             }
-        }
-        finally
-        {
+        } finally {
             stream.close();
         }
+
         throw new IOException( "Section '" + section + "' not found" );
     }
-    public static byte[] readData( String filename, String section ) throws IOException
-    {
-        File file = new File( filename );
-        FileInputStream stream = new FileInputStream( file );
-        return readData(stream, section);
+
+    public static byte[] readData( String filename, String section ) throws IOException {
+        return readData(new FileInputStream( filename ), section);
     }
 
     @SuppressWarnings("fallthrough")
@@ -110,8 +98,7 @@ public class HexRead
         List<Byte> bytes = new ArrayList<Byte>();
         final char a = 'a' - 10;
         final char A = 'A' - 10;
-        while ( true )
-        {
+        while ( true ) {
             int count = stream.read();
             int digitValue = -1;
             if ( '0' <= count && count <= '9' ) {
@@ -131,8 +118,7 @@ public class HexRead
                 b <<= 4;
                 b += (byte) digitValue;
                 characterCount++;
-                if ( characterCount == 2 )
-                {
+                if ( characterCount == 2 ) {
                     bytes.add( Byte.valueOf( b ) );
                     characterCount = 0;
                     b = (byte) 0;
@@ -141,8 +127,7 @@ public class HexRead
         }
         Byte[] polished = bytes.toArray(new Byte[bytes.size()]);
         byte[] rval = new byte[polished.length];
-        for ( int j = 0; j < polished.length; j++ )
-        {
+        for ( int j = 0; j < polished.length; j++ ) {
             rval[j] = polished[j].byteValue();
         }
         return rval;
@@ -156,11 +141,9 @@ public class HexRead
         }
     }
 
-    static private void readToEOL( InputStream stream ) throws IOException
-    {
+    static private void readToEOL( InputStream stream ) throws IOException {
         int c = stream.read();
-        while ( c != -1 && c != '\n' && c != '\r' )
-        {
+        while ( c != -1 && c != '\n' && c != '\r' ) {
             c = stream.read();
         }
     }

@@ -90,8 +90,22 @@ public class OldExcelExtractor implements Closeable {
             if (poifs != null) {
                 poifs.close();
             }
+        } catch (IOException e) {
+            // ensure streams are closed correctly
+            if (poifs != null) {
+                poifs.close();
+            }
+
+            throw e;
+        } catch (RuntimeException e) {
+            // ensure streams are closed correctly
+            if (poifs != null) {
+                poifs.close();
+            }
+
+            throw e;
         }
-        
+
         @SuppressWarnings("resource")
         FileInputStream biffStream = new FileInputStream(f); // NOSONAR
         try {
