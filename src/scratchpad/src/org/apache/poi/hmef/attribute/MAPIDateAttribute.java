@@ -42,7 +42,7 @@ import org.apache.poi.util.POILogger;
  * @see <a href="https://msdn.microsoft.com/en-us/library/cc433490(v=exchg.80).aspx">[MS-OXPROPS]: Exchange Server Protocols Master Property List</a>
  */
 public final class MAPIDateAttribute extends MAPIAttribute {
-   private static POILogger logger = POILogFactory.getLogger(MAPIDateAttribute.class);
+   private final static POILogger logger = POILogFactory.getLogger(MAPIDateAttribute.class);
    private Date data;
    
    /**

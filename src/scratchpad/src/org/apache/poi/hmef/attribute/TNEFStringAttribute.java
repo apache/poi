@@ -31,7 +31,7 @@ import org.apache.poi.util.StringUtil;
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFStringAttribute extends TNEFAttribute {
-   private static POILogger logger = POILogFactory.getLogger(TNEFStringAttribute.class);
+   private final static POILogger logger = POILogFactory.getLogger(TNEFStringAttribute.class);
    private String data;
    
    /**

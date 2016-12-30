@@ -72,7 +72,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument
 @Beta
 public class XMLSlideShow extends POIXMLDocument
 implements SlideShow<XSLFShape,XSLFTextParagraph> {
-    private static POILogger _logger = POILogFactory.getLogger(XMLSlideShow.class);
+    private final static POILogger _logger = POILogFactory.getLogger(XMLSlideShow.class);
 
     private CTPresentation _presentation;
     private List<XSLFSlide> _slides;

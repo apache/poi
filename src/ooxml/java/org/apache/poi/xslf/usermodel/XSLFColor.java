@@ -46,7 +46,7 @@ import org.w3c.dom.Node;
 @Beta
 @Internal
 public class XSLFColor {
-    private static POILogger LOGGER = POILogFactory.getLogger(XSLFColor.class);
+    private final static POILogger LOGGER = POILogFactory.getLogger(XSLFColor.class);
     
     private XmlObject _xmlObject;
     private Color _color;

@@ -144,7 +144,7 @@ public final class FIBFieldHandler
   public static final int STTBLISTNAMES = 91;
   public static final int STTBFUSSR = 92;
 
-  private static POILogger log = POILogFactory.getLogger(FIBFieldHandler.class);
+  private final static POILogger log = POILogFactory.getLogger(FIBFieldHandler.class);
 
   private static final int FIELD_SIZE = LittleEndian.INT_SIZE * 2;
 

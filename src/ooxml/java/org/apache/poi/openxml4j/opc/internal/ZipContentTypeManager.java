@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
  * @see ContentTypeManager
  */
 public class ZipContentTypeManager extends ContentTypeManager {
-    private static POILogger logger = POILogFactory.getLogger(ZipContentTypeManager.class);
+    private final static POILogger logger = POILogFactory.getLogger(ZipContentTypeManager.class);
 
 	/**
 	 * Delegate constructor to the super constructor.

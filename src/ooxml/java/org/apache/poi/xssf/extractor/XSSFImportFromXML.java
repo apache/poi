@@ -71,7 +71,7 @@ public class XSSFImportFromXML {
 
     private final XSSFMap _map;
 
-    private static POILogger logger = POILogFactory.getLogger(XSSFImportFromXML.class);
+    private final static POILogger logger = POILogFactory.getLogger(XSSFImportFromXML.class);
 
     public XSSFImportFromXML(XSSFMap map) {
         _map = map;

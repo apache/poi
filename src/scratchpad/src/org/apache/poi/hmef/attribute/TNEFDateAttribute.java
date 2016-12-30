@@ -39,7 +39,7 @@ import org.apache.poi.util.POILogger;
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFDateAttribute extends TNEFAttribute {
-   private static POILogger logger = POILogFactory.getLogger(TNEFDateAttribute.class);
+   private final static POILogger logger = POILogFactory.getLogger(TNEFDateAttribute.class);
    private Date data;
    
    /**

@@ -189,7 +189,7 @@ public class HwmfBitmapDib {
         }
     }
 
-    private static POILogger logger = POILogFactory.getLogger(HwmfBitmapDib.class);
+    private final static POILogger logger = POILogFactory.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
     
     private int headerSize;

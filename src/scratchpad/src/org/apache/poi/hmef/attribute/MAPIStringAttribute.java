@@ -32,7 +32,7 @@ import org.apache.poi.util.StringUtil;
  *  to a {@link HMEFMessage} or one of its {@link Attachment}s.
  */
 public final class MAPIStringAttribute extends MAPIAttribute {
-   private static POILogger logger = POILogFactory.getLogger(MAPIStringAttribute.class);
+   private final static POILogger logger = POILogFactory.getLogger(MAPIStringAttribute.class);
    private static final String CODEPAGE = "CP1252";
    private final String data;
    

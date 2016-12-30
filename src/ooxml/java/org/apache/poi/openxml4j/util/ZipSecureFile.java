@@ -45,7 +45,7 @@ import org.apache.poi.util.SuppressForbidden;
  * and {@link #setMinInflateRatio(double)}.
  */
 public class ZipSecureFile extends ZipFile {
-    private static POILogger logger = POILogFactory.getLogger(ZipSecureFile.class);
+    private final static POILogger logger = POILogFactory.getLogger(ZipSecureFile.class);
     
     private static double MIN_INFLATE_RATIO = 0.01d;
     private static long MAX_ENTRY_SIZE = 0xFFFFFFFFL;
