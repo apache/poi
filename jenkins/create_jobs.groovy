@@ -133,6 +133,9 @@ Apache POI - the Java API for Microsoft Documents
             label(slaves)
             environmentVariables {
                 env('LANG', 'en_US.UTF-8')
+                if(jdkKey == '1.9') {
+                    env('ANT_OPTS', '--add-modules=java.xml.bind')
+                }
             }
             wrappers {
                 timeout {
