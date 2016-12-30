@@ -235,6 +235,14 @@ public final class TestOldExcelExtractor {
         } catch (RecordFormatException e) {
             // expected here
         }
+
+        // a POIFS file which is not a Workbook
+        try {
+            new OldExcelExtractor(POIDataSamples.getDocumentInstance().getFile("47304.doc"));
+            fail("Should catch Exception here");
+        } catch (FileNotFoundException e) {
+            // expected here
+        }
     }
 
     @Test

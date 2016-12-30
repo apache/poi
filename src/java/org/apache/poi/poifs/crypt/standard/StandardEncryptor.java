@@ -119,8 +119,7 @@ public class StandardEncryptor extends Encryptor implements Cloneable {
     throws IOException, GeneralSecurityException {
         createEncryptionInfoEntry(dir);
         DataSpaceMapUtils.addDefaultDataSpace(dir);
-        OutputStream countStream = new StandardCipherOutputStream(dir);
-        return countStream;
+        return new StandardCipherOutputStream(dir);
     }
     
     protected class StandardCipherOutputStream extends FilterOutputStream implements POIFSWriterListener {
@@ -188,8 +187,11 @@ public class StandardEncryptor extends Encryptor implements Cloneable {
                 leos.writeLong(countBytes);
 
                 FileInputStream fis = new FileInputStream(fileOut);
-                IOUtils.copy(fis, leos);
-                fis.close();
+                try {
+                    IOUtils.copy(fis, leos);
+                } finally {
+                    fis.close();
+                }
                 if (!fileOut.delete()) {
                     logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);
                 }

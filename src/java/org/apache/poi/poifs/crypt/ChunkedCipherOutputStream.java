@@ -57,9 +57,9 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private final File fileOut;
     private final DirectoryNode dir;
 
-    private long pos = 0;
-    private long totalPos = 0;
-    private long written = 0;
+    private long pos;
+    private long totalPos;
+    private long written;
     
     // the cipher can't be final, because for the last chunk we change the padding
     // and therefore need to change the cipher too
@@ -206,7 +206,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
      *
      * @throws BadPaddingException 
      * @throws IllegalBlockSizeException 
-     * @throws ShortBufferException 
+     * @throws ShortBufferException
      */
     protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException {
         byte plain[] = (plainByteFlags.isEmpty()) ? null : chunk.clone();
@@ -281,8 +281,11 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
                 os.write(buf);
 
                 FileInputStream fis = new FileInputStream(fileOut);
-                IOUtils.copy(fis, os);
-                fis.close();
+                try {
+                    IOUtils.copy(fis, os);
+                } finally {
+                    fis.close();
+                }
 
                 os.close();
 

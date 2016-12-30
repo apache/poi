@@ -95,8 +95,11 @@ public class VsdxToPng {
         graphics.dispose();
 
         FileOutputStream out = new FileOutputStream(outFile);
-        ImageIO.write(img, "png", out);
-        out.close();
+        try {
+            ImageIO.write(img, "png", out);
+        } finally {
+            out.close();
+        }
     }
 
     public static void renderToPng(XmlVisioDocument document,
