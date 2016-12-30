@@ -240,6 +240,8 @@ under the License.
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
     <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*"/>
+    
+    <property name="file.leak.detector" value="-Dthis.is.a.dummy=true"/>
 
     <!-- Apache RAT license check properties -->
     <property name="rat.reportdir" value="build/rat"/>
@@ -1376,6 +1378,7 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <jvmarg value="${file.leak.detector}" />
                 <!--
                   YK: ensure that JUnit has enough memory to run tests.
                   Without the line below tests fail on Mac OS X with jdk-1.6.26
