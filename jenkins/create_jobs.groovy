@@ -35,7 +35,7 @@ def poijobs = [
                      '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                      '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
                      '-Djava.locale.providers=JRE,CLDR'],
-        email: 'centic@apache.org', skipcigame: true
+        skipcigame: true
     ],
     [ name: 'POI-DSL-IBM-JDK', jdks: ['IBMJDK'], trigger: triggerSundays, noScratchpad: true,
         // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
