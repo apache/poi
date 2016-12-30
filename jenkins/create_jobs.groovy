@@ -37,7 +37,7 @@ def poijobs = [
                      '-Djava.locale.providers=JRE,CLDR'],
         skipcigame: true
     ],
-    [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, noScratchpad: true,
+    [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays,
         // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
         disabled: true, skipcigame: true
     ],
@@ -263,6 +263,7 @@ for more details about the DSL.</b>
                     }
                     ant {
                         targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-main', 'test-ooxml', 'test-excelant', 'test-ooxml-lite', 'testcoveragereport'] + (poijob.properties ?: []))
+                        prop('coverage.enabled', true)
                         antInstallation(defaultAnt)
                     }
                 } else {
