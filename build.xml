@@ -307,6 +307,10 @@ under the License.
     <property name="maxpermsize" value="-XX:MaxPermSize=256m"/>
     <property name="java9addmods" value="-Dthis.is.a.dummy=true"/>
     <property name="java9addmodsvalue" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addopens1" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addopens2" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addopens3" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addopens4" value="-Dthis.is.a.dummy=true"/>
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
@@ -1260,6 +1264,11 @@ under the License.
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
+                <jvmarg value="${java9addopens1}" />
+                <jvmarg value="${java9addopens2}" />
+                <jvmarg value="${java9addopens3}" />
+                <jvmarg value="${java9addopens4}" />
+                <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1320,6 +1329,10 @@ under the License.
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
+                <jvmarg value="${java9addopens1}" />
+                <jvmarg value="${java9addopens2}" />
+                <jvmarg value="${java9addopens3}" />
+                <jvmarg value="${java9addopens4}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1368,9 +1381,13 @@ under the License.
                   Without the line below tests fail on Mac OS X with jdk-1.6.26
                   and on Windows with jdk-1.5.22
                 -->
-                <jvmarg value="-Xmx256M"/>
+                <jvmarg value="-Xmx512m"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
+                <jvmarg value="${java9addopens1}" />
+                <jvmarg value="${java9addopens2}" />
+                <jvmarg value="${java9addopens3}" />
+                <jvmarg value="${java9addopens4}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${scratchpad.reports.test}">
@@ -1413,7 +1430,12 @@ under the License.
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
-                    <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                  <jvmarg value="${java9addopens1}" />
+                  <jvmarg value="${java9addopens2}" />
+                  <jvmarg value="${java9addopens3}" />
+                  <jvmarg value="${java9addopens4}" />
+                  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                  <jvmarg value="${file.leak.detector}" />
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1440,6 +1462,10 @@ under the License.
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
+                  <jvmarg value="${java9addopens1}" />
+                  <jvmarg value="${java9addopens2}" />
+				  <jvmarg value="${java9addopens3}" />
+                  <jvmarg value="${java9addopens4}" />
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1485,7 +1511,11 @@ under the License.
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
-                    <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                  <jvmarg value="${java9addopens1}" />
+                  <jvmarg value="${java9addopens2}" />
+                  <jvmarg value="${java9addopens3}" />
+                  <jvmarg value="${java9addopens4}" />
+                  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1535,6 +1565,10 @@ under the License.
                 <jvmarg value="-Xmx1512M"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
+                <jvmarg value="${java9addopens1}" />
+                <jvmarg value="${java9addopens2}" />
+                <jvmarg value="${java9addopens3}" />
+                <jvmarg value="${java9addopens4}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${integration.reports.test}">
@@ -1589,6 +1623,11 @@ under the License.
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="${java9addmods}" />
             <jvmarg value="${java9addmodsvalue}" />
+            <jvmarg value="${java9addopens1}" />
+            <jvmarg value="${java9addopens2}" />
+            <jvmarg value="${java9addopens3}" />
+            <jvmarg value="${java9addopens4}" />
+            <jvmarg value="${file.leak.detector}" />
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
@@ -1628,6 +1667,11 @@ under the License.
                 <jvmarg value="-ea"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
+                <jvmarg value="${java9addopens1}" />
+                <jvmarg value="${java9addopens2}" />
+                <jvmarg value="${java9addopens3}" />
+                <jvmarg value="${java9addopens4}" />
+                <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${excelant.reports.test}">

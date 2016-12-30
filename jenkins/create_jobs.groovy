@@ -27,7 +27,14 @@ def poijobs = [
         skipcigame: true
     ],
     [ name: 'POI-DSL-1.9', jdks: ['1.9'], trigger: triggerSundays,
-        properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true', '-Djava9addmods=--add-modules=java.xml.bind', '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true', '-Djava.locale.providers=JRE,CLDR'],
+        properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true',
+                     '-Djava9addmods=--add-modules=java.xml.bind',
+                     '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
+                     '-Djava9addopens1=--add-opens=java.base/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                     '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
+                     '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
+                     '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                     '-Djava.locale.providers=JRE,CLDR'],
         email: 'centic@apache.org', skipcigame: true
     ],
     [ name: 'POI-DSL-IBM-JDK', jdks: ['IBMJDK'], trigger: triggerSundays, noScratchpad: true,
