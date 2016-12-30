@@ -17,6 +17,7 @@
    limitations under the License.
    ====================================================================
 -->
+<!--suppress DeprecatedClassUsageInspection -->
 <FindBugsFilter>
 	<Match>
 		<Bug code="EI,EI2" pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE,MS_PKGPROTECT,MS_MUTABLE_ARRAY"/>

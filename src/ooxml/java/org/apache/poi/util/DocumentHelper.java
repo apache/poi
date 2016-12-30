@@ -78,6 +78,9 @@ public final class DocumentHelper {
     
     /**
      * Creates a new document builder, with sensible defaults
+     *
+     * @throws IllegalStateException If creating the DocumentBuilder fails, e.g.
+     *  due to {@link ParserConfigurationException}.
      */
     public static synchronized DocumentBuilder newDocumentBuilder() {
         try {
