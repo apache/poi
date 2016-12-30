@@ -65,7 +65,7 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         setTimeZone(LocaleUtil.getUserTimeZone());
     }
 
-    private double dateToBeFormatted = 0.0;
+    private double dateToBeFormatted;
 
     // no-arg constructor is private because of undefined super call with locale
 
@@ -88,12 +88,12 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
      */
     private static String processFormatPattern(String f) {
         String t = f.replaceAll("MMMMM", MMMMM_START_SYMBOL + "MMM" + MMMMM_TRUNCATE_SYMBOL);
-        t = t.replaceAll("\\[H\\]", String.valueOf(H_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[HH\\]", String.valueOf(HH_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[m\\]", String.valueOf(M_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[mm\\]", String.valueOf(MM_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[s\\]", String.valueOf(S_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[ss\\]", String.valueOf(SS_BRACKET_SYMBOL));
+        t = t.replaceAll("\\[H]", String.valueOf(H_BRACKET_SYMBOL));
+        t = t.replaceAll("\\[HH]", String.valueOf(HH_BRACKET_SYMBOL));
+        t = t.replaceAll("\\[m]", String.valueOf(M_BRACKET_SYMBOL));
+        t = t.replaceAll("\\[mm]", String.valueOf(MM_BRACKET_SYMBOL));
+        t = t.replaceAll("\\[s]", String.valueOf(S_BRACKET_SYMBOL));
+        t = t.replaceAll("\\[ss]", String.valueOf(SS_BRACKET_SYMBOL));
         t = t.replaceAll("s.000", "s.SSS");
         t = t.replaceAll("s.00", "s." + LL_BRACKET_SYMBOL);
         t = t.replaceAll("s.0", "s." + L_BRACKET_SYMBOL);
@@ -119,7 +119,7 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         // Now handle our special cases
         if (s.indexOf(MMMMM_START_SYMBOL) != -1) {
             s = s.replaceAll(
-                    MMMMM_START_SYMBOL + "(\\w)\\w+" + MMMMM_TRUNCATE_SYMBOL,
+                    MMMMM_START_SYMBOL + "(\\p{L}|\\p{P})[\\p{L}\\p{P}]+" + MMMMM_TRUNCATE_SYMBOL,
                     "$1"
             );
         }
