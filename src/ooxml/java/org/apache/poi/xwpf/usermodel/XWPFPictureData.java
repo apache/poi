@@ -31,9 +31,7 @@ import org.apache.poi.util.IOUtils;
 /**
  * Raw picture data, normally attached to a WordprocessingML Drawing.
  * As a rule, pictures are stored in the /word/media/ part of a WordprocessingML package.
- */
-
-/**
+ *
  * @author Philipp Epp
  */
 public class XWPFPictureData extends POIXMLDocumentPart {
@@ -58,7 +56,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
         RELATIONS[Document.PICTURE_TYPE_WPG] = XWPFRelation.IMAGE_WPG;
     }
 
-    private Long checksum = null;
+    private Long checksum;
 
     /**
      * Create a new XWPFGraphicData node
@@ -171,7 +169,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
 
     @Override
     public boolean equals(Object obj) {
-        /**
+        /*
          * In case two objects ARE equal, but its not the same instance, this
          * implementation will always run through the whole
          * byte-array-comparison before returning true. If this will turn into a

@@ -62,7 +62,7 @@ public class DrawTextParagraph implements Drawable {
     protected List<DrawTextFragment> lines = new ArrayList<DrawTextFragment>();
     protected String rawText;
     protected DrawTextFragment bullet;
-    protected int autoNbrIdx = 0;
+    protected int autoNbrIdx;
 
     /**
      * the highest line in this paragraph. Used for line spacing.
@@ -226,7 +226,7 @@ public class DrawTextParagraph implements Drawable {
     /**
      * break text into lines, each representing a line of text that fits in the wrapping width
      *
-     * @param graphics
+     * @param graphics The drawing context for computing text-lengths.
      */
     protected void breakText(Graphics2D graphics){
         lines.clear();
@@ -479,7 +479,7 @@ public class DrawTextParagraph implements Drawable {
      */
     @SuppressWarnings("rawtypes")
     private PlaceableShape<?,?> getParagraphShape() {
-        PlaceableShape<?,?> ps = new PlaceableShape(){
+        return new PlaceableShape(){
             public ShapeContainer<?,?> getParent() { return null; }
             public Rectangle2D getAnchor() { return paragraph.getParentShape().getAnchor(); }
             public void setAnchor(Rectangle2D anchor) {}
@@ -491,7 +491,6 @@ public class DrawTextParagraph implements Drawable {
             public boolean getFlipVertical() { return false; }
             public Sheet<?,?> getSheet() { return paragraph.getParentShape().getSheet(); }
         };
-        return ps;
     }
 
     protected AttributedString getAttributedString(Graphics2D graphics, StringBuilder text){
@@ -633,7 +632,7 @@ public class DrawTextParagraph implements Drawable {
 
         return string;
     }
-    
+
     protected boolean isHSLF() {
         return paragraph.getClass().getName().contains("HSLF");
     }
