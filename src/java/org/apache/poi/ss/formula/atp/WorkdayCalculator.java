@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.Removal;
 
 /**
  * A calculator for workdays, considering dates as excel representations.
@@ -38,7 +39,7 @@ public class WorkdayCalculator {
 
     /**
      * Calculate how many workdays are there between a start and an end date, as excel representations, considering a range of holidays.
-     * 
+     *
      * @param start start date.
      * @param end end date.
      * @param holidays an array of holidays.
@@ -53,7 +54,7 @@ public class WorkdayCalculator {
 
     /**
      * Calculate the workday past x workdays from a starting date, considering a range of holidays.
-     * 
+     *
      * @param start start date.
      * @param workdays number of workdays to be past from starting date.
      * @param holidays an array of holidays.
@@ -76,10 +77,10 @@ public class WorkdayCalculator {
 		}
 		return endDate.getTime();
 	}
-    
+
     /**
      * Calculates how many days of week past between a start and an end date.
-     * 
+     *
      * @param start start date.
      * @param end end date.
      * @param dayOfWeek a day of week as represented by {@link Calendar} constants.
@@ -96,12 +97,12 @@ public class WorkdayCalculator {
                 pastDaysOfWeek++;
             }
         }
-        return start < end ? pastDaysOfWeek : -pastDaysOfWeek;
+        return start <= end ? pastDaysOfWeek : -pastDaysOfWeek;
     }
 
     /**
      * Calculates how many holidays in a list are workdays, considering an interval of dates.
-     * 
+     *
      * @param start start date.
      * @param end end date.
      * @param holidays an array of holidays.
@@ -111,14 +112,14 @@ public class WorkdayCalculator {
         int nonWeekendHolidays = 0;
         double startDay = start < end ? start : end;
         double endDay = end > start ? end : start;
-        for (int i = 0; i < holidays.length; i++) {
-            if (isInARange(startDay, endDay, holidays[i])) {
-                if (!isWeekend(holidays[i])) {
+        for (double holiday : holidays) {
+            if (isInARange(startDay, endDay, holiday)) {
+                if (!isWeekend(holiday)) {
                     nonWeekendHolidays++;
                 }
             }
         }
-        return start < end ? nonWeekendHolidays : -nonWeekendHolidays;
+        return start <= end ? nonWeekendHolidays : -nonWeekendHolidays;
     }
 
     /**
@@ -137,8 +138,8 @@ public class WorkdayCalculator {
      * @return <code>true</code> if date is a holiday, <code>false</code> otherwise.
      */
     protected boolean isHoliday(double aDate, double[] holidays) {
-        for (int i = 0; i < holidays.length; i++) {
-            if (Math.round(holidays[i]) == Math.round(aDate)) {
+        for (double holiday : holidays) {
+            if (Math.round(holiday) == Math.round(aDate)) {
                 return true;
             }
         }
@@ -149,7 +150,10 @@ public class WorkdayCalculator {
      * @param aDate a given date.
      * @param holidays an array of holidays.
      * @return <code>1</code> is not a workday, <code>0</code> otherwise.
+     *
+     * @deprecated POI 3.16 - will be removed, not used in POI itself
      */
+    @Removal(version="3.18")
     protected int isNonWorkday(double aDate, double[] holidays) {
         return isWeekend(aDate) || isHoliday(aDate, holidays) ? 1 : 0;
     }
