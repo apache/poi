@@ -67,6 +67,24 @@ public class TestWorkdayCalculator {
         assertEquals(4, WorkdayCalculator.instance.calculateWorkdays(A_FRIDAY, A_WEDNESDAY, new double[]{ A_SATURDAY, A_SUNDAY }));
     }
 
+	@Test
+	public void testCalculateWorkdaysOnSameDayShouldReturn1ForWeekdays() {
+		final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
+		assertEquals(1, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[0]));
+	}
+
+	@Test
+	public void testCalculateWorkdaysOnSameDayShouldReturn0ForHolidays() {
+		final double A_MONDAY = DateUtil.getExcelDate(d(2017, 1, 2));
+		assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_MONDAY, A_MONDAY, new double[]{ A_MONDAY }));
+	}
+
+	@Test
+	public void testCalculateWorkdaysOnSameDayShouldReturn0ForWeekends() {
+		final double A_SUNDAY = DateUtil.getExcelDate(d(2017, 1, 1));
+		assertEquals(0, WorkdayCalculator.instance.calculateWorkdays(A_SUNDAY, A_SUNDAY, new double[0]));
+	}
+
     @Test
     public void testCalculateWorkdaysNumberOfDays() {
     	double start = 41553.0;
@@ -108,9 +126,42 @@ public class TestWorkdayCalculator {
         final double A_SATURDAY = DateUtil.getExcelDate(d(2011, 12, 10));
         assertEquals(1, WorkdayCalculator.instance.pastDaysOfWeek(A_THURSDAY, A_SATURDAY, SATURDAY));
     }
-    
+
     private static Date d(int year, int month, int day) {
         Calendar cal = LocaleUtil.getLocaleCalendar(year, month-1, day, 0, 0, 0);
         return cal.getTime();
+    }
+
+    @Test
+    public void testCalculateNonWeekendHolidays() {
+        final double start = DateUtil.getExcelDate(d(2016, 12, 24));
+        final double end = DateUtil.getExcelDate(d(2016, 12, 31));
+        final double holiday1 = DateUtil.getExcelDate(d(2016, 12, 25));
+        final double holiday2 = DateUtil.getExcelDate(d(2016, 12, 26));
+        int count = WorkdayCalculator.instance.calculateNonWeekendHolidays(start, end, new double[]{holiday1, holiday2});
+        assertEquals("Expected 1 non-weekend-holiday for " + start + " to " + end + " and " + holiday1 + " and " + holiday2,
+                1, count);
+    }
+
+    @Test
+    public void testCalculateNonWeekendHolidaysOneDay() {
+        final double start = DateUtil.getExcelDate(d(2016, 12, 26));
+        final double end = DateUtil.getExcelDate(d(2016, 12, 26));
+        final double holiday1 = DateUtil.getExcelDate(d(2016, 12, 25));
+        final double holiday2 = DateUtil.getExcelDate(d(2016, 12, 26));
+        int count = WorkdayCalculator.instance.calculateNonWeekendHolidays(start, end, new double[]{holiday1, holiday2});
+        assertEquals("Expected 1 non-weekend-holiday for " + start + " to " + end + " and " + holiday1 + " and " + holiday2,
+                1, count);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testIsNonWorkday() throws Exception {
+        final double weekend = DateUtil.getExcelDate(d(2016, 12, 25));
+        final double holiday = DateUtil.getExcelDate(d(2016, 12, 26));
+        final double workday = DateUtil.getExcelDate(d(2016, 12, 27));
+        assertEquals(1, WorkdayCalculator.instance.isNonWorkday(weekend, new double[]{holiday}));
+        assertEquals(1, WorkdayCalculator.instance.isNonWorkday(holiday, new double[]{holiday}));
+        assertEquals(0, WorkdayCalculator.instance.isNonWorkday(workday, new double[]{holiday}));
     }
 }
