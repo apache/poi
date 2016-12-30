@@ -35,6 +35,6 @@ public class TestSAXHelper {
         assertEquals(SAXHelper.IGNORING_ENTITY_RESOLVER, reader.getEntityResolver());
         assertNotNull(reader.getProperty("http://apache.org/xml/properties/security-manager"));
 
-        reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes())));
+        reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
     }
 }
