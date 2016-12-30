@@ -351,7 +351,14 @@ public final class XSSFRelation extends POIXMLRelation {
             "/xl/ctrlProps/ctrlProp#.xml",
             null
     );
-    
+
+    public static final XSSFRelation CUSTOM_PROPERTIES = new XSSFRelation(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.customProperty",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/customProperty",
+            "/xl/customProperty#.bin",
+            null
+    );
+
     public static final String NS_SPREADSHEETML = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
     public static final String NS_DRAWINGML = "http://schemas.openxmlformats.org/drawingml/2006/main";
     public static final String NS_CHART = "http://schemas.openxmlformats.org/drawingml/2006/chart";
@@ -387,7 +394,7 @@ public final class XSSFRelation extends POIXMLRelation {
      *    <code>http://schemas.openxmlformats.org/officeDocument/2006/relationships/image</code>
      * @return registered POIXMLRelation or null if not found
      */
-    public static XSSFRelation getInstance(String rel){
+    public static XSSFRelation getInstance(String rel) {
         return _table.get(rel);
     }
 }

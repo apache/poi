@@ -18,14 +18,21 @@
 package org.apache.poi.xssf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     public TestXSSFCloneSheet() {
@@ -58,5 +65,29 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
             // expected here
         }
         assertEquals(1, wb.getNumberOfSheets());
+    }
+
+    @Test
+    public void test60512() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60512.xlsm");
+
+        assertEquals(1, wb.getNumberOfSheets());
+        Sheet sheet = wb.cloneSheet(0);
+        assertNotNull(sheet);
+        assertEquals(2, wb.getNumberOfSheets());
+
+
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        wbBack.close();
+
+        OutputStream str = new FileOutputStream("/tmp/60512.xlsx");
+        try {
+            wb.write(str);
+        } finally {
+            str.close();
+        }
+
+        wb.close();
     }
 }
