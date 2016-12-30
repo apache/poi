@@ -37,7 +37,7 @@ import org.xml.sax.XMLReader;
  */
 public final class SAXHelper {
     private static final POILogger logger = POILogFactory.getLogger(SAXHelper.class);
-    private static long lastLog = 0;
+    private static long lastLog;
 
     private SAXHelper() {}
 
@@ -47,7 +47,7 @@ public final class SAXHelper {
     public static synchronized XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
         XMLReader xmlReader = saxFactory.newSAXParser().getXMLReader();
         xmlReader.setEntityResolver(IGNORING_ENTITY_RESOLVER);
-        trySetSAXFeature(xmlReader, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySetSAXFeature(xmlReader, XMLConstants.FEATURE_SECURE_PROCESSING);
         trySetXercesSecurityManager(xmlReader);
         return xmlReader;
     }
@@ -67,9 +67,9 @@ public final class SAXHelper {
         saxFactory.setNamespaceAware(true);
     }
             
-    private static void trySetSAXFeature(XMLReader xmlReader, String feature, boolean enabled) {
+    private static void trySetSAXFeature(XMLReader xmlReader, String feature) {
         try {
-            xmlReader.setFeature(feature, enabled);
+            xmlReader.setFeature(feature, true);
         } catch (Exception e) {
             logger.log(POILogger.WARN, "SAX Feature unsupported", feature, e);
         } catch (AbstractMethodError ame) {
