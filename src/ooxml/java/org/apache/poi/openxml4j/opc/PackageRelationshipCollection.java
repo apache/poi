@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
 public final class PackageRelationshipCollection implements
         Iterable<PackageRelationship> {
 
-    private static POILogger logger = POILogFactory.getLogger(PackageRelationshipCollection.class);
+    private final static POILogger logger = POILogFactory.getLogger(PackageRelationshipCollection.class);
 
     /**
      * Package relationships ordered by ID.

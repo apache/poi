@@ -55,7 +55,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 @Beta
 public class XSLFGroupShape extends XSLFShape
 implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
-    private static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
+    private final static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
     
     private final List<XSLFShape> _shapes;
     private final CTGroupShapeProperties _grpSpPr;

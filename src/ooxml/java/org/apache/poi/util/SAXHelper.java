@@ -36,7 +36,7 @@ import org.xml.sax.XMLReader;
  * Provides handy methods for working with SAX parsers and readers
  */
 public final class SAXHelper {
-    private static POILogger logger = POILogFactory.getLogger(SAXHelper.class);
+    private static final POILogger logger = POILogFactory.getLogger(SAXHelper.class);
     private static long lastLog = 0;
 
     private SAXHelper() {}
@@ -94,6 +94,7 @@ public final class SAXHelper {
                 // throttle the log somewhat as it can spam the log otherwise
                 if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
                     logger.log(POILogger.WARN, "SAX Security Manager could not be setup [log suppressed for 5 minutes]", e);
+                    lastLog = System.currentTimeMillis();
                 }
             }
         }

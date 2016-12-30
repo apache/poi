@@ -41,7 +41,7 @@ import org.apache.poi.util.POILogger;
  * ids.
  */
 public class FormatTrackingHSSFListener implements HSSFListener {
-	private static POILogger logger = POILogFactory.getLogger(FormatTrackingHSSFListener.class);
+	private final static POILogger logger = POILogFactory.getLogger(FormatTrackingHSSFListener.class);
 	private final HSSFListener _childListener;
 	private final HSSFDataFormatter _formatter;
 	private final NumberFormat _defaultFormat;

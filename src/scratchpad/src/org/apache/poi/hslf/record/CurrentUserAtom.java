@@ -43,7 +43,7 @@ import org.apache.poi.util.StringUtil;
  */
 public class CurrentUserAtom
 {
-	private static POILogger logger = POILogFactory.getLogger(CurrentUserAtom.class);
+	private final static POILogger logger = POILogFactory.getLogger(CurrentUserAtom.class);
 
 	/** Standard Atom header */
 	public static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };

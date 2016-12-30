@@ -34,7 +34,7 @@ import org.apache.poi.util.POILogger;
 @Internal
 public final class ListTables
 {
-  private static POILogger log = POILogFactory.getLogger(ListTables.class);
+  private final static POILogger log = POILogFactory.getLogger(ListTables.class);
 
     /**
      * Both PlfLst and the following LVLs
