@@ -308,6 +308,7 @@ under the License.
     <!-- this can be overwriten to empty when running with Java 9 -->
     <property name="maxpermsize" value="-XX:MaxPermSize=256m"/>
     <property name="java9addmods" value="-Dthis.is.a.dummy=true"/>
+    <property name="javadoc9addmods" value="-J-Dthis.is.a.dummy=true"/>
     <property name="java9addmodsvalue" value="-Dthis.is.a.dummy=true"/>
     <property name="java9addopens1" value="-Dthis.is.a.dummy=true"/>
     <property name="java9addopens2" value="-Dthis.is.a.dummy=true"/>
@@ -1749,6 +1750,8 @@ under the License.
             <packageset dir="${ooxml.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
             </packageset>
+            
+            <arg value="${javadoc9addmods}"/>
 
             <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
             <bottom>
