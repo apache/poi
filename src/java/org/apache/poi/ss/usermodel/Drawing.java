@@ -18,10 +18,8 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * High level representation of spreadsheet drawing.
- * @author Yegor Kozlov
- * @author Roman Kashitsyn
  */
-public interface Drawing {
+public interface Drawing<T extends Shape> extends ShapeContainer<T> {
 	/**
 	 * Creates a picture.
 	 * @param anchor       the client anchor describes how this picture is

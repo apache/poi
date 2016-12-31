@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
@@ -32,9 +33,11 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.ss.usermodel.Shape;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  * An abstract shape.
@@ -44,7 +47,7 @@ import org.apache.poi.util.POILogger;
  * reverse them and draw shapes vertically or horizontally flipped via
  * setFlipVertical() or setFlipHorizontally(). 
  */
-public abstract class HSSFShape {
+public abstract class HSSFShape implements Shape {
     private static final POILogger LOG = POILogFactory.getLogger(HSSFShape.class);
     
     public static final int LINEWIDTH_ONE_PT = 12700;
@@ -152,9 +155,7 @@ public abstract class HSSFShape {
         return _optRecord;
     }
 
-    /**
-     * Gets the parent shape.
-     */
+    @Override
     public HSSFShape getParent() {
         return parent;
     }
@@ -162,6 +163,7 @@ public abstract class HSSFShape {
     /**
      * @return the anchor that is used by this shape.
      */
+    @Override
     public HSSFAnchor getAnchor() {
         return anchor;
     }
@@ -231,9 +233,7 @@ public abstract class HSSFShape {
         setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor));
     }
 
-    /**
-     * The color applied to the lines of this shape.
-     */
+    @Override
     public void setLineStyleColor(int red, int green, int blue) {
         int lineStyleColor = ((blue) << 16) | ((green) << 8) | red;
         setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor));
@@ -254,9 +254,7 @@ public abstract class HSSFShape {
         setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor));
     }
 
-    /**
-     * The color used to fill this shape.
-     */
+    @Override
     public void setFillColor(int red, int green, int blue) {
         int fillColor = ((blue) << 16) | ((green) << 8) | red;
         setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor));
@@ -308,17 +306,13 @@ public abstract class HSSFShape {
         }
     }
 
-    /**
-     * @return <code>true</code> if this shape is not filled with a color.
-     */
+    @Override
     public boolean isNoFill() {
         EscherBoolProperty property = _optRecord.lookup(EscherProperties.FILL__NOFILLHITTEST);
         return property == null ? NO_FILL_DEFAULT : property.getPropertyValue() == NO_FILLHITTEST_TRUE;
     }
 
-    /**
-     * @param noFill sets whether this shape is filled or transparent.
-     */
+    @Override
     public void setNoFill(boolean noFill) {
         setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? NO_FILLHITTEST_TRUE : NO_FILLHITTEST_FALSE));
     }
@@ -416,5 +410,20 @@ public abstract class HSSFShape {
 
     protected void setParent(HSSFShape parent) {
         this.parent = parent;
+    }
+
+    /**
+     * @return the name of this shape
+     */
+    public String getShapeName() {
+        EscherOptRecord eor = getOptRecord();
+        if (eor == null) {
+            return null;
+        }
+        EscherProperty ep = eor.lookup(EscherProperties.GROUPSHAPE__SHAPENAME);
+        if (ep instanceof EscherComplexProperty) {
+            return StringUtil.getFromUnicodeLE(((EscherComplexProperty)ep).getComplexData());
+        }
+        return null;
     }
 }

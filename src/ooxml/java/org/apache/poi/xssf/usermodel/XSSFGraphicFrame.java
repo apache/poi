@@ -187,4 +187,9 @@ public final class XSSFGraphicFrame extends XSSFShape {
     protected CTShapeProperties getShapeProperties(){
         return null;
     }
+
+    @Override
+    public String getShapeName() {
+        return graphicFrame.getNvGraphicFramePr().getCNvPr().getName();
+    }
 }

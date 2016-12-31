@@ -20,6 +20,7 @@ package org.apache.poi.xssf.streaming;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Shape;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
@@ -182,7 +183,7 @@ public final class SXSSFPicture implements Picture {
     }
 
     private float getColumnWidthInPixels(int columnIndex){
-        XSSFSheet sheet = getParent();
+        XSSFSheet sheet = getSheet();
 
         CTCol col = sheet.getColumnHelper().getColumn(columnIndex, false);
         double numChars = col == null || !col.isSetWidth() ? DEFAULT_COLUMN_WIDTH : col.getWidth();
@@ -193,7 +194,7 @@ public final class SXSSFPicture implements Picture {
     private float getRowHeightInPixels(int rowIndex) {
         // THE FOLLOWING THREE LINES ARE THE MAIN CHANGE compared to the non-streaming version: use the SXSSF sheet,
 		// not the XSSF sheet (which never contais rows when using SXSSF)
-        XSSFSheet xssfSheet = getParent();
+        XSSFSheet xssfSheet = getSheet();
         SXSSFSheet sheet = _wb.getSXSSFSheet(xssfSheet);
         Row row = sheet.getRow(rowIndex);
         float height = row != null ?  row.getHeightInPoints() : sheet.getDefaultRowHeightInPoints();
@@ -232,11 +233,8 @@ public final class SXSSFPicture implements Picture {
         return getCTPicture().getSpPr();
     }
 
-    private XSSFSheet getParent() {
-        return (XSSFSheet)_picture.getDrawing().getParent();
-    }
-
-    private XSSFAnchor getAnchor() {
+    @Override
+    public XSSFAnchor getAnchor() {
         return _picture.getAnchor();
     }
 
@@ -268,5 +266,35 @@ public final class SXSSFPicture implements Picture {
     @Override
     public XSSFSheet getSheet() {
         return _picture.getSheet();
+    }
+
+    @Override
+    public String getShapeName() {
+        return _picture.getShapeName();
+    }
+
+    @Override
+    public Shape getParent() {
+        return _picture.getParent();
+    }
+
+    @Override
+    public boolean isNoFill() {
+        return _picture.isNoFill();
+    }
+
+    @Override
+    public void setNoFill(boolean noFill) {
+        _picture.setNoFill(noFill);
+    }
+
+    @Override
+    public void setFillColor(int red, int green, int blue) {
+        _picture.setFillColor(red, green, blue);
+    }
+    
+    @Override
+    public void setLineStyleColor( int red, int green, int blue ) {
+        _picture.setLineStyleColor(red, green, blue);
     }
 }

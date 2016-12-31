@@ -381,6 +381,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         return isRemoved;
     }
 
+    @Override
     public Iterator<HSSFShape> iterator() {
         return shapes.iterator();
     }

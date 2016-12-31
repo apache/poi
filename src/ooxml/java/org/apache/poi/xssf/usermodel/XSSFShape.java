@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.ss.usermodel.Shape;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNoFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetLineDashProperties;
@@ -27,10 +28,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 
 /**
  * Represents a shape in a SpreadsheetML drawing.
- *
- * @author Yegor Kozlov
  */
-public abstract class XSSFShape {
+public abstract class XSSFShape implements Shape {
     public static final int EMU_PER_PIXEL = 9525;
     public static final int EMU_PER_POINT = 12700;
 
@@ -61,9 +60,7 @@ public abstract class XSSFShape {
         return drawing;
     }
 
-    /**
-     * Gets the parent shape.
-     */
+    @Override
     public XSSFShapeGroup getParent()
     {
         return parent;
@@ -72,6 +69,7 @@ public abstract class XSSFShape {
     /**
      * @return  the anchor that is used by this shape.
      */
+    @Override
     public XSSFAnchor getAnchor()
     {
         return anchor;
@@ -84,20 +82,12 @@ public abstract class XSSFShape {
      */
     protected abstract CTShapeProperties getShapeProperties();
 
-    /**
-     * Whether this shape is not filled with a color
-     *
-     * @return true if this shape is not filled with a color.
-     */
+    @Override
     public boolean isNoFill() {
         return getShapeProperties().isSetNoFill();
     }
 
-    /**
-     * Sets whether this shape is filled or transparent.
-     *
-     * @param noFill if true then no fill will be applied to the shape element.
-     */
+    @Override
     public void setNoFill(boolean noFill) {
         CTShapeProperties props = getShapeProperties();
         //unset solid and pattern fills if they are set
@@ -107,9 +97,7 @@ public abstract class XSSFShape {
         props.setNoFill(CTNoFillProperties.Factory.newInstance());
     }
 
-    /**
-     * Sets the color used to fill this shape using the solid fill pattern.
-     */
+    @Override
     public void setFillColor(int red, int green, int blue) {
         CTShapeProperties props = getShapeProperties();
         CTSolidColorFillProperties fill = props.isSetSolidFill() ? props.getSolidFill() : props.addNewSolidFill();
@@ -118,9 +106,7 @@ public abstract class XSSFShape {
         fill.setSrgbClr(rgb);
     }
 
-    /**
-     * The color applied to the lines of this shape.
-     */
+    @Override
     public void setLineStyleColor( int red, int green, int blue ) {
         CTShapeProperties props = getShapeProperties();
         CTLineProperties ln = props.isSetLn() ? props.getLn() : props.addNewLn();

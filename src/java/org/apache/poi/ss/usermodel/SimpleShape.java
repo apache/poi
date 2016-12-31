@@ -15,13 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
-
-import org.apache.poi.ss.usermodel.ChildAnchor;
+package org.apache.poi.ss.usermodel;
 
 /**
- * An anchor is what specifics the position of a shape within a client object
- * or within another containing shape.
+ * A common interface for simple shapes.
+ * (Currently the HSSF and XSSF classes don't share common method signatures ...)
+ * 
+ * @since POI 3.16-beta2
  */
-public abstract class XSSFAnchor implements ChildAnchor {
+public interface SimpleShape extends Shape {
+
 }
