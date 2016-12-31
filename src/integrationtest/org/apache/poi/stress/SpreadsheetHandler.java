@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.extractor.EmbeddedData;
+import org.apache.poi.ss.extractor.EmbeddedExtractor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -54,6 +56,8 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		assertNotNull(read);
 		
 		readContent(read);
+		
+		extractEmbedded(read);
 		
 		modifyContent(read);
 
@@ -90,6 +94,18 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 			    }
 			}
 		}
+	}
+
+	private void extractEmbedded(Workbook wb) throws IOException {
+        EmbeddedExtractor ee = new EmbeddedExtractor();
+
+        for (Sheet s : wb) {
+            for (EmbeddedData ed : ee.extractAll(s)) {
+                assertNotNull(ed.getFilename());
+                assertNotNull(ed.getEmbeddedData());
+                assertNotNull(ed.getShape());
+            }
+        }
 	}
 	
 	private void modifyContent(Workbook wb) {

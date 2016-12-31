@@ -40,6 +40,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
@@ -86,7 +88,9 @@ import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigura
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
@@ -4371,4 +4375,64 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         CTIgnoredError ctIgnoredError = ctIgnoredErrors.addNewIgnoredError();
         XSSFIgnoredErrorHelper.addIgnoredErrors(ctIgnoredError, ref, ignoredErrorTypes);
     }
+
+    /**
+     * Determine the OleObject which links shapes with embedded resources
+     *
+     * @param shapeId the shape id
+     * @return the CTOleObject of the shape
+     */
+    protected CTOleObject readOleObject(long shapeId) {
+        if (!getCTWorksheet().isSetOleObjects()) {
+            return null;
+        }
+        
+        // we use a XmlCursor here to handle oleObject with-/out AlternateContent wrappers
+        String xquery = "declare namespace p='"+XSSFRelation.NS_SPREADSHEETML+"' .//p:oleObject";
+        XmlCursor cur = getCTWorksheet().getOleObjects().newCursor();
+        try {
+            cur.selectPath(xquery);
+            CTOleObject coo = null;
+            while (cur.toNextSelection()) {
+                String sId = cur.getAttributeText(new QName(null, "shapeId"));
+                if (sId == null || Long.parseLong(sId)  != shapeId) {
+                    continue;
+                }
+                
+                XmlObject xObj = cur.getObject();
+                if (xObj instanceof CTOleObject) {
+                    // the unusual case ...
+                    coo = (CTOleObject)xObj;
+                } else {
+                    XMLStreamReader reader = cur.newXMLStreamReader();
+                    try {
+                        CTOleObjects coos = CTOleObjects.Factory.parse(reader);
+                        if (coos.sizeOfOleObjectArray() == 0) {
+                            continue;
+                        }
+                        coo = coos.getOleObjectArray(0);
+                    } catch (XmlException e) {
+                        logger.log(POILogger.INFO, "can't parse CTOleObjects", e);
+                    } finally {
+                        try {
+                            reader.close();
+                        } catch (XMLStreamException e) {
+                            logger.log(POILogger.INFO, "can't close reader", e);
+                        }
+                    }
+                }
+                
+                // there are choice and fallback OleObject ... we prefer the one having the objectPr element,
+                // which is in the choice element
+                if (cur.toChild(XSSFRelation.NS_SPREADSHEETML, "objectPr")) {
+                    break;
+                }
+            }
+            return (coo == null) ? null : coo;
+        } finally {
+            cur.dispose();
+        }
+    }
+
+
 }

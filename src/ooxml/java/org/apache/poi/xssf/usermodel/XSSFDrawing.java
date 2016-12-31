@@ -20,8 +20,10 @@ package org.apache.poi.xssf.usermodel;
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -32,13 +34,21 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
@@ -53,7 +63,9 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 /**
  * Represents a SpreadsheetML drawing
  */
-public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
+public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSSFShape> {
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFDrawing.class);
+    
     /**
      * Root element of the SpreadsheetML Drawing part
      */
@@ -86,7 +98,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
         //Removing root element
         options.setLoadReplaceDocumentElement(null);
-        drawing = CTDrawing.Factory.parse(part.getInputStream(),options);
+        InputStream is = part.getInputStream();
+        try {
+            drawing = CTDrawing.Factory.parse(is,options);
+        } finally {
+            is.close();
+        }
     }
     
     /**
@@ -176,6 +193,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         XSSFPicture shape = new XSSFPicture(this, ctShape);
         shape.anchor = anchor;
         shape.setPictureReference(rel);
+        ctShape.getSpPr().setXfrm(createXfrm(anchor));
+        
         return shape;
     }
 
@@ -202,6 +221,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
 
         XSSFGraphicFrame frame = createGraphicFrame(anchor);
         frame.setChart(chart, chartRelId);
+        frame.getCTGraphicalObjectFrame().setXfrm(createXfrm(anchor));
 
         return chart;
     }
@@ -241,6 +261,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         CTShape ctShape = ctAnchor.addNewSp();
         ctShape.set(XSSFSimpleShape.prototype());
         ctShape.getNvSpPr().getCNvPr().setId(shapeId);
+        ctShape.getSpPr().setXfrm(createXfrm(anchor));
         XSSFSimpleShape shape = new XSSFSimpleShape(this, ctShape);
         shape.anchor = anchor;
         return shape;
@@ -278,6 +299,11 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
         CTGroupShape ctGroup = ctAnchor.addNewGrpSp();
         ctGroup.set(XSSFShapeGroup.prototype());
+        CTTransform2D xfrm = createXfrm(anchor);
+        CTGroupTransform2D grpXfrm =ctGroup.getGrpSpPr().getXfrm();
+        grpXfrm.setOff(xfrm.getOff());
+        grpXfrm.setExt(xfrm.getExt());
+        grpXfrm.setChExt(xfrm.getExt());
 
         XSSFShapeGroup shape = new XSSFShapeGroup(this, ctGroup);
         shape.anchor = anchor;
@@ -333,6 +359,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor(anchor);
         CTGraphicalObjectFrame ctGraphicFrame = ctAnchor.addNewGraphicFrame();
         ctGraphicFrame.set(XSSFGraphicFrame.prototype());
+        ctGraphicFrame.setXfrm(createXfrm(anchor));
 
         long frameId = numOfGraphicFrames++;
         XSSFGraphicFrame graphicFrame = new XSSFGraphicFrame(this, ctGraphicFrame);
@@ -378,39 +405,159 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         return ctAnchor;
     }
 
+    private CTTransform2D createXfrm(XSSFClientAnchor anchor) {
+        CTTransform2D xfrm = CTTransform2D.Factory.newInstance();
+        CTPoint2D off = xfrm.addNewOff();
+        off.setX(anchor.getDx1());
+        off.setY(anchor.getDy1());
+        XSSFSheet sheet = (XSSFSheet)getParent();
+        double widthPx = 0;
+        for (int col=anchor.getCol1(); col<anchor.getCol2(); col++) {
+            widthPx += sheet.getColumnWidthInPixels(col);
+        }
+        double heightPx = 0;
+        for (int row=anchor.getRow1(); row<anchor.getRow2(); row++) {
+            heightPx += ImageUtils.getRowHeightInPixels(sheet, row);
+        }
+        int width = Units.pixelToEMU((int)widthPx);
+        int height = Units.pixelToEMU((int)heightPx);
+        CTPositiveSize2D ext = xfrm.addNewExt();
+        ext.setCx(width - anchor.getDx1() + anchor.getDx2());
+        ext.setCy(height - anchor.getDy1() + anchor.getDy2());
+        
+        // TODO: handle vflip/hflip
+        return xfrm;
+    }
+    
     private long newShapeId(){
         return drawing.sizeOfTwoCellAnchorArray() + 1;
     }
 
     /**
-     *
      * @return list of shapes in this drawing
      */
-    public List<XSSFShape>  getShapes(){
+    public List<XSSFShape> getShapes(){
         List<XSSFShape> lst = new ArrayList<XSSFShape>();
-        for(XmlObject obj : drawing.selectPath("./*/*")) {
-            XSSFShape shape = null;
-            if(obj instanceof CTPicture) shape = new XSSFPicture(this, (CTPicture)obj) ;
-            else if(obj instanceof CTConnector) shape = new XSSFConnector(this, (CTConnector)obj) ;
-            else if(obj instanceof CTShape) shape = new XSSFSimpleShape(this, (CTShape)obj) ;
-            else if(obj instanceof CTGraphicalObjectFrame) shape = new XSSFGraphicFrame(this, (CTGraphicalObjectFrame)obj) ;
-            else if(obj instanceof CTGroupShape) shape = new XSSFShapeGroup(this, (CTGroupShape)obj) ;
-
-            if(shape != null){
-                shape.anchor = getAnchorFromParent(obj);
-                lst.add(shape);
+        XmlCursor cur = drawing.newCursor();
+        try {
+            if (cur.toFirstChild()) {
+                addShapes(cur, lst);
             }
+        } finally {
+            cur.dispose();
         }
         return lst;
     }
 
+    /**
+     * @return list of shapes in this shape group
+     */
+    public List<XSSFShape> getShapes(XSSFShapeGroup groupshape){
+        List<XSSFShape> lst = new ArrayList<XSSFShape>();
+        XmlCursor cur = groupshape.getCTGroupShape().newCursor();
+        try {
+            addShapes(cur, lst);
+        } finally {
+            cur.dispose();
+        }
+        return lst;
+    }
+    
+    private void addShapes(XmlCursor cur, List<XSSFShape> lst) {
+        try {
+            do {
+                cur.push();
+                if (cur.toFirstChild()) {
+                    do {
+                        XmlObject obj = cur.getObject();
+    
+                        XSSFShape shape;
+                        if (obj instanceof CTMarker) {
+                            // ignore anchor elements
+                            continue;
+                        } else if (obj instanceof CTPicture) {
+                            shape = new XSSFPicture(this, (CTPicture)obj) ;
+                        } else if(obj instanceof CTConnector) {
+                            shape = new XSSFConnector(this, (CTConnector)obj) ;
+                        } else if(obj instanceof CTShape) {
+                            shape = hasOleLink(obj) 
+                                ? new XSSFObjectData(this, (CTShape)obj)
+                                : new XSSFSimpleShape(this, (CTShape)obj) ;
+                        } else if(obj instanceof CTGraphicalObjectFrame) {
+                            shape = new XSSFGraphicFrame(this, (CTGraphicalObjectFrame)obj) ;
+                        } else if(obj instanceof CTGroupShape) {
+                            shape = new XSSFShapeGroup(this, (CTGroupShape)obj) ;
+                        } else if(obj instanceof XmlAnyTypeImpl) {
+                            LOG.log(POILogger.WARN, "trying to parse AlternateContent, "
+                                    + "this unlinks the returned Shapes from the underlying xml content, "
+                                    + "so those shapes can't be used to modify the drawing, "
+                                    + "i.e. modifications will be ignored!");
+                            
+                            // XmlAnyTypeImpl is returned for AlternateContent parts, which might contain a CTDrawing
+                            cur.push();
+                            cur.toFirstChild();
+                            XmlCursor cur2 = null;
+                            try {
+                                // need to parse AlternateContent again, otherwise the child elements aren't typed,
+                                // but also XmlAnyTypes
+                                CTDrawing alterWS = CTDrawing.Factory.parse(cur.newXMLStreamReader());
+                                cur2 = alterWS.newCursor();
+                                if (cur2.toFirstChild()) {
+                                    addShapes(cur2, lst);
+                                }
+                            } catch (XmlException e) {
+                                LOG.log(POILogger.WARN, "unable to parse CTDrawing in alternate content.", e);
+                            } finally {
+                                if (cur2 != null) {
+                                    cur2.dispose();
+                                }
+                                cur.pop();
+                            }
+                            continue;
+                        } else {
+                            // ignore anything else
+                            continue;
+                        }
+
+                        assert(shape != null);
+                        shape.anchor = getAnchorFromParent(obj);
+                        lst.add(shape);
+                        
+                    } while (cur.toNextSibling());
+                }
+                cur.pop();
+            } while (cur.toNextSibling());
+        } finally {
+            cur.dispose();
+        }
+    }
+
+    private boolean hasOleLink(XmlObject shape) {
+        QName uriName = new QName(null, "uri");
+        String xquery = "declare namespace a='"+XSSFRelation.NS_DRAWINGML+"' .//a:extLst/a:ext";
+        XmlCursor cur = shape.newCursor();
+        cur.selectPath(xquery);
+        try {
+            while (cur.toNextSelection()) {
+                String uri = cur.getAttributeText(uriName);
+                if ("{63B3BB69-23CF-44E3-9099-C40C66FF867C}".equals(uri)) {
+                    return true;
+                }
+            }
+        } finally {
+            cur.dispose();
+        }
+        return false;
+    }
 
     private XSSFAnchor getAnchorFromParent(XmlObject obj){
         XSSFAnchor anchor = null;
 
         XmlObject parentXbean = null;
         XmlCursor cursor = obj.newCursor();
-        if(cursor.toParent()) parentXbean = cursor.getObject();
+        if(cursor.toParent()) {
+            parentXbean = cursor.getObject();
+        }
         cursor.dispose();
         if(parentXbean != null){
             if (parentXbean instanceof CTTwoCellAnchor) {
@@ -424,4 +571,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         return anchor;
     }
 
+    @Override
+    public Iterator<XSSFShape> iterator() {
+        return getShapes().iterator();
+    }
 }
