@@ -22,12 +22,13 @@ import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ss.usermodel.ChildAnchor;
 
 /**
  * An anchor is what specifics the position of a shape within a client object
  * or within another containing shape.
  */
-public abstract class HSSFAnchor {
+public abstract class HSSFAnchor implements ChildAnchor {
 
     protected boolean _isHorizontallyFlipped = false;
     protected boolean _isVerticallyFlipped = false;
@@ -54,46 +55,6 @@ public abstract class HSSFAnchor {
             return null;
         }
     }
-
-    /**
-     * @return x coordinate of the left up corner
-     */
-    public abstract int getDx1();
-
-    /**
-     * @param dx1 x coordinate of the left up corner
-     */
-    public abstract void setDx1(int dx1);
-
-    /**
-     * @return y coordinate of the left up corner
-     */
-    public abstract int getDy1();
-
-    /**
-     * @param dy1 y coordinate of the left up corner
-     */
-    public abstract void setDy1(int dy1);
-
-    /**
-     * @return y coordinate of the right down corner
-     */
-    public abstract int getDy2();
-
-    /**
-     * @param dy2 y coordinate of the right down corner
-     */
-    public abstract void setDy2(int dy2);
-
-    /**
-     * @return x coordinate of the right down corner
-     */
-    public abstract int getDx2();
-
-    /**
-     * @param dx2 x coordinate of the right down corner
-     */
-    public abstract void setDx2(int dx2);
 
     /**
      * @return whether this shape is horizontally flipped

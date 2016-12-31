@@ -134,4 +134,8 @@ public final class XSSFConnector extends XSSFShape {
         return ctShape.getSpPr();
     }
 
+    @Override
+    public String getShapeName() {
+        return ctShape.getNvCxnSpPr().getCNvPr().getName();
+    }
 }

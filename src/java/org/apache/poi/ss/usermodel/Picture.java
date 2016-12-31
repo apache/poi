@@ -21,10 +21,8 @@ import java.awt.Dimension;
 
 /**
  * Repersents a picture in a SpreadsheetML document
- *
- * @author Yegor Kozlov
  */
-public interface Picture {
+public interface Picture extends Shape {
 
     /**
      * Reset the image to the dimension of the embedded image

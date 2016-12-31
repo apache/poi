@@ -15,13 +15,54 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
-
-import org.apache.poi.ss.usermodel.ChildAnchor;
+package org.apache.poi.ss.usermodel;
 
 /**
+ * Common interface for anchors.<p>
+ * 
  * An anchor is what specifics the position of a shape within a client object
  * or within another containing shape.
+ * 
+ * @since POI 3.16-beta2
  */
-public abstract class XSSFAnchor implements ChildAnchor {
+public interface ChildAnchor {
+    /**
+     * @return x coordinate of the left up corner
+     */
+    int getDx1();
+
+    /**
+     * @param dx1 x coordinate of the left up corner
+     */
+    void setDx1(int dx1);
+
+    /**
+     * @return y coordinate of the left up corner
+     */
+    int getDy1();
+
+    /**
+     * @param dy1 y coordinate of the left up corner
+     */
+    void setDy1(int dy1);
+
+    /**
+     * @return y coordinate of the right down corner
+     */
+    int getDy2();
+
+    /**
+     * @param dy2 y coordinate of the right down corner
+     */
+    void setDy2(int dy2);
+
+    /**
+     * @return x coordinate of the right down corner
+     */
+    int getDx2();
+
+    /**
+     * @param dx2 x coordinate of the right down corner
+     */
+    void setDx2(int dx2);
 }

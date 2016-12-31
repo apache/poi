@@ -19,10 +19,12 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.ShapeContainer;
+
 /**
  * An interface that indicates whether a class can contain children.
  */
-public interface HSSFShapeContainer extends Iterable<HSSFShape>
+public interface HSSFShapeContainer extends ShapeContainer<HSSFShape>
 {
     /**
      * @return  Any children contained by this shape.

@@ -284,4 +284,9 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     public XSSFSheet getSheet() {
         return (XSSFSheet)getDrawing().getParent();
     }
+
+    @Override
+    public String getShapeName() {
+        return ctPicture.getNvPicPr().getCNvPr().getName();
+    }
 }

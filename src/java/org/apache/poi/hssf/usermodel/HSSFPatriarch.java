@@ -57,7 +57,7 @@ import org.apache.poi.util.StringUtil;
  * The patriarch is the toplevel container for shapes in a sheet.  It does
  * little other than act as a container for other shapes and groups.
  */
-public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
+public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShape> {
     // private static POILogger log = POILogFactory.getLogger(HSSFPatriarch.class);
     private final List<HSSFShape> _shapes = new ArrayList<HSSFShape>();
 
@@ -279,7 +279,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         String entryName = "MBD"+HexDump.toHex(storageId);
         DirectoryEntry oleRoot;
         try {
-            DirectoryNode dn = _sheet.getWorkbook().getRootDirectory();
+            DirectoryNode dn = _sheet.getWorkbook().getDirectory();
         	if (dn == null) throw new FileNotFoundException();
         	oleRoot = (DirectoryEntry)dn.getEntry(entryName);
         } catch (FileNotFoundException e) {
@@ -541,7 +541,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         for (int i = 0; i < spgrChildren.size(); i++) {
             EscherContainerRecord spContainer = spgrChildren.get(i);
             if (i != 0) {
-                HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this, _sheet.getWorkbook().getRootDirectory());
+                HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this, _sheet.getWorkbook().getDirectory());
             }
         }
     }
@@ -556,6 +556,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         }
     }
 
+    @Override
     public Iterator<HSSFShape> iterator() {
         return _shapes.iterator();
     }

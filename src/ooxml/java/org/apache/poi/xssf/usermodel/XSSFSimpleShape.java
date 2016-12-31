@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.SimpleShape;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -37,7 +38,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
  * Represents a shape with a predefined geometry in a SpreadsheetML drawing.
  * Possible shape types are defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}
  */
-public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParagraph> { // TODO - instantiable superclass
+public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParagraph>, SimpleShape {
 	/**
 	 * List of the paragraphs that make up the text in this shape
 	 */
@@ -862,5 +863,10 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
                 }
             }
         }
+    }
+
+    @Override
+    public String getShapeName() {
+        return ctShape.getNvSpPr().getCNvPr().getName();
     }
 }
