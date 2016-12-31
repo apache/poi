@@ -33,7 +33,6 @@ import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -189,7 +188,6 @@ public class TestFormulaParser {
     }
     
     // bug 60219: FormulaParser can't parse external references when sheet name is quoted
-    @Ignore
     @Test
     public void testParseExternalReferencesWithQuotedSheetName() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook();

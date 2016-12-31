@@ -218,7 +218,7 @@ public final class TestFormulaParser {
         }
     }
     
-    private final static void assertEqualsIgnoreCase(String expected, String actual) {
+    private static void assertEqualsIgnoreCase(String expected, String actual) {
         assertEquals(expected.toLowerCase(Locale.ROOT), actual.toLowerCase(Locale.ROOT));
     }
 
@@ -414,7 +414,7 @@ public final class TestFormulaParser {
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
         HSSFCell cell = row.createCell(0);
-        String formula = null;
+        String formula;
 
         cell.setCellFormula("1.3E21/3");
         formula = cell.getCellFormula();
@@ -488,7 +488,7 @@ public final class TestFormulaParser {
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
         HSSFCell cell = row.createCell(0);
-        String formula = null;
+        String formula;
 
         // starts from decimal point
 
@@ -530,7 +530,7 @@ public final class TestFormulaParser {
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
         HSSFCell cell = row.createCell(0);
-        String formula = null;
+        String formula;
 
         cell.setCellFormula("A1.A2");
         formula = cell.getCellFormula();
@@ -557,7 +557,7 @@ public final class TestFormulaParser {
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
         HSSFCell cell = row.createCell(0);
-        String formula = null;
+        String formula;
 
         
         // References to a single cell:
@@ -718,8 +718,8 @@ public final class TestFormulaParser {
         assertEquals(65534.6, np.getValue(), 0);
     }
 
+    @Test
     public void testMissingArgs() {
-
         confirmTokenClasses("if(A1, ,C1)",
                 RefPtg.class,
                 AttrPtg.class, // tAttrIf
@@ -1327,8 +1327,7 @@ public final class TestFormulaParser {
     }
 
     /**
-     * TODO - delete equiv test:
-     * {@link BaseTestBugzillaIssues#test42448()}
+     * See the related/similar test: {@link BaseTestBugzillaIssues#bug42448()}
      */
     @Test
     public void testParseAbnormalSheetNamesAndRanges_bug42448() throws IOException {
@@ -1373,11 +1372,10 @@ public final class TestFormulaParser {
 
     @Test
     public void testUnionOfFullCollFullRowRef() throws IOException {
-        Ptg[] ptgs;
-        ptgs = parseFormula("3:4");
-        ptgs = parseFormula("$Z:$AC");
+        parseFormula("3:4");
+        Ptg[] ptgs = parseFormula("$Z:$AC");
         confirmTokenClasses(ptgs, AreaPtg.class);
-        ptgs = parseFormula("B:B");
+        parseFormula("B:B");
 
         ptgs = parseFormula("$11:$13");
         confirmTokenClasses(ptgs, AreaPtg.class);

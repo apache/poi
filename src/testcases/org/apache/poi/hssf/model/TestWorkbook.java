@@ -115,7 +115,7 @@ public final class TestWorkbook {
             }
         };
 
-        /**
+        /*
          * register the two test UDFs in a UDF finder, to be passed to the evaluator
          */
         UDFFinder udff1 = new DefaultUDFFinder(new String[] { "myFunc", },
