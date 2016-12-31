@@ -29,6 +29,7 @@ def poijobs = [
     [ name: 'POI-DSL-1.9', jdk: '1.9', trigger: triggerSundays,
         properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true',
                      '-Djava9addmods=--add-modules=java.xml.bind',
+                     '-Djavadoc9addmods=--add-modules=java.xml.bind',
                      '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
                      '-Djava9addopens1=--add-opens=java.base/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
                      '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
