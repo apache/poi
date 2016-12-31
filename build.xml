@@ -239,7 +239,7 @@ under the License.
     <!-- Coverage -->
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
-    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*"/>
+    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*:org.slf4j.*:org.hamcrest.*:org.bouncycastle.*:org.apache.xmlbeans.*:org.apache.tools.*:org.apache.commons.*:org.apache.jcp.*:sun.*:schemaorg_apache_xmlbeans.*"/>
     
     <property name="file.leak.detector" value="-Dthis.is.a.dummy=true"/>
 
@@ -1209,13 +1209,8 @@ under the License.
                     <classfiles>
                         <fileset dir="${ooxml.output.dir}"/>
                         <!-- there are no actual POI classes in build/ooxml-lite-classes, only generated code...
-                        fileset dir="${ooxml.lite.output.dir}">
-                            <exclude name="org/openxmlformats/**"/>
-                            <exclude name="schema*/**"/>
-                            <exclude name="org/etsi/**"/>
-                            <exclude name="org/w3/**"/>
-                            <exclude name="com/**"/>
-                        </fileset-->
+                        <fileset dir="${ooxml.lite.output.dir}"/>
+                        -->
                     </classfiles>
                     <sourcefiles encoding="UTF-8">
                         <fileset dir="${ooxml.src}"/>
@@ -1323,7 +1318,7 @@ under the License.
     <target name="test-hssf" unless="main.hssf.test.notRequired"
             depends="compile-main, -test-main-hssf-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant"
             description="test HSSF classes only">
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-main.exec">
+        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-hssf.exec">
             <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
                    failureproperty="main.hssf.test.failed" showoutput="true">
                 <classpath refid="test.classpath"/>
@@ -1506,7 +1501,7 @@ under the License.
         <attribute name="classpath"/>
         <attribute name="type"/>
         <sequential>
-            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}.exec">
+            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-ss.exec">
               <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                      failureproperty="ooxml.ss.test.failed">
                   <classpath refid="@{classpath}"/>
