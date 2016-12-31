@@ -17,7 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.Iterator;
+
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.usermodel.ShapeContainer;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
@@ -25,6 +28,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShapeNonVisual;
@@ -36,10 +40,8 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
  * just as if it were a regular shape but instead of being described by a single geometry it is made up of all the
  * shape geometries encompassed within it. Within a group shape each of the shapes that make up the group are
  * specified just as they normally would.
- *
- * @author Yegor Kozlov
  */
-public final class XSSFShapeGroup extends XSSFShape {
+public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XSSFShape> {
     private static CTGroupShape prototype = null;
 
     private CTGroupShape ctGroup;
@@ -164,6 +166,34 @@ public final class XSSFShapeGroup extends XSSFShape {
         return shape;
     }
 
+    /**
+     * Creates a group shape.
+     *
+     * @param anchor       the client anchor describes how this group is attached to the group.
+     * @return the newly created group shape.
+     */
+    public XSSFShapeGroup createGroup(XSSFChildAnchor anchor) {
+        CTGroupShape ctShape = ctGroup.addNewGrpSp();
+        ctShape.set(prototype());
+
+        XSSFShapeGroup shape = new XSSFShapeGroup(getDrawing(), ctShape);
+        shape.parent = this;
+        shape.anchor = anchor;
+        
+        // TODO: calculate bounding rectangle on anchor and set off/ext correctly
+        
+        CTGroupTransform2D xfrm = shape.getCTGroupShape().getGrpSpPr().getXfrm();
+        CTTransform2D t2 = anchor.getCTTransform2D();
+        xfrm.setOff(t2.getOff());
+        xfrm.setExt(t2.getExt());
+        // child offset is left to 0,0
+        xfrm.setChExt(t2.getExt());
+        xfrm.setFlipH(t2.getFlipH());
+        xfrm.setFlipV(t2.getFlipV());
+        
+        return shape;
+    }
+
     @Internal
     public CTGroupShape getCTGroupShape() {
         return ctGroup;
@@ -194,4 +224,13 @@ public final class XSSFShapeGroup extends XSSFShape {
         throw new IllegalStateException("Not supported for shape group");
     }
 
+    @Override
+    public Iterator<XSSFShape> iterator() {
+        return getDrawing().getShapes(this).iterator();
+    }
+
+    @Override
+    public String getShapeName() {
+        return ctGroup.getNvGrpSpPr().getCNvPr().getName();
+    }
 }

@@ -32,8 +32,11 @@ import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
+import org.apache.poi.ss.usermodel.ShapeTypes;
+import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
@@ -131,7 +134,7 @@ public class TestXSSFDrawing {
         // Check
         dr1 = sheet.createDrawingPatriarch();
         CTDrawing ctDrawing = dr1.getCTDrawing();
-        
+
         // Connector, shapes and text boxes are all two cell anchors
         assertEquals(0, ctDrawing.sizeOfAbsoluteAnchorArray());
         assertEquals(0, ctDrawing.sizeOfOneCellAnchorArray());
@@ -148,11 +151,11 @@ public class TestXSSFDrawing {
         String xml = ctDrawing.toString();
         assertTrue(xml.contains("xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\""));
         assertTrue(xml.contains("xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""));
-        
+
         checkRewrite(wb2);
         wb2.close();
     }
-    
+
     @Test
     public void testMultipleDrawings() throws IOException{
         XSSFWorkbook wb = new XSSFWorkbook();
@@ -177,7 +180,7 @@ public class TestXSSFDrawing {
         XSSFSheet sheet1 = wb.getSheetAt(0);
 
         XSSFSheet sheet2 = wb.cloneSheet(0);
-        
+
         //the source sheet has one relationship and it is XSSFDrawing
         List<POIXMLDocumentPart> rels1 = sheet1.getRelations();
         assertEquals(1, rels1.size());
@@ -202,7 +205,7 @@ public class TestXSSFDrawing {
             assertTrue(sh1.getClass() == sh2.getClass());
             assertEquals(sh1.getShapeProperties().toString(), sh2.getShapeProperties().toString());
         }
-        
+
         checkRewrite(wb);
         wb.close();
     }
@@ -241,7 +244,7 @@ public class TestXSSFDrawing {
         assertArrayEquals(
                 new byte[]{0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal());
-        
+
         checkRewrite(wb);
         wb.close();
     }
@@ -276,11 +279,11 @@ public class TestXSSFDrawing {
         assertEquals(shapes.get(0).getAnchor(), anchor1);
         assertEquals(shapes.get(1).getAnchor(), anchor2);
         assertEquals(shapes.get(2).getAnchor(), anchor3);
-        
+
         checkRewrite(wb2);
         wb2.close();
     }
-    
+
     /**
      * ensure that font and color rich text attributes defined in a XSSFRichTextString
      * are passed to XSSFSimpleShape.
@@ -333,26 +336,26 @@ public class TestXSSFDrawing {
         rt.applyFont(font);
 
         shape.setText(rt);
-        
+
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
         assertEquals(1, paras.size());
         assertEquals("Test String", paras.get(0).getText());
-        
+
         List<XSSFTextRun> runs = paras.get(0).getTextRuns();
         assertEquals(1, runs.size());
         assertEquals("Arial", runs.get(0).getFontFamily());
-        
-        Color clr = runs.get(0).getFontColor(); 
+
+        Color clr = runs.get(0).getFontColor();
         assertArrayEquals(
                 new int[] { 0, 255, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
-        
+
         checkRewrite(wb);
         wb.close();
     }
-    
+
     /**
-     * Test addNewTextParagraph 
+     * Test addNewTextParagraph
      */
     @Test
     public void testAddNewTextParagraph() throws IOException {
@@ -361,17 +364,17 @@ public class TestXSSFDrawing {
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
-        
+
         XSSFTextParagraph para = shape.addNewTextParagraph();
         para.addNewTextRun().setText("Line 1");
-                
+
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
         assertEquals(2, paras.size());	// this should be 2 as XSSFSimpleShape creates a default paragraph (no text), and then we add a string to that.
-        
+
         List<XSSFTextRun> runs = para.getTextRuns();
         assertEquals(1, runs.size());
         assertEquals("Line 1", runs.get(0).getText());
-        
+
         checkRewrite(wb);
         wb.close();
     }
@@ -388,17 +391,17 @@ public class TestXSSFDrawing {
         XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
         XSSFRichTextString rt = new XSSFRichTextString("Test Rich Text String");
 
-        XSSFFont font = wb1.createFont();        
+        XSSFFont font = wb1.createFont();
         font.setColor(new XSSFColor(new Color(0, 255, 255)));
         font.setFontName("Arial");
         rt.applyFont(font);
-        
+
         XSSFFont midfont = wb1.createFont();
         midfont.setColor(new XSSFColor(new Color(0, 255, 0)));
         rt.applyFont(5, 14, midfont);	// set the text "Rich Text" to be green and the default font
-        
+
         XSSFTextParagraph para = shape.addNewTextParagraph(rt);
-        
+
         // Save and re-load it
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
@@ -406,49 +409,49 @@ public class TestXSSFDrawing {
 
         // Check
         drawing = sheet.createDrawingPatriarch();
-        
+
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape); 
-        
+        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+
         XSSFSimpleShape sshape = (XSSFSimpleShape) shapes.get(0);
-        
+
         List<XSSFTextParagraph> paras = sshape.getTextParagraphs();
-        assertEquals(2, paras.size());	// this should be 2 as XSSFSimpleShape creates a default paragraph (no text), and then we add a string to that.  
-        
+        assertEquals(2, paras.size());	// this should be 2 as XSSFSimpleShape creates a default paragraph (no text), and then we add a string to that.
+
         List<XSSFTextRun> runs = para.getTextRuns();
         assertEquals(3, runs.size());
-        
+
         // first run properties
         assertEquals("Test ", runs.get(0).getText());
         assertEquals("Arial", runs.get(0).getFontFamily());
 
-        Color clr = runs.get(0).getFontColor(); 
+        Color clr = runs.get(0).getFontColor();
         assertArrayEquals(
                 new int[] { 0, 255, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
 
-        // second run properties        
+        // second run properties
         assertEquals("Rich Text", runs.get(1).getText());
         assertEquals(XSSFFont.DEFAULT_FONT_NAME, runs.get(1).getFontFamily());
 
-        clr = runs.get(1).getFontColor(); 
+        clr = runs.get(1).getFontColor();
         assertArrayEquals(
                 new int[] { 0, 255, 0 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });        
-        
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
+
         // third run properties
         assertEquals(" String", runs.get(2).getText());
         assertEquals("Arial", runs.get(2).getFontFamily());
-        clr = runs.get(2).getFontColor(); 
+        clr = runs.get(2).getFontColor();
         assertArrayEquals(
                 new int[] { 0, 255, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
-        
+
         checkRewrite(wb2);
         wb2.close();
-    }    
-    
+    }
+
     /**
      * Test add multiple paragraphs and retrieve text
      */
@@ -459,24 +462,24 @@ public class TestXSSFDrawing {
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
-        
+
         XSSFTextParagraph para = shape.addNewTextParagraph();
         para.addNewTextRun().setText("Line 1");
-                
+
         para = shape.addNewTextParagraph();
         para.addNewTextRun().setText("Line 2");
-        
+
         para = shape.addNewTextParagraph();
         para.addNewTextRun().setText("Line 3");
-        
+
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
         assertEquals(4, paras.size());	// this should be 4 as XSSFSimpleShape creates a default paragraph (no text), and then we added 3 paragraphs
-        assertEquals("Line 1\nLine 2\nLine 3", shape.getText());           
-        
+        assertEquals("Line 1\nLine 2\nLine 3", shape.getText());
+
         checkRewrite(wb);
         wb.close();
     }
-    
+
     /**
      * Test setting the text, then adding multiple paragraphs and retrieve text
      */
@@ -487,23 +490,23 @@ public class TestXSSFDrawing {
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
-        
+
         shape.setText("Line 1");
-                
+
         XSSFTextParagraph para = shape.addNewTextParagraph();
         para.addNewTextRun().setText("Line 2");
-        
+
         para = shape.addNewTextParagraph();
         para.addNewTextRun().setText("Line 3");
-        
+
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
         assertEquals(3, paras.size());	// this should be 3 as we overwrote the default paragraph with setText, then added 2 new paragraphs
         assertEquals("Line 1\nLine 2\nLine 3", shape.getText());
-        
+
         checkRewrite(wb);
         wb.close();
     }
-    
+
     /**
      * Test reading text from a textbox in an existing file
      */
@@ -531,14 +534,14 @@ public class TestXSSFDrawing {
 
         assertTrue(shapes.get(4) instanceof XSSFSimpleShape);
 
-        XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(4); 
+        XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(4);
         assertEquals("Sheet with various pictures\n(jpeg, png, wmf, emf and pict)", textbox.getText());
-        
+
         checkRewrite(wb);
         wb.close();
     }
 
-    
+
     /**
      * Test reading multiple paragraphs from a textbox in an existing file
      */
@@ -550,11 +553,11 @@ public class TestXSSFDrawing {
         List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
         RelationPart rp = rels.get(0);
-       
+
         assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
 
         XSSFDrawing drawing = rp.getDocumentPart();
-        
+
         //sheet.createDrawingPatriarch() should return the same instance of XSSFDrawing
         assertSame(drawing, sheet.createDrawingPatriarch());
         String drawingId = rp.getRelationship().getId();
@@ -569,34 +572,34 @@ public class TestXSSFDrawing {
         assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
 
         XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(0);
-        
+
         List<XSSFTextParagraph> paras = textbox.getTextParagraphs();
         assertEquals(3, paras.size());
-        
+
         assertEquals("Line 2", paras.get(1).getText());	// check content of second paragraph
 
         assertEquals("Line 1\nLine 2\nLine 3", textbox.getText());	// check content of entire textbox
-        
+
         // check attributes of paragraphs
         assertEquals(TextAlign.LEFT, paras.get(0).getTextAlign());
         assertEquals(TextAlign.CENTER, paras.get(1).getTextAlign());
         assertEquals(TextAlign.RIGHT, paras.get(2).getTextAlign());
-        
-        Color clr = paras.get(0).getTextRuns().get(0).getFontColor(); 
+
+        Color clr = paras.get(0).getTextRuns().get(0).getFontColor();
         assertArrayEquals(
                 new int[] { 255, 0, 0 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
-        
-        clr = paras.get(1).getTextRuns().get(0).getFontColor(); 
+
+        clr = paras.get(1).getTextRuns().get(0).getFontColor();
         assertArrayEquals(
                 new int[] { 0, 255, 0 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
-        
-        clr = paras.get(2).getTextRuns().get(0).getFontColor(); 
+
+        clr = paras.get(2).getTextRuns().get(0).getFontColor();
         assertArrayEquals(
                 new int[] { 0, 0, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
-        
+
         checkRewrite(wb);
         wb.close();
     }
@@ -606,13 +609,13 @@ public class TestXSSFDrawing {
      */
     @Test
     public void testAddBulletParagraphs() throws IOException {
-    
+
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 10, 20));
-        
+
         String paraString1 = "A normal paragraph";
         String paraString2 = "First bullet";
         String paraString3 = "Second bullet (level 1)";
@@ -623,7 +626,7 @@ public class TestXSSFDrawing {
         String paraString8 = "Third bullet (level 1)";
         String paraString9 = "Fourth bullet (level 1)";
         String paraString10 = "Fifth Bullet";
-        
+
         XSSFTextParagraph para = shape.addNewTextParagraph(paraString1);
         para = shape.addNewTextParagraph(paraString2);
         para.setBullet(true);
@@ -634,7 +637,7 @@ public class TestXSSFDrawing {
 
         para = shape.addNewTextParagraph(paraString4);
         para.setBullet(true);
-        
+
         para = shape.addNewTextParagraph(paraString5);
         para = shape.addNewTextParagraph(paraString6);
         para.setBullet(ListAutoNumber.ARABIC_PERIOD);
@@ -642,7 +645,7 @@ public class TestXSSFDrawing {
         para = shape.addNewTextParagraph(paraString7);
         para.setBullet(ListAutoNumber.ARABIC_PERIOD, 3);
         para.setLevel(1);
-        
+
         para = shape.addNewTextParagraph(paraString8);
         para.setBullet(ListAutoNumber.ARABIC_PERIOD, 3);
         para.setLevel(1);
@@ -650,14 +653,14 @@ public class TestXSSFDrawing {
         para = shape.addNewTextParagraph("");
         para.setBullet(ListAutoNumber.ARABIC_PERIOD, 3);
         para.setLevel(1);
-        
+
         para = shape.addNewTextParagraph(paraString9);
         para.setBullet(ListAutoNumber.ARABIC_PERIOD, 3);
         para.setLevel(1);
-        
+
         para = shape.addNewTextParagraph(paraString10);
         para.setBullet(ListAutoNumber.ARABIC_PERIOD);
-        
+
         // Save and re-load it
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
@@ -665,18 +668,18 @@ public class TestXSSFDrawing {
 
         // Check
         drawing = sheet.createDrawingPatriarch();
-        
+
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(1, shapes.size());
-        assertTrue(shapes.get(0) instanceof XSSFSimpleShape); 
-        
+        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+
         XSSFSimpleShape sshape = (XSSFSimpleShape) shapes.get(0);
-        
+
         List<XSSFTextParagraph> paras = sshape.getTextParagraphs();
         assertEquals(12, paras.size());  // this should be 12 as XSSFSimpleShape creates a default paragraph (no text), and then we added to that
-        
+
         StringBuilder builder = new StringBuilder();
-        
+
         builder.append(paraString1);
         builder.append("\n");
         builder.append("\u2022 ");
@@ -706,13 +709,13 @@ public class TestXSSFDrawing {
         builder.append("\n");
         builder.append("2. ");
         builder.append(paraString10);
-        
+
         assertEquals(builder.toString(), sshape.getText());
-        
+
         checkRewrite(wb2);
         wb2.close();
-    }  
-    
+    }
+
     /**
      * Test reading bullet numbering from a textbox in an existing file
      */
@@ -747,16 +750,16 @@ public class TestXSSFDrawing {
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(4, shapes.size());
-        
+
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
         sheet = wb2.getSheetAt(0);
         drawing = sheet.createDrawingPatriarch();
-        
+
         shapes = drawing.getShapes();
         assertEquals(4, shapes.size());
         wb2.close();
-        
+
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -764,12 +767,12 @@ public class TestXSSFDrawing {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
-        
+
         // first comment works
         ClientAnchor anchor = new XSSFClientAnchor(1, 1, 2, 2, 3, 3, 4, 4);
         XSSFComment comment = drawing.createCellComment(anchor);
         assertNotNull(comment);
-        
+
         // Should fail if we try to add the same comment for the same cell
         try {
             drawing.createCellComment(anchor);
@@ -777,6 +780,65 @@ public class TestXSSFDrawing {
             wb.close();
         }
     }
+
+    @Test
+    public void testGroupShape() throws Exception {
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+
+        XSSFSimpleShape s0 = drawing.createSimpleShape(drawing.createAnchor(0, 0, Units.pixelToEMU(30), Units.pixelToEMU(30), 1, 1, 10, 10));
+        s0.setShapeType(ShapeTypes.RECT);
+        s0.setLineStyleColor(100, 0, 0);
+
+        XSSFShapeGroup g1 = drawing.createGroup(drawing.createAnchor(0, 0, 300, 300, 1, 1, 10, 10));
+        CTGroupTransform2D xfrmG1 = g1.getCTGroupShape().getGrpSpPr().getXfrm();
+
+        XSSFSimpleShape s1 = g1.createSimpleShape(new XSSFChildAnchor(
+            (int)(xfrmG1.getChExt().getCx()*0.1),
+            (int)(xfrmG1.getChExt().getCy()*0.1),
+            (int)(xfrmG1.getChExt().getCx()*0.9),
+            (int)(xfrmG1.getChExt().getCy()*0.9)
+        ));
+        s1.setShapeType(ShapeTypes.RECT);
+        s1.setLineStyleColor(0, 100, 0);
+
+        XSSFShapeGroup g2 = g1.createGroup(new XSSFChildAnchor(
+            (int)(xfrmG1.getChExt().getCx()*0.2),
+            (int)(xfrmG1.getChExt().getCy()*0.2),
+            (int)(xfrmG1.getChExt().getCx()*0.8),
+            (int)(xfrmG1.getChExt().getCy()*0.8)
+        ));
+        CTGroupTransform2D xfrmG2 = g2.getCTGroupShape().getGrpSpPr().getXfrm();
+        
+        XSSFSimpleShape s2 = g2.createSimpleShape(new XSSFChildAnchor(
+            (int)(xfrmG2.getChExt().getCx()*0.1),
+            (int)(xfrmG2.getChExt().getCy()*0.1),
+            (int)(xfrmG2.getChExt().getCx()*0.9),
+            (int)(xfrmG2.getChExt().getCy()*0.9)
+        ));
+        s2.setShapeType(ShapeTypes.RECT);
+        s2.setLineStyleColor(0, 0, 100);
+
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        
+        XSSFDrawing draw = wb2.getSheetAt(0).getDrawingPatriarch();
+        List<XSSFShape> shapes = draw.getShapes();
+        assertEquals(2, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
+        shapes = draw.getShapes((XSSFShapeGroup)shapes.get(1));
+        assertEquals(2, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
+        shapes = draw.getShapes((XSSFShapeGroup)shapes.get(1));
+        assertEquals(1, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+
+        wb2.close();
+    }
+
 
     private static void checkRewrite(XSSFWorkbook wb) throws IOException {
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);

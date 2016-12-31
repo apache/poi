@@ -277,7 +277,7 @@ public class ImageUtils {
     }
     
     
-    private static double getRowHeightInPixels(Sheet sheet, int rowNum) {
+    public static double getRowHeightInPixels(Sheet sheet, int rowNum) {
         Row r = sheet.getRow(rowNum);
         double points = (r == null) ? sheet.getDefaultRowHeightInPoints() : r.getHeightInPoints();
         return Units.toEMU(points)/(double)EMU_PER_PIXEL;
