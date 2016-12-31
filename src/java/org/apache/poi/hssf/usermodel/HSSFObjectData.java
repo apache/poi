@@ -25,6 +25,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.ss.usermodel.ObjectData;
 import org.apache.poi.util.HexDump;
 
 /**
@@ -32,7 +33,7 @@ import org.apache.poi.util.HexDump;
  * <p/>
  * Right now, 13, july, 2012 can not be created from scratch
  */
-public final class HSSFObjectData extends HSSFPicture {
+public final class HSSFObjectData extends HSSFPicture implements ObjectData {
     /**
      * Reference to the filesystem root, required for retrieving the object data.
      */
@@ -43,20 +44,12 @@ public final class HSSFObjectData extends HSSFPicture {
         this._root = _root;
     }
 
-    /**
-     * Returns the OLE2 Class Name of the object
-     */
+    @Override
     public String getOLE2ClassName() {
         return findObjectRecord().getOLEClassName();
     }
 
-    /**
-     * Gets the object data. Only call for ones that have
-     * data though. See {@link #hasDirectoryEntry()}
-     *
-     * @return the object data as an OLE2 directory.
-     * @throws IOException if there was an error reading the data.
-     */
+    @Override
     public DirectoryEntry getDirectory() throws IOException {
         EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
 
@@ -70,20 +63,12 @@ public final class HSSFObjectData extends HSSFPicture {
         throw new IOException("Stream " + streamName + " was not an OLE2 directory");
     }
 
-    /**
-     * Returns the data portion, for an ObjectData
-     * that doesn't have an associated POIFS Directory
-     * Entry
-     */
+    @Override
     public byte[] getObjectData() {
         return findObjectRecord().getObjectData();
     }
 
-    /**
-     * Does this ObjectData have an associated POIFS
-     * Directory Entry?
-     * (Not all do, those that don't have a data portion)
-     */
+    @Override
     public boolean hasDirectoryEntry() {
         EmbeddedObjectRefSubRecord subRecord = findObjectRecord();
 
