@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.dev;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -34,7 +31,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
  * Useful for seeing what parts are defined, and how
  *  they're all related to each other.
  */
-public class OOXMLLister {
+public class OOXMLLister implements Closeable {
 	private final OPCPackage container;
 	private final PrintStream disp;
 	
@@ -110,6 +107,7 @@ public class OOXMLLister {
 			displayRelation(rel, "");
 		}
 	}
+
 	private void displayRelation(PackageRelationship rel, String indent) {
 		disp.println(indent+"Relationship:");
 		disp.println(indent+"\tFrom: "+ rel.getSourceURI());
@@ -118,7 +116,12 @@ public class OOXMLLister {
 		disp.println(indent+"\tMode: " + rel.getTargetMode());
 		disp.println(indent+"\tType: " + rel.getRelationshipType());
 	}
-	
+
+	@Override
+	public void close() throws IOException {
+		container.close();
+	}
+
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
@@ -136,10 +139,14 @@ public class OOXMLLister {
 		OOXMLLister lister = new OOXMLLister(
 				OPCPackage.open(f.toString(), PackageAccess.READ)
 		);
-		
-		lister.disp.println(f.toString() + "\n");
-		lister.displayParts();
-		lister.disp.println();
-		lister.displayRelations();
+
+		try {
+			lister.disp.println(f.toString() + "\n");
+			lister.displayParts();
+			lister.disp.println();
+			lister.displayRelations();
+		} finally {
+			lister.close();
+		}
 	}
 }

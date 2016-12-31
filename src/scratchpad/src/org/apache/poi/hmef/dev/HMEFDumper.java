@@ -41,20 +41,23 @@ public final class HMEFDumper {
       }
       
       boolean truncatePropData = true;
-      for(int i=0; i<args.length; i++) {
-         if(args[i].equalsIgnoreCase("--full")) {
+      for (String arg : args) {
+         if (arg.equalsIgnoreCase("--full")) {
             truncatePropData = false;
             continue;
          }
-         
-         HMEFDumper dumper = new HMEFDumper(
-               new FileInputStream(args[i])
-         );
-         dumper.setTruncatePropertyData(truncatePropData);
-         dumper.dump();
+
+         InputStream stream = new FileInputStream(arg);
+         try {
+            HMEFDumper dumper = new HMEFDumper(stream);
+            dumper.setTruncatePropertyData(truncatePropData);
+            dumper.dump();
+         } finally {
+            stream.close();
+         }
       }
    }
-   
+
    private InputStream inp;
    private boolean truncatePropertyData;
    
