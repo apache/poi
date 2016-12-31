@@ -67,7 +67,7 @@ def poijobs = [
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
 def defaultJdk = '1.6'
-def defaultTrigger = 'H/15 * * * *'
+def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant (latest)'
 def defaultSlaves = 'ubuntu&&!cloud-slave'
@@ -82,7 +82,6 @@ def jdkMapping = [
 ]
 
 poijobs.each { poijob ->
-    
     def jdkKey = poijob.jdk ?: defaultJdk
     def trigger = poijob.trigger ?: defaultTrigger
     def email = poijob.email ?: defaultEmail
@@ -133,6 +132,7 @@ for more details about the DSL.</b>
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
             if(jdkKey == '1.9') {
+                // when using JDK 9 for running Ant, we need to provide more packages for the forbidden-api-checks task
                 env('ANT_OPTS', '--add-modules=java.xml.bind')
             }
         }
@@ -300,7 +300,7 @@ for more details about the DSL.</b>
                     }
                 }
                 jacocoCodeCoverage {
-                    classPattern('build/classes,build/examples-classes,build/excelant-classes,build/ooxml-classes,build/scratchpad-classes,build/*/build/classes')
+                    classPattern('build/classes,build/excelant-classes,build/ooxml-classes,build/scratchpad-classes,build/*/build/classes')
                     execPattern('build/*.exec,build/*/build/jacoco/*.exec')
                     sourcePattern('src/java,src/excelant/java,src/ooxml/java,src/scratchpad/src')
                     exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
