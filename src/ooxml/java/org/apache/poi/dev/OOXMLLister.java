@@ -122,7 +122,7 @@ public class OOXMLLister implements Closeable {
 		container.close();
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, InvalidFormatException {
 		if(args.length == 0) {
 			System.err.println("Use:");
 			System.err.println("\tjava OOXMLLister <filename>");

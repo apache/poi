@@ -20,28 +20,34 @@
 ==================================================================== */
 package org.apache.poi.dev;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.PrintStream;
-
 public class TestOOXMLLister {
     @Test
-    public void testMain() throws Exception {
+    public void testMain() throws IOException, InvalidFormatException {
         File file = XSSFTestDataSamples.getSampleFile("Formatting.xlsx");
         OOXMLLister.main(new String[] {file.getAbsolutePath()});
     }
 
     @Test
-    public void testWithPrintStream() throws Exception {
+    public void testWithPrintStream() throws IOException, InvalidFormatException {
         File file = XSSFTestDataSamples.getSampleFile("Formatting.xlsx");
-        OOXMLLister lister = new OOXMLLister(OPCPackage.open(file.getAbsolutePath(), PackageAccess.READ), new PrintStream(new NullOutputStream()));
+        PrintStream nullStream = new PrintStream(new NullOutputStream(), true, "UTF-8");
+        OPCPackage opc = OPCPackage.open(file.getAbsolutePath(), PackageAccess.READ);
+        OOXMLLister lister = new OOXMLLister(opc, nullStream);
         lister.displayParts();
         lister.displayRelations();
         lister.close();
+        opc.close();
+        nullStream.close();
     }
 }
