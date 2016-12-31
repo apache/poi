@@ -19,10 +19,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.util.CloseIgnoringInputStream;
@@ -152,10 +149,16 @@ public class POIFSFileSystem
         // TODO Make this nicer!
         // Create a new empty POIFS in the file
         POIFSFileSystem tmp = new POIFSFileSystem();
-        FileOutputStream fout = new FileOutputStream(file);
-        tmp.writeFilesystem(fout);
-        fout.close();
-        tmp.close();
+        try {
+            OutputStream out = new FileOutputStream(file);
+            try {
+                tmp.writeFilesystem(out);
+            } finally {
+                out.close();
+            }
+        } finally {
+            tmp.close();
+        }
         
         // Open it up again backed by the file
         return new POIFSFileSystem(file, false);
@@ -166,14 +169,9 @@ public class POIFSFileSystem
      *
      * @param args names of the files; arg[ 0 ] is the input file,
      *             arg[ 1 ] is the output file
-     *
-     * @exception IOException
      */
-
-    public static void main(String args[])
-        throws IOException
+    public static void main(String args[]) throws IOException
     {
         OPOIFSFileSystem.main(args);
     }
 }
-
