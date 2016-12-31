@@ -74,8 +74,7 @@ public class HwmfBitmap16 {
         }
 
         int length = (((width * bitsPixel + 15) >> 4) << 1) * height;
-        @SuppressWarnings("unused")
-        byte buf[] = IOUtils.toByteArray(leis, length);
+        /*byte buf[] =*/ IOUtils.toByteArray(leis, length);
         
         // TODO: this is not implemented ... please provide a sample, if it
         // ever happens to you, to come here ...
