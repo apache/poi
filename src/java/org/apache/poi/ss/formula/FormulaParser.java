@@ -115,7 +115,7 @@ public final class FormulaParser {
      * Tracks whether the run of whitespace preceding "look" could be an
      * intersection operator.  See GetChar.
      */
-    private boolean _inIntersection = false;
+    private boolean _inIntersection;
 
     private final FormulaParsingWorkbook _book;
     private final SpreadsheetVersion _ssVersion;
@@ -133,7 +133,7 @@ public final class FormulaParser {
      * This class is recommended only for single threaded use.
      *
      * If you have a {@link org.apache.poi.hssf.usermodel.HSSFWorkbook}, and not a
-     *  {@link org.apache.poi.hssf.model.Workbook}, then use the convenience method on
+     *  {@link org.apache.poi.ss.usermodel.Workbook}, then use the convenience method on
      *  {@link org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator}
      */
     private FormulaParser(String formula, FormulaParsingWorkbook book, int sheetIndex, int rowIndex) {
@@ -298,7 +298,7 @@ public final class FormulaParser {
 
     /** Get a Number */
     private String GetNum() {
-        StringBuffer value = new StringBuffer();
+        StringBuilder value = new StringBuilder();
 
         while (IsDigit(this.look)){
             value.append(this.look);
@@ -670,7 +670,7 @@ public final class FormulaParser {
             GetChar();
         }
         // parse column quantifier
-        String startColumnName = null;
+        String startColumnName;
         String endColumnName = null;
         int nColQuantifiers = 0;
         int savePtr1 = _pointer;
@@ -1112,12 +1112,19 @@ public final class FormulaParser {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(64);
-            sb.append(getClass().getName()).append(" [");
-            sb.append(_rep);
-            sb.append("]");
-            return sb.toString();
+            return getClass().getName() + " [" + _rep + "]";
         }
+    }
+    
+    private String getBookName() {
+        StringBuilder sb = new StringBuilder();
+        GetChar();
+        while (look != ']') {
+            sb.append(look);
+            GetChar();
+        }
+        GetChar();
+        return sb.toString();
     }
 
     /**
@@ -1127,22 +1134,18 @@ public final class FormulaParser {
     private SheetIdentifier parseSheetName() {
         String bookName;
         if (look == '[') {
-            StringBuilder sb = new StringBuilder();
-            GetChar();
-            while (look != ']') {
-                sb.append(look);
-                GetChar();
-            }
-            GetChar();
-            bookName = sb.toString();
+        	bookName = getBookName();
         } else {
             bookName = null;
         }
 
         if (look == '\'') {
-            StringBuffer sb = new StringBuffer();
-
             Match('\'');
+            
+            if (look == '[')
+            	bookName = getBookName();
+            
+            StringBuilder sb = new StringBuilder();
             boolean done = look == '\'';
             while(!done) {
                 sb.append(look);
@@ -1232,7 +1235,7 @@ public final class FormulaParser {
         boolean result = CellReference.classifyCellReference(str, _ssVersion) == NameType.CELL;
 
         if(result){
-            /**
+            /*
              * Check if the argument is a function. Certain names can be either a cell reference or a function name
              * depending on the contenxt. Compare the following examples in Excel 2007:
              * (a) LOG10(100) + 1
@@ -1323,7 +1326,7 @@ public final class FormulaParser {
      * Adds a name (named range or user defined function) to underlying workbook's names table
      * @param functionName
      */
-    private final void addName(String functionName) {
+    private void addName(String functionName) {
         final Name name = _book.createName();
         name.setFunction(true);
         name.setNameName(functionName);
@@ -1766,7 +1769,7 @@ public final class FormulaParser {
      * return Int or Number Ptg based on size of input
      */
     private static Ptg getNumberPtgFromString(String number1, String number2, String exponent) {
-        StringBuffer number = new StringBuffer();
+        StringBuilder number = new StringBuilder();
 
         if (number2 == null) {
             number.append(number1);
@@ -1808,7 +1811,7 @@ public final class FormulaParser {
     private String parseStringLiteral() {
         Match('"');
 
-        StringBuffer token = new StringBuffer();
+        StringBuilder token = new StringBuilder();
         while (true) {
             if (look == '"') {
                 GetChar();
@@ -1975,7 +1978,7 @@ public final class FormulaParser {
 
     //{--------------------------------------------------------------}
     //{ Parse and Translate an Assignment Statement }
-    /**
+    /*
 procedure Assignment;
 var Name: string[8];
 begin

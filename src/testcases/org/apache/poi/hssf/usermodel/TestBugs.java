@@ -1836,16 +1836,25 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals("'[$http://gagravarr.org/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
        assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
+       // Link our new workbook
+       Workbook externalWb1 = new HSSFWorkbook();
+       externalWb1.createSheet("Sheet1");
+       wb1.linkExternalWorkbook("$http://gagravarr.org/FormulaRefs2.xls", externalWb1);
+       
        // Change 4
        row.getCell(1).setCellFormula("'[$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2");
        row.getCell(1).setCellValue(123.0);
 
+       // Link our new workbook
+       Workbook externalWb2 = new HSSFWorkbook();
+       externalWb2.createSheet("Sheet1");
+       wb1.linkExternalWorkbook("$http://example.com/FormulaRefs.xls", externalWb2);
+       
        // Add 5
        row = s.createRow(5);
        row.createCell(1, CellType.FORMULA);
        row.getCell(1).setCellFormula("'[$http://example.com/FormulaRefs.xls]Sheet1'!B1");
        row.getCell(1).setCellValue(234.0);
-
 
        // Re-test
        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
@@ -1871,8 +1880,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals("[Formulas2.xls]Sheet1!B2", row.getCell(1).getCellFormula());
        assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
-       // TODO - Fix these so they work...
-       /*row = s.getRow(4);
+       row = s.getRow(4);
        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
        assertEquals("'[$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2", row.getCell(1).getCellFormula());
        assertEquals(123.0, row.getCell(1).getNumericCellValue(), 0);
@@ -1880,7 +1888,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        row = s.getRow(5);
        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
        assertEquals("'[$http://example.com/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
-       assertEquals(234.0, row.getCell(1).getNumericCellValue(), 0);*/
+       assertEquals(234.0, row.getCell(1).getNumericCellValue(), 0);
        
        wb2.close();
     }
