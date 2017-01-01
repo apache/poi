@@ -57,7 +57,7 @@ public final class PICT extends Metafile {
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         Header header = new Header();
         header.read(data, pos);
-        long bs_exp = pos + header.getSize();
+        long bs_exp = (long)pos + header.getSize();
         long bs_act = bis.skip(bs_exp);
         if (bs_exp != bs_act) {
             throw new EOFException();

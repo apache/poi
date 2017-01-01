@@ -156,8 +156,8 @@ public class DrawSimpleShape extends DrawShape {
         java.awt.Shape tailShape = null;
         Path p = null;
         Rectangle2D bounds;
-        final double scaleY = Math.pow(DECO_SIZE_POW, tailWidth.ordinal()+1);
-        final double scaleX = Math.pow(DECO_SIZE_POW, tailLength.ordinal()+1);
+        final double scaleY = Math.pow(DECO_SIZE_POW, tailWidth.ordinal()+1.);
+        final double scaleX = Math.pow(DECO_SIZE_POW, tailLength.ordinal()+1.);
 
         DecorationShape tailShapeEnum = deco.getTailShape();
 
@@ -230,8 +230,8 @@ public class DrawSimpleShape extends DrawShape {
         java.awt.Shape headShape = null;
         Path p = null;
         Rectangle2D bounds;
-        final double scaleY = Math.pow(DECO_SIZE_POW, headWidth.ordinal()+1);
-        final double scaleX = Math.pow(DECO_SIZE_POW, headLength.ordinal()+1);
+        final double scaleY = Math.pow(DECO_SIZE_POW, headWidth.ordinal()+1.);
+        final double scaleX = Math.pow(DECO_SIZE_POW, headLength.ordinal()+1.);
         DecorationShape headShapeEnum = deco.getHeadShape();
 
         if (headShapeEnum == null) {

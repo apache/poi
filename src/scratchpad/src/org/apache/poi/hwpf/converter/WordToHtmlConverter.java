@@ -541,9 +541,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
                      * least simplest case shall be handled
                      */
                     final float defaultTab = TWIPS_PER_INCH / 2;
+                    // char have some space
                     float firstLinePosition = paragraph.getIndentFromLeft()
-                            + paragraph.getFirstLineIndent() + 20; // char have
-                                                                   // some space
+                            + paragraph.getFirstLineIndent() + 20f;
 
                     float nextStop = (float) ( Math.ceil( firstLinePosition
                             / defaultTab ) * defaultTab );

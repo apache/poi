@@ -478,7 +478,7 @@ public class NPOIFSFileSystem extends BlockStore
     @Override
     protected ByteBuffer getBlockAt(final int offset) throws IOException {
        // The header block doesn't count, so add one
-       long blockWanted = offset + 1;
+       long blockWanted = offset + 1L;
        long startAt = blockWanted * bigBlockSize.getBigBlockSize();
        try {
            return _data.read(bigBlockSize.getBigBlockSize(), startAt);
@@ -499,7 +499,7 @@ public class NPOIFSFileSystem extends BlockStore
           return getBlockAt(offset);
        } catch(IndexOutOfBoundsException e) {
           // The header block doesn't count, so add one
-          long startAt = (offset+1) * bigBlockSize.getBigBlockSize();
+          long startAt = (offset+1L) * bigBlockSize.getBigBlockSize();
           // Allocate and write
           ByteBuffer buffer = ByteBuffer.allocate(getBigBlockSize());
           _data.write(buffer, startAt);

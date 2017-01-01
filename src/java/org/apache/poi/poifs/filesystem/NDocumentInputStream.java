@@ -200,7 +200,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
 		if (n < 0) {
 			return 0;
 		}
-		int new_offset = _current_offset + (int) n;
+		long new_offset = _current_offset + n;
 
 		if (new_offset < _current_offset) {
 			// wrap around in converting a VERY large long to an int

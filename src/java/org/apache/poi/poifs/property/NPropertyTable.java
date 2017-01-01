@@ -113,7 +113,7 @@ public final class NPropertyTable extends PropertyTableBase {
      */
     public int countBlocks()
     {
-       long rawSize = _properties.size() * POIFSConstants.PROPERTY_SIZE;
+       long rawSize = _properties.size() * (long)POIFSConstants.PROPERTY_SIZE;
        int blkSize = _bigBigBlockSize.getBigBlockSize();
        int numBlocks = (int)(rawSize / blkSize);
        if ((rawSize % blkSize) != 0) {

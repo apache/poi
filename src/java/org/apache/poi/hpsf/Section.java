@@ -893,7 +893,7 @@ public class Section {
                 /* Write the dictionary item in another codepage than
                  * Unicode. */
                 length += TypeWriter.writeUIntToStream(out, key.longValue());
-                length += TypeWriter.writeUIntToStream(out, value.length() + 1);
+                length += TypeWriter.writeUIntToStream(out, value.length() + 1L);
                 final byte[] ba = CodePageUtil.getBytesInCodePage(value, codepage);
                 for (int j = 0; j < ba.length; j++) {
                     out.write(ba[j]);

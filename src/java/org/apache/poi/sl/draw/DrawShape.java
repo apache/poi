@@ -128,7 +128,7 @@ public class DrawShape implements Drawable {
                         graphics.rotate(rot);
                     }
                     graphics.scale(scaleX, scaleY);
-                    rot = Math.toRadians(quadrant*90);
+                    rot = Math.toRadians(quadrant*90.);
                     if (rot != 0) {
                         graphics.rotate(rot);
                     }

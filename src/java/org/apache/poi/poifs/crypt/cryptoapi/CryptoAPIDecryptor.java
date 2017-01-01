@@ -170,7 +170,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         LittleEndianInputStream leis = new LittleEndianInputStream(sbis);
         int streamDescriptorArrayOffset = (int) leis.readUInt();
         /* int streamDescriptorArraySize = (int) */ leis.readUInt();
-        sbis.skip(streamDescriptorArrayOffset - 8);
+        sbis.skip(streamDescriptorArrayOffset - 8L);
         sbis.setBlock(0);
         int encryptedStreamDescriptorCount = (int) leis.readUInt();
         StreamDescriptorEntry entries[] = new StreamDescriptorEntry[encryptedStreamDescriptorCount];
