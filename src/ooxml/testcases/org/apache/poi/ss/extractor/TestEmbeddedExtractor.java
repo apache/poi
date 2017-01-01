@@ -109,7 +109,7 @@ public class TestEmbeddedExtractor {
             return DatatypeConverter.printBase64Binary(hash);
         } catch (NoSuchAlgorithmException e) {
             // doesn't happen
-            return "";
+            throw new RuntimeException(e);
         }
     }
 }
