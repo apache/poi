@@ -42,7 +42,7 @@ public final class EMF extends Metafile {
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE);
-            long len = is.skip(header.getSize() + CHECKSUM_SIZE);
+            long len = is.skip(header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);
 
             InflaterInputStream inflater = new InflaterInputStream( is );

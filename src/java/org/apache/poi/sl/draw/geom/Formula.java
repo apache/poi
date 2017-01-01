@@ -43,7 +43,7 @@ public abstract class Formula {
         builtInFormulas.put("3cd4",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return 270 * 60000;
+                return 270 * 60000.;
             }
 
          });
@@ -52,7 +52,7 @@ public abstract class Formula {
         builtInFormulas.put("3cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return 135 * 60000;
+                return 135 * 60000.;
             }
 
          });
@@ -61,7 +61,7 @@ public abstract class Formula {
         builtInFormulas.put("5cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return 270 * 60000;
+                return 270 * 60000.;
             }
 
          });
@@ -70,7 +70,7 @@ public abstract class Formula {
         builtInFormulas.put("7cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return 270 * 60000;
+                return 270 * 60000.;
             }
 
          });
@@ -89,7 +89,7 @@ public abstract class Formula {
         builtInFormulas.put("cd2",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return 180 * 60000;
+                return 180 * 60000.;
             }
 
          });
@@ -98,7 +98,7 @@ public abstract class Formula {
         builtInFormulas.put("cd4",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return 90 * 60000;
+                return 90 * 60000.;
             }
 
          });
@@ -107,7 +107,7 @@ public abstract class Formula {
         builtInFormulas.put("cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return 45 * 60000;
+                return 45 * 60000.;
             }
 
          });
@@ -117,7 +117,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getX() + anchor.getWidth()/2;
+                return anchor.getX() + anchor.getWidth()/2.;
             }
 
          });
@@ -137,7 +137,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getHeight()/2;
+                return anchor.getHeight()/2.;
             }
 
          });
@@ -147,7 +147,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getHeight()/3;
+                return anchor.getHeight()/3.;
             }
 
          });
@@ -157,7 +157,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getHeight()/4;
+                return anchor.getHeight()/4.;
             }
 
          });
@@ -167,7 +167,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getHeight()/5;
+                return anchor.getHeight()/5.;
             }
 
          });
@@ -177,7 +177,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getHeight()/6;
+                return anchor.getHeight()/6.;
             }
 
          });
@@ -187,7 +187,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getHeight()/8;
+                return anchor.getHeight()/8.;
             }
 
          });
@@ -238,7 +238,7 @@ public abstract class Formula {
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
                 double ss = Math.min(anchor.getWidth(), anchor.getHeight());
-                return ss / 2;
+                return ss / 2.;
             }
          });
 
@@ -248,7 +248,7 @@ public abstract class Formula {
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
                 double ss = Math.min(anchor.getWidth(), anchor.getHeight());
-                return ss / 4;
+                return ss / 4.;
             }
          });
 
@@ -258,7 +258,7 @@ public abstract class Formula {
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
                 double ss = Math.min(anchor.getWidth(), anchor.getHeight());
-                return ss / 6;
+                return ss / 6.;
             }
          });
 
@@ -268,7 +268,7 @@ public abstract class Formula {
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
                 double ss = Math.min(anchor.getWidth(), anchor.getHeight());
-                return ss / 8;
+                return ss / 8.;
             }
          });
 
@@ -278,7 +278,7 @@ public abstract class Formula {
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
                 double ss = Math.min(anchor.getWidth(), anchor.getHeight());
-                return ss / 16;
+                return ss / 16.;
             }
          });
 
@@ -288,7 +288,7 @@ public abstract class Formula {
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
                 double ss = Math.min(anchor.getWidth(), anchor.getHeight());
-                return ss / 32;
+                return ss / 32.;
             }
          });
 
@@ -305,7 +305,7 @@ public abstract class Formula {
             @Override
             double evaluate(Context ctx){
                 Rectangle2D anchor = ctx.getShapeAnchor();
-                return anchor.getY() + anchor.getHeight()/2;
+                return anchor.getY() + anchor.getHeight()/2.;
             }
          });
 
@@ -321,7 +321,7 @@ public abstract class Formula {
         builtInFormulas.put("wd2",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/2;
+                return ctx.getShapeAnchor().getWidth()/2.;
             }
          });
 
@@ -329,7 +329,7 @@ public abstract class Formula {
         builtInFormulas.put("wd3",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/3;
+                return ctx.getShapeAnchor().getWidth()/3.;
             }
          });
 
@@ -337,7 +337,7 @@ public abstract class Formula {
         builtInFormulas.put("wd4",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/4;
+                return ctx.getShapeAnchor().getWidth()/4.;
             }
          });
 
@@ -345,7 +345,7 @@ public abstract class Formula {
         builtInFormulas.put("wd5",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/5;
+                return ctx.getShapeAnchor().getWidth()/5.;
             }
          });
 
@@ -353,7 +353,7 @@ public abstract class Formula {
         builtInFormulas.put("wd6",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/6;
+                return ctx.getShapeAnchor().getWidth()/6.;
             }
          });
 
@@ -361,7 +361,7 @@ public abstract class Formula {
         builtInFormulas.put("wd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/8;
+                return ctx.getShapeAnchor().getWidth()/8.;
             }
          });
 
@@ -369,7 +369,7 @@ public abstract class Formula {
         builtInFormulas.put("wd10",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/10;
+                return ctx.getShapeAnchor().getWidth()/10.;
             }
          });
 
@@ -377,7 +377,7 @@ public abstract class Formula {
         builtInFormulas.put("wd32",  new Formula(){
             @Override
             double evaluate(Context ctx){
-                return ctx.getShapeAnchor().getWidth()/32;
+                return ctx.getShapeAnchor().getWidth()/32.;
             }
          });
     }

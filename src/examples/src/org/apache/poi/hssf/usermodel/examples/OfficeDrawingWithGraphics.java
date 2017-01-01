@@ -36,11 +36,11 @@ public class OfficeDrawingWithGraphics {
         HSSFSheet sheet = wb.createSheet( "my drawing" );
         sheet.setColumnWidth(1, 256 * 27);
         HSSFRow row1 = sheet.createRow(0);
-        row1.setHeightInPoints(10 * 15);
+        row1.setHeightInPoints(10 * 15f);
         HSSFRow row2 = sheet.createRow(1);
-        row2.setHeightInPoints(5 * 15);
+        row2.setHeightInPoints(5 * 15f);
         HSSFRow row3 = sheet.createRow(2);
-        row3.setHeightInPoints(10 * 15);
+        row3.setHeightInPoints(10 * 15f);
 
         // Add some cells so we can test that the anchoring works when we
         // sort them.

@@ -51,10 +51,10 @@ public class ZipSecureFile extends ZipFile {
     private static long MAX_ENTRY_SIZE = 0xFFFFFFFFL;
     
     // don't alert for expanded sizes smaller than 100k
-    private final static long GRACE_ENTRY_SIZE = 100*1024;
+    private final static long GRACE_ENTRY_SIZE = 100*1024L;
 
     // The default maximum size of extracted text 
-    private static long MAX_TEXT_SIZE = 10*1024*1024;
+    private static long MAX_TEXT_SIZE = 10*1024*1024L;
     
     /**
      * Sets the ratio between de- and inflated bytes to detect zipbomb.

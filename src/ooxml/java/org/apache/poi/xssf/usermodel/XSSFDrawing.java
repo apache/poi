@@ -419,8 +419,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         for (int row=anchor.getRow1(); row<anchor.getRow2(); row++) {
             heightPx += ImageUtils.getRowHeightInPixels(sheet, row);
         }
-        int width = Units.pixelToEMU((int)widthPx);
-        int height = Units.pixelToEMU((int)heightPx);
+        long width = Units.pixelToEMU((int)widthPx);
+        long height = Units.pixelToEMU((int)heightPx);
         CTPositiveSize2D ext = xfrm.addNewExt();
         ext.setCx(width - anchor.getDx1() + anchor.getDx2());
         ext.setCy(height - anchor.getDy1() + anchor.getDy2());

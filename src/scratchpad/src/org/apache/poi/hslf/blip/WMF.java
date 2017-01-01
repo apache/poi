@@ -42,7 +42,7 @@ public final class WMF extends Metafile {
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE*getUIDInstanceCount());
-            long len = is.skip(header.getSize() + CHECKSUM_SIZE*getUIDInstanceCount());
+            long len = is.skip(header.getSize() + (long)CHECKSUM_SIZE*getUIDInstanceCount());
             assert(len == header.getSize() + CHECKSUM_SIZE*getUIDInstanceCount());
 
             ImageHeaderWMF aldus = new ImageHeaderWMF(header.getBounds());
