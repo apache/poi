@@ -45,6 +45,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.usermodel.XSSFObjectData;
 
 public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     private static final POILogger LOG = POILogFactory.getLogger(EmbeddedExtractor.class);
@@ -97,7 +98,11 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                     if (od.hasDirectoryEntry()) {
                         data = extractOne((DirectoryNode)od.getDirectory());
                     } else {
-                        data = new EmbeddedData(od.getFileName(), od.getObjectData(), "binary/octet-stream");
+                        String contentType = "binary/octet-stream";
+                        if (od instanceof XSSFObjectData) {
+                            contentType = ((XSSFObjectData)od).getObjectPart().getContentType();
+                        }
+                        data = new EmbeddedData(od.getFileName(), od.getObjectData(), contentType);
                     }
                 } catch (Exception e) {
                     LOG.log(POILogger.WARN, "Entry not found / readable - ignoring OLE embedding", e);
@@ -169,6 +174,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
             try {
+                // TODO: inspect the CompObj record for more details, i.e. the content type
                 Ole10Native ole10 = Ole10Native.createFromEmbeddedOleObject(dn);
                 return new EmbeddedData(ole10.getFileName(), ole10.getDataBuffer(), "binary/octet-stream");
             } catch (Ole10NativeException e) {
@@ -254,6 +260,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
             EmbeddedData ed = super.extract(dn);
             ed.setFilename(dn.getName()+".doc");
+            ed.setContentType("application/msword");
             return ed;
         }
     }
@@ -271,6 +278,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
             EmbeddedData ed = super.extract(dn);
             ed.setFilename(dn.getName()+".xls");
+            ed.setContentType("application/vnd.ms-excel");
             return ed;
         }
     }
