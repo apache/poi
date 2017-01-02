@@ -112,7 +112,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
         try {
             sir.writeOut(bos);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
         _data = bos.toByteArray();
 

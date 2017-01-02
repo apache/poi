@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -180,13 +181,13 @@ public abstract class Record
 			// Instantiate
 			toReturn = con.newInstance(new Object[] { b, start, len });
 		} catch(InstantiationException ie) {
-			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
+			throw new HSLFException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {
-			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause(), ite);
+			throw new HSLFException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause(), ite);
 		} catch(IllegalAccessException iae) {
-			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae, iae);
+			throw new HSLFException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae, iae);
 		} catch(NoSuchMethodException nsme) {
-			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme, nsme);
+			throw new HSLFException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme, nsme);
 		}
 
 		// Handling for special kinds of records follow

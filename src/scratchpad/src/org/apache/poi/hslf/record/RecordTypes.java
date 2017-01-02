@@ -279,7 +279,7 @@ public enum RecordTypes {
 //               }
 //            }
 //        } catch (IllegalAccessException e){
-//            throw new RuntimeException("Failed to initialize records types");
+//            throw new HSLFException("Failed to initialize records types");
 //        }
 //    }
 

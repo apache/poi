@@ -74,8 +74,12 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     protected HSLFTable(int numRows, int numCols, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(parent);
 
-        if(numRows < 1) throw new IllegalArgumentException("The number of rows must be greater than 1");
-        if(numCols < 1) throw new IllegalArgumentException("The number of columns must be greater than 1");
+        if(numRows < 1) {
+            throw new IllegalArgumentException("The number of rows must be greater than 1");
+        }
+        if(numCols < 1) {
+            throw new IllegalArgumentException("The number of columns must be greater than 1");
+        }
 
         double x=0, y=0, tblWidth=0, tblHeight=0;
         cells = new HSLFTableCell[numRows][numCols];
@@ -310,16 +314,16 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
                     }
                 }
 
-                if (lfit < threshold) {
+                if (lfit < threshold && lline != null) {
                     tc.borderLeft = lline.l;
                 }
-                if (tfit < threshold) {
+                if (tfit < threshold && tline != null) {
                     tc.borderTop = tline.l;
                 }
-                if (rfit < threshold) {
+                if (rfit < threshold && rline != null) {
                     tc.borderRight = rline.l;
                 }
-                if (bfit < threshold) {
+                if (bfit < threshold && bline != null) {
                     tc.borderBottom = bline.l;
                 }
             }

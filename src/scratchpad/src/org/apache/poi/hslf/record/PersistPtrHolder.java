@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
@@ -215,7 +216,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
                 lastSlideId = nextSlideId;
             } catch (IOException e) {
                 // ByteArrayOutputStream is very unlikely throwing a IO exception (maybe because of OOM ...)
-                throw new RuntimeException(e);
+                throw new HSLFException(e);
             }
         }
         

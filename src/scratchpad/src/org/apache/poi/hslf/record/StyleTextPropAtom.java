@@ -17,13 +17,18 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties
@@ -121,7 +126,7 @@ public final class StyleTextPropAtom extends RecordAtom
         if(len < 18) {
             len = 18;
             if(source.length - start < 18) {
-                throw new RuntimeException("Not enough data to form a StyleTextPropAtom (min size 18 bytes long) - found " + (source.length - start));
+                throw new HSLFException("Not enough data to form a StyleTextPropAtom (min size 18 bytes long) - found " + (source.length - start));
             }
         }
 
@@ -167,7 +172,7 @@ public final class StyleTextPropAtom extends RecordAtom
         try {
             updateRawContents();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
     }
 
@@ -175,6 +180,7 @@ public final class StyleTextPropAtom extends RecordAtom
     /**
      * We are of type 4001
      */
+    @Override
     public long getRecordType() { return _type; }
 
 
@@ -182,6 +188,7 @@ public final class StyleTextPropAtom extends RecordAtom
      * Write the contents of the record back, so it can be written
      *  to disk
      */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
         // First thing to do is update the raw bytes of the contents, based
         //  on the properties
@@ -203,7 +210,9 @@ public final class StyleTextPropAtom extends RecordAtom
      *  contains, so we can go ahead and initialise ourselves.
      */
     public void setParentTextSize(int size) {
-        if (initialised) return;
+        if (initialised) {
+            return;
+        }
         
         int pos = 0;
         int textHandled = 0;
@@ -365,6 +374,7 @@ public final class StyleTextPropAtom extends RecordAtom
      *
      * @return the string representation of the record data
      */
+    @Override
     public String toString(){
         StringBuffer out = new StringBuffer();
 

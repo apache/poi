@@ -17,10 +17,12 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A ColorSchemeAtom (type 2032). Holds the 8 RGB values for the different
@@ -97,7 +99,7 @@ public final class ColorSchemeAtom extends RecordAtom {
 		if(len < 40) {
 			len = 40;
 			if(source.length - start < 40) {
-				throw new RuntimeException("Not enough data to form a ColorSchemeAtom (always 40 bytes long) - found " + (source.length - start));
+				throw new HSLFException("Not enough data to form a ColorSchemeAtom (always 40 bytes long) - found " + (source.length - start));
 			}
 		}
 
@@ -140,7 +142,8 @@ public final class ColorSchemeAtom extends RecordAtom {
 	/**
 	 * We are of type 3999
 	 */
-	public long getRecordType() { return _type; }
+	@Override
+    public long getRecordType() { return _type; }
 
 
 	/**
@@ -155,7 +158,7 @@ public final class ColorSchemeAtom extends RecordAtom {
 			writeLittleEndian(rgb,baos);
 		} catch(IOException ie) {
 			// Should never happen
-			throw new RuntimeException(ie);
+			throw new HSLFException(ie);
 		}
 		byte[] b = baos.toByteArray();
 		System.arraycopy(b,0,ret,0,3);
@@ -174,7 +177,7 @@ public final class ColorSchemeAtom extends RecordAtom {
 	 */
 	public static int joinRGB(byte[] rgb) {
 		if(rgb.length != 3) {
-			throw new RuntimeException("joinRGB accepts a byte array of 3 values, but got one of " + rgb.length + " values!");
+			throw new HSLFException("joinRGB accepts a byte array of 3 values, but got one of " + rgb.length + " values!");
 		}
 		byte[] with_zero = new byte[4];
 		System.arraycopy(rgb,0,with_zero,0,3);
@@ -188,7 +191,8 @@ public final class ColorSchemeAtom extends RecordAtom {
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		// Header - size or type unchanged
 		out.write(_header);
 

@@ -36,28 +36,7 @@ import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.FontCollection;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.MasterTextPropAtom;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
-import org.apache.poi.hslf.record.OutlineTextRefAtom;
-import org.apache.poi.hslf.record.PPDrawing;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
-import org.apache.poi.hslf.record.SlideListWithText;
-import org.apache.poi.hslf.record.SlidePersistAtom;
-import org.apache.poi.hslf.record.StyleTextProp9Atom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextBytesAtom;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.TextRulerAtom;
-import org.apache.poi.hslf.record.TextSpecInfoAtom;
-import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -195,7 +174,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private void supplySheet(HSLFSheet sheet) {
         this._sheet = sheet;
 
-        if (_runs == null) return;
+        if (_runs == null) {
+            return;
+        }
         for (HSLFTextRun rt : _runs) {
             rt.updateSheet();
         }
@@ -232,7 +213,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * @param index
      */
     protected void setIndex(int index) {
-        if (_headerAtom != null) _headerAtom.setIndex(index);
+        if (_headerAtom != null) {
+            _headerAtom.setIndex(index);
+        }
     }
 
     /**
@@ -245,7 +228,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     public void setRunType(int runType) {
-        if (_headerAtom != null) _headerAtom.setTextType(runType);
+        if (_headerAtom != null) {
+            _headerAtom.setTextType(runType);
+        }
     }
 
     /**
@@ -265,8 +250,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (_ruler == null) {
             _ruler = TextRulerAtom.getParagraphInstance();
             Record childAfter = _byteAtom;
-            if (childAfter == null) childAfter = _charAtom;
-            if (childAfter == null) childAfter = _headerAtom;
+            if (childAfter == null) {
+                childAfter = _charAtom;
+            }
+            if (childAfter == null) {
+                childAfter = _headerAtom;
+            }
             _headerAtom.getParentRecord().addChildAfter(_ruler, childAfter);
         }
         return _ruler;
@@ -290,7 +279,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
         for (; startIdx[0] < records.length; startIdx[0]++) {
             Record r = records[startIdx[0]];
-            if (r instanceof TextHeaderAtom && (headerAtom == null || r == headerAtom)) break;
+            if (r instanceof TextHeaderAtom && (headerAtom == null || r == headerAtom)) {
+                break;
+            }
         }
 
         if (startIdx[0] >= records.length) {
@@ -301,7 +292,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         int length;
         for (length = 1; startIdx[0] + length < records.length; length++) {
             Record r = records[startIdx[0]+length];
-            if (r instanceof TextHeaderAtom || r instanceof SlidePersistAtom) break;
+            if (r instanceof TextHeaderAtom || r instanceof SlidePersistAtom) {
+                break;
+            }
         }
 
         Record result[] = new Record[length];
@@ -383,15 +376,17 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     @Override
     public void setTextAlign(TextAlign align) {
         Integer alignInt = null;
-        if (align != null) switch (align) {
-            default:
-            case LEFT: alignInt = TextAlignmentProp.LEFT;break;
-            case CENTER: alignInt = TextAlignmentProp.CENTER; break;
-            case RIGHT: alignInt = TextAlignmentProp.RIGHT; break;
-            case DIST: alignInt = TextAlignmentProp.DISTRIBUTED; break;
-            case JUSTIFY: alignInt = TextAlignmentProp.JUSTIFY; break;
-            case JUSTIFY_LOW: alignInt = TextAlignmentProp.JUSTIFYLOW; break;
-            case THAI_DIST: alignInt = TextAlignmentProp.THAIDISTRIBUTED; break;
+        if (align != null) {
+            switch (align) {
+                default:
+                case LEFT: alignInt = TextAlignmentProp.LEFT;break;
+                case CENTER: alignInt = TextAlignmentProp.CENTER; break;
+                case RIGHT: alignInt = TextAlignmentProp.RIGHT; break;
+                case DIST: alignInt = TextAlignmentProp.DISTRIBUTED; break;
+                case JUSTIFY: alignInt = TextAlignmentProp.JUSTIFY; break;
+                case JUSTIFY_LOW: alignInt = TextAlignmentProp.JUSTIFYLOW; break;
+                case THAI_DIST: alignInt = TextAlignmentProp.THAIDISTRIBUTED; break;
+            }
         }
         setParagraphTextPropVal("alignment", alignInt);
     }
@@ -399,7 +394,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     @Override
     public TextAlign getTextAlign() {
         TextProp tp = getPropVal(_paragraphStyle, "alignment", this);
-        if (tp == null) return null;
+        if (tp == null) {
+            return null;
+        }
         switch (tp.getValue()) {
             default:
             case TextAlignmentProp.LEFT: return TextAlign.LEFT;
@@ -415,7 +412,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     @Override
     public FontAlign getFontAlign() {
         TextProp tp = getPropVal(_paragraphStyle, FontAlignmentProp.NAME, this);
-        if (tp == null) return null;
+        if (tp == null) {
+            return null;
+        }
 
         switch (tp.getValue()) {
             case FontAlignmentProp.BASELINE: return FontAlign.BASELINE;
@@ -427,18 +426,26 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     public AutoNumberingScheme getAutoNumberingScheme() {
-        if (styleTextProp9Atom == null) return null;
+        if (styleTextProp9Atom == null) {
+            return null;
+        }
         TextPFException9[] ant = styleTextProp9Atom.getAutoNumberTypes();
         int level = getIndentLevel();
-        if (ant == null || level == -1 || level  >= ant.length) return null;
+        if (ant == null || level == -1 || level  >= ant.length) {
+            return null;
+        }
         return ant[level].getAutoNumberScheme();
     }
 
     public Integer getAutoNumberingStartAt() {
-        if (styleTextProp9Atom == null) return null;
+        if (styleTextProp9Atom == null) {
+            return null;
+        }
         TextPFException9[] ant = styleTextProp9Atom.getAutoNumberTypes();
         int level = getIndentLevel();
-        if (ant == null || level  >= ant.length) return null;
+        if (ant == null || level  >= ant.length) {
+            return null;
+        }
         Short startAt = ant[level].getAutoNumberStartNumber();
         assert(startAt != null);
         return startAt.intValue();
@@ -447,7 +454,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public BulletStyle getBulletStyle() {
-        if (!isBullet() && getAutoNumberingScheme() == null) return null;
+        if (!isBullet() && getAutoNumberingScheme() == null) {
+            return null;
+        }
 
         return new BulletStyle() {
             @Override
@@ -537,7 +546,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public void setIndentLevel(int level) {
-       if( _paragraphStyle != null ) _paragraphStyle.setIndentLevel((short)level);
+       if( _paragraphStyle != null ) {
+        _paragraphStyle.setIndentLevel((short)level);
+    }
     }
 
     /**
@@ -638,7 +649,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public String getBulletFont() {
         TextProp tp = getPropVal(_paragraphStyle, "bullet.font", this);
         boolean hasFont = getFlag(ParagraphFlagsTextProp.BULLET_HARDFONT_IDX);
-        if (tp == null || !hasFont) return getDefaultFontFamily();
+        if (tp == null || !hasFont) {
+            return getDefaultFontFamily();
+        }
         PPFont ppFont = getSheet().getSlideShow().getFont(tp.getValue());
         assert(ppFont != null);
         return ppFont.getFontName();
@@ -682,7 +695,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     private Double getPctOrPoints(String propName) {
         TextProp tp = getPropVal(_paragraphStyle, propName, this);
-        if (tp == null) return null;
+        if (tp == null) {
+            return null;
+        }
         int val = tp.getValue();
         return (val < 0) ? Units.masterToPoints(val) : val;
     }
@@ -739,7 +754,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         
         BitMaskTextProp maskProp = (BitMaskTextProp) props.findByName(ParagraphFlagsTextProp.NAME);
         boolean hardAttribute = (maskProp != null && maskProp.getValue() == 0);
-        if (hardAttribute) return null;
+        if (hardAttribute) {
+            return null;
+        }
 
         HSLFSheet sheet = paragraph.getSheet();
         int txtype = paragraph.getRunType();
@@ -753,7 +770,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
         for (String pn : propNames) {
             TextProp prop = master.getStyleAttribute(txtype, paragraph.getIndentLevel(), pn, isChar);
-            if (prop != null) return prop;
+            if (prop != null) {
+                return prop;
+            }
         }
 
         return null;
@@ -791,7 +810,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
             List<HSLFTextRun> ltr = p.getTextRuns();
             if (ltr.isEmpty()) {
-                throw new RuntimeException("paragraph without textruns found");
+                throw new HSLFException("paragraph without textruns found");
             }
             lastRun = ltr.get(ltr.size() - 1);
             assert (lastRun.getRawText() != null);
@@ -889,9 +908,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         int /* headerIdx = -1, */ textIdx = -1, styleIdx = -1;
         for (int i = 0; i < cr.length; i++) {
             Record r = cr[i];
-            if (r == headerAtom) ; // headerIdx = i;
-            else if (r == oldRecord || r == newRecord) textIdx = i;
-            else if (r == styleAtom) styleIdx = i;
+            if (r == headerAtom) {
+                ; // headerIdx = i;
+            } else if (r == oldRecord || r == newRecord) {
+                textIdx = i;
+            } else if (r == styleAtom) {
+                styleIdx = i;
+            }
         }
 
         if (textIdx == -1) {
@@ -957,7 +980,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
 
-        assert (lastPTPC != null && lastRTPC != null && ptpc != null && rtpc != null);
+        if (lastPTPC == null || lastRTPC == null || ptpc == null || rtpc == null) {
+            throw new HSLFException("Not all TextPropCollection could be determined.");
+        }
+        
         ptpc.updateTextSize(ptpc.getCharactersCovered() + 1);
         rtpc.updateTextSize(rtpc.getCharactersCovered() + 1);
         lastPTPC.updateTextSize(lastPTPC.getCharactersCovered() + 1);
@@ -1025,7 +1051,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             try {
                 ((EscherTextboxWrapper) _txtbox).writeOut(null);
             } catch (IOException e) {
-                throw new RuntimeException("failed dummy write", e);
+                throw new HSLFException("failed dummy write", e);
             }
         }
     }
@@ -1183,7 +1209,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         List<List<HSLFTextParagraph>> runsV = new ArrayList<List<HSLFTextParagraph>>();
         for (EscherTextboxWrapper wrapper : ppdrawing.getTextboxWrappers()) {
             List<HSLFTextParagraph> p = findTextParagraphs(wrapper, sheet);
-            if (p != null) runsV.add(p);
+            if (p != null) {
+                runsV.add(p);
+            }
         }
         return runsV;
     }
@@ -1205,7 +1233,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (ota != null) {
             // if we are based on an outline, there are no further records to be parsed from the wrapper
             if (sheet == null) {
-                throw new RuntimeException("Outline atom reference can't be solved without a sheet record");
+                throw new HSLFException("Outline atom reference can't be solved without a sheet record");
             }
 
             List<List<HSLFTextParagraph>> sheetRuns = sheet.getTextParagraphs();
@@ -1213,9 +1241,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
             int idx = ota.getTextIndex();
             for (List<HSLFTextParagraph> r : sheetRuns) {
-                if (r.isEmpty()) continue;
+                if (r.isEmpty()) {
+                    continue;
+                }
                 int ridx = r.get(0).getIndex();
-                if (ridx > idx) break;
+                if (ridx > idx) {
+                    break;
+                }
                 if (ridx == idx) {
                     if (rv == null) {
                         rv = r;
@@ -1251,7 +1283,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 case 0: break; // nothing found
                 case 1: rv = rvl.get(0); break; // normal case
                 default:
-                    throw new RuntimeException("TextBox contains more than one list of paragraphs.");
+                    throw new HSLFException("TextBox contains more than one list of paragraphs.");
                 }
             }
         }
@@ -1302,7 +1334,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 // don't search for RecordTypes.StyleTextPropAtom.typeID here ... see findStyleAtomPresent below
             }
 
-            if (header == null) break;
+            if (header == null) {
+                break;
+            }
 
             if (header.getParentRecord() instanceof SlideListWithText) {
                 // runs found in PPDrawing are not linked with SlideListWithTexts
@@ -1353,7 +1387,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         for (HSLFHyperlink h : links) {
             int csIdx = 0;
             for (HSLFTextParagraph p : paragraphs) {
-                if (csIdx > h.getEndIndex()) break;
+                if (csIdx > h.getEndIndex()) {
+                    break;
+                }
                 List<HSLFTextRun> runs = p.getTextRuns();
                 for (int rlen=0,rIdx=0; rIdx < runs.size(); csIdx+=rlen, rIdx++) {
                     HSLFTextRun run = runs.get(rIdx);
@@ -1443,7 +1479,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         int paraIdx = 0;
         for (TextPropCollection p : paraStyles) {
             for (int ccPara = 0, ccStyle = p.getCharactersCovered(); ccPara < ccStyle; paraIdx++) {
-                if (paraIdx >= paragraphs.size()) return;
+                if (paraIdx >= paragraphs.size()) {
+                    return;
+                }
                 HSLFTextParagraph htp = paragraphs.get(paraIdx);
                 TextPropCollection pCopy = new TextPropCollection(0, TextPropType.paragraph);
                 pCopy.copy(p);
@@ -1452,7 +1490,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 for (HSLFTextRun trun : htp.getTextRuns()) {
                     len += trun.getLength();
                 }
-                if (paraIdx == paragraphs.size()-1) len++;
+                if (paraIdx == paragraphs.size()-1) {
+                    len++;
+                }
                 pCopy.updateTextSize(len);
                 ccPara += len;
             }
@@ -1463,7 +1503,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         int paraIdx = 0;
         for (IndentProp p : paraStyles) {
             for (int ccPara = 0, ccStyle = p.getCharactersCovered(); ccPara < ccStyle; paraIdx++) {
-                if (paraIdx >= paragraphs.size() || ccPara >= ccStyle-1) return;
+                if (paraIdx >= paragraphs.size() || ccPara >= ccStyle-1) {
+                    return;
+                }
                 HSLFTextParagraph para = paragraphs.get(paraIdx);
                 int len = 0;
                 for (HSLFTextRun trun : para.getTextRuns()) {
@@ -1517,7 +1559,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         switch (cidx) {
             // Background ... Accent 3 color
             case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                if (sheet == null) return null;
+                if (sheet == null) {
+                    return null;
+                }
                 ColorSchemeAtom ca = sheet.getColorScheme();
                 tmp = new Color(ca.getColor(cidx), true);
                 break;

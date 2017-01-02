@@ -17,12 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * A UserEdit Atom (type 4085). Holds information which bits of the file
@@ -140,18 +141,20 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 	/**
 	 * We are of type 4085
 	 */
-	public long getRecordType() { return _type; }
+	@Override
+    public long getRecordType() { return _type; }
 
 	/**
 	 * At write-out time, update the references to PersistPtrs and
 	 *  other UserEditAtoms to point to their new positions
 	 */
-	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
+	@Override
+    public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
 		// Look up the new positions of our preceding UserEditAtomOffset
 		if(lastUserEditAtomOffset != 0) {
 			Integer newLocation = oldToNewReferencesLookup.get(Integer.valueOf(lastUserEditAtomOffset));
 			if(newLocation == null) {
-				throw new RuntimeException("Couldn't find the new location of the UserEditAtom that used to be at " + lastUserEditAtomOffset);
+				throw new HSLFException("Couldn't find the new location of the UserEditAtom that used to be at " + lastUserEditAtomOffset);
 			}
 			lastUserEditAtomOffset = newLocation.intValue();
 		}
@@ -159,7 +162,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		// Ditto for our PersistPtr
 		Integer newLocation = oldToNewReferencesLookup.get(Integer.valueOf(persistPointersOffset));
 		if(newLocation == null) {
-			throw new RuntimeException("Couldn't find the new location of the PersistPtr that used to be at " + persistPointersOffset);
+			throw new HSLFException("Couldn't find the new location of the PersistPtr that used to be at " + persistPointersOffset);
 		}
 		persistPointersOffset = newLocation.intValue();
 	}
@@ -168,7 +171,8 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		// Header
 		out.write(_header);
 

@@ -232,7 +232,9 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
 
             it.next();
         }
-        if(!isClosed) segInfo.add(SEGMENTINFO_LINETO);
+        if(!isClosed) {
+            segInfo.add(SEGMENTINFO_LINETO);
+        }
         segInfo.add(new byte[]{0x00, (byte)0x80});
 
         AbstractEscherOptRecord opt = getEscherOptRecord();
@@ -357,9 +359,11 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
     }
     
     private void fillPoint(byte xyMaster[], double xyPoints[]) {
-        int masterCnt = (xyMaster == null) ? 0 : xyMaster.length;
-        int pointCnt = (xyPoints == null) ? 0 : xyPoints.length;
-        if ((masterCnt != 4 && masterCnt != 8) || pointCnt != 2) {
+        if (xyMaster == null || xyPoints == null) {
+            LOG.log(POILogger.WARN, "Master bytes or points not set - ignore point");
+            return;
+        }
+        if ((xyMaster.length != 4 && xyMaster.length != 8) || xyPoints.length != 2) {
             LOG.log(POILogger.WARN, "Invalid number of master bytes for a single point - ignore point");
             return;
         }

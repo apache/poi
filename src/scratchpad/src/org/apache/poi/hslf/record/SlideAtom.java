@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -138,13 +139,15 @@ public final class SlideAtom extends RecordAtom
 	/**
 	 * We are of type 1007
 	 */
-	public long getRecordType() { return _type; }
+	@Override
+    public long getRecordType() { return _type; }
 
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		// Header
 		out.write(_header);
 
@@ -211,7 +214,7 @@ public final class SlideAtom extends RecordAtom
 		 */
 		public SSlideLayoutAtom(byte[] data) {
 			if(data.length != 12) {
-				throw new RuntimeException("SSlideLayoutAtom created with byte array not 12 bytes long - was " + data.length + " bytes in size");
+				throw new HSLFException("SSlideLayoutAtom created with byte array not 12 bytes long - was " + data.length + " bytes in size");
 			}
 
 			// Grab out our data

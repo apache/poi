@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -67,6 +68,7 @@ public final class FontEntityAtom extends RecordAtom {
         LittleEndian.putInt(_header, 4, _recdata.length);
     }
 
+    @Override
     public long getRecordType() {
         return RecordTypes.FontEntityAtom.typeID;
     }
@@ -103,7 +105,7 @@ public final class FontEntityAtom extends RecordAtom {
 
 		// Ensure it's not now too long
 		if(name.length() > 32) {
-			throw new RuntimeException("The length of the font name, including null termination, must not exceed 32 characters");
+			throw new HSLFException("The length of the font name, including null termination, must not exceed 32 characters");
 		}
 
 		// Everything's happy, so save the name
@@ -207,7 +209,8 @@ public final class FontEntityAtom extends RecordAtom {
     /**
 	 * Write the contents of the record back, so it can be written to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		out.write(_header);
 		out.write(_recdata);
 	}
