@@ -166,7 +166,9 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
 
         EscherSimpleProperty p = getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
-        if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
+        if(p != null && (p.getPropertyValue() & 0x8) == 0) {
+            return null;
+        }
 
         Color clr = getColor(EscherProperties.LINESTYLE__COLOR, EscherProperties.LINESTYLE__OPACITY, -1);
         return clr == null ? null : clr;
@@ -179,7 +181,9 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
 
         EscherSimpleProperty p = getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
-        if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
+        if(p != null && (p.getPropertyValue() & 0x8) == 0) {
+            return null;
+        }
 
         Color clr = getColor(EscherProperties.LINESTYLE__BACKCOLOR, EscherProperties.LINESTYLE__OPACITY, -1);
         return clr == null ? null : clr;
@@ -319,7 +323,9 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         }
 
         name = name.replace("adj", "");
-        if ("".equals(name)) name = "1";
+        if ("".equals(name)) {
+            name = "1";
+        }
 
         short escherProp;
         switch (Integer.parseInt(name)) {
@@ -333,7 +339,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             case 8: escherProp = EscherProperties.GEOMETRY__ADJUST8VALUE; break;
             case 9: escherProp = EscherProperties.GEOMETRY__ADJUST9VALUE; break;
             case 10: escherProp = EscherProperties.GEOMETRY__ADJUST10VALUE; break;
-            default: throw new RuntimeException();
+            default: throw new HSLFException();
         }
 
         // TODO: the adjust values need to be corrected somehow depending on the shape width/height
@@ -392,9 +398,13 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     @Override
     public Shadow<HSLFShape,HSLFTextParagraph> getShadow() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        if (opt == null) return null;
+        if (opt == null) {
+            return null;
+        }
         EscherProperty shadowType = opt.lookup(EscherProperties.SHADOWSTYLE__TYPE);
-        if (shadowType == null) return null;
+        if (shadowType == null) {
+            return null;
+        }
 
         return new Shadow<HSLFShape,HSLFTextParagraph>(){
             @Override

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.DocumentEncryptionAtom;
@@ -206,14 +207,8 @@ public class HSLFSlideShowEncrypted implements Closeable {
         } catch (Exception e) {
             throw new EncryptedPowerPointFileException(e);
         } finally {
-            try {
-                if (ccis != null) {
-                    ccis.close();
-                }
-                lei.close();
-            } catch (IOException e) {
-                throw new EncryptedPowerPointFileException(e);
-            }
+            IOUtils.closeQuietly(ccis);
+            IOUtils.closeQuietly(lei);
         }
     }
 
@@ -465,7 +460,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
             recordMap.put(pdr.getLastOnDiskOffset(), r);
         }
 
-        assert(uea != null && pph != null && uea.getPersistPointersOffset() == pph.getLastOnDiskOffset());
+        if (uea == null || pph == null || uea.getPersistPointersOffset() != pph.getLastOnDiskOffset()) {
+            throw new EncryptedDocumentException("UserEditAtom and PersistPtrHolder must exist and their offset need to match.");
+        }
 
         recordMap.put(pph.getLastOnDiskOffset(), pph);
         recordMap.put(uea.getLastOnDiskOffset(), uea);
@@ -508,7 +505,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
             recordList.add(r);
         }
 
-        assert(ptr != null);
+        if (ptr == null || uea == null) {
+            throw new EncryptedDocumentException("UserEditAtom or PersistPtrholder not found.");
+        }
         if (deaSlideId == -1 && deaOffset == -1) {
             return records;
         }
