@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hsmf.extractor;
 
+import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,7 +132,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
             // Failing that try via the raw headers 
             String[] headers = msg.getHeaders();
             for(String header: headers) {
-               if(header.toLowerCase(Locale.ROOT).startsWith("date:")) {
+               if(startsWithIgnoreCase(header, "date:")) {
                   s.append(
                         "Date:" + 
                         header.substring(header.indexOf(':')+1) +
