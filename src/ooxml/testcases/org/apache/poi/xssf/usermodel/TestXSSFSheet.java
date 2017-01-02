@@ -456,32 +456,32 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         assertEquals(2,cols.sizeOfColArray());
 
-        assertEquals(false,cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertFalse(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(true, cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertTrue(cols.getColArray(1).isSetCollapsed());
         assertEquals(10, cols.getColArray(1).getMin()); // 1 based
         assertEquals(13, cols.getColArray(1).getMax()); // 1 based
 
         sheet1.groupColumn( (short)10, (short)11 );
         assertEquals(4,cols.sizeOfColArray());
 
-        assertEquals(false,cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertFalse(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(true, cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertTrue(cols.getColArray(1).isSetCollapsed());
         assertEquals(10, cols.getColArray(1).getMin()); // 1 based
         assertEquals(10, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(2).isSetHidden());
-        assertEquals(true, cols.getColArray(2).isSetCollapsed());
+        assertFalse(cols.getColArray(2).isSetHidden());
+        assertTrue(cols.getColArray(2).isSetCollapsed());
         assertEquals(11, cols.getColArray(2).getMin()); // 1 based
         assertEquals(12, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(3).isSetHidden());
-        assertEquals(true, cols.getColArray(3).isSetCollapsed());
+        assertFalse(cols.getColArray(3).isSetHidden());
+        assertTrue(cols.getColArray(3).isSetCollapsed());
         assertEquals(13, cols.getColArray(3).getMin()); // 1 based
         assertEquals(13, cols.getColArray(3).getMax()); // 1 based
 
@@ -489,24 +489,24 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         sheet1.setColumnGroupCollapsed( (short)5, true );
         assertEquals(5,cols.sizeOfColArray());
 
-        assertEquals(true, cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertTrue(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(true, cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertTrue(cols.getColArray(1).isSetCollapsed());
         assertEquals(9, cols.getColArray(1).getMin()); // 1 based
         assertEquals(9, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(2).isSetHidden());
-        assertEquals(true, cols.getColArray(2).isSetCollapsed());
+        assertFalse(cols.getColArray(2).isSetHidden());
+        assertTrue(cols.getColArray(2).isSetCollapsed());
         assertEquals(10, cols.getColArray(2).getMin()); // 1 based
         assertEquals(10, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(3).isSetHidden());
-        assertEquals(true, cols.getColArray(3).isSetCollapsed());
+        assertFalse(cols.getColArray(3).isSetHidden());
+        assertTrue(cols.getColArray(3).isSetCollapsed());
         assertEquals(11, cols.getColArray(3).getMin()); // 1 based
         assertEquals(12, cols.getColArray(3).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(4).isSetHidden());
-        assertEquals(true, cols.getColArray(4).isSetCollapsed());
+        assertFalse(cols.getColArray(4).isSetHidden());
+        assertTrue(cols.getColArray(4).isSetCollapsed());
         assertEquals(13, cols.getColArray(4).getMin()); // 1 based
         assertEquals(13, cols.getColArray(4).getMax()); // 1 based
 
@@ -514,24 +514,24 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         // expand columns - 1
         sheet1.setColumnGroupCollapsed( (short)5, false );
 
-        assertEquals(false,cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertFalse(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(false,cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertFalse(cols.getColArray(1).isSetCollapsed());
         assertEquals(9, cols.getColArray(1).getMin()); // 1 based
         assertEquals(9, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(2).isSetHidden());
-        assertEquals(true, cols.getColArray(2).isSetCollapsed());
+        assertFalse(cols.getColArray(2).isSetHidden());
+        assertTrue(cols.getColArray(2).isSetCollapsed());
         assertEquals(10, cols.getColArray(2).getMin()); // 1 based
         assertEquals(10, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(3).isSetHidden());
-        assertEquals(true, cols.getColArray(3).isSetCollapsed());
+        assertFalse(cols.getColArray(3).isSetHidden());
+        assertTrue(cols.getColArray(3).isSetCollapsed());
         assertEquals(11, cols.getColArray(3).getMin()); // 1 based
         assertEquals(12, cols.getColArray(3).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(4).isSetHidden());
-        assertEquals(true, cols.getColArray(4).isSetCollapsed());
+        assertFalse(cols.getColArray(4).isSetHidden());
+        assertTrue(cols.getColArray(4).isSetCollapsed());
         assertEquals(13, cols.getColArray(4).getMin()); // 1 based
         assertEquals(13, cols.getColArray(4).getMax()); // 1 based
 
@@ -539,28 +539,28 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         //collapse - 2
         sheet1.setColumnGroupCollapsed( (short)9, true );
         assertEquals(6,cols.sizeOfColArray());
-        assertEquals(false,cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertFalse(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(false,cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertFalse(cols.getColArray(1).isSetCollapsed());
         assertEquals(9, cols.getColArray(1).getMin()); // 1 based
         assertEquals(9, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(2).isSetHidden());
-        assertEquals(true, cols.getColArray(2).isSetCollapsed());
+        assertTrue(cols.getColArray(2).isSetHidden());
+        assertTrue(cols.getColArray(2).isSetCollapsed());
         assertEquals(10, cols.getColArray(2).getMin()); // 1 based
         assertEquals(10, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(3).isSetHidden());
-        assertEquals(true, cols.getColArray(3).isSetCollapsed());
+        assertTrue(cols.getColArray(3).isSetHidden());
+        assertTrue(cols.getColArray(3).isSetCollapsed());
         assertEquals(11, cols.getColArray(3).getMin()); // 1 based
         assertEquals(12, cols.getColArray(3).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(4).isSetHidden());
-        assertEquals(true, cols.getColArray(4).isSetCollapsed());
+        assertTrue(cols.getColArray(4).isSetHidden());
+        assertTrue(cols.getColArray(4).isSetCollapsed());
         assertEquals(13, cols.getColArray(4).getMin()); // 1 based
         assertEquals(13, cols.getColArray(4).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(5).isSetHidden());
-        assertEquals(true, cols.getColArray(5).isSetCollapsed());
+        assertFalse(cols.getColArray(5).isSetHidden());
+        assertTrue(cols.getColArray(5).isSetCollapsed());
         assertEquals(14, cols.getColArray(5).getMin()); // 1 based
         assertEquals(14, cols.getColArray(5).getMax()); // 1 based
 
@@ -572,30 +572,30 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         //outline level 2: the line under ==> collapsed==True
         assertEquals(2,cols.getColArray(3).getOutlineLevel());
-        assertEquals(true,cols.getColArray(4).isSetCollapsed());
+        assertTrue(cols.getColArray(4).isSetCollapsed());
 
-        assertEquals(false,cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertFalse(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(false,cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertFalse(cols.getColArray(1).isSetCollapsed());
         assertEquals(9, cols.getColArray(1).getMin()); // 1 based
         assertEquals(9, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(2).isSetHidden());
-        assertEquals(true, cols.getColArray(2).isSetCollapsed());
+        assertFalse(cols.getColArray(2).isSetHidden());
+        assertTrue(cols.getColArray(2).isSetCollapsed());
         assertEquals(10, cols.getColArray(2).getMin()); // 1 based
         assertEquals(10, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(3).isSetHidden());
-        assertEquals(true, cols.getColArray(3).isSetCollapsed());
+        assertTrue(cols.getColArray(3).isSetHidden());
+        assertTrue(cols.getColArray(3).isSetCollapsed());
         assertEquals(11, cols.getColArray(3).getMin()); // 1 based
         assertEquals(12, cols.getColArray(3).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(4).isSetHidden());
-        assertEquals(true, cols.getColArray(4).isSetCollapsed());
+        assertFalse(cols.getColArray(4).isSetHidden());
+        assertTrue(cols.getColArray(4).isSetCollapsed());
         assertEquals(13, cols.getColArray(4).getMin()); // 1 based
         assertEquals(13, cols.getColArray(4).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(5).isSetHidden());
-        assertEquals(false,cols.getColArray(5).isSetCollapsed());
+        assertFalse(cols.getColArray(5).isSetHidden());
+        assertFalse(cols.getColArray(5).isSetCollapsed());
         assertEquals(14, cols.getColArray(5).getMin()); // 1 based
         assertEquals(14, cols.getColArray(5).getMax()); // 1 based
 
@@ -603,28 +603,28 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         //collapse - 3
         sheet1.setColumnGroupCollapsed( (short)10, true );
         assertEquals(6,cols.sizeOfColArray());
-        assertEquals(false,cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertFalse(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(false,cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertFalse(cols.getColArray(1).isSetCollapsed());
         assertEquals(9, cols.getColArray(1).getMin()); // 1 based
         assertEquals(9, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(2).isSetHidden());
-        assertEquals(true, cols.getColArray(2).isSetCollapsed());
+        assertFalse(cols.getColArray(2).isSetHidden());
+        assertTrue(cols.getColArray(2).isSetCollapsed());
         assertEquals(10, cols.getColArray(2).getMin()); // 1 based
         assertEquals(10, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(3).isSetHidden());
-        assertEquals(true, cols.getColArray(3).isSetCollapsed());
+        assertTrue(cols.getColArray(3).isSetHidden());
+        assertTrue(cols.getColArray(3).isSetCollapsed());
         assertEquals(11, cols.getColArray(3).getMin()); // 1 based
         assertEquals(12, cols.getColArray(3).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(4).isSetHidden());
-        assertEquals(true, cols.getColArray(4).isSetCollapsed());
+        assertFalse(cols.getColArray(4).isSetHidden());
+        assertTrue(cols.getColArray(4).isSetCollapsed());
         assertEquals(13, cols.getColArray(4).getMin()); // 1 based
         assertEquals(13, cols.getColArray(4).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(5).isSetHidden());
-        assertEquals(false,cols.getColArray(5).isSetCollapsed());
+        assertFalse(cols.getColArray(5).isSetHidden());
+        assertFalse(cols.getColArray(5).isSetCollapsed());
         assertEquals(14, cols.getColArray(5).getMin()); // 1 based
         assertEquals(14, cols.getColArray(5).getMax()); // 1 based
 
@@ -632,9 +632,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         //expand - 3
         sheet1.setColumnGroupCollapsed( (short)10, false );
         assertEquals(6,cols.sizeOfColArray());
-        assertEquals(false,cols.getColArray(0).getHidden());
-        assertEquals(false,cols.getColArray(5).getHidden());
-        assertEquals(false,cols.getColArray(4).isSetCollapsed());
+        assertFalse(cols.getColArray(0).getHidden());
+        assertFalse(cols.getColArray(5).getHidden());
+        assertFalse(cols.getColArray(4).isSetCollapsed());
 
 //      write out and give back
         // Save and re-load
@@ -643,28 +643,28 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         sheet1 = wb2.getSheetAt(0);
         assertEquals(6,cols.sizeOfColArray());
 
-        assertEquals(false,cols.getColArray(0).isSetHidden());
-        assertEquals(true, cols.getColArray(0).isSetCollapsed());
+        assertFalse(cols.getColArray(0).isSetHidden());
+        assertTrue(cols.getColArray(0).isSetCollapsed());
         assertEquals(5, cols.getColArray(0).getMin()); // 1 based
         assertEquals(8, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(1).isSetHidden());
-        assertEquals(false,cols.getColArray(1).isSetCollapsed());
+        assertFalse(cols.getColArray(1).isSetHidden());
+        assertFalse(cols.getColArray(1).isSetCollapsed());
         assertEquals(9, cols.getColArray(1).getMin()); // 1 based
         assertEquals(9, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(2).isSetHidden());
-        assertEquals(true, cols.getColArray(2).isSetCollapsed());
+        assertFalse(cols.getColArray(2).isSetHidden());
+        assertTrue(cols.getColArray(2).isSetCollapsed());
         assertEquals(10, cols.getColArray(2).getMin()); // 1 based
         assertEquals(10, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(3).isSetHidden());
-        assertEquals(true, cols.getColArray(3).isSetCollapsed());
+        assertFalse(cols.getColArray(3).isSetHidden());
+        assertTrue(cols.getColArray(3).isSetCollapsed());
         assertEquals(11, cols.getColArray(3).getMin()); // 1 based
         assertEquals(12, cols.getColArray(3).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(4).isSetHidden());
-        assertEquals(false,cols.getColArray(4).isSetCollapsed());
+        assertFalse(cols.getColArray(4).isSetHidden());
+        assertFalse(cols.getColArray(4).isSetCollapsed());
         assertEquals(13, cols.getColArray(4).getMin()); // 1 based
         assertEquals(13, cols.getColArray(4).getMax()); // 1 based
-        assertEquals(false,cols.getColArray(5).isSetHidden());
-        assertEquals(false,cols.getColArray(5).isSetCollapsed());
+        assertFalse(cols.getColArray(5).isSetHidden());
+        assertFalse(cols.getColArray(5).isSetCollapsed());
         assertEquals(14, cols.getColArray(5).getMin()); // 1 based
         assertEquals(14, cols.getColArray(5).getMax()); // 1 based
         
@@ -1073,7 +1073,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         assertNotNull(nm);
 
         assertEquals(0, nm.getCTName().getLocalSheetId());
-        assertEquals(true, nm.getCTName().getHidden());
+        assertTrue(nm.getCTName().getHidden());
         assertEquals("_xlnm._FilterDatabase", nm.getCTName().getName());
         assertEquals("'new sheet'!$A$1:$D$100", nm.getCTName().getStringValue());
         
@@ -1206,7 +1206,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         
         // Set
         sheet.setForceFormulaRecalculation(true);
-        assertEquals(true, sheet.getForceFormulaRecalculation());
+        assertTrue(sheet.getForceFormulaRecalculation());
 
         // calcMode="manual" is unset when forceFormulaRecalculation=true
         CTCalcPr calcPr = wb1.getCTWorkbook().addNewCalcPr();
@@ -1216,14 +1216,14 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         // Check
         sheet.setForceFormulaRecalculation(false);
-        assertEquals(false, sheet.getForceFormulaRecalculation());
+        assertFalse(sheet.getForceFormulaRecalculation());
 
 
         // Save, re-load, and re-check
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
         sheet = wb2.getSheet("Sheet 1");
-        assertEquals(false, sheet.getForceFormulaRecalculation());
+        assertFalse(sheet.getForceFormulaRecalculation());
         wb2.close();
     }
 
