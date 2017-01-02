@@ -387,7 +387,7 @@ public class AddDimensionedImage {
 	if( sURL.endsWith(".png") ) {
             imageType = Workbook.PICTURE_TYPE_PNG;
 	}
-	else if( sURL.endsWith("jpg") || sURL.endsWith(".jpeg") ) {
+	else if( sURL.endsWith(".jpg") || sURL.endsWith(".jpeg") ) {
             imageType = Workbook.PICTURE_TYPE_JPEG;
 	}
 	else  {

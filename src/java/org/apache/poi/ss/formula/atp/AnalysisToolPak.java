@@ -69,7 +69,9 @@ public final class AnalysisToolPak implements UDFFinder {
     public FreeRefFunction findFunction(String name) {
         // functions that are available in Excel 2007+ have a prefix _xlfn.
         // if you save such a .xlsx workbook as .xls
-        if(name.startsWith("_xlfn.")) name = name.substring(6);
+        final String prefix = "_xlfn.";
+        // case-sensitive
+        if(name.startsWith(prefix)) name = name.substring(prefix.length());
 
         // FIXME: inconsistent case-sensitivity
         return _functionsByName.get(name.toUpperCase(Locale.ROOT));
