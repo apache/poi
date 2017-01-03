@@ -21,7 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
@@ -85,7 +85,7 @@ public final class Picture
 
     private PICF _picf;
     private PICFAndOfficeArtData _picfAndOfficeArtData;
-    private List<? extends EscherRecord> _blipRecords;
+    private final List<? extends EscherRecord> _blipRecords;
 
     private byte[] content;
     private int dataBlockStartOfsset;
@@ -100,7 +100,7 @@ public final class Picture
      */
     public Picture( EscherBlipRecord blipRecord )
     {
-       this._blipRecords = Arrays.asList(new EscherBlipRecord[] {blipRecord});
+       this._blipRecords = Collections.singletonList(blipRecord);
     }
 
     /**
@@ -115,7 +115,9 @@ public final class Picture
         this.dataBlockStartOfsset = dataBlockStartOfsset;
 
         if ( _picfAndOfficeArtData != null && _picfAndOfficeArtData.getBlipRecords() != null) {
-           _blipRecords = _picfAndOfficeArtData.getBlipRecords();
+            _blipRecords = _picfAndOfficeArtData.getBlipRecords();
+        } else {
+            _blipRecords = Collections.emptyList();
         }
         
         if ( fillBytes ) {
