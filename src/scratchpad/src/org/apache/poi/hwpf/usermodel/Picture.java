@@ -421,8 +421,11 @@ public final class Picture
 
         if ( escherRecord instanceof EscherBSERecord )
         {
-            return ( (EscherBSERecord) escherRecord ).getBlipRecord()
-                    .getPicturedata();
+            EscherBlipRecord blip = ( (EscherBSERecord) escherRecord ).getBlipRecord();
+            if (blip != null) {
+                return blip.getPicturedata();
+            
+            }
         }
         return new byte[0];
     }
