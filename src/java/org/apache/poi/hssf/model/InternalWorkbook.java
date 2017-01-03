@@ -110,6 +110,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Low level model implementation of a Workbook.  Provides creational methods
@@ -2292,8 +2293,7 @@ public final class InternalWorkbook {
 
                 EscherDggRecord dgg = null;
                 EscherContainerRecord bStore = null;
-                for(Iterator<EscherRecord> it = cr.getChildIterator(); it.hasNext();) {
-                    EscherRecord er = it.next();
+                for(EscherRecord er : cr) {
                     if(er instanceof EscherDggRecord) {
                         dgg = (EscherDggRecord)er;
                     } else if (er.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER) {
@@ -2590,8 +2590,7 @@ public final class InternalWorkbook {
             dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
 
             EscherDgRecord dg = null;
-            for(Iterator<EscherRecord> it = escherContainer.getChildIterator(); it.hasNext();) {
-                EscherRecord er = it.next();
+            for(EscherRecord er : escherContainer) {
                 if(er instanceof EscherDgRecord) {
                     dg = (EscherDgRecord)er;
                     //update id of the drawing in the cloned sheet
@@ -2604,6 +2603,9 @@ public final class InternalWorkbook {
                         for(EscherRecord shapeChildRecord : shapeContainer.getChildRecords()) {
                             int recordId = shapeChildRecord.getRecordId();
                             if (recordId == EscherSpRecord.RECORD_ID){
+                                if (dg == null) {
+                                    throw new RecordFormatException("EscherDgRecord wasn't set/processed before.");
+                                }
                                 EscherSpRecord sp = (EscherSpRecord)shapeChildRecord;
                                 int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
                                 //allocateShapeId increments the number of shapes. roll back to the previous value

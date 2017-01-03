@@ -227,49 +227,47 @@ public final class HSSFChart {
 
 			if(r instanceof ChartRecord) {
 				lastSeries = null;
-				
 				lastChart = new HSSFChart(sheet,(ChartRecord)r);
 				charts.add(lastChart);
-			} else if(r instanceof LegendRecord) {
+            } else if (r instanceof LinkedDataRecord) {
+                LinkedDataRecord linkedDataRecord = (LinkedDataRecord) r;
+                if (lastSeries != null) {
+                    lastSeries.insertData(linkedDataRecord);
+                }
+			}
+            
+            if (lastChart == null) {
+                continue;
+            }
+            
+            if (r instanceof LegendRecord) {
 				lastChart.legendRecord = (LegendRecord)r;
 			} else if(r instanceof SeriesRecord) {
 				HSSFSeries series = new HSSFSeries( (SeriesRecord)r );
 				lastChart.series.add(series);
 				lastSeries = series;
 			} else if(r instanceof ChartTitleFormatRecord) {
-				lastChart.chartTitleFormat =
-					(ChartTitleFormatRecord)r;
+				lastChart.chartTitleFormat = (ChartTitleFormatRecord)r;
 			} else if(r instanceof SeriesTextRecord) {
-				// Applies to a series, unless we've seen
-				//  a legend already
+				// Applies to a series, unless we've seen a legend already
 				SeriesTextRecord str = (SeriesTextRecord)r;
-				if(lastChart.legendRecord == null &&
-						lastChart.series.size() > 0) {
+				if(lastChart.legendRecord == null && lastChart.series.size() > 0) {
 					HSSFSeries series = lastChart.series.get(lastChart.series.size()-1);
 					series.seriesTitleText = str;
 				} else {
 					lastChart.chartTitleText = str;
 				}
-			} else if (r instanceof LinkedDataRecord) {
-				LinkedDataRecord linkedDataRecord = (LinkedDataRecord) r;
-				if (lastSeries != null) {
-					lastSeries.insertData(linkedDataRecord);
-				}
 			} else if(r instanceof ValueRangeRecord){
 				lastChart.valueRanges.add((ValueRangeRecord)r);
 			} else if (r instanceof Record) {
-				if (lastChart != null)
-				{
-					Record record = (Record) r;
-					for (HSSFChartType type : HSSFChartType.values()) {
-						if (type == HSSFChartType.Unknown)
-						{
-							continue;
-						}
-						if (record.getSid() == type.getSid()) {
-							lastChart.type = type ;
-							break;
-						}
+				Record record = (Record) r;
+				for (HSSFChartType type : HSSFChartType.values()) {
+					if (type == HSSFChartType.Unknown) {
+						continue;
+					}
+					if (record.getSid() == type.getSid()) {
+						lastChart.type = type;
+						break;
 					}
 				}
 			}

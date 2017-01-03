@@ -82,28 +82,18 @@ public class OldExcelExtractor implements Closeable {
             return;
         } catch (OldExcelFormatException e) {
             // will be handled by workaround below
-            if (poifs != null) {
-                poifs.close();
-            }
         } catch (NotOLE2FileException e) {
             // will be handled by workaround below
-            if (poifs != null) {
-                poifs.close();
-            }
         } catch (IOException e) {
             // ensure streams are closed correctly
-            if (poifs != null) {
-                poifs.close();
-            }
-
             throw e;
         } catch (RuntimeException e) {
             // ensure streams are closed correctly
-            if (poifs != null) {
-                poifs.close();
-            }
-
             throw e;
+        } finally {
+            if (toClose == null) {
+                IOUtils.closeQuietly(poifs);
+            }
         }
 
         @SuppressWarnings("resource")

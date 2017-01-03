@@ -1688,7 +1688,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 // Need to walk backward to find the last non-blank row
                 // NOTE: n is always negative here
                 _lastrow = Math.min(endRow + n, SpreadsheetVersion.EXCEL97.getLastRowIndex());
-                for (int i = endRow - 1; i > endRow + n; i++) {
+                for (int i = endRow - 1; i > endRow + n; i--) {
                     if (getRow(i) != null) {
                         _lastrow = i;
                         break;
