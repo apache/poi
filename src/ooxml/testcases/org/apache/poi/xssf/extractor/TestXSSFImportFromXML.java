@@ -89,7 +89,7 @@ public class TestXSSFImportFromXML {
 		 }
 	}
 	
-	@Test	
+	@Test(timeout=10000)
 	public void testMultiTable() throws IOException, XPathExpressionException, SAXException{
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings-complex-type.xlsx");	 
 		try {
@@ -102,8 +102,13 @@ public class TestXSSFImportFromXML {
     						 "<ns1:Schema ID=\""+cellC6+"\" SchemaRef=\"a\" />"+ 
     						 "<ns1:Schema ID=\""+cellC7+"\" SchemaRef=\"b\" />"+ 
     						 "<ns1:Schema ID=\""+cellC8+"\" SchemaRef=\"c\" />"+ 
-    						 "<ns1:Schema ID=\""+cellC9+"\" SchemaRef=\"d\" />"+ 
-    						 "<ns1:Map ID=\"1\" Name=\"\" RootElement=\"\" SchemaID=\"\" ShowImportExportValidationErrors=\"\" AutoFit=\"\" Append=\"\" PreserveSortAFLayout=\"\" PreserveFormat=\"\">"+
+    						 "<ns1:Schema ID=\""+cellC9+"\" SchemaRef=\"d\" />";
+    		
+    						 for(int i = 10; i< 10010; i++){
+    							 testXML +=  "<ns1:Schema ID=\"c"+i+"\" SchemaRef=\"d\" />";
+    						 }
+    		
+    						testXML += "<ns1:Map ID=\"1\" Name=\"\" RootElement=\"\" SchemaID=\"\" ShowImportExportValidationErrors=\"\" AutoFit=\"\" Append=\"\" PreserveSortAFLayout=\"\" PreserveFormat=\"\">"+
     						 "<ns1:DataBinding DataBindingLoadMode=\"\" />"+ 
     						 "</ns1:Map>"+
     						 "<ns1:Map ID=\"2\" Name=\"\" RootElement=\"\" SchemaID=\"\" ShowImportExportValidationErrors=\"\" AutoFit=\"\" Append=\"\" PreserveSortAFLayout=\"\" PreserveFormat=\"\">"+
@@ -127,6 +132,7 @@ public class TestXSSFImportFromXML {
     		assertEquals(cellC7,sheet.getRow(6).getCell(2).getStringCellValue());
     		assertEquals(cellC8,sheet.getRow(7).getCell(2).getStringCellValue());
     		assertEquals(cellC9,sheet.getRow(8).getCell(2).getStringCellValue());
+    		assertEquals("c5001",sheet.getRow(5000).getCell(2).getStringCellValue());
         } finally {
             wb.close();
         }
@@ -238,4 +244,7 @@ public class TestXSSFImportFromXML {
 		
 		wb.close();
 	}
+	
+	
+	
 }
