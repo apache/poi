@@ -376,14 +376,8 @@ public class HSLFSlideShowEncrypted implements Closeable {
         } catch (Exception e) {
             throw new EncryptedPowerPointFileException(e);
         } finally {
-            try {
-                if (ccos != null) {
-                    ccos.close();
-                }
-                los.close();
-            } catch (IOException e) {
-                throw new EncryptedPowerPointFileException(e);
-            }
+            IOUtils.closeQuietly(ccos);
+            IOUtils.closeQuietly(los);
         }
     }
 

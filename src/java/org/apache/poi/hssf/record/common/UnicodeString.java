@@ -748,7 +748,7 @@ public class UnicodeString implements Comparable<UnicodeString> {
           }
         }
 
-        if (extendedDataSize > 0) {
+        if (extendedDataSize > 0 && field_5_ext_rst != null) {
            field_5_ext_rst.serialize(out);
         }
     }

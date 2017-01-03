@@ -194,6 +194,7 @@ import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -251,12 +252,10 @@ public final class BiffViewer {
                 }
                 temp.add(record);
 
-                if (dumpInterpretedRecords) {
-                    for (String header : recListener.getRecentHeaders()) {
-                        ps.println(header);
-                    }
-                    ps.print(record.toString());
+                for (String header : recListener.getRecentHeaders()) {
+                    ps.println(header);
                 }
+                ps.print(record.toString());
             } else {
                 recStream.readRemainder();
             }
@@ -560,33 +559,26 @@ public final class BiffViewer {
 			pw = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
 		}
 
+		NPOIFSFileSystem fs = null;
+		InputStream is = null;
         try {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(cmdArgs.getFile(), true);
-            try {
-                InputStream is = getPOIFSInputStream(fs);
+            fs = new NPOIFSFileSystem(cmdArgs.getFile(), true);
+            is = getPOIFSInputStream(fs);
 
-                try {
-                    if (cmdArgs.shouldOutputRawHexOnly()) {
-                        int size = is.available();
-                        byte[] data = new byte[size];
-
-                        is.read(data);
-                        HexDump.dump(data, 0, System.out, 0);
-                    } else {
-                        boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
-                        boolean dumpHex = cmdArgs.shouldDumpBiffHex();
-                        boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
-                        runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
-                                cmdArgs.suppressHeader());
-                    }
-                } finally {
-                    is.close();
-                }
-            } finally {
-                fs.close();
+            if (cmdArgs.shouldOutputRawHexOnly()) {
+                byte[] data = IOUtils.toByteArray(is);
+                HexDump.dump(data, 0, System.out, 0);
+            } else {
+                boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
+                boolean dumpHex = cmdArgs.shouldDumpBiffHex();
+                boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
+                runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
+                        cmdArgs.suppressHeader());
             }
         } finally {
-            pw.close();
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(fs);
+            IOUtils.closeQuietly(pw);
         }
 	}
 

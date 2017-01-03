@@ -272,17 +272,17 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public List<HSLFShape> getShapes() {
-        // Out escher container record should contain several
-        //  SpContainers, the first of which is the group shape itself
-        Iterator<EscherRecord> iter = getSpContainer().getChildIterator();
-
-        // Don't include the first SpContainer, it is always NotPrimitive
-        if (iter.hasNext()) {
-            iter.next();
-        }
+        // Our escher container record should contain several
+        // SpContainers, the first of which is the group shape itself
         List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
-        while (iter.hasNext()) {
-            EscherRecord r = iter.next();
+        boolean isFirst = true;
+        for (EscherRecord r : getSpContainer()) {
+            if (isFirst) {
+                // Don't include the first SpContainer, it is always NotPrimitive
+                isFirst = false;
+                continue;
+            }
+            
             if(r instanceof EscherContainerRecord) {
                 // Create the Shape for it
                 EscherContainerRecord container = (EscherContainerRecord)r;

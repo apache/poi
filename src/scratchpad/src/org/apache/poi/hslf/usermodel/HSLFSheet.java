@@ -151,8 +151,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         EscherContainerRecord dg = ppdrawing.getDgContainer();
         EscherContainerRecord spgr = null;
 
-        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
-            EscherRecord rec = it.next();
+        for (EscherRecord rec : dg) {
             if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
                 spgr = (EscherContainerRecord) rec;
                 break;
@@ -163,13 +162,15 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         }
 
         List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
-        Iterator<EscherRecord> it = spgr.getChildIterator();
-        if (it.hasNext()) {
-            // skip first item
-            it.next();
-        }
-        for (; it.hasNext();) {
-            EscherContainerRecord sp = (EscherContainerRecord) it.next();
+        boolean isFirst = true;
+        for (EscherRecord r : spgr) {
+            if (isFirst) {
+                // skip first item
+                isFirst = false;
+                continue;
+            }
+
+            EscherContainerRecord sp = (EscherContainerRecord)r;
             HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
             sh.setSheet(this);
             

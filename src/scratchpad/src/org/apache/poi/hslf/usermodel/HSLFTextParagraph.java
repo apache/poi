@@ -980,7 +980,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
 
-        if (lastPTPC == null || lastRTPC == null || ptpc == null || rtpc == null) {
+        if (lastPTPC == null || lastRTPC == null || ptpc == null || rtpc == null) { // NOSONAR
             throw new HSLFException("Not all TextPropCollection could be determined.");
         }
         

@@ -18,12 +18,16 @@
 package org.apache.poi.ddf;
 
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * Escher container records store other escher records as children.
@@ -31,7 +35,7 @@ import org.apache.poi.util.POILogger;
  * the standard header used by all escher records.  This one record is
  * used to represent many different types of records.
  */
-public final class EscherContainerRecord extends EscherRecord {
+public final class EscherContainerRecord extends EscherRecord implements Iterable<EscherRecord> {
     public static final short DGG_CONTAINER    = (short)0xF000;
     public static final short BSTORE_CONTAINER = (short)0xF001;
     public static final short DG_CONTAINER     = (short)0xF002;
@@ -97,17 +101,13 @@ public final class EscherContainerRecord extends EscherRecord {
         LittleEndian.putShort(data, offset, getOptions());
         LittleEndian.putShort(data, offset+2, getRecordId());
         int remainingBytes = 0;
-        Iterator<EscherRecord> iterator = _childRecords.iterator();
-        while (iterator.hasNext()) {
-            EscherRecord r = iterator.next();
+        for (EscherRecord r : this) {
             remainingBytes += r.getRecordSize();
         }
         remainingBytes += _remainingLength;
         LittleEndian.putInt(data, offset+4, remainingBytes);
         int pos = offset+8;
-        iterator = _childRecords.iterator();
-        while (iterator.hasNext()) {
-            EscherRecord r = iterator.next();
+        for (EscherRecord r : this) {
             pos += r.serialize(pos, data, listener );
         }
 
@@ -118,9 +118,7 @@ public final class EscherContainerRecord extends EscherRecord {
     @Override
     public int getRecordSize() {
         int childRecordsSize = 0;
-        Iterator<EscherRecord> iterator = _childRecords.iterator();
-        while (iterator.hasNext()) {
-            EscherRecord r = iterator.next();
+        for (EscherRecord r : this) {
             childRecordsSize += r.getRecordSize();
         }
         return 8 + childRecordsSize;
@@ -134,9 +132,7 @@ public final class EscherContainerRecord extends EscherRecord {
      * @return true, if any child has the given recordId
      */
     public boolean hasChildOfType(short recordId) {
-        Iterator<EscherRecord> iterator = _childRecords.iterator();
-        while (iterator.hasNext()) {
-            EscherRecord r = iterator.next();
+        for (EscherRecord r : this) {
             if(r.getRecordId() == recordId) {
                 return true;
             }
@@ -158,8 +154,20 @@ public final class EscherContainerRecord extends EscherRecord {
 
     /**
      * @return an iterator over the child records
+     * @deprecated POI 3.16 beta 1. use iterator() or loop over the container record instead,
+     *     e.g. "for (EscherRecord r : container) ..."
      */
+    @Removal(version="3.18")
+    @Deprecated
     public Iterator<EscherRecord> getChildIterator() {
+        return iterator();
+    }
+    
+    /**
+     * @return an iterator over the child records
+     */
+    @Override
+    public Iterator<EscherRecord> iterator() {
         return Collections.unmodifiableList(_childRecords).iterator();
     }
 
@@ -195,9 +203,7 @@ public final class EscherContainerRecord extends EscherRecord {
      */
     public List<EscherContainerRecord> getChildContainers() {
         List<EscherContainerRecord> containers = new ArrayList<EscherContainerRecord>();
-        Iterator<EscherRecord> iterator = _childRecords.iterator();
-        while (iterator.hasNext()) {
-            EscherRecord r = iterator.next();
+        for (EscherRecord r : this) {
             if(r instanceof EscherContainerRecord) {
                 containers.add((EscherContainerRecord) r);
             }
@@ -228,9 +234,7 @@ public final class EscherContainerRecord extends EscherRecord {
     @Override
     public void display(PrintWriter w, int indent) {
         super.display(w, indent);
-        for (Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator.hasNext();)
-        {
-            EscherRecord escherRecord = iterator.next();
+        for (EscherRecord escherRecord : this) {
             escherRecord.display(w, indent + 1);
         }
     }
@@ -252,8 +256,10 @@ public final class EscherContainerRecord extends EscherRecord {
      */
     public void addChildBefore(EscherRecord record, int insertBeforeRecordId) {
         int idx = 0;
-        for (EscherRecord rec : _childRecords) {
-            if(rec.getRecordId() == (short)insertBeforeRecordId) break;
+        for (EscherRecord rec : this) {
+            if(rec.getRecordId() == (short)insertBeforeRecordId) {
+                break;
+            }
             // TODO - keep looping? Do we expect multiple matches?
             idx++;
         }
@@ -271,10 +277,7 @@ public final class EscherContainerRecord extends EscherRecord {
             children.append( "  children: " + nl );
 
             int count = 0;
-            for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator
-                    .hasNext(); )
-            {
-                EscherRecord record = iterator.next();
+            for ( EscherRecord record : this ) {
                 children.append( "   Child " + count + ":" + nl );
                 String childResult = String.valueOf( record );
                 childResult = childResult.replaceAll( "\n", "\n    " );
@@ -298,22 +301,16 @@ public final class EscherContainerRecord extends EscherRecord {
     public String toXml(String tab) {
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append(formatXmlRecordHeader(getRecordName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())));
-        for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator
-                .hasNext(); )
-        {
-            EscherRecord record = iterator.next();
+        for ( EscherRecord record : this ) {
             builder.append(record.toXml(tab+"\t"));
         }
         builder.append(tab).append("</").append(getRecordName()).append(">\n");
         return builder.toString();
     }
 
-    public <T extends EscherRecord> T getChildById( short recordId )
-    {
-        for ( EscherRecord childRecord : _childRecords )
-        {
-            if ( childRecord.getRecordId() == recordId )
-            {
+    public <T extends EscherRecord> T getChildById( short recordId ) {
+        for ( EscherRecord childRecord : this ) {
+            if ( childRecord.getRecordId() == recordId ) {
                 @SuppressWarnings( "unchecked" )
                 final T result = (T) childRecord;
                 return result;
@@ -329,9 +326,7 @@ public final class EscherContainerRecord extends EscherRecord {
      * @param out - list to store found records
      */
     public void getRecordsById(short recordId, List<EscherRecord> out){
-        Iterator<EscherRecord> iterator = _childRecords.iterator();
-        while (iterator.hasNext()) {
-            EscherRecord r = iterator.next();
+        for (EscherRecord r : this) {
             if(r instanceof EscherContainerRecord) {
                 EscherContainerRecord c = (EscherContainerRecord)r;
                 c.getRecordsById(recordId, out );
