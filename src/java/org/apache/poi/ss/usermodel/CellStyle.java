@@ -338,7 +338,7 @@ public interface CellStyle {
     short getIndex();
 
     /**
-     * set the data format (must be a valid format)
+     * Set the data format (must be a valid format). Built in formats are defined at @see BuiltinFormats
      * @see DataFormat
      */
 
