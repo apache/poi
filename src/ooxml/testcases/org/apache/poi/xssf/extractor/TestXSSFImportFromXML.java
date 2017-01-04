@@ -89,7 +89,7 @@ public class TestXSSFImportFromXML {
 		 }
 	}
 	
-	@Test(timeout=10000)
+	@Test(timeout=60000)
 	public void testMultiTable() throws IOException, XPathExpressionException, SAXException{
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings-complex-type.xlsx");	 
 		try {
