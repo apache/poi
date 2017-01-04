@@ -16,14 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
+import java.io.Closeable;
 import java.io.InputStream;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
@@ -35,37 +35,32 @@ public class EmbeddedObjects {
         XSSFWorkbook workbook = new XSSFWorkbook(args[0]);
         for (PackagePart pPart : workbook.getAllEmbedds()) {
             String contentType = pPart.getContentType();
+            InputStream is = pPart.getInputStream();
+            Closeable document;
             if (contentType.equals("application/vnd.ms-excel")) {
                 // Excel Workbook - either binary or OpenXML
-                HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(pPart.getInputStream());
-                embeddedWorkbook.close();
+                document = new HSSFWorkbook(is);
             } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
                 // Excel Workbook - OpenXML file format
-                XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(pPart.getInputStream());
-                embeddedWorkbook.close();
+                document = new XSSFWorkbook(is);
             } else if (contentType.equals("application/msword")) {
                 // Word Document - binary (OLE2CDF) file format
-                HWPFDocument document = new HWPFDocument(pPart.getInputStream());
-                document.close();
+                document = new HWPFDocument(is);
             } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
                 // Word Document - OpenXML file format
-                XWPFDocument document = new XWPFDocument(pPart.getInputStream());
-                document.close();
+                document = new XWPFDocument(is);
             } else if (contentType.equals("application/vnd.ms-powerpoint")) {
                 // PowerPoint Document - binary file format
-                HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(pPart.getInputStream());
-                slideShow.close();
+                document = new HSLFSlideShow(is);
             } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
                 // PowerPoint Document - OpenXML file format
-                OPCPackage docPackage = OPCPackage.open(pPart.getInputStream());
-                XSLFSlideShow slideShow = new XSLFSlideShow(docPackage);
-                slideShow.close();
+                document = new XMLSlideShow(is);
             } else {
                 // Any other type of embedded object.
-                System.out.println("Unknown Embedded Document: " + contentType);
-                InputStream inputStream = pPart.getInputStream();
-                inputStream.close();
+                document = is;
             }
+            document.close();
+            is.close();
         }
         workbook.close();
     }

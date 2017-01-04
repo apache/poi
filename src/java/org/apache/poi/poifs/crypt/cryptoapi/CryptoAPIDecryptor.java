@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.crypt.cryptoapi;
 
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -168,37 +169,42 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         dis.close();
         CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, bos.toByteArray());
         LittleEndianInputStream leis = new LittleEndianInputStream(sbis);
-        int streamDescriptorArrayOffset = (int) leis.readUInt();
-        /* int streamDescriptorArraySize = (int) */ leis.readUInt();
-        sbis.skip(streamDescriptorArrayOffset - 8L);
-        sbis.setBlock(0);
-        int encryptedStreamDescriptorCount = (int) leis.readUInt();
-        StreamDescriptorEntry entries[] = new StreamDescriptorEntry[encryptedStreamDescriptorCount];
-        for (int i = 0; i < encryptedStreamDescriptorCount; i++) {
-            StreamDescriptorEntry entry = new StreamDescriptorEntry();
-            entries[i] = entry;
-            entry.streamOffset = (int) leis.readUInt();
-            entry.streamSize = (int) leis.readUInt();
-            entry.block = leis.readUShort();
-            int nameSize = leis.readUByte();
-            entry.flags = leis.readUByte();
-            // boolean isStream = StreamDescriptorEntry.flagStream.isSet(entry.flags);
-            entry.reserved2 = leis.readInt();
-            entry.streamName = StringUtil.readUnicodeLE(leis, nameSize);
-            leis.readShort();
-            assert(entry.streamName.length() == nameSize);
+        try {
+            int streamDescriptorArrayOffset = (int) leis.readUInt();
+            /* int streamDescriptorArraySize = (int) */ leis.readUInt();
+            long skipN = streamDescriptorArrayOffset - 8L;
+            if (sbis.skip(skipN) < skipN) {
+                throw new EOFException("buffer underrun");
+            }
+            sbis.setBlock(0);
+            int encryptedStreamDescriptorCount = (int) leis.readUInt();
+            StreamDescriptorEntry entries[] = new StreamDescriptorEntry[encryptedStreamDescriptorCount];
+            for (int i = 0; i < encryptedStreamDescriptorCount; i++) {
+                StreamDescriptorEntry entry = new StreamDescriptorEntry();
+                entries[i] = entry;
+                entry.streamOffset = (int) leis.readUInt();
+                entry.streamSize = (int) leis.readUInt();
+                entry.block = leis.readUShort();
+                int nameSize = leis.readUByte();
+                entry.flags = leis.readUByte();
+                // boolean isStream = StreamDescriptorEntry.flagStream.isSet(entry.flags);
+                entry.reserved2 = leis.readInt();
+                entry.streamName = StringUtil.readUnicodeLE(leis, nameSize);
+                leis.readShort();
+                assert(entry.streamName.length() == nameSize);
+            }
+    
+            for (StreamDescriptorEntry entry : entries) {
+                sbis.seek(entry.streamOffset);
+                sbis.setBlock(entry.block);
+                InputStream is = new BoundedInputStream(sbis, entry.streamSize);
+                fsOut.createDocument(is, entry.streamName);
+                is.close();
+            }
+        } finally {
+            IOUtils.closeQuietly(leis);
+            IOUtils.closeQuietly(sbis);
         }
-
-        for (StreamDescriptorEntry entry : entries) {
-            sbis.seek(entry.streamOffset);
-            sbis.setBlock(entry.block);
-            InputStream is = new BoundedInputStream(sbis, entry.streamSize);
-            fsOut.createDocument(is, entry.streamName);
-            is.close();
-        }
-
-        leis.close();
-        sbis.close();
         sbis = null;
         return fsOut;
     }

@@ -144,7 +144,7 @@ public final class TestPOIXMLDocument {
             // FIXME: A better exception class (IOException?) and message should be raised
             // indicating that the document could not be written because the output stream is closed.
             // see {@link org.apache.poi.openxml4j.opc.ZipPackage#saveImpl(java.io.OutputStream)}
-            if (e.getMessage().matches("Fail to save: an error occurs while saving the package : The part .+ fail to be saved in the stream with marshaller .+")) {
+            if (e.getMessage().matches("Fail to save: an error occurs while saving the package : The part .+ failed to be saved in the stream with marshaller .+")) {
                 // expected
             } else {
                 throw e;
@@ -330,6 +330,7 @@ public final class TestPOIXMLDocument {
             thread.setContextClassLoader(cl.getParent());
             XMLSlideShow ppt = new XMLSlideShow(is);
             ppt.getSlides().get(0).getShapes();
+            ppt.close();
         } finally {
             thread.setContextClassLoader(cl);
             is.close();
@@ -347,6 +348,7 @@ public final class TestPOIXMLDocument {
             POIXMLTypeLoader.setClassLoader(cl);
             XMLSlideShow ppt = new XMLSlideShow(is);
             ppt.getSlides().get(0).getShapes();
+            ppt.close();
         } finally {
             thread.setContextClassLoader(cl);
             POIXMLTypeLoader.setClassLoader(null);

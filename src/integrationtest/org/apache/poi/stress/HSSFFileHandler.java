@@ -37,6 +37,9 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 		handleWorkbook(wb);
 		
 		// TODO: some documents fail currently...
+        // Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
+        // IntesectionPtg.  However it is still not capable of parsing it.
+        // So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
         //HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
         //evaluator.evaluateAll();
         

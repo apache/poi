@@ -30,12 +30,9 @@ import org.apache.poi.util.LittleEndian;
  * front that relate to an array of arbitrary data structures in the back.
  * <p>
  * See page 184 of official documentation for details
- *
- * @author Ryan Ackley
  */
 public final class PlexOfCps {
     private int _iMac;
-    private int _offset;
     private int _cbStruct;
     private List<GenericPropertyNode> _props;
 
@@ -104,20 +101,19 @@ public final class PlexOfCps {
 
         byte[] buf = new byte[bufSize];
 
-        GenericPropertyNode node = null;
+        int nodeEnd = 0;
         for (int x = 0; x < size; x++) {
-            node = _props.get(x);
-
+            GenericPropertyNode node = _props.get(x);
+            nodeEnd = node.getEnd();
+            
             // put the starting offset of the property into the plcf.
-            LittleEndian.putInt(buf, (LittleEndian.INT_SIZE * x),
-                    node.getStart());
+            LittleEndian.putInt(buf, (LittleEndian.INT_SIZE * x), node.getStart());
 
             // put the struct into the plcf
-            System.arraycopy(node.getBytes(), 0, buf, cpBufSize
-                    + (x * _cbStruct), _cbStruct);
+            System.arraycopy(node.getBytes(), 0, buf, cpBufSize + (x * _cbStruct), _cbStruct);
         }
         // put the ending offset of the last property into the plcf.
-        LittleEndian.putInt(buf, LittleEndian.INT_SIZE * size, node.getEnd());
+        LittleEndian.putInt(buf, LittleEndian.INT_SIZE * size, nodeEnd);
 
         return buf;
     }

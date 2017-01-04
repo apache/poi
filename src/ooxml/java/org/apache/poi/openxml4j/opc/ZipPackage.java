@@ -45,6 +45,7 @@ import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
@@ -56,7 +57,7 @@ public final class ZipPackage extends OPCPackage {
     private static final String MIMETYPE = "mimetype";
     private static final String SETTINGS_XML = "settings.xml";
 
-    private static final POILogger logger = POILogFactory.getLogger(ZipPackage.class);
+    private static final POILogger LOG = POILogFactory.getLogger(ZipPackage.class);
 
     /**
      * Zip archive, as either a file on disk,
@@ -74,7 +75,7 @@ public final class ZipPackage extends OPCPackage {
         try {
             this.contentTypeManager = new ZipContentTypeManager(null, this);
         } catch (InvalidFormatException e) {
-            logger.log(POILogger.WARN,"Could not parse ZipPackage", e);
+            LOG.log(POILogger.WARN,"Could not parse ZipPackage", e);
         }
     }
 
@@ -98,11 +99,7 @@ public final class ZipPackage extends OPCPackage {
         try {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
         } catch (final IOException e) {
-            try {
-                zis.close();
-            } catch (final IOException e2) {
-                throw new IOException("Failed to close zip input stream while cleaning up. " + e.getMessage(), e2);
-            }
+            IOUtils.closeQuietly(zis);
             throw new IOException("Failed to read zip entry source", e);
         }
     }
@@ -141,7 +138,7 @@ public final class ZipPackage extends OPCPackage {
             if (access == PackageAccess.WRITE) {
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
-            logger.log(POILogger.ERROR, "Error in zip file "+file+" - falling back to stream processing (i.e. ignoring zip central directory)");
+            LOG.log(POILogger.ERROR, "Error in zip file "+file+" - falling back to stream processing (i.e. ignoring zip central directory)");
             ze = openZipEntrySourceStream(file);
         }
         this.zipArchive = ze;
@@ -163,13 +160,13 @@ public final class ZipPackage extends OPCPackage {
             // read from the file input stream
             return openZipEntrySourceStream(fis);
         } catch (final Exception e) {
-            try {
-                // abort: close the file input stream
-                fis.close();
-            } catch (final IOException e2) {
-                throw new InvalidOperationException("Could not close the specified file input stream from file: '" + file + "'", e2);
+            // abort: close the file input stream
+            IOUtils.closeQuietly(fis);
+            if (e instanceof InvalidOperationException) {
+                throw (InvalidOperationException)e;
+            } else {
+                throw new InvalidOperationException("Failed to read the file input stream from file: '" + file + "'", e);
             }
-            throw new InvalidOperationException("Failed to read the file input stream from file: '" + file + "'", e);
         }
     }
     
@@ -189,13 +186,13 @@ public final class ZipPackage extends OPCPackage {
             // read from the zip input stream
             return openZipEntrySourceStream(zis);
         } catch (final Exception e) {
-            try {
-                // abort: close the zip input stream
-                zis.close();
-            } catch (final IOException e2) {
-                throw new InvalidOperationException("Failed to read the zip entry source stream and could not close the zip input stream", e2);
+            // abort: close the zip input stream
+            IOUtils.closeQuietly(zis);
+            if (e instanceof InvalidOperationException) {
+                throw (InvalidOperationException)e;
+            } else {
+                throw new InvalidOperationException("Failed to read the zip entry source stream", e);
             }
-            throw new InvalidOperationException("Failed to read the zip entry source stream", e);
         }
     }
     
@@ -293,7 +290,7 @@ public final class ZipPackage extends OPCPackage {
 
             // Fallback exception
             throw new InvalidFormatException(
-                    "Package should contain a content type part [M1.13]");
+                "Package should contain a content type part [M1.13]");
         }
 
         // Now create all the relationships
@@ -304,7 +301,9 @@ public final class ZipPackage extends OPCPackage {
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             PackagePartName partName = buildPartName(entry);
-            if(partName == null) continue;
+            if(partName == null) {
+                continue;
+            }
 
             // Only proceed for Relationships at this stage
             String contentType = contentTypeManager.getContentType(partName);
@@ -323,7 +322,9 @@ public final class ZipPackage extends OPCPackage {
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             PackagePartName partName = buildPartName(entry);
-            if(partName == null) continue;
+            if(partName == null) {
+                continue;
+            }
 
             String contentType = contentTypeManager.getContentType(partName);
             if (contentType != null && contentType.equals(ContentTypes.RELATIONSHIPS_PART)) {
@@ -338,9 +339,8 @@ public final class ZipPackage extends OPCPackage {
                 }
             } else {
                 throw new InvalidFormatException(
-                        "The part "
-                                + partName.getURI().getPath()
-                                + " does not have any content type ! Rule: Package require content types when retrieving a part from a package. [M.1.14]");
+                    "The part " + partName.getURI().getPath()
+                    + " does not have any content type ! Rule: Package require content types when retrieving a part from a package. [M.1.14]");
             }
         }
 
@@ -363,7 +363,7 @@ public final class ZipPackage extends OPCPackage {
                     .getOPCNameFromZipItemName(entry.getName()));
         } catch (Exception e) {
             // We assume we can continue, even in degraded mode ...
-            logger.log(POILogger.WARN,"Entry "
+            LOG.log(POILogger.WARN,"Entry "
                                       + entry.getName()
                                       + " is not valid, so this part won't be add to the package.", e);
             return null;
@@ -383,17 +383,18 @@ public final class ZipPackage extends OPCPackage {
     @Override
     protected PackagePart createPartImpl(PackagePartName partName,
             String contentType, boolean loadRelationships) {
-        if (contentType == null)
+        if (contentType == null) {
             throw new IllegalArgumentException("contentType");
+        }
 
-        if (partName == null)
+        if (partName == null) {
             throw new IllegalArgumentException("partName");
+        }
 
         try {
-            return new MemoryPackagePart(this, partName, contentType,
-                    loadRelationships);
+            return new MemoryPackagePart(this, partName, contentType, loadRelationships);
         } catch (InvalidFormatException e) {
-            logger.log(POILogger.WARN, e);
+            LOG.log(POILogger.WARN, e);
             return null;
         }
     }
@@ -406,8 +407,9 @@ public final class ZipPackage extends OPCPackage {
      */
     @Override
     protected void removePartImpl(PackagePartName partName) {
-        if (partName == null)
+        if (partName == null) {
             throw new IllegalArgumentException("partUri");
+        }
     }
 
     /**
@@ -428,43 +430,39 @@ public final class ZipPackage extends OPCPackage {
         // Flush the package
         flush();
 
+		if (this.originalPackagePath == null || "".equals(this.originalPackagePath)) {
+		    return;
+		}
+
 		// Save the content
-		if (this.originalPackagePath != null
-				&& !"".equals(this.originalPackagePath)) {
-			File targetFile = new File(this.originalPackagePath);
-			if (targetFile.exists()) {
-				// Case of a package previously open
+		File targetFile = new File(this.originalPackagePath);
+		if (!targetFile.exists()) {
+            throw new InvalidOperationException(
+                "Can't close a package not previously open with the open() method !");
+        }
+		    
+		// Case of a package previously open
+		String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile)); 
+		File tempFile = TempFile.createTempFile(tempFileName, ".tmp");
 
-				File tempFile = TempFile.createTempFile(
-						generateTempFileName(FileHelper
-								.getDirectory(targetFile)), ".tmp");
-
-				// Save the final package to a temporary file
-				try {
-					save(tempFile);
-				} finally {
-					try {
-						// Close the current zip file, so we can
-						//  overwrite it on all platforms
-						this.zipArchive.close();
-						// Copy the new file over the old one
-						FileHelper.copyFile(tempFile, targetFile);
-					} finally {
-						// Either the save operation succeed or not, we delete the
-						// temporary file
-						if (!tempFile.delete()) {
-							logger
-									.log(POILogger.WARN,"The temporary file: '"
-											+ targetFile.getAbsolutePath()
-											+ "' cannot be deleted ! Make sure that no other application use it.");
-						}
-					}
+		// Save the final package to a temporary file
+		try {
+			save(tempFile);
+		} finally {
+            // Close the current zip file, so we can overwrite it on all platforms
+            IOUtils.closeQuietly(this.zipArchive);
+			try {
+				// Copy the new file over the old one
+				FileHelper.copyFile(tempFile, targetFile);
+			} finally {
+				// Either the save operation succeed or not, we delete the temporary file
+				if (!tempFile.delete()) {
+					LOG.log(POILogger.WARN, "The temporary file: '"
+					+ targetFile.getAbsolutePath()
+					+ "' cannot be deleted ! Make sure that no other application use it.");
 				}
-			} else {
-				throw new InvalidOperationException(
-						"Can't close a package not previously open with the open() method !");
 			}
-		} 
+		}
 	}
 
 	/**
@@ -488,8 +486,9 @@ public final class ZipPackage extends OPCPackage {
 	@Override
 	protected void revertImpl() {
 		try {
-			if (this.zipArchive != null)
-				this.zipArchive.close();
+			if (this.zipArchive != null) {
+                this.zipArchive.close();
+            }
 		} catch (IOException e) {
 			// Do nothing, user dont have to know
 		}
@@ -526,16 +525,17 @@ public final class ZipPackage extends OPCPackage {
 
 		final ZipOutputStream zos;
 		try {
-			if (!(outputStream instanceof ZipOutputStream))
-				zos = new ZipOutputStream(outputStream);
-			else
-				zos = (ZipOutputStream) outputStream;
+			if (!(outputStream instanceof ZipOutputStream)) {
+                zos = new ZipOutputStream(outputStream);
+            } else {
+                zos = (ZipOutputStream) outputStream;
+            }
 
 			// If the core properties part does not exist in the part list,
 			// we save it as well
 			if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
                 this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).size() == 0    ) {
-				logger.log(POILogger.DEBUG,"Save core properties part");
+				LOG.log(POILogger.DEBUG,"Save core properties part");
 				
 				// Ensure that core properties are added if missing
 				getPackageProperties();
@@ -555,42 +555,36 @@ public final class ZipPackage extends OPCPackage {
 			}
 
 			// Save package relationships part.
-			logger.log(POILogger.DEBUG,"Save package relationships");
+			LOG.log(POILogger.DEBUG,"Save package relationships");
 			ZipPartMarshaller.marshallRelationshipPart(this.getRelationships(),
 					PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_PART_NAME,
 					zos);
 
 			// Save content type part.
-			logger.log(POILogger.DEBUG,"Save content types part");
+			LOG.log(POILogger.DEBUG,"Save content types part");
 			this.contentTypeManager.save(zos);
 
 			// Save parts.
 			for (PackagePart part : getParts()) {
 				// If the part is a relationship part, we don't save it, it's
 				// the source part that will do the job.
-				if (part.isRelationshipPart())
-					continue;
+				if (part.isRelationshipPart()) {
+                    continue;
+                }
 
-				logger.log(POILogger.DEBUG,"Save part '"
-						+ ZipHelper.getZipItemNameFromOPCName(part
-								.getPartName().getName()) + "'");
-				PartMarshaller marshaller = partMarshallers
-						.get(part._contentType);
+				final PackagePartName ppn = part.getPartName();
+				LOG.log(POILogger.DEBUG,"Save part '" + ZipHelper.getZipItemNameFromOPCName(ppn.getName()) + "'");
+				PartMarshaller marshaller = partMarshallers.get(part._contentType);
+				String errMsg = "The part " + ppn.getURI() + " failed to be saved in the stream with marshaller ";
+
 				if (marshaller != null) {
 					if (!marshaller.marshall(part, zos)) {
-						throw new OpenXML4JException(
-								"The part "
-										+ part.getPartName().getURI()
-										+ " fail to be saved in the stream with marshaller "
-										+ marshaller);
+						throw new OpenXML4JException(errMsg + marshaller);
 					}
 				} else {
-					if (!defaultPartMarshaller.marshall(part, zos))
-						throw new OpenXML4JException(
-								"The part "
-										+ part.getPartName().getURI()
-										+ " fail to be saved in the stream with marshaller "
-										+ defaultPartMarshaller);
+					if (!defaultPartMarshaller.marshall(part, zos)) {
+                        throw new OpenXML4JException(errMsg + defaultPartMarshaller);
+                    }
 				}
 			}
 			zos.close();
@@ -599,8 +593,8 @@ public final class ZipPackage extends OPCPackage {
 			throw e;
 		} catch (Exception e) {
             throw new OpenXML4JRuntimeException(
-                    "Fail to save: an error occurs while saving the package : "
-							+ e.getMessage(), e);
+                "Fail to save: an error occurs while saving the package : "
+				+ e.getMessage(), e);
 		}
     }
 

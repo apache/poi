@@ -180,7 +180,10 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
             initCipherForBlock(cipher, index);
 
             if (lastIndex != index) {
-                super.skip((index - lastIndex) << chunkBits);
+                long skipN = (index - lastIndex) << chunkBits;
+                if (super.skip(skipN) < skipN) {
+                    throw new EOFException("buffer underrun");
+                };
             }
 
             lastIndex = index + 1;
