@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
@@ -26,10 +25,8 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
-import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -42,15 +39,12 @@ import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Internal POI use only
  */
 @Internal
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
-    private static POILogger logger = POILogFactory.getLogger(HSSFEvaluationWorkbook.class);
     private final HSSFWorkbook _uBook;
     private final InternalWorkbook _iBook;
 
@@ -115,6 +109,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
      * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
      * The sheet index is required to resolve sheet-level names. <code>-1</code> means workbook-global names
      */
+    @Override
     public EvaluationName getName(String name, int sheetIndex) {
         for(int i=0; i < _iBook.getNumNames(); i++) {
             NameRecord nr = _iBook.getNameRecord(i);
@@ -226,22 +221,12 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     }
 
     @Override
-    @SuppressWarnings("unused")
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
         HSSFCell cell = ((HSSFEvaluationCell)evalCell).getHSSFCell();
-        if (false) {
-            // re-parsing the formula text also works, but is a waste of time
-            // It is useful from time to time to run all unit tests with this code
-            // to make sure that all formulas POI can evaluate can also be parsed.
-            try {
-                return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
-            } catch (FormulaParseException e) {
-                // Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
-                // IntesectionPtg.  However it is still not capable of parsing it.
-                // So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
-                logger.log( POILogger.ERROR, e.getMessage());
-            }
-        }
+        // re-parsing the formula text also works, but is a waste of time
+        // return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
+        // It is useful within the tests to make sure that all formulas POI can evaluate can also be parsed.
+        // see HSSFFileHandler.handleFile instead
         FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();
         return fra.getFormulaTokens();
     }
@@ -259,21 +244,27 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             _nameRecord = nameRecord;
             _index = index;
         }
+        @Override
         public Ptg[] getNameDefinition() {
             return _nameRecord.getNameDefinition();
         }
+        @Override
         public String getNameText() {
             return _nameRecord.getNameText();
         }
+        @Override
         public boolean hasFormula() {
             return _nameRecord.hasFormula();
         }
+        @Override
         public boolean isFunctionName() {
             return _nameRecord.isFunctionName();
         }
+        @Override
         public boolean isRange() {
             return _nameRecord.hasFormula(); // TODO - is this right?
         }
+        @Override
         public NamePtg createPtg() {
             return new NamePtg(_index);
         }

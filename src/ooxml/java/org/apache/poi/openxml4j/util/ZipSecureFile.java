@@ -45,7 +45,7 @@ import org.apache.poi.util.SuppressForbidden;
  * and {@link #setMinInflateRatio(double)}.
  */
 public class ZipSecureFile extends ZipFile {
-    private final static POILogger logger = POILogFactory.getLogger(ZipSecureFile.class);
+    private static final POILogger LOG = POILogFactory.getLogger(ZipSecureFile.class);
     
     private static double MIN_INFLATE_RATIO = 0.01d;
     private static long MAX_ENTRY_SIZE = 0xFFFFFFFFL;
@@ -169,9 +169,9 @@ public class ZipSecureFile extends ZipFile {
     public static ThresholdInputStream addThreshold(final InputStream zipIS) throws IOException {
         ThresholdInputStream newInner;
         if (zipIS instanceof InflaterInputStream) {
-            newInner = AccessController.doPrivileged(new PrivilegedAction<ThresholdInputStream>() {
+            newInner = AccessController.doPrivileged(new PrivilegedAction<ThresholdInputStream>() { // NOSONAR
                 @SuppressForbidden("TODO: Fix this to not use reflection (it will break in Java 9)! " +
-                        "Better would be to wrap *before* instead of tyring to insert wrapper afterwards.")
+                        "Better would be to wrap *before* instead of trying to insert wrapper afterwards.")
                 public ThresholdInputStream run() {
                     try {
                         Field f = FilterInputStream.class.getDeclaredField("in");
@@ -181,7 +181,7 @@ public class ZipSecureFile extends ZipFile {
                         f.set(zipIS, newInner);
                         return newInner;
                     } catch (Exception ex) {
-                        logger.log(POILogger.WARN, "SecurityManager doesn't allow manipulation via reflection for zipbomb detection - continue with original input stream", ex);
+                        LOG.log(POILogger.WARN, "SecurityManager doesn't allow manipulation via reflection for zipbomb detection - continue with original input stream", ex);
                     }
                     return null;
                 }

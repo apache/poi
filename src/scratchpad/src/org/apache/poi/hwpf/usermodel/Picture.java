@@ -108,13 +108,12 @@ public final class Picture
      *  DataStream
      */
     public Picture( int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes ) { // NOSONAR
-        _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream,
-                dataBlockStartOfsset );
+        _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream, dataBlockStartOfsset );
         _picf = _picfAndOfficeArtData.getPicf();
 
         this.dataBlockStartOfsset = dataBlockStartOfsset;
 
-        if ( _picfAndOfficeArtData != null && _picfAndOfficeArtData.getBlipRecords() != null) {
+        if ( _picfAndOfficeArtData.getBlipRecords() != null) {
             _blipRecords = _picfAndOfficeArtData.getBlipRecords();
         } else {
             _blipRecords = Collections.emptyList();
