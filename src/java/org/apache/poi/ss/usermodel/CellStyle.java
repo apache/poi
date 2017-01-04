@@ -338,14 +338,14 @@ public interface CellStyle {
     short getIndex();
 
     /**
-     * set the data format (must be a valid format)
+     * set the data format (must be a valid format). Built in formats are defined at {@link BuiltinFormats}.
      * @see DataFormat
      */
 
     void setDataFormat(short fmt);
 
     /**
-     * get the index of the format
+     * get the index of the data format. Built in formats are defined at {@link BuiltinFormats}.
      * @see DataFormat
      */
     short getDataFormat();
