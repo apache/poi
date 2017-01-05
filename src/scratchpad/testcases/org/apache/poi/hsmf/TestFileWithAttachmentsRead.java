@@ -62,7 +62,7 @@ public class TestFileWithAttachmentsRead extends TestCase {
     }
 
     /**
-     * Test to see if we get the correct Content-IDs of inline images.
+     * Bug 60550: Test to see if we get the correct Content-IDs of inline images`.
      */
     public void testReadContentIDField() throws IOException {
         AttachmentChunks[] attachments = inlineImgMsgAttachments.getAttachmentFiles();
