@@ -17,9 +17,16 @@
 
 package org.apache.poi.hsmf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -28,21 +35,29 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 /**
  * Tests to verify that we can read attachments from msg file
  */
-public class TestFileWithAttachmentsRead extends TestCase {
-    private final MAPIMessage twoSimpleAttachments;
-    private final MAPIMessage pdfMsgAttachments;
-    private final MAPIMessage inlineImgMsgAttachments;
+public class TestFileWithAttachmentsRead {
+    private static MAPIMessage twoSimpleAttachments;
+    private static MAPIMessage pdfMsgAttachments;
+    private static MAPIMessage inlineImgMsgAttachments;
 
     /**
      * Initialize this test, load up the attachment_test_msg.msg mapi message.
      * 
      * @throws Exception
      */
-    public TestFileWithAttachmentsRead() throws IOException {
+    @BeforeClass
+    public static void setUp() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
-        this.twoSimpleAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
-        this.pdfMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_pdf.msg"));
-        this.inlineImgMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_inlineImg.msg"));
+        twoSimpleAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
+        pdfMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_pdf.msg"));
+        inlineImgMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_inlineImg.msg"));
+    }
+
+    @AfterClass
+    public static void tearDown() throws IOException {
+        twoSimpleAttachments.close();
+        pdfMsgAttachments.close();
+        inlineImgMsgAttachments.close();
     }
 
     /**
@@ -51,6 +66,7 @@ public class TestFileWithAttachmentsRead extends TestCase {
      * @throws ChunkNotFoundException
      * 
      */
+    @Test
     public void testRetrieveAttachments() {
         // Simple file
         AttachmentChunks[] attachments = twoSimpleAttachments.getAttachmentFiles();
@@ -64,6 +80,7 @@ public class TestFileWithAttachmentsRead extends TestCase {
     /**
      * Bug 60550: Test to see if we get the correct Content-IDs of inline images`.
      */
+    @Test
     public void testReadContentIDField() throws IOException {
         AttachmentChunks[] attachments = inlineImgMsgAttachments.getAttachmentFiles();
 
@@ -95,6 +112,7 @@ public class TestFileWithAttachmentsRead extends TestCase {
     /**
      * Test to see if attachments are not empty.
      */
+    @Test
     public void testReadAttachments() throws IOException {
         AttachmentChunks[] attachments = twoSimpleAttachments.getAttachmentFiles();
 
@@ -129,6 +147,7 @@ public class TestFileWithAttachmentsRead extends TestCase {
     /**
      * Test that we can handle both PDF and MSG attachments
      */
+    @Test
     public void testReadMsgAttachments() throws Exception {
         AttachmentChunks[] attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
