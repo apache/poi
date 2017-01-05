@@ -81,17 +81,17 @@ public class TestFileWithAttachmentsRead extends TestCase {
 
       // Now check in detail
       attachment = twoSimpleAttachments.getAttachmentFiles()[0];
-      assertEquals("TEST-U~1.DOC", attachment.getAttachFileName().toString());
-      assertEquals("test-unicode.doc", attachment.getAttachLongFileName().toString());
+      assertEquals("TEST-U~1.DOC", attachment.getAttachFileName().getValue());
+      assertEquals("test-unicode.doc", attachment.getAttachLongFileName().getValue());
       assertEquals(".doc", attachment.getAttachExtension().getValue());
-      assertEquals(null, attachment.getAttachMimeTag());
+      assertNull(attachment.getAttachMimeTag());
       assertEquals(24064, attachment.getAttachData().getValue().length);
 
       attachment = twoSimpleAttachments.getAttachmentFiles()[1];
-      assertEquals("pj1.txt", attachment.getAttachFileName().toString());
-      assertEquals("pj1.txt", attachment.getAttachLongFileName().toString());
+      assertEquals("pj1.txt", attachment.getAttachFileName().getValue());
+      assertEquals("pj1.txt", attachment.getAttachLongFileName().getValue());
       assertEquals(".txt", attachment.getAttachExtension().getValue());
-      assertEquals(null, attachment.getAttachMimeTag());
+      assertNull(attachment.getAttachMimeTag());
       assertEquals(89, attachment.getAttachData().getValue().length);
    }
    
@@ -106,20 +106,20 @@ public class TestFileWithAttachmentsRead extends TestCase {
 
        // Second is a PDF
        attachment = pdfMsgAttachments.getAttachmentFiles()[1];
-       assertEquals("smbprn~1.pdf", attachment.getAttachFileName().toString());
-       assertEquals("smbprn.00009008.KdcPjl.pdf", attachment.getAttachLongFileName().toString());
+       assertEquals("smbprn~1.pdf", attachment.getAttachFileName().getValue());
+       assertEquals("smbprn.00009008.KdcPjl.pdf", attachment.getAttachLongFileName().getValue());
        assertEquals(".pdf", attachment.getAttachExtension().getValue());
-       assertEquals(null, attachment.getAttachMimeTag());
-       assertEquals(null, attachment.getAttachmentDirectory());
+       assertNull(attachment.getAttachMimeTag());
+       assertNull(attachment.getAttachmentDirectory());
        assertEquals(13539, attachment.getAttachData().getValue().length);
        
        // First in a nested message
        attachment = pdfMsgAttachments.getAttachmentFiles()[0];
-       assertEquals("Test Attachment", attachment.getAttachFileName().toString());
-       assertEquals(null, attachment.getAttachLongFileName());
-       assertEquals(null, attachment.getAttachExtension());
-       assertEquals(null, attachment.getAttachMimeTag());
-       assertEquals(null, attachment.getAttachData());
+       assertEquals("Test Attachment", attachment.getAttachFileName().getValue());
+       assertNull(attachment.getAttachLongFileName());
+       assertNull(attachment.getAttachExtension());
+       assertNull(attachment.getAttachMimeTag());
+       assertNull(attachment.getAttachData());
        assertNotNull(attachment.getAttachmentDirectory());
        
        // Check we can see some bits of it
