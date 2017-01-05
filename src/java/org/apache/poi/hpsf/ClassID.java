@@ -30,17 +30,43 @@ import org.apache.poi.util.StringUtil;
  */
 public class ClassID
 {
-    public static final ClassID OLE10_PACKAGE = new ClassID("{0003000C-0000-0000-C000-000000000046}");
-    public static final ClassID PPT_SHOW      = new ClassID("{64818D10-4F9B-11CF-86EA-00AA00B929E8}");
-    public static final ClassID XLS_WORKBOOK  = new ClassID("{00020841-0000-0000-C000-000000000046}");
-    public static final ClassID TXT_ONLY      = new ClassID("{5e941d80-bf96-11cd-b579-08002b30bfeb}");
-    public static final ClassID EXCEL97       = new ClassID("{00020820-0000-0000-C000-000000000046}");
-    public static final ClassID EXCEL95       = new ClassID("{00020810-0000-0000-C000-000000000046}");
-    public static final ClassID WORD97        = new ClassID("{00020906-0000-0000-C000-000000000046}");
-    public static final ClassID WORD95        = new ClassID("{00020900-0000-0000-C000-000000000046}");
-    public static final ClassID POWERPOINT97  = new ClassID("{64818D10-4F9B-11CF-86EA-00AA00B929E8}");
-    public static final ClassID POWERPOINT95  = new ClassID("{EA7BAE70-FB3B-11CD-A903-00AA00510EA3}");
-    public static final ClassID EQUATION30    = new ClassID("{0002CE02-0000-0000-C000-000000000046}");
+    public static final ClassID OLE10_PACKAGE  = new ClassID("{0003000C-0000-0000-C000-000000000046}");
+    public static final ClassID PPT_SHOW       = new ClassID("{64818D10-4F9B-11CF-86EA-00AA00B929E8}");
+    public static final ClassID XLS_WORKBOOK   = new ClassID("{00020841-0000-0000-C000-000000000046}");
+    public static final ClassID TXT_ONLY       = new ClassID("{5e941d80-bf96-11cd-b579-08002b30bfeb}");
+
+    // Excel V3
+    public static final ClassID EXCEL_V3       = new ClassID("{00030000-0000-0000-C000-000000000046}");
+    public static final ClassID EXCEL_V3_CHART = new ClassID("{00030001-0000-0000-C000-000000000046}");
+    public static final ClassID EXCEL_V3_MACRO = new ClassID("{00030002-0000-0000-C000-000000000046}");
+    // Excel V5
+    public static final ClassID EXCEL95        = new ClassID("{00020810-0000-0000-C000-000000000046}");
+    public static final ClassID EXCEL95_CHART  = new ClassID("{00020811-0000-0000-C000-000000000046}");
+    // Excel V8
+    public static final ClassID EXCEL97        = new ClassID("{00020820-0000-0000-C000-000000000046}");
+    public static final ClassID EXCEL97_CHART  = new ClassID("{00020821-0000-0000-C000-000000000046}");
+    // Excel V11
+    public static final ClassID EXCEL2003      = new ClassID("{00020812-0000-0000-C000-000000000046}");
+    // Excel V12
+    public static final ClassID EXCEL2007      = new ClassID("{00020830-0000-0000-C000-000000000046}");
+    public static final ClassID EXCEL2007_MACRO= new ClassID("{00020832-0000-0000-C000-000000000046}");
+    public static final ClassID EXCEL2007_XLSB = new ClassID("{00020833-0000-0000-C000-000000000046}");
+    // Excel V14
+    public static final ClassID EXCEL2010      = new ClassID("{00024500-0000-0000-C000-000000000046}");
+    public static final ClassID EXCEL2010_CHART= new ClassID("{00024505-0014-0000-C000-000000000046}");
+    public static final ClassID EXCEL2010_ODS  = new ClassID("{EABCECDB-CC1C-4A6F-B4E3-7F888A5ADFC8}");
+    
+    public static final ClassID WORD97         = new ClassID("{00020906-0000-0000-C000-000000000046}");
+    public static final ClassID WORD95         = new ClassID("{00020900-0000-0000-C000-000000000046}");
+    public static final ClassID WORD2007       = new ClassID("{F4754C9B-64F5-4B40-8AF4-679732AC0607}");
+    public static final ClassID WORD2007_MACRO = new ClassID("{18A06B6B-2F3F-4E2B-A611-52BE631B2D22}");
+    
+    public static final ClassID POWERPOINT97   = new ClassID("{64818D10-4F9B-11CF-86EA-00AA00B929E8}");
+    public static final ClassID POWERPOINT95   = new ClassID("{EA7BAE70-FB3B-11CD-A903-00AA00510EA3}");
+    public static final ClassID POWERPOINT2007 = new ClassID("{CF4F55F4-8F87-4D47-80BB-5808164BB3F8}");
+    public static final ClassID POWERPOINT2007_MACRO = new ClassID("{DC020317-E6E2-4A62-B9FA-B3EFE16626F4}");
+    
+    public static final ClassID EQUATION30     = new ClassID("{0002CE02-0000-0000-C000-000000000046}");
 	
     /** <p>The number of bytes occupied by this object in the byte
      * stream.</p> */

@@ -27,10 +27,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.Ole10NativeException;
@@ -43,12 +43,18 @@ import org.apache.poi.ss.usermodel.Shape;
 import org.apache.poi.ss.usermodel.ShapeContainer;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFObjectData;
 
+/**
+ * This extractor class tries to identify various embedded documents within Excel files
+ * and provide them via a common interface, i.e. the EmbeddedData instances
+ */
+@Beta
 public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     private static final POILogger LOG = POILogFactory.getLogger(EmbeddedExtractor.class);
     
@@ -58,19 +64,13 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     private static final String CONTENT_TYPE_DOC = "application/msword";
     private static final String CONTENT_TYPE_XLS = "application/vnd.ms-excel";
 
-    // default file extension
-    private static final String PDF_EXT = ".pdf";
-    private static final String DOC_EXT = ".doc";
-    private static final String XLS_EXT = ".xls";
-    private static final String OLE_EXT = ".ole";
-
     /**
      * @return the list of known extractors, if you provide custom extractors, override this method
      */
     @Override
     public Iterator<EmbeddedExtractor> iterator() {
         EmbeddedExtractor[] ee = {
-            new Ole10Extractor(), new PdfExtractor(), new WordExtractor(), new ExcelExtractor(), new FsExtractor()
+            new Ole10Extractor(), new PdfExtractor(), new BiffExtractor(), new OOXMLExtractor(), new FsExtractor()
         };
         return Arrays.asList(ee).iterator();
     }
@@ -112,10 +112,11 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                     if (od.hasDirectoryEntry()) {
                         data = extractOne((DirectoryNode)od.getDirectory());
                     } else {
+                        String contentType = CONTENT_TYPE_BYTES;
                         if (od instanceof XSSFObjectData) {
-                            String contentType = ((XSSFObjectData)od).getObjectPart().getContentType();
+                            contentType = ((XSSFObjectData)od).getObjectPart().getContentType();
                         }
-                        data = new EmbeddedData(od.getFileName(), od.getObjectData(), CONTENT_TYPE_BYTES);
+                        data = new EmbeddedData(od.getFileName(), od.getObjectData(), contentType);
                     }
                 } catch (Exception e) {
                     LOG.log(POILogger.WARN, "Entry not found / readable - ignoring OLE embedding", e);
@@ -211,7 +212,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             InputStream is = dn.createDocumentInputStream("CONTENTS");
             IOUtils.copy(is, bos);
             is.close();
-            return new EmbeddedData(dn.getName() + PDF_EXT, bos.toByteArray(), CONTENT_TYPE_PDF);
+            return new EmbeddedData(dn.getName() + ".pdf", bos.toByteArray(), CONTENT_TYPE_PDF);
         }
         
         @Override
@@ -251,8 +252,8 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             byte[] pdfBytes = new byte[pictureBytesLen];
             System.arraycopy(pictureBytes, idxStart, pdfBytes, 0, pictureBytesLen);
             String filename = source.getShapeName().trim();
-            if (!endsWithIgnoreCase(filename, PDF_EXT)) {
-                filename += PDF_EXT;
+            if (!endsWithIgnoreCase(filename, ".pdf")) {
+                filename += ".pdf";
             }
             return new EmbeddedData(filename, pdfBytes, CONTENT_TYPE_PDF);
         }
@@ -260,38 +261,83 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
     }
 
-    static class WordExtractor extends EmbeddedExtractor {
+    static class OOXMLExtractor extends EmbeddedExtractor {
         @Override
         public boolean canExtract(DirectoryNode dn) {
-            ClassID clsId = dn.getStorageClsid();
-            return (ClassID.WORD95.equals(clsId)
-            || ClassID.WORD97.equals(clsId)
-            || dn.hasEntry("WordDocument"));
+            return dn.hasEntry("package");
         }
 
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
-            EmbeddedData ed = super.extract(dn);
-            ed.setFilename(dn.getName() + DOC_EXT);
-            ed.setContentType(CONTENT_TYPE_DOC);
-            return ed;
+
+            ClassID clsId = dn.getStorageClsid();
+
+            String contentType, ext;
+            if (ClassID.WORD2007.equals(clsId)) {
+                ext = ".docx";
+                contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            } else if (ClassID.WORD2007_MACRO.equals(clsId)) {
+                ext = ".docm";
+                contentType = "application/vnd.ms-word.document.macroEnabled.12";
+            } else if (ClassID.EXCEL2007.equals(clsId) || ClassID.EXCEL2003.equals(clsId) || ClassID.EXCEL2010.equals(clsId)) {
+                ext = ".xlsx";
+                contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            } else if (ClassID.EXCEL2007_MACRO.equals(clsId)) {
+                ext = ".xlsm";
+                contentType = "application/vnd.ms-excel.sheet.macroEnabled.12";
+            } else if (ClassID.EXCEL2007_XLSB.equals(clsId)) {
+                ext = ".xlsb";
+                contentType = "application/vnd.ms-excel.sheet.binary.macroEnabled.12";
+            } else if (ClassID.POWERPOINT2007.equals(clsId)) {
+                ext = ".pptx";
+                contentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            } else if (ClassID.POWERPOINT2007_MACRO.equals(clsId)) {
+                ext = ".ppsm";
+                contentType = "application/vnd.ms-powerpoint.slideshow.macroEnabled.12";
+            } else {
+                ext = ".zip";
+                contentType = "application/zip";
+            }
+
+            DocumentInputStream dis = dn.createDocumentInputStream("package");
+            byte data[] = IOUtils.toByteArray(dis);
+            dis.close();
+            
+            return new EmbeddedData(dn.getName()+ext, data, contentType);
         }
     }
 
-    static class ExcelExtractor extends EmbeddedExtractor {
+    static class BiffExtractor extends EmbeddedExtractor {
         @Override
         public boolean canExtract(DirectoryNode dn) {
+            return canExtractExcel(dn) || canExtractWord(dn);
+        }
+        
+        protected boolean canExtractExcel(DirectoryNode dn) {
             ClassID clsId = dn.getStorageClsid();
             return (ClassID.EXCEL95.equals(clsId)
-                    || ClassID.EXCEL97.equals(clsId)
-                    || dn.hasEntry("Workbook") /*...*/);
+                || ClassID.EXCEL97.equals(clsId)
+                || dn.hasEntry("Workbook") /*...*/);
+        }
+
+        protected boolean canExtractWord(DirectoryNode dn) {
+            ClassID clsId = dn.getStorageClsid();
+            return (ClassID.WORD95.equals(clsId)
+                || ClassID.WORD97.equals(clsId)
+                || dn.hasEntry("WordDocument"));
         }
         
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
             EmbeddedData ed = super.extract(dn);
-            ed.setFilename(dn.getName() + XLS_EXT);
-            ed.setContentType(CONTENT_TYPE_XLS);
+            if (canExtractExcel(dn)) {
+                ed.setFilename(dn.getName() + ".xls");
+                ed.setContentType(CONTENT_TYPE_XLS);
+            } else if (canExtractWord(dn)) {
+                ed.setFilename(dn.getName() + ".doc");
+                ed.setContentType(CONTENT_TYPE_DOC);
+            }
+            
             return ed;
         }
     }
@@ -304,7 +350,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
             EmbeddedData ed = super.extract(dn);
-            ed.setFilename(dn.getName() + OLE_EXT);
+            ed.setFilename(dn.getName() + ".ole");
             // TODO: read the content type from CombObj stream
             return ed;
         }
