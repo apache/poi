@@ -123,13 +123,6 @@ public class MAPIMessage extends POIReadOnlyDocument {
       this(fs.getRoot());
    }
    /**
-    * @deprecated Use {@link #MAPIMessage(DirectoryNode)} instead
-    */
-   @Deprecated
-   public MAPIMessage(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
-      this(poifsDir);
-   }
-   /**
     * Constructor for reading MSG Files from a certain
     *  point within a POIFS filesystem
     * @param poifsDir Directory containing the message
@@ -205,10 +198,6 @@ public class MAPIMessage extends POIReadOnlyDocument {
          return mainChunks.getHtmlBodyChunkBinary().getAs7bitString();
       }
       return getStringFromChunk(mainChunks.getHtmlBodyChunkString());
-   }
-   @Deprecated
-   public String getHmtlBody() throws ChunkNotFoundException {
-      return getHtmlBody();
    }
 
    /**
@@ -426,7 +415,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       
       // Nothing suitable in the headers, try HTML
       try {
-         String html = getHmtlBody();
+         String html = getHtmlBody();
          if(html != null && html.length() > 0) {
             // Look for a content type in the meta headers
             Pattern p = Pattern.compile(
