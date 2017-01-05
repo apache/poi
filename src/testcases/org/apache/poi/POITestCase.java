@@ -44,6 +44,14 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public final class POITestCase {
+    public static void assertStartsWith(String string, String prefix) {
+        assertNotNull(string);
+        assertNotNull(prefix);
+        
+        final int len = Math.min(string.length(), prefix.length());
+        assertEquals("string does not start with prefix", prefix, string.substring(0, len));
+    }
+    
     public static void assertContains(String haystack, String needle) {
         assertNotNull(haystack);
         assertTrue(
