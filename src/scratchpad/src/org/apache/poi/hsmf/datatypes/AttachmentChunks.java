@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hsmf.datatypes;
 
+import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_CONTENT_ID;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_DATA;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_EXTENSION;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_FILENAME;
@@ -47,6 +48,7 @@ public class AttachmentChunks implements ChunkGroup {
     private StringChunk attachLongFileName;
     private StringChunk attachMimeTag;
     private DirectoryChunk attachmentDirectory;
+    private StringChunk attachContentId;
 
     /**
      * This is in WMF Format. You'll probably want to pass it to Apache Batik to
@@ -158,6 +160,13 @@ public class AttachmentChunks implements ChunkGroup {
     }
 
     /**
+     * @return the attachment content ID
+     */
+    public StringChunk getAttachContentId() {
+        return attachContentId;
+    }
+
+    /**
      * Called by the parser whenever a chunk is found.
      */
     @Override
@@ -178,7 +187,7 @@ public class AttachmentChunks implements ChunkGroup {
             } else if (chunk instanceof DirectoryChunk) {
                 attachmentDirectory = (DirectoryChunk) chunk;
             } else {
-                LOG.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk);
+                LOG.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk.getEntryName());
             }
         } else if (chunkId == ATTACH_EXTENSION.id) {
             attachExtension = (StringChunk) chunk;
@@ -190,6 +199,10 @@ public class AttachmentChunks implements ChunkGroup {
             attachMimeTag = (StringChunk) chunk;
         } else if (chunkId == ATTACH_RENDERING.id) {
             attachRenderingWMF = (ByteChunk) chunk;
+        } else if (chunkId == ATTACH_CONTENT_ID.id) {
+            attachContentId = (StringChunk) chunk;
+        } else {
+            LOG.log(POILogger.WARN, "Currently unsupported attachment chunk property will be ignored. " + chunk.getEntryName());
         }
 
         // And add to the main list

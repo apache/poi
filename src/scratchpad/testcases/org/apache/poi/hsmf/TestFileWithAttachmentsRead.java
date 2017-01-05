@@ -31,6 +31,7 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 public class TestFileWithAttachmentsRead extends TestCase {
     private final MAPIMessage twoSimpleAttachments;
     private final MAPIMessage pdfMsgAttachments;
+    private final MAPIMessage inlineImgMsgAttachments;
 
     /**
      * Initialize this test, load up the attachment_test_msg.msg mapi message.
@@ -41,6 +42,7 @@ public class TestFileWithAttachmentsRead extends TestCase {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         this.twoSimpleAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
         this.pdfMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_pdf.msg"));
+        this.inlineImgMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_inlineImg.msg"));
     }
 
     /**
@@ -58,6 +60,37 @@ public class TestFileWithAttachmentsRead extends TestCase {
         attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
     }
+
+    /**
+     * Test to see if we get the correct Content-IDs of inline images.
+     */
+    public void testReadContentIDField() throws IOException {
+        AttachmentChunks[] attachments = inlineImgMsgAttachments.getAttachmentFiles();
+
+        AttachmentChunks attachment;
+
+        // Check in Content-ID field
+        attachment = inlineImgMsgAttachments.getAttachmentFiles()[0];
+        assertEquals("image001.png", attachment.getAttachFileName().getValue());
+        assertEquals(".png", attachment.getAttachExtension().getValue());
+        assertEquals("image001.png@01D0A524.96D40F30", attachment.getAttachContentId().getValue());
+
+        attachment = inlineImgMsgAttachments.getAttachmentFiles()[1];
+        assertEquals("image002.png", attachment.getAttachFileName().getValue());
+        assertEquals(".png", attachment.getAttachExtension().getValue());
+        assertEquals("image002.png@01D0A524.96D40F30", attachment.getAttachContentId().getValue());
+
+        attachment = inlineImgMsgAttachments.getAttachmentFiles()[2];
+        assertEquals("image003.png", attachment.getAttachFileName().getValue());
+        assertEquals(".png", attachment.getAttachExtension().getValue());
+        assertEquals("image003.png@01D0A526.B4C739C0", attachment.getAttachContentId().getValue());
+
+        attachment = inlineImgMsgAttachments.getAttachmentFiles()[3];
+        assertEquals("image006.jpg", attachment.getAttachFileName().getValue());
+        assertEquals(".jpg", attachment.getAttachExtension().getValue());
+        assertEquals("image006.jpg@01D0A526.B649E220", attachment.getAttachContentId().getValue());
+    }
+
 
     /**
      * Test to see if attachments are not empty.
@@ -83,14 +116,14 @@ public class TestFileWithAttachmentsRead extends TestCase {
         assertEquals("test-unicode.doc", attachment.getAttachLongFileName().getValue());
         assertEquals(".doc", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
-        assertEquals(24064, attachment.getAttachData().getValue().length);
+        assertEquals(24064, attachment.getAttachData().getValue().length); // or compare the hashes of the attachment data
 
         attachment = twoSimpleAttachments.getAttachmentFiles()[1];
         assertEquals("pj1.txt", attachment.getAttachFileName().getValue());
         assertEquals("pj1.txt", attachment.getAttachLongFileName().getValue());
         assertEquals(".txt", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
-        assertEquals(89, attachment.getAttachData().getValue().length);
+        assertEquals(89, attachment.getAttachData().getValue().length); // or compare the hashes of the attachment data
     }
     
     /**
@@ -109,7 +142,7 @@ public class TestFileWithAttachmentsRead extends TestCase {
         assertEquals(".pdf", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
         assertNull(attachment.getAttachmentDirectory());
-        assertEquals(13539, attachment.getAttachData().getValue().length);
+        assertEquals(13539, attachment.getAttachData().getValue().length); //or compare the hashes of the attachment data
         
         // First in a nested message
         attachment = pdfMsgAttachments.getAttachmentFiles()[0];

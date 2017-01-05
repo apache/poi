@@ -27,9 +27,9 @@ import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 public abstract class Chunk {
     public static final String DEFAULT_NAME_PREFIX = "__substg1.0_";
 
-    private int chunkId;
-    private MAPIType type;
-    private String namePrefix;
+    private final int chunkId;
+    private final MAPIType type;
+    private final String namePrefix;
 
     protected Chunk(String namePrefix, int chunkId, MAPIType type) {
         this.namePrefix = namePrefix;
