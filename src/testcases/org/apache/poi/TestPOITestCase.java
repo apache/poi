@@ -34,6 +34,13 @@ import org.junit.Test;
  */
 public final class TestPOITestCase {
     @Test
+    public void assertStartsWith() {
+        POITestCase.assertStartsWith("Apache POI", "");
+        POITestCase.assertStartsWith("Apache POI", "Apache");
+        POITestCase.assertStartsWith("Apache POI", "Apache POI");
+    }
+    
+    @Test
     public void assertContains() {
         POITestCase.assertContains("There is a needle in this haystack", "needle");
         /*try {

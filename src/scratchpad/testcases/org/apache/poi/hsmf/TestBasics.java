@@ -17,6 +17,9 @@
 
 package org.apache.poi.hsmf;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
+
 import java.io.IOException;
 
 import junit.framework.TestCase;
@@ -89,9 +92,9 @@ public final class TestBasics extends TestCase {
    public void testHeaders() throws Exception {
       // Simple email first
       assertEquals(26, simple.getHeaders().length);
-      assertTrue(simple.getHeaders()[0].startsWith("Return-path:"));
-      assertTrue(simple.getHeaders()[1].equals("Envelope-to: travis@overwrittenstack.com"));
-      assertTrue(simple.getHeaders()[25].startsWith("X-Antivirus-Scanner: Clean"));
+      assertStartsWith(simple.getHeaders()[0], "Return-path:");
+      assertEquals("Envelope-to: travis@overwrittenstack.com", simple.getHeaders()[1]);
+      assertStartsWith(simple.getHeaders()[25], "X-Antivirus-Scanner: Clean");
       
       // Quick doesn't have them
       try {
@@ -107,9 +110,32 @@ public final class TestBasics extends TestCase {
       
       // Outlook30 has some
       assertEquals(33, outlook30.getHeaders().length);
-      assertTrue(outlook30.getHeaders()[0].startsWith("Microsoft Mail Internet Headers"));
-      assertTrue(outlook30.getHeaders()[1].startsWith("x-mimeole:"));
-      assertTrue(outlook30.getHeaders()[32].startsWith("\t\"Williams")); // May need better parsing in future
+      assertStartsWith(outlook30.getHeaders()[0], "Microsoft Mail Internet Headers");
+      assertStartsWith(outlook30.getHeaders()[1], "x-mimeole:");
+      assertStartsWith(outlook30.getHeaders()[32], "\t\"Williams"); // May need better parsing in future
+   }
+
+   public void testBody() throws Exception {
+      // Messages may have their bodies saved as plain text, html, and/or rtf.
+      assertEquals("This is a test message.", simple.getTextBody());
+      assertEquals("The quick brown fox jumps over the lazy dog\r\n", quick.getTextBody());
+      assertStartsWith(outlook30.getTextBody(), "I am shutting down the IN-SPIRE servers now for 30ish minutes.\r\n\r\n");
+      assertStartsWith(attachments.getTextBody(), "contenu\r\n\r\n");
+      assertStartsWith(unicode.getTextBody(), "..less you are Nick.....");
+      
+      // outlook30 has chunks for all 3 body formats
+      // Examine one of the paragraphs is present in all 3 formats, surrounded by markup tags
+      String text = "I am shutting down the IN-SPIRE servers now for 30ish minutes.";
+      assertStartsWith(outlook30.getTextBody(), text + "\r\n\r\n");
+      assertEquals(850494485, outlook30.getTextBody().hashCode());
+      
+      assertStartsWith(outlook30.getHtmlBody(), "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\r\n<HTML>\r\n<HEAD>");
+      assertContains(outlook30.getHtmlBody(), "<P DIR=LTR><SPAN LANG=\"en-us\"><FONT FACE=\"Calibri\">" + text + "</FONT></SPAN></P>");
+      assertEquals(-654938715, outlook30.getHtmlBody().hashCode());
+      
+      assertStartsWith(outlook30.getRtfBody(), "{\\rtf1\\adeflang1025\\ansi\\ansicpg1252\\uc1\\adeff3150");
+      assertContains(outlook30.getRtfBody(), "{\\rtlch\\fcs1 \\af31507 \\ltrch\\fcs0 \\cf0\\insrsid5003910 " + text + "\r\n\\par \r\n\\par");
+      assertEquals(891652290, outlook30.getRtfBody().hashCode());
    }
 
    /**
