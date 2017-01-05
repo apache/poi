@@ -127,7 +127,7 @@ public final class TestBasics extends TestCase {
     * Use a file with no HTML body
     */
    public void testMissingChunks() throws Exception {
-      assertEquals(false, attachments.isReturnNullOnMissingChunk());
+      assertFalse(attachments.isReturnNullOnMissingChunk());
 
       try {
           attachments.getHtmlBody();
@@ -138,7 +138,7 @@ public final class TestBasics extends TestCase {
 
       attachments.setReturnNullOnMissingChunk(true);
 
-      assertEquals(null, attachments.getHtmlBody());
+      assertNull(attachments.getHtmlBody());
 	   
       attachments.setReturnNullOnMissingChunk(false);
       
@@ -155,7 +155,7 @@ public final class TestBasics extends TestCase {
     *  missing recipient email address
     */
    public void testMissingAddressChunk() throws Exception {
-      assertEquals(false, noRecipientAddress.isReturnNullOnMissingChunk());
+      assertFalse(noRecipientAddress.isReturnNullOnMissingChunk());
 
       try {
          noRecipientAddress.getRecipientEmailAddress();
@@ -176,7 +176,7 @@ public final class TestBasics extends TestCase {
       noRecipientAddress.getRecipientEmailAddressList();
       assertEquals("", noRecipientAddress.getRecipientEmailAddress());
       assertEquals(1, noRecipientAddress.getRecipientEmailAddressList().length);
-      assertEquals(null, noRecipientAddress.getRecipientEmailAddressList()[0]);
+      assertNull(noRecipientAddress.getRecipientEmailAddressList()[0]);
       
       // Check a few other bits too
       assertEquals("Microsoft Outlook 2003 Team", noRecipientAddress.getDisplayFrom());
@@ -189,10 +189,10 @@ public final class TestBasics extends TestCase {
     * Test the 7 bit detection
     */
    public void test7BitDetection() throws Exception {
-      assertEquals(false, unicode.has7BitEncodingStrings());
-      assertEquals(true, simple.has7BitEncodingStrings());
-      assertEquals(true, chinese.has7BitEncodingStrings());
-      assertEquals(true, cyrillic.has7BitEncodingStrings());
+      assertFalse(unicode.has7BitEncodingStrings());
+      assertTrue(simple.has7BitEncodingStrings());
+      assertTrue(chinese.has7BitEncodingStrings());
+      assertTrue(cyrillic.has7BitEncodingStrings());
    }
 	
    /**
