@@ -53,10 +53,10 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
 
     private long length = -1L;
     private int chunkSize = -1;
-    
+
     static class StreamDescriptorEntry {
         static BitField flagStream = BitFieldFactory.getInstance(1);
-        
+
         int streamOffset;
         int streamSize;
         int block;
@@ -149,17 +149,16 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
             throws IOException, GeneralSecurityException {
         return new CryptoAPICipherInputStream(stream, size, initialPos);
     }
-    
+
     /**
      * Decrypt the Document-/SummaryInformation and other optionally streams.
      * Opposed to other crypto modes, cryptoapi is record based and can't be used
      * to stream-decrypt a whole file
-     * 
+     *
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
     public POIFSFileSystem getSummaryEntries(DirectoryNode root, String encryptedStream)
     throws IOException, GeneralSecurityException {
-        POIFSFileSystem fsOut = new POIFSFileSystem();
         // HSLF: encryptedStream
         // HSSF: encryption
         DocumentNode es = (DocumentNode) root.getEntry(encryptedStream);
@@ -169,6 +168,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         dis.close();
         CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, bos.toByteArray());
         LittleEndianInputStream leis = new LittleEndianInputStream(sbis);
+        POIFSFileSystem fsOut = null;
         try {
             int streamDescriptorArrayOffset = (int) leis.readUInt();
             /* int streamDescriptorArraySize = (int) */ leis.readUInt();
@@ -193,7 +193,8 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
                 leis.readShort();
                 assert(entry.streamName.length() == nameSize);
             }
-    
+
+            fsOut = new POIFSFileSystem();
             for (StreamDescriptorEntry entry : entries) {
                 sbis.seek(entry.streamOffset);
                 sbis.setBlock(entry.block);
@@ -201,11 +202,19 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
                 fsOut.createDocument(is, entry.streamName);
                 is.close();
             }
+        } catch (Exception e) {
+            IOUtils.closeQuietly(fsOut);
+            if (e instanceof GeneralSecurityException) {
+                throw (GeneralSecurityException)e;
+            } else if (e instanceof IOException) {
+                throw (IOException)e;
+            } else {
+                throw new IOException("summary entries can't be read", e);
+            }
         } finally {
             IOUtils.closeQuietly(leis);
             IOUtils.closeQuietly(sbis);
         }
-        sbis = null;
         return fsOut;
     }
 
@@ -220,10 +229,11 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         return length;
     }
 
+    @Override
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
-    
+
     @Override
     public CryptoAPIDecryptor clone() throws CloneNotSupportedException {
         return (CryptoAPIDecryptor)super.clone();
@@ -240,6 +250,6 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         public CryptoAPICipherInputStream(InputStream stream, long size, int initialPos)
                 throws GeneralSecurityException {
             super(stream, size, chunkSize, initialPos);
-        }    
+        }
     }
 }

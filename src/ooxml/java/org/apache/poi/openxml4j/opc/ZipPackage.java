@@ -131,7 +131,7 @@ public final class ZipPackage extends OPCPackage {
 
         ZipEntrySource ze;
         try {
-            final ZipFile zipFile = ZipHelper.openZipFile(file);
+            final ZipFile zipFile = ZipHelper.openZipFile(file); // NOSONAR
             ze = new ZipFileZipEntrySource(zipFile);
         } catch (IOException e) {
             // probably not happening with write access - not sure how to handle the default read-write access ...
@@ -149,7 +149,7 @@ public final class ZipPackage extends OPCPackage {
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
         try {
             // open the file input stream
-            fis = new FileInputStream(file);
+            fis = new FileInputStream(file); // NOSONAR
         } catch (final FileNotFoundException e) {
             // If the source cannot be acquired, abort (no resources to free at this level)
             throw new InvalidOperationException("Can't open the specified file input stream from file: '" + file + "'", e);
@@ -175,7 +175,7 @@ public final class ZipPackage extends OPCPackage {
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
         try {
             // open the zip input stream
-            zis = ZipHelper.openZipStream(fis);
+            zis = ZipHelper.openZipStream(fis); // NOSONAR
         } catch (final IOException e) {
             // If the source cannot be acquired, abort (no resources to free at this level)
             throw new InvalidOperationException("Could not open the file input stream", e);
