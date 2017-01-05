@@ -43,13 +43,6 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    public OutlookTextExtactor(MAPIMessage msg) {
       super(msg);
    }
-   /**
-    * Use {@link #OutlookTextExtactor(DirectoryNode)} instead
-    */
-   @Deprecated
-   public OutlookTextExtactor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
-      this(new MAPIMessage(poifsDir, fs));
-   }
    public OutlookTextExtactor(DirectoryNode poifsDir) throws IOException {
       this(new MAPIMessage(poifsDir));
    }
