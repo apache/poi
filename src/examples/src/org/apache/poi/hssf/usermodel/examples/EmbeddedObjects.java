@@ -16,11 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel.examples;
 
+import java.io.Closeable;
 import java.io.FileInputStream;
-import java.util.Iterator;
 
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hssf.usermodel.HSSFObjectData;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -39,32 +38,28 @@ public class EmbeddedObjects {
         for (HSSFObjectData obj : workbook.getAllEmbeddedObjects()) {
             //the OLE2 Class Name of the object
             String oleName = obj.getOLE2ClassName();
+            DirectoryNode dn = (obj.hasDirectoryEntry()) ? (DirectoryNode) obj.getDirectory() : null;
+            Closeable document = null;
             if (oleName.equals("Worksheet")) {
-                DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(dn, fs, false);
-                //System.out.println(entry.getName() + ": " + embeddedWorkbook.getNumberOfSheets());
-                embeddedWorkbook.close();
+                document = new HSSFWorkbook(dn, fs, false);
             } else if (oleName.equals("Document")) {
-                DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                HWPFDocument embeddedWordDocument = new HWPFDocument(dn);
-                //System.out.println(entry.getName() + ": " + embeddedWordDocument.getRange().text());
+                document = new HWPFDocument(dn);
             }  else if (oleName.equals("Presentation")) {
-                DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                HSLFSlideShow embeddedPowerPointDocument = new HSLFSlideShow(new HSLFSlideShowImpl(dn));
-                //System.out.println(entry.getName() + ": " + embeddedPowerPointDocument.getSlides().length);
+                document = new HSLFSlideShow(dn);
             } else {
-                if(obj.hasDirectoryEntry()){
+                if(dn != null){
                     // The DirectoryEntry is a DocumentNode. Examine its entries to find out what it is
-                    DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                    for (Iterator<Entry> entries = dn.getEntries(); entries.hasNext();) {
-                        Entry entry = entries.next();
-                        //System.out.println(oleName + "." + entry.getName());
+                    for (Entry entry : dn) {
+                         String name = entry.getName();
                     }
                 } else {
                     // There is no DirectoryEntry
                     // Recover the object's data from the HSSFObjectData instance.
                     byte[] objectData = obj.getObjectData();
                 }
+            }
+            if (document != null) {
+                document.close();
             }
         }
         workbook.close();
