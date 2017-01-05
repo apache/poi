@@ -31,7 +31,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Demonstrates how you can extract embedded data from a .xls file
  */
-public class EmeddedObjects {
+public class EmbeddedObjects {
     @SuppressWarnings("unused")
     public static void main(String[] args) throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(args[0]));
