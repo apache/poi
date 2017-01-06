@@ -46,13 +46,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * This example shows how to display a spreadsheet in HTML using the classes for
  * spreadsheet display.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class ToHtml {
     private final Workbook wb;
@@ -154,23 +153,26 @@ public class ToHtml {
     }
 
     private ToHtml(Workbook wb, Appendable output) {
-        if (wb == null)
+        if (wb == null) {
             throw new NullPointerException("wb");
-        if (output == null)
+        }
+        if (output == null) {
             throw new NullPointerException("output");
+        }
         this.wb = wb;
         this.output = output;
         setupColorMap();
     }
 
     private void setupColorMap() {
-        if (wb instanceof HSSFWorkbook)
+        if (wb instanceof HSSFWorkbook) {
             helper = new HSSFHtmlHelper((HSSFWorkbook) wb);
-        else if (wb instanceof XSSFWorkbook)
+        } else if (wb instanceof XSSFWorkbook) {
             helper = new XSSFHtmlHelper();
-        else
+        } else {
             throw new IllegalArgumentException(
                     "unknown workbook type: " + wb.getClass().getSimpleName());
+        }
     }
 
     /**
@@ -214,11 +216,9 @@ public class ToHtml {
                 out.format("</html>%n");
             }
         } finally {
-            if (out != null)
-                out.close();
+            IOUtils.closeQuietly(out);
             if (output instanceof Closeable) {
-                Closeable closeable = (Closeable) output;
-                closeable.close();
+                IOUtils.closeQuietly((Closeable) output);
             }
         }
     }
@@ -236,8 +236,9 @@ public class ToHtml {
     }
 
     private void ensureOut() {
-        if (out == null)
+        if (out == null) {
             out = new Formatter(output);
+        }
     }
 
     public void printStyles() {
@@ -255,14 +256,7 @@ public class ToHtml {
         } catch (IOException e) {
             throw new IllegalStateException("Reading standard css", e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    //noinspection ThrowFromFinallyBlock
-                    throw new IllegalStateException("Reading standard css", e);
-                }
-            }
+            IOUtils.closeQuietly(in);
         }
 
         // now add css for each used style
@@ -307,10 +301,12 @@ public class ToHtml {
     private void fontStyle(CellStyle style) {
         Font font = wb.getFontAt(style.getFontIndex());
 
-        if (font.getBold())
+        if (font.getBold()) {
             out.format("  font-weight: bold;%n");
-        if (font.getItalic())
+        }
+        if (font.getItalic()) {
             out.format("  font-style: italic;%n");
+        }
 
         int fontheight = font.getFontHeightInPoints();
         if (fontheight == 9) {
@@ -323,8 +319,9 @@ public class ToHtml {
     }
 
     private String styleName(CellStyle style) {
-        if (style == null)
+        if (style == null) {
             style = wb.getCellStyleAt((short) 0);
+        }
         StringBuilder sb = new StringBuilder();
         Formatter fmt = new Formatter(sb);
         try {
@@ -344,8 +341,9 @@ public class ToHtml {
 
     private static CellType ultimateCellType(Cell c) {
         CellType type = c.getCellTypeEnum();
-        if (type == CellType.FORMULA)
+        if (type == CellType.FORMULA) {
             type = c.getCachedFormulaResultTypeEnum();
+        }
         return type;
     }
 
@@ -372,8 +370,9 @@ public class ToHtml {
     }
 
     private void ensureColumnBounds(Sheet sheet) {
-        if (gotBounds)
+        if (gotBounds) {
             return;
+        }
 
         Iterator<Row> iter = sheet.rowIterator();
         firstColumn = (iter.hasNext() ? Integer.MAX_VALUE : 0);
@@ -434,8 +433,9 @@ public class ToHtml {
                                 style.getDataFormatString());
                         CellFormatResult result = cf.apply(cell);
                         content = result.text;
-                        if (content.equals(""))
+                        if (content.equals("")) {
                             content = "&nbsp;";
+                        }
                     }
                 }
                 out.format("    <td class=%s %s>%s</td>%n", styleName(style),

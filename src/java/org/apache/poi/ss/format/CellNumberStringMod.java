@@ -63,6 +63,7 @@ public class CellNumberStringMod implements Comparable<CellNumberStringMod> {
         toAdd = "";
     }
 
+    @Override
     public int compareTo(CellNumberStringMod that) {
         int diff = special.pos - that.special.pos;
         return (diff != 0) ? diff : (op - that.op);
@@ -70,12 +71,7 @@ public class CellNumberStringMod implements Comparable<CellNumberStringMod> {
 
     @Override
     public boolean equals(Object that) {
-        try {
-            return compareTo((CellNumberStringMod) that) == 0;
-        } catch (RuntimeException ignored) {
-            // NullPointerException or CastException
-            return false;
-        }
+        return (that instanceof CellNumberStringMod) && compareTo((CellNumberStringMod) that) == 0;
     }
 
     @Override
