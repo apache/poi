@@ -20,10 +20,6 @@ package org.apache.poi.ss.formula;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author Josh Micich
- */
 final class PlainCellCache {
 
 	public static final class Loc {
@@ -48,12 +44,16 @@ final class PlainCellCache {
 			_rowIndex = rowIndex;
 		}
 
-		public int hashCode() {
+		@Override
+        public int hashCode() {
 			return (int)(_bookSheetColumn ^ (_bookSheetColumn >>> 32)) + 17 * _rowIndex;
 		}
 
-		public boolean equals(Object obj) {
-			assert obj instanceof Loc : "these package-private cache key instances are only compared to themselves";
+		@Override
+        public boolean equals(Object obj) {
+		    if (!(obj instanceof Loc)) {
+		        return false;
+		    }
 			Loc other = (Loc) obj;
 			return _bookSheetColumn == other._bookSheetColumn && _rowIndex == other._rowIndex;
 		}

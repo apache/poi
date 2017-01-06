@@ -126,7 +126,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
      */
     public OutputStream getSummaryEntries(DirectoryNode dir)
     throws IOException, GeneralSecurityException {
-        CryptoAPIDocumentOutputStream bos = new CryptoAPIDocumentOutputStream(this);
+        CryptoAPIDocumentOutputStream bos = new CryptoAPIDocumentOutputStream(this); // NOSONAR
         byte buf[] = new byte[8];
         
         bos.write(buf, 0, 8); // skip header

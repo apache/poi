@@ -19,6 +19,12 @@
 
 package org.apache.poi.ss.examples.formula;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -29,19 +35,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * Demonstrates how to use functions provided by third-party add-ins, e.g. Bloomberg Excel Add-in.
  *
  * There can be situations when you are not interested in formula evaluation,
  * you just need to set the formula  and the workbook will be evaluation by the client.
- *
- * @author Yegor Kozlov
  */
 public class SettingExternalFunction {
 
@@ -90,7 +88,8 @@ public class SettingExternalFunction {
         FileOutputStream out = new FileOutputStream("bloomberg-demo.xlsx");
         wb.write(out);
         out.close();
-
+        
+        wb.close();
     }
 
 }

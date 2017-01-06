@@ -136,6 +136,7 @@ public final class Countif extends Fixed2ArgFunction {
             throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '"
                     + _representation + "'");
         }
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer(64);
             sb.append(getClass().getName());
@@ -187,6 +188,7 @@ public final class Countif extends Fixed2ArgFunction {
             return String.valueOf(_value);
         }
 
+        @Override
         public boolean matches(ValueEval x) {
             double testValue;
             if(x instanceof StringEval) {
@@ -246,22 +248,21 @@ public final class Countif extends Fixed2ArgFunction {
             return value ? 1 : 0;
         }
 
+        @Override
         public boolean matches(ValueEval x) {
             int testValue;
             if(x instanceof StringEval) {
-                if (true) { // change to false to observe more intuitive behaviour
-                    // Note - Unlike with numbers, it seems that COUNTIF never matches
-                    // boolean values when the target(x) is a string
-                    return false;
-                }
-                @SuppressWarnings("unused")
-                StringEval se = (StringEval)x;
-                Boolean val = parseBoolean(se.getStringValue());
-                if(val == null) {
-                    // x is text that is not a boolean
-                    return false;
-                }
-                testValue = boolToInt(val.booleanValue());
+                // Note - Unlike with numbers, it seems that COUNTIF never matches
+                // boolean values when the target(x) is a string
+                return false;
+                // uncomment to observe more intuitive behaviour
+                // StringEval se = (StringEval)x;
+                // Boolean val = parseBoolean(se.getStringValue());
+                // if(val == null) {
+                //     // x is text that is not a boolean
+                //     return false;
+                // }
+                // testValue = boolToInt(val.booleanValue());
             } else if((x instanceof BoolEval)) {
                 BoolEval be = (BoolEval) x;
                 testValue = boolToInt(be.getBooleanValue());
@@ -300,6 +301,7 @@ public final class Countif extends Fixed2ArgFunction {
             return FormulaError.forInt(_value).getString();
         }
 
+        @Override
         public boolean matches(ValueEval x) {
             if(x instanceof ErrorEval) {
                 int testValue = ((ErrorEval)x).getErrorCode();
@@ -339,6 +341,7 @@ public final class Countif extends Fixed2ArgFunction {
             return _pattern.pattern();
         }
 
+        @Override
         public boolean matches(ValueEval x) {
             if (x instanceof BlankEval) {
                 switch(getCode()) {
@@ -433,6 +436,7 @@ public final class Countif extends Fixed2ArgFunction {
         }
     }
 
+    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
         I_MatchPredicate mp = createCriteriaPredicate(arg1, srcRowIndex, srcColumnIndex);
@@ -525,13 +529,27 @@ public final class Countif extends Fixed2ArgFunction {
         if (value.length() < 4 || value.charAt(0) != '#') {
             return null;
         }
-        if (value.equals("#NULL!"))  return ErrorEval.NULL_INTERSECTION;
-        if (value.equals("#DIV/0!")) return ErrorEval.DIV_ZERO;
-        if (value.equals("#VALUE!")) return ErrorEval.VALUE_INVALID;
-        if (value.equals("#REF!"))   return ErrorEval.REF_INVALID;
-        if (value.equals("#NAME?"))  return ErrorEval.NAME_INVALID;
-        if (value.equals("#NUM!"))   return ErrorEval.NUM_ERROR;
-        if (value.equals("#N/A"))    return ErrorEval.NA;
+        if (value.equals("#NULL!")) {
+            return ErrorEval.NULL_INTERSECTION;
+        }
+        if (value.equals("#DIV/0!")) {
+            return ErrorEval.DIV_ZERO;
+        }
+        if (value.equals("#VALUE!")) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        if (value.equals("#REF!")) {
+            return ErrorEval.REF_INVALID;
+        }
+        if (value.equals("#NAME?")) {
+            return ErrorEval.NAME_INVALID;
+        }
+        if (value.equals("#NUM!")) {
+            return ErrorEval.NUM_ERROR;
+        }
+        if (value.equals("#N/A")) {
+            return ErrorEval.NA;
+        }
 
         return null;
     }

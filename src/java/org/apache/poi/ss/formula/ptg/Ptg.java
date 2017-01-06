@@ -35,10 +35,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * parsed formula.  However, in BIFF files <tt>Ptg</tt>s are written/read in
  * <em>Reverse-Polish Notation</em> order. The RPN ordering also simplifies formula
  * evaluation logic, so POI mostly accesses <tt>Ptg</tt>s in the same way.
- *
- * @author  andy
- * @author avik
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public abstract class Ptg {
 	public static final Ptg[] EMPTY_PTG_ARRAY = { };
@@ -201,8 +197,8 @@ public abstract class Ptg {
 	 * @return number of bytes written
 	 */
 	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
-		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(array, offset);
-
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(array, offset); // NOSONAR
+		
 		List<Ptg> arrayPtgs = null;
 
 		for (Ptg ptg : ptgs) {

@@ -16,16 +16,20 @@
 ==================================================================== */
 package org.apache.poi.sl.usermodel;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.OldFileFormatException;
-import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
@@ -66,7 +70,7 @@ public class SlideShowFactory {
 
                 return createXSLFSlideShow(stream);
             } finally {
-                if (stream != null) stream.close();
+                IOUtils.closeQuietly(stream);
             }
         }
 
@@ -211,14 +215,10 @@ public class SlideShowFactory {
             fs = new NPOIFSFileSystem(file, readOnly);
             return create(fs, password);
         } catch(OfficeXmlFileException e) {
-            if(fs != null) {
-                fs.close();
-            }
+            IOUtils.closeQuietly(fs);
             return createXSLFSlideShow(file, readOnly);
         } catch(RuntimeException e) {
-            if(fs != null) {
-                fs.close();
-            }
+            IOUtils.closeQuietly(fs);
             throw e;
         }
     }

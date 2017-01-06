@@ -25,7 +25,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,6 +52,7 @@ import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Shadow;
 import org.apache.poi.sl.usermodel.SimpleShape;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Units;
 
 
@@ -110,15 +110,21 @@ public class DrawSimpleShape extends DrawShape {
     }
 
     protected void drawDecoration(Graphics2D graphics, Paint line, BasicStroke stroke) {
-        if(line == null) return;
+        if(line == null) {
+            return;
+        }
         graphics.setPaint(line);
 
         List<Outline> lst = new ArrayList<Outline>();
         LineDecoration deco = getShape().getLineDecoration();
         Outline head = getHeadDecoration(graphics, deco, stroke);
-        if (head != null) lst.add(head);
+        if (head != null) {
+            lst.add(head);
+        }
         Outline tail = getTailDecoration(graphics, deco, stroke);
-        if (tail != null) lst.add(tail);
+        if (tail != null) {
+            lst.add(tail);
+        }
 
 
         for(Outline o : lst){
@@ -126,8 +132,12 @@ public class DrawSimpleShape extends DrawShape {
             Path p = o.getPath();
             graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
 
-            if(p.isFilled()) graphics.fill(s);
-            if(p.isStroked()) graphics.draw(s);
+            if(p.isFilled()) {
+                graphics.fill(s);
+            }
+            if(p.isStroked()) {
+                graphics.draw(s);
+            }
         }
     }
 
@@ -221,8 +231,7 @@ public class DrawSimpleShape extends DrawShape {
         double lineWidth = Math.max(2.5, stroke.getLineWidth());
 
         Rectangle2D anchor = getAnchor(graphics, getShape());
-        double x1 = anchor.getX(),
-                y1 = anchor.getY();
+        double x1 = anchor.getX(), y1 = anchor.getY();
 
         double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
 
@@ -283,13 +292,15 @@ public class DrawSimpleShape extends DrawShape {
     }
 
     protected void drawShadow(
-            Graphics2D graphics
-          , Collection<Outline> outlines
-          , Paint fill
-          , Paint line
+        Graphics2D graphics
+      , Collection<Outline> outlines
+      , Paint fill
+      , Paint line
     ) {
           Shadow<?,?> shadow = getShape().getShadow();
-          if (shadow == null || (fill == null && line == null)) return;
+          if (shadow == null || (fill == null && line == null)) {
+              return;
+          }
 
           SolidPaint shadowPaint = shadow.getFillStyle();
           Color shadowColor = DrawPaint.applyColorTransform(shadowPaint.getSolidColor());
@@ -373,11 +384,7 @@ public class DrawSimpleShape extends DrawShape {
             } catch (Exception e) {
                 throw new RuntimeException("Unable to load preset geometries.", e);
             } finally {
-                try {
-                    presetIS.close();
-                } catch (IOException e) {
-                    throw new RuntimeException("Unable to load preset geometries.", e);
-                }
+                IOUtils.closeQuietly(presetIS);
             }
         }
 

@@ -29,8 +29,6 @@ import org.apache.poi.util.LocaleUtil;
  * Internal calculation methods for Excel 'Analysis ToolPak' function YEARFRAC()<br/>
  *  
  * Algorithm inspired by www.dwheeler.com/yearfrac
- * 
- * @author Josh Micich
  */
 final class YearFracCalculator {
 	private static final int MS_PER_HOUR = 60 * 60 * 1000;
@@ -212,25 +210,21 @@ final class YearFracCalculator {
 	 * @return <code>true</code> if dates both within a leap year, or span a period including Feb 29
 	 */
 	private static boolean shouldCountFeb29(SimpleDate start, SimpleDate end) {
-		boolean startIsLeapYear = isLeapYear(start.year);
-		if (startIsLeapYear && start.year == end.year) {
-			// note - dates may not actually span Feb-29, but it gets counted anyway in this case
-			return true;
-		}
+		if (isLeapYear(start.year)) {
+	        if (start.year == end.year) {
+	            // note - dates may not actually span Feb-29, but it gets counted anyway in this case
+	            return true;
+	        }
 
-		boolean endIsLeapYear = isLeapYear(end.year);
-		if (!startIsLeapYear && !endIsLeapYear) {
-			return false;
-		}
-		if (startIsLeapYear) {
-			switch (start.month) {
+	        switch (start.month) {
 				case SimpleDate.JANUARY:
 				case SimpleDate.FEBRUARY:
 					return true;
 			}
 			return false;
 		}
-		if (endIsLeapYear) {
+		
+		if (isLeapYear(end.year)) {
 			switch (end.month) {
 				case SimpleDate.JANUARY:
 					return false;
