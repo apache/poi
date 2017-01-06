@@ -323,6 +323,7 @@ public class CellReference {
     /**
      * @deprecated 3.15 beta 2. Use {@link #isColumnWithinRange}.
      */
+    @Deprecated
     public static boolean isColumnWithnRange(String colStr, SpreadsheetVersion ssVersion) {
         return isColumnWithinRange(colStr, ssVersion);
     }
@@ -352,6 +353,7 @@ public class CellReference {
     /**
      * @deprecated 3.15 beta 2. Use {@link #isRowWithinRange}
      */
+    @Deprecated
     public static boolean isRowWithnRange(String rowStr, SpreadsheetVersion ssVersion) {
         return isRowWithinRange(rowStr, ssVersion);
     }
@@ -388,7 +390,9 @@ public class CellReference {
         final String sheetName = parseSheetName(reference, plingPos);
         String cell = reference.substring(plingPos+1).toUpperCase(Locale.ROOT);
         Matcher matcher = CELL_REF_PATTERN.matcher(cell);
-        if (!matcher.matches()) throw new IllegalArgumentException("Invalid CellReference: " + reference);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid CellReference: " + reference);
+        }
         String col = matcher.group(1);
         String row = matcher.group(2);
 
@@ -430,13 +434,11 @@ public class CellReference {
                 sb.append(ch);
                 continue;
             }
-            if(i < lastQuotePos) {
-                if(reference.charAt(i+1) == SPECIAL_NAME_DELIMITER) {
-                    // two consecutive quotes is the escape sequence for a single one
-                    i++; // skip this and keep parsing the special name
-                    sb.append(ch);
-                    continue;
-                }
+            if(i+1 < lastQuotePos && reference.charAt(i+1) == SPECIAL_NAME_DELIMITER) {
+                // two consecutive quotes is the escape sequence for a single one
+                i++; // skip this and keep parsing the special name
+                sb.append(ch);
+                continue;
             }
             throw new IllegalArgumentException("Bad sheet name quote escaping: (" + reference + ")");
         }

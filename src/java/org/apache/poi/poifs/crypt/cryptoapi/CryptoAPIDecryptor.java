@@ -194,7 +194,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
                 assert(entry.streamName.length() == nameSize);
             }
 
-            fsOut = new POIFSFileSystem();
+            fsOut = new POIFSFileSystem(); // NOSONAR
             for (StreamDescriptorEntry entry : entries) {
                 sbis.seek(entry.streamOffset);
                 sbis.setBlock(entry.block);

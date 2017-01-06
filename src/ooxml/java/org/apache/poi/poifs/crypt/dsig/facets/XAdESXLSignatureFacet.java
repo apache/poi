@@ -48,6 +48,7 @@ import java.util.UUID;
 import javax.xml.crypto.MarshalException;
 
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.c14n.Canonicalizer;
@@ -62,28 +63,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.RespID;
-import org.etsi.uri.x01903.v13.CRLIdentifierType;
-import org.etsi.uri.x01903.v13.CRLRefType;
-import org.etsi.uri.x01903.v13.CRLRefsType;
-import org.etsi.uri.x01903.v13.CRLValuesType;
-import org.etsi.uri.x01903.v13.CertIDListType;
-import org.etsi.uri.x01903.v13.CertIDType;
-import org.etsi.uri.x01903.v13.CertificateValuesType;
-import org.etsi.uri.x01903.v13.CompleteCertificateRefsType;
-import org.etsi.uri.x01903.v13.CompleteRevocationRefsType;
-import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
-import org.etsi.uri.x01903.v13.EncapsulatedPKIDataType;
-import org.etsi.uri.x01903.v13.OCSPIdentifierType;
-import org.etsi.uri.x01903.v13.OCSPRefType;
-import org.etsi.uri.x01903.v13.OCSPRefsType;
-import org.etsi.uri.x01903.v13.OCSPValuesType;
-import org.etsi.uri.x01903.v13.QualifyingPropertiesDocument;
-import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
-import org.etsi.uri.x01903.v13.ResponderIDType;
-import org.etsi.uri.x01903.v13.RevocationValuesType;
-import org.etsi.uri.x01903.v13.UnsignedPropertiesType;
-import org.etsi.uri.x01903.v13.UnsignedSignaturePropertiesType;
-import org.etsi.uri.x01903.v13.XAdESTimeStampType;
+import org.etsi.uri.x01903.v13.*;
 import org.etsi.uri.x01903.v14.ValidationDataType;
 import org.w3.x2000.x09.xmldsig.CanonicalizationMethodType;
 import org.w3c.dom.Document;
@@ -341,8 +321,8 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
                 ASN1Integer integer = (ASN1Integer)asn1IS2.readObject();
                 return integer.getPositiveValue();
             } finally {
-                asn1IS2.close();
-                asn1IS1.close();
+                IOUtils.closeQuietly(asn1IS2);
+                IOUtils.closeQuietly(asn1IS1);
             }
         } catch (IOException e) {
             throw new RuntimeException("I/O error: " + e.getMessage(), e);

@@ -16,11 +16,14 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -28,6 +31,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -252,8 +256,7 @@ public class WorkbookFactory {
                 return create(fs, password);
             } catch (RuntimeException e) {
                 // ensure that the file-handle is closed again
-                fs.close();
-                
+                IOUtils.closeQuietly(fs);
                 throw e;
             }
         } catch(OfficeXmlFileException e) {
@@ -261,20 +264,18 @@ public class WorkbookFactory {
             OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
             try {
                 return new XSSFWorkbook(pkg);
-            } catch (IOException ioe) {
-                // ensure that file handles are closed (use revert() to not re-write the file)
+            } catch (Exception ioe) {
+                // ensure that file handles are closed - use revert() to not re-write the file
                 pkg.revert();
-                //pkg.close();
+                // do not pkg.close();
 
-                // rethrow exception
-                throw ioe;
-            } catch (RuntimeException ioe) {
-                // ensure that file handles are closed (use revert() to not re-write the file)
-                pkg.revert();
-                //pkg.close();
-
-                // rethrow exception
-                throw ioe;
+                if (ioe instanceof IOException) {
+                    throw (IOException)ioe;
+                } else if (ioe instanceof RuntimeException) {
+                    throw (RuntimeException)ioe;
+                } else {
+                    throw new IOException(ioe);
+                }
             }
         }
     }

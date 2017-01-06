@@ -19,9 +19,10 @@
 
 package org.apache.poi.poifs.eventfilesystem;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.OPOIFSDocument;
@@ -34,6 +35,7 @@ import org.apache.poi.poifs.storage.BlockList;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
+import org.apache.poi.util.IOUtils;
 
 /**
  * An event-driven reader for POIFS file systems. Users of this class
@@ -42,8 +44,6 @@ import org.apache.poi.poifs.storage.SmallBlockTableReader;
  * documents. Once all the listeners have been registered, the read()
  * method is called, which results in the listeners being notified as
  * their documents are read.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public class POIFSReader
@@ -190,20 +190,19 @@ public class POIFSReader
     {
         if (args.length == 0)
         {
-            System.err
-                .println("at least one argument required: input filename(s)");
+            System.err.println("at least one argument required: input filename(s)");
             System.exit(1);
         }
 
         // register for all
-        for (int j = 0; j < args.length; j++)
+        for (String arg : args)
         {
             POIFSReader         reader   = new POIFSReader();
             POIFSReaderListener listener = new SampleListener();
 
             reader.registerListener(listener);
-            System.out.println("reading " + args[ j ]);
-            FileInputStream istream = new FileInputStream(args[ j ]);
+            System.out.println("reading " + arg);
+            FileInputStream istream = new FileInputStream(arg);
 
             reader.read(istream);
             istream.close();
@@ -300,31 +299,25 @@ public class POIFSReader
          * @param event
          */
 
-        public void processPOIFSReaderEvent(final POIFSReaderEvent event)
-        {
-            @SuppressWarnings("resource")
+        @Override
+        public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
             DocumentInputStream istream = event.getStream();
             POIFSDocumentPath   path    = event.getPath();
             String              name    = event.getName();
 
-            try
-            {
-                byte[] data = new byte[ istream.available() ];
-
-                istream.read(data);
+            try {
+                byte[] data = IOUtils.toByteArray(istream);
                 int pathLength = path.length();
 
-                for (int k = 0; k < pathLength; k++)
-                {
+                for (int k = 0; k < pathLength; k++) {
                     System.out.print("/" + path.getComponent(k));
                 }
-                System.out.println("/" + name + ": " + data.length
-                                   + " bytes read");
-            }
-            catch (IOException ignored)
-            {
+                System.out.println("/" + name + ": " + data.length + " bytes read");
+            } catch (IOException ignored) {
+            } finally {
+                IOUtils.closeQuietly(istream);
             }
         }
-    }   // end private class SampleListener
-}       // end public class POIFSReader
+    }
+}
 

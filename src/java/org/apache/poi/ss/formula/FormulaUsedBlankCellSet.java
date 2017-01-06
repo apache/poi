@@ -25,9 +25,7 @@ import java.util.Map;
 import org.apache.poi.ss.util.CellReference;
 
 /**
- * Optimisation - compacts many blank cell references used by a single formula.
- *
- * @author Josh Micich
+ * Optimization - compacts many blank cell references used by a single formula.
  */
 final class FormulaUsedBlankCellSet {
 	public static final class BookSheetKey {
@@ -39,11 +37,15 @@ final class FormulaUsedBlankCellSet {
 			_bookIndex = bookIndex;
 			_sheetIndex = sheetIndex;
 		}
-		public int hashCode() {
+		@Override
+        public int hashCode() {
 			return _bookIndex * 17 + _sheetIndex;
 		}
-		public boolean equals(Object obj) {
-			assert obj instanceof BookSheetKey : "these private cache key instances are only compared to themselves";
+		@Override
+        public boolean equals(Object obj) {
+		    if (!(obj instanceof BookSheetKey)) {
+		        return false;
+		    }
 			BookSheetKey other = (BookSheetKey) obj;
 			return _bookIndex == other._bookIndex && _sheetIndex == other._sheetIndex;
 		}
@@ -148,7 +150,8 @@ final class FormulaUsedBlankCellSet {
 			_lastRowIndex = rowIndex;
 			return true;
 		}
-		public String toString() {
+		@Override
+        public String toString() {
 			StringBuffer sb = new StringBuffer(64);
 			CellReference crA = new CellReference(_firstRowIndex, _firstColumnIndex, false, false);
 			CellReference crB = new CellReference(_lastRowIndex, _lastColumnIndex, false, false);

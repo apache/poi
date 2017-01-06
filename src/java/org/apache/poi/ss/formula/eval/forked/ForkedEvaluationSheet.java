@@ -37,8 +37,6 @@ import org.apache.poi.util.Internal;
  * will be used in all subsequent evaluations.<br/>
  *
  * For POI internal use only
- *
- * @author Josh Micich
  */
 @Internal
 final class ForkedEvaluationSheet implements EvaluationSheet {
@@ -128,7 +126,9 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
         }
         @Override
         public boolean equals(Object obj) {
-            assert obj instanceof RowColKey : "these private cache key instances are only compared to themselves";
+            if (!(obj instanceof RowColKey)) {
+                return false;
+            }
             RowColKey other = (RowColKey) obj;
             return _rowIndex == other._rowIndex && _columnIndex == other._columnIndex;
         }
@@ -136,6 +136,7 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
         public int hashCode() {
             return _rowIndex ^ _columnIndex;
         }
+        @Override
         public int compareTo(RowColKey o) {
             int cmp = _rowIndex - o._rowIndex;
             if (cmp != 0) {
