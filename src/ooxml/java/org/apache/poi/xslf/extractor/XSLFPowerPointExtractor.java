@@ -101,7 +101,8 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 	/**
 	 * Gets the slide text, but not the notes text
 	 */
-	public String getText() {
+	@Override
+    public String getText() {
 		return getText(slidesByDefault, notesByDefault);
 	}
 	
@@ -162,12 +163,10 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
           
           // If requested, get text from the master and it's layout 
           if(masterText) {
-             if(layout != null) {
-                extractText(layout, true, text);
-             }
-             if(master != null) {
-                extractText(master, true, text);
-             }
+             assert (layout != null);
+             extractText(layout, true, text);
+             assert (master != null);
+             extractText(master, true, text);
           }
 
           // If the slide has comments, do those too

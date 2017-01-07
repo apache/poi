@@ -115,11 +115,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         } catch (Exception e){
             throw new POIXMLException(e);
         } finally {
-            try {
-                is.close();
-            } catch (Exception e) {
-                throw new POIXMLException(e);
-            }
+            IOUtils.closeQuietly(is);
         }
     }
 

@@ -118,7 +118,7 @@ public class CombinedIterable<T> implements Iterable<T> {
 
                     } else {
                         lastI = masterIdx;
-                        val = currentMaster.getValue();
+                        val = (currentMaster != null) ? currentMaster.getValue() : null;
                         currentMaster = null;
                     }
 

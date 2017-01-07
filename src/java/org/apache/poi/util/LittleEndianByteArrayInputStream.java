@@ -56,7 +56,9 @@ public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream
 	    final int size = LittleEndianConsts.INT_SIZE;
 		checkPosition(size);
 		int le = LittleEndian.getInt(buf, pos);
-		super.skip(size);
+        if (super.skip(size) < size) {
+            throw new RuntimeException("Buffer overrun");
+        }
 		return le;
 	}
 
@@ -65,7 +67,9 @@ public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream
 	    final int size = LittleEndianConsts.LONG_SIZE;
 		checkPosition(size);
 		long le = LittleEndian.getLong(buf, pos);
-		super.skip(size);
+		if (super.skip(size) < size) {
+		    throw new RuntimeException("Buffer overrun");
+		}
 		return le;
 	}
 
@@ -84,7 +88,9 @@ public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream
         final int size = LittleEndianConsts.SHORT_SIZE;
         checkPosition(size);
         int le = LittleEndian.getUShort(buf, pos);
-        super.skip(size);
+        if (super.skip(size) < size) {
+            throw new RuntimeException("Buffer overrun");
+        }
         return le;
 	}
 
