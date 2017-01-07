@@ -17,9 +17,7 @@
 
 package org.apache.poi.util;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -168,7 +166,9 @@ public class HexDump {
 
     public static char toAscii(int dataB) {
         char charB = (char)(dataB & 0xFF);
-        if (Character.isISOControl(charB)) return '.';
+        if (Character.isISOControl(charB)) {
+            return '.';
+        }
         
         switch (charB) {
             // printable, but not compilable with current compiler encoding
@@ -408,12 +408,10 @@ public class HexDump {
     }    
     
     
-    public static void main(String[] args) throws Exception {
-        File file = new File(args[0]);
-        InputStream in = new BufferedInputStream(new FileInputStream(file));
-        byte[] b = new byte[(int)file.length()];
-        in.read(b);
-        System.out.println(HexDump.dump(b, 0, 0));
+    public static void main(String[] args) throws IOException {
+        InputStream in = new FileInputStream(args[0]);
+        byte[] b = IOUtils.toByteArray(in);
         in.close();
+        System.out.println(HexDump.dump(b, 0, 0));
     }
 }

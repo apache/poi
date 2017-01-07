@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.streaming;
 
+import java.awt.Dimension;
+import java.io.IOException;
+
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,14 +29,18 @@ import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFAnchor;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFPicture;
+import org.apache.poi.xssf.usermodel.XSSFPictureData;
+import org.apache.poi.xssf.usermodel.XSSFShape;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-
-import java.awt.Dimension;
-import java.io.IOException;
 
 /**
  * Streaming version of Picture.
@@ -140,38 +147,31 @@ public final class SXSSFPicture implements Picture {
         double scaledHeight = size.getHeight() * scale;
 
         float w = 0;
-        int col2 = anchor.getCol1();
-        int dx2 = 0;
+        int col2 = anchor.getCol1()-1;
 
-        for (;;) {
-            w += getColumnWidthInPixels(col2);
-            if(w > scaledWidth) break;
-            col2++;
+        while (w <= scaledWidth) {
+            w += getColumnWidthInPixels(++col2);
         }
 
-        if(w > scaledWidth) {
-            double cw = getColumnWidthInPixels(col2 );
-            double delta = w - scaledWidth;
-            dx2 = (int)(XSSFShape.EMU_PER_PIXEL * (cw - delta));
-        }
+        assert (w > scaledWidth);
+        double cw = getColumnWidthInPixels(col2);
+        double deltaW = w - scaledWidth;
+        int dx2 = (int)(XSSFShape.EMU_PER_PIXEL * (cw - deltaW));
+
         anchor.setCol2(col2);
         anchor.setDx2(dx2);
 
         double h = 0;
-        int row2 = anchor.getRow1();
-        int dy2 = 0;
+        int row2 = anchor.getRow1()-1;
 
-        for (;;) {
-            h += getRowHeightInPixels(row2);
-            if(h > scaledHeight) break;
-            row2++;
+        while (h <= scaledHeight) {
+            h += getRowHeightInPixels(++row2);
         }
 
-        if(h > scaledHeight) {
-            double ch = getRowHeightInPixels(row2);
-            double delta = h - scaledHeight;
-            dy2 = (int)(XSSFShape.EMU_PER_PIXEL * (ch - delta));
-        }
+        assert (h > scaledHeight);
+        double ch = getRowHeightInPixels(row2);
+        double deltaH = h - scaledHeight;
+        int dy2 = (int)(XSSFShape.EMU_PER_PIXEL * (ch - deltaH));
         anchor.setRow2(row2);
         anchor.setDy2(dy2);
 
