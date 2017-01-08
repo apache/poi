@@ -261,7 +261,7 @@ public class WorkbookFactory {
             }
         } catch(OfficeXmlFileException e) {
             // opening as .xls failed => try opening as .xlsx
-            OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
+            OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE); // NOSONAR
             try {
                 return new XSSFWorkbook(pkg);
             } catch (Exception ioe) {

@@ -17,9 +17,15 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -27,7 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Fills and Colors
  */
 public class FillsAndColors {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("new sheet");
 
@@ -37,7 +43,7 @@ public class FillsAndColors {
         // Aqua background
         CellStyle style = wb.createCellStyle();
         style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
-        style.setFillPattern(CellStyle.BIG_SPOTS);
+        style.setFillPattern(FillPatternType.BIG_SPOTS);
         Cell cell = row.createCell(1);
         cell.setCellValue(new XSSFRichTextString("X"));
         cell.setCellStyle(style);
@@ -45,7 +51,7 @@ public class FillsAndColors {
         // Orange "foreground", foreground being the fill foreground not the font color.
         style = wb.createCellStyle();
         style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cell = row.createCell(2);
         cell.setCellValue(new XSSFRichTextString("X"));
         cell.setCellStyle(style);
@@ -54,6 +60,6 @@ public class FillsAndColors {
         FileOutputStream fileOut = new FileOutputStream("fill_colors.xlsx");
         wb.write(fileOut);
         fileOut.close();
-
+        wb.close();
     }
 }

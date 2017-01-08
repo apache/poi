@@ -17,17 +17,23 @@
 
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.*;
-
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Working with borders
  */
 public class WorkingWithBorders {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Workbook wb = new XSSFWorkbook();  //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("borders");
 
@@ -40,13 +46,13 @@ public class WorkingWithBorders {
 
         // Style the cell with borders all around.
         CellStyle style = wb.createCellStyle();
-        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderBottom(BorderStyle.THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderLeft(BorderStyle.THIN);
         style.setLeftBorderColor(IndexedColors.GREEN.getIndex());
-        style.setBorderRight(CellStyle.BORDER_THIN);
+        style.setBorderRight(BorderStyle.THIN);
         style.setRightBorderColor(IndexedColors.BLUE.getIndex());
-        style.setBorderTop(CellStyle.BORDER_MEDIUM_DASHED);
+        style.setBorderTop(BorderStyle.MEDIUM_DASHED);
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         cell.setCellStyle(style);
 
@@ -54,5 +60,6 @@ public class WorkingWithBorders {
         FileOutputStream fileOut = new FileOutputStream("xssf-borders.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

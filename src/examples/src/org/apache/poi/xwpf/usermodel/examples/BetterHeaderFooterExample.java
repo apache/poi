@@ -30,7 +30,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 public class BetterHeaderFooterExample {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         XWPFDocument doc = new XWPFDocument();
 
         XWPFParagraph p = doc.createParagraph();
@@ -48,13 +48,9 @@ public class BetterHeaderFooterExample {
         XWPFFooter foot = doc.createFooter(HeaderFooterType.DEFAULT);
         foot.createParagraph().createRun().setText("footer");
         
-        try {
-            OutputStream os = new FileOutputStream(new File("header2.docx"));
-            doc.write(os);
-            doc.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        OutputStream os = new FileOutputStream(new File("header2.docx"));
+        doc.write(os);
+        os.close();
+        doc.close();
     }
 }

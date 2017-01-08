@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
@@ -28,7 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class HeadersAndFooters {
 
 
-    public static void main(String[]args) throws Exception {
+    public static void main(String[]args) throws IOException {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("first-header - format sheet");
         sheet.createRow(0).createCell(0).setCellValue(123);
@@ -79,6 +80,6 @@ public class HeadersAndFooters {
         FileOutputStream fileOut = new FileOutputStream("headerFooter.xlsx");
         wb.write(fileOut);
         fileOut.close();
-
+        wb.close();
     }
 }

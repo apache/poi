@@ -23,33 +23,31 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
-import java.util.Iterator;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
  * Tests whether it is possible to successfully update an Excel workbook that is
  * embedded into a WordprocessingML document. Note that the test has currently
  * only been conducted with a binary Excel workbook and NOT yet with a
- * SpreadsheetML workbook embedded into the document.
- *
- * <p>
- *     This code was successfully tested with the following file from the POI test collection:
- *     http://svn.apache.org/repos/asf/poi/trunk/test-data/document/EmbeddedDocument.docx
- * </p>
- *
- * @author Mark B
+ * SpreadsheetML workbook embedded into the document.<p>
+ * 
+ * This code was successfully tested with the following file from the POI test collection:
+ * http://svn.apache.org/repos/asf/poi/trunk/test-data/document/EmbeddedDocument.docx
  */
 public class UpdateEmbeddedDoc {
 
@@ -79,27 +77,15 @@ public class UpdateEmbeddedDoc {
         this.docFile = new File(filename);
         FileInputStream fis = null;
         if (!this.docFile.exists()) {
-            throw new FileNotFoundException("The Word dcoument " +
-                    filename +
-                    " does not exist.");
+            throw new FileNotFoundException("The Word dcoument " + filename + " does not exist.");
         }
         try {
-
             // Open the Word document file and instantiate the XWPFDocument
             // class.
             fis = new FileInputStream(this.docFile);
             this.doc = new XWPFDocument(fis);
         } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                    fis = null;
-                } catch (IOException ioEx) {
-                    System.out.println("IOException caught trying to close " +
-                            "FileInputStream in the constructor of " +
-                            "UpdateEmbeddedDoc.");
-                }
-            }
+            IOUtils.closeQuietly(fis);
         }
     }
 
@@ -121,35 +107,38 @@ public class UpdateEmbeddedDoc {
      *                             file system.
      */
     public void updateEmbeddedDoc() throws OpenXML4JException, IOException {
-        Workbook workbook = null;
-        Sheet sheet = null;
-        Row row = null;
-        Cell cell = null;
-        PackagePart pPart = null;
-        Iterator<PackagePart> pIter = null;
         List<PackagePart> embeddedDocs = this.doc.getAllEmbedds();
-        if (embeddedDocs != null && !embeddedDocs.isEmpty()) {
-            pIter = embeddedDocs.iterator();
-            while (pIter.hasNext()) {
-                pPart = pIter.next();
-                if (pPart.getPartName().getExtension().equals(BINARY_EXTENSION) ||
-                        pPart.getPartName().getExtension().equals(OPENXML_EXTENSION)) {
-
-                    // Get an InputStream from the pacage part and pass that
-                    // to the create method of the WorkbookFactory class. Update
-                    // the resulting Workbook and then stream that out again
-                    // using an OutputStream obtained from the same PackagePart.
-                    workbook = WorkbookFactory.create(pPart.getInputStream());
-                    sheet = workbook.getSheetAt(SHEET_NUM);
-                    row = sheet.getRow(ROW_NUM);
-                    cell = row.getCell(CELL_NUM);
+        for (PackagePart pPart : embeddedDocs) {
+            String ext = pPart.getPartName().getExtension();
+            if (BINARY_EXTENSION.equals(ext) || OPENXML_EXTENSION.equals(ext)) {
+                // Get an InputStream from the package part and pass that
+                // to the create method of the WorkbookFactory class. Update
+                // the resulting Workbook and then stream that out again
+                // using an OutputStream obtained from the same PackagePart.
+                InputStream is = pPart.getInputStream();
+                Workbook workbook = null;
+                OutputStream os = null;
+                try {
+                    workbook = WorkbookFactory.create(is);
+                    Sheet sheet = workbook.getSheetAt(SHEET_NUM);
+                    Row row = sheet.getRow(ROW_NUM);
+                    Cell cell = row.getCell(CELL_NUM);
                     cell.setCellValue(NEW_VALUE);
-                    workbook.write(pPart.getOutputStream());
+                    os = pPart.getOutputStream();
+                    workbook.write(os);
+                } finally {
+                    IOUtils.closeQuietly(os);
+                    IOUtils.closeQuietly(workbook);
+                    IOUtils.closeQuietly(is);
                 }
             }
+        }
 
+        if (!embeddedDocs.isEmpty()) {
             // Finally, write the newly modified Word document out to file.
-            this.doc.write(new FileOutputStream(this.docFile));
+            FileOutputStream fos = new FileOutputStream(this.docFile);
+            this.doc.write(fos);
+            fos.close();
         }
     }
 
@@ -179,24 +168,20 @@ public class UpdateEmbeddedDoc {
      *                             file system.
      */
     public void checkUpdatedDoc() throws OpenXML4JException, IOException {
-        Workbook workbook = null;
-        Sheet sheet = null;
-        Row row = null;
-        Cell cell = null;
-        PackagePart pPart = null;
-        Iterator<PackagePart> pIter = null;
-        List<PackagePart> embeddedDocs = this.doc.getAllEmbedds();
-        if (embeddedDocs != null && !embeddedDocs.isEmpty()) {
-            pIter = embeddedDocs.iterator();
-            while (pIter.hasNext()) {
-                pPart = pIter.next();
-                if (pPart.getPartName().getExtension().equals(BINARY_EXTENSION) ||
-                        pPart.getPartName().getExtension().equals(OPENXML_EXTENSION)) {
-                    workbook = WorkbookFactory.create(pPart.getInputStream());
-                    sheet = workbook.getSheetAt(SHEET_NUM);
-                    row = sheet.getRow(ROW_NUM);
-                    cell = row.getCell(CELL_NUM);
+        for (PackagePart pPart : this.doc.getAllEmbedds()) {
+            String ext = pPart.getPartName().getExtension();
+            if (BINARY_EXTENSION.equals(ext) || OPENXML_EXTENSION.equals(ext)) {
+                InputStream is = pPart.getInputStream();
+                Workbook workbook = null;
+                try {
+                    workbook = WorkbookFactory.create(is);
+                    Sheet sheet = workbook.getSheetAt(SHEET_NUM);
+                    Row row = sheet.getRow(ROW_NUM);
+                    Cell cell = row.getCell(CELL_NUM);
                     assertEquals(cell.getNumericCellValue(), NEW_VALUE, 0.0001);
+                } finally {
+                    IOUtils.closeQuietly(workbook);
+                    IOUtils.closeQuietly(is);
                 }
             }
         }
@@ -206,16 +191,11 @@ public class UpdateEmbeddedDoc {
      * Code to test updating of the embedded Excel workbook.
      *
      * @param args
+     * @throws OpenXML4JException 
      */
-    public static void main(String[] args) {
-        try {
-            UpdateEmbeddedDoc ued = new UpdateEmbeddedDoc(args[0]);
-            ued.updateEmbeddedDoc();
-            ued.checkUpdatedDoc();
-        } catch (Exception ex) {
-            System.out.println(ex.getClass().getName());
-            System.out.println(ex.getMessage());
-            ex.printStackTrace(System.out);
-        }
+    public static void main(String[] args) throws IOException, OpenXML4JException {
+        UpdateEmbeddedDoc ued = new UpdateEmbeddedDoc(args[0]);
+        ued.updateEmbeddedDoc();
+        ued.checkUpdatedDoc();
     }
 }

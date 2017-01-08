@@ -17,21 +17,22 @@
 
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * An example of how to merge regions of cells.
  */
 public class MergingCells {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("new sheet");
 
@@ -45,5 +46,6 @@ public class MergingCells {
         FileOutputStream fileOut = new FileOutputStream("merging_cells.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

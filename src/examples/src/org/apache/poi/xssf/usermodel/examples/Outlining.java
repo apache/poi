@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,14 +27,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Outlining {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Outlining o=new Outlining();
         o.groupRowColumn();
         o.collapseExpandRowColumn();
     }
 
 
-    private void groupRowColumn() throws Exception {
+    private void groupRowColumn() throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet1 = wb.createSheet("new sheet");
 
@@ -50,10 +51,11 @@ public class Outlining {
             wb.write(fileOut);
         } finally {
             fileOut.close();
+            wb.close();
         }
     }
 
-    private void collapseExpandRowColumn() throws Exception {
+    private void collapseExpandRowColumn() throws IOException {
         Workbook wb2 = new XSSFWorkbook();
         Sheet sheet2 = wb2.createSheet("new sheet");
         sheet2.groupRow( 5, 14 );
@@ -76,6 +78,7 @@ public class Outlining {
             wb2.write(fileOut);
         } finally {
             fileOut.close();
+            wb2.close();
         }
     }
 }

@@ -20,19 +20,32 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.*;
-import org.apache.poi.ss.usermodel.charts.*;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
+import org.apache.poi.ss.usermodel.charts.ChartDataSource;
+import org.apache.poi.ss.usermodel.charts.ChartLegend;
+import org.apache.poi.ss.usermodel.charts.DataSources;
+import org.apache.poi.ss.usermodel.charts.LegendPosition;
+import org.apache.poi.ss.usermodel.charts.ScatterChartData;
+import org.apache.poi.ss.usermodel.charts.ValueAxis;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Illustrates how to create a simple scatter chart.
- *
- * @author Roman Kashitsyn
  */
 public class ScatterChart {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("Sheet 1");
         final int NUM_OF_ROWS = 3;
@@ -49,7 +62,7 @@ public class ScatterChart {
             }
         }
 
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
         Chart chart = drawing.createChart(anchor);
@@ -76,5 +89,6 @@ public class ScatterChart {
         FileOutputStream fileOut = new FileOutputStream("ooxml-scatter-chart.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

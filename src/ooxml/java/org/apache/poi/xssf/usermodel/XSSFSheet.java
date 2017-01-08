@@ -236,7 +236,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private void initHyperlinks() {
         hyperlinks = new ArrayList<XSSFHyperlink>();
 
-        if(!worksheet.isSetHyperlinks()) return;
+        if(!worksheet.isSetHyperlinks()) {
+            return;
+        }
 
         try {
             PackageRelationshipCollection hyperRels =
@@ -390,11 +392,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // for each cell in sheet, if cell belongs to an array formula, check if merged region intersects array formula cells
         for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
             XSSFRow row = getRow(rowIn);
-            if (row == null) continue;
+            if (row == null) {
+                continue;
+            }
             
             for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
                 XSSFCell cell = row.getCell(colIn);
-                if (cell == null) continue;
+                if (cell == null) {
+                    continue;
+                }
 
                 if (cell.isPartOfArrayFormulaGroup()) {
                     CellRangeAddress arrayRange = cell.getArrayFormulaRange();
@@ -646,7 +652,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         // If both colSplit and rowSplit are zero then the existing freeze pane is removed
         if(colSplit == 0 && rowSplit == 0){
-            if(ctView.isSetPane()) ctView.unsetPane();
+            if(ctView.isSetPane()) {
+                ctView.unsetPane();
+            }
             ctView.setSelectionArray(null);
             return;
         }
@@ -659,12 +667,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (colSplit > 0) {
            pane.setXSplit(colSplit);
         } else {
-           if(pane.isSetXSplit()) pane.unsetXSplit();
+           if(pane.isSetXSplit()) {
+               pane.unsetXSplit();
+           }
         }
         if (rowSplit > 0) {
            pane.setYSplit(rowSplit);
         } else {
-           if(pane.isSetYSplit()) pane.unsetYSplit();
+           if(pane.isSetYSplit()) {
+               pane.unsetYSplit();
+           }
         }
 
         pane.setState(STPaneState.FROZEN);
@@ -756,7 +768,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @return the cell comment, if one exists. Otherwise return null.
      * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
      */
+    @Deprecated
     @Override
+    @Removal(version="3.16")
     public XSSFComment getCellComment(int row, int column) {
         return getCellComment(new CellAddress(row, column));
     }
@@ -778,7 +792,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         CellAddress ref = new CellAddress(row, column);
         CTComment ctComment = sheetComments.getCTComment(ref);
-        if(ctComment == null) return null;
+        if(ctComment == null) {
+            return null;
+        }
 
         XSSFVMLDrawing vml = getVMLDrawing(false);
         return new XSSFComment(sheetComments, ctComment,
@@ -1181,7 +1197,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public double getMargin(short margin) {
-        if (!worksheet.isSetPageMargins()) return 0;
+        if (!worksheet.isSetPageMargins()) {
+            return 0;
+        }
 
         CTPageMargins pageMargins = worksheet.getPageMargins();
         switch (margin) {
@@ -1252,7 +1270,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public CellRangeAddress getMergedRegion(int index) {
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
-        if(ctMergeCells == null) throw new IllegalStateException("This worksheet does not contain merged regions");
+        if(ctMergeCells == null) {
+            throw new IllegalStateException("This worksheet does not contain merged regions");
+        }
 
         CTMergeCell ctMergeCell = ctMergeCells.getMergeCellArray(index);
         String ref = ctMergeCell.getRef();
@@ -1269,7 +1289,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     public List<CellRangeAddress> getMergedRegions() {
         List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
-        if(ctMergeCells == null) return addresses;
+        if(ctMergeCells == null) {
+            return addresses;
+        }
 
         for(CTMergeCell ctMergeCell : ctMergeCells.getMergeCellArray()) {
             String ref = ctMergeCell.getRef();
@@ -1302,7 +1324,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     public PaneInformation getPaneInformation() {
         CTPane pane = getDefaultSheetView().getPane();
         // no pane configured
-        if(pane == null)  return null;
+        if(pane == null) {
+            return null;
+        }
 
         CellReference cellRef = pane.isSetTopLeftCell() ? new CellReference(pane.getTopLeftCell()) : null;
         return new PaneInformation((short)pane.getXSplit(), (short)pane.getYSplit(),
@@ -1861,7 +1885,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void removeMergedRegion(int index) {
-        if (!worksheet.isSetMergeCells()) return;
+        if (!worksheet.isSetMergeCells()) {
+            return;
+        }
         
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
         int size = ctMergeCells.sizeOfMergeCellArray();
@@ -1884,7 +1910,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void removeMergedRegions(Collection<Integer> indices) {
-        if (!worksheet.isSetMergeCells()) return;
+        if (!worksheet.isSetMergeCells()) {
+            return;
+        }
         
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
         List<CTMergeCell> newMergeCells = new ArrayList<CTMergeCell>(ctMergeCells.sizeOfMergeCellArray());
@@ -2466,7 +2494,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setColumnWidth(int columnIndex, int width) {
-        if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
+        if(width > 255*256) {
+            throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
+        }
 
         columnHelper.setColWidth(columnIndex, (double)width/256);
         columnHelper.setCustomWidth(columnIndex, true);
@@ -2611,8 +2641,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         short level = getRow(rowIndex).getCTRow().getOutlineLevel();
         int currentRow = rowIndex;
         while (getRow(currentRow) != null) {
-            if (getRow(currentRow).getCTRow().getOutlineLevel() < level)
+            if (getRow(currentRow).getCTRow().getOutlineLevel() < level) {
                 return currentRow + 1;
+            }
             currentRow--;
         }
         return currentRow;
@@ -2641,8 +2672,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @param rowNumber the zero based row index to expand
      */
     private void expandRow(int rowNumber) {
-        if (rowNumber == -1)
+        if (rowNumber == -1) {
             return;
+        }
         XSSFRow row = getRow(rowNumber);
         // If it is already expanded do nothing.
         if (!row.getCTRow().isSetHidden()) {
@@ -2756,6 +2788,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @param denominator   The denominator for the zoom magnification.
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
+    @Deprecated
     @Removal(version="3.16")
     @Override
     public void setZoom(int numerator, int denominator) {
@@ -2989,6 +3022,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // we need to sort it in a way so the shifting does not mess up the structures, 
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<XSSFComment, Integer>(new Comparator<XSSFComment>() {
+            @Override
             public int compare(XSSFComment o1, XSSFComment o2) {
                 int row1 = o1.getRow();
                 int row2 = o2.getRow();
@@ -3038,7 +3072,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 }
             }
 
-            if(rownum < startRow || rownum > endRow) continue;
+            if(rownum < startRow || rownum > endRow) {
+                continue;
+            }
 
             if (!copyRowHeight) {
                 row.setHeight((short)-1);
@@ -3266,6 +3302,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @param cellRef the location of the active cell, e.g. <code>A1</code>..
      * @deprecated 3.14beta2 (circa 2015-12-05). Use {@link #setActiveCell(CellAddress)} instead.
      */
+    @Deprecated
+    @Removal(version="3.16")
     public void setActiveCell(String cellRef) {
         CTSelection ctsel = getSheetTypeSelection();
         ctsel.setActiveCell(cellRef);
@@ -3313,11 +3351,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     private CTSheetView getDefaultSheetView() {
         CTSheetViews views = getSheetTypeSheetViews();
-        int sz = views == null ? 0 : views.sizeOfSheetViewArray();
-        if (sz  == 0) {
+        if (views == null) {
             return null;
         }
-        return views.getSheetViewArray(sz - 1);
+        int sz = views.sizeOfSheetViewArray();
+        return (sz == 0) ? null : views.getSheetViewArray(sz - 1);
     }
 
     /**
@@ -3835,6 +3873,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         return dataValidationHelper;
     }
 
+    @Override
     public List<XSSFDataValidation> getDataValidations() {
         List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
         CTDataValidations dataValidations = this.worksheet.getDataValidations();
@@ -3879,7 +3918,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public XSSFAutoFilter setAutoFilter(CellRangeAddress range) {
         CTAutoFilter af = worksheet.getAutoFilter();
-        if(af == null) af = worksheet.addNewAutoFilter();
+        if(af == null) {
+            af = worksheet.addNewAutoFilter();
+        }
 
         CellRangeAddress norm = new CellRangeAddress(range.getFirstRow(), range.getLastRow(),
                 range.getFirstColumn(), range.getLastColumn());
@@ -3945,7 +3986,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     public XSSFColor getTabColor() {
         CTSheetPr pr = worksheet.getSheetPr();
-        if(pr == null) pr = worksheet.addNewSheetPr();
+        if(pr == null) {
+            pr = worksheet.addNewSheetPr();
+        }
         if (!pr.isSetTabColor()) {
             return null;
         }
@@ -3958,6 +4001,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @param colorIndex  the indexed color to set, must be a constant from {@link org.apache.poi.ss.usermodel.IndexedColors}
      * @deprecated 3.15-beta2. Removed in 3.17. Use {@link #setTabColor(XSSFColor)}.
      */
+    @Deprecated
+    @Removal(version="3.17")
     public void setTabColor(int colorIndex) {
         IndexedColors indexedColor = IndexedColors.fromInt(colorIndex);
         XSSFColor color = new XSSFColor(indexedColor);
@@ -3971,7 +4016,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     public void setTabColor(XSSFColor color) {
         CTSheetPr pr = worksheet.getSheetPr();
-        if(pr == null) pr = worksheet.addNewSheetPr();
+        if(pr == null) {
+            pr = worksheet.addNewSheetPr();
+        }
         pr.setTabColor(color.getCTColor());
     }
 
@@ -4197,6 +4244,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
 
         return createPivotTable(position, sourceSheet, new PivotTableReferenceConfigurator() {
+                @Override
                 public void configureReference(CTWorksheetSource wsSource) {
                     final String[] firstCell = source.getFirstCell().getCellRefParts();
                     final String firstRow = firstCell[1];
@@ -4269,6 +4317,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
         
         return createPivotTable(position, sourceSheet, new PivotTableReferenceConfigurator() {
+                @Override
                 public void configureReference(CTWorksheetSource wsSource) {
                     wsSource.setName(source.getNameName());
                 }
@@ -4297,7 +4346,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Beta
     public XSSFPivotTable createPivotTable(final Table source, CellReference position) {
        return createPivotTable(position, getWorkbook().getSheet(source.getSheetName()), new PivotTableReferenceConfigurator() {
-           public void configureReference(CTWorksheetSource wsSource) {
+           @Override
+        public void configureReference(CTWorksheetSource wsSource) {
                wsSource.setName(source.getName());
            }
        });
@@ -4317,6 +4367,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         return tables;
     }
     
+    @Override
     public int getColumnOutlineLevel(int columnIndex) {
         CTCol col = columnHelper.getColumn(columnIndex, false);
         if (col == null) {

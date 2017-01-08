@@ -48,10 +48,12 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -233,20 +235,14 @@ public class SXSSFWorkbook implements Workbook {
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable){
         setRandomAccessWindowSize(rowAccessWindowSize);
         setCompressTempFiles(compressTmpFiles);
-        if (workbook == null)
-        {
+        if (workbook == null) {
             _wb=new XSSFWorkbook();
             _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
-        }
-        else
-        {
+        } else {
             _wb=workbook;
             _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
-            final int numberOfSheets = _wb.getNumberOfSheets();
-            for ( int i = 0; i < numberOfSheets; i++ )
-            {
-                XSSFSheet sheet = _wb.getSheetAt( i );
-                createAndRegisterSXSSFSheet( sheet );
+            for ( Sheet sheet : _wb ) {
+                createAndRegisterSXSSFSheet( (XSSFSheet)sheet );
             }
         }
     }
@@ -364,62 +360,44 @@ public class SXSSFWorkbook implements Workbook {
     {
         for(XSSFSheet sheet : _sxFromXHash.values())
         {
-            if(sheetRef.equals(sheet.getPackagePart().getPartName().getName().substring(1))) return sheet;
+            if(sheetRef.equals(sheet.getPackagePart().getPartName().getName().substring(1))) {
+                return sheet;
+            }
         }
         return null;
     }
 
-    protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException 
-    {
-        try
-        {
+    protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
+        try {
             ZipOutputStream zos = new ZipOutputStream(out);
-            try
-            {
+            try {
                 Enumeration<? extends ZipEntry> en = zipEntrySource.getEntries();
-                while (en.hasMoreElements()) 
-                {
+                while (en.hasMoreElements()) {
                     ZipEntry ze = en.nextElement();
                     zos.putNextEntry(new ZipEntry(ze.getName()));
                     InputStream is = zipEntrySource.getInputStream(ze);
                     XSSFSheet xSheet=getSheetFromZipEntryName(ze.getName());
-                    if(xSheet!=null)
-                    {
+                    if(xSheet!=null) {
                         SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
                         InputStream xis = sxSheet.getWorksheetXMLInputStream();
-                        try
-                        {
+                        try {
                             copyStreamAndInjectWorksheet(is,zos,xis);
-                        }
-                        finally
-                        {
+                        } finally {
                             xis.close();
                         }
-                    }
-                    else
-                    {
-                        copyStream(is, zos);
+                    } else {
+                        IOUtils.copy(is, zos);
                     }
                     is.close();
                 }
-            }
-            finally
-            {
+            } finally {
                 zos.close();
             }
-        }
-        finally
-        {
+        } finally {
             zipEntrySource.close();
         }
     }
-    private static void copyStream(InputStream in, OutputStream out) throws IOException {
-        byte[] chunk = new byte[1024];
-        int count;
-        while ((count = in.read(chunk)) >=0 ) {
-          out.write(chunk,0,count);
-        }
-    }
+
     private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, InputStream worksheetData) throws IOException {
         InputStreamReader inReader=new InputStreamReader(in,"UTF-8"); //TODO: Is it always UTF-8 or do we need to read the xml encoding declaration in the file? If not, we should perhaps use a SAX reader instead.
         OutputStreamWriter outWriter=new OutputStreamWriter(out,"UTF-8");
@@ -428,7 +406,7 @@ public class SXSSFWorkbook implements Workbook {
         int pos=0;
         String s="<sheetData";
         int n=s.length();
-//Copy from "in" to "out" up to the string "<sheetData/>" or "</sheetData>" (excluding).
+        //Copy from "in" to "out" up to the string "<sheetData/>" or "</sheetData>" (excluding).
         while(((c=inReader.read())!=-1))
         {
             if(c==s.charAt(pos))
@@ -492,7 +470,9 @@ public class SXSSFWorkbook implements Workbook {
             }
             else
             {
-                if(pos>0) outWriter.write(s,0,pos);
+                if(pos>0) {
+                    outWriter.write(s,0,pos);
+                }
                 if(c==s.charAt(0))
                 {
                     pos=1;
@@ -510,13 +490,14 @@ public class SXSSFWorkbook implements Workbook {
         	outWriter.write("<sheetData>\n");
         	outWriter.flush();
         }
-//Copy the worksheet data to "out".
-        copyStream(worksheetData,out);
+        //Copy the worksheet data to "out".
+        IOUtils.copy(worksheetData,out);
         outWriter.write("</sheetData>");
         outWriter.flush();
-//Copy the rest of "in" to "out".
-        while(((c=inReader.read())!=-1))
+        //Copy the rest of "in" to "out".
+        while(((c=inReader.read())!=-1)) {
             outWriter.write(c);
+        }
         outWriter.flush();
     }
 
@@ -830,7 +811,9 @@ public class SXSSFWorkbook implements Workbook {
      * @return the font with the matched attributes or <code>null</code>
      * @deprecated POI 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
+    @Deprecated
     @Override
+    @Removal(version="3.17")
     public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline)
     {
         return _wb.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
@@ -934,7 +917,7 @@ public class SXSSFWorkbook implements Workbook {
     }
     
     /**
-     * Write out this workbook to an Outputstream.
+     * Write out this workbook to an OutputStream.
      *
      * @param stream - the java OutputStream you wish to write to
      * @exception IOException if anything can't be written.
@@ -946,27 +929,23 @@ public class SXSSFWorkbook implements Workbook {
 
         //Save the template
         File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
-        try
-        {
+        boolean deleted;
+        try {
             FileOutputStream os = new FileOutputStream(tmplFile);
-            try
-            {
+            try {
                 _wb.write(os);
-            }
-            finally
-            {
+            } finally {
                 os.close();
             }
 
             //Substitute the template entries with the generated sheet data files
             final ZipEntrySource source = new ZipFileZipEntrySource(new ZipFile(tmplFile));
             injectData(source, stream);
+        } finally {
+            deleted = tmplFile.delete();
         }
-        finally
-        {
-            if(!tmplFile.delete()) {
-                throw new IOException("Could not delete temporary file after processing: " + tmplFile);
-            }
+        if(!deleted) {
+            throw new IOException("Could not delete temporary file after processing: " + tmplFile);
         }
     }
     
@@ -1046,6 +1025,7 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     @Deprecated
+    @Removal(version="3.18")
     public Name getNameAt(int nameIndex)
     {
         return _wb.getNameAt(nameIndex);
@@ -1076,6 +1056,7 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     @Deprecated
+    @Removal(version="3.18")
     public int getNameIndex(String name)
     {
         return _wb.getNameIndex(name);
@@ -1090,6 +1071,7 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     @Deprecated
+    @Removal(version="3.18")
     public void removeName(int index)
     {
         _wb.removeName(index);
@@ -1104,6 +1086,7 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     @Deprecated
+    @Removal(version="3.18")
     public void removeName(String name)
     {
         _wb.removeName(name);

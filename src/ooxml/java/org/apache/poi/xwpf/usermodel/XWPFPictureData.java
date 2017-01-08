@@ -156,11 +156,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
             } catch (IOException e) {
                 throw new POIXMLException(e);
             } finally {
-                try {
-                    if (is != null) is.close();
-                } catch (IOException e) {
-                    throw new POIXMLException(e);
-                }
+                IOUtils.closeQuietly(is);
             }
             this.checksum = IOUtils.calculateChecksum(data);
         }

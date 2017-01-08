@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Chart;
@@ -42,7 +43,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class LineChart {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("linechart");
         final int NUM_OF_ROWS = 3;
@@ -59,7 +60,7 @@ public class LineChart {
             }
         }
 
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
         Chart chart = drawing.createChart(anchor);
@@ -87,5 +88,6 @@ public class LineChart {
         FileOutputStream fileOut = new FileOutputStream("ooxml-line-chart.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }
