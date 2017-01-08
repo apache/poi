@@ -46,6 +46,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -180,32 +181,20 @@ public final class XSSFCell implements Cell {
         
         // Copy CellStyle
         if (policy.isCopyCellStyle()) {
-            if (srcCell != null) {
-                setCellStyle(srcCell.getCellStyle());
-            }
-            else {
-                // clear cell style
-                setCellStyle(null);
-            }
+            setCellStyle(srcCell == null ? null : srcCell.getCellStyle());
         }
         
+        final Hyperlink srcHyperlink = (srcCell == null) ? null : srcCell.getHyperlink();
+
         if (policy.isMergeHyperlink()) {
             // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
-            final Hyperlink srcHyperlink = srcCell.getHyperlink();
             if (srcHyperlink != null) {
                 setHyperlink(new XSSFHyperlink(srcHyperlink));
             }
-        }
-        else if (policy.isCopyHyperlink()) {
+        } else if (policy.isCopyHyperlink()) {
             // overwrite the hyperlink at dest cell with srcCell's hyperlink
             // if srcCell doesn't have a hyperlink, clear the hyperlink (if one exists) at destCell
-            final Hyperlink srcHyperlink = srcCell.getHyperlink();
-            if (srcHyperlink == null) {
-                setHyperlink(null);
-            }
-            else {
-                setHyperlink(new XSSFHyperlink(srcHyperlink));
-            }
+            setHyperlink(srcHyperlink == null ? null : new XSSFHyperlink(srcHyperlink));
         }
     }
 
@@ -303,7 +292,9 @@ public final class XSSFCell implements Cell {
             case NUMERIC:
                 if(_cell.isSetV()) {
                    String v = _cell.getV();
-                   if (v.isEmpty()) return 0.0;
+                   if (v.isEmpty()) {
+                       return 0.0;
+                   }
                    try {
                       return Double.parseDouble(v);
                    } catch(NumberFormatException e) {
@@ -487,7 +478,9 @@ public final class XSSFCell implements Cell {
      */
     protected String getCellFormula(XSSFEvaluationWorkbook fpb) {
         CellType cellType = getCellTypeEnum();
-        if(cellType != CellType.FORMULA) throw typeMismatch(CellType.FORMULA, cellType, false);
+        if(cellType != CellType.FORMULA) {
+            throw typeMismatch(CellType.FORMULA, cellType, false);
+        }
 
         CTCellFormula f = _cell.getF();
         if (isPartOfArrayFormulaGroup() && f == null) {
@@ -510,8 +503,10 @@ public final class XSSFCell implements Cell {
         XSSFSheet sheet = getSheet();
 
         CTCellFormula f = sheet.getSharedFormula(si);
-        if(f == null) throw new IllegalStateException(
-                "Master cell of a shared formula with sid="+si+" was not found");
+        if(f == null) {
+            throw new IllegalStateException(
+                    "Master cell of a shared formula with sid="+si+" was not found");
+        }
 
         String sharedFormula = f.getStringValue();
         //Range of cells which the shared formula applies to
@@ -560,7 +555,9 @@ public final class XSSFCell implements Cell {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
         if (formula == null) {
             wb.onDeleteFormula(this);
-            if(_cell.isSetF()) _cell.unsetF();
+            if(_cell.isSetF()) {
+                _cell.unsetF();
+            }
             return;
         }
 
@@ -571,7 +568,9 @@ public final class XSSFCell implements Cell {
         CTCellFormula f = CTCellFormula.Factory.newInstance();
         f.setStringValue(formula);
         _cell.setF(f);
-        if(_cell.isSetV()) _cell.unsetV();
+        if(_cell.isSetV()) {
+            _cell.unsetV();
+        }
     }
 
     /**
@@ -644,7 +643,9 @@ public final class XSSFCell implements Cell {
     @Override
     public void setCellStyle(CellStyle style) {
         if(style == null) {
-            if(_cell.isSetS()) _cell.unsetS();
+            if(_cell.isSetS()) {
+                _cell.unsetS();
+            }
         } else {
             XSSFCellStyle xStyle = (XSSFCellStyle)style;
             xStyle.verifyBelongsToStylesSource(_stylesSource);
@@ -670,7 +671,9 @@ public final class XSSFCell implements Cell {
      * @return the cell type
      * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
+    @Deprecated
     @Override
+    @Removal(version="3.17")
     public int getCellType() {
         return getCellTypeEnum().getCode();
     }
@@ -684,7 +687,9 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public CellType getCellTypeEnum() {
-        if (isFormulaCell()) return CellType.FORMULA;
+        if (isFormulaCell()) {
+            return CellType.FORMULA;
+        }
 
         return getBaseCellType(true);
     }
@@ -700,7 +705,9 @@ public final class XSSFCell implements Cell {
      * on the cached value of the formula
      * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
+    @Deprecated
     @Override
+    @Removal(version="3.17")
     public int getCachedFormulaResultType() {
         return getCachedFormulaResultTypeEnum().getCode();
     }
@@ -826,7 +833,9 @@ public final class XSSFCell implements Cell {
      */
     public String getErrorCellString() throws IllegalStateException {
         CellType cellType = getBaseCellType(true);
-        if(cellType != CellType.ERROR) throw typeMismatch(CellType.ERROR, cellType, false);
+        if(cellType != CellType.ERROR) {
+            throw typeMismatch(CellType.ERROR, cellType, false);
+        }
 
         return _cell.getV();
     }
@@ -897,7 +906,9 @@ public final class XSSFCell implements Cell {
     private void setBlank(){
         CTCell blank = CTCell.Factory.newInstance();
         blank.setR(_cell.getR());
-        if(_cell.isSetS()) blank.setS(_cell.getS());
+        if(_cell.isSetS()) {
+            blank.setS(_cell.getS());
+        }
         _cell.set(blank);
     }
 
@@ -925,7 +936,9 @@ public final class XSSFCell implements Cell {
      * @see CellType#ERROR
      * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
      */
+    @Deprecated
     @Override
+    @Removal(version="3.17")
     public void setCellType(int cellType) {
         setCellType(CellType.forInt(cellType));
     }
@@ -964,7 +977,9 @@ public final class XSSFCell implements Cell {
                     CTCellFormula f =  CTCellFormula.Factory.newInstance();
                     f.setStringValue("0");
                     _cell.setF(f);
-                    if(_cell.isSetT()) _cell.unsetT();
+                    if(_cell.isSetT()) {
+                        _cell.unsetT();
+                    }
                 }
                 break;
             case BLANK:

@@ -78,7 +78,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
             options.setLoadReplaceDocumentElement(null);
             ctPivotCacheDefinition = CTPivotCacheDefinition.Factory.parse(is, options);
         } catch (XmlException e) {
-            throw new IOException(e.getLocalizedMessage());
+            throw new IOException(e.getLocalizedMessage(), e);
         }
     }
 
@@ -123,22 +123,30 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         final String ref = wsSource.getRef();
         final String name = wsSource.getName();
         
-        if (ref == null && name == null) throw new IllegalArgumentException("Pivot cache must reference an area, named range, or table.");
+        if (ref == null && name == null) {
+            throw new IllegalArgumentException("Pivot cache must reference an area, named range, or table.");
+        }
         
         // this is the XML format, so tell the reference that.
-        if (ref != null) return new AreaReference(ref, SpreadsheetVersion.EXCEL2007);
+        if (ref != null) {
+            return new AreaReference(ref, SpreadsheetVersion.EXCEL2007);
+        }
         
-        if (name != null) {
-            // named range or table?
-            final Name range = wb.getName(name);
-            if (range != null) return new AreaReference(range.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
-            // not a named range, check for a table.
-            // do this second, as tables are sheet-specific, but named ranges are not, and may not have a sheet name given.
-            final XSSFSheet sheet = (XSSFSheet) wb.getSheet(wsSource.getSheet());
-            for (XSSFTable table : sheet.getTables()) {
-                if (table.getName().equals(name)) { //case-sensitive?
-                    return new AreaReference(table.getStartCellReference(), table.getEndCellReference());
-                }
+        assert (name != null);
+        
+        // named range or table?
+        final Name range = wb.getName(name);
+        if (range != null) {
+            return new AreaReference(range.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
+        }
+        
+        // not a named range, check for a table.
+        // do this second, as tables are sheet-specific, but named ranges are not, and may not have a sheet name given.
+        final XSSFSheet sheet = (XSSFSheet) wb.getSheet(wsSource.getSheet());
+        for (XSSFTable table : sheet.getTables()) {
+            // TODO: case-sensitive?
+            if (name.equals(table.getName())) {
+                return new AreaReference(table.getStartCellReference(), table.getEndCellReference());
             }
         }
         

@@ -17,17 +17,22 @@
 
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.IndexedColors;
-
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Working with Fonts
  */
 public class WorkingWithFonts {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         Workbook wb = new XSSFWorkbook();  //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("Fonts");
 
@@ -97,5 +102,6 @@ public class WorkingWithFonts {
         FileOutputStream fileOut = new FileOutputStream("xssf-fonts.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

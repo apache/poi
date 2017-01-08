@@ -84,24 +84,22 @@ public class SavePasswordProtectedXlsx {
     
     public static void save(final InputStream inputStream, final String filename, final String pwd)
             throws InvalidFormatException, IOException, GeneralSecurityException {
+        POIFSFileSystem fs = null;
+        FileOutputStream fos = null;
+        OPCPackage opc = null;
         try {
-            POIFSFileSystem fs = new POIFSFileSystem();
+            fs = new POIFSFileSystem();
             EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
             Encryptor enc = Encryptor.getInstance(info);
             enc.confirmPassword(pwd);
-            OPCPackage opc = OPCPackage.open(inputStream);
-            try {
-                FileOutputStream fos = new FileOutputStream(filename);
-                try {
-                    opc.save(enc.getDataStream(fs));
-                    fs.writeFilesystem(fos);
-                } finally {
-                    IOUtils.closeQuietly(fos);
-                }
-            } finally {
-                IOUtils.closeQuietly(opc);
-            }
+            opc = OPCPackage.open(inputStream);
+            fos = new FileOutputStream(filename);
+            opc.save(enc.getDataStream(fs));
+            fs.writeFilesystem(fos);
         } finally {
+            IOUtils.closeQuietly(fos);
+            IOUtils.closeQuietly(opc);
+            IOUtils.closeQuietly(fs);
             IOUtils.closeQuietly(inputStream);
         }
     }

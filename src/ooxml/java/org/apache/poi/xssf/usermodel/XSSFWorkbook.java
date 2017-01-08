@@ -352,15 +352,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             Map<String, ExternalLinksTable> elIdMap = new HashMap<String, ExternalLinksTable>();
             for(RelationPart rp : getRelationParts()){
                 POIXMLDocumentPart p = rp.getDocumentPart();
-                if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
-                else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
-                else if(p instanceof ThemesTable) theme = (ThemesTable)p;
-                else if(p instanceof CalculationChain) calcChain = (CalculationChain)p;
-                else if(p instanceof MapInfo) mapInfo = (MapInfo)p;
-                else if (p instanceof XSSFSheet) {
+                if(p instanceof SharedStringsTable) {
+                    sharedStringSource = (SharedStringsTable)p;
+                } else if(p instanceof StylesTable) {
+                    stylesSource = (StylesTable)p;
+                } else if(p instanceof ThemesTable) {
+                    theme = (ThemesTable)p;
+                } else if(p instanceof CalculationChain) {
+                    calcChain = (CalculationChain)p;
+                } else if(p instanceof MapInfo) {
+                    mapInfo = (MapInfo)p;
+                } else if (p instanceof XSSFSheet) {
                     shIdMap.put(rp.getRelationship().getId(), (XSSFSheet)p);
-                }
-                else if (p instanceof ExternalLinksTable) {
+                } else if (p instanceof ExternalLinksTable) {
                     elIdMap.put(rp.getRelationship().getId(), (ExternalLinksTable)p);
                 }
             }
@@ -723,8 +727,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public XSSFDataFormat createDataFormat() {
-        if (formatter == null)
+        if (formatter == null) {
             formatter = new XSSFDataFormat(stylesSource);
+        }
         return formatter;
     }
 
@@ -827,7 +832,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         validateSheetName(sheetname);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
+        if(sheetname.length() > 31) {
+            sheetname = sheetname.substring(0, 31);
+        }
         WorkbookUtil.validateSheetName(sheetname);
 
         CTSheet sheet = addSheet(sheetname);
@@ -860,7 +867,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         wrapper.sheet = sheet;
         sheet.setId(rp.getRelationship().getId());
         sheet.setSheetId(sheetNumber);
-        if (sheets.isEmpty()) wrapper.setSelected(true);
+        if (sheets.isEmpty()) {
+            wrapper.setSelected(true);
+        }
         sheets.add(wrapper);
         return wrapper;
     }
@@ -1082,7 +1091,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     @Override
     public String getPrintArea(int sheetIndex) {
         XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
-        if (name == null) return null;
+        if (name == null) {
+            return null;
+        }
         //adding one here because 0 indicates a global named region; doesnt make sense for print areas
         return name.getRefersToFormula();
 
@@ -1146,7 +1157,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public int getSheetIndex(Sheet sheet) {
         int idx = 0;
         for(XSSFSheet sh : sheets){
-            if(sh == sheet) return idx;
+            if(sh == sheet) {
+                return idx;
+            }
             idx++;
         }
         return -1;
@@ -1439,7 +1452,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         List<XSSFName> toRemove = new ArrayList<XSSFName>();
         for (XSSFName nm : namedRanges) {
             CTDefinedName ct = nm.getCTName();
-            if(!ct.isSetLocalSheetId()) continue;
+            if(!ct.isSetLocalSheetId()) {
+                continue;
+            }
             if (ct.getLocalSheetId() == index) {
                 toRemove.add(nm);
             } else if (ct.getLocalSheetId() > index){
@@ -1639,21 +1654,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public void setSheetName(int sheetIndex, String sheetname) {
+        if (sheetname == null) {
+            throw new IllegalArgumentException( "sheetName must not be null" );
+        }
+        
         validateSheetIndex(sheetIndex);
         String oldSheetName = getSheetName(sheetIndex);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname != null && sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
+        if(sheetname.length() > 31) {
+            sheetname = sheetname.substring(0, 31);
+        }
         WorkbookUtil.validateSheetName(sheetname);
-        // findbugs fix - validateSheetName has already checked for null value
-        assert(sheetname != null); 
 
         // Do nothing if no change
-        if (sheetname.equals(oldSheetName)) return;
+        if (sheetname.equals(oldSheetName)) {
+            return;
+        }
         
         // Check it isn't already taken
-        if (containsSheet(sheetname, sheetIndex ))
+        if (containsSheet(sheetname, sheetIndex )) {
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
+        }
 
         // Update references to the name
         XSSFFormulaUtils utils = new XSSFFormulaUtils(this);
@@ -1822,7 +1844,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Returns the Theme of current workbook.
      */
     public ThemesTable getTheme() {
-        if (stylesSource == null) return null;
+        if (stylesSource == null) {
+            return null;
+        }
         return stylesSource.getTheme();
     }
 
@@ -1832,7 +1856,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public XSSFCreationHelper getCreationHelper() {
-        if(_creationHelper == null) _creationHelper = new XSSFCreationHelper(this);
+        if(_creationHelper == null) {
+            _creationHelper = new XSSFCreationHelper(this);
+        }
         return _creationHelper;
     }
 
@@ -1857,8 +1883,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 ctName = ctName.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
             }
 
-            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctName))
+            if (excludeSheetIdx != i && name.equalsIgnoreCase(ctName)) {
                 return true;
+            }
         }
         return false;
     }
@@ -2149,7 +2176,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
      */
     public void setWorkbookPassword(String password, HashAlgorithm hashAlgo) {
-        if (password == null && !workbookProtectionPresent()) return;
+        if (password == null && !workbookProtectionPresent()) {
+            return;
+        }
         setPassword(safeGetWorkbookProtection(), password, hashAlgo, "workbook");
     }
 
@@ -2159,7 +2188,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @return true, if the hashes match (... though original password may differ ...)
      */
     public boolean validateWorkbookPassword(String password) {
-        if (!workbookProtectionPresent()) return (password == null);
+        if (!workbookProtectionPresent()) {
+            return (password == null);
+        }
         return validatePassword(safeGetWorkbookProtection(), password, "workbook");
     }
 
@@ -2171,7 +2202,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
      */
     public void setRevisionsPassword(String password, HashAlgorithm hashAlgo) {
-        if (password == null && !workbookProtectionPresent()) return;
+        if (password == null && !workbookProtectionPresent()) {
+            return;
+        }
         setPassword(safeGetWorkbookProtection(), password, hashAlgo, "revisions");
     }
 
@@ -2181,7 +2214,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @return true if the hashes match (... though original password may differ ...)
      */
     public boolean validateRevisionsPassword(String password) {
-        if (!workbookProtectionPresent()) return (password == null);
+        if (!workbookProtectionPresent()) {
+            return (password == null);
+        }
         return validatePassword(safeGetWorkbookProtection(), password, "revisions");
     }
     

@@ -26,37 +26,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.wp.usermodel.Paragraph;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTProofErr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRunTrackChange;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSmartTagRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * <p>A Paragraph within a Document, Table, Header etc.</p>
@@ -114,8 +84,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     for (XWPFParagraph p : footnote.getParagraphs()) {
                         if (!first) {
                             footnoteText.append("\n");
-                            first = false;
                         }
+                        first = false;
                         footnoteText.append(p.getText());
                     }
 
@@ -204,6 +174,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         return !paragraph.getDomNode().hasChildNodes();
     }
 
+    @Override
     public XWPFDocument getDocument() {
         return document;
     }
@@ -240,8 +211,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public String getStyleID() {
         if (paragraph.getPPr() != null) {
             if (paragraph.getPPr().getPStyle() != null) {
-                if (paragraph.getPPr().getPStyle().getVal() != null)
+                if (paragraph.getPPr().getPStyle().getVal() != null) {
                     return paragraph.getPPr().getPStyle().getVal();
+                }
             }
         }
         return null;
@@ -257,8 +229,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public BigInteger getNumID() {
         if (paragraph.getPPr() != null) {
             if (paragraph.getPPr().getNumPr() != null) {
-                if (paragraph.getPPr().getNumPr().getNumId() != null)
+                if (paragraph.getPPr().getNumPr().getNumId() != null) {
                     return paragraph.getPPr().getNumPr().getNumId().getVal();
+                }
             }
         }
         return null;
@@ -270,10 +243,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @param numPos
      */
     public void setNumID(BigInteger numPos) {
-        if (paragraph.getPPr() == null)
+        if (paragraph.getPPr() == null) {
             paragraph.addNewPPr();
-        if (paragraph.getPPr().getNumPr() == null)
+        }
+        if (paragraph.getPPr().getNumPr() == null) {
             paragraph.getPPr().addNewNumPr();
+        }
         if (paragraph.getPPr().getNumPr().getNumId() == null) {
             paragraph.getPPr().getNumPr().addNewNumId();
         }
@@ -289,8 +264,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public BigInteger getNumIlvl() {
         if (paragraph.getPPr() != null) {
             if (paragraph.getPPr().getNumPr() != null) {
-                if (paragraph.getPPr().getNumPr().getIlvl() != null)
+                if (paragraph.getPPr().getNumPr().getIlvl() != null) {
                     return paragraph.getPPr().getNumPr().getIlvl().getVal();
+                }
             }
         }
         return null;
@@ -319,8 +295,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     }
                 }
                 if (level != null && level.getNumFmt() != null
-                        && level.getNumFmt().getVal() != null)
+                        && level.getNumFmt().getVal() != null) {
                     return level.getNumFmt().getVal().toString();
+                }
             }
         }
         return null;
@@ -339,26 +316,31 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             if (num != null) {
                 BigInteger ilvl = getNumIlvl();
                 CTNum ctNum = num.getCTNum();
-                if (ctNum == null)
+                if (ctNum == null) {
                     return null;
+                }
 
                 CTDecimalNumber ctDecimalNumber = ctNum.getAbstractNumId();
-                if (ctDecimalNumber == null)
+                if (ctDecimalNumber == null) {
                     return null;
+                }
 
                 BigInteger abstractNumId = ctDecimalNumber.getVal();
-                if (abstractNumId == null)
+                if (abstractNumId == null) {
                     return null;
+                }
 
                 XWPFAbstractNum xwpfAbstractNum = numbering.getAbstractNum(abstractNumId);
 
-                if (xwpfAbstractNum == null)
+                if (xwpfAbstractNum == null) {
                     return null;
+                }
 
                 CTAbstractNum anum = xwpfAbstractNum.getCTAbstractNum();
 
-                if (anum == null)
+                if (anum == null) {
                     return null;
+                }
 
                 CTLvl level = null;
                 for (int i = 0; i < anum.sizeOfLvlArray(); i++) {
@@ -369,8 +351,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     }
                 }
                 if (level != null && level.getLvlText() != null
-                        && level.getLvlText().getVal() != null)
+                        && level.getLvlText().getVal() != null) {
                     return level.getLvlText().getVal().toString();
+                }
             }
         }
         return null;
@@ -486,10 +469,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * @return The raw alignment value, {@link #getAlignment()} is suggested
      */
+    @Override
     public int getFontAlignment() {
         return getAlignment().getValue();
     }
 
+    @Override
     public void setFontAlignment(int align) {
         ParagraphAlignment pAlign = ParagraphAlignment.valueOf(align);
         setAlignment(pAlign);
@@ -600,10 +585,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
 
         CTBorder pr = (ct.isSetTop()) ? ct.getTop() : ct.addNewTop();
-        if (border.getValue() == Borders.NONE.getValue())
+        if (border.getValue() == Borders.NONE.getValue()) {
             ct.unsetTop();
-        else
+        } else {
             pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        }
     }
 
     /**
@@ -654,10 +640,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setBorderBottom(Borders border) {
         CTPBdr ct = getCTPBrd(true);
         CTBorder pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
-        if (border.getValue() == Borders.NONE.getValue())
+        if (border.getValue() == Borders.NONE.getValue()) {
             ct.unsetBottom();
-        else
+        } else {
             pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        }
     }
 
     /**
@@ -703,10 +690,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setBorderLeft(Borders border) {
         CTPBdr ct = getCTPBrd(true);
         CTBorder pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
-        if (border.getValue() == Borders.NONE.getValue())
+        if (border.getValue() == Borders.NONE.getValue()) {
             ct.unsetLeft();
-        else
+        } else {
             pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        }
     }
 
     /**
@@ -752,10 +740,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setBorderRight(Borders border) {
         CTPBdr ct = getCTPBrd(true);
         CTBorder pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
-        if (border.getValue() == Borders.NONE.getValue())
+        if (border.getValue() == Borders.NONE.getValue()) {
             ct.unsetRight();
-        else
+        } else {
             pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        }
     }
 
     /**
@@ -805,10 +794,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setBorderBetween(Borders border) {
         CTPBdr ct = getCTPBrd(true);
         CTBorder pr = ct.isSetBetween() ? ct.getBetween() : ct.addNewBetween();
-        if (border.getValue() == Borders.NONE.getValue())
+        if (border.getValue() == Borders.NONE.getValue()) {
             ct.unsetBetween();
-        else
+        } else {
             pr.setVal(STBorder.Enum.forInt(border.getValue()));
+        }
     }
 
     /**
@@ -857,10 +847,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         CTPPr ppr = getCTPPr();
         CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr
                 .getPageBreakBefore() : ppr.addNewPageBreakBefore();
-        if (pageBreak)
+        if (pageBreak) {
             ctPageBreak.setVal(STOnOff.TRUE);
-        else
+        } else {
             ctPageBreak.setVal(STOnOff.FALSE);
+        }
     }
 
     /**
@@ -1228,26 +1219,32 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         indent.setFirstLine(bi);
     }
 
+    @Override
     public int getIndentFromLeft() {
         return getIndentationLeft();
     }
 
+    @Override
     public void setIndentFromLeft(int dxaLeft) {
         setIndentationLeft(dxaLeft);
     }
 
+    @Override
     public int getIndentFromRight() {
         return getIndentationRight();
     }
 
+    @Override
     public void setIndentFromRight(int dxaRight) {
         setIndentationRight(dxaRight);
     }
 
+    @Override
     public int getFirstLineIndent() {
         return getIndentationFirstLine();
     }
 
+    @Override
     public void setFirstLineIndent(int first) {
         setIndentationFirstLine(first);
     }
@@ -1260,6 +1257,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @return boolean
      */
+    @Override
     public boolean isWordWrapped() {
         CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
                 .getWordWrap() : null;
@@ -1279,13 +1277,15 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @param wrap - boolean
      */
+    @Override
     public void setWordWrapped(boolean wrap) {
         CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
                 .getWordWrap() : getCTPPr().addNewWordWrap();
-        if (wrap)
+        if (wrap) {
             wordWrap.setVal(STOnOff.TRUE);
-        else
+        } else {
             wordWrap.unsetVal();
+        }
     }
 
     public boolean isWordWrap() {
@@ -1325,8 +1325,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     private CTPBdr getCTPBrd(boolean create) {
         CTPPr pr = getCTPPr();
         CTPBdr ct = pr.isSetPBdr() ? pr.getPBdr() : null;
-        if (create && ct == null)
+        if (create && ct == null) {
             ct = pr.addNewPBdr();
+        }
         return ct;
     }
 
@@ -1337,8 +1338,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     private CTSpacing getCTSpacing(boolean create) {
         CTPPr pr = getCTPPr();
         CTSpacing ct = pr.getSpacing() == null ? null : pr.getSpacing();
-        if (create && ct == null)
+        if (create && ct == null) {
             ct = pr.addNewSpacing();
+        }
         return ct;
     }
 
@@ -1349,8 +1351,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     private CTInd getCTInd(boolean create) {
         CTPPr pr = getCTPPr();
         CTInd ct = pr.getInd() == null ? null : pr.getInd();
-        if (create && ct == null)
+        if (create && ct == null) {
             ct = pr.addNewInd();
+        }
         return ct;
     }
 
@@ -1536,8 +1539,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             for (int j = startText; j <= endText; j++) {
                 String tmpText = tArray[j].getStringValue();
                 int startChar = 0, endChar = tmpText.length() - 1;
-                if ((j == textBegin) && (i == runBegin))
+                if ((j == textBegin) && (i == runBegin)) {
                     startChar = charBegin;
+                }
                 if ((j == textEnd) && (i == runEnd)) {
                     endChar = charEnd;
                 }
@@ -1585,10 +1589,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
      */
+    @Override
     public BodyElementType getElementType() {
         return BodyElementType.PARAGRAPH;
     }
 
+    @Override
     public IBody getBody() {
         return part;
     }
@@ -1598,6 +1604,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
+    @Override
     public POIXMLDocumentPart getPart() {
         if (part != null) {
             return part.getPart();
@@ -1610,6 +1617,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
+    @Override
     public BodyType getPartType() {
         return part.getPartType();
     }

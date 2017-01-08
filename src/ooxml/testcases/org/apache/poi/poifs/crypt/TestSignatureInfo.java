@@ -36,7 +36,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -389,17 +393,16 @@ public class TestSignatureInfo {
                 throw e;
             }
             if((e.getCause() instanceof ConnectException) || (e.getCause() instanceof SocketTimeoutException)) {
-                Assume.assumeTrue("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
+                Assume.assumeFalse("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
                         e.getCause().getMessage().contains("timed out"));
             } else if (e.getCause() instanceof IOException) {
-                Assume.assumeTrue("Only allowing IOException with 'Error contacting TSP server' as message here, but had: " + e,
+                Assume.assumeFalse("Only allowing IOException with 'Error contacting TSP server' as message here, but had: " + e,
                         e.getCause().getMessage().contains("Error contacting TSP server"));
             } else if (e.getCause() instanceof RuntimeException) {
-                Assume.assumeTrue("Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e,
+                Assume.assumeFalse("Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e,
                         e.getCause().getMessage().contains("This site is cur"));
-            } else {
-                throw e;
             }
+            throw e;
         }
         
         // verify
@@ -557,7 +560,9 @@ public class TestSignatureInfo {
                 boolean b = si.verifySignature();
                 assertTrue("Signature not correctly calculated for " + ha, b);
             } finally {
-                if (pkg != null) pkg.close();
+                if (pkg != null) {
+                    pkg.close();
+                }
             }
         }
     }

@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -30,7 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class NewLinesInCells {
 
-    public static void main(String[]args) throws Exception {
+    public static void main(String[]args) throws IOException {
         Workbook wb = new XSSFWorkbook();   //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet();
 
@@ -52,6 +53,7 @@ public class NewLinesInCells {
         FileOutputStream fileOut = new FileOutputStream("ooxml-newlines.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 
 }

@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -37,8 +37,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
  */
 public class CreateTable {
         
-    public static void main(String[] args) throws FileNotFoundException, 
-            IOException {
+    public static void main(String[] args) throws IOException {
         
         Workbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) wb.createSheet();
@@ -88,5 +87,6 @@ public class CreateTable {
         FileOutputStream fileOut = new FileOutputStream("ooxml-table.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

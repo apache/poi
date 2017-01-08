@@ -18,9 +18,17 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -29,7 +37,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class CreateCell {
 
 
-	public static void main(String[]args) throws Exception {
+	public static void main(String[]args) throws IOException {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         CreationHelper creationHelper = wb.getCreationHelper();
         Sheet sheet = wb.createSheet("new sheet");
@@ -76,5 +84,6 @@ public class CreateCell {
         FileOutputStream fileOut = new FileOutputStream("ooxml-cell.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
 	}
 }

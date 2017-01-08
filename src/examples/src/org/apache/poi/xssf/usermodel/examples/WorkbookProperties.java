@@ -18,18 +18,17 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.POIXMLProperties;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- *  How to set extended and custom properties
- *
- * @author Yegor Kozlov
+ * How to set extended and custom properties
  */
 public class WorkbookProperties {
 
-    public static void main(String[]args) throws Exception {
+    public static void main(String[]args) throws IOException {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         workbook.createSheet("Workbook Properties");
@@ -59,7 +58,7 @@ public class WorkbookProperties {
         FileOutputStream out = new FileOutputStream("workbook.xlsx");
         workbook.write(out);
         out.close();
-
+        workbook.close();
     }
 
 

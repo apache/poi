@@ -17,17 +17,18 @@
 
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.ss.usermodel.Workbook;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileOutputStream;
-
 /**
- * How to set spklit and freeze panes
+ * How to set split and freeze panes
  */
 public class SplitAndFreezePanes {
-    public static void main(String[]args) throws Exception {
+    public static void main(String[]args) throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet1 = wb.createSheet("new sheet");
         Sheet sheet2 = wb.createSheet("second sheet");
@@ -46,5 +47,6 @@ public class SplitAndFreezePanes {
         FileOutputStream fileOut = new FileOutputStream("splitFreezePane.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }
