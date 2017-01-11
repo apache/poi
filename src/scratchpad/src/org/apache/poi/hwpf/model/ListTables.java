@@ -135,9 +135,22 @@ public final class ListTables
         return _plfLfo.getIlfoByLsid( lsid );
     }
 
+    /**
+     * Get the ListLevel for a given lsid and level
+     * @param lsid
+     * @param level
+     * @return ListLevel if found, or <code>null</code> if ListData can't be found or if level is > that available
+     */
   public ListLevel getLevel(int lsid, int level)
   {
     ListData lst = _listMap.get(Integer.valueOf(lsid));
+    if (lst == null) {
+        if (log.check(POILogger.WARN)) {
+            log.log(POILogger.WARN, "ListData for " +
+                    lsid + " was null.");
+        }
+        return null;
+    }
     if(level < lst.numLevels()) {
     	ListLevel lvl = lst.getLevels()[level];
     	return lvl;
