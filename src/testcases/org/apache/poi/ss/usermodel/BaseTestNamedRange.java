@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 import org.junit.Test;
 
 /**
@@ -736,5 +737,19 @@ public abstract class BaseTestNamedRange {
             }
         }
         
+    }
+    
+    // bug 60260: renaming a sheet with a named range referring to a unicode (non-ASCII) sheet name
+    @Test
+    public void renameSheetWithNamedRangeReferringToUnicodeSheetName() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("Sheet\u30FB1");
+        
+        Name name = wb.createName();
+        name.setNameName("test_named_range");
+        name.setRefersToFormula("'Sheet\u30FB201'!A1:A6");
+        
+        wb.setSheetName(0, "Sheet 1");
+        IOUtils.closeQuietly(wb);
     }
 }
