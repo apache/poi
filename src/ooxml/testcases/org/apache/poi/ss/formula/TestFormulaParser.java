@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
@@ -30,6 +32,7 @@ import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -55,16 +58,31 @@ public class TestFormulaParser {
         }
     }
 
+    private static void checkHSSFFormula(String formula) {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        FormulaParsingWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
+        FormulaParser.parse(formula, workbook, FormulaType.CELL, 0);
+        IOUtils.closeQuietly(wb);
+    } 
+    private static void checkXSSFFormula(String formula) {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        FormulaParsingWorkbook workbook = XSSFEvaluationWorkbook.create(wb);
+        FormulaParser.parse(formula, workbook, FormulaType.CELL, 0);
+        IOUtils.closeQuietly(wb);
+    } 
+    private static void checkFormula(String formula) {
+        checkHSSFFormula(formula);
+        checkXSSFFormula(formula);
+    }
+
     @Test
     public void testHSSFPassCase() {
-        FormulaParsingWorkbook workbook = HSSFEvaluationWorkbook.create(new HSSFWorkbook());
-        FormulaParser.parse("Sheet1!1:65536", workbook, FormulaType.CELL, 0);
+        checkHSSFFormula("Sheet1!1:65536");
     }
 
     @Test
     public void testXSSFWorksForOver65536() {
-        FormulaParsingWorkbook workbook = XSSFEvaluationWorkbook.create(new XSSFWorkbook());
-        FormulaParser.parse("Sheet1!1:65537", workbook, FormulaType.CELL, 0);
+        checkXSSFFormula("Sheet1!1:65537");
     }
 
     @Test
@@ -202,5 +220,11 @@ public class TestFormulaParser {
         assertEquals("Row", 0, pxg.getRow());
         assertEquals("Column", 0, pxg.getColumn());
         wb.close();
+    }
+
+    // bug 60260
+    @Test
+    public void testUnicodeSheetName() {
+        checkFormula("'Sheet\u30FB1'!A1:A6");
     }
 }

@@ -96,7 +96,7 @@ public final class FormulaParser {
     private final static POILogger log = POILogFactory.getLogger(FormulaParser.class);
     private final String _formulaString;
     private final int _formulaLength;
-    /** points at the next character to be read (after the {@link #look} char) */
+    /** points at the next character to be read (after the {@link #look} codepoint) */
     private int _pointer;
 
     private ParseNode _rootNode;
@@ -106,10 +106,10 @@ public final class FormulaParser {
     private final static char LF = '\n';  // Normally just XSSF
 
     /**
-     * Lookahead Character.
+     * Lookahead unicode codepoint
      * gets value '\0' when the input string is exhausted
      */
-    private char look;
+    private int look;
 
     /**
      * Tracks whether the run of whitespace preceding "look" could be an
@@ -226,20 +226,20 @@ public final class FormulaParser {
             throw new RuntimeException("too far");
         }
         if (_pointer < _formulaLength) {
-            look=_formulaString.charAt(_pointer);
+            look=_formulaString.codePointAt(_pointer);
         } else {
             // Just return if so and reset 'look' to something to keep
             // SkipWhitespace from spinning
             look = (char)0;
             _inIntersection = false;
         }
-        _pointer++;
-        //System.out.println("Got char: "+ look);
+        _pointer += Character.charCount(look);
+        //System.out.println(new StringBuilder("Got char: ").appendCodePoint(look)).toString();
     }
     private void resetPointer(int ptr) {
         _pointer = ptr;
         if (_pointer <= _formulaLength) {
-            look=_formulaString.charAt(_pointer-1);
+            look=_formulaString.codePointAt(_pointer - Character.charCount(look));
         } else {
             // Just return if so and reset 'look' to something to keep
             // SkipWhitespace from spinning
@@ -255,25 +255,32 @@ public final class FormulaParser {
             msg = "The specified formula '" + _formulaString
                 + "' starts with an equals sign which is not allowed.";
         } else {
-            msg = "Parse error near char " + (_pointer-1) + " '" + look + "'"
-                + " in specified formula '" + _formulaString + "'. Expected "
-                + s;
+            msg = new StringBuilder("Parse error near char ")
+                .append(_pointer-1) //this is the codepoint index, not char index, which may be larger if there are multi-byte chars
+                .append(" '")
+                .appendCodePoint(look)
+                .append("'")
+                .append(" in specified formula '")
+                .append(_formulaString)
+                .append("'. Expected ")
+                .append(s)
+                .toString();
         }
         return new FormulaParseException(msg);
     }
 
     /** Recognize an Alpha Character */
-    private static boolean IsAlpha(char c) {
+    private static boolean IsAlpha(int c) {
         return Character.isLetter(c) || c == '$' || c=='_';
     }
 
     /** Recognize a Decimal Digit */
-    private static boolean IsDigit(char c) {
+    private static boolean IsDigit(int c) {
         return Character.isDigit(c);
     }
 
     /** Recognize White Space */
-    private static boolean IsWhite( char c) {
+    private static boolean IsWhite(int c) {
         return  c ==' ' || c== TAB || c == CR || c == LF;
     }
 
@@ -289,9 +296,13 @@ public final class FormulaParser {
      *  unchecked exception. This method does <b>not</b> consume whitespace (before or after the
      *  matched character).
      */
-    private void Match(char x) {
+    private void Match(int x) {
         if (look != x) {
-            throw expected("'" + x + "'");
+            throw expected(new StringBuilder()
+                    .append("'")
+                    .appendCodePoint(x)
+                    .append("'")
+                    .toString());
         }
         GetChar();
     }
@@ -301,7 +312,7 @@ public final class FormulaParser {
         StringBuilder value = new StringBuilder();
 
         while (IsDigit(this.look)){
-            value.append(this.look);
+            value.appendCodePoint(this.look);
             GetChar();
         }
         return value.length() == 0 ? null : value.toString();
@@ -826,7 +837,7 @@ public final class FormulaParser {
         }
         StringBuilder name = new StringBuilder();
         while (look!=']') {
-           name.append(look);
+           name.appendCodePoint(look);
            GetChar();
         }
         Match(']');
@@ -914,7 +925,7 @@ public final class FormulaParser {
             throw expected("number, string, defined name, or data table");
         }
         while (isValidDefinedNameChar(look)) {
-            sb.append(look);
+            sb.appendCodePoint(look);
             GetChar();
         }
         SkipWhite();
@@ -923,11 +934,16 @@ public final class FormulaParser {
     }
 
     /**
-     *
+     * @param ch unicode codepoint
      * @return <code>true</code> if the specified character may be used in a defined name
      */
-    private static boolean isValidDefinedNameChar(char ch) {
+    private static boolean isValidDefinedNameChar(int ch) {
         if (Character.isLetterOrDigit(ch)) {
+            return true;
+        }
+        // the sheet naming rules are vague on whether unicode characters are allowed
+        // assume they're allowed.
+        if (ch > 128) {
             return true;
         }
         switch (ch) {
@@ -937,6 +953,7 @@ public final class FormulaParser {
             case '\\': // of all things
                 return true;
         }
+        // includes special non-name control characters like ! $ : , ( ) [ ] and space
         return false;
     }
     
@@ -1120,7 +1137,7 @@ public final class FormulaParser {
         StringBuilder sb = new StringBuilder();
         GetChar();
         while (look != ']') {
-            sb.append(look);
+            sb.appendCodePoint(look);
             GetChar();
         }
         GetChar();
@@ -1148,7 +1165,7 @@ public final class FormulaParser {
             StringBuilder sb = new StringBuilder();
             boolean done = look == '\'';
             while(!done) {
-                sb.append(look);
+                sb.appendCodePoint(look);
                 GetChar();
                 if(look == '\'')
                 {
@@ -1176,7 +1193,7 @@ public final class FormulaParser {
             StringBuilder sb = new StringBuilder();
             // can concatenate idens with dots
             while (isUnquotedSheetNameChar(look)) {
-                sb.append(look);
+                sb.appendCodePoint(look);
                 GetChar();
             }
             NameIdentifier iden = new NameIdentifier(sb.toString(), false);
@@ -1214,9 +1231,15 @@ public final class FormulaParser {
 
     /**
      * very similar to {@link SheetNameFormatter#isSpecialChar(char)}
+     * @param ch unicode codepoint
      */
-    private static boolean isUnquotedSheetNameChar(char ch) {
+    private static boolean isUnquotedSheetNameChar(int ch) {
         if(Character.isLetterOrDigit(ch)) {
+            return true;
+        }
+        // the sheet naming rules are vague on whether unicode characters are allowed
+        // assume they're allowed.
+        if (ch > 128) {
             return true;
         }
         switch(ch) {
@@ -1413,7 +1436,11 @@ public final class FormulaParser {
        }
     }
 
-    private static boolean isArgumentDelimiter(char ch) {
+    /**
+     * @param ch  unicode codepoint
+     *
+     */
+    private static boolean isArgumentDelimiter(int ch) {
         return ch ==  ',' || ch == ')';
     }
 
@@ -1754,7 +1781,7 @@ public final class FormulaParser {
         }
         StringBuilder sb = new StringBuilder();
         while (Character.isLetterOrDigit(look) || look == '.') {
-            sb.append(look);
+            sb.appendCodePoint(look);
             GetChar();
         }
         if (sb.length() < 1) {
@@ -1819,7 +1846,7 @@ public final class FormulaParser {
                     break;
                 }
              }
-            token.append(look);
+            token.appendCodePoint(look);
             GetChar();
         }
         return token.toString();

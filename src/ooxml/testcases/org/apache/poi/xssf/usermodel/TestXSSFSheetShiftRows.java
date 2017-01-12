@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
@@ -448,5 +449,15 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         }
         
         wb.close();
+    }
+    
+    // bug 60260: shift rows or rename a sheet containing a named range
+    // that refers to formula with a unicode (non-ASCII) sheet name formula
+    @Test
+    public void shiftRowsWithUnicodeNamedRange() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("unicodeSheetName.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        sheet.shiftRows(1, 2, 3);
+        IOUtils.closeQuietly(wb);
     }
 }
