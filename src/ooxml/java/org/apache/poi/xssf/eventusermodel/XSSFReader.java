@@ -37,6 +37,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -57,6 +59,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
  *  for XSSF.
  */
 public class XSSFReader {
+
+    private static final POILogger LOGGER = POILogFactory.getLogger(XSSFReader.class);
+
     private OPCPackage pkg;
     private PackagePart workbookPart;
 
@@ -318,6 +323,11 @@ public class XSSFReader {
                   PackageRelationship drawings = drawingsList.getRelationship(i);
                   PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
                   PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
+                  if (drawingsPart == null) {
+                      //parts can go missing; Excel ignores them silently -- TIKA-2134
+                      LOGGER.log(POILogger.WARN, "Missing drawing: "+drawingsName +". Skipping it.");
+                      continue;
+                  }
                   XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
                   for (XSSFShape shape : drawing.getShapes()){
                       shapes.add(shape);
