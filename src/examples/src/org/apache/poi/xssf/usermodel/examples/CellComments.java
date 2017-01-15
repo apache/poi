@@ -16,12 +16,21 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.ss.usermodel.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.IOException;
-import java.io.FileOutputStream;
 
 /**
  * Demonstrates how to work with excel cell comments.
@@ -44,7 +53,7 @@ public class CellComments {
         Cell cell1 = sheet.createRow(3).createCell(5);
         cell1.setCellValue("F4");
 
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
 
         ClientAnchor anchor = factory.createClientAnchor();
 
@@ -63,7 +72,7 @@ public class CellComments {
         Font font = wb.createFont();
         font.setFontName("Arial");
         font.setFontHeightInPoints((short)14);
-        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setBold(true);
         font.setColor(IndexedColors.RED.getIndex());
         str2.applyFont(font);
 

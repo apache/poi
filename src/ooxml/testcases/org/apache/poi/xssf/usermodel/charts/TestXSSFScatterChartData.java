@@ -17,7 +17,11 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -33,21 +37,23 @@ import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 
 /**
  * Tests for XSSFScatterChartData.
  */
-public final class TestXSSFScatterChartData extends TestCase {
+public final class TestXSSFScatterChartData {
 
     private static final Object[][] plotData = {
             {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"},
             {  1,    2,   3,    4,    5,   6,    7,   8,    9,  10}
     };
 
-    public void testOneSeriePlot() throws Exception {
+    @Test
+    public void testOneSeriePlot() throws IOException {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = new SheetBuilder(wb, plotData).build();
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
         Chart chart = drawing.createChart(anchor);
 
@@ -66,5 +72,6 @@ public final class TestXSSFScatterChartData extends TestCase {
         assertTrue(scatterChartData.getSeries().contains(series));
 
         chart.plot(scatterChartData, bottomAxis, leftAxis);
+        wb.close();
     }
 }

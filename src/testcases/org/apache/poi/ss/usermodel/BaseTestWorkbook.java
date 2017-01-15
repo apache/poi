@@ -33,7 +33,6 @@ import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
@@ -908,7 +907,7 @@ public abstract class BaseTestWorkbook {
         Sheet sheet = wb.createSheet("Main Sheet");
         Row row0 = sheet.createRow(0);
         Row row1 = sheet.createRow(1);
-        Cell cell = row1.createCell(0);
+        row1.createCell(0);
         row0.createCell(1);
         row1.createCell(0);
         row1.createCell(1);
@@ -916,7 +915,7 @@ public abstract class BaseTestWorkbook {
         byte[] pictureData = _testDataProvider.getTestDataFileContent("logoKarmokar4.png");
 
         int handle = wb.addPicture(pictureData, Workbook.PICTURE_TYPE_PNG);
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         CreationHelper helper = wb.getCreationHelper();
         ClientAnchor anchor = helper.createClientAnchor();
         anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);

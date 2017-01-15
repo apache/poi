@@ -16,11 +16,17 @@
 ==================================================================== */
 package org.apache.poi.poifs.storage;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.zip.GZIPInputStream;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Test utility class.<br/>
@@ -81,4 +87,31 @@ public final class RawDataUtil {
 			throw new RuntimeException("different");
 		}
 	}
+
+    /**
+     * Decompress previously gziped/base64ed data
+     *
+     * @param data the gziped/base64ed data
+     * @return the raw bytes
+     * @throws IOException if you copy and pasted the data wrong
+     */
+    public static byte[] decompress(String data) throws IOException {
+        byte[] base64Bytes = DatatypeConverter.parseBase64Binary(data);
+        return IOUtils.toByteArray(new GZIPInputStream(new ByteArrayInputStream(base64Bytes)));
+    }
+    
+    /**
+     * Compress raw data for test runs - usually called while debugging :)
+     *
+     * @param data the raw data
+     * @return the gziped/base64ed data as String
+     * @throws IOException usually not ...
+     */
+    public static String compress(byte[] data) throws IOException {
+        java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+        java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(bos);
+        gz.write(data);
+        gz.finish();
+        return DatatypeConverter.printBase64Binary(bos.toByteArray());        
+    }
 }

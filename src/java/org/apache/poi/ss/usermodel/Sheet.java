@@ -972,7 +972,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return a SpreadsheetML drawing
      */
-    Drawing getDrawingPatriarch();
+    Drawing<?> getDrawingPatriarch();
     
     /**
      * Creates the top-level drawing patriarch. 
@@ -982,7 +982,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return  The new drawing patriarch.
      */
-    Drawing createDrawingPatriarch();
+    Drawing<?> createDrawingPatriarch();
 
 
     /**

@@ -269,7 +269,7 @@ public class AddDimensionedImage {
      *                                            to the resizeBehaviour
      *                                            parameter.
      */
-    public void addImageToSheet(String cellNumber, Sheet sheet, Drawing drawing,
+    public void addImageToSheet(String cellNumber, Sheet sheet, Drawing<?> drawing,
             URL imageFile, double reqImageWidthMM, double reqImageHeightMM,
             int resizeBehaviour) throws IOException, IllegalArgumentException {
         // Convert the String into column and row indices then chain the
@@ -329,7 +329,7 @@ public class AddDimensionedImage {
      *                                            it is of a type that cannot
      *                                            currently be added to the worksheet.
      */
-    public void addImageToSheet(int colNumber, int rowNumber, Sheet sheet, Drawing drawing,
+    public void addImageToSheet(int colNumber, int rowNumber, Sheet sheet, Drawing<?> drawing,
             URL imageFile, double reqImageWidthMM, double reqImageHeightMM,
             int resizeBehaviour) throws IOException,
                                                      IllegalArgumentException {

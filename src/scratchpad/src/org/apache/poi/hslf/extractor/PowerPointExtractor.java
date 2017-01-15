@@ -54,7 +54,6 @@ import org.apache.poi.util.POILogger;
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
    private static final POILogger LOG = POILogFactory.getLogger(PowerPointExtractor.class);
     
-   private final HSLFSlideShowImpl _hslfshow;
    private final HSLFSlideShow _show;
    private final List<HSLFSlide> _slides;
 
@@ -147,8 +146,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 */
 	public PowerPointExtractor(HSLFSlideShowImpl ss) {
 		super(ss);
-		_hslfshow = ss;
-		_show = new HSLFSlideShow(_hslfshow);
+		_show = new HSLFSlideShow(ss);
 		_slides = _show.getSlides();
 	}
 
@@ -184,7 +182,8 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * Fetches all the slide text from the slideshow, but not the notes, unless
 	 * you've called setSlidesByDefault() and setNotesByDefault() to change this
 	 */
-	public String getText() {
+	@Override
+    public String getText() {
 		return getText(_slidesByDefault, _notesByDefault, _commentsByDefault, _masterByDefault);
 	}
 

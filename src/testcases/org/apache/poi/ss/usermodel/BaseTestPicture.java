@@ -105,7 +105,7 @@ public abstract class BaseTestPicture {
 
 
     private void handleResize(Workbook wb, Sheet sheet, Row row) throws IOException {
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         CreationHelper createHelper = wb.getCreationHelper();
 
         final byte[] bytes = HSSFITestDataProvider.instance.getTestDataFileContent("logoKarmokar4.png");

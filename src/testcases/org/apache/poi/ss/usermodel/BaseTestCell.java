@@ -253,7 +253,7 @@ public abstract class BaseTestCell {
         Font f = wb1.createFont();
         f.setFontHeightInPoints((short) 20);
         f.setColor(IndexedColors.RED.getIndex());
-        f.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        f.setBold(true);
         f.setFontName("Arial Unicode MS");
         cs.setFillBackgroundColor((short)3);
         cs.setFont(f);
@@ -718,7 +718,7 @@ public abstract class BaseTestCell {
         assertFalse(style.getHidden());
         assertEquals(0, style.getIndention());
         assertEquals(0, style.getFontIndex());
-        assertEquals(0, style.getAlignment());
+        assertEquals(HorizontalAlignment.GENERAL, style.getAlignmentEnum());
         assertEquals(0, style.getDataFormat());
         assertEquals(false, style.getWrapText());
 
@@ -1004,7 +1004,7 @@ public abstract class BaseTestCell {
         anchor.setRow1(row.getRowNum());
         anchor.setRow2(row.getRowNum()+3);
 
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         Comment comment = drawing.createCellComment(anchor);
         RichTextString str = factory.createRichTextString("Hello, World!");
         comment.setString(str);

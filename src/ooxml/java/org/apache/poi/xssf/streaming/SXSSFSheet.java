@@ -33,7 +33,6 @@ import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.PrintSetup;
@@ -51,6 +50,7 @@ import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
@@ -207,8 +207,9 @@ public class SXSSFSheet implements Sheet
     @Override
     public int getFirstRowNum()
     {
-        if(_writer.getNumberOfFlushedRows() > 0)
+        if(_writer.getNumberOfFlushedRows() > 0) {
             return _writer.getLowestIndexOfFlushedRows();
+        }
         return _rows.size() == 0 ? 0 : _rows.firstKey();
     }
 
@@ -875,6 +876,7 @@ public class SXSSFSheet implements Sheet
      * @param denominator   The denominator for the zoom magnification.
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
+    @Deprecated
     @Removal(version="3.16")
     @Override
     public void setZoom(int numerator, int denominator)
@@ -1293,7 +1295,9 @@ public class SXSSFSheet implements Sheet
             int level = row.getOutlineLevel() + 1;
             row.setOutlineLevel(level);
 
-            if(level > outlineLevelRow) outlineLevelRow = level;
+            if(level > outlineLevelRow) {
+                outlineLevelRow = level;
+            }
         }
 
         setWorksheetOutlineLevelRow();
@@ -1328,7 +1332,9 @@ public class SXSSFSheet implements Sheet
         CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
             ct.getSheetFormatPr() :
             ct.addNewSheetFormatPr();
-        if(outlineLevelRow > 0) pr.setOutlineLevelRow((short)outlineLevelRow);
+        if(outlineLevelRow > 0) {
+            pr.setOutlineLevelRow((short)outlineLevelRow);
+        }
     }
 
     /**
@@ -1397,8 +1403,9 @@ public class SXSSFSheet implements Sheet
         }
         int currentRow = rowIndex;
         while (getRow(currentRow) != null) {
-            if (getRow(currentRow).getOutlineLevel() < level)
+            if (getRow(currentRow).getOutlineLevel() < level) {
                 return currentRow + 1;
+            }
             currentRow--;
         }
         return currentRow + 1;
@@ -1626,6 +1633,8 @@ public class SXSSFSheet implements Sheet
      * @return cell comment or <code>null</code> if not found
      * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
      */
+    @Deprecated
+    @Removal(version="3.16")
     @Override
     public XSSFComment getCellComment(int row, int column)
     {
@@ -1691,7 +1700,7 @@ public class SXSSFSheet implements Sheet
      * {@inheritDoc}
      */
     @Override
-    public Drawing getDrawingPatriarch()
+    public XSSFDrawing getDrawingPatriarch()
     {
         return _sh.getDrawingPatriarch();
     }
@@ -1702,9 +1711,9 @@ public class SXSSFSheet implements Sheet
      * @return  The new drawing patriarch.
      */
     @Override
-    public Drawing createDrawingPatriarch()
+    public SXSSFDrawing createDrawingPatriarch()
     {
-        return new SXSSFDrawing((SXSSFWorkbook)getWorkbook(), _sh.createDrawingPatriarch());
+        return new SXSSFDrawing(getWorkbook(), _sh.createDrawingPatriarch());
     }
 
 
@@ -1868,8 +1877,12 @@ public class SXSSFSheet implements Sheet
      */
     public void flushRows(int remaining) throws IOException
     {
-        while(_rows.size() > remaining) flushOneRow();
-        if (remaining == 0) allFlushed = true;
+        while(_rows.size() > remaining) {
+            flushOneRow();
+        }
+        if (remaining == 0) {
+            allFlushed = true;
+        }
     }
 
     /**
@@ -1907,8 +1920,9 @@ public class SXSSFSheet implements Sheet
         for(Iterator<Map.Entry<Integer,SXSSFRow>> iter=_rows.entrySet().iterator();iter.hasNext();)
         {
             Map.Entry<Integer,SXSSFRow> entry=iter.next();
-            if(entry.getValue()==row)
+            if(entry.getValue()==row) {
                 return entry.getKey().intValue();
+            }
         }
         return -1;
     }
@@ -1918,7 +1932,9 @@ public class SXSSFSheet implements Sheet
      * @return true if the file was deleted, false if it wasn't.
      */
     boolean dispose() throws IOException {
-        if (!allFlushed) flushRows();
+        if (!allFlushed) {
+            flushRows();
+        }
         return _writer.dispose();
     }
 

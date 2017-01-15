@@ -17,19 +17,43 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import junit.framework.TestCase;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.charts.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
+import org.apache.poi.ss.usermodel.charts.ChartDataSource;
+import org.apache.poi.ss.usermodel.charts.ChartLegend;
+import org.apache.poi.ss.usermodel.charts.DataSources;
+import org.apache.poi.ss.usermodel.charts.LegendPosition;
+import org.apache.poi.ss.usermodel.charts.LineChartData;
+import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.*;
-
-import java.util.List;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 
 /**
  * Test get/set chart title.
  */
-public class TestXSSFChartTitle extends TestCase {
+public class TestXSSFChartTitle {
     private Workbook createWorkbookWithChart() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("linechart");
@@ -47,7 +71,7 @@ public class TestXSSFChartTitle extends TestCase {
             }
         }
 
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
         Chart chart = drawing.createChart(anchor);
@@ -91,7 +115,8 @@ public class TestXSSFChartTitle extends TestCase {
         return null;
     }
 
-    public void testNewChart() {
+    @Test
+    public void testNewChart() throws IOException {
         Workbook wb = createWorkbookWithChart();
         XSSFChart chart = getChartFromWorkbook(wb, "linechart");
         assertNotNull(chart);
@@ -101,9 +126,11 @@ public class TestXSSFChartTitle extends TestCase {
         XSSFRichTextString queryTitle = chart.getTitle();
         assertNotNull(queryTitle);
         assertEquals(myTitle, queryTitle.toString());
+        wb.close();
     }
 
-    public void testExistingChartWithTitle() {
+    @Test
+    public void testExistingChartWithTitle() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
@@ -115,9 +142,11 @@ public class TestXSSFChartTitle extends TestCase {
         XSSFRichTextString queryTitle = chart.getTitle();
         assertNotNull(queryTitle);
         assertEquals(myTitle, queryTitle.toString());
+        wb.close();
     }
 
-    public void testExistingChartNoTitle() {
+    @Test
+    public void testExistingChartNoTitle() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_noTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
@@ -127,6 +156,6 @@ public class TestXSSFChartTitle extends TestCase {
         XSSFRichTextString queryTitle = chart.getTitle();
         assertNotNull(queryTitle);
         assertEquals(myTitle, queryTitle.toString());
+        wb.close();
     }
-
 }

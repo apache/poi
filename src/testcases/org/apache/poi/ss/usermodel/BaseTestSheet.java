@@ -1141,7 +1141,7 @@ public abstract class BaseTestSheet {
     public void getCellComment() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
-        Drawing dg = sheet.createDrawingPatriarch();
+        Drawing<?> dg = sheet.createDrawingPatriarch();
         Comment comment = dg.createCellComment(workbook.getCreationHelper().createClientAnchor());
         Cell cell = sheet.createRow(9).createCell(2);
         comment.setAuthor("test C10 author");
@@ -1165,7 +1165,7 @@ public abstract class BaseTestSheet {
         // a sheet with no cell comments should return an empty map (not null or raise NPE).
         assertEquals(Collections.emptyMap(), sheet.getCellComments());
 
-        Drawing dg = sheet.createDrawingPatriarch();
+        Drawing<?> dg = sheet.createDrawingPatriarch();
         ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
         
         int nRows = 5;

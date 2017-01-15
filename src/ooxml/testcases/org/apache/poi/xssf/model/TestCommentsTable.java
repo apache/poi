@@ -144,7 +144,7 @@ public class TestCommentsTable {
         Cell c1r2s2 = r2s2.createCell(1);
         assertNull(c1r2s2.getCellComment());
 
-        Drawing dg = sheet2.createDrawingPatriarch();
+        Drawing<?> dg = sheet2.createDrawingPatriarch();
         Comment cc2 = dg.createCellComment(new XSSFClientAnchor());
         cc2.setAuthor("Also POI");
         cc2.setString(new XSSFRichTextString("A new comment"));
@@ -256,7 +256,7 @@ public class TestCommentsTable {
         // NOTE - only occurs if a comment is placed in A1 first
         Cell A1 = getCell(sheet, 0, 0);
         //Cell A1 = getCell(sheet, 2, 2);
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         setComment(sheet, A1, drawing, "for A1", helper, anchor);
         
         // find comment in A1 before we set the comment in B2
@@ -282,7 +282,7 @@ public class TestCommentsTable {
     
     // Set the comment on a sheet
     //
-    private static void setComment(Sheet sheet, Cell cell, Drawing drawing, String commentText, CreationHelper helper, ClientAnchor anchor) {
+    private static void setComment(Sheet sheet, Cell cell, Drawing<?> drawing, String commentText, CreationHelper helper, ClientAnchor anchor) {
         System.out.println("Setting col: " + cell.getColumnIndex() + " and row " + cell.getRowIndex());
         anchor.setCol1(cell.getColumnIndex());
         anchor.setCol2(cell.getColumnIndex());

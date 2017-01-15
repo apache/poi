@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.apache.poi.hssf.model.TestDrawingAggregate.decompress;
+import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

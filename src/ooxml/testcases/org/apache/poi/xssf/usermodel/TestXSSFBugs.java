@@ -25,7 +25,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -57,6 +64,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -1277,7 +1285,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Try to add comments to Sheet 1
         CreationHelper factory = wb1.getCreationHelper();
-        Drawing drawing = sh1.createDrawingPatriarch();
+        Drawing<?> drawing = sh1.createDrawingPatriarch();
 
         ClientAnchor anchor = factory.createClientAnchor();
         anchor.setCol1(0);
@@ -1336,8 +1344,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Name name = wb.getName("Intekon.ProdCodes");
         assertEquals("'Abc,1'!$A$1:$A$2", name.getRefersToFormula());
 
-        @SuppressWarnings("deprecation")
-        AreaReference ref = new AreaReference(name.getRefersToFormula());
+        AreaReference ref = new AreaReference(name.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
         assertEquals(0, ref.getFirstCell().getRow());
         assertEquals(0, ref.getFirstCell().getCol());
         assertEquals(1, ref.getLastCell().getRow());
@@ -2312,7 +2319,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertNotNull(orig);
 
             Sheet sheet = wb.cloneSheet(0);
-            Drawing drawing = sheet.createDrawingPatriarch();
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
             for (XSSFShape shape : ((XSSFDrawing) drawing).getShapes()) {
                 if (shape instanceof XSSFPicture) {
                     XSSFPictureData pictureData = ((XSSFPicture) shape).getPictureData();
@@ -2991,7 +2998,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFColor color = new XSSFColor(java.awt.Color.RED);
         XSSFCellStyle style = workbook.createCellStyle();
         style.setFillForegroundColor(color);
-        style.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         cell.setCellStyle(style);
 
         // Everything is fine at this point, cell is red
