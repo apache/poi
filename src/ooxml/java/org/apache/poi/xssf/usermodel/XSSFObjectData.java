@@ -36,7 +36,17 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeArtExtension;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeArtExtensionList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObject;
 
 /**
@@ -59,13 +69,54 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
     /**
      * Prototype with the default structure of a new auto-shape.
      */
+    /**
+     * Prototype with the default structure of a new auto-shape.
+     */
     protected static CTShape prototype() {
+        final String drawNS = "http://schemas.microsoft.com/office/drawing/2010/main";
+
         if(prototype == null) {
-            prototype = XSSFSimpleShape.prototype();
+            CTShape shape = CTShape.Factory.newInstance();
+
+            CTShapeNonVisual nv = shape.addNewNvSpPr();
+            CTNonVisualDrawingProps nvp = nv.addNewCNvPr();
+            nvp.setId(1);
+            nvp.setName("Shape 1");
+//            nvp.setHidden(true);
+            CTOfficeArtExtensionList extLst = nvp.addNewExtLst();
+            // https://msdn.microsoft.com/en-us/library/dd911027(v=office.12).aspx
+            CTOfficeArtExtension ext = extLst.addNewExt();
+            ext.setUri("{63B3BB69-23CF-44E3-9099-C40C66FF867C}");
+            XmlCursor cur = ext.newCursor();
+            cur.toEndToken();
+            cur.beginElement(new QName(drawNS, "compatExt", "a14"));
+            cur.insertNamespace("a14", drawNS);
+            cur.insertAttributeWithValue("spid", "_x0000_s1");
+            cur.dispose();
+            
+            nv.addNewCNvSpPr();
+
+            CTShapeProperties sp = shape.addNewSpPr();
+            CTTransform2D t2d = sp.addNewXfrm();
+            CTPositiveSize2D p1 = t2d.addNewExt();
+            p1.setCx(0);
+            p1.setCy(0);
+            CTPoint2D p2 = t2d.addNewOff();
+            p2.setX(0);
+            p2.setY(0);
+
+            CTPresetGeometry2D geom = sp.addNewPrstGeom();
+            geom.setPrst(STShapeType.RECT);
+            geom.addNewAvLst();
+
+            prototype = shape;
         }
         return prototype;
     }
 
+    
+    
+    
     @Override
     public String getOLE2ClassName() {
         return getOleObject().getProgId();

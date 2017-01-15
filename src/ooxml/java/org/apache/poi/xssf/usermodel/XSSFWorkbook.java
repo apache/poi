@@ -47,6 +47,7 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -58,6 +59,9 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.Ole10Native;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
@@ -2436,5 +2440,42 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             }
         }
         return null;
+    }
+
+    @Override
+    public int addOlePackage(byte[] oleData, String label, String fileName, String command)
+    throws IOException {
+        // find an unused part name
+        OPCPackage opc = getPackage();
+        PackagePartName pnOLE;
+        int oleId=0;
+        do {
+            try {
+                pnOLE = PackagingURIHelper.createPartName( "/xl/embeddings/oleObject"+(++oleId)+".bin" );
+            } catch (InvalidFormatException e) {
+                throw new IOException("ole object name not recognized", e);
+            }
+        } while (opc.containPart(pnOLE));
+
+        PackagePart pp = opc.createPart( pnOLE, "application/vnd.openxmlformats-officedocument.oleObject" );
+        
+        Ole10Native ole10 = new Ole10Native(label, fileName, command, oleData);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500);
+        ole10.writeOut(bos);
+        
+        POIFSFileSystem poifs = new POIFSFileSystem();
+        DirectoryNode root = poifs.getRoot();
+        root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+        root.setStorageClsid(ClassID.OLE10_PACKAGE);
+
+        // TODO: generate CombObj stream
+
+        OutputStream os = pp.getOutputStream();
+        poifs.writeFilesystem(os);
+        os.close();
+        poifs.close();
+
+        return oleId;
     }
 }

@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.ObjectData;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFShape;
@@ -63,8 +64,14 @@ public class SXSSFDrawing implements Drawing<XSSFShape> {
     }
 
     @Override
+    public ObjectData createObjectData(ClientAnchor anchor, int storageId, int pictureIndex) {
+        return _drawing.createObjectData(anchor, storageId, pictureIndex);
+    }
+
+    @Override
     public Iterator<XSSFShape> iterator() {
         return _drawing.getShapes().iterator();
     }
+    
 }
 

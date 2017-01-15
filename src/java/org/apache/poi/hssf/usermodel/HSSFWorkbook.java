@@ -2048,6 +2048,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     	return olemap;
     }
 
+    /**
+     * Adds an OLE package manager object with the given POIFS to the sheet
+     *
+     * @param poiData an POIFS containing the embedded document, to be added
+     * @param label the label of the payload
+     * @param fileName the original filename
+     * @param command the command to open the payload
+     * @return the index of the added ole object
+     * @throws IOException if the object can't be embedded
+     */
     public int addOlePackage(POIFSFileSystem poiData, String label, String fileName, String command)
     throws IOException {
     	DirectoryNode root = poiData.getRoot();
@@ -2064,6 +2074,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return addOlePackage(bos.toByteArray(), label, fileName, command);
     }
 
+    @Override
     public int addOlePackage(byte[] oleData, String label, String fileName, String command)
     throws IOException {
     	// check if we were created by POIFS otherwise create a new dummy POIFS for storing the package data
