@@ -286,6 +286,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return the font with the matched attributes or <code>null</code>
      * @deprecated POI 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
+    @Deprecated
     Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
     
     /**
@@ -635,4 +636,18 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @since 3.14 beta 2
      */
     SpreadsheetVersion getSpreadsheetVersion();
+
+    /**
+     * Adds an OLE package manager object with the given content to the sheet
+     *
+     * @param oleData the payload
+     * @param label the label of the payload
+     * @param fileName the original filename
+     * @param command the command to open the payload
+     * 
+     * @return the index of the added ole object, i.e. the storage id
+     * 
+     * @throws IOException if the object can't be embedded
+     */
+    int addOlePackage(byte[] oleData, String label, String fileName, String command) throws IOException;
 }

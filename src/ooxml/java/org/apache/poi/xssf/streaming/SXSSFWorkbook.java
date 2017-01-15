@@ -1391,5 +1391,10 @@ public class SXSSFWorkbook implements Workbook {
         return SpreadsheetVersion.EXCEL2007;
     }
 
+    @Override
+    public int addOlePackage(byte[] oleData, String label, String fileName, String command) throws IOException {
+        return _wb.addOlePackage(oleData, label, fileName, command);
+    }
+    
 //end of interface implementation
 }

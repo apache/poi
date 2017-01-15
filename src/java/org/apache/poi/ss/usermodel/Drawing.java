@@ -62,4 +62,17 @@ public interface Drawing<T extends Shape> extends ShapeContainer<T> {
 	 * @return the newly created client anchor
 	 */
 	ClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2, int col1, int row1, int col2, int row2);
+	
+    /**
+     * Adds a new OLE Package Shape 
+     * 
+     * @param anchor       the client anchor describes how this picture is
+     *                     attached to the sheet.
+     * @param storageId    the storageId returned by {@link Workbook#addOlePackage(byte[], String, String, String)}
+     * @param pictureIndex the index of the picture (used as preview image) in the
+     *                     workbook collection of pictures.
+     *
+     * @return newly created shape
+     */
+    ObjectData createObjectData(ClientAnchor anchor, int storageId, int pictureIndex);
 }

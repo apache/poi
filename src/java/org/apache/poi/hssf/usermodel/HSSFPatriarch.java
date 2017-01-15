@@ -48,6 +48,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
@@ -137,6 +138,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
      * @param shape to be removed
      * @return true of shape is removed
      */
+    @Override
     public boolean removeShape(HSSFShape shape) {
         boolean  isRemoved = _mainSpgrContainer.removeChildRecord(shape.getEscherContainer());
         if (isRemoved){
@@ -214,22 +216,13 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
      *
      * @return newly created shape
      */
+    @Override
     public HSSFPicture createPicture(ClientAnchor anchor, int pictureIndex) {
         return createPicture((HSSFClientAnchor) anchor, pictureIndex);
     }
 
-    /**
-     * Adds a new OLE Package Shape 
-     * 
-     * @param anchor       the client anchor describes how this picture is
-     *                     attached to the sheet.
-     * @param storageId    the storageId returned by {@link HSSFWorkbook#addOlePackage(POIFSFileSystem,String,String,String)}
-     * @param pictureIndex the index of the picture (used as preview image) in the
-     *                     workbook collection of pictures.
-     *
-     * @return newly created shape
-     */
-    public HSSFObjectData createObjectData(HSSFClientAnchor anchor, int storageId, int pictureIndex) {
+    @Override
+    public HSSFObjectData createObjectData(ClientAnchor anchor, int storageId, int pictureIndex) {
         ObjRecord obj = new ObjRecord();
 
         CommonObjectDataSubRecord ftCmo = new CommonObjectDataSubRecord();
@@ -248,15 +241,15 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         FtCfSubRecord ftCf = new FtCfSubRecord();
         HSSFPictureData pictData = getSheet().getWorkbook().getAllPictures().get(pictureIndex-1);
         switch (pictData.getFormat()) {
-	        case HSSFWorkbook.PICTURE_TYPE_WMF:
-	        case HSSFWorkbook.PICTURE_TYPE_EMF:
+	        case Workbook.PICTURE_TYPE_WMF:
+	        case Workbook.PICTURE_TYPE_EMF:
 	        	// this needs patch #49658 to be applied to actually work 
 	            ftCf.setFlags(FtCfSubRecord.METAFILE_BIT);
 	            break;
-	        case HSSFWorkbook.PICTURE_TYPE_DIB:
-	        case HSSFWorkbook.PICTURE_TYPE_PNG:
-	        case HSSFWorkbook.PICTURE_TYPE_JPEG:
-	        case HSSFWorkbook.PICTURE_TYPE_PICT:
+	        case Workbook.PICTURE_TYPE_DIB:
+	        case Workbook.PICTURE_TYPE_PNG:
+	        case Workbook.PICTURE_TYPE_JPEG:
+	        case Workbook.PICTURE_TYPE_PICT:
 	            ftCf.setFlags(FtCfSubRecord.BITMAP_BIT);
 	            break;
 	        default:
@@ -280,14 +273,16 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         DirectoryEntry oleRoot;
         try {
             DirectoryNode dn = _sheet.getWorkbook().getDirectory();
-        	if (dn == null) throw new FileNotFoundException();
+        	if (dn == null) {
+                throw new FileNotFoundException();
+            }
         	oleRoot = (DirectoryEntry)dn.getEntry(entryName);
         } catch (FileNotFoundException e) {
         	throw new IllegalStateException("trying to add ole shape without actually adding data first - use HSSFWorkbook.addOlePackage first", e);
         }
         
         // create picture shape, which need to be minimal modified for oleshapes
-        HSSFPicture shape = new HSSFPicture(null, anchor);
+        HSSFPicture shape = new HSSFPicture(null, (HSSFClientAnchor)anchor);
         shape.setPictureIndex(pictureIndex);
         EscherContainerRecord spContainer = shape.getEscherContainer();
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
@@ -355,6 +350,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         return shape;
     }
 
+    @Override
     public HSSFComment createCellComment(ClientAnchor anchor) {
         return createComment((HSSFAnchor) anchor);
     }
@@ -362,6 +358,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * Returns a unmodifiable list of all shapes contained by the patriarch.
      */
+    @Override
     public List<HSSFShape> getChildren() {
         return Collections.unmodifiableList(_shapes);
     }
@@ -369,6 +366,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * add a shape to this drawing
      */
+    @Override
     @Internal
     public void addShape(HSSFShape shape) {
         shape.setPatriarch(this);
@@ -405,6 +403,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
      * Sets the coordinate space of this group.  All children are constrained
      * to these coordinates.
      */
+    @Override
     public void setCoordinates(int x1, int y1, int x2, int y2) {
         _spgrRecord.setRectY1(y1);
         _spgrRecord.setRectY2(y2);
@@ -415,6 +414,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * remove all shapes inside patriarch
      */
+    @Override
     public void clear() {
         ArrayList <HSSFShape> copy = new ArrayList<HSSFShape>(_shapes);
         for (HSSFShape shape: copy){
@@ -469,6 +469,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * @return x coordinate of the left up corner
      */
+    @Override
     public int getX1() {
         return _spgrRecord.getRectX1();
     }
@@ -476,6 +477,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * @return y coordinate of the left up corner
      */
+    @Override
     public int getY1() {
         return _spgrRecord.getRectY1();
     }
@@ -483,6 +485,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * @return x coordinate of the right down corner
      */
+    @Override
     public int getX2() {
         return _spgrRecord.getRectX2();
     }
@@ -490,6 +493,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * @return y coordinate of the right down corner
      */
+    @Override
     public int getY2() {
         return _spgrRecord.getRectY2();
     }
@@ -517,10 +521,12 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
      * @param row2 the row (0 based) of the second cell.
      * @return the newly created client anchor
      */
+    @Override
     public HSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2, int col1, int row1, int col2, int row2) {
         return new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col1, row1, (short) col2, row2);
     }
 
+    @Override
     @NotImplemented
     public Chart createChart(ClientAnchor anchor) {
         throw new RuntimeException("NotImplemented");
