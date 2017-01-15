@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
@@ -52,10 +51,6 @@ public class TestEmbedOLEPackage {
         ClientAnchor anchor = pat.createAnchor(0, 0, 0, 0, 1, 1, 3, 6);
         pat.createObjectData(anchor, oleIdx, picIdx);
 
-        FileOutputStream fos = new FileOutputStream("bla.xlsx");
-        wb1.write(fos);
-        fos.close();
-        
         Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
 
         pat = wb2.getSheetAt(0).getDrawingPatriarch();
