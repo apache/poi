@@ -21,13 +21,11 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 
-import javax.imageio.ImageIO;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.sl.usermodel.AutoShape;
@@ -54,6 +52,10 @@ public class TestEmbedOLEPackage {
         ClientAnchor anchor = pat.createAnchor(0, 0, 0, 0, 1, 1, 3, 6);
         pat.createObjectData(anchor, oleIdx, picIdx);
 
+        FileOutputStream fos = new FileOutputStream("bla.xlsx");
+        wb1.write(fos);
+        fos.close();
+        
         Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
 
         pat = wb2.getSheetAt(0).getDrawingPatriarch();
@@ -98,13 +100,8 @@ public class TestEmbedOLEPackage {
         wb1.close();
     }
 
-    static byte[] getSamplePng() throws IOException {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URL imgUrl = cl.getResource("javax/swing/plaf/metal/icons/ocean/directory.gif");
-        BufferedImage img = ImageIO.read(imgUrl);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(img, "PNG", bos);
-        return bos.toByteArray();
+    static byte[] getSamplePng() {
+        return POIDataSamples.getSpreadSheetInstance().readFile("logoKarmokar4.png");
     }
 
     static byte[] getSamplePPT(boolean ooxml) throws IOException {
