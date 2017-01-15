@@ -17,15 +17,18 @@
 
 package org.apache.poi.hdgf.streams;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for bugs with streams
@@ -36,33 +39,35 @@ public final class TestStreamBugs extends StreamTest {
 	private PointerFactory ptrFactory;
 	private POIFSFileSystem filesystem;
 
-	@Override
-    protected void setUp() throws Exception {
+	@Before
+    public void setUp() throws IOException {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 
         InputStream is = POIDataSamples.getDiagramInstance().openResourceAsStream("44594.vsd");
         filesystem = new POIFSFileSystem(is);
-
-		DocumentEntry docProps =
-			(DocumentEntry)filesystem.getRoot().getEntry("VisioDocument");
+        is.close();
 
 		// Grab the document stream
-		contents = new byte[docProps.getSize()];
-		filesystem.createDocumentInputStream("VisioDocument").read(contents);
+		InputStream is2 = filesystem.createDocumentInputStream("VisioDocument");
+		contents = IOUtils.toByteArray(is2);
+		is2.close();
 	}
 
-	public void testGetTrailer() {
+	@Test
+    public void testGetTrailer() {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
 	}
 
-	public void TOIMPLEMENTtestGetCertainChunks() {
+	@SuppressWarnings("unused")
+    public void TOIMPLEMENTtestGetCertainChunks() {
 		int offsetA = 3708;
 		int offsetB = 3744;
 	}
 
-	public void testGetChildren() {
+	@Test
+    public void testGetChildren() {
 		Pointer trailerPointer = ptrFactory.createPointer(contents, 0x24);
 		TrailerStream trailer = (TrailerStream)
 			Stream.createStream(trailerPointer, contents, chunkFactory, ptrFactory);
@@ -97,7 +102,8 @@ public final class TestStreamBugs extends StreamTest {
 		trailer.findChildren(contents);
 	}
 
-	public void testOpen() throws Exception {
-		HDGFDiagram dg = new HDGFDiagram(filesystem);
+	@Test
+    public void testOpen() throws IOException {
+		new HDGFDiagram(filesystem).close();
 	}
 }

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hdgf.HDGFDiagram;
@@ -32,7 +33,7 @@ import org.junit.Test;
 
 public class HDGFFileHandler extends POIFSFileHandler {
 	@Override
-	public void handleFile(InputStream stream) throws Exception {
+	public void handleFile(InputStream stream) throws IOException {
 	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
 		HDGFDiagram diagram = new HDGFDiagram(poifs);
 		Stream[] topLevelStreams = diagram.getTopLevelStreams();
@@ -44,7 +45,7 @@ public class HDGFFileHandler extends POIFSFileHandler {
 		TrailerStream trailerStream = diagram.getTrailerStream();
 		assertNotNull(trailerStream);
 		assertTrue(trailerStream.getPointer().getLength() >= 0);
-		
+		diagram.close();
 		poifs.close();
 		
 		// writing is not yet implemented... handlePOIDocument(diagram);

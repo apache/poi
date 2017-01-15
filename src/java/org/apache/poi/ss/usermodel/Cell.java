@@ -19,11 +19,11 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
 /**
@@ -47,6 +47,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#NUMERIC} instead.
      */
+    @Deprecated
     @Removal(version="4.0")
     int CELL_TYPE_NUMERIC = 0; //CellType.NUMERIC.getCode();
 
@@ -56,6 +57,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#STRING} instead.
      */
+    @Deprecated
     @Removal(version="4.0")
     int CELL_TYPE_STRING = 1; //CellType.STRING.getCode();
 
@@ -65,6 +67,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#FORMULA} instead.
      */
+    @Deprecated
     @Removal(version="4.0")
     int CELL_TYPE_FORMULA = 2; //CellType.FORMULA.getCode();
 
@@ -74,6 +77,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#BLANK} instead.
      */
+    @Deprecated
     @Removal(version="4.0")
     int CELL_TYPE_BLANK = 3; //CellType.BLANK.getCode();
 
@@ -83,6 +87,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#BOOLEAN} instead.
      */
+    @Deprecated
     @Removal(version="4.0")
     int CELL_TYPE_BOOLEAN = 4; //CellType.BOOLEAN.getCode();
 
@@ -92,6 +97,7 @@ public interface Cell {
      * @see #getCellType()
      * @deprecated POI 3.15 beta 3. Use {@link CellType#ERROR} instead.
      */
+    @Deprecated
     @Removal(version="4.0")
     int CELL_TYPE_ERROR = 5; //CellType.ERROR.getCode();
 
@@ -143,6 +149,7 @@ public interface Cell {
      * @see CellType#ERROR
      * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
      */
+    @Deprecated
     @Removal(version="4.0")
     void setCellType(int cellType);
     /**
@@ -169,6 +176,7 @@ public interface Cell {
      * @return the cell type
      * @deprecated POI 3.15. Will return a {@link CellType} enum in the future.
      */
+    @Deprecated
     int getCellType();
     
     /**
@@ -192,6 +200,7 @@ public interface Cell {
      * on the cached value of the formula
      * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
+    @Deprecated
     int getCachedFormulaResultType();
 
     /**

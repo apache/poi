@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.model;
 
+import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,9 +33,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -59,7 +57,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.IOUtils;
 import org.junit.Test;
 
 public class TestDrawingAggregate {
@@ -945,33 +942,5 @@ public class TestDrawingAggregate {
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
         assertTrue("drawing data brefpore and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
-    }
-
-
-    /**
-     * Decompress previously gziped/base64ed data
-     *
-     * @param data the gziped/base64ed data
-     * @return the raw bytes
-     * @throws IOException if you copy and pasted the data wrong
-     */
-    public static byte[] decompress(String data) throws IOException {
-        byte[] base64Bytes = DatatypeConverter.parseBase64Binary(data);
-        return IOUtils.toByteArray(new GZIPInputStream(new ByteArrayInputStream(base64Bytes)));
-    }
-    
-    /**
-     * Compress raw data for test runs - usually called while debugging :)
-     *
-     * @param data the raw data
-     * @return the gziped/base64ed data as String
-     * @throws IOException usually not ...
-     */
-    public static String compress(byte[] data) throws IOException {
-        java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
-        java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(bos);
-        gz.write(data);
-        gz.finish();
-        return DatatypeConverter.printBase64Binary(bos.toByteArray());        
     }
 }

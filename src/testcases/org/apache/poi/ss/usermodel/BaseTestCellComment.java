@@ -77,7 +77,7 @@ public abstract class BaseTestCellComment {
         assertNull(cell.getCellComment());
         assertNull(sheet.getCellComment(new CellAddress(cellRow, cellColumn)));
 
-        Drawing patr = sheet.createDrawingPatriarch();
+        Drawing<?> patr = sheet.createDrawingPatriarch();
         ClientAnchor anchor = factory.createClientAnchor();
         anchor.setCol1(2);
         anchor.setCol2(5);
@@ -261,7 +261,7 @@ public abstract class BaseTestCellComment {
         Cell cell = sheet.createRow(3).createCell(5);
         cell.setCellValue("F4");
 
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
 
         ClientAnchor anchor = factory.createClientAnchor();
         Comment comment = drawing.createCellComment(anchor);
@@ -294,7 +294,7 @@ public abstract class BaseTestCellComment {
         Cell cell = row.createCell(5);
         CreationHelper factory = wb.getCreationHelper();
         
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         
         double r_mul, c_mul;
         if (sheet instanceof HSSFSheet) {
@@ -365,7 +365,7 @@ public abstract class BaseTestCellComment {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();
-        Drawing patriarch = sh.createDrawingPatriarch();
+        Drawing<?> patriarch = sh.createDrawingPatriarch();
         patriarch.createCellComment(factory.createClientAnchor());
         
         try {
@@ -388,7 +388,7 @@ public abstract class BaseTestCellComment {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();
-        Drawing patriarch = sh.createDrawingPatriarch();
+        Drawing<?> patriarch = sh.createDrawingPatriarch();
         Comment comment = patriarch.createCellComment(factory.createClientAnchor());
         
         assertEquals(CellAddress.A1, comment.getAddress());
@@ -402,7 +402,7 @@ public abstract class BaseTestCellComment {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();
-        Drawing patriarch = sh.createDrawingPatriarch();
+        Drawing<?> patriarch = sh.createDrawingPatriarch();
         Comment comment = patriarch.createCellComment(factory.createClientAnchor());
         
         assertEquals(CellAddress.A1, comment.getAddress());

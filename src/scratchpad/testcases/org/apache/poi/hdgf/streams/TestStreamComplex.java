@@ -17,15 +17,24 @@
 
 package org.apache.poi.hdgf.streams;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 public final class TestStreamComplex extends StreamTest {
 	private byte[] contents;
@@ -34,26 +43,28 @@ public final class TestStreamComplex extends StreamTest {
 	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
 
-	@Override
-    protected void setUp() throws Exception {
+	@Before
+    public void setUp() throws IOException {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
 
         InputStream is = POIDataSamples.getDiagramInstance().openResourceAsStream("Test_Visio-Some_Random_Text.vsd");
 		POIFSFileSystem filesystem = new POIFSFileSystem(is);
-
-		DocumentEntry docProps =
-			(DocumentEntry)filesystem.getRoot().getEntry("VisioDocument");
+		is.close();
 
 		// Grab the document stream
-		contents = new byte[docProps.getSize()];
-		filesystem.createDocumentInputStream("VisioDocument").read(contents);
+		InputStream is2 = filesystem.createDocumentInputStream("VisioDocument");
+		contents = IOUtils.toByteArray(is2);
+		is2.close();
+		
+		filesystem.close();
 	}
 
 	/**
 	 * Test creating the trailer, but not looking for children
 	 */
-	public void testTrailer() {
+	@Test
+    public void testTrailer() {
 		// Find the trailer
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 
@@ -74,7 +85,8 @@ public final class TestStreamComplex extends StreamTest {
 		assertEquals(0xff, ts.getChildPointers()[3].getType());
 	}
 
-	public void testChunks() {
+	@Test
+    public void testChunks() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
 			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
@@ -94,7 +106,8 @@ public final class TestStreamComplex extends StreamTest {
 		cs.findChunks();
 	}
 
-	public void testStrings() {
+	@Test
+    public void testStrings() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
 			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
@@ -110,7 +123,8 @@ public final class TestStreamComplex extends StreamTest {
 		assertTrue(stream instanceof StringsStream);
 	}
 
-	public void testPointerToStrings() {
+	@Test
+    public void testPointerToStrings() {
 		// The stream at 0x347f has strings
 		// The stream at 0x4312 has a pointer to 0x347f
 		// The stream at 0x44d3 has a pointer to 0x4312
@@ -154,7 +168,8 @@ public final class TestStreamComplex extends StreamTest {
 		assertTrue(s4312.getPointedToStreams()[1] instanceof StringsStream);
 	}
 
-	public void testTrailerContents() {
+	@Test
+    public void testTrailerContents() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
 			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
@@ -205,7 +220,8 @@ public final class TestStreamComplex extends StreamTest {
 		assertTrue(s8451.getPointedToStreams()[1] instanceof StringsStream);
 	}
 
-	public void testChunkWithText() {
+	@Test
+    public void testChunkWithText() {
 		// Parent ChunkStream is at 0x7194
 		// This is one of the last children of the trailer
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);

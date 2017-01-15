@@ -161,7 +161,7 @@ public class OldExcelExtractor implements Closeable {
         prepare();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.err.println("Use:");
             System.err.println("   OldExcelExtractor <filename>");
@@ -173,8 +173,9 @@ public class OldExcelExtractor implements Closeable {
     }
     
     private void prepare() {
-        if (! ris.hasNextRecord())
-            throw new IllegalArgumentException("File contains no records!"); 
+        if (! ris.hasNextRecord()) {
+            throw new IllegalArgumentException("File contains no records!");
+        } 
         ris.nextRecord();
         
         // Work out what version we're dealing with

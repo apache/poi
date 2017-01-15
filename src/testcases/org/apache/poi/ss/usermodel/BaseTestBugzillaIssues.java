@@ -17,6 +17,23 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.text.AttributedString;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -29,18 +46,6 @@ import org.apache.poi.util.POILogger;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.text.AttributedString;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * A base class for bugzilla issues that can be described in terms of common ss interfaces.
@@ -70,8 +75,9 @@ public abstract class BaseTestBugzillaIssues {
     public static void assertAlmostEquals(double expected, double actual, float factor) {
         double diff = Math.abs(expected - actual);
         double fuzz = expected * factor;
-        if (diff > fuzz)
+        if (diff > fuzz) {
             fail(actual + " not within " + fuzz + " of " + expected);
+        }
     }
 
     /**
@@ -359,7 +365,9 @@ public abstract class BaseTestBugzillaIssues {
         fmla.append(name);
         fmla.append("(");
         for(int i=0; i < maxArgs; i++){
-            if(i > 0) fmla.append(',');
+            if(i > 0) {
+                fmla.append(',');
+            }
             fmla.append("A1");
         }
         fmla.append(")");
@@ -512,9 +520,15 @@ public abstract class BaseTestBugzillaIssues {
     private static void copyAttributes(Font font, AttributedString str, int endIdx) {
         str.addAttribute(TextAttribute.FAMILY, font.getFontName(), 0, endIdx);
         str.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints());
-        if (font.getBold()) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, 0, endIdx);
-        if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, 0, endIdx);
-        if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, 0, endIdx);
+        if (font.getBold()) {
+            str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, 0, endIdx);
+        }
+        if (font.getItalic() ) {
+            str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, 0, endIdx);
+        }
+        if (font.getUnderline() == Font.U_SINGLE ) {
+            str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, 0, endIdx);
+        }
     }
 
     /**
@@ -1063,7 +1077,7 @@ public abstract class BaseTestBugzillaIssues {
         CreationHelper factory = wb.getCreationHelper();
 
         Sheet sheet = wb.createSheet();
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         ClientAnchor anchor = factory.createClientAnchor();
 
         Cell cell0 = sheet.createRow(0).createCell(0);
@@ -1513,7 +1527,7 @@ public abstract class BaseTestBugzillaIssues {
         
         CreationHelper helper = wb.getCreationHelper();
         ClientAnchor anchor = helper.createClientAnchor();
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         
         Row row = sheet.createRow(0);
         
@@ -1677,7 +1691,7 @@ public abstract class BaseTestBugzillaIssues {
         assertEquals(10, row.getRowNum());
 
         for (Cell cell : row) {
-            String cellValue = null;
+            String cellValue;
             switch (cell.getCellTypeEnum()) {
                 case STRING:
                     cellValue = cell.getRichStringCellValue().getString();
@@ -1685,6 +1699,9 @@ public abstract class BaseTestBugzillaIssues {
                 case FORMULA:
                     cellValue = cell.getCellFormula();
                     break;
+                default:
+                    fail("unexpected cell type");
+                    return;
             }
             assertNotNull(cellValue);
             cellValue = cellValue.isEmpty() ? null : cellValue;

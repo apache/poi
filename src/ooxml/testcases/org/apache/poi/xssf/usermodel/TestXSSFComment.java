@@ -18,9 +18,15 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
@@ -48,9 +54,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 
 import com.microsoft.schemas.vml.CTShape;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFComment extends BaseTestCellComment  {
 
     private static final String TEST_RICHTEXTSTRING = "test richtextstring";
@@ -274,7 +277,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
             cell.setCellValue("F4");
 
-            Drawing drawing = sheet.createDrawingPatriarch();
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
 
             CreationHelper factory = wb.getCreationHelper();
 

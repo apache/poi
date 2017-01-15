@@ -1955,7 +1955,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 	}
     
     private void addComments(CreationHelper helper, Sheet sheet) {
-		Drawing drawing = sheet.createDrawingPatriarch();
+		Drawing<?> drawing = sheet.createDrawingPatriarch();
 
 		for (int i = 0; i < 2; i++) {
 			ClientAnchor anchor = helper.createClientAnchor();
@@ -1968,11 +1968,13 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 			comment.setString(helper.createRichTextString("BugTesting"));
 
 			Row row = sheet.getRow(0 + i);
-			if (row == null)
-				row = sheet.createRow(0 + i);
+			if (row == null) {
+                row = sheet.createRow(0 + i);
+            }
 			Cell cell = row.getCell(0);
-			if (cell == null)
-				cell = row.createCell(0);
+			if (cell == null) {
+                cell = row.createCell(0);
+            }
 
 			cell.setCellComment(comment);
 		}

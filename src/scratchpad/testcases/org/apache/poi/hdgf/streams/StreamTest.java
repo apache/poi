@@ -17,12 +17,13 @@
 
 package org.apache.poi.hdgf.streams;
 
+import static org.apache.poi.hdgf.pointers.PointerV6.getNumPointersOffsetV6;
+import static org.apache.poi.hdgf.pointers.PointerV6.getNumPointersV6;
+import static org.apache.poi.hdgf.pointers.PointerV6.getPostNumPointersSkipV6;
+
 import org.apache.poi.hdgf.pointers.Pointer;
-import static org.apache.poi.hdgf.pointers.PointerV6.*;
 
-import junit.framework.TestCase;
-
-public abstract class StreamTest extends TestCase {
+public abstract class StreamTest {
     public static class TestPointer extends Pointer {
         private final boolean compressed;
         protected boolean hasPointers = false;

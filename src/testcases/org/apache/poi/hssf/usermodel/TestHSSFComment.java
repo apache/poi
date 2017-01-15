@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import static org.apache.poi.hssf.model.TestDrawingAggregate.decompress;
+import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,6 +41,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 /**
@@ -102,7 +103,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     public void testBug56380InsertComments() throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet();
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         int noOfRows = 1025;
         String comment = "c";
         
@@ -139,7 +140,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         HSSFWorkbook workbook = new HSSFWorkbook();
         try {
             Sheet sheet = workbook.createSheet();
-            Drawing drawing = sheet.createDrawingPatriarch();
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
             String comment = "c";
     
             for(int rowNum = 0;rowNum < 258;rowNum++) {
@@ -179,7 +180,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         }
     }
 
-    private Comment insertComment(Drawing drawing, Cell cell, String message) {
+    private Comment insertComment(Drawing<?> drawing, Cell cell, String message) {
         CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
         
         ClientAnchor anchor = factory.createClientAnchor();
@@ -272,7 +273,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
-        int idx = wb.addPicture(new byte[]{1,2,3}, HSSFWorkbook.PICTURE_TYPE_PNG);
+        int idx = wb.addPicture(new byte[]{1,2,3}, Workbook.PICTURE_TYPE_PNG);
 
         HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
         comment.setColumn(5);

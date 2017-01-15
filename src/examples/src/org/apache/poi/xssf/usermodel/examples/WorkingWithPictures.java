@@ -17,20 +17,23 @@
 
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.util.IOUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Demonstrates how to insert pictures in a SpreadsheetML document
- *
- * @author Yegor Kozlov
  */
 public class WorkingWithPictures {
     public static void main(String[] args) throws IOException {
@@ -50,7 +53,7 @@ public class WorkingWithPictures {
             Sheet sheet = wb.createSheet();
     
             //create drawing
-            Drawing drawing = sheet.createDrawingPatriarch();
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
     
             //add a picture shape
             ClientAnchor anchor = helper.createClientAnchor();
@@ -63,7 +66,10 @@ public class WorkingWithPictures {
     
             //save workbook
             String file = "picture.xls";
-            if(wb instanceof XSSFWorkbook) file += "x"; // NOSONAR
+            if(wb instanceof XSSFWorkbook)
+             {
+                file += "x"; // NOSONAR
+            }
             OutputStream fileOut = new FileOutputStream(file);
             try {
                 wb.write(fileOut);
