@@ -18,7 +18,14 @@
 package org.apache.poi.hwpf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITextExtractor;
@@ -28,26 +35,25 @@ import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.StringUtil;
-
-import java.io.IOException;
-import java.io.InputStream;
+import org.junit.Test;
 
 /**
  * Test the different routes to extracting text
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestWordExtractor extends TestCase {
+public final class TestWordExtractor {
 
-    public static void assertEquals( String expected, String actual )
+    private static POIDataSamples docTests = POIDataSamples.getDocumentInstance();
+    
+    public static void assertEqualsTrim( String expected, String actual )
     {
         String newExpected = expected.replaceAll( "\r\n", "\n" )
                 .replaceAll( "\r", "\n" ).trim();
         String newActual = actual.replaceAll( "\r\n", "\n" )
                 .replaceAll( "\r", "\n" ).trim();
-        TestCase.assertEquals( newExpected, newActual );
+        assertEquals( newExpected, newActual );
     }
     
     private static void assertExtractedContains(String[] extracted, String needle) {
@@ -71,68 +77,40 @@ public final class TestWordExtractor extends TestCase {
 			"\r\n",
 			"It is otherwise very very boring.\r\n"
 	};
-	private String p_text1_block = "";
 
-	// Well behaved document
-	private WordExtractor extractor;
-	// Slightly iffy document
-	private WordExtractor extractor2;
-	// A word doc embeded in an excel file
-	private String filename3;
-
-	// With header and footer
-	private String filename4;
-	// With unicode header and footer
-	private String filename5;
-	// With footnote
-	private String filename6;
-
-	@Override
-    protected void setUp() throws Exception {
-
-		String filename = "test2.doc";
-		String filename2 = "test.doc";
-		filename3 = "excel_with_embeded.xls";
-		filename4 = "ThreeColHeadFoot.doc";
-		filename5 = "HeaderFooterUnicode.doc";
-		filename6 = "footnote.doc";
-        POIDataSamples docTests = POIDataSamples.getDocumentInstance();
-		extractor = new WordExtractor(docTests.openResourceAsStream(filename));
-		extractor2 = new WordExtractor(docTests.openResourceAsStream(filename2));
-
-		// Build splat'd out text version
-		p_text1_block = StringUtil.join(p_text1, "");
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-	    if (extractor != null) extractor.close();
-	    if (extractor2 != null) extractor2.close();
-	}
+    // Build splat'd out text version
+	private final String p_text1_block = StringUtil.join(p_text1, "");
 
 	/**
 	 * Test paragraph based extraction
 	 */
-	public void testExtractFromParagraphs() {
+	@Test
+	public void testExtractFromParagraphs() throws IOException {
+        WordExtractor extractor = openExtractor("test2.doc");
 		String[] text = extractor.getParagraphText();
 
 		assertEquals(p_text1.length, text.length);
 		for (int i = 0; i < p_text1.length; i++) {
 			assertEquals(p_text1[i], text[i]);
 		}
+        extractor.close();
 
 		// Lots of paragraphs with only a few lines in them
+        WordExtractor extractor2 = openExtractor("test.doc");
 		assertEquals(24, extractor2.getParagraphText().length);
 		assertEquals("as d\r\n", extractor2.getParagraphText()[16]);
-      assertEquals("as d\r\n", extractor2.getParagraphText()[17]);
-      assertEquals("as d\r\n", extractor2.getParagraphText()[18]);
+		assertEquals("as d\r\n", extractor2.getParagraphText()[17]);
+		assertEquals("as d\r\n", extractor2.getParagraphText()[18]);
+		extractor2.close();
 	}
 
 	/**
 	 * Test the paragraph -> flat extraction
 	 */
-	public void testGetText() {
-		assertEquals(p_text1_block, extractor.getText());
+    @Test
+	public void testGetText() throws IOException {
+        WordExtractor extractor = openExtractor("test2.doc");
+        assertEqualsTrim(p_text1_block, extractor.getText());
 
         // For the 2nd, should give similar answers for
         // the two methods, differing only in line endings
@@ -141,26 +119,29 @@ public final class TestWordExtractor extends TestCase {
         // assertEquals(
         // extractor2.getTextFromPieces().replaceAll("[\\r\\n]", ""),
         // extractor2.getText().replaceAll("[\\r\\n]", ""));
+		extractor.close();
     }
 
 	/**
 	 * Test textPieces based extraction
 	 */
-	public void testExtractFromTextPieces() {
+    @Test
+	public void testExtractFromTextPieces() throws IOException {
+        WordExtractor extractor = openExtractor("test2.doc");
 		String text = extractor.getTextFromPieces();
 		assertEquals(p_text1_block, text);
+		extractor.close();
 	}
 
 
 	/**
-	 * Test that we can get data from two different
-	 *  embeded word documents
-	 * @throws Exception
+	 * Test that we can get data from two different embedded word documents
 	 */
-	public void testExtractFromEmbeded() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getSpreadSheetInstance().openResourceAsStream(filename3));
-		HWPFDocument doc;
-		WordExtractor extractor3;
+    @Test
+	public void testExtractFromEmbeded() throws IOException {
+	    InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embeded.xls");
+		POIFSFileSystem fs = new POIFSFileSystem(is);
+		is.close();
 
 		DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B7");
 		DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B2");
@@ -173,101 +154,123 @@ public final class TestWordExtractor extends TestCase {
 		assertNotNull(dirB.getEntry("WordDocument"));
 
 		// Check each in turn
-		doc = new HWPFDocument(dirA);
-		extractor3 = new WordExtractor(doc);
+        HWPFDocument docA = new HWPFDocument(dirA);
+		WordExtractor extractorA = new WordExtractor(docA);
 
-		assertNotNull(extractor3.getText());
-		assertTrue(extractor3.getText().length() > 20);
-		assertEquals("I am a sample document\r\nNot much on me\r\nI am document 1\r\n", extractor3
-				.getText());
-		assertEquals("Sample Doc 1", extractor3.getSummaryInformation().getTitle());
-		assertEquals("Sample Test", extractor3.getSummaryInformation().getSubject());
+		assertNotNull(extractorA.getText());
+		assertTrue(extractorA.getText().length() > 20);
+		assertEqualsTrim("I am a sample document\r\nNot much on me\r\nI am document 1\r\n", extractorA.getText());
+		assertEquals("Sample Doc 1", extractorA.getSummaryInformation().getTitle());
+		assertEquals("Sample Test", extractorA.getSummaryInformation().getSubject());
 
-		doc = new HWPFDocument(dirB);
-		extractor3 = new WordExtractor(doc);
+		HWPFDocument docB = new HWPFDocument(dirB);
+		WordExtractor extractorB = new WordExtractor(docB);
 
-		assertNotNull(extractor3.getText());
-		assertTrue(extractor3.getText().length() > 20);
-		assertEquals("I am another sample document\r\nNot much on me\r\nI am document 2\r\n",
-				extractor3.getText());
-		assertEquals("Sample Doc 2", extractor3.getSummaryInformation().getTitle());
-		assertEquals("Another Sample Test", extractor3.getSummaryInformation().getSubject());
+		assertNotNull(extractorB.getText());
+		assertTrue(extractorB.getText().length() > 20);
+		assertEqualsTrim("I am another sample document\r\nNot much on me\r\nI am document 2\r\n", extractorB.getText());
+		assertEquals("Sample Doc 2", extractorB.getSummaryInformation().getTitle());
+		assertEquals("Another Sample Test", extractorB.getSummaryInformation().getSubject());
+
+		extractorA.close();
+		docA.close();
+
+		extractorB.close();
+		docB.close();
+		
+		fs.close();
 	}
 
-	public void testWithHeader() {
+    @Test
+	public void testWithHeader() throws IOException {
 		// Non-unicode
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename4);
-		extractor = new WordExtractor(doc);
+		HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
+		WordExtractor extractor1 = new WordExtractor(doc1);
 
-		assertEquals("First header column!\tMid header Right header!\n", extractor.getHeaderText());
-		assertContains(extractor.getText(), "First header column!");
+		assertEquals("First header column!\tMid header Right header!\n", extractor1.getHeaderText());
+		assertContains(extractor1.getText(), "First header column!");
+		extractor1.close();
+		doc1.close();
 
 		// Unicode
-		doc = HWPFTestDataSamples.openSampleFile(filename5);
-		extractor = new WordExtractor(doc);
+		HWPFDocument doc2 = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
+		WordExtractor extractor2 = new WordExtractor(doc2);
 
-		assertEquals("This is a simple header, with a \u20ac euro symbol in it.\n\n", extractor.getHeaderText());
-		assertContains(extractor.getText(), "This is a simple header");
+		assertEquals("This is a simple header, with a \u20ac euro symbol in it.\n\n", extractor2.getHeaderText());
+		assertContains(extractor2.getText(), "This is a simple header");
+		extractor2.close();
+		doc2.close();
 	}
 
-	public void testWithFooter() {
+    @Test
+	public void testWithFooter() throws IOException {
 		// Non-unicode
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename4);
-		extractor = new WordExtractor(doc);
+		HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
+		WordExtractor extractor1 = new WordExtractor(doc1);
 
-		assertEquals("Footer Left\tFooter Middle Footer Right\n", extractor.getFooterText());
-		assertContains(extractor.getText(), "Footer Left");
+		assertEquals("Footer Left\tFooter Middle Footer Right\n", extractor1.getFooterText());
+		assertContains(extractor1.getText(), "Footer Left");
+        extractor1.close();
+        doc1.close();
 
 		// Unicode
-		doc = HWPFTestDataSamples.openSampleFile(filename5);
-		extractor = new WordExtractor(doc);
+		HWPFDocument doc2 = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
+		WordExtractor extractor2 = new WordExtractor(doc2);
 
-		assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\n", extractor.getFooterText());
-		assertContains(extractor.getText(), "The footer, with");
+		assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\n", extractor2.getFooterText());
+		assertContains(extractor2.getText(), "The footer, with");
+        extractor2.close();
+        doc2.close();
 	}
 
-	public void testFootnote() {
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename6);
-		extractor = new WordExtractor(doc);
+    @Test
+	public void testFootnote() throws IOException {
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("footnote.doc");
+		WordExtractor extractor = new WordExtractor(doc);
 
 		assertExtractedContains(extractor.getFootnoteText(), "TestFootnote");
 		assertEquals(0x00, doc.getRange().getSection(0).getFootnoteNumberingFormat()); // msonfcArabic
 		assertEquals(0x00, doc.getRange().getSection(0).getFootnoteRestartQualifier()); // rncCont
 		assertEquals(0, doc.getRange().getSection(0).getFootnoteNumberingOffset());	    
 		assertEquals(1, doc.getFootnotes().getNotesCount());
+		extractor.close();
+		doc.close();
 	}
 
-	public void testEndnote() {
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename6);
-		extractor = new WordExtractor(doc);
+    @Test
+	public void testEndnote() throws IOException {
+		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("footnote.doc");
+		WordExtractor extractor = new WordExtractor(doc);
 
 		assertExtractedContains(extractor.getEndnoteText(), "TestEndnote");
 		assertEquals(0x02, doc.getRange().getSection(0).getEndnoteNumberingFormat()); // msonfcLCRoman
 		assertEquals(0x00, doc.getRange().getSection(0).getEndnoteRestartQualifier()); // rncCont
 		assertEquals(0, doc.getRange().getSection(0).getEndnoteNumberingOffset()); 	   
 		assertEquals(1, doc.getEndnotes().getNotesCount());
+		extractor.close();
+		doc.close();
 	}
 
-	public void testComments() {
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(filename6);
-		extractor = new WordExtractor(doc);
-
+    @Test
+	public void testComments() throws IOException {
+		WordExtractor extractor = openExtractor("footnote.doc");
 		assertExtractedContains(extractor.getCommentsText(), "TestComment");
+		extractor.close();
 	}
 	
+    @Test(expected=OldWordFileFormatException.class)
+    public void testWord95_WordExtractor() throws Exception {
+        // Too old for the default
+        openExtractor("Word95.doc").close();
+    }
+    
+    @Test
 	public void testWord95() throws Exception {
-	    // Too old for the default
-	    try {
-    		extractor = new WordExtractor(
-    				POIDataSamples.getDocumentInstance().openResourceAsStream("Word95.doc")
-    		);
-    		fail();
-	    } catch(OldWordFileFormatException e) {}
-		
 		// Can work with the special one
-	    Word6Extractor w6e = new Word6Extractor(
-                POIDataSamples.getDocumentInstance().openResourceAsStream("Word95.doc")
-        );
+        InputStream is = docTests.openResourceAsStream("Word95.doc");
+	    Word6Extractor w6e = new Word6Extractor(is);
+	    is.close();
+	    
 		String text = w6e.getText();
 		
 		assertTrue(text.contains("The quick brown fox jumps over the lazy dog"));
@@ -284,20 +287,20 @@ public final class TestWordExtractor extends TestCase {
         assertEquals("Paragraph 3. Has some RED text and some BLUE BOLD text in it.\r\n", tp[4]);
         assertEquals("\r\n", tp[5]);
         assertEquals("Last (4th) paragraph.\r\n", tp[6]);
+        w6e.close();
 	}
 	
-	public void testWord6() throws Exception {
+    @Test(expected=OldWordFileFormatException.class)
+    public void testWord6_WordExtractor() throws IOException {
         // Too old for the default
-        try {
-    		extractor = new WordExtractor(
-    				POIDataSamples.getDocumentInstance().openResourceAsStream("Word6.doc")
-    		);
-            fail();
-        } catch(OldWordFileFormatException e) {}
-        
-        Word6Extractor w6e = new Word6Extractor(
-                POIDataSamples.getDocumentInstance().openResourceAsStream("Word6.doc")
-        );
+        openExtractor("Word6.doc").close();
+    }
+    
+    @Test
+	public void testWord6() throws Exception {
+        InputStream is = docTests.openResourceAsStream("Word6.doc");
+        Word6Extractor w6e = new Word6Extractor(is);
+        is.close();
         String text = w6e.getText();
         
         assertTrue(text.contains("The quick brown fox jumps over the lazy dog"));
@@ -305,12 +308,12 @@ public final class TestWordExtractor extends TestCase {
         String[] tp = w6e.getParagraphText();
         assertEquals(1, tp.length);
         assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
+        w6e.close();
 	}
 
+    @Test
     public void testFastSaved() throws Exception {
-        extractor = new WordExtractor(
-                POIDataSamples.getDocumentInstance().openResourceAsStream("rasp.doc")
-        );
+        WordExtractor extractor = openExtractor("rasp.doc");
 
         String text = extractor.getText();
         assertTrue(text.contains("\u0425\u0425\u0425\u0425\u0425"));
@@ -319,57 +322,57 @@ public final class TestWordExtractor extends TestCase {
         extractor.close();
     }
 
+    @Test
     public void testFirstParagraphFix() throws Exception {
-        extractor = new WordExtractor(
-                POIDataSamples.getDocumentInstance().openResourceAsStream("Bug48075.doc")
-        );
+        WordExtractor extractor = openExtractor("Bug48075.doc");
 
         String text = extractor.getText();
 
         assertTrue(text.startsWith("\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435"));
+        extractor.close();
     }
     
     /**
      * Tests that we can work with both {@link POIFSFileSystem}
      *  and {@link NPOIFSFileSystem}
      */
+    @Test
     public void testDifferentPOIFS() throws Exception {
-       POIDataSamples docTests = POIDataSamples.getDocumentInstance();
-       
        // Open the two filesystems
-       DirectoryNode[] files = new DirectoryNode[2];
-       POIFSFileSystem poifs = new POIFSFileSystem(docTests.openResourceAsStream("test2.doc"));
-       files[0] = poifs.getRoot();
-       NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(docTests.getFile("test2.doc"));
-       files[1] = npoifsFileSystem.getRoot();
+       File file = docTests.getFile("test2.doc");
+       InputStream is = new FileInputStream(file);
+       OPOIFSFileSystem opoifs = new OPOIFSFileSystem(is);
+       is.close();
+       NPOIFSFileSystem npoifs = new NPOIFSFileSystem(file);
+       
+       DirectoryNode[] files = { opoifs.getRoot(), npoifs.getRoot() };
        
        // Open directly 
        for(DirectoryNode dir : files) {
           WordExtractor extractor = new WordExtractor(dir);
-          assertEquals(p_text1_block, extractor.getText());
+          assertEqualsTrim(p_text1_block, extractor.getText());
        }
 
        // Open via a HWPFDocument
        for(DirectoryNode dir : files) {
           HWPFDocument doc = new HWPFDocument(dir);
           WordExtractor extractor = new WordExtractor(doc);
-          assertEquals(p_text1_block, extractor.getText());
+          assertEqualsTrim(p_text1_block, extractor.getText());
+          extractor.close();
        }
        
-       poifs.close();
-       npoifsFileSystem.close();
+       npoifs.close();
     }
 
     /**
      * [RESOLVED FIXED] Bug 51686 - Update to POI 3.8 beta 4 causes
      * ConcurrentModificationException in Tika's OfficeParser
      */
-    public void testBug51686() throws IOException
-    {
-        InputStream is = POIDataSamples.getDocumentInstance()
-                .openResourceAsStream( "Bug51686.doc" );
-
+    @Test
+    public void testBug51686() throws IOException {
+        InputStream is = docTests.openResourceAsStream( "Bug51686.doc" );
         POIFSFileSystem fs = new POIFSFileSystem(is);
+        is.close();
 
         String text = null;
 
@@ -385,11 +388,14 @@ public final class TestWordExtractor extends TestCase {
         }
 
         assertNotNull(text);
+        fs.close();
     }
 
-
+    @Test
     public void testExtractorFromWord6Extractor() throws Exception {
-        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getHPSFInstance().openResourceAsStream("TestMickey.doc"));
+        InputStream is = POIDataSamples.getHPSFInstance().openResourceAsStream("TestMickey.doc");
+        POIFSFileSystem fs = new POIFSFileSystem(is);
+        is.close();
         Word6Extractor wExt = new Word6Extractor(fs);
         try {
             POITextExtractor ext = wExt.getMetadataTextExtractor();
@@ -405,6 +411,17 @@ public final class TestWordExtractor extends TestCase {
             }
         } finally {
             wExt.close();
+            fs.close();
         }
+    }
+    
+    private WordExtractor openExtractor(String fileName) throws IOException {
+        InputStream is = docTests.openResourceAsStream(fileName);
+        try {
+            return new WordExtractor(is);
+        } finally {
+            is.close();
+        }
+        
     }
 }

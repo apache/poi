@@ -106,6 +106,7 @@ public final class TestOleEmbedding {
                     HWPFDocument doc = new HWPFDocument(data.getData());
                     String txt = doc.getRange().getParagraph(0).text();
                     assertEquals("OLE embedding is thoroughly unremarkable.\r", txt);
+                    doc.close();
                 }
             }
 

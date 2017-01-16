@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.util.Units;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
 import org.junit.Test;
@@ -82,10 +81,11 @@ public class TestXWPFBugs {
                 }
             }
         }
+        doc.close();
     }
 
     @Test
-    public void bug57495_getTableArrayInDoc() {
+    public void bug57495_getTableArrayInDoc() throws IOException {
         XWPFDocument doc =new XWPFDocument();
         //let's create a few tables for the test
         for(int i=0;i<3;i++) {
@@ -96,10 +96,11 @@ public class TestXWPFBugs {
         //let's check also that returns the correct table
         XWPFTable same = doc.getTables().get(0);
         assertEquals(table, same);
+        doc.close();
     }
 
     @Test
-    public void bug57495_getParagraphArrayInTableCell() {
+    public void bug57495_getParagraphArrayInTableCell() throws IOException {
         XWPFDocument doc =new XWPFDocument();
         //let's create a table for the test
         XWPFTable table = doc.createTable(2, 2);       
@@ -109,6 +110,7 @@ public class TestXWPFBugs {
         //let's check also that returns the correct paragraph
         XWPFParagraph same = table.getRow(0).getCell(0).getParagraphs().get(0);        
         assertEquals(p, same);
+        doc.close();
     }
     
     @Test
@@ -120,16 +122,17 @@ public class TestXWPFBugs {
     }
 
     @Test
-    public void test56392() throws IOException, OpenXML4JException {
+    public void test56392() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("56392.docx");
         assertNotNull(doc);
+        doc.close();
     }
 
     /**
      * Removing a run needs to remove it from both Runs and IRuns
      */
     @Test
-    public void test57829() throws Exception {
+    public void test57829() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         assertNotNull(doc);
         assertEquals(3, doc.getParagraphs().size());
@@ -138,13 +141,14 @@ public class TestXWPFBugs {
             paragraph.removeRun(0);
             assertNotNull(paragraph.getText());
         }
+        doc.close();
     }
     
   /**
    * Removing a run needs to take into account position of run if paragraph contains hyperlink runs
    */
   @Test
-  public void test58618() throws Exception {
+  public void test58618() throws IOException {
       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58618.docx");
       XWPFParagraph para = (XWPFParagraph)doc.getBodyElements().get(0);
       assertNotNull(para);
@@ -154,10 +158,11 @@ public class TestXWPFBugs {
       assertEquals("Some text  some hyper links link link and some text.....New Text", para.getText());
       para.removeRun(para.getRuns().size() -2);
       assertEquals("Some text  some hyper links link linkNew Text", para.getText());
+      doc.close();
   }
 
     @Test
-    public void test59378() throws Exception {
+    public void test59378() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("59378.docx");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         doc.write(out);

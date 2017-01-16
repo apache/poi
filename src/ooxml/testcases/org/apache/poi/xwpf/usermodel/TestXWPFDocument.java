@@ -151,7 +151,7 @@ public final class TestXWPFDocument {
     public void testAddPicture() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         byte[] jpeg = XWPFTestDataSamples.getImage("nature1.jpg");
-        String relationId = doc.addPictureData(jpeg, XWPFDocument.PICTURE_TYPE_JPEG);
+        String relationId = doc.addPictureData(jpeg, Document.PICTURE_TYPE_JPEG);
 
         byte[] newJpeg = ((XWPFPictureData) doc.getRelationById(relationId)).getData();
         assertEquals(newJpeg.length, jpeg.length);
@@ -165,17 +165,17 @@ public final class TestXWPFDocument {
     public void testAllPictureFormats() throws IOException, InvalidFormatException {
         XWPFDocument doc = new XWPFDocument();
 
-        doc.addPictureData(new byte[10], XWPFDocument.PICTURE_TYPE_EMF);
-        doc.addPictureData(new byte[11], XWPFDocument.PICTURE_TYPE_WMF);
-        doc.addPictureData(new byte[12], XWPFDocument.PICTURE_TYPE_PICT);
-        doc.addPictureData(new byte[13], XWPFDocument.PICTURE_TYPE_JPEG);
-        doc.addPictureData(new byte[14], XWPFDocument.PICTURE_TYPE_PNG);
-        doc.addPictureData(new byte[15], XWPFDocument.PICTURE_TYPE_DIB);
-        doc.addPictureData(new byte[16], XWPFDocument.PICTURE_TYPE_GIF);
-        doc.addPictureData(new byte[17], XWPFDocument.PICTURE_TYPE_TIFF);
-        doc.addPictureData(new byte[18], XWPFDocument.PICTURE_TYPE_EPS);
-        doc.addPictureData(new byte[19], XWPFDocument.PICTURE_TYPE_BMP);
-        doc.addPictureData(new byte[20], XWPFDocument.PICTURE_TYPE_WPG);
+        doc.addPictureData(new byte[10], Document.PICTURE_TYPE_EMF);
+        doc.addPictureData(new byte[11], Document.PICTURE_TYPE_WMF);
+        doc.addPictureData(new byte[12], Document.PICTURE_TYPE_PICT);
+        doc.addPictureData(new byte[13], Document.PICTURE_TYPE_JPEG);
+        doc.addPictureData(new byte[14], Document.PICTURE_TYPE_PNG);
+        doc.addPictureData(new byte[15], Document.PICTURE_TYPE_DIB);
+        doc.addPictureData(new byte[16], Document.PICTURE_TYPE_GIF);
+        doc.addPictureData(new byte[17], Document.PICTURE_TYPE_TIFF);
+        doc.addPictureData(new byte[18], Document.PICTURE_TYPE_EPS);
+        doc.addPictureData(new byte[19], Document.PICTURE_TYPE_BMP);
+        doc.addPictureData(new byte[20], Document.PICTURE_TYPE_WPG);
 
         assertEquals(11, doc.getAllPictures().size());
 
@@ -442,8 +442,10 @@ public final class TestXWPFDocument {
 	    String origText = ext.getText();
 	    
 	    doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+	    ext.close();
 	    ext = new XWPFWordExtractor(doc);
 	    
 	    assertEquals(origText, ext.getText());
+	    ext.close();
 	}
 }

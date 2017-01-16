@@ -18,22 +18,24 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Class to test DocumentOutputStream functionality
- *
- * @author Marc Johnson
  */
-public final class TestDocumentOutputStream extends TestCase {
+public final class TestDocumentOutputStream {
 
     /**
      * test write(int) behavior
      */
+    @Test
     public void testWrite1() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
@@ -57,12 +59,14 @@ public final class TestDocumentOutputStream extends TestCase {
         {
             assertEquals(( byte ) j, output[ j ]);
         }
+        dstream.close();
         stream.close();
     }
 
     /**
      * test write(byte[]) behavior
      */
+    @Test
     public void testWrite2() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
@@ -96,12 +100,14 @@ public final class TestDocumentOutputStream extends TestCase {
                              output[ (j * 4) + k ]);
             }
         }
+        dstream.close();
         stream.close();
     }
 
     /**
      * test write(byte[], int, int) behavior
      */
+    @Test
     public void testWrite3() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
@@ -127,12 +133,14 @@ public final class TestDocumentOutputStream extends TestCase {
         {
             assertEquals(( byte ) (j + 1), output[ j ]);
         }
+        dstream.close();
         stream.close();
     }
 
     /**
      * test writeFiller()
      */
+    @Test
     public void testWriteFiller() throws IOException {
         ByteArrayOutputStream stream  = new ByteArrayOutputStream();
         DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
@@ -161,6 +169,7 @@ public final class TestDocumentOutputStream extends TestCase {
         {
             assertEquals(String.valueOf(j), ( byte ) 0xff, output[ j ]);
         }
+        dstream.close();
         stream.close();
     }
 }

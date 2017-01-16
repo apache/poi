@@ -349,6 +349,7 @@ public class TestEncryptor {
         e.confirmPassword("AYBABTU");
         docx.write(e.getDataStream(fs));
         
+        docx.close();
         fs.close();
     }
     
