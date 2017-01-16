@@ -49,16 +49,17 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun
 /**
  * Tests for XWPF Run
  */
-@SuppressWarnings("deprecation")
 public class TestXWPFRun {
     private CTR ctRun;
     private XWPFParagraph p;
+    private IRunBody irb;
     private XWPFDocument doc;
 
     @Before
     public void setUp() {
         doc = new XWPFDocument();
         p = doc.createParagraph();
+        irb = p;
 
         this.ctRun = CTR.Factory.newInstance();
     }
@@ -75,7 +76,7 @@ public class TestXWPFRun {
         ctRun.addNewT().setStringValue("TEST3 STRING");
 
         assertEquals(3, ctRun.sizeOfTArray());
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
 
         assertEquals("TEST2 STRING", run.getText(1));
 
@@ -95,7 +96,7 @@ public class TestXWPFRun {
     public void testCTOnOff() {
         CTRPr rpr = ctRun.addNewRPr();
         CTOnOff bold = rpr.addNewB();        
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
 
         // True values: "true", "1", "on"
         bold.setVal(STOnOff.TRUE);
@@ -123,7 +124,7 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewB().setVal(STOnOff.TRUE);
 
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(true, run.isBold());
 
         run.setBold(false);
@@ -137,7 +138,7 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewI().setVal(STOnOff.TRUE);
 
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(true, run.isItalic());
 
         run.setItalic(false);
@@ -149,10 +150,10 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewStrike().setVal(STOnOff.TRUE);
 
-        XWPFRun run = new XWPFRun(ctRun, p);
-        assertEquals(true, run.isStrike());
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertEquals(true, run.isStrikeThrough());
 
-        run.setStrike(false);
+        run.setStrikeThrough(false);
         assertEquals(STOnOff.FALSE, rpr.getStrike().getVal());
     }
 
@@ -161,7 +162,7 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewU().setVal(STUnderline.DASH);
 
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(UnderlinePatterns.DASH.getValue(), run.getUnderline()
                 .getValue());
 
@@ -175,7 +176,7 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
 
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(VerticalAlign.SUBSCRIPT, run.getSubscript());
 
         run.setSubscript(VerticalAlign.BASELINE);
@@ -187,7 +188,7 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewRFonts().setAscii("Times New Roman");
 
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals("Times New Roman", run.getFontFamily());
 
         run.setFontFamily("Verdana");
@@ -199,7 +200,7 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewSz().setVal(new BigInteger("14"));
 
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(7, run.getFontSize());
 
         run.setFontSize(24);
@@ -211,7 +212,7 @@ public class TestXWPFRun {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewPosition().setVal(new BigInteger("4000"));
 
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(4000, run.getTextPosition());
 
         run.setTextPosition(2400);
@@ -220,7 +221,7 @@ public class TestXWPFRun {
 
     @Test
     public void testSetGetColor() {
-        XWPFRun run = new XWPFRun(ctRun, p);
+        XWPFRun run = new XWPFRun(ctRun, irb);
         run.setColor("0F0F0F");
         String clr = run.getColor();
         assertEquals("0F0F0F", clr);
@@ -235,7 +236,7 @@ public class TestXWPFRun {
         ctRun.addNewT().setStringValue("TEST3 STRING");
         assertEquals(2, ctRun.sizeOfCrArray());
 
-        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), irb);
         run.setText("T1");
         run.addCarriageReturn();
         run.addCarriageReturn();
@@ -256,7 +257,7 @@ public class TestXWPFRun {
         assertEquals(1, ctRun.sizeOfCrArray());
         assertEquals(1, ctRun.sizeOfTabArray());
 
-        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), irb);
         run.setText("T1");
         run.addCarriageReturn();
         run.setText("T2");
@@ -278,7 +279,7 @@ public class TestXWPFRun {
         ctRun.addNewT().setStringValue("TEST3 STRING");
         assertEquals(2, ctRun.sizeOfBrArray());
 
-        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), irb);
         run.setText("TEXT1");
         run.addBreak();
         run.setText("TEXT2");
@@ -308,14 +309,14 @@ public class TestXWPFRun {
         assertEquals("This is a test document", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
         run = p.getRuns().get(1);
         assertEquals(".", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
 
@@ -328,7 +329,7 @@ public class TestXWPFRun {
         assertEquals("This bit is in bold and italic", run.toString());
         assertEquals(true, run.isBold());
         assertEquals(true, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(true, run.getCTR().getRPr().isSetB());
         assertEquals(false, run.getCTR().getRPr().getB().isSetVal());
 
@@ -342,7 +343,7 @@ public class TestXWPFRun {
         assertEquals("Back to normal", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
 
@@ -355,73 +356,75 @@ public class TestXWPFRun {
         assertEquals("This contains ", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
         run = p.getRuns().get(1);
         assertEquals("BOLD", run.toString());
         assertEquals(true, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
 
         run = p.getRuns().get(2);
         assertEquals(", ", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
         run = p.getRuns().get(3);
         assertEquals("ITALIC", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(true, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
 
         run = p.getRuns().get(4);
         assertEquals(" and ", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
         run = p.getRuns().get(5);
         assertEquals("BOTH", run.toString());
         assertEquals(true, run.isBold());
         assertEquals(true, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
 
         run = p.getRuns().get(6);
         assertEquals(", as well as ", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
         run = p.getRuns().get(7);
         assertEquals("RED", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
 
         run = p.getRuns().get(8);
         assertEquals(" and ", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
 
         run = p.getRuns().get(9);
         assertEquals("YELLOW", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
 
         run = p.getRuns().get(10);
         assertEquals(" text.", run.toString());
         assertEquals(false, run.isBold());
         assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrike());
+        assertEquals(false, run.isStrikeThrough());
         assertEquals(null, run.getCTR().getRPr());
+        
+        doc.close();
     }
 
     @Test
@@ -447,10 +450,11 @@ public class TestXWPFRun {
         }
 
         assertEquals(1, count);
+        sampleDoc.close();
     }
 
     @Test
-    public void testSetGetHighlight() throws Exception {
+    public void testSetGetHighlight() throws IOException {
         XWPFRun run = p.createRun();
         assertEquals(false, run.isHighlighted());
         
@@ -483,15 +487,15 @@ public class TestXWPFRun {
         
         assertEquals(1, docBack.getAllPictures().size());
         assertEquals(1, rBack.getEmbeddedPictures().size());
+        docBack.close();
+        doc.close();
     }
     
     /**
      * Bugzilla #58237 - Unable to add image to word document header
-     *
-     * @throws Exception
      */
     @Test
-    public void testAddPictureInHeader() throws Exception {
+    public void testAddPictureInHeader() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
         XWPFParagraph p = hdr.createParagraph();
@@ -523,6 +527,8 @@ public class TestXWPFRun {
         
         assertEquals(1, hdrBack.getAllPictures().size());
         assertEquals(1, rBack.getEmbeddedPictures().size());
+        docBack.close();
+        doc.close();
     }
 
     /**
@@ -530,7 +536,7 @@ public class TestXWPFRun {
      * run mustn't NPE
      */
     @Test
-    public void testSetFontFamily_52288() throws Exception {
+    public void testSetFontFamily_52288() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52288.docx");
         final Iterator<XWPFParagraph> paragraphs = doc.getParagraphsIterator();
         while (paragraphs.hasNext()) {
@@ -544,6 +550,7 @@ public class TestXWPFRun {
                 }
             }
         }
+        doc.close();
     }
 
     @Test
@@ -570,7 +577,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testBug58922() {
+    public void testBug58922() throws IOException {
         XWPFDocument document = new XWPFDocument();
 
         final XWPFRun run = document.createParagraph().createRun();
@@ -625,5 +632,7 @@ public class TestXWPFRun {
 
         run.setTextPosition(-1);
         assertEquals(-1, run.getTextPosition());
+        
+        document.close();
     }
 }

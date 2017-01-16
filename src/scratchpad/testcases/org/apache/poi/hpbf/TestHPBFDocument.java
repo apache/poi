@@ -17,24 +17,32 @@
 
 package org.apache.poi.hpbf;
 
-import junit.framework.TestCase;
-import org.apache.poi.POIDataSamples;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public final class TestHPBFDocument extends TestCase {
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.poi.POIDataSamples;
+import org.junit.Test;
+
+public final class TestHPBFDocument {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
-	public void testOpen() throws Exception {
-		HPBFDocument doc = new HPBFDocument(
-                _samples.openResourceAsStream("Sample.pub")
-		);
-
+    @Test
+	public void testOpen() throws IOException {
+	    InputStream is = _samples.openResourceAsStream("Sample.pub");
+		HPBFDocument doc = new HPBFDocument(is);
+		is.close();
 		assertNotNull(doc);
+		doc.close();
 	}
 
-	public void testBits() throws Exception {
-		HPBFDocument doc = new HPBFDocument(
-                _samples.openResourceAsStream("Sample.pub")
-		);
+    @Test
+	public void testBits() throws IOException {
+        InputStream is = _samples.openResourceAsStream("Sample.pub");
+		HPBFDocument doc = new HPBFDocument(is);
+        is.close();
 
 		assertNotNull(doc.getMainContents());
 		assertNotNull(doc.getQuillContents());
@@ -45,6 +53,8 @@ public final class TestHPBFDocument extends TestCase {
 		assertTrue(doc.getQuillContents().getData().length > 0);
 		assertTrue(doc.getEscherStm().getData().length > 0);
 		assertTrue(doc.getEscherDelayStm().getData().length == 0);
+
+       doc.close();
 	}
 
 	// TODO
