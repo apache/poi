@@ -53,17 +53,18 @@ import org.apache.poi.util.Units;
 public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformShape<HSLFShape,HSLFTextParagraph> {
     private static final POILogger LOG = POILogFactory.getLogger(HSLFFreeformShape.class);
 
-    public static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
-    public static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
-    public static final byte[] SEGMENTINFO_ESCAPE   = new byte[]{0x01, 0x00};
-    public static final byte[] SEGMENTINFO_ESCAPE2  = new byte[]{0x01, 0x20};
-    public static final byte[] SEGMENTINFO_CUBICTO  = new byte[]{0x00, (byte)0xAD};
-    public static final byte[] SEGMENTINFO_CUBICTO2 = new byte[]{0x00, (byte)0xB3}; //OpenOffice inserts 0xB3 instead of 0xAD.
-    public static final byte[] SEGMENTINFO_CLOSE    = new byte[]{0x01, (byte)0x60};
-    public static final byte[] SEGMENTINFO_END      = new byte[]{0x00, (byte)0x80};
+    private static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
+    private static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
+    private static final byte[] SEGMENTINFO_ESCAPE   = new byte[]{0x01, 0x00};
+    private static final byte[] SEGMENTINFO_ESCAPE2  = new byte[]{0x01, 0x20};
+    private static final byte[] SEGMENTINFO_CUBICTO  = new byte[]{0x00, (byte)0xAD};
+    // OpenOffice inserts 0xB3 instead of 0xAD.
+    // private static final byte[] SEGMENTINFO_CUBICTO2 = new byte[]{0x00, (byte)0xB3};
+    private static final byte[] SEGMENTINFO_CLOSE    = new byte[]{0x01, (byte)0x60};
+    private static final byte[] SEGMENTINFO_END      = new byte[]{0x00, (byte)0x80};
 
-    private static BitField PATH_INFO = BitFieldFactory.getInstance(0xE000);
-    private static BitField ESCAPE_INFO = BitFieldFactory.getInstance(0x1F00);
+    private static final BitField PATH_INFO = BitFieldFactory.getInstance(0xE000);
+    // private static final BitField ESCAPE_INFO = BitFieldFactory.getInstance(0x1F00);
 
     enum PathInfo {
         lineTo(0),curveTo(1),moveTo(2),close(3),end(4),escape(5),clientEscape(6);
@@ -235,7 +236,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         if(!isClosed) {
             segInfo.add(SEGMENTINFO_LINETO);
         }
-        segInfo.add(new byte[]{0x00, (byte)0x80});
+        segInfo.add(SEGMENTINFO_END);
 
         AbstractEscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
@@ -302,7 +303,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
             PathInfo pi = getPathInfo(segElem);
             switch (pi) {
                 case escape: {
-                    handleEscapeInfo(path, segElem, vertIter);
+                    // handleEscapeInfo(path, segElem, vertIter);
                     break;
                 }
                 case moveTo: {
@@ -389,60 +390,59 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         return prop;
     }
     
-    // FIXME: FindBugs-JDK8 identified that this method does nothing
-    private void handleEscapeInfo(Path2D path, byte segElem[], Iterator<byte[]> vertIter) {
-        EscapeInfo ei = getEscapeInfo(segElem);
-        switch (ei) {
-            case EXTENSION:
-                break;
-            case ANGLE_ELLIPSE_TO:
-                break;
-            case ANGLE_ELLIPSE:
-                break;
-            case ARC_TO:
-                break;
-            case ARC:
-                break;
-            case CLOCKWISE_ARC_TO:
-                break;
-            case CLOCKWISE_ARC:
-                break;
-            case ELLIPTICAL_QUADRANT_X:
-                break;
-            case ELLIPTICAL_QUADRANT_Y:
-                break;
-            case QUADRATIC_BEZIER:
-                break;
-            case NO_FILL:
-                break;
-            case NO_LINE:
-                break;
-            case AUTO_LINE:
-                break;
-            case AUTO_CURVE:
-                break;
-            case CORNER_LINE:
-                break;
-            case CORNER_CURVE:
-                break;
-            case SMOOTH_LINE:
-                break;
-            case SMOOTH_CURVE:
-                break;
-            case SYMMETRIC_LINE:
-                break;
-            case SYMMETRIC_CURVE:
-                break;
-            case FREEFORM:
-                break;
-            case FILL_COLOR:
-                break;
-            case LINE_COLOR:
-                break;
-            default:
-                break;
-        }
-    }
+//    private void handleEscapeInfo(Path2D path, byte segElem[], Iterator<byte[]> vertIter) {
+//        EscapeInfo ei = getEscapeInfo(segElem);
+//        switch (ei) {
+//            case EXTENSION:
+//                break;
+//            case ANGLE_ELLIPSE_TO:
+//                break;
+//            case ANGLE_ELLIPSE:
+//                break;
+//            case ARC_TO:
+//                break;
+//            case ARC:
+//                break;
+//            case CLOCKWISE_ARC_TO:
+//                break;
+//            case CLOCKWISE_ARC:
+//                break;
+//            case ELLIPTICAL_QUADRANT_X:
+//                break;
+//            case ELLIPTICAL_QUADRANT_Y:
+//                break;
+//            case QUADRATIC_BEZIER:
+//                break;
+//            case NO_FILL:
+//                break;
+//            case NO_LINE:
+//                break;
+//            case AUTO_LINE:
+//                break;
+//            case AUTO_CURVE:
+//                break;
+//            case CORNER_LINE:
+//                break;
+//            case CORNER_CURVE:
+//                break;
+//            case SMOOTH_LINE:
+//                break;
+//            case SMOOTH_CURVE:
+//                break;
+//            case SYMMETRIC_LINE:
+//                break;
+//            case SYMMETRIC_CURVE:
+//                break;
+//            case FREEFORM:
+//                break;
+//            case FILL_COLOR:
+//                break;
+//            case LINE_COLOR:
+//                break;
+//            default:
+//                break;
+//        }
+//    }
     
 
     private static PathInfo getPathInfo(byte elem[]) {
@@ -451,9 +451,9 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         return PathInfo.valueOf(pathInfo);
     }
     
-    private static EscapeInfo getEscapeInfo(byte elem[]) {
-        int elemUS = LittleEndian.getUShort(elem, 0);
-        int escInfo = ESCAPE_INFO.getValue(elemUS);
-        return EscapeInfo.valueOf(escInfo);
-    }
+//    private static EscapeInfo getEscapeInfo(byte elem[]) {
+//        int elemUS = LittleEndian.getUShort(elem, 0);
+//        int escInfo = ESCAPE_INFO.getValue(elemUS);
+//        return EscapeInfo.valueOf(escInfo);
+//    }
 }
