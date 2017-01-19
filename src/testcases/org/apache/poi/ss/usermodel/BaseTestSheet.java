@@ -1231,6 +1231,29 @@ public abstract class BaseTestSheet {
         
         workbook.close();
     }
+    
+    @Test
+    public void removeAllHyperlinks() throws IOException {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Hyperlink hyperlink = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
+        hyperlink.setAddress("https://poi.apache.org/");
+        Sheet sheet = workbook.createSheet();
+        Cell cell = sheet.createRow(5).createCell(1);
+        cell.setHyperlink(hyperlink);
+        
+        assertEquals(1, workbook.getSheetAt(0).getHyperlinkList().size());
+        // Save a workbook with a hyperlink
+        Workbook workbook2 = _testDataProvider.writeOutAndReadBack(workbook);
+        assertEquals(1, workbook2.getSheetAt(0).getHyperlinkList().size());
+        
+        // Remove all hyperlinks from a saved workbook
+        workbook2.getSheetAt(0).getRow(5).getCell(1).removeHyperlink();
+        assertEquals(0, workbook2.getSheetAt(0).getHyperlinkList().size());
+        
+        // Verify that hyperlink was removed from workbook after writing out
+        Workbook workbook3 = _testDataProvider.writeOutAndReadBack(workbook2);
+        assertEquals(0, workbook3.getSheetAt(0).getHyperlinkList().size());
+    }
 
 
     @Test
