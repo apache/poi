@@ -3485,15 +3485,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             worksheet.getHyperlinks().setHyperlinkArray(ctHls);
         }
         else {
-            // For some reason, we have to remove the hyperlinks one by one from the CTHyperlinks array
-            // rather than unsetting or resetting the hyperlink array.
-            //worksheet.getHyperlinks().setHyperlinkArray(new CTHyperlink[0]);
-            //worksheet.unsetHyperlinks();
             if (worksheet.getHyperlinks() != null) {
                 final int count = worksheet.getHyperlinks().sizeOfHyperlinkArray();
                 for (int i=count-1; i>=0; i--) {
                     worksheet.getHyperlinks().removeHyperlink(i);
                 }
+                // For some reason, we have to remove the hyperlinks one by one from the CTHyperlinks array
+                // before unsetting the hyperlink array.
+                // Resetting the hyperlink array seems to break some XML nodes.
+                //worksheet.getHyperlinks().setHyperlinkArray(new CTHyperlink[0]);
+                worksheet.unsetHyperlinks();
             } else {
                 // nothing to do
             }
