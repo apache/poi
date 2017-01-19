@@ -64,7 +64,10 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
      */
     @Override
     public XSSFWorkbook writeOutAndReadBack(Workbook wb) {
-        if(!(wb instanceof SXSSFWorkbook)) {
+        // wb is usually an SXSSFWorkbook, but must also work on an XSSFWorkbook
+        // since workbooks must be able to be written out and read back
+        // several times in succession
+        if(!(wb instanceof SXSSFWorkbook || wb instanceof XSSFWorkbook)) {
             throw new IllegalArgumentException("Expected an instance of SXSSFWorkbook");
         }
 
