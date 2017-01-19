@@ -3485,7 +3485,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             worksheet.getHyperlinks().setHyperlinkArray(ctHls);
         }
         else {
-            worksheet.unsetHyperlinks();
+            // For some reason, we have to remove the hyperlinks one by one from the CTHyperlinks array
+            // rather than unsetting or resetting the hyperlink array.
+            //worksheet.getHyperlinks().setHyperlinkArray(new CTHyperlink[0]);
+            //worksheet.unsetHyperlinks();
+            if (worksheet.getHyperlinks() != null) {
+                final int count = worksheet.getHyperlinks().sizeOfHyperlinkArray();
+                for (int i=count-1; i>=0; i--) {
+                    worksheet.getHyperlinks().removeHyperlink(i);
+                }
+            } else {
+                // nothing to do
+            }
         }
 
         int minCell=Integer.MAX_VALUE, maxCell=Integer.MIN_VALUE;
