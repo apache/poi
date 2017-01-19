@@ -3484,6 +3484,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }
             worksheet.getHyperlinks().setHyperlinkArray(ctHls);
         }
+        else {
+            worksheet.unsetHyperlinks();
+        }
 
         int minCell=Integer.MAX_VALUE, maxCell=Integer.MIN_VALUE;
         for(XSSFRow row : _rows.values()){
