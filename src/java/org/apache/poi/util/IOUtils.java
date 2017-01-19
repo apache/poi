@@ -251,4 +251,27 @@ public final class IOUtils {
                     exc );
         }
     }
+
+    /**
+     * Skips bytes from a stream.  Returns -1L if EOF was hit before
+     * the end of the stream.
+     *
+     * @param in inputstream
+     * @param len length to skip
+     * @return number of bytes skipped
+     * @throws IOException on IOException
+     */
+    public static long skipFully(InputStream in, long len) throws IOException {
+        int total = 0;
+        while (true) {
+            long got = in.skip(len-total);
+            if (got < 0) {
+                return -1L;
+            }
+            total += got;
+            if (total == len) {
+                return total;
+            }
+        }
+    }
 }
