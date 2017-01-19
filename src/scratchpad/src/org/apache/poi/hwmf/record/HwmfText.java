@@ -19,6 +19,7 @@ package org.apache.poi.hwmf.record;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -27,7 +28,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -144,7 +144,7 @@ public class HwmfText {
          * length of the string.
          * The string is written at the location specified by the XStart and YStart fields.
          */
-        private String text;
+        private byte[] rawTextBytes;
         /**
          * A 16-bit signed integer that defines the vertical (y-axis) coordinate, in logical
          * units, of the point where drawing is to start.
@@ -164,18 +164,33 @@ public class HwmfText {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             stringLength = leis.readShort();
-            byte buf[] = new byte[stringLength+(stringLength&1)];
-            leis.readFully(buf);
-            text = new String(buf, 0, stringLength, LocaleUtil.CHARSET_1252).trim();
+            rawTextBytes = new byte[stringLength+(stringLength&1)];
+            leis.readFully(rawTextBytes);
             yStart = leis.readShort();
             xStart = leis.readShort();
-            return 3*LittleEndianConsts.SHORT_SIZE+buf.length;
+            return 3*LittleEndianConsts.SHORT_SIZE+rawTextBytes.length;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D bounds = new Rectangle2D.Double(xStart, yStart, 0, 0);
-            ctx.drawString(text, bounds);
+            ctx.drawString(getTextBytes(), bounds);
+        }
+
+        public String getText(Charset charset) {
+            return new String(getTextBytes(), charset);
+        }
+
+        /**
+         *
+         * @return a copy of a trimmed byte array of rawTextBytes bytes.
+         * This includes only the bytes from 0..stringLength.
+         * This does not include the extra optional padding on the byte array.
+         */
+        private byte[] getTextBytes() {
+            byte[] ret = new byte[stringLength];
+            System.arraycopy(rawTextBytes, 0, ret, 0, stringLength);
+            return ret;
         }
     }
     
@@ -264,7 +279,7 @@ public class HwmfText {
          * the length is odd, an extra byte is placed after it so that the following member (optional Dx) is 
          * aligned on a 16-bit boundary.
          */
-        private String text;
+        private byte[] rawTextBytes;
         /**
          * An optional array of 16-bit signed integers that indicate the distance between 
          * origins of adjacent character cells. For example, Dx[i] logical units separate the origins of 
@@ -300,10 +315,9 @@ public class HwmfText {
                 size += 4*LittleEndianConsts.SHORT_SIZE;
             }
             
-            byte buf[] = new byte[stringLength+(stringLength&1)];
-            leis.readFully(buf);
-            text = new String(buf, 0, stringLength, LocaleUtil.CHARSET_1252);
-            size += buf.length;
+            rawTextBytes = new byte[stringLength+(stringLength&1)];
+            leis.readFully(rawTextBytes);
+            size += rawTextBytes.length;
             
             if (size >= remainingRecordSize) {
                 logger.log(POILogger.INFO, "META_EXTTEXTOUT doesn't contain character tracking info");
@@ -327,7 +341,23 @@ public class HwmfText {
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D bounds = new Rectangle2D.Double(x, y, 0, 0);
-            ctx.drawString(text, bounds, dx);
+            ctx.drawString(getTextBytes(), bounds, dx);
+        }
+
+        public String getText(Charset charset) {
+            return new String(getTextBytes(), charset);
+        }
+
+        /**
+         *
+         * @return a copy of a trimmed byte array of rawTextBytes bytes.
+         * This includes only the bytes from 0..stringLength.
+         * This does not include the extra optional padding on the byte array.
+         */
+        private byte[] getTextBytes() {
+            byte[] ret = new byte[stringLength];
+            System.arraycopy(rawTextBytes, 0, ret, 0, stringLength);
+            return ret;
         }
     }
     
@@ -522,6 +552,10 @@ public class HwmfText {
         @Override
         public void applyObject(HwmfGraphics ctx) {
             ctx.getProperties().setFont(font);
+        }
+
+        public HwmfFont getFont() {
+            return font;
         }
     }
 }

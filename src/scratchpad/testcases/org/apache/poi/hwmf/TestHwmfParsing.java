@@ -18,7 +18,9 @@
 package org.apache.poi.hwmf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import javax.imageio.ImageIO;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -31,21 +33,24 @@ import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.imageio.ImageIO;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
+import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwmf.record.HwmfRecord;
+import org.apache.poi.hwmf.record.HwmfRecordType;
+import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -188,4 +193,33 @@ public class TestHwmfParsing {
             }
         }
     }
+
+    @Test
+    @Ignore("If we decide we can use common crawl file specified, we can turn this back on")
+    public void testCyrillic() throws Exception {
+        //TODO: move test file to framework and fix this
+        File dir = new File("C:/somethingOrOther");
+        File f = new File(dir, "ZMLH54SPLI76NQ7XMKVB7SMUJA2HTXTS-2.wmf");
+        HwmfPicture wmf = new HwmfPicture(new FileInputStream(f));
+
+        Charset charset = LocaleUtil.CHARSET_1252;
+        StringBuilder sb = new StringBuilder();
+        //this is pure hackery for specifying the font
+        //this happens to work on this test file, but you need to
+        //do what Graphics does by maintaining the stack, etc.!
+        for (HwmfRecord r : wmf.getRecords()) {
+            if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
+                HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
+                charset = (font.getCharSet().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharSet().getCharset();
+            }
+            if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
+                HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
+                sb.append(textOut.getText(charset)).append("\n");
+            }
+        }
+        String txt = sb.toString();
+        assertTrue(txt.contains("\u041E\u0431\u0449\u043E"));
+        assertTrue(txt.contains("\u0411\u0430\u043B\u0430\u043D\u0441"));
+    }
+
 }

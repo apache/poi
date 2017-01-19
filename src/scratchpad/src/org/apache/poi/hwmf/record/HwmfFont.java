@@ -19,67 +19,93 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * The Font object specifies the attributes of a logical font
  */
 public class HwmfFont {
+
+    private static final POILogger logger = POILogFactory.getLogger(HwmfFont.class);
+
     public enum WmfCharset {
         /** Specifies the English character set. */
-        ANSI_CHARSET(0x00000000),
+        ANSI_CHARSET(0x00000000, "Cp1252"),
         /**
          * Specifies a character set based on the current system locale;
          * for example, when the system locale is United States English,
          * the default character set is ANSI_CHARSET.
          */
-        DEFAULT_CHARSET(0x00000001),
+        DEFAULT_CHARSET(0x00000001, "Cp1252"),
         /** Specifies a character set of symbols. */
-        SYMBOL_CHARSET(0x00000002),
+        SYMBOL_CHARSET(0x00000002, ""),
         /** Specifies the Apple Macintosh character set. */
-        MAC_CHARSET(0x0000004D),
+        MAC_CHARSET(0x0000004D, "MacRoman"),
         /** Specifies the Japanese character set. */
-        SHIFTJIS_CHARSET(0x00000080),
+        SHIFTJIS_CHARSET(0x00000080, "Shift_JIS"),
         /** Also spelled "Hangeul". Specifies the Hangul Korean character set. */
-        HANGUL_CHARSET(0x00000081),
+        HANGUL_CHARSET(0x00000081, "cp949"),
         /** Also spelled "Johap". Specifies the Johab Korean character set. */
-        JOHAB_CHARSET(0x00000082),
+        JOHAB_CHARSET(0x00000082, "x-Johab"),
         /** Specifies the "simplified" Chinese character set for People's Republic of China. */
-        GB2312_CHARSET(0x00000086),
+        GB2312_CHARSET(0x00000086, "GB2312"),
         /**
          * Specifies the "traditional" Chinese character set, used mostly in
          * Taiwan and in the Hong Kong and Macao Special Administrative Regions.
          */
-        CHINESEBIG5_CHARSET(0x00000088),
+        CHINESEBIG5_CHARSET(0x00000088, "Big5"),
         /** Specifies the Greek character set. */
-        GREEK_CHARSET(0x000000A1),
+        GREEK_CHARSET(0x000000A1, "Cp1253"),
         /** Specifies the Turkish character set. */
-        TURKISH_CHARSET(0x000000A2),
+        TURKISH_CHARSET(0x000000A2, "Cp1254"),
         /** Specifies the Vietnamese character set. */
-        VIETNAMESE_CHARSET(0x000000A3),
+        VIETNAMESE_CHARSET(0x000000A3, "Cp1258"),
         /** Specifies the Hebrew character set. */
-        HEBREW_CHARSET(0x000000B1),
+        HEBREW_CHARSET(0x000000B1, "Cp1255"),
         /** Specifies the Arabic character set. */
-        ARABIC_CHARSET(0x000000B2),
+        ARABIC_CHARSET(0x000000B2, "Cp1256"),
         /** Specifies the Baltic (Northeastern European) character set. */
-        BALTIC_CHARSET(0x000000BA),
+        BALTIC_CHARSET(0x000000BA, "Cp1257"),
         /** Specifies the Russian Cyrillic character set. */
-        RUSSIAN_CHARSET(0x000000CC),
+        RUSSIAN_CHARSET(0x000000CC, "Cp1251"),
         /** Specifies the Thai character set. */
-        THAI_CHARSET(0x000000DE),
+        THAI_CHARSET(0x000000DE, "x-windows-874"),
         /** Specifies a Eastern European character set. */
-        EASTEUROPE_CHARSET(0x000000EE),
+        EASTEUROPE_CHARSET(0x000000EE, "Cp1250"),
         /**
          * Specifies a mapping to one of the OEM code pages,
          * according to the current system locale setting.
          */
-        OEM_CHARSET(0x000000FF);
+        OEM_CHARSET(0x000000FF, "Cp1252");
 
         int flag;
-        WmfCharset(int flag) {
+        Charset charset;
+
+        WmfCharset(int flag, String javaCharsetName) {
             this.flag = flag;
+            if (javaCharsetName.length() > 0) {
+                try {
+                    charset = Charset.forName(javaCharsetName);
+                    return;
+                } catch (UnsupportedCharsetException e) {
+                    logger.log(POILogger.WARN, "Unsupported charset: "+javaCharsetName);
+                }
+            }
+            charset = null;
+        }
+
+        /**
+         *
+         * @return charset for the font or <code>null</code> if there is no matching charset or
+         *         if the charset is a &quot;default&quot;
+         */
+        public Charset getCharset() {
+            return charset;
         }
 
         static WmfCharset valueOf(int flag) {

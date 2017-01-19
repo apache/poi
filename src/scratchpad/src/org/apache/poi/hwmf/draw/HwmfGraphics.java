@@ -29,6 +29,7 @@ import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.nio.charset.Charset;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -48,8 +49,11 @@ import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.util.LocaleUtil;
 
 public class HwmfGraphics {
+
+    private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
     private final Graphics2D graphicsCtx;
     private final List<HwmfDrawProperties> propStack = new LinkedList<HwmfDrawProperties>();
     private HwmfDrawProperties prop = new HwmfDrawProperties();
@@ -311,14 +315,34 @@ public class HwmfGraphics {
             break;
         }
     }
-    
+
+    /**
+     *
+     * @param text
+     * @param bounds
+     * @deprecated use {@link #drawString(byte[], Rectangle2D)}
+     */
     public void drawString(String text, Rectangle2D bounds) {
         drawString(text, bounds, null);
     }
-    
+
+    public void drawString(byte[] text, Rectangle2D bounds) {
+        drawString(text, bounds, null);
+    }
+
+    /**
+     *
+     * @param text
+     * @param bounds
+     * @deprecated use {@link #drawString(byte[], Rectangle2D, int[])}
+     */
     public void drawString(String text, Rectangle2D bounds, int dx[]) {
+        drawString(text.getBytes(DEFAULT_CHARSET), bounds, dx);
+    }
+
+    public void drawString(byte[] text, Rectangle2D bounds, int dx[]) {
         HwmfFont font = prop.getFont();
-        if (font == null || text == null || text.isEmpty()) {
+        if (font == null || text == null || text.length == 0) {
             return;
         }
         
@@ -326,8 +350,11 @@ public class HwmfGraphics {
         // TODO: another approx. ...
         double fontW = fontH/1.8;
         
-        int len = text.length();
-        AttributedString as = new AttributedString(text);
+        int len = text.length;
+        Charset charset = (font.getCharSet().getCharset() == null)?
+                DEFAULT_CHARSET : font.getCharSet().getCharset();
+        String textString = new String(text, charset);
+        AttributedString as = new AttributedString(textString);
         if (dx == null || dx.length == 0) {
             addAttributes(as, font);
         } else {
