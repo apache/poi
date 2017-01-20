@@ -783,11 +783,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
-        
-        /*if (visibility != SheetVisibility.VISIBLE && sheetIx == getActiveSheetIndex()) {
-            throw new IllegalStateException("Cannot hide the active sheet. Change active sheet before hiding.");
-        }*/
-        
         workbook.setSheetHidden(sheetIx, visibility);
     }
 
