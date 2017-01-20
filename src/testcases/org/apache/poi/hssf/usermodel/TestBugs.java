@@ -80,6 +80,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
@@ -1341,8 +1342,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertFalse(wb1.isSheetHidden(2));
         assertTrue(wb1.isSheetVeryHidden(2));
 
-        // Change 0 to be very hidden, and re-load
-        wb1.setSheetHidden(0, Workbook.SHEET_STATE_VERY_HIDDEN);
+        // Change sheet 0 to be very hidden, and re-load
+        wb1.setSheetVisibility(0, SheetVisibility.VERY_HIDDEN);
 
         HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
         wb1.close();
