@@ -28,7 +28,6 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.util.Removal;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class BaseTestSheetHiding {
