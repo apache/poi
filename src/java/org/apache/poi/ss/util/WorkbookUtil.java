@@ -182,7 +182,7 @@ public class WorkbookUtil {
             case Workbook.SHEET_STATE_HIDDEN: break;
             case Workbook.SHEET_STATE_VERY_HIDDEN: break;
             default: throw new IllegalArgumentException("Invalid sheet state : " + state + "\n" +
-                            "Sheet state must beone of the Workbook.SHEET_STATE_* constants");
+                            "Sheet state must be one of the Workbook.SHEET_STATE_* constants");
         }
     }
     
