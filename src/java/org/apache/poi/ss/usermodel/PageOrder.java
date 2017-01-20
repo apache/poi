@@ -34,7 +34,7 @@ public enum PageOrder {
     OVER_THEN_DOWN(2);
 
 
-    private int order;
+    private final int order;
 
 
     private PageOrder(int order) {
