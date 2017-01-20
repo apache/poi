@@ -1992,10 +1992,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
         
-        /*if (visibility != SheetVisibility.VISIBLE && sheetIx == getActiveSheetIndex()) {
-            throw new IllegalStateException("Cannot hide the active sheet. Change active sheet before hiding.");
-        }*/
-        
         final CTSheet ctSheet = sheets.get(sheetIx).sheet;
         switch (visibility) {
             case VISIBLE:

@@ -130,32 +130,6 @@ public abstract class BaseTestSheetHiding {
     
         wb.close();
     }
-    
-    @Ignore
-    @Test
-    public void testCannotHideActiveSheet() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        wb.createSheet("Active Sheet");
-        wb.createSheet("Inactive Sheet");
-        wb.setActiveSheet(0);
-        assertEquals(0, wb.getActiveSheetIndex());
-        
-        try {
-            wb.setSheetVisibility(0, SheetVisibility.VERY_HIDDEN);
-            fail("Should not be able to hide an active sheet");
-        } catch (final IllegalStateException e) {
-            // expected
-        }
-        
-        try {
-            wb.setSheetVisibility(0, SheetVisibility.HIDDEN);
-            fail("Should not be able to hide an active sheet");
-        } catch (final IllegalStateException e) {
-            // expected
-        }
-        
-        wb.close();
-    }
 
     /**
      * Test that we get the right number of sheets,

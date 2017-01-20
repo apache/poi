@@ -185,33 +185,4 @@ public class WorkbookUtil {
                             "Sheet state must be one of the Workbook.SHEET_STATE_* constants");
         }
     }
-    
-    @Internal(since="3.16 beta 2")
-    public static int getNextActiveSheetDueToSheetHiding(Workbook wb, int sheetIx) {
-        if (sheetIx == wb.getActiveSheetIndex()) {
-            // activate next sheet
-            // if last sheet in workbook, the previous visible sheet should be activated
-            final int count = wb.getNumberOfSheets();
-            for (int i=sheetIx+1; i < count; i++) {
-                // get the next visible sheet in this workbook
-                if (SheetVisibility.VISIBLE == wb.getSheetVisibility(i)) {
-                    return i;
-                }
-            }
-            
-            // if there are no sheets to the right or all sheets to the right are hidden, activate a sheet to the left
-            for (int i=sheetIx-1; i < count; i--) {
-                if (SheetVisibility.VISIBLE == wb.getSheetVisibility(i)) {
-                    return i;
-                }
-            }
-            
-            // there are no other visible sheets in this workbook
-            return -1;
-            //throw new IllegalStateException("Cannot hide sheet " + sheetIx + ". Workbook must contain at least 1 other visible sheet.");
-        }
-        else {
-            return sheetIx;
-        }
-    }
 }
