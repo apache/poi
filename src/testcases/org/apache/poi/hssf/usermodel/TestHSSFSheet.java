@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.apache.poi.POITestCase.assertBetween;
 
 import java.io.IOException;
 import java.util.List;
@@ -704,10 +705,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
        s.autoSizeColumn((short)1);
        
        // Size ranges due to different fonts on different machines
-       assertTrue("Single number column too small: " + s.getColumnWidth(0), s.getColumnWidth(0) > 350); 
-       assertTrue("Single number column too big: " + s.getColumnWidth(0),   s.getColumnWidth(0) < 550); 
-       assertTrue("6 digit number column too small: " + s.getColumnWidth(1), s.getColumnWidth(1) > 1500); 
-       assertTrue("6 digit number column too big: " + s.getColumnWidth(1),   s.getColumnWidth(1) < 2000);
+       assertBetween("Single number column width", s.getColumnWidth(0), 350, 550); 
+       assertBetween("6 digit number column width", s.getColumnWidth(1), 1500, 2000);
        
        // Set a date format
        HSSFCellStyle cs = wb.createCellStyle();
@@ -723,10 +722,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
        s.autoSizeColumn((short)0);
        s.autoSizeColumn((short)1);
 
-       assertTrue("Date column too small: " + s.getColumnWidth(0), s.getColumnWidth(0) > 4750); 
-       assertTrue("Date column too small: " + s.getColumnWidth(1), s.getColumnWidth(1) > 4750); 
-       assertTrue("Date column too big: " + s.getColumnWidth(0), s.getColumnWidth(0) < 6500); 
-       assertTrue("Date column too big: " + s.getColumnWidth(0), s.getColumnWidth(0) < 6500);
+       assertBetween("Date column width", s.getColumnWidth(0), 4750, 7000); 
+       assertBetween("Date column width", s.getColumnWidth(1), 4750, 7000);
        
        wb.close();
     }

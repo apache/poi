@@ -241,4 +241,17 @@ public final class POITestCase {
     public static void testPassesNow(int bug) {
         fail("This test passes now. Please update the unit test and bug " + bug + ".");
     }
+    
+    public static void assertBetween(String message, int value, int min, int max) {
+        assertTrue(message + ": " + value + " is less than minimum value of " + min,
+                min <= value);
+        assertTrue(message + ": " + value + " is greater than maximum value of " + max,
+                value <= max);
+    }
+    public static void assertStrictlyBetween(String message, int value, int min, int max) {
+        assertTrue(message + ": " + value + " is less or equal to than minimum value of " + min,
+                min < value);
+        assertTrue(message + ": " + value + " is greater or equal to than maximum value of " + max,
+                value < max);
+    }
 }
