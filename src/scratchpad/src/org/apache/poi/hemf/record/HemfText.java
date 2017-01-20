@@ -99,7 +99,7 @@ public class HemfText {
          * For {@link ExtTextOutW}, the charset is "UTF-16LE"
          *
          * @param charset the charset to be used to decode the character bytes
-         * @return
+         * @return text from this text element
          * @throws IOException
          */
         public String getText(Charset charset) throws IOException {

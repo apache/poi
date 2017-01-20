@@ -36,7 +36,6 @@ public interface HemfPlusRecord {
      *                    at the end.
      * @param recordId record type id
      * @param flags flags
-     * @return
      * @throws IOException, RecordFormatException
      */
     void init(byte[] dataBytes, int recordId, int flags) throws IOException;
