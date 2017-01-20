@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
@@ -57,14 +58,20 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * Indicates the sheet is visible.
      *
      * @see #setSheetHidden(int, int)
+     * @deprecated POI 3.16 beta 2. Use {@link SheetVisibility#VISIBLE} instead.
      */
+    @Deprecated
+    @Removal(version="3.18")
     int SHEET_STATE_VISIBLE = 0;
 
     /**
      * Indicates the book window is hidden, but can be shown by the user via the user interface.
      *
      * @see #setSheetHidden(int, int)
+     * @deprecated POI 3.16 beta 2. Use {@link SheetVisibility#HIDDEN} instead.
      */
+    @Deprecated
+    @Removal(version="3.18")
     int SHEET_STATE_HIDDEN = 1;
 
     /**
@@ -76,7 +83,10 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * </p>
      *
      * @see #setSheetHidden(int, int)
+     * @deprecated POI 3.16 beta 2. Use {@link SheetVisibility#VERY_HIDDEN} instead.
      */
+    @Deprecated
+    @Removal(version="3.18")
     int SHEET_STATE_VERY_HIDDEN = 2;
 
     /**
@@ -550,6 +560,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * </p>
      * @param sheetIx Number
      * @return <code>true</code> if sheet is hidden
+     * @see #getSheetVisibility(int)
      */
     boolean isSheetHidden(int sheetIx);
 
@@ -561,6 +572,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * </p>
      * @param sheetIx sheet index to check
      * @return <code>true</code> if sheet is very hidden
+     * @see #getSheetVisibility(int)
      */
     boolean isSheetVeryHidden(int sheetIx);
 
@@ -572,6 +584,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @param sheetIx the sheet index (0-based)
      * @param hidden True to mark the sheet as hidden, false otherwise
+     * @see #setSheetVisibility(int, SheetVisibility)
      */
     void setSheetHidden(int sheetIx, boolean hidden);
 
@@ -593,8 +606,31 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *        <code>Workbook.SHEET_STATE_HIDDEN</code>, or
      *        <code>Workbook.SHEET_STATE_VERY_HIDDEN</code>.
      * @throws IllegalArgumentException if the supplied sheet index or state is invalid
+     * @deprecated POI 3.16 beta 2. Use {@link #setSheetVisibility(int, SheetVisibility)} instead.
      */
+    @Removal(version="3.18")
     void setSheetHidden(int sheetIx, int hidden);
+    
+    /**
+     * Get the visibility (visible, hidden, very hidden) of a sheet in this workbook
+     *
+     * @param sheetIx  the index of the sheet
+     * @return the sheet visibility
+     * @since POI 3.16 beta 2
+     */
+    SheetVisibility getSheetVisibility(int sheetIx);
+
+    /**
+     * Hide or unhide a sheet.
+     *
+     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
+     * created workbook or the one set via setActiveSheet()) cannot be hidden.
+     *  
+     * @param sheetIx     the sheet index (0-based)
+     * @param visibility  the sheet visibility to set
+     * @since POI 3.16 beta 2
+     */
+    void setSheetVisibility(int sheetIx, SheetVisibility visibility);
 
     /**
      * Register a new toolpack in this workbook.

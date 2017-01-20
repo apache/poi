@@ -25,8 +25,10 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.util.Removal;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class BaseTestSheetHiding {
@@ -59,8 +61,15 @@ public abstract class BaseTestSheetHiding {
 	    wbU.close();
 	}
 	
+	/**
+	 * @deprecated 3.16 beta 2. Use {@link #testSheetVisibility()} instead.
+	 *
+	 * @throws IOException
+	 */
+	@Removal(version="3.18")
+	@Deprecated
 	@Test
-    public final void testSheetHidden() throws IOException {
+    public final void testSheetHiddenOld() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("MySheet");
 
@@ -92,6 +101,59 @@ public abstract class BaseTestSheetHiding {
             // ok
         }
 
+        wb.close();
+    }
+    
+    @Test
+    public final void testSheetVisibility() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("MySheet");
+    
+        assertFalse(wb.isSheetHidden(0));
+        assertFalse(wb.isSheetVeryHidden(0));
+        assertEquals(SheetVisibility.VISIBLE, wb.getSheetVisibility(0));
+    
+        wb.setSheetVisibility(0, SheetVisibility.HIDDEN);
+        assertTrue(wb.isSheetHidden(0));
+        assertFalse(wb.isSheetVeryHidden(0));
+        assertEquals(SheetVisibility.HIDDEN, wb.getSheetVisibility(0));
+    
+        wb.setSheetVisibility(0, SheetVisibility.VERY_HIDDEN);
+        assertFalse(wb.isSheetHidden(0));
+        assertTrue(wb.isSheetVeryHidden(0));
+        assertEquals(SheetVisibility.VERY_HIDDEN, wb.getSheetVisibility(0));
+    
+        wb.setSheetVisibility(0, SheetVisibility.VISIBLE);
+        assertFalse(wb.isSheetHidden(0));
+        assertFalse(wb.isSheetVeryHidden(0));
+        assertEquals(SheetVisibility.VISIBLE, wb.getSheetVisibility(0));
+    
+        wb.close();
+    }
+    
+    @Ignore
+    @Test
+    public void testCannotHideActiveSheet() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("Active Sheet");
+        wb.createSheet("Inactive Sheet");
+        wb.setActiveSheet(0);
+        assertEquals(0, wb.getActiveSheetIndex());
+        
+        try {
+            wb.setSheetVisibility(0, SheetVisibility.VERY_HIDDEN);
+            fail("Should not be able to hide an active sheet");
+        } catch (final IllegalStateException e) {
+            // expected
+        }
+        
+        try {
+            wb.setSheetVisibility(0, SheetVisibility.HIDDEN);
+            fail("Should not be able to hide an active sheet");
+        } catch (final IllegalStateException e) {
+            // expected
+        }
+        
         wb.close();
     }
 

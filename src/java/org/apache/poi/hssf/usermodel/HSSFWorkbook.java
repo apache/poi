@@ -100,6 +100,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Configurator;
@@ -188,7 +189,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     private MissingCellPolicy missingCellPolicy = MissingCellPolicy.RETURN_NULL_AND_BLANK;
 
-    private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
+    private static final POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
     /**
      * The locator of user-defined functions.
@@ -748,19 +749,46 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         validateSheetIndex(sheetIx);
         return workbook.isSheetVeryHidden(sheetIx);
     }
-
-
+    
     @Override
-    public void setSheetHidden(int sheetIx, boolean hidden) {
-        validateSheetIndex(sheetIx);
-        workbook.setSheetHidden(sheetIx, hidden);
+    public SheetVisibility getSheetVisibility(int sheetIx) {
+        return workbook.getSheetVisibility(sheetIx);
     }
 
     @Override
+    public void setSheetHidden(int sheetIx, boolean hidden) {
+        setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
+    }
+
+    @Removal(version="3.18")
+    @Deprecated
+    @Override
     public void setSheetHidden(int sheetIx, int hidden) {
+        switch (hidden) {
+            case Workbook.SHEET_STATE_VISIBLE:
+                setSheetVisibility(sheetIx, SheetVisibility.VISIBLE);
+                break;
+            case Workbook.SHEET_STATE_HIDDEN:
+                setSheetVisibility(sheetIx, SheetVisibility.HIDDEN);
+                break;
+            case Workbook.SHEET_STATE_VERY_HIDDEN:
+                setSheetVisibility(sheetIx, SheetVisibility.VERY_HIDDEN);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid sheet state : " + hidden + "\n" +
+                        "Sheet state must beone of the Workbook.SHEET_STATE_* constants");
+        }
+    }
+    
+    @Override
+    public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
-        WorkbookUtil.validateSheetState(hidden);
-        workbook.setSheetHidden(sheetIx, hidden);
+        
+        /*if (visibility != SheetVisibility.VISIBLE && sheetIx == getActiveSheetIndex()) {
+            throw new IllegalStateException("Cannot hide the active sheet. Change active sheet before hiding.");
+        }*/
+        
+        workbook.setSheetHidden(sheetIx, visibility);
     }
 
     /** Returns the index of the sheet by his name

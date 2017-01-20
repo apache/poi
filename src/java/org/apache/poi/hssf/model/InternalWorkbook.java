@@ -105,6 +105,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
@@ -715,6 +716,27 @@ public final class InternalWorkbook {
     public boolean isSheetVeryHidden(int sheetnum) {
         return getBoundSheetRec(sheetnum).isVeryHidden();
     }
+    
+    /**
+     * Gets the hidden flag for a given sheet.
+     * Note that a sheet could instead be
+     *  set to be very hidden, which is different
+     *  ({@link #isSheetVeryHidden(int)})
+     *
+     * @param sheetnum the sheet number (0 based)
+     * @return True if sheet is hidden
+     * @since 3.16 beta 2
+     */
+    public SheetVisibility getSheetVisibility(int sheetnum) {
+        final BoundSheetRecord bsr = getBoundSheetRec(sheetnum);
+        if (bsr.isVeryHidden()) {
+            return SheetVisibility.VERY_HIDDEN;
+        }
+        if (bsr.isHidden()) {
+            return SheetVisibility.HIDDEN;
+        }
+        return SheetVisibility.VISIBLE;
+    }
 
     /**
      * Hide or unhide a sheet
@@ -723,32 +745,20 @@ public final class InternalWorkbook {
      * @param hidden True to mark the sheet as hidden, false otherwise
      */
     public void setSheetHidden(int sheetnum, boolean hidden) {
-        getBoundSheetRec(sheetnum).setHidden(hidden);
+        setSheetHidden(sheetnum, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
     /**
      * Hide or unhide a sheet.
-     *  0 = not hidden
-     *  1 = hidden
-     *  2 = very hidden.
      *
-     * @param sheetnum The sheet number
-     * @param hidden 0 for not hidden, 1 for hidden, 2 for very hidden
+     * @param sheetnum   The sheet number
+     * @param visibility the sheet visibility to set (visible, hidden, very hidden)
+     * @since 3.16 beta 2
      */
-    public void setSheetHidden(int sheetnum, int hidden) {
+    public void setSheetHidden(int sheetnum, SheetVisibility visibility) {
         BoundSheetRecord bsr = getBoundSheetRec(sheetnum);
-        boolean h = false;
-        boolean vh = false;
-        if(hidden == 0) {
-        } else if(hidden == 1) {
-            h = true;
-        } else if(hidden == 2) {
-            vh = true;
-        } else {
-            throw new IllegalArgumentException("Invalid hidden flag " + hidden + " given, must be 0, 1 or 2");
-        }
-        bsr.setHidden(h);
-        bsr.setVeryHidden(vh);
+        bsr.setHidden(visibility == SheetVisibility.HIDDEN);
+        bsr.setVeryHidden(visibility == SheetVisibility.VERY_HIDDEN);
     }
 
 
