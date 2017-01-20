@@ -243,15 +243,15 @@ public final class POITestCase {
     }
     
     public static void assertBetween(String message, int value, int min, int max) {
-        assertTrue(message + ": " + value + " is less than minimum value of " + min,
+        assertTrue(message + ": " + value + " is less than the minimum value of " + min,
                 min <= value);
-        assertTrue(message + ": " + value + " is greater than maximum value of " + max,
+        assertTrue(message + ": " + value + " is greater than the maximum value of " + max,
                 value <= max);
     }
     public static void assertStrictlyBetween(String message, int value, int min, int max) {
-        assertTrue(message + ": " + value + " is less or equal to than minimum value of " + min,
+        assertTrue(message + ": " + value + " is less than or equal to the minimum value of " + min,
                 min < value);
-        assertTrue(message + ": " + value + " is greater or equal to than maximum value of " + max,
+        assertTrue(message + ": " + value + " is greater than or equal to the maximum value of " + max,
                 value < max);
     }
 }
