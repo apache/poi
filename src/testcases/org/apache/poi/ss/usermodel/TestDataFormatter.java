@@ -816,4 +816,16 @@ public class TestDataFormatter {
 
         wb.close();
     }
+    
+    /**
+     * bug 60031: DataFormatter parses months incorrectly when put at the end of date segment
+     */
+    @Test
+    public void testBug60031() {
+        // 23-08-2016 08:51:01 which is 42605.368761574071 as double will be parsed
+        // with format "yyyy-dd-MM HH:mm:ss" into "2016-23-51 08:51:01".
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("2016-23-08 08:51:01", dfUS.formatRawCellContents(42605.368761574071, -1, "yyyy-dd-MM HH:mm:ss"));
+        assertEquals("2017-12-01 January 09:54:33", dfUS.formatRawCellContents(42747.412892397523, -1, "yyyy-dd-MM MMMM HH:mm:ss"));
+    }
 }
