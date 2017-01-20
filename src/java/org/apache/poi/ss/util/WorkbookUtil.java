@@ -17,9 +17,7 @@
 
 package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
 
