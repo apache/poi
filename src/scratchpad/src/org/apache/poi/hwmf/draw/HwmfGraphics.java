@@ -316,28 +316,8 @@ public class HwmfGraphics {
         }
     }
 
-    /**
-     *
-     * @param text
-     * @param bounds
-     * @deprecated use {@link #drawString(byte[], Rectangle2D)}
-     */
-    public void drawString(String text, Rectangle2D bounds) {
-        drawString(text, bounds, null);
-    }
-
     public void drawString(byte[] text, Rectangle2D bounds) {
         drawString(text, bounds, null);
-    }
-
-    /**
-     *
-     * @param text
-     * @param bounds
-     * @deprecated use {@link #drawString(byte[], Rectangle2D, int[])}
-     */
-    public void drawString(String text, Rectangle2D bounds, int dx[]) {
-        drawString(text.getBytes(DEFAULT_CHARSET), bounds, dx);
     }
 
     public void drawString(byte[] text, Rectangle2D bounds, int dx[]) {
