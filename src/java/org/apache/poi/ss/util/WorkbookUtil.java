@@ -17,7 +17,10 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 
 /**
@@ -169,14 +172,46 @@ public class WorkbookUtil {
      *      {@link Workbook#SHEET_STATE_VISIBLE},
      *      {@link Workbook#SHEET_STATE_HIDDEN} or
      *      {@link Workbook#SHEET_STATE_VERY_HIDDEN}
+     * @deprecated POI 3.16 beta 2. Use {@link org.apache.poi.ss.usermodel.SheetVisibility} instead.
      */
+    @Removal(version="3.18")
+    @Deprecated
     public static void validateSheetState(int state) {
         switch(state){
             case Workbook.SHEET_STATE_VISIBLE: break;
             case Workbook.SHEET_STATE_HIDDEN: break;
             case Workbook.SHEET_STATE_VERY_HIDDEN: break;
-            default: throw new IllegalArgumentException("Ivalid sheet state : " + state + "\n" +
+            default: throw new IllegalArgumentException("Invalid sheet state : " + state + "\n" +
                             "Sheet state must beone of the Workbook.SHEET_STATE_* constants");
         }
-    }    
+    }
+    
+    @Internal(since="3.16 beta 2")
+    public static int getNextActiveSheetDueToSheetHiding(Workbook wb, int sheetIx) {
+        if (sheetIx == wb.getActiveSheetIndex()) {
+            // activate next sheet
+            // if last sheet in workbook, the previous visible sheet should be activated
+            final int count = wb.getNumberOfSheets();
+            for (int i=sheetIx+1; i < count; i++) {
+                // get the next visible sheet in this workbook
+                if (SheetVisibility.VISIBLE == wb.getSheetVisibility(i)) {
+                    return i;
+                }
+            }
+            
+            // if there are no sheets to the right or all sheets to the right are hidden, activate a sheet to the left
+            for (int i=sheetIx-1; i < count; i--) {
+                if (SheetVisibility.VISIBLE == wb.getSheetVisibility(i)) {
+                    return i;
+                }
+            }
+            
+            // there are no other visible sheets in this workbook
+            return -1;
+            //throw new IllegalStateException("Cannot hide sheet " + sheetIx + ". Workbook must contain at least 1 other visible sheet.");
+        }
+        else {
+            return sheetIx;
+        }
+    }
 }

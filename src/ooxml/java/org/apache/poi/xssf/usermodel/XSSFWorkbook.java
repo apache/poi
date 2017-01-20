@@ -37,12 +37,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
 import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.apache.commons.logging.Log;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
@@ -71,6 +73,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
@@ -81,6 +84,7 @@ import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ExternalLinksTable;
@@ -1940,15 +1944,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         throw new RuntimeException("Not implemented yet");
     }
 
-    /**
-     * Check whether a sheet is hidden.
-     * <p>
-     * Note that a sheet could instead be set to be very hidden, which is different
-     *  ({@link #isSheetVeryHidden(int)})
-     * </p>
-     * @param sheetIx Number
-     * @return <code>true</code> if sheet is hidden
-     */
     @Override
     public boolean isSheetHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
@@ -1956,70 +1951,69 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return ctSheet.getState() == STSheetState.HIDDEN;
     }
 
-    /**
-     * Check whether a sheet is very hidden.
-     * <p>
-     * This is different from the normal hidden status
-     *  ({@link #isSheetHidden(int)})
-     * </p>
-     * @param sheetIx sheet index to check
-     * @return <code>true</code> if sheet is very hidden
-     */
     @Override
     public boolean isSheetVeryHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         return ctSheet.getState() == STSheetState.VERY_HIDDEN;
     }
+    
+    @Override
+    public SheetVisibility getSheetVisibility(int sheetIx) {
+        validateSheetIndex(sheetIx);
+        final CTSheet ctSheet = sheets.get(sheetIx).sheet;
+        final STSheetState.Enum state = ctSheet.getState();
+        if (state == STSheetState.VISIBLE) {
+            return SheetVisibility.VISIBLE;
+        }
+        if (state == STSheetState.HIDDEN) {
+            return SheetVisibility.HIDDEN;
+        }
+        if (state == STSheetState.VERY_HIDDEN) {
+            return SheetVisibility.VERY_HIDDEN;
+        }
+        throw new IllegalArgumentException("This should never happen");
+    }
 
-    /**
-     * Sets the visible state of this sheet.
-     * <p>
-     *   Calling <code>setSheetHidden(sheetIndex, true)</code> is equivalent to
-     *   <code>setSheetHidden(sheetIndex, Workbook.SHEET_STATE_HIDDEN)</code>.
-     * <br/>
-     *   Calling <code>setSheetHidden(sheetIndex, false)</code> is equivalent to
-     *   <code>setSheetHidden(sheetIndex, Workbook.SHEET_STATE_VISIBLE)</code>.
-     * </p>
-     * 
-     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
-     * created workbook or the one set via setActiveSheet()) cannot be hidden. 
-     *
-     * @param sheetIx   the 0-based index of the sheet
-     * @param hidden whether this sheet is hidden
-     * @see #setSheetHidden(int, int)
-     */
     @Override
     public void setSheetHidden(int sheetIx, boolean hidden) {
-        setSheetHidden(sheetIx, hidden ? SHEET_STATE_HIDDEN : SHEET_STATE_VISIBLE);
+        setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
-    /**
-     * Hide or unhide a sheet.
-     *
-     * <ul>
-     *  <li>0 - visible. </li>
-     *  <li>1 - hidden. </li>
-     *  <li>2 - very hidden.</li>
-     * </ul>
-     * 
-     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
-     * created workbook or the one set via setActiveSheet()) cannot be hidden.
-     *  
-     * @param sheetIx the sheet index (0-based)
-     * @param state one of the following <code>Workbook</code> constants:
-     *        <code>Workbook.SHEET_STATE_VISIBLE</code>,
-     *        <code>Workbook.SHEET_STATE_HIDDEN</code>, or
-     *        <code>Workbook.SHEET_STATE_VERY_HIDDEN</code>.
-     * @throws IllegalArgumentException if the supplied sheet index or state is invalid
-     */
+    @Deprecated
+    @Removal(version="3.18")
     @Override
     public void setSheetHidden(int sheetIx, int state) {
-        validateSheetIndex(sheetIx);
         WorkbookUtil.validateSheetState(state);
-        CTSheet ctSheet = sheets.get(sheetIx).sheet;
-        ctSheet.setState(STSheetState.Enum.forInt(state + 1));
+        setSheetVisibility(sheetIx, SheetVisibility.values()[state]);
     }
+    
+    @Override
+    public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
+        validateSheetIndex(sheetIx);
+        
+        /*if (visibility != SheetVisibility.VISIBLE && sheetIx == getActiveSheetIndex()) {
+            throw new IllegalStateException("Cannot hide the active sheet. Change active sheet before hiding.");
+        }*/
+        
+        final CTSheet ctSheet = sheets.get(sheetIx).sheet;
+        switch (visibility) {
+            case VISIBLE:
+                ctSheet.setState(STSheetState.VISIBLE);
+                break;
+            case HIDDEN:
+                ctSheet.setState(STSheetState.HIDDEN);
+                break;
+            case VERY_HIDDEN:
+                ctSheet.setState(STSheetState.VERY_HIDDEN);
+                break;
+            default:
+                throw new IllegalArgumentException("This should never happen");
+        }
+    }
+    
+    
+    
 
     /**
      * Fired when a formula is deleted from this workbook,

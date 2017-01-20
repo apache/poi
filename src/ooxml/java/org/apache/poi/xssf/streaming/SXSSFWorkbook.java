@@ -47,6 +47,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -1239,92 +1240,54 @@ public class SXSSFWorkbook implements Workbook {
         return _wb.isDate1904();
     }
     
-    /**
-     * @return <code>false</code> if this workbook is not visible in the GUI
-     */
     @Override
+    @NotImplemented("XSSFWorkbook#isHidden is not implemented")
     public boolean isHidden()
     {
         return _wb.isHidden();
     }
 
-    /**
-     * @param hiddenFlag pass <code>false</code> to make the workbook visible in the GUI
-     */
     @Override
+    @NotImplemented("XSSFWorkbook#setHidden is not implemented")
     public void setHidden(boolean hiddenFlag)
     {
         _wb.setHidden(hiddenFlag);
     }
 
-    /**
-     * Check whether a sheet is hidden.
-     * <p>
-     * Note that a sheet could instead be set to be very hidden, which is different
-     *  ({@link #isSheetVeryHidden(int)})
-     * </p>
-     * @param sheetIx Number
-     * @return <code>true</code> if sheet is hidden
-     */
     @Override
     public boolean isSheetHidden(int sheetIx)
     {
         return _wb.isSheetHidden(sheetIx);
     }
 
-    /**
-     * Check whether a sheet is very hidden.
-     * <p>
-     * This is different from the normal hidden status
-     *  ({@link #isSheetHidden(int)})
-     * </p>
-     * @param sheetIx sheet index to check
-     * @return <code>true</code> if sheet is very hidden
-     */
     @Override
     public boolean isSheetVeryHidden(int sheetIx)
     {
         return _wb.isSheetVeryHidden(sheetIx);
     }
+    
+    @Override
+    public SheetVisibility getSheetVisibility(int sheetIx) {
+        return _wb.getSheetVisibility(sheetIx);
+    }
 
-    /**
-     * Hide or unhide a sheet
-     * 
-     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
-     * created workbook or the one set via setActiveSheet()) cannot be hidden. 
-     *
-     * @param sheetIx the sheet index (0-based)
-     * @param hidden True to mark the sheet as hidden, false otherwise
-     */
     @Override
     public void setSheetHidden(int sheetIx, boolean hidden)
     {
         _wb.setSheetHidden(sheetIx,hidden);
     }
 
-    /**
-     * Hide or unhide a sheet.
-     * 
-     * <ul>
-     *  <li>0 - visible. </li>
-     *  <li>1 - hidden. </li>
-     *  <li>2 - very hidden.</li>
-     * </ul>
-     * 
-     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
-     * created workbook or the one set via setActiveSheet()) cannot be hidden.
-     *  
-     * @param sheetIx the sheet index (0-based)
-     * @param hidden one of the following <code>Workbook</code> constants:
-     *        <code>Workbook.SHEET_STATE_VISIBLE</code>,
-     *        <code>Workbook.SHEET_STATE_HIDDEN</code>, or
-     *        <code>Workbook.SHEET_STATE_VERY_HIDDEN</code>.
-     * @throws IllegalArgumentException if the supplied sheet index or state is invalid
-     */
+    @Removal(version="3.18")
+    @Deprecated
     @Override
     public void setSheetHidden(int sheetIx, int hidden)
     {
         _wb.setSheetHidden(sheetIx,hidden);
+    }
+    
+    @Override
+    public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
+        _wb.setSheetVisibility(sheetIx, visibility);
     }
     
     /**
