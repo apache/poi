@@ -770,7 +770,8 @@ public final class InternalWorkbook {
     public int getSheetIndex(String name) {
         int retval = -1;
 
-        for (int k = 0; k < boundsheets.size(); k++) {
+        final int size = boundsheets.size();
+        for (int k = 0; k < size; k++) {
             String sheet = getSheetName(k);
 
             if (sheet.equalsIgnoreCase(name)) {
