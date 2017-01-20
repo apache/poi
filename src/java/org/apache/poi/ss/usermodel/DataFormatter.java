@@ -582,6 +582,9 @@ public class DataFormatter implements Observer {
                 }
             }
             else {
+                if (Character.isWhitespace(c)){
+                    ms.clear();
+                }
                 sb.append(c);
             }
         }
