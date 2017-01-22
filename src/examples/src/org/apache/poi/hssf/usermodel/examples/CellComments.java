@@ -28,7 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 
 /**
  * Demonstrates how to work with excel cell comments.
@@ -81,7 +81,7 @@ public class CellComments {
         font.setFontName("Arial");
         font.setFontHeightInPoints((short)10);
         font.setBold(true);
-        font.setColor(HSSFColor.RED.index);
+        font.setColor(HSSFColorPredefined.RED.getIndex());
         string.applyFont(font);
 
         comment2.setString(string);

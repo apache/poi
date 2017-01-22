@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -112,6 +113,7 @@ public final class HSSFCellStyle implements CellStyle {
     // avoid multi-threading issues when different workbooks are accessed in 
     // multiple threads at the same time
     private static final ThreadLocal<Short> lastDateFormat = new ThreadLocal<Short>() {
+        @Override
         protected Short initialValue() {
             return Short.MIN_VALUE;
         }
@@ -273,6 +275,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #ALIGN_CENTER_SELECTION
      * @deprecated POI 3.15 beta 3. Use {@link #setAlignment(HorizontalAlignment)} instead.
      */
+    @Deprecated
     @Removal(version="3.17")
     @Override
     public void setAlignment(short align)
@@ -303,6 +306,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #ALIGN_CENTER_SELECTION
      * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
      */
+    @Deprecated
     @Override
     public short getAlignment()
     {
@@ -349,6 +353,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see VerticalAlignment
      * @deprecated POI 3.15 beta 3. Use {@link #setVerticalAlignment(VerticalAlignment)} instead.
      */
+    @Deprecated
     @Removal(version="3.17")
     @Override
     public void setVerticalAlignment(short align)
@@ -375,6 +380,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see VerticalAlignment
      * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
      */
+    @Deprecated
     @Override
     public short getVerticalAlignment()
     {
@@ -480,6 +486,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderLeft(BorderStyle)} instead.
      */
+    @Deprecated
     @Removal(version="3.17")
     @Override
     public void setBorderLeft(short border)
@@ -504,6 +511,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @return border type
      * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderLeftEnum()}.
      */
+    @Deprecated
     @Override
     public short getBorderLeft()
     {
@@ -539,6 +547,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderRight(BorderStyle)} instead.
      */
+    @Deprecated
     @Removal(version="3.17")
     @Override
     public void setBorderRight(short border)
@@ -563,6 +572,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @return border type
      * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderRightEnum()}.
      */
+    @Deprecated
     @Override
     public short getBorderRight()
     {
@@ -598,6 +608,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderTop(BorderStyle)} instead.
      */
+    @Deprecated
     @Removal(version="3.17")
     @Override
     public void setBorderTop(short border)
@@ -622,6 +633,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @return border type
      * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderTopEnum()}.
      */
+    @Deprecated
     @Override
     public short getBorderTop()
     {
@@ -657,6 +669,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_SLANTED_DASH_DOT
      * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderBottom(BorderStyle)} instead.
      */
+    @Deprecated
     @Removal(version="3.17")
     @Override
     public void setBorderBottom(short border)
@@ -681,6 +694,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @return border type
      * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderBottomEnum()}.
      */
+    @Deprecated
     @Override
     public short getBorderBottom()
     {
@@ -806,6 +820,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @param fp  fill pattern (set to 1 to fill w/foreground color)
      * @deprecated POI 3.15 beta 3. Use {@link #setFillPattern(FillPatternType)} instead.
      */
+    @Deprecated
     @Removal(version="3.17")
     @Override
     public void setFillPattern(short fp)
@@ -830,6 +845,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @return fill pattern
      * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead. 
      */
+    @Deprecated
     @Override
     public short getFillPattern()
     {
@@ -857,16 +873,20 @@ public final class HSSFCellStyle implements CellStyle {
      * <p>0x40         0xSOMETHING</p>
      */
     private void checkDefaultBackgroundFills() {
-      if (_format.getFillForeground() == org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index) {
-          //JMH: Why +1, hell why not. I guess it made some sense to someone at the time. Doesnt
-          //to me now.... But experience has shown that when the fore is set to AUTOMATIC then the
-          //background needs to be incremented......
-          if (_format.getFillBackground() != (org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1))
-              setFillBackgroundColor((short)(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1));
-      } else if (_format.getFillBackground() == org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1)
-          //Now if the forground changes to a non-AUTOMATIC color the background resets itself!!!
-          if (_format.getFillForeground() != org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index)
-              setFillBackgroundColor(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index);
+        final short autoIdx = HSSFColorPredefined.AUTOMATIC.getIndex();
+        if (_format.getFillForeground() == autoIdx) {
+            //JMH: Why +1, hell why not. I guess it made some sense to someone at the time. Doesnt
+            //to me now.... But experience has shown that when the fore is set to AUTOMATIC then the
+            //background needs to be incremented......
+            if (_format.getFillBackground() != autoIdx+1) {
+                setFillBackgroundColor((short)(autoIdx+1));
+            }
+        } else if (_format.getFillBackground() == autoIdx+1) {
+            //Now if the forground changes to a non-AUTOMATIC color the background resets itself!!!
+            if (_format.getFillForeground() != autoIdx) {
+                setFillBackgroundColor(autoIdx);
+            }
+        }
     }
 
     /**
@@ -909,13 +929,13 @@ public final class HSSFCellStyle implements CellStyle {
      * @return fill color
      */
     @Override
-    public short getFillBackgroundColor()
-    {
+    public short getFillBackgroundColor() {
+        final short autoIndex = HSSFColorPredefined.AUTOMATIC.getIndex();
         short result = _format.getFillBackground();
         //JMH: Do this ridiculous conversion, and let HSSFCellStyle
         //internally migrate back and forth
-        if (result == (HSSFColor.AUTOMATIC.index+1)) {
-            return HSSFColor.AUTOMATIC.index;
+        if (result == autoIndex+1) {
+            return autoIndex;
         }
         return result;
     }
@@ -1117,17 +1137,24 @@ public final class HSSFCellStyle implements CellStyle {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
         if (obj instanceof HSSFCellStyle) {
             final HSSFCellStyle other = (HSSFCellStyle) obj;
             if (_format == null) {
-                if (other._format != null)
+                if (other._format != null) {
                     return false;
-            } else if (!_format.equals(other._format))
+                }
+            } else if (!_format.equals(other._format)) {
                 return false;
-            if (_index != other._index)
+            }
+            if (_index != other._index) {
                 return false;
+            }
             return true;
         }
         return false;

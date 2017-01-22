@@ -88,7 +88,7 @@ import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -231,9 +231,10 @@ public final class InternalWorkbook {
      * @return Workbook object
      */
     public static InternalWorkbook createWorkbook(List<Record> recs) {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "Workbook (readfile) created with reclen=",
                     Integer.valueOf(recs.size()));
+        }
         InternalWorkbook retval = new InternalWorkbook();
         List<Record> records = new ArrayList<Record>(recs.size() / 3);
         retval.records.setRecords(records);
@@ -244,54 +245,62 @@ public final class InternalWorkbook {
 
             if (rec.getSid() == EOFRecord.sid) {
                 records.add(rec);
-                if (log.check( POILogger.DEBUG ))
+                if (log.check( POILogger.DEBUG )) {
                     log.log(DEBUG, "found workbook eof record at " + k);
+                }
                 break;
             }
             switch (rec.getSid()) {
 
                 case BoundSheetRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found boundsheet record at " + k);
+                    }
                     retval.boundsheets.add((BoundSheetRecord) rec);
                     retval.records.setBspos( k );
                     break;
 
                 case SSTRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found sst record at " + k);
+                    }
                     retval.sst = ( SSTRecord ) rec;
                     break;
 
                 case FontRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found font record at " + k);
+                    }
                     retval.records.setFontpos( k );
                     retval.numfonts++;
                     break;
 
                 case ExtendedFormatRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found XF record at " + k);
+                    }
                     retval.records.setXfpos( k );
                     retval.numxfs++;
                     break;
 
                 case TabIdRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found tabid record at " + k);
+                    }
                     retval.records.setTabpos( k );
                     break;
 
                 case ProtectRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found protect record at " + k);
+                    }
                     retval.records.setProtpos( k );
                     break;
 
                 case BackupRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found backup record at " + k);
+                    }
                     retval.records.setBackuppos( k );
                     break;
                 case ExternSheetRecord.sid :
@@ -299,57 +308,67 @@ public final class InternalWorkbook {
                 case NameRecord.sid :
                 case SupBookRecord.sid :
                     // LinkTable can start with either of these
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found SupBook record at " + k);
+                    }
                     retval.linkTable = new LinkTable(recs, k, retval.records, retval.commentRecords);
                     k+=retval.linkTable.getRecordCount() - 1;
                     continue;
                 case FormatRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found format record at " + k);
+                    }
                     retval.formats.add((FormatRecord) rec);
                     retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
                     break;
                 case DateWindow1904Record.sid :
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found datewindow1904 record at " + k);
+                    }
                     retval.uses1904datewindowing = ((DateWindow1904Record)rec).getWindowing() == 1;
                     break;
                 case PaletteRecord.sid:
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found palette record at " + k);
+                    }
                     retval.records.setPalettepos( k );
                     break;
                 case WindowOneRecord.sid:
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found WindowOneRecord at " + k);
+                    }
                     retval.windowOne = (WindowOneRecord) rec;
                     break;
                 case WriteAccessRecord.sid:
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found WriteAccess at " + k);
+                    }
                     retval.writeAccess = (WriteAccessRecord) rec;
                     break;
                 case WriteProtectRecord.sid:
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found WriteProtect at " + k);
+                    }
                     retval.writeProtect = (WriteProtectRecord) rec;
                     break;
                 case FileSharingRecord.sid:
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found FileSharing at " + k);
+                    }
                     retval.fileShare = (FileSharingRecord) rec;
                     break;
 
                 case NameCommentRecord.sid:
                     final NameCommentRecord ncr = (NameCommentRecord) rec;
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG, "found NameComment at " + k);
+                    }
                     retval.commentRecords.put(ncr.getNameText(), ncr);
                     break;
                 default:
-                    if (log.check( POILogger.DEBUG ))
+                    if (log.check( POILogger.DEBUG )) {
                         log.log(DEBUG,  "ignoring record (sid=" + rec.getSid() + ") at " + k);
+                    }
                     break;
             }
             records.add(rec);
@@ -376,8 +395,9 @@ public final class InternalWorkbook {
         if (retval.windowOne == null) {
             retval.windowOne = createWindowOne();
         }
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "exit create workbook from existing file function");
+        }
         return retval;
     }
 
@@ -389,8 +409,9 @@ public final class InternalWorkbook {
      */
     public static InternalWorkbook createWorkbook()
     {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log( DEBUG, "creating new workbook from scratch" );
+        }
         InternalWorkbook retval = new InternalWorkbook();
         List<Record> records = new ArrayList<Record>( 30 );
         retval.records.setRecords(records);
@@ -463,8 +484,9 @@ public final class InternalWorkbook {
         records.add(InternalWorkbook.createExtendedSST());
 
         records.add(EOFRecord.instance);
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log( DEBUG, "exit create new workbook from scratch" );
+        }
         return retval;
     }
 
@@ -592,9 +614,10 @@ public final class InternalWorkbook {
      */
 
     public void setSheetBof(int sheetIndex, int pos) {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "setting bof for sheetnum =", Integer.valueOf(sheetIndex),
                 " at pos=", Integer.valueOf(pos));
+        }
         checkSheets(sheetIndex);
         getBoundSheetRec(sheetIndex)
         .setPositionOfBof(pos);
@@ -626,7 +649,9 @@ public final class InternalWorkbook {
         checkSheets(sheetnum);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
+        if(sheetname.length() > 31) {
+            sheetname = sheetname.substring(0, 31);
+        }
 
         BoundSheetRecord sheet = boundsheets.get(sheetnum);
         sheet.setSheetname(sheetname);
@@ -868,8 +893,9 @@ public final class InternalWorkbook {
      */
 
     public int getNumSheets() {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "getNumSheets=", Integer.valueOf(boundsheets.size()));
+        }
         return boundsheets.size();
     }
 
@@ -880,8 +906,9 @@ public final class InternalWorkbook {
      */
 
     public int getNumExFormats() {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "getXF=", Integer.valueOf(numxfs));
+        }
         return numxfs;
     }
 
@@ -1019,8 +1046,9 @@ public final class InternalWorkbook {
      */
 
     public int addSSTString(UnicodeString string) {
-        if (log.check( POILogger.DEBUG ))
-          log.log(DEBUG, "insert to sst string='", string);
+        if (log.check( POILogger.DEBUG )) {
+            log.log(DEBUG, "insert to sst string='", string);
+        }
         if (sst == null) {
             insertSST();
         }
@@ -1038,9 +1066,10 @@ public final class InternalWorkbook {
         }
         UnicodeString retval = sst.getString(str);
 
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "Returning SST for index=", Integer.valueOf(str),
                 " String= ", retval);
+        }
         return retval;
     }
 
@@ -1052,8 +1081,9 @@ public final class InternalWorkbook {
      */
 
     public void insertSST() {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "creating new SST via insertSST!");
+        }
         sst = new SSTRecord();
         records.add(records.size() - 1, createExtendedSST());
         records.add(records.size() - 2, sst);
@@ -1096,8 +1126,9 @@ public final class InternalWorkbook {
      */
     public int serialize( int offset, byte[] data )
     {
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log( DEBUG, "Serializing Workbook with offsets" );
+        }
 
         int pos = 0;
 
@@ -1133,8 +1164,9 @@ public final class InternalWorkbook {
             /////  DEBUG END /////
             pos += len;   // rec.length;
         }
-        if (log.check( POILogger.DEBUG ))
+        if (log.check( POILogger.DEBUG )) {
             log.log( DEBUG, "Exiting serialize workbook" );
+        }
         return pos;
     }
 
@@ -1207,13 +1239,15 @@ public final class InternalWorkbook {
         for ( int k = 0; k < records.size(); k++ )
         {
             Record record = records.get( k );
-            if (record instanceof SSTRecord)
+            if (record instanceof SSTRecord) {
                 sst = (SSTRecord)record;
+            }
 
-            if (record.getSid() == ExtSSTRecord.sid && sst != null)
+            if (record.getSid() == ExtSSTRecord.sid && sst != null) {
                 retval += sst.calcExtSSTRecordSize();
-            else
+            } else {
                 retval += record.getRecordSize();
+            }
         }
 
         return retval;
@@ -1250,7 +1284,9 @@ public final class InternalWorkbook {
         try {
             String username = System.getProperty("user.name");
             // Google App engine returns null for user.name, see Bug 53974
-            if(username == null) username = defaultUserName;
+            if(username == null) {
+                username = defaultUserName;
+            }
 
             retval.setUsername(username);
         } catch (AccessControlException e) {
@@ -1799,10 +1835,10 @@ public final class InternalWorkbook {
         retval.setPaletteOptions(( short ) 0);
         retval.setAdtlPaletteOptions(( short ) 0);
         retval.setFillPaletteOptions(( short ) 0x20c0);
-        retval.setTopBorderPaletteIdx(HSSFColor.BLACK.index);
-        retval.setBottomBorderPaletteIdx(HSSFColor.BLACK.index);
-        retval.setLeftBorderPaletteIdx(HSSFColor.BLACK.index);
-        retval.setRightBorderPaletteIdx(HSSFColor.BLACK.index);
+        retval.setTopBorderPaletteIdx(HSSFColorPredefined.BLACK.getIndex());
+        retval.setBottomBorderPaletteIdx(HSSFColorPredefined.BLACK.getIndex());
+        retval.setLeftBorderPaletteIdx(HSSFColorPredefined.BLACK.getIndex());
+        retval.setRightBorderPaletteIdx(HSSFColorPredefined.BLACK.getIndex());
         return retval;
     }
 
@@ -2172,8 +2208,9 @@ public final class InternalWorkbook {
         FormatRecord rec = new FormatRecord(maxformatid, formatString);
 
         int pos = 0;
-        while ( pos < records.size() && records.get( pos ).getSid() != FormatRecord.sid )
+        while ( pos < records.size() && records.get( pos ).getSid() != FormatRecord.sid ) {
             pos++;
+        }
         pos += formats.size();
         formats.add( rec );
         records.add( pos, rec );
@@ -2226,8 +2263,9 @@ public final class InternalWorkbook {
         int matches = 0;
         for (Record record : records) {
             if (record.getSid() == sid) {
-                if (matches++ == pos)
+                if (matches++ == pos) {
                     return record;
+                }
             }
         }
         return null;
@@ -2266,7 +2304,9 @@ public final class InternalWorkbook {
         Record rec = records.get(palettePos);
         if (rec instanceof PaletteRecord) {
           palette = (PaletteRecord) rec;
-        } else throw new RuntimeException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
+        } else {
+            throw new RuntimeException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
+        }
       }
       else
       {
@@ -2316,7 +2356,9 @@ public final class InternalWorkbook {
                     drawingManager = new DrawingManager2(dgg);
                     if(bStore != null){
                         for(EscherRecord bs : bStore.getChildRecords()){
-                            if(bs instanceof EscherBSERecord) escherBSERecords.add((EscherBSERecord)bs);
+                            if(bs instanceof EscherBSERecord) {
+                                escherBSERecords.add((EscherBSERecord)bs);
+                            }
                         }
                     }
                     return drawingManager;
@@ -2344,7 +2386,9 @@ public final class InternalWorkbook {
                 drawingManager = new DrawingManager2(dgg);
                 if(bStore != null){
                     for(EscherRecord bs : bStore.getChildRecords()){
-                        if(bs instanceof EscherBSERecord) escherBSERecords.add((EscherBSERecord)bs);
+                        if(bs instanceof EscherBSERecord) {
+                            escherBSERecords.add((EscherBSERecord)bs);
+                        }
                     }
                 }
             }
@@ -2395,8 +2439,9 @@ public final class InternalWorkbook {
             splitMenuColors.setColor4(0x100000F7);
 
             dggContainer.addChildRecord(dgg);
-            if (bstoreContainer != null)
+            if (bstoreContainer != null) {
                 dggContainer.addChildRecord( bstoreContainer );
+            }
             dggContainer.addChildRecord(opt);
             dggContainer.addChildRecord(splitMenuColors);
 

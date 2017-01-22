@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 
 /**
  * Represents a workbook color palette.
@@ -45,16 +46,13 @@ public final class HSSFPalette {
     public HSSFColor getColor(short index)
     {
         //Handle the special AUTOMATIC case
-        if (index == HSSFColor.AUTOMATIC.index) {
-            return HSSFColor.AUTOMATIC.getInstance();
+        if (index == HSSFColorPredefined.AUTOMATIC.getIndex()) {
+            return HSSFColorPredefined.AUTOMATIC.getColor();
         }
         byte[] b = _palette.getColor(index);
-          if (b != null)
-          {
-             return new CustomColor(index, b);
-          }
-        return null;
+        return (b == null) ? null : new CustomColor(index, b);
     }
+
     /**
      * Retrieves the color at a given index
      *

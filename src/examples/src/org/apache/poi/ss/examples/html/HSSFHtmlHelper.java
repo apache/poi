@@ -16,24 +16,23 @@
 ==================================================================== */
 package org.apache.poi.ss.examples.html;
 
+import java.util.Formatter;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.CellStyle;
-
-import java.util.Formatter;
 
 /**
  * Implementation of {@link HtmlHelper} for HSSF files.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class HSSFHtmlHelper implements HtmlHelper {
     private final HSSFWorkbook wb;
     private final HSSFPalette colors;
 
-    private static final HSSFColor HSSF_AUTO = new HSSFColor.AUTOMATIC();
+    private static final HSSFColor HSSF_AUTO = HSSFColorPredefined.AUTOMATIC.getColor();
 
     public HSSFHtmlHelper(HSSFWorkbook wb) {
         this.wb = wb;
@@ -45,7 +44,7 @@ public class HSSFHtmlHelper implements HtmlHelper {
     @Override
     public void colorStyles(CellStyle style, Formatter out) {
         HSSFCellStyle cs = (HSSFCellStyle) style;
-        out.format("  /* fill pattern = %d */%n", cs.getFillPattern());
+        out.format("  /* fill pattern = %d */%n", cs.getFillPatternEnum().getCode());
         styleColor(out, "background-color", cs.getFillForegroundColor());
         styleColor(out, "color", cs.getFont(wb).getColor());
         styleColor(out, "border-left-color", cs.getLeftBorderColor());

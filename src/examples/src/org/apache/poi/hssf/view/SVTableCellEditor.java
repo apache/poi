@@ -18,6 +18,8 @@
 
 package org.apache.poi.hssf.view;
 
+import static org.apache.poi.hssf.view.SVTableUtils.getAWTColor;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -25,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
-import java.util.Map;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -37,7 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.FillPatternType;
 
 /**
@@ -47,10 +48,8 @@ import org.apache.poi.ss.usermodel.FillPatternType;
  * @author     Jason Height
  */
 public class SVTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-  private static final Color black = getAWTColor(new HSSFColor.BLACK());
-  private static final Color white = getAWTColor(new HSSFColor.WHITE());
-  private Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
-
+  private static final Color black = getAWTColor(HSSFColorPredefined.BLACK);
+  private static final Color white = getAWTColor(HSSFColorPredefined.WHITE);
 
   private HSSFWorkbook wb;
   private JTextField editor;
@@ -67,7 +66,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
    * @return    The cellEditable value
    */
   @Override
-public boolean isCellEditable(java.util.EventObject e) {
+  public boolean isCellEditable(java.util.EventObject e) {
     if (e instanceof MouseEvent) {
       return ((MouseEvent) e).getClickCount() >= 2;
     }
@@ -76,7 +75,7 @@ public boolean isCellEditable(java.util.EventObject e) {
 
 
   @Override
-public boolean shouldSelectCell(EventObject anEvent) {
+  public boolean shouldSelectCell(EventObject anEvent) {
     return true;
   }
 
@@ -88,7 +87,7 @@ public boolean shouldSelectCell(EventObject anEvent) {
 
 
   @Override
-public boolean stopCellEditing() {
+  public boolean stopCellEditing() {
     System.out.println("Stop Cell Editing");
     fireEditingStopped();
     return true;
@@ -96,14 +95,14 @@ public boolean stopCellEditing() {
 
 
   @Override
-public void cancelCellEditing() {
+  public void cancelCellEditing() {
     System.out.println("Cancel Cell Editing");
     fireEditingCanceled();
   }
 
 
   @Override
-public void actionPerformed(ActionEvent e) {
+  public void actionPerformed(ActionEvent e) {
     System.out.println("Action performed");
     stopCellEditing();
   }
@@ -115,7 +114,7 @@ public void actionPerformed(ActionEvent e) {
    * @return    The cellEditorValue value
    */
   @Override
-public Object getCellEditorValue() {
+  public Object getCellEditorValue() {
     System.out.println("GetCellEditorValue");
     //JMH Look at when this method is called. Should it return a HSSFCell?
     return editor.getText();
@@ -128,7 +127,7 @@ public Object getCellEditorValue() {
    * @return             The tableCellEditorComponent value
    */
   @Override
-public Component getTableCellEditorComponent(JTable table, Object value,
+  public Component getTableCellEditorComponent(JTable table, Object value,
       boolean isSelected,
       int row,
       int column) {
@@ -142,18 +141,26 @@ public Component getTableCellEditorComponent(JTable table, Object value,
 
           int fontstyle = Font.PLAIN;
 
-          if (isbold) fontstyle = Font.BOLD;
-          if (isitalics) fontstyle = fontstyle | Font.ITALIC;
+          if (isbold) {
+            fontstyle = Font.BOLD;
+          }
+          if (isitalics) {
+            fontstyle = fontstyle | Font.ITALIC;
+          }
 
           int fontheight = f.getFontHeightInPoints();
-          if (fontheight == 9) fontheight = 10; //fix for stupid ol Windows
+          if (fontheight == 9) {
+            fontheight = 10; //fix for stupid ol Windows
+          }
 
           Font font = new Font(f.getFontName(),fontstyle,fontheight);
           editor.setFont(font);
 
           if (style.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND) {
             editor.setBackground(getAWTColor(style.getFillForegroundColor(), white));
-          } else editor.setBackground(white);
+          } else {
+            editor.setBackground(white);
+          }
 
           editor.setForeground(getAWTColor(f.getColor(), black));
 
@@ -202,18 +209,4 @@ public Component getTableCellEditorComponent(JTable table, Object value,
     }
     return editor;
   }
-
-    /** This method retrieves the AWT Color representation from the colour hash table
-     *
-     */
-    private final Color getAWTColor(int index, Color deflt) {
-      HSSFColor clr = colors.get(index);
-      if (clr == null) return deflt;
-      return getAWTColor(clr);
-    }
-
-    private static final Color getAWTColor(HSSFColor clr) {
-      short[] rgb = clr.getTriplet();
-      return new Color(rgb[0],rgb[1],rgb[2]);
-    }
 }

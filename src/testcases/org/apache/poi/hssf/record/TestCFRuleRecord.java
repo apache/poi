@@ -18,8 +18,13 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
@@ -28,44 +33,49 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefNPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.LittleEndian;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Tests the serialization and deserialization of the TestCFRuleRecord
  * class works correctly.
  */
-@SuppressWarnings("resource")
-public final class TestCFRuleRecord extends TestCase {
-    public void testConstructors () {
+public final class TestCFRuleRecord {
+    @Test
+    public void testConstructors () throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
         CFRuleRecord rule1 = CFRuleRecord.create(sheet, "7");
-        assertEquals(CFRuleRecord.CONDITION_TYPE_FORMULA, rule1.getConditionType());
+        assertEquals(CFRuleBase.CONDITION_TYPE_FORMULA, rule1.getConditionType());
         assertEquals(ComparisonOperator.NO_COMPARISON, rule1.getComparisonOperation());
         assertNotNull(rule1.getParsedExpression1());
         assertSame(Ptg.EMPTY_PTG_ARRAY, rule1.getParsedExpression2());
 
         CFRuleRecord rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
-        assertEquals(CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS, rule2.getConditionType());
+        assertEquals(CFRuleBase.CONDITION_TYPE_CELL_VALUE_IS, rule2.getConditionType());
         assertEquals(ComparisonOperator.BETWEEN, rule2.getComparisonOperation());
         assertNotNull(rule2.getParsedExpression1());
         assertNotNull(rule2.getParsedExpression2());
 
         CFRuleRecord rule3 = CFRuleRecord.create(sheet, ComparisonOperator.EQUAL, null, null);
-        assertEquals(CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS, rule3.getConditionType());
+        assertEquals(CFRuleBase.CONDITION_TYPE_CELL_VALUE_IS, rule3.getConditionType());
         assertEquals(ComparisonOperator.EQUAL, rule3.getComparisonOperation());
         assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
         assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
+        workbook.close();
     }
 
-    public void testCreateCFRuleRecord() {
+    @Test
+    public void testCreateCFRuleRecord() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         CFRuleRecord record = CFRuleRecord.create(sheet, "7");
@@ -87,13 +97,14 @@ public final class TestCFRuleRecord extends TestCase {
         // Compare
         assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
 
-        for (int i = 0; i < recordData.length;i++)
-        {
+        for (int i = 0; i < recordData.length;i++) {
             assertEquals("CFRuleRecord doesn't match", recordData[i], output[i+4]);
         }
+        workbook.close();
     }
 
-    public void testCreateCFRule12Record() {
+    @Test
+    public void testCreateCFRule12Record() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         CFRule12Record record = CFRule12Record.create(sheet, "7");
@@ -115,13 +126,14 @@ public final class TestCFRuleRecord extends TestCase {
         // Compare
         assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
 
-        for (int i = 0; i < recordData.length;i++)
-        {
+        for (int i = 0; i < recordData.length;i++) {
             assertEquals("CFRule12Record doesn't match", recordData[i], output[i+4]);
         }
+        workbook.close();
     }
 
-    public void testCreateIconCFRule12Record() {
+    @Test
+    public void testCreateIconCFRule12Record() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         CFRule12Record record = CFRule12Record.create(sheet, IconSet.GREY_5_ARROWS);
@@ -155,10 +167,10 @@ public final class TestCFRuleRecord extends TestCase {
         // Compare
         assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
 
-        for (int i = 0; i < recordData.length;i++)
-        {
+        for (int i = 0; i < recordData.length;i++) {
             assertEquals("CFRule12Record doesn't match", recordData[i], output[i+4]);
         }
+        workbook.close();
     }
     
     private void testCFRuleRecord(CFRuleRecord record) {
@@ -227,11 +239,11 @@ public final class TestCFRuleRecord extends TestCase {
     }
 
     private void testPatternFormattingAccessors(PatternFormatting patternFormatting) {
-        patternFormatting.setFillBackgroundColor(HSSFColor.GREEN.index);
-        assertEquals(HSSFColor.GREEN.index,patternFormatting.getFillBackgroundColor());
+        patternFormatting.setFillBackgroundColor(HSSFColorPredefined.GREEN.getIndex());
+        assertEquals(HSSFColorPredefined.GREEN.getIndex(),patternFormatting.getFillBackgroundColor());
 
-        patternFormatting.setFillForegroundColor(HSSFColor.INDIGO.index);
-        assertEquals(HSSFColor.INDIGO.index,patternFormatting.getFillForegroundColor());
+        patternFormatting.setFillForegroundColor(HSSFColorPredefined.INDIGO.getIndex());
+        assertEquals(HSSFColorPredefined.INDIGO.getIndex(),patternFormatting.getFillForegroundColor());
 
         patternFormatting.setFillPattern(PatternFormatting.DIAMONDS);
         assertEquals(PatternFormatting.DIAMONDS,patternFormatting.getFillPattern());
@@ -258,24 +270,24 @@ public final class TestCFRuleRecord extends TestCase {
         borderFormatting.setBorderTop(BorderFormatting.BORDER_HAIR);
         assertEquals(BorderFormatting.BORDER_HAIR, borderFormatting.getBorderTop());
 
-        borderFormatting.setBottomBorderColor(HSSFColor.AQUA.index);
-        assertEquals(HSSFColor.AQUA.index, borderFormatting.getBottomBorderColor());
+        borderFormatting.setBottomBorderColor(HSSFColorPredefined.AQUA.getIndex());
+        assertEquals(HSSFColorPredefined.AQUA.getIndex(), borderFormatting.getBottomBorderColor());
 
-        borderFormatting.setDiagonalBorderColor(HSSFColor.RED.index);
-        assertEquals(HSSFColor.RED.index, borderFormatting.getDiagonalBorderColor());
+        borderFormatting.setDiagonalBorderColor(HSSFColorPredefined.RED.getIndex());
+        assertEquals(HSSFColorPredefined.RED.getIndex(), borderFormatting.getDiagonalBorderColor());
 
         assertFalse(borderFormatting.isForwardDiagonalOn());
         borderFormatting.setForwardDiagonalOn(true);
         assertTrue(borderFormatting.isForwardDiagonalOn());
 
-        borderFormatting.setLeftBorderColor(HSSFColor.BLACK.index);
-        assertEquals(HSSFColor.BLACK.index, borderFormatting.getLeftBorderColor());
+        borderFormatting.setLeftBorderColor(HSSFColorPredefined.BLACK.getIndex());
+        assertEquals(HSSFColorPredefined.BLACK.getIndex(), borderFormatting.getLeftBorderColor());
 
-        borderFormatting.setRightBorderColor(HSSFColor.BLUE.index);
-        assertEquals(HSSFColor.BLUE.index, borderFormatting.getRightBorderColor());
+        borderFormatting.setRightBorderColor(HSSFColorPredefined.BLUE.getIndex());
+        assertEquals(HSSFColorPredefined.BLUE.getIndex(), borderFormatting.getRightBorderColor());
 
-        borderFormatting.setTopBorderColor(HSSFColor.GOLD.index);
-        assertEquals(HSSFColor.GOLD.index, borderFormatting.getTopBorderColor());
+        borderFormatting.setTopBorderColor(HSSFColorPredefined.GOLD.getIndex());
+        assertEquals(HSSFColorPredefined.GOLD.getIndex(), borderFormatting.getTopBorderColor());
     }
 
 
@@ -378,7 +390,8 @@ public final class TestCFRuleRecord extends TestCase {
         assertTrue(fontFormatting.isUnderlineTypeModified());
     }
 
-    public void testWrite() {
+    @Test
+    public void testWrite() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         CFRuleRecord rr = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "5", "10");
@@ -397,6 +410,7 @@ public final class TestCFRuleRecord extends TestCase {
         assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
         // check all remaining flag bits (some are not well understood yet)
         assertEquals(0x203FFFFF, flags);
+        workbook.close();
     }
 
     private static final byte[] DATA_REFN = {
@@ -413,6 +427,7 @@ public final class TestCFRuleRecord extends TestCase {
     /**
      * tRefN and tAreaN tokens must be preserved when re-serializing conditional format formulas
      */
+    @Test
     public void testReserializeRefNTokens() {
 
         RecordInputStream is = TestcaseRecordInputStream.create(CFRuleRecord.sid, DATA_REFN);
@@ -431,7 +446,8 @@ public final class TestCFRuleRecord extends TestCase {
         TestcaseRecordInputStream.confirmRecordEncoding(CFRuleRecord.sid, DATA_REFN, data);
     }
     
-    public void testBug53691() {
+    @Test
+    public void testBug53691() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
@@ -442,12 +458,16 @@ public final class TestCFRuleRecord extends TestCase {
         byte [] serializedRecord = record.serialize();
         byte [] serializedClone = clone.serialize();
         assertArrayEquals(serializedRecord, serializedClone);
+        workbook.close();
     }
     
-    public void testBug57231_rewrite() {
-        HSSFWorkbook wb = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls");
-        assertEquals(7, wb.getNumberOfSheets());
-        wb = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        assertEquals(7, wb.getNumberOfSheets());
+    @Test
+    public void testBug57231_rewrite() throws IOException {
+        HSSFWorkbook wb1 = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls");
+        assertEquals(7, wb1.getNumberOfSheets());
+        HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
+        assertEquals(7, wb2.getNumberOfSheets());
+        wb2.close();
+        wb1.close();
     }
 }
