@@ -25,7 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.FillPatternType;
 
 /**
@@ -41,7 +41,7 @@ public class FrillsAndFills {
 
         // Aqua background
         HSSFCellStyle style = wb.createCellStyle();
-        style.setFillBackgroundColor(HSSFColor.AQUA.index);
+        style.setFillBackgroundColor(HSSFColorPredefined.AQUA.getIndex());
         style.setFillPattern(FillPatternType.BIG_SPOTS);
         HSSFCell cell = row.createCell(1);
         cell.setCellValue("X");
@@ -49,7 +49,7 @@ public class FrillsAndFills {
 
         // Orange "foreground", foreground being the fill foreground not the font color.
         style = wb.createCellStyle();
-        style.setFillForegroundColor(HSSFColor.ORANGE.index);
+        style.setFillForegroundColor(HSSFColorPredefined.ORANGE.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cell = row.createCell(2);
         cell.setCellValue("X");

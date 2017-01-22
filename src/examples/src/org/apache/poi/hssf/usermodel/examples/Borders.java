@@ -25,7 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
 /**
@@ -46,13 +46,13 @@ public class Borders {
         // Style the cell with borders all around.
         HSSFCellStyle style = wb.createCellStyle();
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(HSSFColor.BLACK.index);
+        style.setBottomBorderColor(HSSFColorPredefined.BLACK.getIndex());
         style.setBorderLeft(BorderStyle.THIN);
-        style.setLeftBorderColor(HSSFColor.GREEN.index);
+        style.setLeftBorderColor(HSSFColorPredefined.GREEN.getIndex());
         style.setBorderRight(BorderStyle.THIN);
-        style.setRightBorderColor(HSSFColor.BLUE.index);
+        style.setRightBorderColor(HSSFColorPredefined.BLUE.getIndex());
         style.setBorderTop(BorderStyle.MEDIUM_DASHED);
-        style.setTopBorderColor(HSSFColor.ORANGE.index);
+        style.setTopBorderColor(HSSFColorPredefined.ORANGE.getIndex());
         cell.setCellStyle(style);
 
         // Write the output to a file

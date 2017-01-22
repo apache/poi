@@ -18,12 +18,16 @@
 
 package org.apache.poi.hssf.view;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.border.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 
 /**
  * SVTableCell Editor and Renderer helper functions.
@@ -33,9 +37,9 @@ import org.apache.poi.hssf.util.*;
 public class SVTableUtils {
   private final static Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
   /**  Description of the Field */
-  public final static Color black = getAWTColor(new HSSFColor.BLACK());
+  public final static Color black = getAWTColor(HSSFColorPredefined.BLACK);
   /**  Description of the Field */
-  public final static Color white = getAWTColor(new HSSFColor.WHITE());
+  public final static Color white = getAWTColor(HSSFColorPredefined.WHITE);
   /**  Description of the Field */
   public static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
@@ -44,7 +48,7 @@ public class SVTableUtils {
    *  Creates a new font for a specific cell style
    */
   public static Font makeFont(HSSFFont font) {
-    boolean isbold = font.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;
+    boolean isbold = font.getBold();
     boolean isitalics = font.getItalic();
     int fontstyle = Font.PLAIN;
     if (isbold) {
@@ -63,31 +67,20 @@ public class SVTableUtils {
     return new Font(font.getFontName(), fontstyle, fontheight);
   }
 
-
-  /**
-   * This method retrieves the AWT Color representation from the colour hash table
+  /** This method retrieves the AWT Color representation from the colour hash table
    *
-   * @param  index  Description of the Parameter
-   * @param  deflt  Description of the Parameter
-   * @return        The aWTColor value
    */
-  public final static Color getAWTColor(int index, Color deflt) {
+  /* package */ static final Color getAWTColor(int index, Color deflt) {
     HSSFColor clr = colors.get(index);
     if (clr == null) {
       return deflt;
     }
-    return getAWTColor(clr);
+    short[] rgb = clr.getTriplet();
+    return new Color(rgb[0],rgb[1],rgb[2]);
   }
 
-
-  /**
-   *  Gets the aWTColor attribute of the SVTableUtils class
-   *
-   * @param  clr  Description of the Parameter
-   * @return      The aWTColor value
-   */
-  public final static Color getAWTColor(HSSFColor clr) {
+  /* package */ static final Color getAWTColor(HSSFColorPredefined clr) {
     short[] rgb = clr.getTriplet();
-    return new Color(rgb[0], rgb[1], rgb[2]);
+    return new Color(rgb[0],rgb[1],rgb[2]);
   }
 }

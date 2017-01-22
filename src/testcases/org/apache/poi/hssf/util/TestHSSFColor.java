@@ -17,38 +17,45 @@
 
 package org.apache.poi.hssf.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 
-import junit.framework.TestCase;
-/**
- * @author Nick Burch
- */
-public final class TestHSSFColor extends TestCase {
-	public void testBasics() {
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.junit.Test;
+
+public final class TestHSSFColor {
+    @Test
+    public void testBasics() {
 		assertNotNull(HSSFColor.YELLOW.class);
-		assertTrue(HSSFColor.YELLOW.index > 0);
-		assertTrue(HSSFColor.YELLOW.index2 > 0);
+		assertTrue(HSSFColorPredefined.YELLOW.getIndex() > 0);
+		assertTrue(HSSFColorPredefined.YELLOW.getIndex2() > 0);
 	}
 	
+    @Test
 	public void testContents() {
-		assertEquals(3, HSSFColor.YELLOW.triplet.length);
-		assertEquals(255, HSSFColor.YELLOW.triplet[0]);
-		assertEquals(255, HSSFColor.YELLOW.triplet[1]);
-		assertEquals(0, HSSFColor.YELLOW.triplet[2]);
+	    short[] triplet = HSSFColorPredefined.YELLOW.getTriplet();
+		assertEquals(3, triplet.length);
+		assertEquals(255, triplet[0]);
+		assertEquals(255, triplet[1]);
+		assertEquals(0, triplet[2]);
 		
-		assertEquals("FFFF:FFFF:0", HSSFColor.YELLOW.hexString);
+		assertEquals("FFFF:FFFF:0", HSSFColorPredefined.YELLOW.getHexString());
 	}
 	
+    @Test
 	public void testTrippletHash() {
 		Map<String, HSSFColor> tripplets = HSSFColor.getTripletHash();
 		
 		assertEquals(
 				HSSFColor.MAROON.class,
-				tripplets.get(HSSFColor.MAROON.hexString).getClass()
+				tripplets.get(HSSFColorPredefined.MAROON.getHexString()).getClass()
 		);
 		assertEquals(
 				HSSFColor.YELLOW.class,
-				tripplets.get(HSSFColor.YELLOW.hexString).getClass()
+				tripplets.get(HSSFColorPredefined.YELLOW.getHexString()).getClass()
 		);
 	}
 }

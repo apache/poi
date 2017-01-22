@@ -28,13 +28,11 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Demonstrates how to create hyperlinks.
- *
- * @author Yegor Kozlov (yegor at apach.org)
  */
 public class Hyperlinks {
 
@@ -47,7 +45,7 @@ public class Hyperlinks {
         HSSFCellStyle hlink_style = wb.createCellStyle();
         HSSFFont hlink_font = wb.createFont();
         hlink_font.setUnderline(Font.U_SINGLE);
-        hlink_font.setColor(HSSFColor.BLUE.index);
+        hlink_font.setColor(HSSFColorPredefined.BLUE.getIndex());
         hlink_style.setFont(hlink_font);
 
         HSSFCell cell;

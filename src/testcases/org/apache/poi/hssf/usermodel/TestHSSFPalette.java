@@ -18,6 +18,10 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -27,21 +31,19 @@ import java.util.Map;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.TestCase;
-
-/**
- * @author Brian Sanders (bsanders at risklabs dot com)
- */
-public final class TestHSSFPalette extends TestCase {
+public final class TestHSSFPalette {
     private PaletteRecord _palette;
     private HSSFPalette _hssfPalette;
 
 
-    @Override
-    public void setUp()
-    {
+    @Before
+    public void setUp() {
         _palette = new PaletteRecord();
         _hssfPalette = new HSSFPalette(_palette);
     }
@@ -49,6 +51,7 @@ public final class TestHSSFPalette extends TestCase {
     /**
      * Verifies that a custom palette can be created, saved, and reloaded
      */
+    @Test
     public void testCustomPalette() {
         //reading sample xls
         HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
@@ -62,9 +65,9 @@ public final class TestHSSFPalette extends TestCase {
         book = HSSFTestDataSamples.writeOutAndReadBack(book);
 
         palette = book.getCustomPalette();
-        HSSFColor color = palette.getColor(HSSFColor.CORAL.index);  //unmodified
+        HSSFColor color = palette.getColor(HSSFColorPredefined.CORAL.getIndex());  //unmodified
         assertNotNull("Unexpected null in custom palette (unmodified index)", color);
-        short[] expectedRGB = HSSFColor.CORAL.triplet;
+        short[] expectedRGB = HSSFColorPredefined.CORAL.getTriplet();
         short[] actualRGB = color.getTriplet();
         String msg = "Expected palette position to remain unmodified";
         assertEquals(msg, expectedRGB[0], actualRGB[0]);
@@ -83,6 +86,7 @@ public final class TestHSSFPalette extends TestCase {
     /**
      * Uses the palette from cell stylings
      */
+    @Test
     public void testPaletteFromCellColours() {
         HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("SimpleWithColours.xls");
 
@@ -98,8 +102,8 @@ public final class TestHSSFPalette extends TestCase {
         assertEquals("I'm plain", cellA.getStringCellValue());
         assertEquals(64, cellA.getCellStyle().getFillForegroundColor());
         assertEquals(64, cellA.getCellStyle().getFillBackgroundColor());
-        assertEquals(HSSFFont.COLOR_NORMAL, cellA.getCellStyle().getFont(book).getColor());
-        assertEquals(0, cellA.getCellStyle().getFillPattern());
+        assertEquals(Font.COLOR_NORMAL, cellA.getCellStyle().getFont(book).getColor());
+        assertEquals(FillPatternType.NO_FILL, cellA.getCellStyle().getFillPatternEnum());
         assertEquals("0:0:0", p.getColor((short)64).getHexString());
         assertEquals(null, p.getColor((short)32767));
 
@@ -108,7 +112,7 @@ public final class TestHSSFPalette extends TestCase {
         assertEquals(64, cellB.getCellStyle().getFillForegroundColor());
         assertEquals(64, cellB.getCellStyle().getFillBackgroundColor());
         assertEquals(10, cellB.getCellStyle().getFont(book).getColor());
-        assertEquals(0, cellB.getCellStyle().getFillPattern());
+        assertEquals(FillPatternType.NO_FILL, cellB.getCellStyle().getFillPatternEnum());
         assertEquals("0:0:0", p.getColor((short)64).getHexString());
         assertEquals("FFFF:0:0", p.getColor((short)10).getHexString());
 
@@ -117,7 +121,7 @@ public final class TestHSSFPalette extends TestCase {
         assertEquals(11, cellC.getCellStyle().getFillForegroundColor());
         assertEquals(64, cellC.getCellStyle().getFillBackgroundColor());
         assertEquals(10, cellC.getCellStyle().getFont(book).getColor());
-        assertEquals(1, cellC.getCellStyle().getFillPattern());
+        assertEquals(FillPatternType.SOLID_FOREGROUND, cellC.getCellStyle().getFillPatternEnum());
         assertEquals("0:FFFF:0", p.getColor((short)11).getHexString());
         assertEquals("FFFF:0:0", p.getColor((short)10).getHexString());
 
@@ -126,7 +130,7 @@ public final class TestHSSFPalette extends TestCase {
         assertEquals(13, cellD.getCellStyle().getFillForegroundColor());
         assertEquals(64, cellD.getCellStyle().getFillBackgroundColor());
         assertEquals(14, cellD.getCellStyle().getFont(book).getColor());
-        assertEquals(0, cellD.getCellStyle().getFillPattern());
+        assertEquals(FillPatternType.NO_FILL, cellD.getCellStyle().getFillPatternEnum());
         assertEquals("FFFF:FFFF:0", p.getColor((short)13).getHexString());
         assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
 
@@ -135,11 +139,12 @@ public final class TestHSSFPalette extends TestCase {
         assertEquals(13, cellE.getCellStyle().getFillForegroundColor());
         assertEquals(64, cellE.getCellStyle().getFillBackgroundColor());
         assertEquals(14, cellE.getCellStyle().getFont(book).getColor());
-        assertEquals(0, cellE.getCellStyle().getFillPattern());
+        assertEquals(FillPatternType.NO_FILL, cellE.getCellStyle().getFillPatternEnum());
         assertEquals("FFFF:FFFF:0", p.getColor((short)13).getHexString());
         assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
     }
 
+    @Test
     public void testFindSimilar() throws IOException {
         HSSFWorkbook book = new HSSFWorkbook();
         HSSFPalette p = book.getCustomPalette();
@@ -230,6 +235,7 @@ public final class TestHSSFPalette extends TestCase {
      * Verifies that the generated gnumeric-format string values match the
      * hardcoded values in the HSSFColor default color palette
      */
+    @Test
     public void testGnumericStrings() {
         compareToDefaults(new ColorComparator() {
             @Override
@@ -243,6 +249,7 @@ public final class TestHSSFPalette extends TestCase {
     /**
      * Verifies that the palette handles invalid palette indexes
      */
+    @Test
     public void testBadIndexes() {
         //too small
         _hssfPalette.setColorAtIndex((short) 2, (byte) 255, (byte) 255, (byte) 255);
@@ -275,6 +282,7 @@ public final class TestHSSFPalette extends TestCase {
         }
     }
 
+    @Test
     public void testAddColor() {
         try
         {

@@ -27,8 +27,6 @@ import org.junit.Test;
 
 /**
  * Verifies that custom palette editing works correctly
- *
- * @author Brian Sanders (bsanders at risklabs dot com)
  */
 public final class TestPaletteRecord {
 
@@ -46,8 +44,8 @@ public final class TestPaletteRecord {
             HSSFColor c = entry.getValue();
             short[] rgbTriplet = c.getTriplet();
             byte[] paletteTriplet = palette.getColor((short) index);
-            String msg = "Expected HSSFColor constant to match PaletteRecord at index 0x"
-                + Integer.toHexString(c.getIndex());
+            String msg = "Expected HSSFColor constant to match PaletteRecord at index" + (index == c.getIndex2() ? "2" : "") + " 0x"
+                + Integer.toHexString(index);
             assertEquals(msg, rgbTriplet[0], paletteTriplet[0] & 0xff);
             assertEquals(msg, rgbTriplet[1], paletteTriplet[1] & 0xff);
             assertEquals(msg, rgbTriplet[2], paletteTriplet[2] & 0xff);

@@ -17,19 +17,22 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+
 /**
  * Demonstrates many features of the user API at once.  Used in the HOW-TO guide.
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Andrew Oliver (acoliver at apache.org)
  */
 public class BigExample {
     public static void main(String[] args) throws IOException {
@@ -56,17 +59,17 @@ public class BigExample {
         //set font 1 to 12 point type
         f.setFontHeightInPoints((short) 12);
         //make it red
-        f.setColor(HSSFColor.RED.index);
+        f.setColor(HSSFColorPredefined.RED.getIndex());
         // make it bold
         //arial is the default font
-        f.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        f.setBold(true);
 
         //set font 2 to 10 point type
         f2.setFontHeightInPoints((short) 10);
         //make it the color at palette index 0xf (white)
-        f2.setColor(HSSFColor.WHITE.index);
+        f2.setColor(HSSFColorPredefined.WHITE.getIndex());
         //make it bold
-        f2.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        f2.setBold(true);
 
         //set cell stlye
         cs.setFont(f);
@@ -74,11 +77,11 @@ public class BigExample {
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
 
         //set a thin border
-        cs2.setBorderBottom(CellStyle.BORDER_THIN);
+        cs2.setBorderBottom(BorderStyle.THIN);
         //fill w fg fill color
-        cs2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cs2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         // set foreground fill to red
-        cs2.setFillForegroundColor(HSSFColor.RED.index);
+        cs2.setFillForegroundColor(HSSFColorPredefined.RED.getIndex());
 
         // set the font
         cs2.setFont(f2);
@@ -143,7 +146,7 @@ public class BigExample {
 
         // define the third style to be the default
         // except with a thick black border at the bottom
-        cs3.setBorderBottom(CellStyle.BORDER_THICK);
+        cs3.setBorderBottom(BorderStyle.THICK);
 
         //create 50 cells
         for (int cellnum =0; cellnum < 50; cellnum++) {
