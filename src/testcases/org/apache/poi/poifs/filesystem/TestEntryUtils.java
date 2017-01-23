@@ -17,19 +17,24 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class TestEntryUtils extends TestCase {
-    private final byte[] dataSmallA = new byte[] { 12, 42, 11, -12, -121 };
-    private final byte[] dataSmallB = new byte[] { 11, 73, 21, -92, -103 };
+public class TestEntryUtils {
+    private static final byte[] dataSmallA = new byte[] { 12, 42, 11, -12, -121 };
+    private static final byte[] dataSmallB = new byte[] { 11, 73, 21, -92, -103 };
 
-    public void testCopyRecursively() throws Exception {
+    @Test
+    public void testCopyRecursively() throws IOException {
        POIFSFileSystem fsD = new POIFSFileSystem();
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
@@ -56,6 +61,8 @@ public class TestEntryUtils extends TestCase {
        assertNotNull(fsD.getRoot().getEntry("EntryRoot"));
        assertNotNull(fsD.getRoot().getEntry("EntryA1"));
        assertNotNull(fsD.getRoot().getEntry("EntryA2"));
+
+       fsD.close();
        
        // Copy directories
        fsD = new POIFSFileSystem();
@@ -72,6 +79,7 @@ public class TestEntryUtils extends TestCase {
        assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntry("DirB")).getEntryCount());
        assertNotNull(fsD.getRoot().getEntry("DirA"));
        assertEquals(2, ((DirectoryEntry)fsD.getRoot().getEntry("DirA")).getEntryCount());
+       fsD.close();
        
        // Copy the whole lot
        fsD = new POIFSFileSystem();
@@ -84,9 +92,12 @@ public class TestEntryUtils extends TestCase {
        assertNotNull(fsD.getRoot().getEntry(entryR.getName()));
        assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntry("DirB")).getEntryCount());
        assertEquals(2, ((DirectoryEntry)fsD.getRoot().getEntry("DirA")).getEntryCount());
+       fsD.close();
+       fs.close();
     }
 
-    public void testAreDocumentsIdentical() throws Exception {
+    @Test
+    public void testAreDocumentsIdentical() throws IOException {
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
        DirectoryEntry dirB = fs.createDirectory("DirB");
@@ -112,6 +123,7 @@ public class TestEntryUtils extends TestCase {
        // Can work with NPOIFS + POIFS
        ByteArrayOutputStream tmpO = new ByteArrayOutputStream();
        fs.writeFilesystem(tmpO);
+       
        ByteArrayInputStream tmpI = new ByteArrayInputStream(tmpO.toByteArray());
        NPOIFSFileSystem nfs = new NPOIFSFileSystem(tmpI);
        
@@ -129,9 +141,12 @@ public class TestEntryUtils extends TestCase {
        
        assertEquals(true, EntryUtils.areDocumentsIdentical(eNA1, entryA1));
        assertEquals(true, EntryUtils.areDocumentsIdentical(eNA1, entryB1));
+       nfs.close();
+       fs.close();
     }
 
-    public void testAreDirectoriesIdentical() throws Exception {
+    @Test
+    public void testAreDirectoriesIdentical() throws IOException {
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
        DirectoryEntry dirB = fs.createDirectory("DirB");
@@ -187,5 +202,7 @@ public class TestEntryUtils extends TestCase {
        
        dirBI.createDocument("IgnZZ", new ByteArrayInputStream(dataSmallA));
        assertEquals(true, EntryUtils.areDirectoriesIdentical(fdA, fdB));
+       
+       fs.close();
     }
 }

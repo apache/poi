@@ -18,23 +18,54 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that the helper methods on RecordContainer work properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestRecordContainer extends TestCase {
+public final class TestRecordContainer {
+    private HSLFSlideShowImpl hss;
 	private RecordContainer recordContainer;
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
+    @Before
+    public void setUp() throws IOException {
+        // Find a real RecordContainer record
+        InputStream is = slTests.openResourceAsStream("basic_test_ppt_file.ppt");
+        hss = new HSLFSlideShowImpl(is);
+        is.close();
+
+        Record[] r = hss.getRecords();
+        for (Record rec : r) {
+            if(rec instanceof RecordContainer) {
+                recordContainer = (RecordContainer)rec;
+                return;
+            }
+        }
+    }
+    
+    @After
+    public void closeResources() throws IOException {
+        hss.close();
+    }
+	
+	@Test
 	public void testIsAnAtom() {
 		assertFalse( recordContainer.isAnAtom() );
 	}
 
+    @Test
 	public void testAppendChildRecord() {
 		// Grab records for testing with
 		Record r = recordContainer.getChildRecords()[0];
@@ -68,6 +99,7 @@ public final class TestRecordContainer extends TestCase {
 		assertEquals(r, nrs[3]);
 	}
 
+    @Test
 	public void testAddChildAfter() {
 		// Working with new StyleTextPropAtom
 		Record newRecord = new StyleTextPropAtom(0);
@@ -97,6 +129,7 @@ public final class TestRecordContainer extends TestCase {
 		assertEquals(newRecord, ncr[cr.length]);
 	}
 
+    @Test
 	public void testAddChildBefore() {
 		// Working with new StyleTextPropAtom
 		Record newRecord = new StyleTextPropAtom(0);
@@ -137,27 +170,11 @@ public final class TestRecordContainer extends TestCase {
 		assertEquals(before, ncr[1]);
 	}
 
+    @Test
     public void testRemove() {
         Record[] ch = recordContainer.getChildRecords();
         Record removeRecord = recordContainer.removeChild(ch[0]);
         assertSame(ch[0], removeRecord);
         assertEquals(ch.length-1, recordContainer.getChildRecords().length);
     }
-
-    @Override
-    protected void setUp() throws Exception {
-		super.setUp();
-
-		// Find a real RecordContainer record
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-
-		Record[] r = hss.getRecords();
-		for (Record rec : r) {
-			if(rec instanceof RecordContainer) {
-				recordContainer = (RecordContainer)rec;
-				return;
-			}
-		}
-	}
 }

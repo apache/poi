@@ -24,7 +24,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -53,7 +58,7 @@ public final class TestNPOIFSFileSystem {
     * Returns test files with 512 byte and 4k block sizes, loaded
     *  both from InputStreams and Files
     */
-   protected NPOIFSFileSystem[] get512and4kFileAndInput() throws Exception {
+   protected NPOIFSFileSystem[] get512and4kFileAndInput() throws IOException {
        NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
        NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
        NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
@@ -82,8 +87,9 @@ public final class TestNPOIFSFileSystem {
        assertEquals(doc.getSize(), inp.read(contents));
        inp.close();
        
-       if (expected != null)
-           assertThat(expected, equalTo(contents));
+       if (expected != null) {
+        assertThat(expected, equalTo(contents));
+    }
    }
    
    protected static HeaderBlock writeOutAndReadHeader(NPOIFSFileSystem fs) throws IOException {
@@ -97,7 +103,6 @@ public final class TestNPOIFSFileSystem {
     protected static NPOIFSFileSystem writeOutAndReadBack(NPOIFSFileSystem original) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         original.writeFilesystem(baos);
-        original.close();
         return new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
     }
 
@@ -109,12 +114,11 @@ public final class TestNPOIFSFileSystem {
         } finally {
             fout.close();
         }
-        original.close();
         return new NPOIFSFileSystem(file, false);
     }
    
    @Test
-   public void basicOpen() throws Exception {
+   public void basicOpen() throws IOException {
       NPOIFSFileSystem fsA, fsB;
       
       // With a simple 512 block file
@@ -137,7 +141,7 @@ public final class TestNPOIFSFileSystem {
    }
 
    @Test
-   public void propertiesAndFatOnRead() throws Exception {
+   public void propertiesAndFatOnRead() throws IOException {
       NPOIFSFileSystem fsA, fsB;
       
       // With a simple 512 block file
@@ -280,7 +284,7 @@ public final class TestNPOIFSFileSystem {
     *  out what the next one is
     */
    @Test
-   public void nextBlock() throws Exception {
+   public void nextBlock() throws IOException {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
@@ -342,7 +346,7 @@ public final class TestNPOIFSFileSystem {
     * Check we get the right data back for each block
     */
    @Test
-   public void getBlock() throws Exception {
+   public void getBlock() throws IOException {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
@@ -416,7 +420,7 @@ public final class TestNPOIFSFileSystem {
     *  to be had from the FAT
     */
    @Test
-   public void getFreeBlockWithSpare() throws Exception {
+   public void getFreeBlockWithSpare() throws IOException {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       
       // Our first BAT block has spares
@@ -447,142 +451,143 @@ public final class TestNPOIFSFileSystem {
     *  file needs to be extended and another BAT/XBAT added
     */
    @Test
-   public void getFreeBlockWithNoneSpare() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+   public void getFreeBlockWithNoneSpare() throws IOException {
+      NPOIFSFileSystem fs1 = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       int free;
 
       // We have one BAT at block 99
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
-      assertBATCount(fs, 1, 0);
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs1.getNextBlock(99));
+      assertBATCount(fs1, 1, 0);
       
       // We've spare ones from 100 to 128
       for(int i=100; i<128; i++) {
-         assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(i));
+         assertEquals(POIFSConstants.UNUSED_BLOCK, fs1.getNextBlock(i));
       }
       
       // Check our BAT knows it's free
-      assertEquals(true, fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertEquals(true, fs1.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
       
       // Allocate all the spare ones
       for(int i=100; i<128; i++) {
-         fs.setNextBlock(i, POIFSConstants.END_OF_CHAIN);
+         fs1.setNextBlock(i, POIFSConstants.END_OF_CHAIN);
       }
       
       // BAT is now full, but there's only the one
-      assertEquals(false, fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertEquals(false, fs1.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
       try {
-         assertEquals(false, fs.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+         assertEquals(false, fs1.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
          fail("Should only be one BAT");
       } catch(IndexOutOfBoundsException e) {}
-      assertBATCount(fs, 1, 0);
+      assertBATCount(fs1, 1, 0);
 
       
       // Now ask for a free one, will need to extend the file
-      assertEquals(129, fs.getFreeBlock());
+      assertEquals(129, fs1.getFreeBlock());
       
-      assertEquals(false, fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
-      assertEquals(true, fs.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(128));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(129));
+      assertEquals(false, fs1.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertEquals(true, fs1.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs1.getNextBlock(128));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs1.getNextBlock(129));
       
       // We now have 2 BATs, but no XBATs
-      assertBATCount(fs, 2, 0);
+      assertBATCount(fs1, 2, 0);
       
       
       // Fill up to hold 109 BAT blocks
       for(int i=0; i<109; i++) {
-         fs.getFreeBlock();
+         fs1.getFreeBlock();
          int startOffset = i*128;
-         while( fs.getBATBlockAndIndex(startOffset).getBlock().hasFreeSectors() ) {
-            free = fs.getFreeBlock();
-            fs.setNextBlock(free, POIFSConstants.END_OF_CHAIN);
+         while( fs1.getBATBlockAndIndex(startOffset).getBlock().hasFreeSectors() ) {
+            free = fs1.getFreeBlock();
+            fs1.setNextBlock(free, POIFSConstants.END_OF_CHAIN);
          }
       }
       
-      assertEquals(false, fs.getBATBlockAndIndex(109*128-1).getBlock().hasFreeSectors());
+      assertEquals(false, fs1.getBATBlockAndIndex(109*128-1).getBlock().hasFreeSectors());
       try {
-         assertEquals(false, fs.getBATBlockAndIndex(109*128).getBlock().hasFreeSectors());
+         assertEquals(false, fs1.getBATBlockAndIndex(109*128).getBlock().hasFreeSectors());
          fail("Should only be 109 BATs");
       } catch(IndexOutOfBoundsException e) {}
       
       // We now have 109 BATs, but no XBATs
-      assertBATCount(fs, 109, 0);
+      assertBATCount(fs1, 109, 0);
       
       
       // Ask for it to be written out, and check the header
-      HeaderBlock header = writeOutAndReadHeader(fs);
+      HeaderBlock header = writeOutAndReadHeader(fs1);
       assertEquals(109, header.getBATCount());
       assertEquals(0, header.getXBATCount());
       
       
       // Ask for another, will get our first XBAT
-      free = fs.getFreeBlock();
-      assertEquals(false, fs.getBATBlockAndIndex(109*128-1).getBlock().hasFreeSectors());
-      assertEquals(true, fs.getBATBlockAndIndex(110*128-1).getBlock().hasFreeSectors());
+      free = fs1.getFreeBlock();
+      assertEquals(false, fs1.getBATBlockAndIndex(109*128-1).getBlock().hasFreeSectors());
+      assertEquals(true, fs1.getBATBlockAndIndex(110*128-1).getBlock().hasFreeSectors());
       try {
-         assertEquals(false, fs.getBATBlockAndIndex(110*128).getBlock().hasFreeSectors());
+         assertEquals(false, fs1.getBATBlockAndIndex(110*128).getBlock().hasFreeSectors());
          fail("Should only be 110 BATs");
       } catch(IndexOutOfBoundsException e) {}
-      assertBATCount(fs, 110, 1);
+      assertBATCount(fs1, 110, 1);
       
-      header = writeOutAndReadHeader(fs);
+      header = writeOutAndReadHeader(fs1);
       assertEquals(110, header.getBATCount());
       assertEquals(1, header.getXBATCount());
 
       
       // Fill the XBAT, which means filling 127 BATs
       for(int i=109; i<109+127; i++) {
-         fs.getFreeBlock();
+         fs1.getFreeBlock();
          int startOffset = i*128;
-         while( fs.getBATBlockAndIndex(startOffset).getBlock().hasFreeSectors() ) {
-            free = fs.getFreeBlock();
-            fs.setNextBlock(free, POIFSConstants.END_OF_CHAIN);
+         while( fs1.getBATBlockAndIndex(startOffset).getBlock().hasFreeSectors() ) {
+            free = fs1.getFreeBlock();
+            fs1.setNextBlock(free, POIFSConstants.END_OF_CHAIN);
          }
-         assertBATCount(fs, i+1, 1);
+         assertBATCount(fs1, i+1, 1);
       }
       
       // Should now have 109+127 = 236 BATs
-      assertEquals(false, fs.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
+      assertEquals(false, fs1.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
       try {
-         assertEquals(false, fs.getBATBlockAndIndex(236*128).getBlock().hasFreeSectors());
+         assertEquals(false, fs1.getBATBlockAndIndex(236*128).getBlock().hasFreeSectors());
          fail("Should only be 236 BATs");
       } catch(IndexOutOfBoundsException e) {}
-      assertBATCount(fs, 236, 1);
+      assertBATCount(fs1, 236, 1);
 
       
       // Ask for another, will get our 2nd XBAT
-      free = fs.getFreeBlock();
-      assertEquals(false, fs.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
-      assertEquals(true, fs.getBATBlockAndIndex(237*128-1).getBlock().hasFreeSectors());
+      free = fs1.getFreeBlock();
+      assertEquals(false, fs1.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
+      assertEquals(true, fs1.getBATBlockAndIndex(237*128-1).getBlock().hasFreeSectors());
       try {
-         assertEquals(false, fs.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
+         assertEquals(false, fs1.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
          fail("Should only be 237 BATs");
       } catch(IndexOutOfBoundsException e) {}
       
       
       // Check the counts now
-      assertBATCount(fs, 237, 2);
+      assertBATCount(fs1, 237, 2);
 
       // Check the header
-      header = writeOutAndReadHeader(fs);
+      header = writeOutAndReadHeader(fs1);
       
       
       // Now, write it out, and read it back in again fully
-      fs = writeOutAndReadBack(fs);
+      NPOIFSFileSystem fs2 = writeOutAndReadBack(fs1);
+      fs1.close();
 
       // Check that it is seen correctly
-      assertBATCount(fs, 237, 2);
+      assertBATCount(fs2, 237, 2);
 
-      assertEquals(false, fs.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
-      assertEquals(true, fs.getBATBlockAndIndex(237*128-1).getBlock().hasFreeSectors());
+      assertEquals(false, fs2.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
+      assertEquals(true, fs2.getBATBlockAndIndex(237*128-1).getBlock().hasFreeSectors());
       try {
-         assertEquals(false, fs.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
+         assertEquals(false, fs2.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
          fail("Should only be 237 BATs");
       } catch(IndexOutOfBoundsException e) {}
 
       
       // All done
-      fs.close();
+      fs2.close();
    }
    
    /**
@@ -590,7 +595,7 @@ public final class TestNPOIFSFileSystem {
     *  entries, and the details on the files in them
     */
    @Test
-   public void listEntries() throws Exception {
+   public void listEntries() throws IOException {
       for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
          DirectoryEntry root = fs.getRoot();
          assertEquals(5, root.getEntryCount());
@@ -680,9 +685,9 @@ public final class TestNPOIFSFileSystem {
        DocumentSummaryInformation dinf = null;
        DirectoryEntry root = null, testDir = null;
        
-       for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
+       for(NPOIFSFileSystem fs1 : get512and4kFileAndInput()) {
            // Check we can find the entries we expect
-           root = fs.getRoot();
+           root = fs1.getRoot();
            assertEquals(5, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
            assertThat(root.getEntryNames(), hasItem("Image"));
@@ -692,10 +697,11 @@ public final class TestNPOIFSFileSystem {
 
            
            // Write out, re-load
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs2 = writeOutAndReadBack(fs1);
+           fs1.close();
            
            // Check they're still there
-           root = fs.getRoot();
+           root = fs2.getRoot();
            assertEquals(5, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
            assertThat(root.getEntryNames(), hasItem("Image"));
@@ -723,9 +729,10 @@ public final class TestNPOIFSFileSystem {
            
            
            // Write out, re-load
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs3 = writeOutAndReadBack(fs2);
+           fs2.close();
            
-           root = fs.getRoot();
+           root = fs3.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertEquals(6, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
@@ -749,9 +756,10 @@ public final class TestNPOIFSFileSystem {
            
            
            // Write out and read once more, just to be sure
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs4 = writeOutAndReadBack(fs3);
+           fs3.close();
            
-           root = fs.getRoot();
+           root = fs4.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertEquals(6, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
@@ -782,10 +790,11 @@ public final class TestNPOIFSFileSystem {
            
            
            // Write out, re-load
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs5 = writeOutAndReadBack(fs4);
+           fs4.close();
 
            // Check it's all there
-           root = fs.getRoot();
+           root = fs5.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertEquals(5, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
@@ -814,10 +823,11 @@ public final class TestNPOIFSFileSystem {
            
            
            // Save
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs6 = writeOutAndReadBack(fs5);
+           fs5.close();
 
            // Check
-           root = fs.getRoot();
+           root = fs6.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            
            assertEquals(5, root.getEntryCount());
@@ -839,9 +849,10 @@ public final class TestNPOIFSFileSystem {
            testDir.createDocument("Mini2", new ByteArrayInputStream(mini2));
            
            // Save, load, check
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs7 = writeOutAndReadBack(fs6);
+           fs6.close();
            
-           root = fs.getRoot();
+           root = fs7.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            
            assertEquals(5, root.getEntryCount());
@@ -871,9 +882,10 @@ public final class TestNPOIFSFileSystem {
 
            
            // Save, load, check
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs8 = writeOutAndReadBack(fs7);
+           fs7.close();
            
-           root = fs.getRoot();
+           root = fs8.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            
            assertEquals(5, root.getEntryCount());
@@ -907,9 +919,10 @@ public final class TestNPOIFSFileSystem {
            
            
            // Re-check
-           fs = writeOutAndReadBack(fs);
+           NPOIFSFileSystem fs9 = writeOutAndReadBack(fs8);
+           fs8.close();
            
-           root = fs.getRoot();
+           root = fs9.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            
            assertEquals(5, root.getEntryCount());
@@ -932,7 +945,7 @@ public final class TestNPOIFSFileSystem {
            
            
            // All done
-           fs.close();
+           fs9.close();
        }
    }
    
@@ -941,51 +954,52 @@ public final class TestNPOIFSFileSystem {
     * Then, add some streams, write and read
     */
    @Test
-   @SuppressWarnings("resource")
-   public void createWriteRead() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem();
+   public void createWriteRead() throws IOException {
+      NPOIFSFileSystem fs1 = new NPOIFSFileSystem();
       DocumentEntry miniDoc;
       DocumentEntry normDoc;
       
       // Initially has Properties + BAT but not SBAT
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(0));
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs1.getNextBlock(0));
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs1.getNextBlock(1));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs1.getNextBlock(2));
       
       // Check that the SBAT is empty
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs1.getRoot().getProperty().getStartBlock());
       
       // Check that properties table was given block 0
-      assertEquals(0, fs._get_property_table().getStartBlock());
+      assertEquals(0, fs1._get_property_table().getStartBlock());
 
       // Write and read it
-      fs = writeOutAndReadBack(fs);
+      NPOIFSFileSystem fs2 = writeOutAndReadBack(fs1);
+      fs1.close();
       
       // No change, SBAT remains empty 
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(2));
-      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(3));
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getRoot().getProperty().getStartBlock());
-      assertEquals(0, fs._get_property_table().getStartBlock());
-
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs2.getNextBlock(0));
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs2.getNextBlock(1));
+      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs2.getNextBlock(2));
+      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs2.getNextBlock(3));
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs2.getRoot().getProperty().getStartBlock());
+      assertEquals(0, fs2._get_property_table().getStartBlock());
+      fs2.close();
       
       // Check the same but with saving to a file
-      fs = new NPOIFSFileSystem();
-      fs = writeOutFileAndReadBack(fs);
+      NPOIFSFileSystem fs3 = new NPOIFSFileSystem();
+      NPOIFSFileSystem fs4 = writeOutFileAndReadBack(fs3);
+      fs3.close();
       
       // Same, no change, SBAT remains empty 
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(2));
-      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(3));
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getRoot().getProperty().getStartBlock());
-      assertEquals(0, fs._get_property_table().getStartBlock());
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs4.getNextBlock(0));
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs4.getNextBlock(1));
+      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs4.getNextBlock(2));
+      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs4.getNextBlock(3));
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs4.getRoot().getProperty().getStartBlock());
+      assertEquals(0, fs4._get_property_table().getStartBlock());
 
       
       
       // Put everything within a new directory
-      DirectoryEntry testDir = fs.createDirectory("Test Directory");
+      DirectoryEntry testDir = fs4.createDirectory("Test Directory");
       
       // Add a new Normal Stream (Normal Streams minimum 4096 bytes)
       byte[] main4096 = new byte[4096];
@@ -993,20 +1007,20 @@ public final class TestNPOIFSFileSystem {
       main4096[4095] = -11;
       testDir.createDocument("Normal4096", new ByteArrayInputStream(main4096));
 
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-      assertEquals(3, fs.getNextBlock(2));
-      assertEquals(4, fs.getNextBlock(3));
-      assertEquals(5, fs.getNextBlock(4));
-      assertEquals(6, fs.getNextBlock(5));
-      assertEquals(7, fs.getNextBlock(6));
-      assertEquals(8, fs.getNextBlock(7));
-      assertEquals(9, fs.getNextBlock(8));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(9));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(10));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(11));
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs4.getNextBlock(0));
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs4.getNextBlock(1));
+      assertEquals(3, fs4.getNextBlock(2));
+      assertEquals(4, fs4.getNextBlock(3));
+      assertEquals(5, fs4.getNextBlock(4));
+      assertEquals(6, fs4.getNextBlock(5));
+      assertEquals(7, fs4.getNextBlock(6));
+      assertEquals(8, fs4.getNextBlock(7));
+      assertEquals(9, fs4.getNextBlock(8));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getNextBlock(9));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs4.getNextBlock(10));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs4.getNextBlock(11));
       // SBAT still unused
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getRoot().getProperty().getStartBlock());
 
       
       // Add a bigger Normal Stream
@@ -1015,32 +1029,32 @@ public final class TestNPOIFSFileSystem {
       main5124[5123] = -33;
       testDir.createDocument("Normal5124", new ByteArrayInputStream(main5124));
 
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-      assertEquals(3, fs.getNextBlock(2));
-      assertEquals(4, fs.getNextBlock(3));
-      assertEquals(5, fs.getNextBlock(4));
-      assertEquals(6, fs.getNextBlock(5));
-      assertEquals(7, fs.getNextBlock(6));
-      assertEquals(8, fs.getNextBlock(7));
-      assertEquals(9, fs.getNextBlock(8));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(9));
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs4.getNextBlock(0));
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs4.getNextBlock(1));
+      assertEquals(3, fs4.getNextBlock(2));
+      assertEquals(4, fs4.getNextBlock(3));
+      assertEquals(5, fs4.getNextBlock(4));
+      assertEquals(6, fs4.getNextBlock(5));
+      assertEquals(7, fs4.getNextBlock(6));
+      assertEquals(8, fs4.getNextBlock(7));
+      assertEquals(9, fs4.getNextBlock(8));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getNextBlock(9));
 
-      assertEquals(11, fs.getNextBlock(10));
-      assertEquals(12, fs.getNextBlock(11));
-      assertEquals(13, fs.getNextBlock(12));
-      assertEquals(14, fs.getNextBlock(13));
-      assertEquals(15, fs.getNextBlock(14));
-      assertEquals(16, fs.getNextBlock(15));
-      assertEquals(17, fs.getNextBlock(16));
-      assertEquals(18, fs.getNextBlock(17));
-      assertEquals(19, fs.getNextBlock(18));
-      assertEquals(20, fs.getNextBlock(19));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(20));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(21));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(22));
+      assertEquals(11, fs4.getNextBlock(10));
+      assertEquals(12, fs4.getNextBlock(11));
+      assertEquals(13, fs4.getNextBlock(12));
+      assertEquals(14, fs4.getNextBlock(13));
+      assertEquals(15, fs4.getNextBlock(14));
+      assertEquals(16, fs4.getNextBlock(15));
+      assertEquals(17, fs4.getNextBlock(16));
+      assertEquals(18, fs4.getNextBlock(17));
+      assertEquals(19, fs4.getNextBlock(18));
+      assertEquals(20, fs4.getNextBlock(19));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getNextBlock(20));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs4.getNextBlock(21));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs4.getNextBlock(22));
 
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getRoot().getProperty().getStartBlock());
       
       
       // Now Add a mini stream
@@ -1048,40 +1062,41 @@ public final class TestNPOIFSFileSystem {
       testDir.createDocument("Mini", new ByteArrayInputStream(mini));
       
       // Mini stream will get one block for fat + one block for data
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-      assertEquals(3, fs.getNextBlock(2));
-      assertEquals(4, fs.getNextBlock(3));
-      assertEquals(5, fs.getNextBlock(4));
-      assertEquals(6, fs.getNextBlock(5));
-      assertEquals(7, fs.getNextBlock(6));
-      assertEquals(8, fs.getNextBlock(7));
-      assertEquals(9, fs.getNextBlock(8));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(9));
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs4.getNextBlock(0));
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs4.getNextBlock(1));
+      assertEquals(3, fs4.getNextBlock(2));
+      assertEquals(4, fs4.getNextBlock(3));
+      assertEquals(5, fs4.getNextBlock(4));
+      assertEquals(6, fs4.getNextBlock(5));
+      assertEquals(7, fs4.getNextBlock(6));
+      assertEquals(8, fs4.getNextBlock(7));
+      assertEquals(9, fs4.getNextBlock(8));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getNextBlock(9));
 
-      assertEquals(11, fs.getNextBlock(10));
-      assertEquals(12, fs.getNextBlock(11));
-      assertEquals(13, fs.getNextBlock(12));
-      assertEquals(14, fs.getNextBlock(13));
-      assertEquals(15, fs.getNextBlock(14));
-      assertEquals(16, fs.getNextBlock(15));
-      assertEquals(17, fs.getNextBlock(16));
-      assertEquals(18, fs.getNextBlock(17));
-      assertEquals(19, fs.getNextBlock(18));
-      assertEquals(20, fs.getNextBlock(19));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(20));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(21));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(22));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(23));
+      assertEquals(11, fs4.getNextBlock(10));
+      assertEquals(12, fs4.getNextBlock(11));
+      assertEquals(13, fs4.getNextBlock(12));
+      assertEquals(14, fs4.getNextBlock(13));
+      assertEquals(15, fs4.getNextBlock(14));
+      assertEquals(16, fs4.getNextBlock(15));
+      assertEquals(17, fs4.getNextBlock(16));
+      assertEquals(18, fs4.getNextBlock(17));
+      assertEquals(19, fs4.getNextBlock(18));
+      assertEquals(20, fs4.getNextBlock(19));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getNextBlock(20));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getNextBlock(21));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs4.getNextBlock(22));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs4.getNextBlock(23));
 
       // Check the mini stream location was set
       // (21 is mini fat, 22 is first mini stream block)
-      assertEquals(22, fs.getRoot().getProperty().getStartBlock());
+      assertEquals(22, fs4.getRoot().getProperty().getStartBlock());
       
       
       // Write and read back
-      fs = writeOutAndReadBack(fs);
-      HeaderBlock header = writeOutAndReadHeader(fs);
+      NPOIFSFileSystem fs5 = writeOutAndReadBack(fs4);
+      fs4.close();
+      HeaderBlock header = writeOutAndReadHeader(fs5);
       
       // Check the header has the right points in it
       assertEquals(1, header.getBATCount());
@@ -1089,44 +1104,44 @@ public final class TestNPOIFSFileSystem {
       assertEquals(0, header.getPropertyStart());
       assertEquals(1, header.getSBATCount());
       assertEquals(21, header.getSBATStart());
-      assertEquals(22, fs._get_property_table().getRoot().getStartBlock());
+      assertEquals(22, fs5._get_property_table().getRoot().getStartBlock());
       
       // Block use should be almost the same, except the properties
       //  stream will have grown out to cover 2 blocks
       // Check the block use is all unchanged
-      assertEquals(23, fs.getNextBlock(0)); // Properties now extends over 2 blocks
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
+      assertEquals(23, fs5.getNextBlock(0)); // Properties now extends over 2 blocks
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs5.getNextBlock(1));
       
-      assertEquals(3, fs.getNextBlock(2));
-      assertEquals(4, fs.getNextBlock(3));
-      assertEquals(5, fs.getNextBlock(4));
-      assertEquals(6, fs.getNextBlock(5));
-      assertEquals(7, fs.getNextBlock(6));
-      assertEquals(8, fs.getNextBlock(7));
-      assertEquals(9, fs.getNextBlock(8));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(9)); // End of normal4096
+      assertEquals(3, fs5.getNextBlock(2));
+      assertEquals(4, fs5.getNextBlock(3));
+      assertEquals(5, fs5.getNextBlock(4));
+      assertEquals(6, fs5.getNextBlock(5));
+      assertEquals(7, fs5.getNextBlock(6));
+      assertEquals(8, fs5.getNextBlock(7));
+      assertEquals(9, fs5.getNextBlock(8));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs5.getNextBlock(9)); // End of normal4096
 
-      assertEquals(11, fs.getNextBlock(10));
-      assertEquals(12, fs.getNextBlock(11));
-      assertEquals(13, fs.getNextBlock(12));
-      assertEquals(14, fs.getNextBlock(13));
-      assertEquals(15, fs.getNextBlock(14));
-      assertEquals(16, fs.getNextBlock(15));
-      assertEquals(17, fs.getNextBlock(16));
-      assertEquals(18, fs.getNextBlock(17));
-      assertEquals(19, fs.getNextBlock(18));
-      assertEquals(20, fs.getNextBlock(19));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(20)); // End of normal5124 
+      assertEquals(11, fs5.getNextBlock(10));
+      assertEquals(12, fs5.getNextBlock(11));
+      assertEquals(13, fs5.getNextBlock(12));
+      assertEquals(14, fs5.getNextBlock(13));
+      assertEquals(15, fs5.getNextBlock(14));
+      assertEquals(16, fs5.getNextBlock(15));
+      assertEquals(17, fs5.getNextBlock(16));
+      assertEquals(18, fs5.getNextBlock(17));
+      assertEquals(19, fs5.getNextBlock(18));
+      assertEquals(20, fs5.getNextBlock(19));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs5.getNextBlock(20)); // End of normal5124 
       
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(21)); // Mini Stream FAT
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(22)); // Mini Stream data
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(23)); // Properties #2
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(24));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs5.getNextBlock(21)); // Mini Stream FAT
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs5.getNextBlock(22)); // Mini Stream data
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs5.getNextBlock(23)); // Properties #2
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs5.getNextBlock(24));
 
       
       // Check some data
-      assertEquals(1, fs.getRoot().getEntryCount());
-      testDir = (DirectoryEntry)fs.getRoot().getEntry("Test Directory");
+      assertEquals(1, fs5.getRoot().getEntryCount());
+      testDir = (DirectoryEntry)fs5.getRoot().getEntry("Test Directory");
       assertEquals(3, testDir.getEntryCount());
 
       miniDoc = (DocumentEntry)testDir.getEntry("Mini");
@@ -1145,55 +1160,56 @@ public final class TestNPOIFSFileSystem {
 
       
       // Check - will have un-used sectors now
-      fs = writeOutAndReadBack(fs);
+      NPOIFSFileSystem fs6 = writeOutAndReadBack(fs5);
+      fs5.close();
       
-      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0)); // Props back in 1 block
-      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs6.getNextBlock(0)); // Props back in 1 block
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs6.getNextBlock(1));
       
-      assertEquals(3, fs.getNextBlock(2));
-      assertEquals(4, fs.getNextBlock(3));
-      assertEquals(5, fs.getNextBlock(4));
-      assertEquals(6, fs.getNextBlock(5));
-      assertEquals(7, fs.getNextBlock(6));
-      assertEquals(8, fs.getNextBlock(7));
-      assertEquals(9, fs.getNextBlock(8));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(9)); // End of normal4096
+      assertEquals(3, fs6.getNextBlock(2));
+      assertEquals(4, fs6.getNextBlock(3));
+      assertEquals(5, fs6.getNextBlock(4));
+      assertEquals(6, fs6.getNextBlock(5));
+      assertEquals(7, fs6.getNextBlock(6));
+      assertEquals(8, fs6.getNextBlock(7));
+      assertEquals(9, fs6.getNextBlock(8));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs6.getNextBlock(9)); // End of normal4096
 
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(10));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(11));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(12));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(13));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(14));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(15));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(16));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(17));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(18));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(19));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(20));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(10));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(11));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(12));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(13));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(14));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(15));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(16));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(17));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(18));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(19));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(20));
       
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(21)); // Mini Stream FAT
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(22)); // Mini Stream data
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(23)); // Properties gone
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(24));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(25));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs6.getNextBlock(21)); // Mini Stream FAT
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs6.getNextBlock(22)); // Mini Stream data
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(23)); // Properties gone
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(24));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs6.getNextBlock(25));
       
       // All done
-      fs.close();
+      fs6.close();
    }
    
    @Test
-   public void addBeforeWrite() throws Exception {
-       NPOIFSFileSystem fs = new NPOIFSFileSystem();
+   public void addBeforeWrite() throws IOException {
+       NPOIFSFileSystem fs1 = new NPOIFSFileSystem();
        DocumentEntry miniDoc;
        DocumentEntry normDoc;
        HeaderBlock hdr;
        
        // Initially has Properties + BAT but nothing else
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(0));
-       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs1.getNextBlock(0));
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs1.getNextBlock(1));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs1.getNextBlock(2));
        
-       hdr = writeOutAndReadHeader(fs);
+       hdr = writeOutAndReadHeader(fs1);
        // No mini stream, and no xbats
        // Will have fat then properties stream
        assertEquals(1, hdr.getBATCount());
@@ -1201,14 +1217,14 @@ public final class TestNPOIFSFileSystem {
        assertEquals(0, hdr.getPropertyStart());
        assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getSBATStart());
        assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
-       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*3, fs.size());
-       
+       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*3, fs1.size());
+       fs1.close();
        
        // Get a clean filesystem to start with
-       fs = new NPOIFSFileSystem();
+       fs1 = new NPOIFSFileSystem();
        
        // Put our test files in a non-standard place
-       DirectoryEntry parentDir = fs.createDirectory("Parent Directory");
+       DirectoryEntry parentDir = fs1.createDirectory("Parent Directory");
        DirectoryEntry testDir = parentDir.createDirectory("Test Directory");
        
        
@@ -1224,20 +1240,20 @@ public final class TestNPOIFSFileSystem {
 
        
        // Check the mini stream was added, then the main stream
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(0));
-       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1)); 
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2)); // Mini Fat
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3)); // Mini Stream
-       assertEquals(5,                           fs.getNextBlock(4)); // Main Stream
-       assertEquals(6,                           fs.getNextBlock(5));
-       assertEquals(7,                           fs.getNextBlock(6));
-       assertEquals(8,                           fs.getNextBlock(7));
-       assertEquals(9,                           fs.getNextBlock(8));
-       assertEquals(10,                          fs.getNextBlock(9));
-       assertEquals(11,                          fs.getNextBlock(10));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(11));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(12));
-       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*13, fs.size());
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs1.getNextBlock(0));
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs1.getNextBlock(1)); 
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs1.getNextBlock(2)); // Mini Fat
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs1.getNextBlock(3)); // Mini Stream
+       assertEquals(5,                           fs1.getNextBlock(4)); // Main Stream
+       assertEquals(6,                           fs1.getNextBlock(5));
+       assertEquals(7,                           fs1.getNextBlock(6));
+       assertEquals(8,                           fs1.getNextBlock(7));
+       assertEquals(9,                           fs1.getNextBlock(8));
+       assertEquals(10,                          fs1.getNextBlock(9));
+       assertEquals(11,                          fs1.getNextBlock(10));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs1.getNextBlock(11));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs1.getNextBlock(12));
+       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*13, fs1.size());
        
        
        // Check that we can read the right data pre-write
@@ -1249,8 +1265,9 @@ public final class TestNPOIFSFileSystem {
        
        
        // Write, read, check
-       hdr = writeOutAndReadHeader(fs);
-       fs = writeOutAndReadBack(fs);
+       hdr = writeOutAndReadHeader(fs1);
+       NPOIFSFileSystem fs2 = writeOutAndReadBack(fs1);
+       fs1.close();
        
        // Check the header details - will have the sbat near the start,
        //  then the properties at the end
@@ -1262,25 +1279,25 @@ public final class TestNPOIFSFileSystem {
        
        // Check the block allocation is unchanged, other than
        //  the properties stream going in at the end
-       assertEquals(12,                          fs.getNextBlock(0)); // Properties
-       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
-       assertEquals(5,                           fs.getNextBlock(4));
-       assertEquals(6,                           fs.getNextBlock(5));
-       assertEquals(7,                           fs.getNextBlock(6));
-       assertEquals(8,                           fs.getNextBlock(7));
-       assertEquals(9,                           fs.getNextBlock(8));
-       assertEquals(10,                          fs.getNextBlock(9));
-       assertEquals(11,                          fs.getNextBlock(10));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(11));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(12));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(13));
-       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*14, fs.size());
+       assertEquals(12,                          fs2.getNextBlock(0)); // Properties
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs2.getNextBlock(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs2.getNextBlock(2));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs2.getNextBlock(3));
+       assertEquals(5,                           fs2.getNextBlock(4));
+       assertEquals(6,                           fs2.getNextBlock(5));
+       assertEquals(7,                           fs2.getNextBlock(6));
+       assertEquals(8,                           fs2.getNextBlock(7));
+       assertEquals(9,                           fs2.getNextBlock(8));
+       assertEquals(10,                          fs2.getNextBlock(9));
+       assertEquals(11,                          fs2.getNextBlock(10));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs2.getNextBlock(11));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs2.getNextBlock(12));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs2.getNextBlock(13));
+       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*14, fs2.size());
        
        
        // Check the data
-       DirectoryEntry fsRoot = fs.getRoot();
+       DirectoryEntry fsRoot = fs2.getRoot();
        assertEquals(1, fsRoot.getEntryCount());
        
        parentDir = (DirectoryEntry)fsRoot.getEntry("Parent Directory");
@@ -1308,9 +1325,10 @@ public final class TestNPOIFSFileSystem {
        
        
        // Recheck the data in all 4 streams
-       fs = writeOutAndReadBack(fs);
+       NPOIFSFileSystem fs3 = writeOutAndReadBack(fs2);
+       fs2.close();
        
-       fsRoot = fs.getRoot();
+       fsRoot = fs3.getRoot();
        assertEquals(1, fsRoot.getEntryCount());
        
        parentDir = (DirectoryEntry)fsRoot.getEntry("Parent Directory");
@@ -1329,11 +1347,11 @@ public final class TestNPOIFSFileSystem {
        assertContentsMatches(main4106, normDoc);
        
        // All done
-       fs.close();
+       fs3.close();
    }
    
    @Test
-   public void readZeroLengthEntries() throws Exception {
+   public void readZeroLengthEntries() throws IOException {
        NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("only-zero-byte-streams.ole2"));
        DirectoryNode testDir = fs.getRoot();
        assertEquals(3, testDir.getEntryCount());
@@ -1364,9 +1382,9 @@ public final class TestNPOIFSFileSystem {
    }
    
    @Test
-   public void writeZeroLengthEntries() throws Exception {
-       NPOIFSFileSystem fs = new NPOIFSFileSystem();
-       DirectoryNode testDir = fs.getRoot();
+   public void writeZeroLengthEntries() throws IOException {
+       NPOIFSFileSystem fs1 = new NPOIFSFileSystem();
+       DirectoryNode testDir = fs1.getRoot();
        DocumentEntry miniDoc;
        DocumentEntry normDoc;
        DocumentEntry emptyDoc;
@@ -1405,7 +1423,7 @@ public final class TestNPOIFSFileSystem {
        
        // Look at the properties entry, and check the empty ones
        //  have zero size and no start block
-       NPropertyTable props = fs._get_property_table();
+       NPropertyTable props = fs1._get_property_table();
        Iterator<Property> propsIt = props.getRoot().getChildren();
        
        Property prop = propsIt.next();
@@ -1435,8 +1453,9 @@ public final class TestNPOIFSFileSystem {
        
        
        // Save and re-check
-       fs = writeOutAndReadBack(fs);
-       testDir = fs.getRoot();
+       NPOIFSFileSystem fs2 = writeOutAndReadBack(fs1);
+       fs1.close();
+       testDir = fs2.getRoot();
        
        miniDoc = (DocumentEntry)testDir.getEntry("Mini2");
        assertContentsMatches(mini2, miniDoc);
@@ -1458,7 +1477,7 @@ public final class TestNPOIFSFileSystem {
        assertEquals(64, testDir.getProperty().getSize()); 
        
        // All done
-       fs.close();
+       fs2.close();
    }
 
    /**
@@ -1466,7 +1485,7 @@ public final class TestNPOIFSFileSystem {
     *  write it out, read it with POIFS, and see the original data
     */
    @Test
-   public void NPOIFSReadCopyWritePOIFSRead() throws Exception {
+   public void NPOIFSReadCopyWritePOIFSRead() throws IOException {
        File testFile = POIDataSamples.getSpreadSheetInstance().getFile("Simple.xls");
        NPOIFSFileSystem src = new NPOIFSFileSystem(testFile);
        byte wbDataExp[] = IOUtils.toByteArray(src.createDocumentInputStream("Workbook"));
@@ -1483,6 +1502,7 @@ public final class TestNPOIFSFileSystem {
        byte wbDataAct[] = IOUtils.toByteArray(pfs.createDocumentInputStream("Workbook"));
        
        assertThat(wbDataExp, equalTo(wbDataAct));
+       pfs.close();
    }
    
    /**
@@ -1490,7 +1510,7 @@ public final class TestNPOIFSFileSystem {
     *  contents
     */
    @Test
-   public void RecursiveDelete() throws Exception {
+   public void RecursiveDelete() throws IOException {
        File testFile = POIDataSamples.getSpreadSheetInstance().getFile("SimpleMacro.xls");
        NPOIFSFileSystem src = new NPOIFSFileSystem(testFile);
 

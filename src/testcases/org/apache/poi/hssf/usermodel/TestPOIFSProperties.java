@@ -17,29 +17,30 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 
 /**
  * Old-style setting of POIFS properties doesn't work with POI 3.0.2
- *
- * @author Yegor Kozlov
  */
-public class TestPOIFSProperties extends TestCase{
+public class TestPOIFSProperties {
 
     private static final String title = "Testing POIFS properties";
 
+    @Test
     public void testFail() throws Exception {
         InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls");
         POIFSFileSystem fs = new POIFSFileSystem(is);
+        is.close();
 
         HSSFWorkbook wb = new HSSFWorkbook(fs);
 
@@ -55,17 +56,21 @@ public class TestPOIFSProperties extends TestCase{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         wb.write(out);
         out.close();
+        wb.close();
 
         POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
         SummaryInformation summary2 = (SummaryInformation)PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
 
         //failing assertion
         assertEquals(title, summary2.getTitle());
+        fs2.close();
     }
 
+    @Test
     public void testOK() throws Exception {
         InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls");
         POIFSFileSystem fs = new POIFSFileSystem(is);
+        is.close();
 
         //set POIFS properties before constructing HSSFWorkbook
         SummaryInformation summary1 = (SummaryInformation)PropertySetFactory.create(fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
@@ -79,11 +84,12 @@ public class TestPOIFSProperties extends TestCase{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         wb.write(out);
         out.close();
+        wb.close();
 
         //read the property
         POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
         SummaryInformation summary2 = (SummaryInformation)PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
         assertEquals(title, summary2.getTitle());
-
+        fs2.close();
     }
 }

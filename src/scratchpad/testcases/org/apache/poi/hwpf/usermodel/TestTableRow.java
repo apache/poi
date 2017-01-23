@@ -16,16 +16,23 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.junit.Test;
 
-public class TestTableRow extends TestCase
-{
-    public void testInnerTableCellsDetection() throws Exception
-    {
-        HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
-                .getDocumentInstance().openResourceAsStream( "innertable.doc" ) );
+public class TestTableRow {
+    private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
+    
+    @Test
+    public void testInnerTableCellsDetection() throws IOException {
+        InputStream is = SAMPLES.openResourceAsStream( "innertable.doc" );
+        HWPFDocument hwpfDocument = new HWPFDocument( is );
+        is.close();
         hwpfDocument.getRange();
 
         Range documentRange = hwpfDocument.getRange();
@@ -36,12 +43,14 @@ public class TestTableRow extends TestCase
 
         TableRow tableRow = innerTable.getRow( 0 );
         assertEquals( 2, tableRow.numCells() );
+        hwpfDocument.close();
     }
 
-    public void testOuterTableCellsDetection() throws Exception
-    {
-        HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
-                .getDocumentInstance().openResourceAsStream( "innertable.doc" ) );
+    @Test
+    public void testOuterTableCellsDetection() throws IOException {
+        InputStream is = SAMPLES.openResourceAsStream( "innertable.doc" );
+        HWPFDocument hwpfDocument = new HWPFDocument( is );
+        is.close();
         hwpfDocument.getRange();
 
         Range documentRange = hwpfDocument.getRange();
@@ -53,6 +62,8 @@ public class TestTableRow extends TestCase
         assertEquals( 3, outerTable.getRow( 0 ).numCells() );
         assertEquals( 3, outerTable.getRow( 1 ).numCells() );
         assertEquals( 3, outerTable.getRow( 2 ).numCells() );
+        
+        hwpfDocument.close();
     }
 
 }
