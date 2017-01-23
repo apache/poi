@@ -21,11 +21,12 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexRead;
 import org.junit.After;
@@ -33,7 +34,7 @@ import org.junit.Test;
 
 public class TestXorEncryption {
     
-    private static HSSFTestDataSamples samples = new HSSFTestDataSamples();
+    private static final HSSFTestDataSamples samples = new HSSFTestDataSamples();
     
     // to not affect other tests running in the same JVM
     @After
@@ -42,7 +43,7 @@ public class TestXorEncryption {
     }
 
     @Test
-    public void testXorEncryption() throws Exception {
+    public void testXorEncryption() throws IOException {
         // Xor-Password: abc
         // 2.5.343 XORObfuscation
         // key = 20810
@@ -59,7 +60,7 @@ public class TestXorEncryption {
 
     @SuppressWarnings("static-access")
     @Test
-    public void testUserFile() throws Exception {
+    public void testUserFile() throws IOException {
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         NPOIFSFileSystem fs = new NPOIFSFileSystem(samples.getSampleFile("xor-encryption-abc.xls"), true);
         HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true);
@@ -68,7 +69,7 @@ public class TestXorEncryption {
         assertEquals(1.0, sh.getRow(0).getCell(0).getNumericCellValue(), 0.0);
         assertEquals(2.0, sh.getRow(1).getCell(0).getNumericCellValue(), 0.0);
         assertEquals(3.0, sh.getRow(2).getCell(0).getNumericCellValue(), 0.0);
-
+        hwb.close();
         fs.close();
     }
 }

@@ -349,8 +349,10 @@ public final class TestWordExtractor {
        
        // Open directly 
        for(DirectoryNode dir : files) {
+          @SuppressWarnings("resource")
           WordExtractor extractor = new WordExtractor(dir);
           assertEqualsTrim(p_text1_block, extractor.getText());
+          // extractor.close();
        }
 
        // Open via a HWPFDocument

@@ -17,22 +17,27 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.SEPX;
+import org.junit.Test;
 
 /**
  * Tests for Range which aren't around deletion, insertion, text replacement or
  * textual contents
  */
-public final class TestRange extends TestCase
-{
-    public void testFieldStripping()
-    {
+public final class TestRange {
+    private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
+    
+    @Test
+    public void testFieldStripping() {
         String exp = "This is some text.";
 
         String single = "This is some \u0013Blah!\u0015text.";
@@ -57,10 +62,11 @@ public final class TestRange extends TestCase
         assertEquals( odd2, Range.stripFields( odd2 ) );
     }
 
-    public void testBug46817() throws Exception
-    {
-        HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
-                .getDocumentInstance().openResourceAsStream( "Bug46817.doc" ) );
+    @Test
+    public void testBug46817() throws IOException {
+        InputStream is = SAMPLES.openResourceAsStream( "Bug46817.doc" );
+        HWPFDocument hwpfDocument = new HWPFDocument( is );
+        is.close();
 
         final List<SEPX> sections = hwpfDocument.getSectionTable()
                 .getSections();
@@ -85,5 +91,6 @@ public final class TestRange extends TestCase
         Paragraph lastInMainSection = section.getParagraph( section
                 .numParagraphs() - 1);
         assertTrue( lastInMainSection.getEndOffset() <= 766 );
+        hwpfDocument.close();
     }
 }

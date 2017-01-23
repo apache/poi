@@ -17,32 +17,39 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.junit.Test;
 
 /**
  * Tests for bugs with the WordExtractor
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestWordExtractorBugs extends TestCase {
+public final class TestWordExtractorBugs {
+    private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
 
-	public void testProblemMetadata() throws Exception {
-		WordExtractor extractor =
-			new WordExtractor(POIDataSamples.getDocumentInstance().openResourceAsStream("ProblemExtracting.doc"));
+    @Test
+    public void testProblemMetadata() throws IOException {
+        InputStream is = SAMPLES.openResourceAsStream("ProblemExtracting.doc");
+		WordExtractor extractor = new WordExtractor(is);
+		is.close();
 
 		// Check it gives text without error
 		extractor.getText();
 		extractor.getParagraphText();
 		extractor.getTextFromPieces();
+		extractor.close();
 	}
 
+    @Test
     public void testBug50688() throws Exception {
-        WordExtractor extractor =
-            new WordExtractor(POIDataSamples.getDocumentInstance().openResourceAsStream("parentinvguid.doc"));
+        InputStream is = SAMPLES.openResourceAsStream("parentinvguid.doc");
+        WordExtractor extractor = new WordExtractor(is);
+        is.close();
 
         // Check it gives text without error
         extractor.getText();
+        extractor.close();
     }
 }

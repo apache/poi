@@ -17,29 +17,28 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.util.TempFile;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.TempFile;
+import org.junit.Test;
 
-/**
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Avik Sengupta
- */
-public final class TestFormulas extends TestCase {
+public final class TestFormulas {
 
     private static HSSFWorkbook openSample(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
@@ -48,10 +47,11 @@ public final class TestFormulas extends TestCase {
     /**
      * Add 1+1 -- WHoohoo!
      */
-    public void testBasicAddIntegers() {
+    @Test
+    public void testBasicAddIntegers() throws IOException {
 
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -60,78 +60,90 @@ public final class TestFormulas extends TestCase {
         c = r.createCell(1);
         c.setCellFormula(1 + "+" + 1);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s  = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s  = wb2.getSheetAt(0);
         r  = s.getRow(1);
         c  = r.getCell(1);
 
         assertTrue("Formula is as expected",("1+1".equals(c.getCellFormula())));
+        wb2.close();
     }
 
     /**
      * Add various integers
      */
-    public void testAddIntegers() {
+    @Test
+    public void testAddIntegers() throws IOException {
         binomialOperator("+");
     }
 
     /**
      * Multiply various integers
      */
-    public void testMultplyIntegers() {
+    @Test
+    public void testMultplyIntegers() throws IOException {
         binomialOperator("*");
     }
 
     /**
      * Subtract various integers
      */
-    public void testSubtractIntegers() {
+    @Test
+    public void testSubtractIntegers() throws IOException {
         binomialOperator("-");
     }
 
     /**
      * Subtract various integers
      */
-    public void testDivideIntegers() {
+    @Test
+    public void testDivideIntegers() throws IOException {
         binomialOperator("/");
     }
 
     /**
      * Exponentialize various integers;
      */
-    public void testPowerIntegers() {
+    @Test
+    public void testPowerIntegers() throws IOException {
         binomialOperator("^");
     }
 
     /**
      * Concatenate two numbers 1&2 = 12
      */
-    public void testConcatIntegers() {
+    @Test
+    public void testConcatIntegers() throws IOException {
         binomialOperator("&");
     }
 
     /**
      * tests 1*2+3*4
      */
-    public void testOrderOfOperationsMultiply() {
+    @Test
+    public void testOrderOfOperationsMultiply() throws IOException {
         orderTest("1*2+3*4");
     }
 
     /**
      * tests 1*2+3^4
      */
-    public void testOrderOfOperationsPower() {
+    @Test
+    public void testOrderOfOperationsPower() throws IOException {
         orderTest("1*2+3^4");
     }
 
     /**
      * Tests that parenthesis are obeyed
      */
-    public void testParenthesis() {
+    @Test
+    public void testParenthesis() throws IOException {
         orderTest("(1*3)+2+(1+2)*(3^4)^5");
     }
 
-    public void testReferencesOpr() {
+    @Test
+    public void testReferencesOpr() throws IOException {
         String[] operation = new String[] {
                             "+", "-", "*", "/", "^", "&"
                            };
@@ -144,14 +156,15 @@ public final class TestFormulas extends TestCase {
      * Tests creating a file with floating point in a formula.
      *
      */
-    public void testFloat() {
+    @Test
+    public void testFloat() throws IOException {
         floatTest("*");
         floatTest("/");
     }
 
-    private static void floatTest(String operator) {
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+    private static void floatTest(String operator) throws IOException {
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -177,9 +190,11 @@ public final class TestFormulas extends TestCase {
             c = r.createCell(0);
             c.setCellFormula("" + Float.MAX_VALUE + operator + Float.MAX_VALUE);
         }
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
 
-        floatVerify(operator, wb);
+        floatVerify(operator, wb2);
+        wb2.close();
     }
 
     private static void floatVerify(String operator, HSSFWorkbook wb) {
@@ -202,25 +217,29 @@ public final class TestFormulas extends TestCase {
         }
     }
 
-    public void testAreaSum() {
+    @Test
+    public void testAreaSum() throws IOException {
         areaFunctionTest("SUM");
     }
 
-    public void testAreaAverage() {
+    @Test
+    public void testAreaAverage() throws IOException {
         areaFunctionTest("AVERAGE");
     }
 
-    public void testRefArraySum() {
+    @Test
+    public void testRefArraySum() throws IOException {
         refArrayFunctionTest("SUM");
     }
 
-    public void testAreaArraySum() {
+    @Test
+    public void testAreaArraySum() throws IOException {
         refAreaArrayFunctionTest("SUM");
     }
 
-    private static void operationRefTest(String operator) {
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+    private static void operationRefTest(String operator) throws IOException {
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -277,8 +296,10 @@ public final class TestFormulas extends TestCase {
             c.setCellFormula("" + "B1" + operator + "IV255");
         }
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        operationalRefVerify(operator, wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        operationalRefVerify(operator, wb2);
+        wb2.close();
     }
 
     /**
@@ -352,9 +373,9 @@ public final class TestFormulas extends TestCase {
     /**
      * tests order wrting out == order writing in for a given formula
      */
-    private static void orderTest(String formula) {
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+    private static void orderTest(String formula) throws IOException {
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -363,15 +384,15 @@ public final class TestFormulas extends TestCase {
         c = r.createCell(1);
         c.setCellFormula(formula);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s      = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s      = wb2.getSheetAt(0);
 
         //get our minimum values
         r = s.getRow(0);
         c = r.getCell(1);
-        assertTrue("minval Formula is as expected",
-                   formula.equals(c.getCellFormula())
-                  );
+        assertTrue("minval Formula is as expected", formula.equals(c.getCellFormula()));
+        wb2.close();
     }
 
     /**
@@ -379,9 +400,9 @@ public final class TestFormulas extends TestCase {
      * huge set of x operator y formulas.  Next we call binomialVerify and verify
      * that they are all how we expect.
      */
-    private static void binomialOperator(String operator) {
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+    private static void binomialOperator(String operator) throws IOException {
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -407,8 +428,10 @@ public final class TestFormulas extends TestCase {
             c = r.createCell(0);
             c.setCellFormula("" + Short.MAX_VALUE + operator + Short.MAX_VALUE);
         }
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        binomialVerify(operator, wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        binomialVerify(operator, wb2);
+        wb2.close();
     }
 
     /**
@@ -454,10 +477,10 @@ public final class TestFormulas extends TestCase {
     /**
      * Writes a function then tests to see if its correct
      */
-    public static void areaFunctionTest(String function) {
+    public static void areaFunctionTest(String function) throws IOException {
 
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -467,23 +490,25 @@ public final class TestFormulas extends TestCase {
         c = r.createCell(0);
         c.setCellFormula(function+"(A2:A3)");
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s = wb2.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
 
         assertTrue("function ="+function+"(A2:A3)",
                     ( (function+"(A2:A3)").equals((function+"(A2:A3)")) )
                   );
+        wb2.close();
     }
 
     /**
      * Writes a function then tests to see if its correct
      */
-    public void refArrayFunctionTest(String function) {
+    public void refArrayFunctionTest(String function) throws IOException {
 
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -493,14 +518,16 @@ public final class TestFormulas extends TestCase {
         c = r.createCell(0);
         c.setCellFormula(function+"(A2,A3)");
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s = wb2.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
 
         assertTrue("function ="+function+"(A2,A3)",
                     ( (function+"(A2,A3)").equals(c.getCellFormula()) )
                   );
+        wb2.close();
     }
 
 
@@ -508,10 +535,10 @@ public final class TestFormulas extends TestCase {
      * Writes a function then tests to see if its correct
      *
      */
-    public void refAreaArrayFunctionTest(String function) {
+    public void refAreaArrayFunctionTest(String function) throws IOException {
 
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet();
         HSSFRow          r      = null;
         HSSFCell         c      = null;
 
@@ -523,8 +550,9 @@ public final class TestFormulas extends TestCase {
         c=r.createCell(1);
         c.setCellFormula(function+"($A$2:$A4,B$2:B4)");
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s = wb2.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
 
@@ -536,13 +564,14 @@ public final class TestFormulas extends TestCase {
         assertTrue("function ="+function+"($A$2:$A4,B$2:B4)",
                     ( (function+"($A$2:$A4,B$2:B4)").equals(c.getCellFormula()) )
                   );
+        wb2.close();
     }
 
 
-
-    public void testAbsRefs() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet s = wb.createSheet();
+    @Test
+    public void testAbsRefs() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet s = wb1.createSheet();
         HSSFRow r;
         HSSFCell c;
 
@@ -558,8 +587,9 @@ public final class TestFormulas extends TestCase {
         c=r.createCell(4);
         c.setCellFormula("SUM($A$3,$A$2)");
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s = wb2.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
         assertTrue("A3+A2", ("A3+A2").equals(c.getCellFormula()));
@@ -571,34 +601,39 @@ public final class TestFormulas extends TestCase {
         assertTrue("$A$3+$A$2", ("$A$3+$A$2").equals(c.getCellFormula()));
          c = r.getCell(4);
         assertTrue("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)").equals(c.getCellFormula()));
+        wb2.close();
     }
 
-    public void testSheetFunctions() {
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet("A");
+    @Test
+    public void testSheetFunctions() throws IOException {
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet("A");
         HSSFRow          r      = null;
         HSSFCell         c      = null;
         r = s.createRow(0);
         c = r.createCell(0);c.setCellValue(1);
         c = r.createCell(1);c.setCellValue(2);
 
-        s      = wb.createSheet("B");
+        s      = wb1.createSheet("B");
         r = s.createRow(0);
         c=r.createCell(0); c.setCellFormula("AVERAGE(A!A1:B1)");
         c=r.createCell(1); c.setCellFormula("A!A1+A!B1");
         c=r.createCell(2); c.setCellFormula("A!$A$1+A!$B1");
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
 
-        s = wb.getSheet("B");
+        s = wb2.getSheet("B");
         r = s.getRow(0);
         c = r.getCell(0);
         assertTrue("expected: AVERAGE(A!A1:B1) got: "+c.getCellFormula(), ("AVERAGE(A!A1:B1)").equals(c.getCellFormula()));
         c = r.getCell(1);
         assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+        wb2.close();
     }
 
-    public void testRVAoperands() throws Exception {
+    @Test
+    public void testRVAoperands() throws IOException {
         File file = TempFile.createTempFile("testFormulaRVA",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
@@ -634,9 +669,11 @@ public final class TestFormulas extends TestCase {
         wb.write(out);
         out.close();
         assertTrue("file exists",file.exists());
+        wb.close();
     }
 
-    public void testStringFormulas() {
+    @Test
+    public void testStringFormulas() throws IOException {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet("A");
         HSSFRow          r      = null;
@@ -646,32 +683,38 @@ public final class TestFormulas extends TestCase {
         c=r.createCell(2); c.setCellFormula("LOWER(\"ABC\")");
         c=r.createCell(3); c.setCellFormula("CONCATENATE(\" my \",\" name \")");
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFTestDataSamples.writeOutAndReadBack(wb).close();
+        wb.close();
 
         wb = openSample("StringFormulas.xls");
         s = wb.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
         assertEquals("UPPER(\"xyz\")", c.getCellFormula());
+        wb.close();
     }
 
-    public void testLogicalFormulas() {
+    @Test
+    public void testLogicalFormulas() throws IOException {
 
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet("A");
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet("A");
         HSSFRow          r      = null;
         HSSFCell         c      = null;
         r = s.createRow(0);
         c=r.createCell(1); c.setCellFormula("IF(A1<A2,B1,B2)");
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s = wb2.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(1);
         assertEquals("Formula in cell 1 ","IF(A1<A2,B1,B2)",c.getCellFormula());
+        wb2.close();
     }
 
-    public void testDateFormulas() {
+    @Test
+    public void testDateFormulas() throws IOException {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet("testSheet1");
         HSSFRow          r      = null;
@@ -695,13 +738,14 @@ public final class TestFormulas extends TestCase {
           c.setCellStyle(cellStyle);
         }
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFTestDataSamples.writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
-
-    public void testIfFormulas() {
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet("testSheet1");
+    @Test
+    public void testIfFormulas() throws IOException {
+        HSSFWorkbook     wb1    = new HSSFWorkbook();
+        HSSFSheet        s      = wb1.createSheet("testSheet1");
         HSSFRow          r      = null;
         HSSFCell         c      = null;
         r = s.createRow(0);
@@ -710,33 +754,37 @@ public final class TestFormulas extends TestCase {
         c=r.createCell(3); c.setCellFormula("MAX(A1:B1)");
         c=r.createCell(4); c.setCellFormula("IF(A1=D1,\"A1\",\"B1\")");
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        s = wb2.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(4);
 
         assertTrue("expected: IF(A1=D1,\"A1\",\"B1\") got "+c.getCellFormula(), ("IF(A1=D1,\"A1\",\"B1\")").equals(c.getCellFormula()));
+        wb2.close();
 
-        wb = openSample("IfFormulaTest.xls");
-        s = wb.getSheetAt(0);
+        wb1 = openSample("IfFormulaTest.xls");
+        s = wb1.getSheetAt(0);
         r = s.getRow(3);
         c = r.getCell(0);
         assertTrue("expected: IF(A3=A1,\"A1\",\"A2\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")").equals(c.getCellFormula()));
         //c = r.getCell((short)1);
         //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+        wb1.close();
 
 
-        wb     = new HSSFWorkbook();
-        s      = wb.createSheet("testSheet1");
+        wb1    = new HSSFWorkbook();
+        s      = wb1.createSheet("testSheet1");
         r      = null;
         c      = null;
         r = s.createRow(0);
         c=r.createCell(0); c.setCellFormula("IF(1=1,0,1)");
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+        wb1.close();
 
-        wb     = new HSSFWorkbook();
-        s      = wb.createSheet("testSheet1");
+        wb1    = new HSSFWorkbook();
+        s      = wb1.createSheet("testSheet1");
         r      = null;
         c      = null;
         r = s.createRow(0);
@@ -758,10 +806,12 @@ public final class TestFormulas extends TestCase {
 
         formulaCell.setCellFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+        wb1.close();
     }
 
-    public void testSumIf() {
+    @Test
+    public void testSumIf() throws IOException {
         String function ="SUMIF(A1:A5,\">4000\",B1:B5)";
 
         HSSFWorkbook wb = openSample("sumifformula.xls");
@@ -799,10 +849,12 @@ public final class TestFormulas extends TestCase {
         r = s.getRow(0);
         c=r.createCell(2); c.setCellFormula(function);
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFTestDataSamples.writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
-    public void testSquareMacro() {
+    @Test
+    public void testSquareMacro() throws IOException {
         HSSFWorkbook w = openSample("SquareMacro.xls");
 
         HSSFSheet s0 = w.getSheetAt(0);
@@ -839,15 +891,20 @@ public final class TestFormulas extends TestCase {
         HSSFCell d2 = r[1].getCell(3);
         assertEquals("square(two())", d2.getCellFormula());
         assertEquals(4d, d2.getNumericCellValue(), 1e-9);
+        
+        w.close();
     }
 
-    public void testStringFormulaRead() {
+    @Test
+    public void testStringFormulaRead() throws IOException {
         HSSFWorkbook w = openSample("StringFormulas.xls");
         HSSFCell c = w.getSheetAt(0).getRow(0).getCell(0);
         assertEquals("String Cell value","XYZ",c.getRichStringCellValue().getString());
+        w.close();
     }
 
     /** test for bug 34021*/
+    @Test
     public void testComplexSheetRefs () throws IOException {
          HSSFWorkbook sb = new HSSFWorkbook();
          try {
@@ -868,7 +925,8 @@ public final class TestFormulas extends TestCase {
     }
 
     /** Unknown Ptg 3C*/
-    public void test27272_1() throws Exception {
+    @Test
+    public void test27272_1() throws IOException {
         HSSFWorkbook wb = openSample("27272_1.xls");
         wb.getSheetAt(0);
         assertEquals("Reference for named range ", "Compliance!#REF!",wb.getNameAt(0).getRefersToFormula());
@@ -879,10 +937,11 @@ public final class TestFormulas extends TestCase {
         } finally {
             stream.close();
         }
-        System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
+        wb.close();
     }
     /** Unknown Ptg 3D*/
-    public void test27272_2() throws Exception {
+    @Test
+    public void test27272_2() throws IOException {
         HSSFWorkbook wb = openSample("27272_2.xls");
         assertEquals("Reference for named range ", "LOAD.POD_HISTORIES!#REF!",wb.getNameAt(0).getRefersToFormula());
         File outF = TempFile.createTempFile("bug27272_2",".xls");
@@ -892,11 +951,11 @@ public final class TestFormulas extends TestCase {
         } finally {
             stream.close();
         }
-        System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
+        wb.close();
     }
 
-    /** MissingArgPtg 
-     * @throws IOException */
+    /** MissingArgPtg */
+    @Test
     public void testMissingArgPtg() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         try {
@@ -907,19 +966,22 @@ public final class TestFormulas extends TestCase {
         }
     }
 
-    public void testSharedFormula() {
+    @Test
+    public void testSharedFormula() throws IOException {
         HSSFWorkbook wb = openSample("SharedFormulaTest.xls");
 
         assertEquals("A$1*2", wb.getSheetAt(0).getRow(1).getCell(1).toString());
         assertEquals("$A11*2", wb.getSheetAt(0).getRow(11).getCell(1).toString());
         assertEquals("DZ2*2", wb.getSheetAt(0).getRow(1).getCell(128).toString());
         assertEquals("B32770*2", wb.getSheetAt(0).getRow(32768).getCell(1).toString());
+        wb.close();
     }
 
     /**
      * Test creation / evaluation of formulas with sheet-level names
      */
-    public void testSheetLevelFormulas(){
+    @Test
+    public void testSheetLevelFormulas() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFRow row;
@@ -961,13 +1023,14 @@ public final class TestFormulas extends TestCase {
 
         assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue(), 0.0);
         assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue(), 0.0);
+        wb.close();
     }
 
     /**
      * Verify that FormulaParser handles defined names beginning with underscores,
      * see Bug #49640
-     * @throws IOException 
      */
+    @Test
     public void testFormulasWithUnderscore() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         try {
