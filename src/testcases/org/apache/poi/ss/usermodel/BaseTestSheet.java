@@ -17,27 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellAddress;
@@ -46,6 +27,14 @@ import org.apache.poi.ss.util.PaneInformation;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.apache.poi.POITestCase.assertBetween;
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Common superclass for testing {@link org.apache.poi.xssf.usermodel.XSSFCell}  and
@@ -295,28 +284,36 @@ public abstract class BaseTestSheet {
             sheet.addMergedRegion(duplicateRegion);
             fail("Should not be able to add a merged region (" + duplicateRegion.formatAsString() + ") " +
                  "if sheet already contains the same merged region (" + baseRegion.formatAsString() + ")");
-        } catch (final IllegalStateException e) { }
+        } catch (final IllegalStateException e) {
+            // expected here
+        }
         
         try {
             final CellRangeAddress partiallyOverlappingRegion = new CellRangeAddress(1, 2, 1, 2); //B2:C3
             sheet.addMergedRegion(partiallyOverlappingRegion);
             fail("Should not be able to add a merged region (" + partiallyOverlappingRegion.formatAsString() + ") " +
                  "if it partially overlaps with an existing merged region (" + baseRegion.formatAsString() + ")");
-        } catch (final IllegalStateException e) { }
+        } catch (final IllegalStateException e) {
+            // expected here
+        }
         
         try {
             final CellRangeAddress subsetRegion = new CellRangeAddress(0, 1, 0, 0); //A1:A2
             sheet.addMergedRegion(subsetRegion);
             fail("Should not be able to add a merged region (" + subsetRegion.formatAsString() + ") " +
                  "if it is a formal subset of an existing merged region (" + baseRegion.formatAsString() + ")");
-        } catch (final IllegalStateException e) { } //expected
+        } catch (final IllegalStateException e) {
+            // expected here
+        }
         
         try {
             final CellRangeAddress supersetRegion = new CellRangeAddress(0, 2, 0, 2); //A1:C3
             sheet.addMergedRegion(supersetRegion);
             fail("Should not be able to add a merged region (" + supersetRegion.formatAsString() + ") " +
                  "if it is a formal superset of an existing merged region (" + baseRegion.formatAsString() + ")");
-        } catch (final IllegalStateException e) { }
+        } catch (final IllegalStateException e) {
+            // expected here
+        }
         
         final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
         sheet.addMergedRegion(disjointRegion);
@@ -449,9 +446,9 @@ public abstract class BaseTestSheet {
         wb.close();
     }
     
-    private static void assertCollectionEquals(Collection<? extends Object> expected, Collection<? extends Object> actual) {
-        Set<Object> e = new HashSet<Object>(expected);
-        Set<Object> a = new HashSet<Object>(actual);
+    private static <T> void assertCollectionEquals(Collection<T> expected, Collection<T> actual) {
+        Set<T> e = new HashSet<T>(expected);
+        Set<T> a = new HashSet<T>(actual);
         assertEquals(e, a);
     }
 
@@ -1113,7 +1110,6 @@ public abstract class BaseTestSheet {
 
     /**
      * XSSFSheet autoSizeColumn() on empty RichTextString fails
-     * @throws IOException 
      */
     @Test
     public void bug48325() throws IOException {
@@ -1346,5 +1342,45 @@ public abstract class BaseTestSheet {
 
         wb1.close();
         wb2.close();
+    }
+
+
+    @Test
+    public void autoSizeDate() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet("Sheet1");
+        Row r = s.createRow(0);
+        r.createCell(0).setCellValue(1);
+        r.createCell(1).setCellValue(123456);
+
+        // for the streaming-variant we need to enable autosize-tracking to make it work
+        trackColumnsForAutoSizingIfSXSSF(s);
+
+        // Will be sized fairly small
+        s.autoSizeColumn((short)0);
+        s.autoSizeColumn((short)1);
+
+        // Size ranges due to different fonts on different machines
+        assertBetween("Single number column width", s.getColumnWidth(0), 350, 570);
+        assertBetween("6 digit number column width", s.getColumnWidth(1), 1500, 2100);
+
+        // Set a date format
+        CellStyle cs = wb.createCellStyle();
+        DataFormat f = wb.createDataFormat();
+        cs.setDataFormat(f.getFormat("yyyy-mm-dd MMMM hh:mm:ss"));
+        r.getCell(0).setCellStyle(cs);
+        r.getCell(1).setCellStyle(cs);
+
+        assertTrue(DateUtil.isCellDateFormatted(r.getCell(0)));
+        assertTrue(DateUtil.isCellDateFormatted(r.getCell(1)));
+
+        // Should get much bigger now
+        s.autoSizeColumn((short)0);
+        s.autoSizeColumn((short)1);
+
+        assertBetween("Date column width", s.getColumnWidth(0), 4750, 7200);
+        assertBetween("Date column width", s.getColumnWidth(1), 4750, 7200);
+
+        wb.close();
     }
 }
