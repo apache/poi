@@ -45,7 +45,8 @@ public final class TestHWPFPictures extends TestCase {
 	private String imgDFile;
 
 	@Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
+		super.setUp();
 
 		docAFile = "testPictures.doc";
 		docBFile = "two_images.doc";
@@ -161,7 +162,7 @@ public final class TestHWPFPictures extends TestCase {
 	 * Pending the missing files being uploaded to
 	 *  bug #44937
 	 */
-	public void BROKENtestEscherDrawing() {
+	public void testEscherDrawing() {
 		HWPFDocument docD = HWPFTestDataSamples.openSampleFile(docDFile);
 		List<Picture> allPictures = docD.getPicturesTable().getAllPictures();
 
