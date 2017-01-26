@@ -82,8 +82,7 @@ public class TestWordToHtmlConverter
                 new DOMSource( wordToHtmlConverter.getDocument() ),
                 new StreamResult( stringWriter ));
 
-        String result = stringWriter.toString();
-        return result;
+        return stringWriter.toString();
     }
 
     @Test

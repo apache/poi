@@ -107,7 +107,7 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * whether temp files should be compressed.
      */
-    private boolean _compressTmpFiles = false;
+    private boolean _compressTmpFiles;
 
     /**
      * shared string table - a cache of strings in this workbook
@@ -817,6 +817,7 @@ public class SXSSFWorkbook implements Workbook {
     @Removal(version="3.17")
     public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline)
     {
+        //noinspection deprecation
         return _wb.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
     
@@ -1027,8 +1028,8 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @Deprecated
     @Removal(version="3.18")
-    public Name getNameAt(int nameIndex)
-    {
+    public Name getNameAt(int nameIndex) {
+        //noinspection deprecation
         return _wb.getNameAt(nameIndex);
     }
 
@@ -1058,8 +1059,8 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @Deprecated
     @Removal(version="3.18")
-    public int getNameIndex(String name)
-    {
+    public int getNameIndex(String name) {
+        //noinspection deprecation
         return _wb.getNameIndex(name);
     }
 
@@ -1073,8 +1074,8 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @Deprecated
     @Removal(version="3.18")
-    public void removeName(int index)
-    {
+    public void removeName(int index) {
+        //noinspection deprecation
         _wb.removeName(index);
     }
 
@@ -1088,8 +1089,8 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @Deprecated
     @Removal(version="3.18")
-    public void removeName(String name)
-    {
+    public void removeName(String name) {
+        //noinspection deprecation
         _wb.removeName(name);
     }
 
@@ -1298,8 +1299,12 @@ public class SXSSFWorkbook implements Workbook {
      *  formulas such as "[MyOtherWorkbook]Sheet3!$A$5" to be added to the 
      *  file, for workbooks not already referenced.
      *
+     *  Note: this is not implemented and thus currently throws an Exception stating this.
+     *
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
+     *
+     * @throws RuntimeException stating that this method is not implemented yet.
      */
     @Override
     @NotImplemented

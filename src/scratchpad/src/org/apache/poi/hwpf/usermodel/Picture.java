@@ -42,15 +42,16 @@ import org.apache.poi.util.StringUtil;
 /**
  * Represents embedded picture extracted from Word Document
  */
-public final class Picture
-{
+public final class Picture {
+    private static final POILogger log = POILogFactory
+            .getLogger( Picture.class );
+
     public static final byte[] COMPRESSED1 = { (byte) 0xFE, 0x78, (byte) 0xDA };
 
     public static final byte[] COMPRESSED2 = { (byte) 0xFE, 0x78, (byte) 0x9C };
 
     public static final byte[] IHDR = new byte[] { 'I', 'H', 'D', 'R' };
-    private static final POILogger log = POILogFactory
-            .getLogger( Picture.class );
+
     @Deprecated
     private static final byte[] PNG = new byte[] { (byte) 0x89, 0x50, 0x4E,
             0x47, 0x0D, 0x0A, 0x1A, 0x0A };
@@ -401,10 +402,11 @@ public final class Picture
     }
 
     /**
-     * Returns picture's content as it stored in Word file, i.e. possibly in
+     * Returns picture's content as stored in the Word file, i.e. possibly in
      * compressed form.
      * 
-     * @return picture's content as it stored in Word file
+     * @return picture's content as it stored in Word file or an empty byte array
+     *      if it cannot be read.
      */
     public byte[] getRawContent()
     {

@@ -56,7 +56,7 @@ public class VariantSupport extends Variant {
 
     
     private static final POILogger logger = POILogFactory.getLogger(VariantSupport.class);
-    private static boolean logUnsupportedTypes = false;
+    private static boolean logUnsupportedTypes;
 
     /**
      * Keeps a list of the variant types an "unsupported" message has already
@@ -196,7 +196,7 @@ public class VariantSupport extends Variant {
                 return uniString.toJavaString();
 
             // if(l1 < 0) {
-            /**
+            /*
              * YK: reading the ClipboardData packet (VT_CF) is not quite
              * correct. The size of the data is determined by the first four
              * bytes of the packet while the current implementation calculates

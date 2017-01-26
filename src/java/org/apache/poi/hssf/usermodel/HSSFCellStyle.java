@@ -66,8 +66,7 @@ public final class HSSFCellStyle implements CellStyle {
      *  unless you're comparing which one is which)
      */
     @Override
-    public short getIndex()
-    {
+    public short getIndex() {
         return _index;
     }
 
@@ -489,8 +488,7 @@ public final class HSSFCellStyle implements CellStyle {
     @Deprecated
     @Removal(version="3.17")
     @Override
-    public void setBorderLeft(short border)
-    {
+    public void setBorderLeft(short border) {
         _format.setIndentNotParentBorder(true);
         _format.setBorderLeft(border);
     }

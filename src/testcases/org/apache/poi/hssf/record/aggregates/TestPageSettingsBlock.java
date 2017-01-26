@@ -203,7 +203,6 @@ public final class TestPageSettingsBlock extends TestCase {
 	 * was added while fixing bug 47199.  All existing POI test samples comply with this requirement.
 	 */
 	public void testDuplicatePSBRecord_bug47199() {
-
 		// Hypothetical setup of PSB records which should cause POI to crash
 		Record[] recs = {
 				new HeaderRecord("&LSales Figures"),
@@ -214,10 +213,8 @@ public final class TestPageSettingsBlock extends TestCase {
 		try {
 			new PageSettingsBlock(rs);
 			throw new AssertionFailedError("Identified bug 47199b - duplicate PSB records should not be allowed");
-		} catch (RecordFormatException e) {
-			if (e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x14)")) {
-				// expected during successful test
-			} else {
+		} catch (org.apache.poi.util.RecordFormatException e) {
+			if (!e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x14)")) {
 				throw new AssertionFailedError("Expected RecordFormatException due to duplicate PSB record");
 			}
 		}
@@ -288,7 +285,7 @@ public final class TestPageSettingsBlock extends TestCase {
 		PageSettingsBlock psb;
 		try {
 			psb = new PageSettingsBlock(rs);
-		} catch (RecordFormatException e) {
+		} catch (org.apache.poi.util.RecordFormatException e) {
 			if ("Duplicate PageSettingsBlock record (sid=0x4d)".equals(e.getMessage())) {
 				throw new AssertionFailedError("Identified bug 47415");
 			}

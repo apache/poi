@@ -21,10 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import javax.imageio.ImageIO;
 
@@ -94,7 +91,7 @@ public class VsdxToPng {
 
         graphics.dispose();
 
-        FileOutputStream out = new FileOutputStream(outFile);
+        OutputStream out = new FileOutputStream(outFile);
         try {
             ImageIO.write(img, "png", out);
         } finally {

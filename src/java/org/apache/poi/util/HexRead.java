@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class HexRead {
     /**
      * This method reads hex data from a filename and returns a byte array.
-     * The file may contain line comments that are preceeded with a # symbol.
+     * The file may contain line comments that are preceded with a # symbol.
      *
      * @param filename  The filename to read
      * @return The bytes read from the file.
