@@ -38,8 +38,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * 
  * @author Nick Burch
  */
-public final class WordExtractor extends POIOLE2TextExtractor
-{
+public final class WordExtractor extends POIOLE2TextExtractor {
     private HWPFDocument doc;
 
     /**
@@ -48,8 +47,7 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * @param is
      *            InputStream containing the word file
      */
-    public WordExtractor( InputStream is ) throws IOException
-    {
+    public WordExtractor( InputStream is ) throws IOException {
         this( HWPFDocument.verifyAndBuildPOIFS( is ) );
     }
 
@@ -59,13 +57,11 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * @param fs
      *            POIFSFileSystem containing the word file
      */
-    public WordExtractor( POIFSFileSystem fs ) throws IOException
-    {
+    public WordExtractor( POIFSFileSystem fs ) throws IOException {
         this( new HWPFDocument( fs ) );
     }
 
-    public WordExtractor( DirectoryNode dir ) throws IOException
-    {
+    public WordExtractor( DirectoryNode dir ) throws IOException {
         this( new HWPFDocument( dir ) );
     }
 
@@ -75,8 +71,7 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * @param doc
      *            The HWPFDocument to extract from
      */
-    public WordExtractor( HWPFDocument doc )
-    {
+    public WordExtractor( HWPFDocument doc ) {
         super( doc );
         this.doc = doc;
     }
@@ -85,10 +80,8 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * Command line extractor, so people will stop moaning that they can't just
      * run this.
      */
-    public static void main( String[] args ) throws IOException
-    {
-        if ( args.length == 0 )
-        {
+    public static void main( String[] args ) throws IOException {
+        if ( args.length == 0 ) {
             System.err.println( "Use:" );
             System.err
                     .println( "   java org.apache.poi.hwpf.extractor.WordExtractor <filename>" );
@@ -109,19 +102,15 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * Get the text from the word file, as an array with one String per
      * paragraph
      */
-    public String[] getParagraphText()
-    {
+    public String[] getParagraphText() {
         String[] ret;
 
         // Extract using the model code
-        try
-        {
+        try {
             Range r = doc.getRange();
 
             ret = getParagraphText( r );
-        }
-        catch ( Exception e )
-        {
+        } catch ( Exception e ) {
             // Something's up with turning the text pieces into paragraphs
             // Fall back to ripping out the text pieces
             ret = new String[1];
@@ -131,46 +120,39 @@ public final class WordExtractor extends POIOLE2TextExtractor
         return ret;
     }
 
-    public String[] getFootnoteText()
-    {
+    public String[] getFootnoteText() {
         Range r = doc.getFootnoteRange();
 
         return getParagraphText( r );
     }
 
-    public String[] getMainTextboxText()
-    {
+    public String[] getMainTextboxText() {
         Range r = doc.getMainTextboxRange();
 
         return getParagraphText( r );
     }
 
-    public String[] getEndnoteText()
-    {
+    public String[] getEndnoteText() {
         Range r = doc.getEndnoteRange();
 
         return getParagraphText( r );
     }
 
-    public String[] getCommentsText()
-    {
+    public String[] getCommentsText() {
         Range r = doc.getCommentsRange();
 
         return getParagraphText( r );
     }
 
-    protected static String[] getParagraphText( Range r )
-    {
+    protected static String[] getParagraphText( Range r ) {
         String[] ret;
         ret = new String[r.numParagraphs()];
-        for ( int i = 0; i < ret.length; i++ )
-        {
+        for ( int i = 0; i < ret.length; i++ ) {
             Paragraph p = r.getParagraph( i );
             ret[i] = p.text();
 
             // Fix the line ending
-            if ( ret[i].endsWith( "\r" ) )
-            {
+            if ( ret[i].endsWith( "\r" )) {
                 ret[i] = ret[i] + "\n";
             }
         }
@@ -180,25 +162,23 @@ public final class WordExtractor extends POIOLE2TextExtractor
     /**
      * Add the header/footer text, if it's not empty
      */
-    private void appendHeaderFooter( String text, StringBuffer out )
-    {
+    private void appendHeaderFooter( String text, StringBuffer out ) {
         if ( text == null || text.length() == 0 )
             return;
 
         text = text.replace( '\r', '\n' );
-        if ( !text.endsWith( "\n" ) )
+        if ( !text.endsWith( "\n" ))
         {
             out.append( text );
             out.append( '\n' );
             return;
         }
-        if ( text.endsWith( "\n\n" ) )
+        if ( text.endsWith( "\n\n" ))
         {
-            out.append( text.substring( 0, text.length() - 1 ) );
+            out.append( text.substring( 0, text.length() - 1 ));
             return;
         }
         out.append( text );
-        return;
     }
 
     /**
@@ -206,21 +186,17 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * @deprecated 3.8 beta 4
      */
     @Deprecated
-    public String getHeaderText()
-    {
+    public String getHeaderText() {
         HeaderStories hs = new HeaderStories( doc );
 
         StringBuffer ret = new StringBuffer();
-        if ( hs.getFirstHeader() != null )
-        {
+        if ( hs.getFirstHeader() != null ) {
             appendHeaderFooter( hs.getFirstHeader(), ret );
         }
-        if ( hs.getEvenHeader() != null )
-        {
+        if ( hs.getEvenHeader() != null ) {
             appendHeaderFooter( hs.getEvenHeader(), ret );
         }
-        if ( hs.getOddHeader() != null )
-        {
+        if ( hs.getOddHeader() != null ) {
             appendHeaderFooter( hs.getOddHeader(), ret );
         }
 
@@ -232,21 +208,17 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * @deprecated 3.8 beta 4
      */
     @Deprecated
-    public String getFooterText()
-    {
+    public String getFooterText() {
         HeaderStories hs = new HeaderStories( doc );
 
         StringBuffer ret = new StringBuffer();
-        if ( hs.getFirstFooter() != null )
-        {
+        if ( hs.getFirstFooter() != null ) {
             appendHeaderFooter( hs.getFirstFooter(), ret );
         }
-        if ( hs.getEvenFooter() != null )
-        {
+        if ( hs.getEvenFooter() != null ) {
             appendHeaderFooter( hs.getEvenFooter(), ret );
         }
-        if ( hs.getOddFooter() != null )
-        {
+        if ( hs.getOddFooter() != null ) {
             appendHeaderFooter( hs.getOddFooter(), ret );
         }
 
@@ -258,16 +230,14 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * crud, but will work in cases where the text piece -> paragraph mapping is
      * broken. Fast too.
      */
-    public String getTextFromPieces()
-    {
+    public String getTextFromPieces() {
         String text = doc.getDocumentText();
 
         // Fix line endings (Note - won't get all of them
         text = text.replaceAll( "\r\r\r", "\r\n\r\n\r\n" );
         text = text.replaceAll( "\r\r", "\r\n\r\n" );
 
-        if ( text.endsWith( "\r" ) )
-        {
+        if ( text.endsWith( "\r" )) {
             text += "\n";
         }
 
@@ -278,42 +248,40 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * Grab the text, based on the WordToTextConverter. Shouldn't include any
      * crud, but slower than getTextFromPieces().
      */
-    public String getText()
-    {
-        try
-        {
+    public String getText() {
+        try {
             WordToTextConverter wordToTextConverter = new WordToTextConverter();
 
-            HeaderStories hs = new HeaderStories( doc );
+            HeaderStories hs = new HeaderStories(doc);
 
-            if ( hs.getFirstHeaderSubrange() != null )
-                wordToTextConverter.processDocumentPart( doc,
-                        hs.getFirstHeaderSubrange() );
-            if ( hs.getEvenHeaderSubrange() != null )
-                wordToTextConverter.processDocumentPart( doc,
-                        hs.getEvenHeaderSubrange() );
-            if ( hs.getOddHeaderSubrange() != null )
-                wordToTextConverter.processDocumentPart( doc,
-                        hs.getOddHeaderSubrange() );
+            if (hs.getFirstHeaderSubrange() != null)
+                wordToTextConverter.processDocumentPart(doc,
+                        hs.getFirstHeaderSubrange());
+            if (hs.getEvenHeaderSubrange() != null)
+                wordToTextConverter.processDocumentPart(doc,
+                        hs.getEvenHeaderSubrange());
+            if (hs.getOddHeaderSubrange() != null)
+                wordToTextConverter.processDocumentPart(doc,
+                        hs.getOddHeaderSubrange());
 
-            wordToTextConverter.processDocument( doc );
-            wordToTextConverter.processDocumentPart( doc,
-                    doc.getMainTextboxRange() );
+            wordToTextConverter.processDocument(doc);
+            wordToTextConverter.processDocumentPart(doc,
+                    doc.getMainTextboxRange());
 
-            if ( hs.getFirstFooterSubrange() != null )
-                wordToTextConverter.processDocumentPart( doc,
-                        hs.getFirstFooterSubrange() );
-            if ( hs.getEvenFooterSubrange() != null )
-                wordToTextConverter.processDocumentPart( doc,
-                        hs.getEvenFooterSubrange() );
-            if ( hs.getOddFooterSubrange() != null )
-                wordToTextConverter.processDocumentPart( doc,
-                        hs.getOddFooterSubrange() );
+            if (hs.getFirstFooterSubrange() != null)
+                wordToTextConverter.processDocumentPart(doc,
+                        hs.getFirstFooterSubrange());
+            if (hs.getEvenFooterSubrange() != null)
+                wordToTextConverter.processDocumentPart(doc,
+                        hs.getEvenFooterSubrange());
+            if (hs.getOddFooterSubrange() != null)
+                wordToTextConverter.processDocumentPart(doc,
+                        hs.getOddFooterSubrange());
 
             return wordToTextConverter.getText();
-        }
-        catch ( Exception exc )
-        {
+        } catch (RuntimeException e) {
+            throw e;
+        } catch ( Exception exc ) {
             throw new RuntimeException( exc );
         }
     }
