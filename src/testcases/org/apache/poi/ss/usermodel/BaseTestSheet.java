@@ -1378,8 +1378,8 @@ public abstract class BaseTestSheet {
         s.autoSizeColumn((short)0);
         s.autoSizeColumn((short)1);
 
-        assertBetween("Date column width", s.getColumnWidth(0), 4750, 7200);
-        assertBetween("Date column width", s.getColumnWidth(1), 4750, 7200);
+        assertBetween("Date column width", s.getColumnWidth(0), 4750, 7300);
+        assertBetween("Date column width", s.getColumnWidth(1), 4750, 7300);
 
         wb.close();
     }
