@@ -59,14 +59,7 @@ import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.AutoFilter;
-import org.apache.poi.ss.usermodel.BaseTestSheet;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationConstraint;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.junit.Test;
@@ -691,42 +684,6 @@ public final class TestHSSFSheet extends BaseTestSheet {
         wb2.close();
         wb1.close();
     }
-    
-    @Test
-    public void autoSizeDate() throws IOException {
-       HSSFWorkbook wb = new HSSFWorkbook();
-       HSSFSheet s = wb.createSheet("Sheet1");
-       HSSFRow r = s.createRow(0);
-       r.createCell(0).setCellValue(1);
-       r.createCell(1).setCellValue(123456);
-       
-       // Will be sized fairly small
-       s.autoSizeColumn((short)0);
-       s.autoSizeColumn((short)1);
-       
-       // Size ranges due to different fonts on different machines
-       assertBetween("Single number column width", s.getColumnWidth(0), 350, 550); 
-       assertBetween("6 digit number column width", s.getColumnWidth(1), 1500, 2000);
-       
-       // Set a date format
-       HSSFCellStyle cs = wb.createCellStyle();
-       HSSFDataFormat f = wb.createDataFormat();
-       cs.setDataFormat(f.getFormat("yyyy-mm-dd MMMM hh:mm:ss"));
-       r.getCell(0).setCellStyle(cs);
-       r.getCell(1).setCellStyle(cs);
-       
-       assertTrue(DateUtil.isCellDateFormatted(r.getCell(0)));
-       assertTrue(DateUtil.isCellDateFormatted(r.getCell(1)));
-       
-       // Should get much bigger now
-       s.autoSizeColumn((short)0);
-       s.autoSizeColumn((short)1);
-
-       assertBetween("Date column width", s.getColumnWidth(0), 4750, 7000); 
-       assertBetween("Date column width", s.getColumnWidth(1), 4750, 7000);
-       
-       wb.close();
-    }
 
     /**
      * Setting ForceFormulaRecalculation on sheets
@@ -998,7 +955,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertEquals(8*20, cs.getFont(wbComplex).getFontHeight());
         assertEquals(10, cs.getFont(wbComplex).getColor());
         assertFalse(cs.getFont(wbComplex).getItalic());
-        assertEquals(HSSFFont.BOLDWEIGHT_BOLD, cs.getFont(wbComplex).getBoldweight());
+        assertTrue(cs.getFont(wbComplex).getBold());
         
         wbComplex.close();
         wbSimple.close();
