@@ -822,10 +822,23 @@ public class TestDataFormatter {
      */
     @Test
     public void testBug60031() {
-        // 23-08-2016 08:51:01 which is 42605.368761574071 as double will be parsed
+        // 23-08-2016 08:51:01 which is 42605.368761574071 as double was parsed
         // with format "yyyy-dd-MM HH:mm:ss" into "2016-23-51 08:51:01".
         DataFormatter dfUS = new DataFormatter(Locale.US);
         assertEquals("2016-23-08 08:51:01", dfUS.formatRawCellContents(42605.368761574071, -1, "yyyy-dd-MM HH:mm:ss"));
+        assertEquals("2016-23 08:51:01 08", dfUS.formatRawCellContents(42605.368761574071, -1, "yyyy-dd HH:mm:ss MM"));
         assertEquals("2017-12-01 January 09:54:33", dfUS.formatRawCellContents(42747.412892397523, -1, "yyyy-dd-MM MMMM HH:mm:ss"));
+        assertEquals("08", dfUS.formatRawCellContents(42605.368761574071, -1, "MM"));
+        assertEquals("01", dfUS.formatRawCellContents(42605.368761574071, -1, "ss"));
+
+        // From Excel help:
+        /*
+            The "m" or "mm" code must appear immediately after the "h" or"hh"
+            code or immediately before the "ss" code; otherwise, Microsoft
+            Excel displays the month instead of minutes."
+          */
+        assertEquals("08", dfUS.formatRawCellContents(42605.368761574071, -1, "mm"));
+        assertEquals("08:51", dfUS.formatRawCellContents(42605.368761574071, -1, "hh:mm"));
+        assertEquals("51:01", dfUS.formatRawCellContents(42605.368761574071, -1, "mm:ss"));
     }
 }
