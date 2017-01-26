@@ -158,7 +158,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     private final HtmlDocumentFacade htmlDocumentFacade;
 
-    private Element notes = null;
+    private Element notes;
 
     /**
      * Creates new instance of {@link WordToHtmlConverter}. Can be used for

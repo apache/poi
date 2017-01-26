@@ -2076,8 +2076,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *  formulas such as "[MyOtherWorkbook.xlsx]Sheet3!$A$5" to be added to the 
      *  file, for workbooks not already linked / referenced.
      *
+     *  Note: this is not implemented and thus currently throws an Exception stating this.
+     *
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
+     *
+     * @throws RuntimeException stating that this method is not implemented yet.
      */
     @Override
     @NotImplemented

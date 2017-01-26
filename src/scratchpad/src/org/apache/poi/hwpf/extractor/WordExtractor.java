@@ -96,7 +96,7 @@ public final class WordExtractor extends POIOLE2TextExtractor
         }
 
         // Process the first argument as a file
-        FileInputStream fin = new FileInputStream( args[0] );
+        InputStream fin = new FileInputStream( args[0] );
         WordExtractor extractor = new WordExtractor( fin );
         try {
         	System.out.println( extractor.getText() );

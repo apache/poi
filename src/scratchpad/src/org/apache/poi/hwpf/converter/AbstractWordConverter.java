@@ -1003,7 +1003,6 @@ public abstract class AbstractWordConverter
 
                 processEndnoteAutonumbered( doc, noteIndex, block,
                         noteTextRange );
-                return;
             }
         }
     }

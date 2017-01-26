@@ -48,7 +48,7 @@ public class HSSFColor implements Color {
 
     /**
      * Predefined HSSFColors with their given palette index (and an optional 2nd index)
-     * 
+     *
      * @since POI 3.16 beta 2
      */
     public enum HSSFColorPredefined {
@@ -140,7 +140,7 @@ public class HSSFColor implements Color {
         public String getHexString() {
             return color.getHexString();
         }
-        
+
         /**
          * @return (a copy of) the HSSFColor assigned to the enum
          */
@@ -211,7 +211,7 @@ public class HSSFColor implements Color {
      *
      * @return a Map containing all colors keyed by String gnumeric-like triplets
      */
-    public final static Map<String,HSSFColor> getTripletHash()
+    public static Map<String,HSSFColor> getTripletHash()
     {
         return createColorsByHexStringMap();
     }
@@ -231,7 +231,7 @@ public class HSSFColor implements Color {
 
     /**
      * Maps the Enums to the HSSFColor subclasses, in cases of user code evaluating the classname
-     * 
+     *
      * @deprecated in 3.16 - remove mapping when subclasses are removed and access
      *  HSSFColorPredfined.values() directly (but exclude AUTOMATIC)
      */

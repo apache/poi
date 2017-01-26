@@ -222,7 +222,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     private void checkNotPresent(Record rec) {
         if (rec != null) {
-            throw new RecordFormatException("Duplicate PageSettingsBlock record (sid=0x"
+            throw new org.apache.poi.util.RecordFormatException("Duplicate PageSettingsBlock record (sid=0x"
                     + Integer.toHexString(rec.getSid()) + ")");
         }
     }
@@ -614,7 +614,7 @@ public final class PageSettingsBlock extends RecordAggregate {
             throw new IllegalStateException("This page settings block already has a header/footer record");
         }
         if (rec.getSid() != HeaderFooterRecord.sid) {
-            throw new RecordFormatException("Unexpected header-footer record sid: 0x" + Integer.toHexString(rec.getSid()));
+            throw new org.apache.poi.util.RecordFormatException("Unexpected header-footer record sid: 0x" + Integer.toHexString(rec.getSid()));
         }
         _headerFooter = rec;
     }
@@ -647,7 +647,7 @@ public final class PageSettingsBlock extends RecordAggregate {
      *
      * @param rs the RecordStream to read from
      * 
-     * @throws  RecordFormatException if any PSB record encountered has the same type (sid) as
+     * @throws  org.apache.poi.util.RecordFormatException if any PSB record encountered has the same type (sid) as
      * a record that is already part of this PageSettingsBlock
      */
     public void addLateRecords(RecordStream rs) {

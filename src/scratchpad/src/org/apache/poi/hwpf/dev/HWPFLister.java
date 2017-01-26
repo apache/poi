@@ -392,8 +392,7 @@ public final class HWPFLister
             for ( char c : text.toCharArray() )
             {
                 if ( c < 30 )
-                    stringBuilder
-                            .append( "\\0x" + Integer.toHexString( c ) );
+                    stringBuilder.append("\\0x").append(Integer.toHexString(c));
                 else
                     stringBuilder.append( c );
             }
