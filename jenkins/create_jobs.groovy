@@ -35,6 +35,7 @@ def poijobs = [
                      '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
                      '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                      '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                     '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
                      '-Djava.locale.providers=JRE,CLDR'],
         skipcigame: true
     ],
