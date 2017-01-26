@@ -263,7 +263,7 @@ for more details about the DSL.</b>
                         antInstallation(defaultAnt)
                     }
                     ant {
-                        targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-main', 'test-ooxml', 'test-excelant', 'test-ooxml-lite', 'testcoveragereport'] + (poijob.properties ?: []))
+                        targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-all', 'testcoveragereport'] + (poijob.properties ?: []))
                         prop('coverage.enabled', true)
                         antInstallation(defaultAnt)
                     }
