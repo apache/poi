@@ -314,6 +314,7 @@ under the License.
     <property name="java9addopens2" value="-Dthis.is.a.dummy=true"/>
     <property name="java9addopens3" value="-Dthis.is.a.dummy=true"/>
     <property name="java9addopens4" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addopens5" value="-Dthis.is.a.dummy=true"/>
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
@@ -1268,6 +1269,7 @@ under the License.
                 <jvmarg value="${java9addopens2}" />
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
+                <jvmarg value="${java9addopens5}" />
                 <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
@@ -1333,6 +1335,7 @@ under the License.
                 <jvmarg value="${java9addopens2}" />
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
+                <jvmarg value="${java9addopens5}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1389,6 +1392,7 @@ under the License.
                 <jvmarg value="${java9addopens2}" />
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
+                <jvmarg value="${java9addopens5}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${scratchpad.reports.test}">
@@ -1435,6 +1439,7 @@ under the License.
                   <jvmarg value="${java9addopens2}" />
                   <jvmarg value="${java9addopens3}" />
                   <jvmarg value="${java9addopens4}" />
+                  <jvmarg value="${java9addopens5}" />
                   <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <jvmarg value="${file.leak.detector}" />
                   <formatter type="plain"/>
@@ -1467,6 +1472,7 @@ under the License.
                   <jvmarg value="${java9addopens2}" />
 				  <jvmarg value="${java9addopens3}" />
                   <jvmarg value="${java9addopens4}" />
+                  <jvmarg value="${java9addopens5}" />
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1516,6 +1522,7 @@ under the License.
                   <jvmarg value="${java9addopens2}" />
                   <jvmarg value="${java9addopens3}" />
                   <jvmarg value="${java9addopens4}" />
+                  <jvmarg value="${java9addopens5}" />
                   <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1570,6 +1577,7 @@ under the License.
                 <jvmarg value="${java9addopens2}" />
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
+                <jvmarg value="${java9addopens5}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${integration.reports.test}">
@@ -1628,6 +1636,7 @@ under the License.
             <jvmarg value="${java9addopens2}" />
             <jvmarg value="${java9addopens3}" />
             <jvmarg value="${java9addopens4}" />
+            <jvmarg value="${java9addopens5}" />
             <jvmarg value="${file.leak.detector}" />
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
@@ -1672,6 +1681,7 @@ under the License.
                 <jvmarg value="${java9addopens2}" />
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
+                <jvmarg value="${java9addopens5}" />
                 <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
