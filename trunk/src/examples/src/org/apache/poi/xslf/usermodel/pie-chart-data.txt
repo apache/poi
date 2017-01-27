@@ -1,0 +1,4 @@
+My Chart
+First 1.0
+Second 3.0
+Third 4.0

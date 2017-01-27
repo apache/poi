@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/testcases"/>
+	<classpathentry kind="src" path="src/resources/main"/>
+	<classpathentry kind="src" path="src/ooxml/java"/>
+	<classpathentry kind="src" path="src/ooxml/testcases"/>
+	<classpathentry kind="src" path="src/resources/ooxml"/>
+	<classpathentry kind="src" path="src/scratchpad/src"/>
+	<classpathentry kind="src" path="src/scratchpad/testcases"/>
+	<classpathentry kind="src" path="src/resources/scratchpad"/>
+	<classpathentry kind="src" path="src/contrib/poi-ruby/java"/>
+	<classpathentry kind="src" path="src/examples/src"/>
+	<classpathentry kind="src" path="src/excelant/java"/>
+	<classpathentry kind="src" path="src/excelant/testcases"/>
+	<classpathentry kind="src" path="src/excelant/resources"/>
+	<classpathentry kind="src" path="src/integrationtest"/>
+	<classpathentry kind="lib" path="lib/ant-1.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/ant-launcher-1.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="ooxml-lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="ooxml-lib/curvesapi-1.04.jar"/>
+	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-schemas-1.3.jar" sourcepath="ooxml-lib/ooxml-schemas-1.3-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-security-1.1.jar" sourcepath="ooxml-lib/ooxml-security-1.1-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry exported="true" kind="lib" path="compile-lib/slf4j-api-1.7.12.jar"/>
+	<classpathentry kind="lib" path="compile-lib/bcpkix-jdk15on-1.54.jar"/>
+	<classpathentry kind="lib" path="compile-lib/bcprov-ext-jdk15on-1.54.jar"/>
+	<classpathentry exported="true" kind="lib" path="compile-lib/xmlsec-2.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.10.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-collections4-4.1.jar"/>
+	<classpathentry kind="output" path="build/eclipse"/>
+</classpath>
