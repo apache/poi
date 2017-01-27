@@ -90,6 +90,14 @@ public class WorkbookUtil {
                 case '*':
                 case ']':
                 case '[':
+                case '\uff0f': // fullwidth solidus
+                case '\uff3c': // fullwidth reverse solidus
+                case '\uffe5': // fullwidth yen sign
+                case '\uff1f': // fullwidth question mark
+                case '\uff0a': // fullwidth asterisk
+                case '\uff3b': // fullwidth left square bracket
+                case '\uff3d': // fullwidth right square bracket
+                case '\uff1a': // fullwidth colon
                     result.setCharAt(i, replaceChar);
                     break;
                 case '\'':
@@ -147,6 +155,14 @@ public class WorkbookUtil {
                 case ']':
                 case '[':
                 case ':':
+                case '\uff0f': // fullwidth solidus
+                case '\uff3c': // fullwidth reverse solidus
+                case '\uffe5': // fullwidth yen sign
+                case '\uff1f': // fullwidth question mark
+                case '\uff0a': // fullwidth asterisk
+                case '\uff3b': // fullwidth left square bracket
+                case '\uff3d': // fullwidth right square bracket
+                case '\uff1a': // fullwidth colon
                     break;
                 default:
                     // all other chars OK
