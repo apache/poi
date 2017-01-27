@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>3.16-beta2-SNAPSHOT</version>
+        <version>3.16-beta3-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>poi-ooxml-schema-security</artifactId>
