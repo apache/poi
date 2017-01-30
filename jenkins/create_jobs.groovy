@@ -95,13 +95,13 @@ poijobs.each { poijob ->
         }
 
         def defaultDesc = '''
-<img src="http://poi.apache.org/resources/images/project-logo.jpg" />
+<img src="https://poi.apache.org/resources/images/project-logo.jpg" />
 <p>
 Apache POI - the Java API for Microsoft Documents
 </p>
 <p>
 <b>This is an automatically generated Job Config, do not edit it here!
-Instead change the Jenkins Job DSL at <a href="http://svn.apache.org/repos/asf/poi/trunk/jenkins">http://svn.apache.org/repos/asf/poi/trunk/jenkins</a>,
+Instead change the Jenkins Job DSL at <a href="https://svn.apache.org/repos/asf/poi/trunk/jenkins">https://svn.apache.org/repos/asf/poi/trunk/jenkins</a>,
 see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki">https://github.com/jenkinsci/job-dsl-plugin/wiki</a>
 for more details about the DSL.</b>
 </p>'''
