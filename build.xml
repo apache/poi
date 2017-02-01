@@ -2451,7 +2451,7 @@ under the License.
         </fail>
 
         <!-- verify that the release tag that we're about to create in release-prep1 does not already exist (no overwriting tags!) -->
-        <fail message="Cannot create release tag. https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG} already exists. Verify the requested release version.">
+        <fail message="Cannot create release tag. https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG} already exists. Verify the requested release version (${version.id}).">
             <condition>
                 <!-- FIXME: svnExists doesn't work with https here. -->
                 <svnExists refid="svn.settings" target="http://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}/"/>
