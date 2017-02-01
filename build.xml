@@ -2441,8 +2441,26 @@ under the License.
         />
     </target>
 
+    <target name="release-prep0" depends="-init-svn" description="check to make sure the release tag doesn't exist yet">
+        <!-- verify that svn username/password are valid ... -->
+        <fail message="Unable to connect to SVN repo. Verify apache-id username and password.">
+            <condition>
+                <!-- FIXME: svnExists doesn't work with https here. -->
+                <not><svnExists refid="svn.settings" target="http://svn.apache.org/repos/asf/poi/"/></not>
+            </condition>
+        </fail>
+
+        <!-- verify that the release tag that we're about to create in release-prep1 does not already exist (no overwriting tags!) -->
+        <fail message="Cannot create release tag. https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG} already exists. Verify the requested release version.">
+            <condition>
+                <!-- FIXME: svnExists doesn't work with https here. -->
+                <svnExists refid="svn.settings" target="http://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}/"/>
+            </condition>
+        </fail>
+    </target>
+
     <!-- experimental release preparation ... tbd. ... -->
-    <target name="release-prep1" depends="-init-svn" description="update the documentation and create the svn tag - needs Java7+">
+    <target name="release-prep1" depends="-init-svn,release-prep0" description="update the documentation and create the svn tag - needs Java7+">
         <local name="tstamp_rel"/>
         <local name="tstamp_next"/>
         <local name="rel_next"/>
