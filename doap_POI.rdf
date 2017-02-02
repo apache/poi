@@ -21,20 +21,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-  <Project rdf:about="http://poi.apache.org">
+  <Project rdf:about="https://poi.apache.org">
     <created>2006-01-26</created>
-    <license rdf:resource="http://spdx.org/licenses/Apache-2.0" />
+    <license rdf:resource="https://spdx.org/licenses/Apache-2.0" />
     <name>Apache POI</name>
-    <homepage rdf:resource="http://poi.apache.org" />
-    <asfext:pmc rdf:resource="http://poi.apache.org" />
+    <homepage rdf:resource="https://poi.apache.org" />
+    <asfext:pmc rdf:resource="https://poi.apache.org" />
     <shortdesc>Java API To Access Microsoft Document File Formats</shortdesc>
     <description>APIs for manipulating various file formats based upon Open Office XML (ECMA-376) and Microsoft's OLE 2 Compound Document formats using pure Java. Apache POI is your Java Excel, Word and PowerPoint solution. We have a complete API for porting other OOXML and OLE 2 Compound Document formats and welcome others to participate.</description>
-    <bug-database rdf:resource="http://issues.apache.org/bugzilla/buglist.cgi?product=POI" />
-    <mailing-list rdf:resource="http://poi.apache.org/mailinglists.html" />
-    <download-page rdf:resource="http://www.apache.org/dyn/closer.lua/poi/" />
+    <bug-database rdf:resource="https://issues.apache.org/bugzilla/buglist.cgi?product=POI" />
+    <mailing-list rdf:resource="https://poi.apache.org/mailinglists.html" />
+    <download-page rdf:resource="https://www.apache.org/dyn/closer.lua/poi/" />
     <programming-language>Java</programming-language>
-    <category rdf:resource="http://projects.apache.org/category/content" />
-    <category rdf:resource="http://projects.apache.org/category/library" />
+    <category rdf:resource="https://projects.apache.org/category/content" />
+    <category rdf:resource="https://projects.apache.org/category/library" />
     <release>
       <Version>
         <name>Apache POI 3.15</name>
@@ -128,8 +128,8 @@
     </release>
     <repository>
       <SVNRepository>
-        <location rdf:resource="http://svn.apache.org/repos/asf/poi/"/>
-        <browse rdf:resource="http://svn.apache.org/viewvc/poi/"/>
+        <location rdf:resource="https://svn.apache.org/repos/asf/poi/"/>
+        <browse rdf:resource="https://svn.apache.org/viewvc/poi/"/>
       </SVNRepository>
     </repository>
    <maintainer>
