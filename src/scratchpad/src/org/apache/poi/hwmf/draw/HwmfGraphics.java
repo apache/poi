@@ -338,13 +338,44 @@ public class HwmfGraphics {
         if (dx == null || dx.length == 0) {
             addAttributes(as, font);
         } else {
-            for (int i=0; i<len; i++) {
+            int[] dxNormed = dx;
+            //for multi-byte encodings (e.g. Shift_JIS), the byte length
+            //might not equal the string length().
+            //The x information is stored in dx[], an array parallel to the
+            //byte array text[].  dx[] stores the x info in the
+            //first byte of a multibyte character, but dx[] stores 0
+            //for the other bytes in that character.
+            //We need to map this information to the String offsets
+            //dx[0] = 13 text[0] = -125
+            //dx[1] = 0  text[1] = 118
+            //dx[2] = 14 text[2] = -125
+            //dx[3] = 0  text[3] = -115
+            // needs to be remapped as:
+            //dxNormed[0] = 13 textString.get(0) = U+30D7
+            //dxNormed[1] = 14 textString.get(1) = U+30ED
+            if (textString.length() != text.length) {
+                int codePoints = textString.codePointCount(0, textString.length());
+                dxNormed = new int[codePoints];
+                int dxPosition = 0;
+                for (int offset = 0; offset < textString.length(); ) {
+                    dxNormed[offset] = dx[dxPosition];
+                    int[] chars = new int[1];
+                    int cp = textString.codePointAt(offset);
+                    chars[0] = cp;
+                    //now figure out how many bytes it takes to encode that
+                    //code point in the charset
+                    int byteLength = new String(chars, 0, chars.length).getBytes(charset).length;
+                    dxPosition += byteLength;
+                    offset += Character.charCount(cp);
+                }
+            }
+            for (int i = 0; i < dxNormed.length; i++) {
                 addAttributes(as, font);
                 // Tracking works as a prefix/advance space on characters whereas
                 // dx[...] is the complete width of the current char
                 // therefore we need to add the additional/suffix width to the next char
-                if (i<len-1) {
-                    as.addAttribute(TextAttribute.TRACKING, (dx[i]-fontW)/fontH, i+1, i+2);
+                if (i < dxNormed.length - 1) {
+                    as.addAttribute(TextAttribute.TRACKING, (dxNormed[i] - fontW) / fontH, i + 1, i + 2);
                 }
             }
         }
