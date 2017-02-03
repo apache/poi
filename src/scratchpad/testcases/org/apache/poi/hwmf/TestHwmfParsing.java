@@ -222,4 +222,30 @@ public class TestHwmfParsing {
         assertTrue(txt.contains("\u0411\u0430\u043B\u0430\u043D\u0441"));
     }
 
+    @Test
+    @Ignore("If we decide we can use the common crawl file attached to Bug 60677, " +
+            "we can turn this back on")
+    public void testShift_JIS() throws Exception {
+        //TODO: move test file to framework and fix this
+        File f = new File("C:/data/file8.wmf");
+        HwmfPicture wmf = new HwmfPicture(new FileInputStream(f));
+
+        Charset charset = LocaleUtil.CHARSET_1252;
+        StringBuilder sb = new StringBuilder();
+        //this is pure hackery for specifying the font
+        //this happens to work on this test file, but you need to
+        //do what Graphics does by maintaining the stack, etc.!
+        for (HwmfRecord r : wmf.getRecords()) {
+            if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
+                HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
+                charset = (font.getCharSet().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharSet().getCharset();
+            }
+            if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
+                HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
+                sb.append(textOut.getText(charset)).append("\n");
+            }
+        }
+        String txt = sb.toString();
+        assertTrue(txt.contains("\u822A\u7A7A\u60C5\u5831\u696D\u52D9\u3078\u306E\uFF27\uFF29\uFF33"));
+    }
 }
