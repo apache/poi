@@ -903,6 +903,7 @@ public class TestBugs{
         assertEquals(section2NumColumns, section.getNumColumns());
     }
 
+    @Test
     public void testRegressionIn315beta2() {
         HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("cap.stanford.edu_profiles_viewbiosketch_facultyid=4009&name=m_maciver.doc");
         assertNotNull(hwpfDocument);
@@ -928,5 +929,11 @@ public class TestBugs{
         } finally {
             fs.close();
         }
+    }
+
+    @Test
+    public void testCommonCrawlRegression() throws IOException {
+        HWPFDocument document = HWPFTestDataSamples.openSampleFile("ca.kwsymphony.www_education_School_Concert_Seat_Booking_Form_2011-12.doc");
+        document.close();
     }
 }
