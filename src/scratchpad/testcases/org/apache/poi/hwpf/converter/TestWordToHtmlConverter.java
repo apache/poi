@@ -16,17 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertFalse;
-
-import java.io.StringWriter;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.PictureType;
@@ -34,53 +23,59 @@ import org.apache.poi.util.XMLHelper;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertFalse;
+
 /**
  * Test cases for {@link WordToHtmlConverter}
  */
-public class TestWordToHtmlConverter
-{
-    private static String getHtmlText( final String sampleFileName )
-            throws Exception
-    {
-        return getHtmlText( sampleFileName, false);
+public class TestWordToHtmlConverter {
+    private static String getHtmlText(final String sampleFileName) throws Exception {
+        return getHtmlText(sampleFileName, false);
     }
 
-    private static String getHtmlText( final String sampleFileName,
-            boolean emulatePictureStorage ) throws Exception
-    {
-        HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
-                .getDocumentInstance().openResourceAsStream( sampleFileName ));
+    private static String getHtmlText(final String sampleFileName,
+            boolean emulatePictureStorage) throws Exception {
+        HWPFDocument hwpfDocument = new HWPFDocument(POIDataSamples
+                .getDocumentInstance().openResourceAsStream(sampleFileName));
 
         Document newDocument = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument();
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
                 newDocument);
 
-        if ( emulatePictureStorage )
+        if (emulatePictureStorage)
         {
-            wordToHtmlConverter.setPicturesManager( new PicturesManager()
+            wordToHtmlConverter.setPicturesManager(new PicturesManager()
             {
                 @Override
-                public String savePicture( byte[] content,
+                public String savePicture(byte[] content,
                         PictureType pictureType, String suggestedName,
-                        float widthInches, float heightInches )
+                        float widthInches, float heightInches)
                 {
                     return suggestedName;
                 }
             });
         }
 
-        wordToHtmlConverter.processDocument( hwpfDocument);
+        wordToHtmlConverter.processDocument(hwpfDocument);
 
         StringWriter stringWriter = new StringWriter();
 
         Transformer transformer = TransformerFactory.newInstance()
                 .newTransformer();
-        transformer.setOutputProperty( OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8");
-        transformer.setOutputProperty( OutputKeys.METHOD, "html");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+        transformer.setOutputProperty(OutputKeys.METHOD, "html");
         transformer.transform(
-                new DOMSource( wordToHtmlConverter.getDocument() ),
-                new StreamResult( stringWriter ));
+                new DOMSource(wordToHtmlConverter.getDocument()),
+                new StreamResult(stringWriter));
 
         return stringWriter.toString();
     }
@@ -88,14 +83,14 @@ public class TestWordToHtmlConverter
     @Test
     public void testAIOOBTap() throws Exception
     {
-        String result = getHtmlText( "AIOOB-Tap.doc");
-        assertContains(result.substring( 0, 6000 ), "<table class=\"t1\">");
+        String result = getHtmlText("AIOOB-Tap.doc");
+        assertContains(result.substring(0, 6000), "<table class=\"t1\">");
     }
 
     @Test
     public void testBug33519() throws Exception
     {
-        String result = getHtmlText( "Bug33519.doc");
+        String result = getHtmlText("Bug33519.doc");
         assertContains(
                 result,
                 "\u041F\u043B\u0430\u043D\u0438\u043D\u0441\u043A\u0438 \u0442\u0443\u0440\u043E\u0432\u0435");
@@ -106,7 +101,7 @@ public class TestWordToHtmlConverter
     @Test
     public void testBug46610_2() throws Exception
     {
-        String result = getHtmlText( "Bug46610_2.doc");
+        String result = getHtmlText("Bug46610_2.doc");
         assertContains(
                 result,
                 "012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678");
@@ -115,7 +110,7 @@ public class TestWordToHtmlConverter
     @Test
     public void testBug46817() throws Exception
     {
-        String result = getHtmlText( "Bug46817.doc");
+        String result = getHtmlText("Bug46817.doc");
         final String substring = "<table class=\"t1\">";
         assertContains(result, substring);
     }
@@ -123,9 +118,9 @@ public class TestWordToHtmlConverter
     @Test
     public void testBug47286() throws Exception
     {
-        String result = getHtmlText( "Bug47286.doc");
+        String result = getHtmlText("Bug47286.doc");
 
-        assertFalse(result.contains( "FORMTEXT" ));
+        assertFalse(result.contains("FORMTEXT"));
 
         assertContains(result, "color:#4f6228;");
         assertContains(result, "Passport No and the date of expire");
@@ -135,13 +130,13 @@ public class TestWordToHtmlConverter
     @Test
     public void testBug48075() throws Exception
     {
-        getHtmlText( "Bug48075.doc");
+        getHtmlText("Bug48075.doc");
     }
 
     @Test
     public void testBug52583() throws Exception
     {
-        String result = getHtmlText( "Bug52583.doc");
+        String result = getHtmlText("Bug52583.doc");
         assertContains(
                 result,
                 "<select><option selected>riri</option><option>fifi</option><option>loulou</option></select>");
@@ -150,14 +145,14 @@ public class TestWordToHtmlConverter
     @Test
     public void testBug53182() throws Exception
     {
-        String result = getHtmlText( "Bug53182.doc");
-        assertFalse(result.contains( "italic" ));
+        String result = getHtmlText("Bug53182.doc");
+        assertFalse(result.contains("italic"));
     }
 
     @Test
     public void testDocumentProperties() throws Exception
     {
-        String result = getHtmlText( "documentProperties.doc");
+        String result = getHtmlText("documentProperties.doc");
 
         assertContains(result, "<title>This is document title</title>");
         assertContains(result,
@@ -167,7 +162,7 @@ public class TestWordToHtmlConverter
     @Test
     public void testEmailhyperlink() throws Exception
     {
-        String result = getHtmlText( "Bug47286.doc");
+        String result = getHtmlText("Bug47286.doc");
         final String substring = "provisastpet@mfa.gov.cy";
         assertContains(result, substring);
     }
@@ -175,21 +170,22 @@ public class TestWordToHtmlConverter
     @Test
     public void testEndnote() throws Exception
     {
-        String result = getHtmlText( "endingnote.doc");
+        String result = getHtmlText("endingnote.doc");
 
         assertContains(
                 result,
                 "<a class=\"a1 endnoteanchor\" href=\"#endnote_1\" name=\"endnote_back_1\">1</a>");
         assertContains(
-                result,
-                "<a class=\"a1 endnoteindex\" href=\"#endnote_back_1\" name=\"endnote_1\">1</a> <span");
+                // starting with JDK 9 such unimportant whitespaces may be trimmed
+                result.replace("</a> <span", "</a><span"),
+                "<a class=\"a1 endnoteindex\" href=\"#endnote_back_1\" name=\"endnote_1\">1</a><span");
         assertContains(result, "Ending note text");
     }
 
     @Test
     public void testEquation() throws Exception
     {
-        String result = getHtmlText( "equation.doc");
+        String result = getHtmlText("equation.doc");
 
         assertContains(result, "<!--Image link to '0.emf' can be here-->");
     }
@@ -197,7 +193,7 @@ public class TestWordToHtmlConverter
     @Test
     public void testHyperlink() throws Exception
     {
-        String result = getHtmlText( "hyperlink.doc");
+        String result = getHtmlText("hyperlink.doc");
 
         assertContains(result, "<span>Before text; </span><a ");
         assertContains(result,
@@ -208,13 +204,13 @@ public class TestWordToHtmlConverter
     @Test
     public void testInnerTable() throws Exception
     {
-        getHtmlText( "innertable.doc");
+        getHtmlText("innertable.doc");
     }
 
     @Test
     public void testListsMargins() throws Exception
     {
-        String result = getHtmlText( "lists-margins.doc");
+        String result = getHtmlText("lists-margins.doc");
 
         assertContains(result,
                 ".s1{display: inline-block; text-indent: 0; min-width: 0.4861111in;}");
@@ -231,13 +227,13 @@ public class TestWordToHtmlConverter
     @Test
     public void testO_kurs_doc() throws Exception
     {
-        getHtmlText( "o_kurs.doc");
+        getHtmlText("o_kurs.doc");
     }
 
     @Test
     public void testPageref() throws Exception
     {
-        String result = getHtmlText( "pageref.doc");
+        String result = getHtmlText("pageref.doc");
 
         assertContains(result, "<a href=\"#userref\">");
         assertContains(result, "<a name=\"userref\">");
@@ -247,7 +243,7 @@ public class TestWordToHtmlConverter
     @Test
     public void testPicture() throws Exception
     {
-        String result = getHtmlText( "picture.doc", true);
+        String result = getHtmlText("picture.doc", true);
 
         // picture
         assertContains(result, "src=\"0.emf\"");
@@ -262,7 +258,7 @@ public class TestWordToHtmlConverter
     @Test
     public void testPicturesEscher() throws Exception
     {
-        String result = getHtmlText( "pictures_escher.doc", true);
+        String result = getHtmlText("pictures_escher.doc", true);
         assertContains(result, "<img src=\"s0.PNG\">");
         assertContains(result, "<img src=\"s808.PNG\">");
     }
@@ -270,7 +266,7 @@ public class TestWordToHtmlConverter
     @Test
     public void testTableMerges() throws Exception
     {
-        String result = getHtmlText( "table-merges.doc");
+        String result = getHtmlText("table-merges.doc");
 
         assertContains(result, "<td class=\"td1\" colspan=\"3\">");
         assertContains(result, "<td class=\"td2\" colspan=\"2\">");
@@ -278,9 +274,9 @@ public class TestWordToHtmlConverter
 
     @Test
     public void testBug52420() throws Exception {
-        String result = getHtmlText( "52420.doc");
+        String result = getHtmlText("52420.doc");
 
-        assertFalse(result.contains( "FORMTEXT" ));
+        assertFalse(result.contains("FORMTEXT"));
 
         assertContains(result, "\u0417\u0410\u0414\u0410\u041d\u0418\u0415");
         assertContains(result, "\u041f\u0440\u0435\u043f\u043e\u0434\u0430\u0432\u0430\u0442\u0435\u043b\u044c");
