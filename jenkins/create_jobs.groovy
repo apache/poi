@@ -31,7 +31,7 @@ def poijobs = [
                      '-Djava9addmods=--add-modules=java.xml.bind',
                      '-Djavadoc9addmods=--add-modules=java.xml.bind',
                      '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                     '-Djava9addopens1=--add-opens=java.base/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                     '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
                      '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
                      '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                      '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
