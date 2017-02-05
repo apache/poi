@@ -28,7 +28,6 @@ import org.apache.poi.util.LittleEndian;
  * stored here.
  */
 public class EscherComplexProperty extends EscherProperty {
-    // TODO - make private and final
     private byte[] _complexData;
 
     /**
@@ -88,23 +87,17 @@ public class EscherComplexProperty extends EscherProperty {
 
     /**
      * Get the complex data value.
-     * 
+     *
      * @return the complex bytes
      */
     public byte[] getComplexData() {
         return _complexData;
     }
 
-    protected void resizeComplexData(int newSize, int bytesToKeep) {
-        if (newSize == _complexData.length) {
-            return;
-        }
-        byte[] newArray = new byte[newSize];
-        System.arraycopy(_complexData, 0, newArray, 0, Math.min(bytesToKeep, newSize));
-        _complexData = newArray;
+    protected void setComplexData(byte[] _complexData) {
+        this._complexData = _complexData;
     }
-    
-    
+
     /**
      * Determine whether this property is equal to another property.
      *
