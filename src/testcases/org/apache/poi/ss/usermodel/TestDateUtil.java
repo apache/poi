@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -91,5 +92,35 @@ public class TestDateUtil {
         assertEquals(expCal, actCal[1]);
         assertEquals(expCal, actCal[2]);
         assertEquals(expCal, actCal[3]);
+    }
+    
+    @Test
+    public void isADateFormat() {
+        // Cell content 2016-12-8 as an example
+        // Cell show "12/8/2016"
+        assertTrue(DateUtil.isADateFormat(14, "m/d/yy"));
+        // Cell show "Thursday, December 8, 2016"
+        assertTrue(DateUtil.isADateFormat(182, "[$-F800]dddd\\,\\ mmmm\\ dd\\,\\ yyyy"));
+        // Cell show "12/8"
+        assertTrue(DateUtil.isADateFormat(183, "m/d;@"));
+        // Cell show "12/08/16"
+        assertTrue(DateUtil.isADateFormat(184, "mm/dd/yy;@"));
+        // Cell show "8-Dec-16"
+        assertTrue(DateUtil.isADateFormat(185, "[$-409]d\\-mmm\\-yy;@"));
+        // Cell show "D-16"
+        assertTrue(DateUtil.isADateFormat(186, "[$-409]mmmmm\\-yy;@"));
+
+        // Cell show "2016年12月8日"
+        assertTrue(DateUtil.isADateFormat(165, "yyyy\"年\"m\"月\"d\"日\";@"));
+        // Cell show "2016年12月"
+        assertTrue(DateUtil.isADateFormat(164, "yyyy\"年\"m\"月\";@"));
+        // Cell show "12月8日"
+        assertTrue(DateUtil.isADateFormat(168, "m\"月\"d\"日\";@"));
+        // Cell show "十二月八日"
+        assertTrue(DateUtil.isADateFormat(181, "[DBNum1][$-404]m\"月\"d\"日\";@"));
+        // Cell show "贰零壹陆年壹拾贰月捌日"
+        assertTrue(DateUtil.isADateFormat(177, "[DBNum2][$-804]yyyy\"年\"m\"月\"d\"日\";@"));
+        // Cell show "２０１６年１２月８日"
+        assertTrue(DateUtil.isADateFormat(178, "[DBNum3][$-804]yyyy\"年\"m\"月\"d\"日\";@"));
     }
 }
