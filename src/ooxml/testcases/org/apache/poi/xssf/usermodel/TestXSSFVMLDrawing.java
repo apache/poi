@@ -16,18 +16,28 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.regex.Pattern;
 
-import com.microsoft.schemas.office.excel.STTrueFalseBlank;
 import org.apache.poi.POIDataSamples;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.junit.Test;
 
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.office.excel.STObjectType;
+import com.microsoft.schemas.office.excel.STTrueFalseBlank;
 import com.microsoft.schemas.office.office.CTShapeLayout;
 import com.microsoft.schemas.office.office.STConnectType;
 import com.microsoft.schemas.office.office.STInsetMode;
@@ -37,14 +47,10 @@ import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
 import com.microsoft.schemas.vml.STTrueFalse;
 
-import junit.framework.TestCase;
+public class TestXSSFVMLDrawing {
 
-/**
- * @author Yegor Kozlov
- */
-public class TestXSSFVMLDrawing extends TestCase {
-
-    public void testNew() throws Exception {
+    @Test
+    public void testNew() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         List<XmlObject> items = vml.getItems();
         assertEquals(2, items.size());
@@ -57,7 +63,7 @@ public class TestXSSFVMLDrawing extends TestCase {
         assertTrue(items.get(1) instanceof CTShapetype);
         CTShapetype type = (CTShapetype)items.get(1);
         assertEquals("21600,21600", type.getCoordsize());
-        assertEquals(202.0f, type.getSpt());
+        assertEquals(202.0f, type.getSpt(), 0);
         assertEquals("m,l,21600r21600,l21600,xe", type.getPath2());
         assertEquals("_x0000_t202", type.getId());
         assertEquals(STTrueFalse.T, type.getPathArray(0).getGradientshapeok());
@@ -102,7 +108,8 @@ public class TestXSSFVMLDrawing extends TestCase {
         assertTrue(items2.get(2) instanceof CTShape);
     }
 
-    public void testFindCommentShape() throws Exception {
+    @Test
+    public void testFindCommentShape() throws IOException, XmlException {
         
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml");
@@ -140,7 +147,8 @@ public class TestXSSFVMLDrawing extends TestCase {
         assertSame(sh_a1, newVml.findCommentShape(0, 1));
     }
 
-    public void testRemoveCommentShape() throws Exception {
+    @Test
+    public void testRemoveCommentShape() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml");
         try {
@@ -155,5 +163,23 @@ public class TestXSSFVMLDrawing extends TestCase {
         assertTrue(vml.removeCommentShape(0, 0));
         assertNull(vml.findCommentShape(0, 0));
 
+    }
+    
+    @Test
+    public void testEvilUnclosedBRFixing() throws IOException, XmlException {
+        XSSFVMLDrawing vml = new XSSFVMLDrawing();
+        InputStream stream = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("bug-60626.vml");
+        try {
+            vml.read(stream);
+        } finally {
+            stream.close();
+        }
+        Pattern p = Pattern.compile("<br/>");
+        int count = 0;
+        for (XmlObject xo : vml.getItems()) {
+            String split[] = p.split(xo.toString());
+            count += split.length-1;
+        }
+        assertEquals(16, count);
     }
 }

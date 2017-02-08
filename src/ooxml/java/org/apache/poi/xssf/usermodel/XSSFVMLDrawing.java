@@ -34,7 +34,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.DocumentHelper;
-import org.apache.poi.xssf.util.EvilUnclosedBRFixingInputStream;
+import org.apache.poi.util.ReplacingInputStream;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -124,7 +124,13 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
     protected void read(InputStream is) throws IOException, XmlException {
         Document doc;
         try {
-            doc = DocumentHelper.readDocument(new EvilUnclosedBRFixingInputStream(is));
+            /*
+             * This is a seriously sick fix for the fact that some .xlsx files contain raw bits
+             * of HTML, without being escaped or properly turned into XML.
+             * The result is that they contain things like &gt;br&lt;, which breaks the XML parsing.
+             * This very sick InputStream wrapper attempts to spot these go past, and fix them.
+             */
+            doc = DocumentHelper.readDocument(new ReplacingInputStream(is, "<br>", "<br/>"));
         } catch (SAXException e) {
             throw new XmlException(e.getMessage(), e);
         }
@@ -146,7 +152,9 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
                 String id = shape.getId();
                 if(id != null) {
                     Matcher m = ptrn_shapeId.matcher(id);
-                    if(m.find()) _shapeId = Math.max(_shapeId, Integer.parseInt(m.group(1)));
+                    if(m.find()) {
+                        _shapeId = Math.max(_shapeId, Integer.parseInt(m.group(1)));
+                    }
                 }
                 _items.add(shape);
             } else {
