@@ -427,8 +427,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         return cell.getCellFormula();
     }
 
-    // This test is written as expected-to-fail and should be rewritten
-    // as expected-to-pass when the bug is fixed.
+    // bug 59983:  Wrong update of shared formulas after shiftRow
     @Test
     public void testSharedFormulas() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
@@ -437,17 +436,44 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D5"));
         assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
 
+        assertEquals("SUM(C3:C5)", getCellFormula(sheet, "C6"));
+        assertEquals("SUM(D3:D5)", getCellFormula(sheet, "D6"));
+        assertEquals("SUM(E3:E5)", getCellFormula(sheet, "E6"));
+
         sheet.shiftRows(3, sheet.getLastRowNum(), 1);
-        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
-        try {
-            assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
-            assertEquals("SUM(D2:D5)", getCellFormula(sheet, "D6"));
-            assertEquals("SUM(E2:E5)", getCellFormula(sheet, "E6"));
-            testPassesNow(59983);
-        } catch (AssertionError e) {
-            skipTest(e);
-        }
-        
+
+        assertEquals("SUM(C2:C5)", getCellFormula(sheet, "C6"));
+        assertEquals("SUM(D2:D5)", getCellFormula(sheet, "D6"));
+        assertEquals("SUM(E2:E5)", getCellFormula(sheet, "E6"));
+
+        assertEquals("SUM(C3:C6)", getCellFormula(sheet, "C7"));
+        assertEquals("SUM(D3:D6)", getCellFormula(sheet, "D7"));
+        assertEquals("SUM(E3:E6)", getCellFormula(sheet, "E7"));
+        wb.close();
+    }
+
+    // bug 59983:  Wrong update of shared formulas after shiftRow
+    @Test
+    public void testShiftSharedFormulas() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C5"));
+        assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D5"));
+        assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E5"));
+
+        assertEquals("SUM(C3:C5)", getCellFormula(sheet, "C6"));
+        assertEquals("SUM(D3:D5)", getCellFormula(sheet, "D6"));
+        assertEquals("SUM(E3:E5)", getCellFormula(sheet, "E6"));
+
+        sheet.shiftRows(sheet.getFirstRowNum(), 4, -1);
+
+        assertEquals("SUM(C1:C3)", getCellFormula(sheet, "C4"));
+        assertEquals("SUM(D1:D3)", getCellFormula(sheet, "D4"));
+        assertEquals("SUM(E1:E3)", getCellFormula(sheet, "E4"));
+
+        assertEquals("SUM(C2:C4)", getCellFormula(sheet, "C6"));
+        assertEquals("SUM(D2:D4)", getCellFormula(sheet, "D6"));
+        assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E6"));
         wb.close();
     }
     

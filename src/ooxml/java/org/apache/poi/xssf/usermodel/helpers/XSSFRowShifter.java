@@ -142,19 +142,24 @@ public final class XSSFRowShifter extends RowShifter {
                             int si = (int)f.getSi();
                             CTCellFormula sf = sheet.getSharedFormula(si);
                             sf.setStringValue(shiftedFormula);
+                            updateRefInCTCellFormula(row, shifter, sf);
                         }
                     }
 
                 }
 
                 //Range of cells which the formula applies to.
-                if (f.isSetRef()) {
-                    String ref = f.getRef();
-                    String shiftedRef = shiftFormula(row, ref, shifter);
-                    if (shiftedRef != null) f.setRef(shiftedRef);
-                }
+                updateRefInCTCellFormula(row, shifter, f);
             }
 
+        }
+    }
+
+    private void updateRefInCTCellFormula(Row row, FormulaShifter shifter, CTCellFormula f) {
+        if (f.isSetRef()) { //Range of cells which the formula applies to.
+            String ref = f.getRef();
+            String shiftedRef = shiftFormula(row, ref, shifter);
+            if (shiftedRef != null) f.setRef(shiftedRef);
         }
     }
 
