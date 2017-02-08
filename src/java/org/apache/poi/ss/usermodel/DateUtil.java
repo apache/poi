@@ -49,9 +49,13 @@ public class DateUtil {
     private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
-    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/,. :\"\\\\]+0*[ampAMP/]*$");
+    // add "\u5e74 \u6708 \u65e5"（年月日） for Chinese/Japanese date format:2017年2月7日
+    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0*[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
+    
+    // for format which start with "[DBNum1]" or "[DBNum2]" or "[DBNum3]" could be a Chinese date
+    private static final Pattern date_ptrn5 = Pattern.compile("^\\[DBNum(1|2|3)\\]");
 
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
@@ -426,7 +430,9 @@ public class DateUtil {
             cache(formatString, formatIndex, true);
             return true;
         }
-
+        // If it starts with [DBNum1] or [DBNum2] or [DBNum3]
+        // then it could be a Chinese date 
+        fs = date_ptrn5.matcher(fs).replaceAll("");
         // If it starts with [$-...], then could be a date, but
         //  who knows what that starting bit is all about
         fs = date_ptrn1.matcher(fs).replaceAll("");
