@@ -72,7 +72,7 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin 
 	apply plugin: 'me.champeau.gradle.japicmp'
         
-	version = '3.16-beta2'
+	version = '3.16-beta3'
 	ext {
 		japicmpversion = '3.15'
 	}
