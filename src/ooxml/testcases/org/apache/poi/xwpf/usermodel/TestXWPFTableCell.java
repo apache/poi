@@ -110,12 +110,14 @@ public class TestXWPFTableCell {
         List<XWPFTableRow> tableRows = table.getRows();
         assertEquals(2, tableRows.size());
 
-        assertEquals(XWPFVertAlign.TOP, tableRows.get(0).getCell(0).getVerticalAlignment());
+        assertNull(tableRows.get(0).getCell(0).getVerticalAlignment());
         assertEquals(XWPFVertAlign.BOTTOM, tableRows.get(0).getCell(1).getVerticalAlignment());
         assertEquals(XWPFVertAlign.CENTER, tableRows.get(1).getCell(0).getVerticalAlignment());
-        assertEquals(XWPFVertAlign.TOP, tableRows.get(1).getCell(1).getVerticalAlignment());
+        assertNull(tableRows.get(1).getCell(1).getVerticalAlignment()); // should return null since alignment isn't set
     }
 
+    // This is not a very useful test as written. It is not worth the execution time for a unit test
+    @Ignore
     @Test
     public void testCellVerticalAlignShouldNotThrowNPE() throws Exception {
         XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("TestTableCellAlign.docx");
@@ -125,7 +127,8 @@ public class TestXWPFTableCell {
             for (XWPFTableRow tableRow : tableRows) {
                 List<XWPFTableCell> tableCells = tableRow.getTableCells();
                 for (XWPFTableCell tableCell : tableCells) {
-                    assertNotNull(tableCell.getVerticalAlignment());
+                    // getVerticalAlignment should return either an XWPFVertAlign enum or null if not set
+                    tableCell.getVerticalAlignment();
                 }
             }
         }
