@@ -17,94 +17,78 @@
 
 package org.apache.poi.xssf.util;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
 
-import junit.framework.TestCase;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ReplacingInputStream;
+import org.junit.Test;
 
-public final class TestEvilUnclosedBRFixingInputStream extends TestCase {
-   public void testOK() throws Exception {
-      byte[] ok = "<p><div>Hello There!</div> <div>Tags!</div></p>".getBytes("UTF-8");
-      
-      EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(
-            new ByteArrayInputStream(ok)
-      );
-      
-      ByteArrayOutputStream bout = new ByteArrayOutputStream();
-      boolean going = true;
-      while(going) {
-         byte[] b = new byte[1024];
-         int r = inp.read(b);
-         if(r > 0) {
-            bout.write(b, 0, r);
-         } else {
-            going = false;
-         }
-      }
-      
-      byte[] result = bout.toByteArray();
-      assertEquals(ok, result);
-   }
-   
-   public void testProblem() throws Exception {
-      byte[] orig = "<p><div>Hello<br>There!</div> <div>Tags!</div></p>".getBytes("UTF-8");
-      byte[] fixed = "<p><div>Hello<br/>There!</div> <div>Tags!</div></p>".getBytes("UTF-8");
-      
-      EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(
-            new ByteArrayInputStream(orig)
-      );
-      
-      ByteArrayOutputStream bout = new ByteArrayOutputStream();
-      boolean going = true;
-      while(going) {
-         byte[] b = new byte[1024];
-         int r = inp.read(b);
-         if(r > 0) {
-            bout.write(b, 0, r);
-         } else {
-            going = false;
-         }
-      }
-      
-      byte[] result = bout.toByteArray();
-      assertEquals(fixed, result);
-   }
-   
-   /**
-    * Checks that we can copy with br tags around the buffer boundaries
-    */
-   public void testBufferSize() throws Exception {
-      byte[] orig = "<p><div>Hello<br> <br>There!</div> <div>Tags!<br><br></div></p>".getBytes("UTF-8");
-      byte[] fixed = "<p><div>Hello<br/> <br/>There!</div> <div>Tags!<br/><br/></div></p>".getBytes("UTF-8");
-      
-      // Vary the buffer size, so that we can end up with the br in the
-      //  overflow or only part in the buffer
-      for(int i=5; i<orig.length; i++) {
-         EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(
-               new ByteArrayInputStream(orig)
-         );
-         
-         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-         boolean going = true;
-         while(going) {
-            byte[] b = new byte[i];
-            int r = inp.read(b);
-            if(r > 0) {
-               bout.write(b, 0, r);
-            } else {
-               going = false;
+public final class TestEvilUnclosedBRFixingInputStream {
+
+    static class EvilUnclosedBRFixingInputStream extends ReplacingInputStream {
+        public EvilUnclosedBRFixingInputStream(byte[] source) {
+            super(new ByteArrayInputStream(source), "<br>", "<br/>");
+        }
+    }
+
+    @Test
+    public void testOK() throws IOException {
+        byte[] ok = getBytes("<p><div>Hello There!</div> <div>Tags!</div></p>");
+
+        EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(ok);
+
+        assertArrayEquals(ok, IOUtils.toByteArray(inp));
+        inp.close();
+    }
+
+    @Test
+    public void testProblem() throws IOException {
+        byte[] orig = getBytes("<p><div>Hello<br>There!</div> <div>Tags!</div></p>");
+        byte[] fixed = getBytes("<p><div>Hello<br/>There!</div> <div>Tags!</div></p>");
+
+        EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(orig);
+
+        assertArrayEquals(fixed, IOUtils.toByteArray(inp));
+        inp.close();
+    }
+
+    /**
+     * Checks that we can copy with br tags around the buffer boundaries
+     */
+    @Test
+    public void testBufferSize() throws IOException {
+        byte[] orig = getBytes("<p><div>Hello<br> <br>There!</div> <div>Tags!<br><br></div></p>");
+        byte[] fixed = getBytes("<p><div>Hello<br/> <br/>There!</div> <div>Tags!<br/><br/></div></p>");
+
+        // Vary the buffer size, so that we can end up with the br in the
+        //  overflow or only part in the buffer
+        for(int i=5; i<orig.length; i++) {
+            EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(orig);
+
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            boolean going = true;
+            while(going) {
+                byte[] b = new byte[i];
+                int r = inp.read(b);
+                if(r > 0) {
+                    bout.write(b, 0, r);
+                } else {
+                    going = false;
+                }
             }
-         }
-         
-         byte[] result = bout.toByteArray();
-         assertEquals(fixed, result);
-      }
-   }
 
-   protected void assertEquals(byte[] a, byte[] b) {
-      assertEquals(a.length, b.length);
-      for(int i=0; i<a.length; i++) {
-         assertEquals("Wrong byte at index " + i, a[i], b[i]);
-      }
-   }
+            byte[] result = bout.toByteArray();
+            assertArrayEquals(fixed, result);
+            inp.close();
+        }
+    }
+
+    private static byte[] getBytes(String str) {
+        return str.getBytes(Charset.forName("UTF-8"));
+    }
 }
