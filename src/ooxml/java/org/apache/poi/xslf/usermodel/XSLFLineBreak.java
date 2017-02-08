@@ -19,20 +19,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 
 class XSLFLineBreak extends XSLFTextRun {
-    private final CTTextCharacterProperties _brProps;
-
-    XSLFLineBreak(CTRegularTextRun r, XSLFTextParagraph p, CTTextCharacterProperties brProps){
+    protected XSLFLineBreak(CTTextLineBreak r, XSLFTextParagraph p) {
         super(r, p);
-        _brProps = brProps;
-    }
-
-    @Override
-    protected CTTextCharacterProperties getRPr(boolean create){
-        return _brProps;
     }
 
     public void setText(String text){

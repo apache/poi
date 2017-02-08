@@ -17,23 +17,21 @@
 
 package org.apache.poi.hslf.record;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * A TextCharsAtom (type 4000). Holds text in byte swapped unicode form.
  * The trailing return character is always stripped from this
- *
- * @author Nick Burch
  */
 
-public final class TextCharsAtom extends RecordAtom
-{
+public final class TextCharsAtom extends RecordAtom {
+    public static final long _type = RecordTypes.TextCharsAtom.typeID;
 	private byte[] _header;
-	private static long _type = RecordTypes.TextCharsAtom.typeID;
 
 	/** The bytes that make up the text */
 	private byte[] _text;
@@ -83,13 +81,15 @@ public final class TextCharsAtom extends RecordAtom
 	/**
 	 * We are of type 4000
 	 */
-	public long getRecordType() { return _type; }
+	@Override
+    public long getRecordType() { return _type; }
 
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		// Header - size or type unchanged
 		out.write(_header);
 
@@ -101,7 +101,8 @@ public final class TextCharsAtom extends RecordAtom
 	 * dump debug info; use getText() to return a string
 	 * representation of the atom
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
         StringBuffer out = new StringBuffer();
         out.append( "TextCharsAtom:\n");
 		out.append( HexDump.dump(_text, 0, 0) );

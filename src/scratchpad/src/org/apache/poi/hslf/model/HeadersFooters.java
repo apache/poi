@@ -21,13 +21,14 @@ import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.HeadersFootersAtom;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SheetContainer;
 import org.apache.poi.hslf.usermodel.HSLFSheet;
+import org.apache.poi.hslf.usermodel.HSLFSimpleShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
+import org.apache.poi.sl.usermodel.Placeholder;
 
 /**
  * Header / Footer settings.
@@ -87,7 +88,7 @@ public final class HeadersFooters {
      */
     public String getHeaderText(){
         CString cs = _container == null ? null : _container.getHeaderAtom();
-        return getPlaceholderText(OEPlaceholderAtom.MasterHeader, cs);
+        return getPlaceholderText(Placeholder.HEADER, cs);
     }
 
     /**
@@ -112,7 +113,7 @@ public final class HeadersFooters {
      */
     public String getFooterText(){
         CString cs = _container == null ? null : _container.getFooterAtom();
-        return getPlaceholderText(OEPlaceholderAtom.MasterFooter, cs);
+        return getPlaceholderText(Placeholder.FOOTER, cs);
     }
 
     /**
@@ -137,7 +138,7 @@ public final class HeadersFooters {
      */
     public String getDateTimeText(){
         CString cs = _container == null ? null : _container.getUserDateAtom();
-        return getPlaceholderText(OEPlaceholderAtom.MasterDate, cs);
+        return getPlaceholderText(Placeholder.DATETIME, cs);
     }
 
     /**
@@ -160,7 +161,7 @@ public final class HeadersFooters {
      * whether the footer text is displayed.
      */
     public boolean isFooterVisible(){
-        return isVisible(HeadersFootersAtom.fHasFooter, OEPlaceholderAtom.MasterFooter);
+        return isVisible(HeadersFootersAtom.fHasFooter, Placeholder.FOOTER);
     }
 
     /**
@@ -174,7 +175,7 @@ public final class HeadersFooters {
      * whether the header text is displayed.
      */
     public boolean isHeaderVisible(){
-        return isVisible(HeadersFootersAtom.fHasHeader, OEPlaceholderAtom.MasterHeader);
+        return isVisible(HeadersFootersAtom.fHasHeader, Placeholder.HEADER);
     }
 
     /**
@@ -188,7 +189,7 @@ public final class HeadersFooters {
      * whether the date is displayed in the footer.
      */
     public boolean isDateTimeVisible(){
-        return isVisible(HeadersFootersAtom.fHasDate, OEPlaceholderAtom.MasterDate);
+        return isVisible(HeadersFootersAtom.fHasDate, Placeholder.DATETIME);
     }
 
     /**
@@ -202,7 +203,7 @@ public final class HeadersFooters {
      * whether the custom user date is used instead of today's date.
      */
     public boolean isUserDateVisible(){
-        return isVisible(HeadersFootersAtom.fHasUserDate, OEPlaceholderAtom.MasterDate);
+        return isVisible(HeadersFootersAtom.fHasUserDate, Placeholder.DATETIME);
     }
 
     /**
@@ -216,7 +217,7 @@ public final class HeadersFooters {
      * whether the slide number is displayed in the footer.
      */
     public boolean isSlideNumberVisible(){
-        return isVisible(HeadersFootersAtom.fHasSlideNumber, OEPlaceholderAtom.MasterSlideNumber);
+        return isVisible(HeadersFootersAtom.fHasSlideNumber, Placeholder.SLIDE_NUMBER);
     }
 
     /**
@@ -244,31 +245,29 @@ public final class HeadersFooters {
         _container.getHeadersFootersAtom().setFormatId(formatId);
     }
 
-    private boolean isVisible(int flag, int placeholderId){
+    private boolean isVisible(int flag, Placeholder placeholderId){
         boolean visible;
         if(_ppt2007){
-            HSLFTextShape placeholder = _sheet.getPlaceholder(placeholderId);
-            visible = placeholder != null && placeholder.getText() != null;
+            HSLFSimpleShape ss = _sheet.getPlaceholder(placeholderId);
+            visible = ss instanceof HSLFTextShape && ((HSLFTextShape)ss).getText() != null;
         } else {
             visible = _container.getHeadersFootersAtom().getFlag(flag);
         }
         return visible;
     }
 
-    private String getPlaceholderText(int placeholderId, CString cs){
-        String text = null;
+    private String getPlaceholderText(Placeholder ph, CString cs) {
+        String text;
         if (_ppt2007) {
-            HSLFTextShape placeholder = _sheet.getPlaceholder(placeholderId);
-            if (placeholder != null) {
-                text = placeholder.getText();
-            }
+            HSLFSimpleShape ss = _sheet.getPlaceholder(ph);
+            text = (ss instanceof HSLFTextShape) ? ((HSLFTextShape)ss).getText() : null;
 
             // default text in master placeholders is not visible
             if("*".equals(text)) {
                 text = null;
             }
         } else {
-            text = cs == null ? null : cs.getText();
+            text = (cs == null) ? null : cs.getText();
         }
         return text;
     }

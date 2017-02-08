@@ -27,14 +27,11 @@ import org.apache.poi.util.LittleEndian;
  * A TextHeaderAtom  (type 3999). Holds information on what kind of
  *  text is contained in the TextBytesAtom / TextCharsAtom that follows
  *  straight after
- *
- * @author Nick Burch
  */
 
-public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
-{
+public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecord {
+    public static final long _type = RecordTypes.TextHeaderAtom.typeID;
 	private byte[] _header;
-	private static long _type = RecordTypes.TextHeaderAtom.typeID;
 	private RecordContainer parentRecord;
 
 	public static final int TITLE_TYPE = 0;

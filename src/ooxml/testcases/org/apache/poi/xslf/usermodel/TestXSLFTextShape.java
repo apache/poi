@@ -714,7 +714,7 @@ public class TestXSLFTextShape {
 
         // level 5: text properties are defined in the text run
         CTTextParagraphProperties lv5PPr = paragraph.getXmlObject().addNewPPr();
-        CTTextCharacterProperties lv5CPr = textRun.getXmlObject().getRPr();
+        CTTextCharacterProperties lv5CPr = textRun.getRPr(false);
         lv5CPr.setSz(3600);
         assertEquals(36.0, textRun.getFontSize(), 0);
         lv5CPr.addNewLatin().setTypeface("Calibri");
@@ -899,11 +899,11 @@ public class TestXSLFTextShape {
 
         // level 5: text properties are defined in the text run
         lv1PPr = p1.getXmlObject().isSetPPr() ? p1.getXmlObject().getPPr() : p1.getXmlObject().addNewPPr();
-        lv1CPr = r1.getXmlObject().getRPr();
+        lv1CPr = r1.getRPr(false);
         lv2PPr = p2.getXmlObject().isSetPPr() ? p2.getXmlObject().getPPr() : p2.getXmlObject().addNewPPr();
-        lv2CPr = r2.getXmlObject().getRPr();
+        lv2CPr = r2.getRPr(false);
         lv3PPr = p3.getXmlObject().isSetPPr() ? p3.getXmlObject().getPPr() : p3.getXmlObject().addNewPPr();
-        lv3CPr = r3.getXmlObject().getRPr();
+        lv3CPr = r3.getRPr(false);
 
         lv1CPr.setSz(3600);
         assertEquals(36.0, r1.getFontSize(), 0);

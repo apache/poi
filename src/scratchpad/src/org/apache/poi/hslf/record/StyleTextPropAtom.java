@@ -42,15 +42,11 @@ import org.apache.poi.util.POILogger;
  *  the style applies to, and what style elements make up the style (another
  *  list, this time of TextProps). Each TextProp has a value, which somehow
  *  encapsulates a property of the style
- *
- * @author Nick Burch
- * @author Yegor Kozlov
  */
 
-public final class StyleTextPropAtom extends RecordAtom
-{
+public final class StyleTextPropAtom extends RecordAtom {
+    public static final long _type = RecordTypes.StyleTextPropAtom.typeID;
     private byte[] _header;
-    private static final long _type = RecordTypes.StyleTextPropAtom.typeID;
     private byte[] reserved;
 
     private byte[] rawContents; // Holds the contents between write-outs

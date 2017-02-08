@@ -20,6 +20,7 @@ package org.apache.poi.sl.usermodel;
 import java.awt.Color;
 
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.util.Internal;
 
 /**
  * Some text.
@@ -29,6 +30,10 @@ public interface TextRun {
         NONE,
         SMALL,
         ALL
+    }
+    
+    enum FieldType {
+        SLIDE_NUMBER, DATE_TIME
     }
 
     String getRawText();
@@ -176,4 +181,12 @@ public interface TextRun {
      * @since POI 3.14-Beta2
      */
     Hyperlink<?,?> createHyperlink();
+    
+    /**
+     * Experimental method to determine the field type, e.g. slide number
+     *
+     * @return the field type or {@code null} if text run is not a field
+     */
+    @Internal
+    FieldType getFieldType();
 }

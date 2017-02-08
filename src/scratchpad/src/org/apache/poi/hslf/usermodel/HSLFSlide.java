@@ -36,6 +36,7 @@ import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SSSlideInfoAtom;
 import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.SlideAtomLayout.SlideLayoutType;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.StyleTextProp9Atom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
@@ -500,5 +501,28 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     @Override
     public boolean getFollowMasterGraphics() {
         return getFollowMasterObjects();
+    }
+
+    @Override
+    public boolean getDisplayPlaceholder(Placeholder placeholder) {
+        HeadersFooters hf = getHeadersFooters();
+        SlideLayoutType slt =  getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType();
+        boolean isTitle =
+            (slt == SlideLayoutType.TITLE_SLIDE || slt == SlideLayoutType.TITLE_ONLY || slt == SlideLayoutType.MASTER_TITLE);
+        if (hf != null) {
+            switch (placeholder) {
+            case DATETIME:
+                return hf.isDateTimeVisible() && !isTitle;
+            case SLIDE_NUMBER:
+                return hf.isSlideNumberVisible() && !isTitle;
+            case HEADER:
+                return hf.isHeaderVisible() && !isTitle;
+            case FOOTER:
+                return hf.isFooterVisible() && !isTitle;
+            default:
+                break;    
+            }
+        }
+        return false;
     }
 }

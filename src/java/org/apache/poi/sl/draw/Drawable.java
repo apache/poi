@@ -130,6 +130,12 @@ public interface Drawable {
     DrawableHint GSAVE = new DrawableHint(10);
     DrawableHint GRESTORE = new DrawableHint(11);
     
+    /**
+     * The Common SL Draw API works sometimes cascading, but there are places
+     * where the current slide context need to be evaluated, e.g. when slide numbers
+     * are printed. In this situation we need to have a way to access the current slide
+     */
+    DrawableHint CURRENT_SLIDE = new DrawableHint(12);
     
     
     /**

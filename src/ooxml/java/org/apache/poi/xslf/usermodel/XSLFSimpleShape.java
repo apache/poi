@@ -121,6 +121,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
     protected CTTransform2D getXfrm(boolean create) {
         PropertyFetcher<CTTransform2D> fetcher = new PropertyFetcher<CTTransform2D>() {
+            @Override
             public boolean fetch(XSLFShape shape) {
                 XmlObject xo = shape.getShapeProperties();
                 if (xo instanceof CTShapeProperties && ((CTShapeProperties)xo).isSetXfrm()) {
@@ -234,20 +235,32 @@ public abstract class XSLFSimpleShape extends XSLFShape
      */
     CTLineProperties getDefaultLineProperties() {
         CTShapeStyle style = getSpStyle();
-        if (style == null) return null;
+        if (style == null) {
+            return null;
+        }
         CTStyleMatrixReference lnRef = style.getLnRef();
-        if (lnRef == null) return null;
+        if (lnRef == null) {
+            return null;
+        }
         // 1-based index of a line style within the style matrix
         int idx = (int)lnRef.getIdx();
 
         XSLFTheme theme = getSheet().getTheme();
-        if (theme == null) return null;
+        if (theme == null) {
+            return null;
+        }
         CTBaseStyles styles = theme.getXmlObject().getThemeElements();
-        if (styles == null) return null;
+        if (styles == null) {
+            return null;
+        }
         CTStyleMatrix styleMatrix = styles.getFmtScheme();
-        if (styleMatrix == null) return null;
+        if (styleMatrix == null) {
+            return null;
+        }
         CTLineStyleList lineStyles = styleMatrix.getLnStyleLst();
-        if (lineStyles == null || lineStyles.sizeOfLnArray() < idx) return null;
+        if (lineStyles == null || lineStyles.sizeOfLnArray() < idx) {
+            return null;
+        }
 
         return lineStyles.getLnArray(idx - 1);
     }
@@ -301,12 +314,14 @@ public abstract class XSLFSimpleShape extends XSLFShape
     protected PaintStyle getLinePaint() {
         XSLFSheet sheet = getSheet();
         final XSLFTheme theme = sheet.getTheme();
+        final boolean hasPlaceholder = getPlaceholder() != null;
         PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
+            @Override
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties spPr = getLn(shape, false);
                 XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(spPr);
                 PackagePart pp = shape.getSheet().getPackagePart();
-                PaintStyle paint = selectPaint(fp, null, pp, theme);
+                PaintStyle paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
                 if (paint != null) {
                     setValue(paint);
                     return true;
@@ -315,7 +330,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 CTShapeStyle style = shape.getSpStyle();
                 if (style != null) {
                     fp = XSLFPropertiesDelegate.getFillDelegate(style.getLnRef());
-                    paint = selectPaint(fp, null, pp, theme);
+                    paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
                 }
                 if (paint != null) {
                     setValue(paint);
@@ -327,11 +342,15 @@ public abstract class XSLFSimpleShape extends XSLFShape
         fetchShapeProperty(fetcher);
 
         PaintStyle paint = fetcher.getValue();
-        if (paint != null) return paint;
+        if (paint != null) {
+            return paint;
+        }
 
         // line color was not found, check if it is defined in the theme
         CTShapeStyle style = getSpStyle();
-        if (style == null) return null;
+        if (style == null) {
+            return null;
+        }
 
         // get a reference to a line style within the style matrix.
         CTStyleMatrixReference lnRef = style.getLnRef();
@@ -341,7 +360,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             CTLineProperties props = theme.getXmlObject().getThemeElements().getFmtScheme().getLnStyleLst().getLnArray(idx - 1);
             XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
             PackagePart pp = sheet.getPackagePart();
-            paint = selectPaint(fp, phClr, pp, theme);
+            paint = selectPaint(fp, phClr, pp, theme, hasPlaceholder);
         }
 
         return paint;
@@ -387,6 +406,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      */
     public double getLineWidth() {
         PropertyFetcher<Double> fetcher = new PropertyFetcher<Double>() {
+            @Override
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties ln = getLn(shape, false);
                 if (ln != null) {
@@ -409,7 +429,9 @@ public abstract class XSLFSimpleShape extends XSLFShape
         if (fetcher.getValue() == null) {
             CTLineProperties defaultLn = getDefaultLineProperties();
             if (defaultLn != null) {
-                if (defaultLn.isSetW()) lineWidth = Units.toPoints(defaultLn.getW());
+                if (defaultLn.isSetW()) {
+                    lineWidth = Units.toPoints(defaultLn.getW());
+                }
             }
         } else {
             lineWidth = fetcher.getValue();
@@ -460,6 +482,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      */
     public LineCompound getLineCompound() {
         PropertyFetcher<Integer> fetcher = new PropertyFetcher<Integer>() {
+            @Override
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties ln = getLn(shape, false);
                 if (ln != null) {
@@ -522,6 +545,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     public LineDash getLineDash() {
 
         PropertyFetcher<LineDash> fetcher = new PropertyFetcher<LineDash>() {
+            @Override
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties ln = getLn(shape, false);
                 if (ln == null || !ln.isSetPrstDash()) {
@@ -569,6 +593,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      */
     public LineCap getLineCap() {
         PropertyFetcher<LineCap> fetcher = new PropertyFetcher<LineCap>() {
+            @Override
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties ln = getLn(shape, false);
                 if (ln != null && ln.isSetCap()) {
@@ -640,8 +665,10 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return shadow of this shape or null if shadow is disabled
      */
+    @Override
     public XSLFShadow getShadow() {
         PropertyFetcher<CTOuterShadowEffect> fetcher = new PropertyFetcher<CTOuterShadowEffect>() {
+            @Override
             public boolean fetch(XSLFShape shape) {
                 XSLFEffectProperties ep = XSLFPropertiesDelegate.getEffectDelegate(shape.getShapeProperties());
                 if (ep != null && ep.isSetEffectLst()) {
@@ -675,6 +702,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @return definition of the shape geometry
      */
+    @Override
     public CustomGeometry getGeometry() {
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
         
@@ -949,6 +977,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         return ph != null;
     }
 
+    @Override
     public Guide getAdjustValue(String name) {
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
         
@@ -963,28 +992,35 @@ public abstract class XSLFSimpleShape extends XSLFShape
         return null;
     }
 
+    @Override
     public LineDecoration getLineDecoration() {
         return new LineDecoration() {
+            @Override
             public DecorationShape getHeadShape() {
                 return getLineHeadDecoration();
             }
 
+            @Override
             public DecorationSize getHeadWidth() {
                 return getLineHeadWidth();
             }
 
+            @Override
             public DecorationSize getHeadLength() {
                 return getLineHeadLength();
             }
 
+            @Override
             public DecorationShape getTailShape() {
                 return getLineTailDecoration();
             }
 
+            @Override
             public DecorationSize getTailWidth() {
                 return getLineTailWidth();
             }
 
+            @Override
             public DecorationSize getTailLength() {
                 return getLineTailLength();
             }
@@ -996,32 +1032,40 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @return either Color or GradientPaint or TexturePaint or null
      */
+    @Override
     public FillStyle getFillStyle() {
         return new FillStyle() {
+            @Override
             public PaintStyle getPaint() {
                 return XSLFSimpleShape.this.getFillPaint();
             }
         };
     }
 
+    @Override
     public StrokeStyle getStrokeStyle() {
         return new StrokeStyle() {
+            @Override
             public PaintStyle getPaint() {
                 return XSLFSimpleShape.this.getLinePaint();
             }
 
+            @Override
             public LineCap getLineCap() {
                 return XSLFSimpleShape.this.getLineCap();
             }
 
+            @Override
             public LineDash getLineDash() {
                 return XSLFSimpleShape.this.getLineDash();
             }
 
+            @Override
             public double getLineWidth() {
                 return XSLFSimpleShape.this.getLineWidth();
             }
 
+            @Override
             public LineCompound getLineCompound() {
                 return XSLFSimpleShape.this.getLineCompound();
             }

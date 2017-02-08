@@ -17,13 +17,14 @@
 
 package org.apache.poi.sl.draw;
 
-import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
-
 import java.awt.geom.AffineTransform;
 
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.MasterSheet;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.Sheet;
 
 
 public class DrawSheet implements Drawable {
@@ -34,6 +35,7 @@ public class DrawSheet implements Drawable {
         this.sheet = sheet;
     }
     
+    @Override
     public void draw(Graphics2D graphics) {
         Dimension dim = sheet.getSlideShow().getPageSize();
         Color whiteTrans = new Color(1f,1f,1f,0f);
@@ -51,7 +53,9 @@ public class DrawSheet implements Drawable {
         graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, new AffineTransform());
 
         for (Shape<?,?> shape : sheet.getShapes()) {
-            if(!canDraw(shape)) continue;
+            if(!canDraw(graphics, shape)) {
+                continue;
+            }
             
             // remember the initial transform and restore it after we are done with drawing
             AffineTransform at = graphics.getTransform();
@@ -73,9 +77,11 @@ public class DrawSheet implements Drawable {
         }
     }
 
+    @Override
     public void applyTransform(Graphics2D context) {
     }
 
+    @Override
     public void drawContent(Graphics2D context) {
     }
 
@@ -85,7 +91,7 @@ public class DrawSheet implements Drawable {
      * Subclasses can override it and skip certain shapes from drawings,
      * for instance, slide masters and layouts don't display placeholders
      */
-    protected boolean canDraw(Shape<?,?> shape){
+    protected boolean canDraw(Graphics2D graphics, Shape<?,?> shape){
         return true;
     }
 }

@@ -138,6 +138,7 @@ public class DrawTextShape extends DrawSimpleShape {
 
         double y0 = y;
         //noinspection RedundantCast
+        @SuppressWarnings("cast")
         Iterator<? extends TextParagraph<?,?,? extends TextRun>> paragraphs =
             (Iterator<? extends TextParagraph<?,?,? extends TextRun>>) getShape().iterator();
         

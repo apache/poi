@@ -114,12 +114,30 @@ public enum Placeholder {
         this.ooxmlId = ooxmlId;
     }
     
-    public static Placeholder lookupNative(int nativeId) {
+    public static Placeholder lookupNativeSlide(int nativeId) {
+        return lookupNative(nativeId, 0);
+    }
+
+    public static Placeholder lookupNativeSlideMaster(int nativeId) {
+        return lookupNative(nativeId, 1);
+    }
+
+    public static Placeholder lookupNativeNotes(int nativeId) {
+        return lookupNative(nativeId, 2);
+    }
+
+    public static Placeholder lookupNativeNotesMaster(int nativeId) {
+        return lookupNative(nativeId, 3);
+    }
+
+    
+    private static Placeholder lookupNative(int nativeId, int type) {
         for (Placeholder ph : values()) {
-            if (ph.nativeSlideId == nativeId ||
-                ph.nativeSlideMasterId == nativeId || 
-                ph.nativeNotesId == nativeId ||
-                ph.nativeNotesMasterId == nativeId
+            if (
+                type == 0 && ph.nativeSlideId == nativeId ||
+                type == 1 && ph.nativeSlideMasterId == nativeId || 
+                type == 2 && ph.nativeNotesId == nativeId ||
+                type == 3 && ph.nativeNotesMasterId == nativeId
             ) {
                 return ph;
             }

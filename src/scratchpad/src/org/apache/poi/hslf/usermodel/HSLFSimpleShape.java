@@ -42,6 +42,7 @@ import org.apache.poi.sl.draw.geom.PresetGeometries;
 import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Placeholder;
@@ -546,13 +547,40 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         if (clRecords == null) {
             return null;
         }
+        int phSource;
+        HSLFSheet sheet = getSheet();
+        if (sheet instanceof HSLFSlideMaster) {
+            phSource = 1;
+        } else if (sheet instanceof HSLFNotes) {
+            phSource = 2;
+        } else if (sheet instanceof MasterSheet) {
+            // notes master aren't yet supported ...
+            phSource = 3;
+        } else {
+            phSource = 0;
+        }
+        
         for (Record r : clRecords) {
+            int phId;
             if (r instanceof OEPlaceholderAtom) {
-                OEPlaceholderAtom oep = (OEPlaceholderAtom)r;
-                return Placeholder.lookupNative(oep.getPlaceholderId());
+                phId = ((OEPlaceholderAtom)r).getPlaceholderId();
             } else if (r instanceof RoundTripHFPlaceholder12) {
-                RoundTripHFPlaceholder12 rtp = (RoundTripHFPlaceholder12)r;
-                return Placeholder.lookupNative(rtp.getPlaceholderId());
+                //special case for files saved in Office 2007
+                phId = ((RoundTripHFPlaceholder12)r).getPlaceholderId();
+            } else {
+                continue;
+            }
+
+            switch (phSource) {
+            case 0:
+                return Placeholder.lookupNativeSlide(phId);
+            default:
+            case 1:
+                return Placeholder.lookupNativeSlideMaster(phId);
+            case 2:
+                return Placeholder.lookupNativeNotes(phId);
+            case 3:
+                return Placeholder.lookupNativeNotesMaster(phId);
             }
         }
 

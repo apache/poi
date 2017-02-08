@@ -145,7 +145,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         CTTableCellProperties pr = getCellProperties(create);
-        if (pr == null) return null;
+        if (pr == null) {
+            return null;
+        }
 
         switch (edge) {
             case bottom:
@@ -164,7 +166,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     @Override
     public void removeBorder(BorderEdge edge) {
         CTTableCellProperties pr = getCellProperties(false);
-        if (pr == null) return;
+        if (pr == null) {
+            return;
+        }
         switch (edge) {
             case bottom:
                 if (pr.isSetLnB()) {
@@ -195,22 +199,27 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     public StrokeStyle getBorderStyle(final BorderEdge edge) {
         final Double width = getBorderWidth(edge);
         return (width == null) ? null : new StrokeStyle() {
+            @Override
             public PaintStyle getPaint() {
                 return DrawPaint.createSolidPaint(getBorderColor(edge));
             }
 
+            @Override
             public LineCap getLineCap() {
                 return getBorderCap(edge);
             }
 
+            @Override
             public LineDash getLineDash() {
                 return getBorderDash(edge);
             }
 
+            @Override
             public LineCompound getLineCompound() {
                 return getBorderCompound(edge);
             }
 
+            @Override
             public double getLineWidth() {
                 return width;
             }
@@ -306,7 +315,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
     public Color getBorderColor(BorderEdge edge) {
         CTLineProperties ln = getCTLine(edge, false);
-        if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill()) return null;
+        if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill()) {
+            return null;
+        }
 
         CTSolidColorFillProperties fill = ln.getSolidFill();
         XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
@@ -381,7 +392,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     public void setFillColor(Color color) {
         CTTableCellProperties spPr = getCellProperties(true);
         if (color == null) {
-            if(spPr.isSetSolidFill()) spPr.unsetSolidFill();
+            if(spPr.isSetSolidFill()) {
+                spPr.unsetSolidFill();
+            }
         } else {
             CTSolidColorFillProperties fill = spPr.isSetSolidFill() ? spPr.getSolidFill() : spPr.addNewSolidFill();
             XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
@@ -409,10 +422,11 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     public PaintStyle getFillPaint() {
         XSLFSheet sheet = getSheet();
         XSLFTheme theme = sheet.getTheme();
+        final boolean hasPlaceholder = getPlaceholder() != null;
         XmlObject props = getCellProperties(false);
         XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
         if (fp != null) {
-            PaintStyle paint = selectPaint(fp, null, sheet.getPackagePart(), theme);
+            PaintStyle paint = selectPaint(fp, null, sheet.getPackagePart(), theme, hasPlaceholder);
             if (paint != null) {
                 return paint;
             }
@@ -438,7 +452,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         
         fp = XSLFPropertiesDelegate.getFillDelegate(props);
         if (fp != null)  {
-            PaintStyle paint = XSLFShape.selectPaint(fp, null, slideShow.getPackagePart(), theme);
+            PaintStyle paint = XSLFShape.selectPaint(fp, null, slideShow.getPackagePart(), theme, hasPlaceholder);
             if (paint != null) {
                 return paint;
             }

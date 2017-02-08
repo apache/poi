@@ -20,23 +20,21 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.record.SlideAtomLayout.SlideLayoutType;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * A Slide Atom (type 1007). Holds information on the parent Slide, what
- *  Master Slide it uses, what Notes is attached to it, that sort of thing.
- *  It also has a SSlideLayoutAtom embeded in it, but without the Atom header
- *
- * @author Nick Burch
+ * Master Slide it uses, what Notes is attached to it, that sort of thing.
+ * It also has a SSlideLayoutAtom embedded in it, but without the Atom header
  */
 
-public final class SlideAtom extends RecordAtom
-{
-	private byte[] _header;
+public final class SlideAtom extends RecordAtom {
+    public static final int USES_MASTER_SLIDE_ID  =  0x80000000;
+    // private static final int MASTER_SLIDE_ID      =  0x00000000;
+
+    private byte[] _header;
 	private static long _type = 1007l;
-	public static final int MASTER_SLIDE_ID = 0;
-	public static final int USES_MASTER_SLIDE_ID = -2147483648;
 
 	private int masterID;
 	private int notesID;
@@ -44,7 +42,7 @@ public final class SlideAtom extends RecordAtom
 	private boolean followMasterObjects;
 	private boolean followMasterScheme;
 	private boolean followMasterBackground;
-	private SSlideLayoutAtom layoutAtom;
+	private SlideAtomLayout layoutAtom;
 	private byte[] reserved;
 
 
@@ -54,8 +52,8 @@ public final class SlideAtom extends RecordAtom
     public void setMasterID(int id) { masterID = id; }
 	/** Get the ID of the notes for this slide. 0 if doesn't have one */
 	public int getNotesID()  { return notesID; }
-	/** Get the embeded SSlideLayoutAtom */
-	public SSlideLayoutAtom getSSlideLayoutAtom() { return layoutAtom; }
+	/** Get the embedded SSlideLayoutAtom */
+	public SlideAtomLayout getSSlideLayoutAtom() { return layoutAtom; }
 
 	/** Change the ID of the notes for this slide. 0 if it no longer has one */
 	public void setNotesID(int id) { notesID = id; }
@@ -85,7 +83,7 @@ public final class SlideAtom extends RecordAtom
 		byte[] SSlideLayoutAtomData = new byte[12];
 		System.arraycopy(source,start+8,SSlideLayoutAtomData,0,12);
 		// Use them to build up the SSlideLayoutAtom
-		layoutAtom = new SSlideLayoutAtom(SSlideLayoutAtomData);
+		layoutAtom = new SlideAtomLayout(SSlideLayoutAtomData);
 
 		// Get the IDs of the master and notes
 		masterID = LittleEndian.getInt(source,start+12+8);
@@ -125,13 +123,13 @@ public final class SlideAtom extends RecordAtom
 		LittleEndian.putInt(_header, 4, 24);
 
 		byte[] ssdate = new byte[12];
-		layoutAtom = new SSlideLayoutAtom(ssdate);
-		layoutAtom.setGeometryType(SSlideLayoutAtom.BLANK_SLIDE);
+		layoutAtom = new SlideAtomLayout(ssdate);
+		layoutAtom.setGeometryType(SlideLayoutType.BLANK_SLIDE);
 
 		followMasterObjects = true;
 		followMasterScheme = true;
 		followMasterBackground = true;
-		masterID = -2147483648;
+		masterID = USES_MASTER_SLIDE_ID; // -2147483648;
 		notesID = 0;
 		reserved = new byte[2];
 	}
@@ -167,71 +165,5 @@ public final class SlideAtom extends RecordAtom
 
 		// Reserved data
 		out.write(reserved);
-	}
-
-
-	/**
-	 * Holds the geometry of the Slide, and the ID of the placeholders
-	 *  on the slide.
-	 * (Embeded inside SlideAtom is a SSlideLayoutAtom, without the
-	 *  usual record header. Since it's a fixed size and tied to
-	 *  the SlideAtom, we'll hold it here.)
-	 */
-	public static class SSlideLayoutAtom {
-		// The different kinds of geometry
-		public static final int TITLE_SLIDE = 0;
-		public static final int TITLE_BODY_SLIDE = 1;
-		public static final int TITLE_MASTER_SLIDE = 2;
-		public static final int MASTER_SLIDE = 3;
-		public static final int MASTER_NOTES = 4;
-		public static final int NOTES_TITLE_BODY = 5;
-		public static final int HANDOUT = 6; // Only header, footer and date placeholders
-		public static final int TITLE_ONLY = 7;
-		public static final int TITLE_2_COLUMN_BODY = 8;
-		public static final int TITLE_2_ROW_BODY = 9;
-		public static final int TITLE_2_COLUNM_RIGHT_2_ROW_BODY = 10;
-		public static final int TITLE_2_COLUNM_LEFT_2_ROW_BODY = 11;
-		public static final int TITLE_2_ROW_BOTTOM_2_COLUMN_BODY = 12;
-		public static final int TITLE_2_ROW_TOP_2_COLUMN_BODY = 13;
-		public static final int FOUR_OBJECTS = 14;
-		public static final int BIG_OBJECT = 15;
-		public static final int BLANK_SLIDE = 16;
-		public static final int VERTICAL_TITLE_BODY_LEFT = 17;
-		public static final int VERTICAL_TITLE_2_ROW_BODY_LEFT = 17;
-
-		/** What geometry type we are */
-		private int geometry;
-		/** What placeholder IDs we have */
-		private byte[] placeholderIDs;
-
-		/** Retrieve the geometry type */
-		public int getGeometryType() { return geometry; }
-		/** Set the geometry type */
-		public void setGeometryType(int geom) { geometry = geom; }
-
-		/**
-		 * Create a new Embeded SSlideLayoutAtom, from 12 bytes of data
-		 */
-		public SSlideLayoutAtom(byte[] data) {
-			if(data.length != 12) {
-				throw new HSLFException("SSlideLayoutAtom created with byte array not 12 bytes long - was " + data.length + " bytes in size");
-			}
-
-			// Grab out our data
-			geometry = LittleEndian.getInt(data,0);
-			placeholderIDs = new byte[8];
-			System.arraycopy(data,4,placeholderIDs,0,8);
-		}
-
-		/**
-		 * Write the contents of the record back, so it can be written
-		 *  to disk. Skips the record header
-		 */
-		public void writeOut(OutputStream out) throws IOException {
-			// Write the geometry
-			writeLittleEndian(geometry,out);
-			// Write the placeholder IDs
-			out.write(placeholderIDs);
-		}
 	}
 }
