@@ -39,7 +39,7 @@ import org.junit.Test;
 public final class TestBlockListImpl {
     private static final class BlockListTestImpl extends BlockListImpl {
         public BlockListTestImpl() {
-            // no extra initialisation
+            // no extra initialization
         }
     }
     private static BlockListImpl create() {

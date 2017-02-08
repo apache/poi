@@ -37,7 +37,7 @@ public class HSLFEscherRecordFactory extends DefaultEscherRecordFactory {
      * Creates an instance of the escher record factory
      */
     public HSLFEscherRecordFactory() {
-        // no instance initialisation
+        // no instance initialization
     }
     
     @Override

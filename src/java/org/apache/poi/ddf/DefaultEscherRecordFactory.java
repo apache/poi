@@ -42,7 +42,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
      * Creates an instance of the escher record factory
      */
     public DefaultEscherRecordFactory() {
-        // no instance initialisation
+        // no instance initialization
     }
 
     @Override

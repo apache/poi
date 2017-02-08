@@ -302,7 +302,7 @@ public class TestEvaluationCache extends TestCase {
 		ms.setCellFormula("A2", "MIN(B3,D2:F2)");
 		ms.setCellFormula("A3", "B3*C3");
 
-		// clear all the logging from the above initialisation
+		// clear all the logging from the above initialization
 		ms.getAndClearLog();
 		ms.clearAllCachedResultValues();
 		return ms;
