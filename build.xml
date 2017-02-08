@@ -65,7 +65,7 @@ under the License.
     <property name="org.apache.poi.util.POILogger" value="org.apache.poi.util.NullLogger"/>
 
     <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
-    <property name="java.source.encoding" value="ASCII"/>
+    <property name="java.source.encoding" value="UTF-8"/>
 
     <scriptdef name="propertyreset" language="javascript"
         description="Allows to assign @{property} new value">
