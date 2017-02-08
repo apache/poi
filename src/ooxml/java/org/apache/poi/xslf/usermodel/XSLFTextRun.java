@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -26,13 +27,16 @@ import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
@@ -45,12 +49,15 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
  */
 @Beta
 public class XSLFTextRun implements TextRun {
-    private final CTRegularTextRun _r;
+    private final XmlObject _r;
     private final XSLFTextParagraph _p;
 
-    protected XSLFTextRun(CTRegularTextRun r, XSLFTextParagraph p){
+    protected XSLFTextRun(XmlObject r, XSLFTextParagraph p){
         _r = r;
         _p = p;
+        if (!(r instanceof CTRegularTextRun || r instanceof CTTextLineBreak || r instanceof CTTextField)) {
+            throw new OpenXML4JRuntimeException("unsupported text run of type "+r.getClass());
+        }
     }
 
     XSLFTextParagraph getParentParagraph(){
@@ -58,11 +65,28 @@ public class XSLFTextRun implements TextRun {
     }
 
     public String getRawText(){
-        return _r.getT();
+        if (_r instanceof CTTextField) {
+            return ((CTTextField)_r).getT();
+        } else if (_r instanceof CTTextLineBreak) {
+            return "\n";
+        }
+        return ((CTRegularTextRun)_r).getT();
     }
 
     String getRenderableText(){
-        String txt = _r.getT();
+        if (_r instanceof CTTextField) {
+            CTTextField tf = (CTTextField)_r;
+            XSLFSheet sheet = _p.getParentShape().getSheet();
+            if ("slidenum".equals(tf.getType()) && sheet instanceof XSLFSlide) {
+                return Integer.toString(((XSLFSlide)sheet).getSlideNumber());
+            }
+            return tf.getT();
+        } else if (_r instanceof CTTextLineBreak) {
+            return "\n";
+        }
+        
+        
+        String txt = ((CTRegularTextRun)_r).getT();
         TextCap cap = getTextCap();
         StringBuffer buf = new StringBuffer();
         for(int i = 0; i < txt.length(); i++) {
@@ -88,10 +112,24 @@ public class XSLFTextRun implements TextRun {
     }
 
     public void setText(String text){
-        _r.setT(text);
+        if (_r instanceof CTTextField) {
+            ((CTTextField)_r).setT(text);
+        } else if (_r instanceof CTTextLineBreak) {
+            // ignored
+            return;
+        } else {
+            ((CTRegularTextRun)_r).setT(text);
+        }
     }
 
-    public CTRegularTextRun getXmlObject(){
+    /**
+     * Return the text run xmlbeans object.
+     * Depending on the type of text run, this can be {@link CTTextField},
+     * {@link CTTextLineBreak} or usually a {@link CTRegularTextRun}
+     *
+     * @return the xmlbeans object
+     */
+    public XmlObject getXmlObject(){
         return _r;
     }
 
@@ -117,6 +155,7 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public PaintStyle getFontColor(){
+        final boolean hasPlaceholder = getParentParagraph().getParentShape().getPlaceholder() != null;
         CharacterPropertyFetcher<PaintStyle> fetcher = new CharacterPropertyFetcher<PaintStyle>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
                 if (props == null) {
@@ -134,7 +173,7 @@ public class XSLFTextRun implements TextRun {
                 XSLFSheet sheet = shape.getSheet();
                 PackagePart pp = sheet.getPackagePart();
                 XSLFTheme theme = sheet.getTheme();
-                PaintStyle ps = XSLFShape.selectPaint(fp, phClr, pp, theme);
+                PaintStyle ps = XSLFShape.selectPaint(fp, phClr, pp, theme, hasPlaceholder);
                 
                 if (ps != null)  {
                     setValue(ps);
@@ -459,13 +498,29 @@ public class XSLFTextRun implements TextRun {
      * @return the character properties or null if create was false and the properties haven't exist
      */
     protected CTTextCharacterProperties getRPr(boolean create) {
-        if (_r.isSetRPr()) {
-            return _r.getRPr();
-        } else if (create) {
-            return _r.addNewRPr();
+        if (_r instanceof CTTextField) {
+            CTTextField tf = (CTTextField)_r;
+            if (tf.isSetRPr()) {
+                return tf.getRPr();
+            } else if (create) {
+                return tf.addNewRPr();
+            }
+        } else if (_r instanceof CTTextLineBreak) {
+            CTTextLineBreak tlb = (CTTextLineBreak)_r;
+            if (tlb.isSetRPr()) {
+                return tlb.getRPr();
+            } else if (create) {
+                return tlb.addNewRPr();
+            }
         } else {
-            return null;
+            CTRegularTextRun tr = (CTRegularTextRun)_r;
+            if (tr.isSetRPr()) {
+                return tr.getRPr();
+            } else if (create) {
+                return tr.addNewRPr();
+            }
         }
+        return null;
     }
 
     @Override
@@ -476,15 +531,17 @@ public class XSLFTextRun implements TextRun {
     @Override
     public XSLFHyperlink createHyperlink(){
         XSLFHyperlink hl = getHyperlink();
-        if (hl == null) {
-            hl = new XSLFHyperlink(_r.getRPr().addNewHlinkClick(), _p.getParentShape().getSheet());
+        if (hl != null) {
+            return hl;
         }
-        return hl;
+
+        CTTextCharacterProperties rPr = getRPr(true);
+        return new XSLFHyperlink(rPr.addNewHlinkClick(), _p.getParentShape().getSheet());
     }
 
     @Override
     public XSLFHyperlink getHyperlink(){
-        CTTextCharacterProperties rPr = _r.getRPr();
+        CTTextCharacterProperties rPr = getRPr(false);
         if (rPr == null) { 
             return null;
         }
@@ -498,33 +555,33 @@ public class XSLFTextRun implements TextRun {
     private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher){
         XSLFTextShape shape = _p.getParentShape();
         XSLFSheet sheet = shape.getSheet();
-        boolean ok = false;
 
-        if (_r.isSetRPr()) ok = fetcher.fetch(getRPr(false));
-        if (ok) return true;
+        CTTextCharacterProperties rPr = getRPr(false);
+        if (rPr != null && fetcher.fetch(rPr)) {
+            return true;
+        }
         
-        ok = shape.fetchShapeProperty(fetcher);
-        if (ok) return true;
+        if (shape.fetchShapeProperty(fetcher)) {
+            return true;
+        }
         
         CTPlaceholder ph = shape.getCTPlaceholder();
         if (ph == null){
             // if it is a plain text box then take defaults from presentation.xml
             @SuppressWarnings("resource")
             XMLSlideShow ppt = sheet.getSlideShow();
+            // TODO: determine master shape
             CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(_p.getIndentLevel());
-            if (themeProps != null) {
-                // TODO: determine master shape
-                ok = fetcher.fetch(themeProps);
+            if (themeProps != null && fetcher.fetch(themeProps)) {
+                return true;
             }
         }
-        if (ok) return true;
 
+        // TODO: determine master shape
         CTTextParagraphProperties defaultProps =  _p.getDefaultMasterStyle();
-        if(defaultProps != null) {
-            // TODO: determine master shape
-            ok = fetcher.fetch(defaultProps);
+        if(defaultProps != null && fetcher.fetch(defaultProps)) {
+            return true;
         }
-        if (ok) return true;
 
         return false;
     }
@@ -556,5 +613,17 @@ public class XSLFTextRun implements TextRun {
 
         boolean strike = r.isStrikethrough();
         if(strike != isStrikethrough()) setStrikethrough(strike);
+    }
+    
+    
+    @Override
+    public FieldType getFieldType() {
+        if (_r instanceof CTTextField) {
+            CTTextField tf = (CTTextField)_r;
+            if ("slidenum".equals(tf.getType())) {
+                return FieldType.SLIDE_NUMBER;
+            }
+        }
+        return null;
     }
 }

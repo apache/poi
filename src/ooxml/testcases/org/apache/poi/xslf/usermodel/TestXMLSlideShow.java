@@ -105,7 +105,8 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
       // Next up look for the slide master
       CTSlideMasterIdListEntry[] masters = xml.getCTPresentation().getSldMasterIdLst().getSldMasterIdArray();
 
-      assertEquals(2147483648l, masters[0].getId());
+      // see SlideAtom.USES_MASTER_SLIDE_ID
+      assertEquals(0x80000000L, masters[0].getId());
       assertEquals("rId1", masters[0].getId2());
       assertNotNull(xml.getSlideMasters().get(0));
 

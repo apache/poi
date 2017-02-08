@@ -169,5 +169,4 @@ public class XSLFTheme extends POIXMLDocumentPart {
         }
         return null;
     }
-
 }

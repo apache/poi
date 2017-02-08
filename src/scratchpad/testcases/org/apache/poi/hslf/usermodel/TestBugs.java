@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
+import java.text.CharacterIterator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -466,12 +467,16 @@ public final class TestBugs {
         // get slides
         for (HSLFSlide slide : ppt.getSlides()) {
             for (HSLFShape shape : slide.getShapes()) {
-                if (!(shape instanceof HSLFTextBox)) continue;
+                if (!(shape instanceof HSLFTextBox)) {
+                    continue;
+                }
                 HSLFTextBox tb = (HSLFTextBox) shape;
                 // work with TextBox
                 String str = tb.getText();
 
-                if (!str.contains("$$DATE$$")) continue;
+                if (!str.contains("$$DATE$$")) {
+                    continue;
+                }
                 str = str.replace("$$DATE$$", new Date().toString());
                 tb.setText(str);
 
@@ -512,7 +517,9 @@ public final class TestBugs {
 
         int tha = 0;
         for (Record r : s1.getSlideRecords()) {
-            if (r instanceof TextHeaderAtom) tha++;
+            if (r instanceof TextHeaderAtom) {
+                tha++;
+            }
         }
         assertEquals(2, tha);
 
@@ -525,7 +532,9 @@ public final class TestBugs {
         // Will have skipped the empty one
         int str = 0;
         for (List<HSLFTextParagraph> tr : _slides.get(0).getTextParagraphs()) {
-            if (! tr.get(0).isDrawingBased()) str++;
+            if (! tr.get(0).isDrawingBased()) {
+                str++;
+            }
         }
         assertEquals(2, str);
         
@@ -758,7 +767,7 @@ public final class TestBugs {
     public void bug47904() throws IOException {
         HSLFSlideShow ppt1 = new HSLFSlideShow();
         HSLFSlideMaster sm = ppt1.getSlideMasters().get(0);
-        HSLFAutoShape as = (HSLFAutoShape)sm.getShapes().get(0);
+        HSLFAutoShape as = (HSLFAutoShape)sm.getPlaceholder(Placeholder.TITLE);
         HSLFTextParagraph tp = as.getTextParagraphs().get(0);
         HSLFTextRun tr = tp.getTextRuns().get(0);
         tr.setFontFamily("Tahoma");
@@ -766,8 +775,9 @@ public final class TestBugs {
         tr.setFontSize(44.);
         tr.setFontColor(Color.red);
         tp.setTextAlign(TextAlign.RIGHT);
-        ppt1.createSlide().addTitle().setText("foobaa");
-        
+        HSLFTextBox tb = ppt1.createSlide().addTitle();
+        tb.setText("foobaa");
+
         HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
         ppt1.close();
         
@@ -877,7 +887,7 @@ public final class TestBugs {
                 StringBuffer sb = new StringBuffer();
                 
                 for (char c = iterator.first();
-                        c != AttributedCharacterIterator.DONE;
+                        c != CharacterIterator.DONE;
                         c = iterator.next()) {
                     sb.append(c);
                     attributes = iterator.getAttributes();

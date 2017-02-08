@@ -207,7 +207,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public boolean getFollowMasterGraphics(){
-        return _slide.isSetShowMasterSp() && _slide.getShowMasterSp();
+        return _slide.getShowMasterSp();
     }
 
     /**
@@ -305,5 +305,10 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
         Drawable draw = drawFact.getDrawable(this);
         draw.draw(graphics);
+    }
+
+    @Override
+    public boolean getDisplayPlaceholder(Placeholder placeholder) {
+        return false;
     }
 }

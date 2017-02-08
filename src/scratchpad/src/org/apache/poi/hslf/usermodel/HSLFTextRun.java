@@ -17,8 +17,6 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.getPropVal;
-
 import java.awt.Color;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -30,6 +28,7 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -54,6 +53,8 @@ public final class HSLFTextRun implements TextRun {
 	 * Note - we may share these styles with other RichTextRuns
 	 */
 	private TextPropCollection characterStyle = new TextPropCollection(1, TextPropType.character);
+	
+	private TextPropCollection masterStyle;
 
 	/**
 	 * Create a new wrapper around a rich text string
@@ -80,8 +81,8 @@ public final class HSLFTextRun implements TextRun {
      * @since POI 3.14-Beta1
      */
 	@Internal
-    /* package */ void setMasterStyleReference(TextPropCollection characterStyle) {
-        this.characterStyle = characterStyle;
+    /* package */ void setMasterStyleReference(TextPropCollection masterStyle) {
+        this.masterStyle = masterStyle;
     }
  
 	
@@ -105,14 +106,16 @@ public final class HSLFTextRun implements TextRun {
 	/**
 	 * Fetch the text, in raw storage form
 	 */
-	public String getRawText() {
+	@Override
+    public String getRawText() {
 		return _runText;
 	}
 
 	/**
 	 * Change the text
 	 */
-	public void setText(String text) {
+	@Override
+    public void setText(String text) {
 	    if (text == null) {
 	        throw new HSLFException("text must not be null");
 	    }
@@ -137,7 +140,9 @@ public final class HSLFTextRun implements TextRun {
 	}
 
 	protected boolean getFlag(int index) {
-	    if (characterStyle == null) return false;
+	    if (characterStyle == null) {
+            return false;
+        }
 
 		BitMaskTextProp prop = (BitMaskTextProp)characterStyle.findByName(CharFlagsTextProp.NAME);
 
@@ -175,8 +180,8 @@ public final class HSLFTextRun implements TextRun {
 	 * @param val The value to set for the TextProp
 	 */
 	public void setCharTextPropVal(String propName, Integer val) {
-	    HSLFTextParagraph.setPropVal(characterStyle, propName, val);
-	    parentParagraph.setDirty();
+	    getTextParagraph().setPropVal(characterStyle, masterStyle, propName, val);
+	    getTextParagraph().setDirty();
 	}
 
 
@@ -256,7 +261,7 @@ public final class HSLFTextRun implements TextRun {
 	 * @return the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
 	 */
 	public int getSuperscript() {
-		TextProp tp = getPropVal(characterStyle, "superscript", parentParagraph);
+		TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "superscript");
 		return tp == null ? 0 : tp.getValue();
 	}
 
@@ -271,7 +276,7 @@ public final class HSLFTextRun implements TextRun {
 
     @Override
 	public Double getFontSize() {
-        TextProp tp = getPropVal(characterStyle, "font.size", parentParagraph);
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "font.size");
         return tp == null ? null : (double)tp.getValue();
 	}
 
@@ -286,7 +291,7 @@ public final class HSLFTextRun implements TextRun {
 	 * Gets the font index
 	 */
 	public int getFontIndex() {
-        TextProp tp = getPropVal(characterStyle, "font.index", parentParagraph);
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "font.index");
         return tp == null ? -1 : tp.getValue();
 	}
 
@@ -320,7 +325,7 @@ public final class HSLFTextRun implements TextRun {
 		if (sheet == null || slideShow == null) {
 			return _fontFamily;
 		}
-        TextProp tp = getPropVal(characterStyle, "font.index,asian.font.index,ansi.font.index,symbol.font.index", parentParagraph);
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "font.index,asian.font.index,ansi.font.index,symbol.font.index");
         if (tp == null) { return null; }
 		return slideShow.getFontCollection().getFontWithId(tp.getValue());
 	}
@@ -330,8 +335,10 @@ public final class HSLFTextRun implements TextRun {
 	 */
 	@Override
 	public SolidPaint getFontColor() {
-		TextProp tp = getPropVal(characterStyle, "font.color", parentParagraph);
-		if (tp == null) return null;
+		TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "font.color");
+		if (tp == null) {
+            return null;
+        }
 		Color color = HSLFTextParagraph.getColorFromColorIndexStruct(tp.getValue(), parentParagraph.getSheet());
 		SolidPaint ps = DrawPaint.createSolidPaint(color);
 		return ps;
@@ -374,6 +381,7 @@ public final class HSLFTextRun implements TextRun {
         return parentParagraph;
     }
     
+    @Override
     public TextCap getTextCap() {
         return TextCap.NONE;
     }
@@ -388,6 +396,7 @@ public final class HSLFTextRun implements TextRun {
         return getSuperscript() > 0;
     }
 
+    @Override
     public byte getPitchAndFamily() {
         return 0;
     }
@@ -413,5 +422,21 @@ public final class HSLFTextRun implements TextRun {
             parentParagraph.setDirty();
         }
         return link;
+    }
+    
+    @Override
+    public FieldType getFieldType() {
+        Placeholder ph = getTextParagraph().getParentShape().getPlaceholder();
+        if (ph != null) {
+            switch (ph) {
+            case SLIDE_NUMBER:
+                return FieldType.SLIDE_NUMBER;
+            case DATETIME:
+                return FieldType.DATE_TIME;
+            default:
+                break;
+            }
+        }
+        return null;
     }
 }

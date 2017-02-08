@@ -25,8 +25,6 @@ import org.apache.poi.hslf.record.SlideAtom;
 
 /**
  * Title masters define the design template for slides with a Title Slide layout.
- *
- * @author Yegor Kozlov
  */
 public final class HSLFTitleMaster extends HSLFMasterSheet {
     private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
@@ -39,13 +37,16 @@ public final class HSLFTitleMaster extends HSLFMasterSheet {
         super(record, sheetNo);
 
         for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
-            if (!_paragraphs.contains(l)) _paragraphs.add(l);
+            if (!_paragraphs.contains(l)) {
+                _paragraphs.add(l);
+            }
         }
     }
 
     /**
      * Returns an array of all the TextRuns found
      */
+    @Override
     public List<List<HSLFTextParagraph>> getTextParagraphs() {
         return _paragraphs;
     }
@@ -53,20 +54,23 @@ public final class HSLFTitleMaster extends HSLFMasterSheet {
     /**
      * Delegate the call to the underlying slide master.
      */
+    @Override
     public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
         HSLFMasterSheet master = getMasterSheet();
-        return master == null ? null : master.getStyleAttribute(txtype, level, name, isCharacter);
+        return (master == null) ? null : master.getStyleAttribute(txtype, level, name, isCharacter);
     }
 
     /**
      * Returns the slide master for this title master.
      */
+    @Override
     public HSLFMasterSheet getMasterSheet(){
-        List<HSLFSlideMaster> master = getSlideShow().getSlideMasters();
         SlideAtom sa = ((org.apache.poi.hslf.record.Slide)getSheetContainer()).getSlideAtom();
         int masterId = sa.getMasterID();
-        for (HSLFSlideMaster sm : master) {
-            if (masterId == sm._getSheetNumber()) return sm;
+        for (HSLFSlideMaster sm : getSlideShow().getSlideMasters()) {
+            if (masterId == sm._getSheetNumber()) {
+                return sm;
+            }
         }
         return null;
     }

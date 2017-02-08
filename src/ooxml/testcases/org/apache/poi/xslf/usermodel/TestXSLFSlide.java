@@ -111,7 +111,7 @@ public class TestXSLFSlide {
         assertEquals(0, ppt.getSlides().size());
 
         XSLFSlide slide = ppt.createSlide();
-        assertFalse(slide.getFollowMasterGraphics());
+        assertTrue(slide.getFollowMasterGraphics());
         slide.setFollowMasterGraphics(false);
         assertFalse(slide.getFollowMasterGraphics());
         slide.setFollowMasterGraphics(true);

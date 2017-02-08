@@ -39,17 +39,33 @@ public class DrawShape implements Drawable {
     }
 
     /**
+     * Sometimes it's necessary to distinguish between XSLF/HSLF for the rendering.
+     * Use this method on the shape to determine, if we work on the BIFF implementation
+     *
+     * @param shape the shape to render
+     * @return {@code true} if HSLF implementation is used
+     */
+    protected static boolean isHSLF(Shape<?,?> shape) {
+        return shape.getClass().getCanonicalName().toLowerCase(Locale.ROOT).contains("hslf");
+    }
+    
+    /**
      * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
      *
      * @param graphics the graphics whos transform matrix will be modified
      */
+    @Override
     public void applyTransform(Graphics2D graphics) {
-        if (!(shape instanceof PlaceableShape)) return;
+        if (!(shape instanceof PlaceableShape)) {
+            return;
+        }
 
         PlaceableShape<?,?> ps = (PlaceableShape<?,?>)shape;
-        final boolean isHSLF = ps.getClass().getCanonicalName().toLowerCase(Locale.ROOT).contains("hslf");
+        final boolean isHSLF = isHSLF(shape);
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
-        if (tx == null) tx = new AffineTransform();
+        if (tx == null) {
+            tx = new AffineTransform();
+        }
         final Rectangle2D anchor = tx.createTransformedShape(ps.getAnchor()).getBounds2D();
 
         char cmds[] = isHSLF ? new char[]{ 'h','v','r' } : new char[]{ 'r','h','v' };
@@ -81,7 +97,9 @@ public class DrawShape implements Drawable {
 
                     // normalize rotation
                     rotation %= 360.;
-                    if (rotation < 0) rotation += 360.;
+                    if (rotation < 0) {
+                        rotation += 360.;
+                    }
 
                     int quadrant = (((int)rotation+45)/90)%4;
                     double scaleX = 1.0, scaleY = 1.0;
@@ -148,9 +166,11 @@ public class DrawShape implements Drawable {
         return (dim2 == 0.) ? 1 : dim1/dim2;
     }
 
+    @Override
     public void draw(Graphics2D graphics) {
     }
 
+    @Override
     public void drawContent(Graphics2D graphics) {
     }
 
@@ -176,7 +196,10 @@ public class DrawShape implements Drawable {
     
     protected static BasicStroke getStroke(StrokeStyle strokeStyle) {
         float lineWidth = (float) strokeStyle.getLineWidth();
-        if (lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
+        if (lineWidth == 0.0f) {
+            // Both PowerPoint and OOo draw zero-length lines as 0.25pt
+            lineWidth = 0.25f;
+        }
 
         LineDash lineDash = strokeStyle.getLineDash();
         if (lineDash == null) {
@@ -194,7 +217,9 @@ public class DrawShape implements Drawable {
         }
 
         LineCap lineCapE = strokeStyle.getLineCap();
-        if (lineCapE == null) lineCapE = LineCap.FLAT;
+        if (lineCapE == null) {
+            lineCapE = LineCap.FLAT;
+        }
         int lineCap;
         switch (lineCapE) {
             case ROUND:

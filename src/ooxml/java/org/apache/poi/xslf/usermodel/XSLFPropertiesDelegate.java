@@ -1341,106 +1341,138 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
             this.props = props;
         }
 
+        @Override
         public CTNoFillProperties getNoFill() {
             return isSetNoFill() ? (CTNoFillProperties)props : null;
         }
 
+        @Override
         public boolean isSetNoFill() {
             return (props instanceof CTNoFillProperties);
         }
 
+        @Override
         public void setNoFill(CTNoFillProperties noFill) {}
 
+        @Override
         public CTNoFillProperties addNewNoFill() {
             return null;
         }
 
+        @Override
         public void unsetNoFill() {}
 
+        @Override
         public CTSolidColorFillProperties getSolidFill() {
             return isSetSolidFill() ? (CTSolidColorFillProperties)props : null;
         }
 
+        @Override
         public boolean isSetSolidFill() {
             return (props instanceof CTSolidColorFillProperties);
         }
 
+        @Override
         public void setSolidFill(CTSolidColorFillProperties solidFill) {}
 
+        @Override
         public CTSolidColorFillProperties addNewSolidFill() {
             return null;
         }
 
+        @Override
         public void unsetSolidFill() {}
 
+        @Override
         public CTGradientFillProperties getGradFill() {
             return isSetGradFill() ? (CTGradientFillProperties)props : null;
         }
 
+        @Override
         public boolean isSetGradFill() {
             return (props instanceof CTGradientFillProperties);
         }
 
+        @Override
         public void setGradFill(CTGradientFillProperties gradFill) {}
 
+        @Override
         public CTGradientFillProperties addNewGradFill() {
             return null;
         }
 
+        @Override
         public void unsetGradFill() {}
 
+        @Override
         public CTBlipFillProperties getBlipFill() {
             return isSetBlipFill() ? (CTBlipFillProperties)props : null;
         }
 
+        @Override
         public boolean isSetBlipFill() {
             return (props instanceof CTBlipFillProperties);
         }
 
+        @Override
         public void setBlipFill(CTBlipFillProperties blipFill) {}
 
+        @Override
         public CTBlipFillProperties addNewBlipFill() {
             return null;
         }
 
+        @Override
         public void unsetBlipFill() {}
 
+        @Override
         public CTPatternFillProperties getPattFill() {
             return isSetPattFill() ? (CTPatternFillProperties)props : null;
         }
 
+        @Override
         public boolean isSetPattFill() {
             return (props instanceof CTPatternFillProperties);
         }
 
+        @Override
         public void setPattFill(CTPatternFillProperties pattFill) {}
 
+        @Override
         public CTPatternFillProperties addNewPattFill() {
             return null;
         }
 
+        @Override
         public void unsetPattFill() {}
 
+        @Override
         public CTGroupFillProperties getGrpFill() {
             return isSetGrpFill() ? (CTGroupFillProperties)props : null;
         }
 
+        @Override
         public boolean isSetGrpFill() {
             return (props instanceof CTGroupFillProperties);
         }
 
+        @Override
         public void setGrpFill(CTGroupFillProperties grpFill) {}
 
+        @Override
         public CTGroupFillProperties addNewGrpFill() {
             return null;
         }
 
+        @Override
         public void unsetGrpFill() {}
 
+        @Override
         public boolean isSetMatrixStyle() {
             return false;
         }
 
+        @Override
         public CTStyleMatrixReference getMatrixStyle() {
             return null;
         }

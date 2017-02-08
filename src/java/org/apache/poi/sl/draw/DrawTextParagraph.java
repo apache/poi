@@ -41,10 +41,12 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.sl.usermodel.TextRun.FieldType;
 import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
@@ -82,6 +84,7 @@ public class DrawTextParagraph implements Drawable {
         /**
          * Resolves instances being deserialized to the predefined constants.
          */
+        @Override
         protected Object readResolve() throws InvalidObjectException {
             if (HYPERLINK_HREF.getName().equals(getName())) {
                 return HYPERLINK_HREF;
@@ -116,8 +119,11 @@ public class DrawTextParagraph implements Drawable {
         autoNbrIdx = index;
     }
 
+    @Override
     public void draw(Graphics2D graphics){
-        if (lines.isEmpty()) return;
+        if (lines.isEmpty()) {
+            return;
+        }
 
         double penY = y;
 
@@ -144,7 +150,9 @@ public class DrawTextParagraph implements Drawable {
 
         //The vertical line spacing
         Double spacing = paragraph.getLineSpacing();
-        if (spacing == null) spacing = 100d;
+        if (spacing == null) {
+            spacing = 100d;
+        }
 
         for(DrawTextFragment line : lines){
             double penX;
@@ -176,7 +184,9 @@ public class DrawTextParagraph implements Drawable {
             double rightInset = insets.right;
 
             TextAlign ta = paragraph.getTextAlign();
-            if (ta == null) ta = TextAlign.LEFT;
+            if (ta == null) {
+                ta = TextAlign.LEFT;
+            }
             switch (ta) {
                 case CENTER:
                     penX += (anchor.getWidth() - line.getWidth() - leftInset - rightInset - leftMargin) / 2;
@@ -217,9 +227,11 @@ public class DrawTextParagraph implements Drawable {
         return (lines.isEmpty() || rawText.trim().isEmpty());
     }
 
+    @Override
     public void applyTransform(Graphics2D graphics) {
     }
 
+    @Override
     public void drawContent(Graphics2D graphics) {
     }
 
@@ -243,10 +255,14 @@ public class DrawTextParagraph implements Drawable {
 
             double wrappingWidth = getWrappingWidth(lines.size() == 0, graphics) + 1; // add a pixel to compensate rounding errors
             // shape width can be smaller that the sum of insets (this was proved by a test file)
-            if(wrappingWidth < 0) wrappingWidth = 1;
+            if(wrappingWidth < 0) {
+                wrappingWidth = 1;
+            }
 
             int nextBreak = text.indexOf("\n", startIndex + 1);
-            if (nextBreak == -1) nextBreak = it.getEndIndex();
+            if (nextBreak == -1) {
+                nextBreak = it.getEndIndex();
+            }
 
             TextLayout layout = measurer.nextLayout((float)wrappingWidth, nextBreak, true);
             if (layout == null) {
@@ -279,7 +295,9 @@ public class DrawTextParagraph implements Drawable {
 
             maxLineHeight = Math.max(maxLineHeight, line.getHeight());
 
-            if(endIndex == it.getEndIndex()) break;
+            if(endIndex == it.getEndIndex()) {
+                break;
+            }
         }
 
         rawText = text.toString();
@@ -287,7 +305,9 @@ public class DrawTextParagraph implements Drawable {
 
     protected DrawTextFragment getBullet(Graphics2D graphics, AttributedCharacterIterator firstLineAttr) {
         BulletStyle bulletStyle = paragraph.getBulletStyle();
-        if (bulletStyle == null) return null;
+        if (bulletStyle == null) {
+            return null;
+        }
 
         String buCharacter;
         AutoNumberingScheme ans = bulletStyle.getAutoNumberingScheme();
@@ -296,10 +316,14 @@ public class DrawTextParagraph implements Drawable {
         } else {
             buCharacter = bulletStyle.getBulletCharacter();
         }
-        if (buCharacter == null) return null;
+        if (buCharacter == null) {
+            return null;
+        }
 
         String buFont = bulletStyle.getBulletFont();
-        if (buFont == null) buFont = paragraph.getDefaultFontFamily();
+        if (buFont == null) {
+            buFont = paragraph.getDefaultFontFamily();
+        }
         assert(buFont != null);
 
         PlaceableShape<?,?> ps = getParagraphShape();
@@ -313,9 +337,14 @@ public class DrawTextParagraph implements Drawable {
 
         float fontSize = (Float)firstLineAttr.getAttribute(TextAttribute.SIZE);
         Double buSz = bulletStyle.getBulletFontSize();
-        if (buSz == null) buSz = 100d;
-        if (buSz > 0) fontSize *= buSz* 0.01;
-        else fontSize = (float)-buSz;
+        if (buSz == null) {
+            buSz = 100d;
+        }
+        if (buSz > 0) {
+            fontSize *= buSz* 0.01;
+        } else {
+            fontSize = (float)-buSz;
+        }
 
 
         AttributedString str = new AttributedString(mapFontCharset(buCharacter,buFont));
@@ -328,7 +357,11 @@ public class DrawTextParagraph implements Drawable {
         return fact.getTextFragment(layout, str);
     }
 
-    protected String getRenderableText(TextRun tr) {
+    protected String getRenderableText(Graphics2D graphics, TextRun tr) {
+        if (tr.getFieldType() == FieldType.SLIDE_NUMBER) {
+            Slide<?,?> slide = (Slide<?,?>)graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
+            return (slide == null) ? "" : Integer.toString(slide.getSlideNumber()); 
+        }
         StringBuilder buf = new StringBuilder();
         TextCap cap = tr.getTextCap();
         String tabs = null;
@@ -364,18 +397,24 @@ public class DrawTextParagraph implements Drawable {
     private String tab2space(TextRun tr) {
         AttributedString string = new AttributedString(" ");
         String fontFamily = tr.getFontFamily();
-        if (fontFamily == null) fontFamily = "Lucida Sans";
+        if (fontFamily == null) {
+            fontFamily = "Lucida Sans";
+        }
         string.addAttribute(TextAttribute.FAMILY, fontFamily);
 
         Double fs = tr.getFontSize();
-        if (fs == null) fs = 12d;
+        if (fs == null) {
+            fs = 12d;
+        }
         string.addAttribute(TextAttribute.SIZE, fs.floatValue());
 
         TextLayout l = new TextLayout(string.getIterator(), new FontRenderContext(null, true, true));
         double wspace = l.getAdvance();
 
         Double tabSz = paragraph.getDefaultTabSize();
-        if (tabSz == null) tabSz = wspace*4;
+        if (tabSz == null) {
+            tabSz = wspace*4;
+        }
 
         int numSpaces = (int)Math.ceil(tabSz / wspace);
         StringBuilder buf = new StringBuilder();
@@ -449,10 +488,13 @@ public class DrawTextParagraph implements Drawable {
             }
             if (firstLine && !isHSLF()) {
                 if (bullet != null){
-                    if (indent > 0) width -= indent;
+                    if (indent > 0) {
+                        width -= indent;
+                    }
                 } else {
-                    if (indent > 0) width -= indent; // first line indentation
-                    else if (indent < 0) { // hanging indentation: the first line start at the left margin
+                    if (indent > 0) {
+                        width -= indent; // first line indentation
+                    } else if (indent < 0) { // hanging indentation: the first line start at the left margin
                         width += leftMargin;
                     }
                 }
@@ -480,25 +522,36 @@ public class DrawTextParagraph implements Drawable {
     @SuppressWarnings("rawtypes")
     private PlaceableShape<?,?> getParagraphShape() {
         return new PlaceableShape(){
+            @Override
             public ShapeContainer<?,?> getParent() { return null; }
+            @Override
             public Rectangle2D getAnchor() { return paragraph.getParentShape().getAnchor(); }
+            @Override
             public void setAnchor(Rectangle2D anchor) {}
+            @Override
             public double getRotation() { return 0; }
+            @Override
             public void setRotation(double theta) {}
+            @Override
             public void setFlipHorizontal(boolean flip) {}
+            @Override
             public void setFlipVertical(boolean flip) {}
+            @Override
             public boolean getFlipHorizontal() { return false; }
+            @Override
             public boolean getFlipVertical() { return false; }
+            @Override
             public Sheet<?,?> getSheet() { return paragraph.getParentShape().getSheet(); }
         };
     }
 
     protected AttributedString getAttributedString(Graphics2D graphics, StringBuilder text){
         List<AttributedStringData> attList = new ArrayList<AttributedStringData>();
-        if (text == null) text = new StringBuilder();
+        if (text == null) {
+            text = new StringBuilder();
+        }
 
         PlaceableShape<?,?> ps = getParagraphShape();
-
         DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
         @SuppressWarnings("unchecked")
         Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
@@ -506,9 +559,11 @@ public class DrawTextParagraph implements Drawable {
         Map<String,String> fallbackMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_FALLBACK);
 
         for (TextRun run : paragraph){
-            String runText = getRenderableText(run);
+            String runText = getRenderableText(graphics, run);
             // skip empty runs
-            if (runText.isEmpty()) continue;
+            if (runText.isEmpty()) {
+                continue;
+            }
 
             // user can pass an custom object to convert fonts
             String mappedFont = run.getFontFamily();
@@ -633,8 +688,11 @@ public class DrawTextParagraph implements Drawable {
         return string;
     }
 
+    /**
+     * @return {@code true} if the HSLF implementation is used
+     */
     protected boolean isHSLF() {
-        return paragraph.getClass().getName().contains("HSLF");
+        return DrawShape.isHSLF(paragraph.getParentShape());
     }
 
     /**

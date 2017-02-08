@@ -72,23 +72,20 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         _runs = new ArrayList<XSLFTextRun>();
         _shape = shape;
 
-        for(XmlObject ch : _p.selectPath("*")){
-            if(ch instanceof CTRegularTextRun){
-                CTRegularTextRun r = (CTRegularTextRun)ch;
-                _runs.add(newTextRun(r));
-            } else if (ch instanceof CTTextLineBreak){
-                CTTextLineBreak br = (CTTextLineBreak)ch;
-                CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
-                r.setRPr(br.getRPr());
-                r.setT("\n");
-                _runs.add(newTextRun(r));
-            } else if (ch instanceof CTTextField){
-                CTTextField f = (CTTextField)ch;
-                CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
-                r.setRPr(f.getRPr());
-                r.setT(f.getT());
-                _runs.add(newTextRun(r));
+        XmlCursor c = _p.newCursor();
+        try {
+            if (c.toFirstChild()) {
+                do {
+                    XmlObject r = c.getObject();
+                    if (r instanceof CTTextLineBreak) {
+                        _runs.add(new XSLFLineBreak((CTTextLineBreak)r, this));
+                    } else if (r instanceof CTRegularTextRun || r instanceof CTTextField) {
+                        _runs.add(new XSLFTextRun(r, this));
+                    }
+                } while (c.toNextSibling());
             }
+        } finally {
+            c.dispose();
         }
     }
 
@@ -147,17 +144,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * @return text run representing this line break ('\n')
      */
     public XSLFTextRun addLineBreak(){
-        CTTextLineBreak br = _p.addNewBr();
-        CTTextCharacterProperties brProps = br.addNewRPr();
+        XSLFLineBreak run = new XSLFLineBreak(_p.addNewBr(), this);
+        CTTextCharacterProperties brProps = run.getRPr(true);
         if(_runs.size() > 0){
             // by default line break has the font size of the last text run
             CTTextCharacterProperties prevRun = _runs.get(_runs.size() - 1).getRPr(true);
             brProps.set(prevRun);
         }
-        CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
-        r.setRPr(brProps);
-        r.setT("\n");
-        XSLFTextRun run = new XSLFLineBreak(r, this, brProps);
         _runs.add(run);
         return run;
     }

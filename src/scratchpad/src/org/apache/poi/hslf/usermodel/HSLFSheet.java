@@ -30,15 +30,14 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.hslf.record.SheetContainer;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Internal;
@@ -108,6 +107,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     /**
      * Fetch the SlideShow we're attached to
      */
+    @Override
     public HSLFSlideShow getSlideShow() {
         return _slideShow;
     }
@@ -131,7 +131,9 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         
         _slideShow = ss;
         List<List<HSLFTextParagraph>> trs = getTextParagraphs();
-        if (trs == null) return;
+        if (trs == null) {
+            return;
+        }
         for (List<HSLFTextParagraph> ltp : trs) {
             HSLFTextParagraph.supplySheet(ltp, this);
             HSLFTextParagraph.applyHyperlinks(ltp);
@@ -192,6 +194,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      *
      * @param shape - the Shape to add
      */
+    @Override
     public void addShape(HSLFShape shape) {
         PPDrawing ppdrawing = getPPDrawing();
 
@@ -226,8 +229,9 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
                 c.incrementShapeId();
                 dg.setNumShapes( dg.getNumShapes() + 1 );
                 dg.setLastMSOSPID( result );
-                if (result >= dgg.getShapeIdMax())
+                if (result >= dgg.getShapeIdMax()) {
                     dgg.setShapeIdMax( result + 1 );
+                }
                 return result;
             }
         }
@@ -238,8 +242,9 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         dg.setNumShapes( dg.getNumShapes() + 1 );
         int result = (1024 * dgg.getFileIdClusters().length);
         dg.setLastMSOSPID( result );
-        if (result >= dgg.getShapeIdMax())
+        if (result >= dgg.getShapeIdMax()) {
             dgg.setShapeIdMax( result + 1 );
+        }
         return result;
     }
 
@@ -249,6 +254,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      * @param shape shape to be removed from this sheet, if present.
      * @return <tt>true</tt> if the shape was deleted.
      */
+    @Override
     public boolean removeShape(HSLFShape shape) {
         PPDrawing ppdrawing = getPPDrawing();
 
@@ -274,6 +280,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     /**
      * Return the master sheet .
      */
+    @Override
     public abstract HSLFMasterSheet getMasterSheet();
 
     /**
@@ -288,6 +295,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      *
      * @return the background shape for this sheet.
      */
+    @Override
     public HSLFBackground getBackground() {
         if (_background == null) {
             PPDrawing ppdrawing = getPPDrawing();
@@ -335,26 +343,17 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     }
 
     /**
-     * Search text placeholer by its type
+     * Search placeholder by its type
      *
      * @param type  type of placeholder to search. See {@link org.apache.poi.hslf.record.OEPlaceholderAtom}
-     * @return  <code>TextShape</code> or <code>null</code>
+     * @return  {@code SimpleShape} or {@code null}
      */
-    public HSLFTextShape getPlaceholder(int type){
+    public HSLFSimpleShape getPlaceholder(Placeholder type){
         for (HSLFShape shape : getShapes()) {
-            if(shape instanceof HSLFTextShape){
-                HSLFTextShape tx = (HSLFTextShape)shape;
-                int placeholderId = 0;
-                OEPlaceholderAtom oep = tx.getPlaceholderAtom();
-                if(oep != null) {
-                    placeholderId = oep.getPlaceholderId();
-                } else {
-                    //special case for files saved in Office 2007
-                    RoundTripHFPlaceholder12 hldr = tx.getClientDataRecord(RecordTypes.RoundTripHFPlaceholder12.typeID);
-                    if(hldr != null) placeholderId = hldr.getPlaceholderId();
-                }
-                if(placeholderId == type){
-                    return tx;
+            if (shape instanceof HSLFSimpleShape) {
+                HSLFSimpleShape ss = (HSLFSimpleShape)shape;
+                if (type == ss.getPlaceholder()) {
+                    return ss;
                 }
             }
         }
@@ -382,7 +381,9 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
                     progBinaryTag.findFirstOfType(
                             RecordTypes.CString.typeID
                 );
-                if(binaryTag != null) tag = binaryTag.getText();
+                if(binaryTag != null) {
+                    tag = binaryTag.getText();
+                }
             }
         }
 
@@ -390,6 +391,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
 
     }
 
+    @Override
     public Iterator<HSLFShape> iterator() {
         return getShapes().iterator();
     }
@@ -400,6 +402,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      * Sheets that support the notion of master (slide, slideLayout) should override it and
      * check this setting
      */
+    @Override
     public boolean getFollowMasterGraphics() {
         return false;
     }

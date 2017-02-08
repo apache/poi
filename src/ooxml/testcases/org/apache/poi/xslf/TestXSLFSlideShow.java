@@ -108,7 +108,8 @@ public class TestXSLFSlideShow {
 		// And again for the master
 		CTSlideMasterIdListEntry[] masters = xml.getSlideMasterReferences().getSldMasterIdArray();
 		
-		assertEquals(2147483648l, masters[0].getId());
+		// see SlideAtom.USES_MASTER_SLIDE_ID
+		assertEquals(0x80000000L, masters[0].getId());
 		assertEquals("rId1", masters[0].getId2());
 		assertNotNull(xml.getSlideMaster(masters[0]));
 		

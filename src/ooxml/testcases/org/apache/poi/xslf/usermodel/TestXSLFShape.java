@@ -16,18 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
-import java.io.IOException;
-import java.util.List;
-
-/**
- * @author Yegor Kozlov
- */
 public class TestXSLFShape {
 
     @Test
@@ -63,7 +62,7 @@ public class TestXSLFShape {
         assertEquals("PPTX ", r2.get(0).getRawText());
         assertEquals("Title", r2.get(1).getRawText());
         // Title is underlined
-        assertEquals(STTextUnderlineType.SNG, r2.get(1).getXmlObject().getRPr().getU());
+        assertEquals(STTextUnderlineType.SNG, r2.get(1).getRPr(false).getU());
 
 
         assertTrue(shapes2.get(1) instanceof XSLFAutoShape);
@@ -78,7 +77,7 @@ public class TestXSLFShape {
         assertEquals(1, paragraphs2.get(1).getTextRuns().size());
 
         assertEquals("Subtitle", paragraphs2.get(0).getTextRuns().get(0).getRawText());
-        assertTrue(paragraphs2.get(0).getTextRuns().get(0).getXmlObject().getRPr().getB());
+        assertTrue(paragraphs2.get(0).getTextRuns().get(0).getRPr(false).getB());
         assertEquals("And second line", paragraphs2.get(1).getTextRuns().get(0).getRawText());
         
         ppt.close();

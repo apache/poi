@@ -20,7 +20,6 @@ package org.apache.poi.hslf.usermodel;
 import static org.apache.poi.hslf.record.RecordTypes.OEPlaceholderAtom;
 import static org.apache.poi.hslf.record.RecordTypes.RoundTripHFPlaceholder12;
 
-import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,10 +33,14 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HSLFMetroShape;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
@@ -71,12 +74,12 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         BOTTOM_BASELINE       (7, VerticalAlignment.BOTTOM, false, true),
         TOP_CENTER_BASELINE   (8, VerticalAlignment.TOP,    true,  true),
         BOTTOM_CENTER_BASELINE(9, VerticalAlignment.BOTTOM, true,  true);
-        
+
         public final int nativeId;
         public final VerticalAlignment vAlign;
         public final boolean centered;
         public final Boolean baseline;
-        
+
         HSLFTextAnchor(int nativeId, VerticalAlignment vAlign, boolean centered, Boolean baseline) {
             this.nativeId = nativeId;
             this.vAlign = vAlign;
@@ -86,7 +89,9 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
         static HSLFTextAnchor fromNativeId(int nativeId) {
             for (HSLFTextAnchor ta : values()) {
-                if (ta.nativeId == nativeId) return ta;
+                if (ta.nativeId == nativeId) {
+                    return ta;
+                }
             }
             return null;
         }
@@ -125,13 +130,13 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /**
      * TextRun object which holds actual text and format data
      */
-    protected List<HSLFTextParagraph> _paragraphs = new ArrayList<HSLFTextParagraph>();
+    private List<HSLFTextParagraph> _paragraphs = new ArrayList<HSLFTextParagraph>();
 
     /**
      * Escher container which holds text attributes such as
-     * TextHeaderAtom, TextBytesAtom ot TextCharsAtom, StyleTextPropAtom etc.
+     * TextHeaderAtom, TextBytesAtom or TextCharsAtom, StyleTextPropAtom etc.
      */
-    protected EscherTextboxWrapper _txtbox;
+    private EscherTextboxWrapper _txtbox;
 
     /**
      * This setting is used for supporting a deprecated alignment
@@ -139,11 +144,6 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @see <a href=""></a>
      */
 //    boolean alignToBaseline = false;
-
-    /**
-     * Used to calculate text bounds
-     */
-    protected static final FontRenderContext _frc = new FontRenderContext(null, true, true);
 
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
@@ -222,10 +222,14 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     }
 
     protected EscherTextboxWrapper getEscherTextboxWrapper(){
-        if(_txtbox != null) return _txtbox;
+        if(_txtbox != null) {
+            return _txtbox;
+        }
 
         EscherTextboxRecord textRecord = getEscherChild(EscherTextboxRecord.RECORD_ID);
-        if (textRecord == null) return null;
+        if (textRecord == null) {
+            return null;
+        }
 
         HSLFSheet sheet = getSheet();
         if (sheet != null) {
@@ -248,6 +252,66 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         return _txtbox;
     }
 
+    private void createEmptyParagraph() {
+        TextHeaderAtom tha = (TextHeaderAtom)_txtbox.findFirstOfType(TextHeaderAtom._type);
+        if (tha == null) {
+            tha = new TextHeaderAtom();
+            tha.setParentRecord(_txtbox);
+            _txtbox.appendChildRecord(tha);
+        }
+
+        TextBytesAtom tba = (TextBytesAtom)_txtbox.findFirstOfType(TextBytesAtom._type);
+        TextCharsAtom tca = (TextCharsAtom)_txtbox.findFirstOfType(TextCharsAtom._type);
+        if (tba == null && tca == null) {
+            tba = new TextBytesAtom();
+             tba.setText(new byte[0]);
+             _txtbox.appendChildRecord(tba);
+        }
+
+        final String text = ((tba != null) ? tba.getText() : tca.getText());
+        
+        StyleTextPropAtom sta = (StyleTextPropAtom)_txtbox.findFirstOfType(StyleTextPropAtom._type);
+        TextPropCollection paraStyle = null, charStyle = null;
+        if (sta == null) {
+            int parSiz = text.length();
+            sta = new StyleTextPropAtom(parSiz+1);
+            if (_paragraphs.isEmpty()) {
+                paraStyle = sta.addParagraphTextPropCollection(parSiz+1);
+                charStyle = sta.addCharacterTextPropCollection(parSiz+1);
+            } else {
+                for (HSLFTextParagraph htp : _paragraphs) {
+                    int runsLen = 0;
+                    for (HSLFTextRun htr : htp.getTextRuns()) {
+                        runsLen += htr.getLength();
+                        charStyle = sta.addCharacterTextPropCollection(htr.getLength());
+                        htr.setCharacterStyle(charStyle);
+                    }
+                    paraStyle = sta.addParagraphTextPropCollection(runsLen);
+                    htp.setParagraphStyle(paraStyle);
+                }
+                assert (paraStyle != null && charStyle != null);
+            }
+            _txtbox.appendChildRecord(sta);
+        } else {
+            paraStyle = sta.getParagraphStyles().get(0);
+            charStyle = sta.getCharacterStyles().get(0);
+        }
+
+        if (_paragraphs.isEmpty()) {
+            HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, tca, _paragraphs);
+            htp.setParagraphStyle(paraStyle);
+            htp.setParentShape(this);
+            _paragraphs.add(htp);
+    
+            HSLFTextRun htr = new HSLFTextRun(htp);
+            htr.setCharacterStyle(charStyle);
+            htr.setText(text);
+            htp.addTextRun(htr);
+        }
+    }
+
+
+    
     /**
      * Adjust the size of the shape so it encompasses the text inside it.
      *
@@ -276,7 +340,9 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     */
     public int getRunType() {
         getEscherTextboxWrapper();
-        if (_txtbox == null) return -1;
+        if (_txtbox == null) {
+            return -1;
+        }
         List<HSLFTextParagraph> paras = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
         return (paras.isEmpty()) ? -1 : paras.get(0).getRunType();
     }
@@ -289,7 +355,9 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     */
     public void setRunType(int type) {
         getEscherTextboxWrapper();
-        if (_txtbox == null) return;
+        if (_txtbox == null) {
+            return;
+        }
         List<HSLFTextParagraph> paras = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
         if (!paras.isEmpty()) {
             paras.get(0).setRunType(type);
@@ -562,19 +630,23 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public List<HSLFTextParagraph> getTextParagraphs(){
-        if (!_paragraphs.isEmpty()) return _paragraphs;
+        if (!_paragraphs.isEmpty()) {
+            return _paragraphs;
+        }
 
         _txtbox = getEscherTextboxWrapper();
         if (_txtbox == null) {
-            _paragraphs.addAll(HSLFTextParagraph.createEmptyParagraph());
-            _txtbox = _paragraphs.get(0).getTextboxWrapper();
+            _txtbox = new EscherTextboxWrapper();
+            createEmptyParagraph();
         } else {
-            _paragraphs = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
-            if (_paragraphs == null) {
+            List<HSLFTextParagraph> pList = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
+            if (pList == null) {
                 // there are actually TextBoxRecords without extra data - see #54722
-                _paragraphs = HSLFTextParagraph.createEmptyParagraph(_txtbox);
+                createEmptyParagraph();
+            } else {
+                _paragraphs = pList;
             }
-
+        
             if (_paragraphs.isEmpty()) {
                 LOG.log(POILogger.WARN, "TextRecord didn't contained any text lines");
             }
@@ -586,6 +658,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
         return _paragraphs;
     }
+
 
     @Override
     public void setSheet(HSLFSheet sheet) {
@@ -611,26 +684,30 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /**
      * Return {@link RoundTripHFPlaceholder12}, the atom that describes a header/footer placeholder.
      * Compare the {@link RoundTripHFPlaceholder12#getPlaceholderId()} with
-     * {@link OEPlaceholderAtom#MasterHeader} or {@link OEPlaceholderAtom#MasterFooter}, to find out
+     * {@link Placeholder#HEADER} or {@link Placeholder#FOOTER}, to find out
      * what kind of placeholder this is.
      *
      * @return {@link RoundTripHFPlaceholder12} or {@code null} if not found
-     * 
+     *
      * @since POI 3.14-Beta2
      */
     public RoundTripHFPlaceholder12 getHFPlaceholderAtom() {
         // special case for files saved in Office 2007
         return getClientDataRecord(RoundTripHFPlaceholder12.typeID);
     }
-    
+
     @Override
     public boolean isPlaceholder() {
         OEPlaceholderAtom oep = getPlaceholderAtom();
-        if (oep != null) return true;
+        if (oep != null) {
+            return true;
+        }
 
         //special case for files saved in Office 2007
         RoundTripHFPlaceholder12 hldr = getHFPlaceholderAtom();
-        if (hldr != null) return true;
+        if (hldr != null) {
+            return true;
+        }
 
         return false;
     }
@@ -710,7 +787,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         }
         setEscherProperty(opt, EscherProperties.TEXT__TEXTFLOW, msotxfl);
     }
-    
+
     @Override
     public Double getTextRotation() {
         // see 2.4.6 MSOCDIR
@@ -718,7 +795,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__FONTROTATION);
         return (prop == null) ? null : (90. * prop.getPropertyValue());
     }
-    
+
     @Override
     public void setTextRotation(Double rotation) {
         AbstractEscherOptRecord opt = getEscherOptRecord();
@@ -729,7 +806,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             setEscherProperty(EscherProperties.TEXT__FONTROTATION, rot);
         }
     }
-    
+
     /**
      * Returns the raw text content of the shape. This hasn't had any
      * changes applied to it, and so is probably unlikely to print
@@ -751,7 +828,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         List<HSLFTextParagraph> paras = getTextParagraphs();
         HSLFTextRun htr = HSLFTextParagraph.appendText(paras, text, newParagraph);
         setTextId(getRawText().hashCode());
-        return htr; 
+        return htr;
     }
 
     @Override

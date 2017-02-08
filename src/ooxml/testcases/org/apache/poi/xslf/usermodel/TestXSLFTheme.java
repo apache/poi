@@ -17,12 +17,15 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.sl.TestCommonSL.sameColor;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.util.List;
 
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
@@ -54,7 +57,9 @@ public class TestXSLFTheme {
 
     private XSLFShape getShape(XSLFSheet sheet, String name){
         for(XSLFShape sh : sheet.getShapes()){
-            if(sh.getShapeName().equals(name)) return sh;
+            if(sh.getShapeName().equals(name)) {
+                return sh;
+            }
         }
         throw new IllegalArgumentException("Shape not found: " + name);
     }
@@ -99,7 +104,7 @@ public class TestXSLFTheme {
         assertTrue(sameColor(new Color(148, 198, 0), run2.getFontColor()));
         assertNull(sh2.getFillColor());  // no fill
 
-        assertFalse(slide.getSlideLayout().getFollowMasterGraphics());
+        assertTrue(slide.getSlideLayout().getFollowMasterGraphics());
     }
 
     void slide5(XSLFSlide slide){
@@ -113,7 +118,7 @@ public class TestXSLFTheme {
         // font size is 40pt and scale factor is 90%
         assertEquals(36.0, run2.getFontSize(), 0);
 
-        assertFalse(slide.getSlideLayout().getFollowMasterGraphics());
+        assertTrue(slide.getSlideLayout().getFollowMasterGraphics());
     }
 
     void slide6(XSLFSlide slide){

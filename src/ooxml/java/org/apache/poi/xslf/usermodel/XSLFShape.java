@@ -32,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.ColorStyle;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
@@ -57,6 +58,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillPropertie
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
@@ -150,6 +152,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     
     protected PaintStyle getFillPaint() {
         final XSLFTheme theme = getSheet().getTheme();
+        final boolean hasPlaceholder = getPlaceholder() != null;
         PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
             public boolean fetch(XSLFShape shape) {
                 XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(shape.getShapeProperties());
@@ -163,7 +166,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
                 }
                 
                 PackagePart pp = shape.getSheet().getPackagePart();
-                PaintStyle paint = selectPaint(fp, null, pp, theme);
+                PaintStyle paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
                 if (paint != null) {
                     setValue(paint);
                     return true;
@@ -172,7 +175,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
                 CTShapeStyle style = shape.getSpStyle();
                 if (style != null) {
                     fp = XSLFPropertiesDelegate.getFillDelegate(style.getFillRef());
-                    paint = selectPaint(fp, null, pp, theme);
+                    paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
                 }
                 if (paint != null) {
                     setValue(paint);
@@ -228,6 +231,9 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         XmlCursor cur = getXmlObject().newCursor();
         T child = null;
         if (cur.toChild(namespace, nodename)) {
+            child = (T)cur.getObject();
+        }
+        if (cur.toChild("http://schemas.openxmlformats.org/drawingml/2006/main", nodename)) {
             child = (T)cur.getObject();
         }
         cur.dispose();
@@ -290,61 +296,71 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     }
 
     /**
-     * Walk up the inheritance tree and fetch shape properties.
+     * Walk up the inheritance tree and fetch shape properties.<p>
      *
-     * The following order of inheritance is assumed:
-     * <p>
-     * slide <-- slideLayout <-- slideMaster
-     * </p>
+     * The following order of inheritance is assumed:<p>
+     * <ol>
+     * <li>slide
+     * <li>slideLayout
+     * <li>slideMaster
+     * </ol>
+     * 
+     * Currently themes and their defaults aren't correctly handled
      *
      * @param visitor the object that collects the desired property
      * @return true if the property was fetched
      */
     protected boolean fetchShapeProperty(PropertyFetcher<?> visitor) {
-        boolean ok = visitor.fetch(this);
+        // try shape properties in slide
+        if (visitor.fetch(this)) {
+            return true;
+        }
 
-        XSLFSimpleShape masterShape;
-        XSLFSheet masterSheet = (XSLFSheet)getSheet().getMasterSheet();
         CTPlaceholder ph = getCTPlaceholder();
-
-        if (masterSheet != null && ph != null) {
-            if (!ok) {
-                masterShape = masterSheet.getPlaceholder(ph);
-                if (masterShape != null) {
-                    ok = visitor.fetch(masterShape);
-                }
+        if (ph == null) {
+            return false;
+        }
+        MasterSheet<XSLFShape,XSLFTextParagraph> sm = getSheet().getMasterSheet();
+        
+        // try slide layout
+        if (sm instanceof XSLFSlideLayout) {
+            XSLFSlideLayout slideLayout = (XSLFSlideLayout)sm;
+            XSLFSimpleShape placeholderShape = slideLayout.getPlaceholder(ph);
+            if (placeholderShape != null && visitor.fetch(placeholderShape)) {
+                return true;
             }
-
-            // try slide master
-            if (!ok ) {
-                int textType;
-                if ( !ph.isSetType()) textType = STPlaceholderType.INT_BODY;
-                else {
-                    switch (ph.getType().intValue()) {
-                        case STPlaceholderType.INT_TITLE:
-                        case STPlaceholderType.INT_CTR_TITLE:
-                            textType = STPlaceholderType.INT_TITLE;
-                            break;
-                        case STPlaceholderType.INT_FTR:
-                        case STPlaceholderType.INT_SLD_NUM:
-                        case STPlaceholderType.INT_DT:
-                            textType = ph.getType().intValue();
-                            break;
-                        default:
-                            textType = STPlaceholderType.INT_BODY;
-                            break;
-                    }
-                }
-                XSLFSheet master = (XSLFSheet)masterSheet.getMasterSheet();
-                if (master != null) {
-                    masterShape = master.getPlaceholderByType(textType);
-                    if (masterShape != null) {
-                        ok = visitor.fetch(masterShape);
-                    }
-                }
+            sm = slideLayout.getMasterSheet();
+        }
+        
+        // try slide master
+        if (sm instanceof XSLFSlideMaster) {
+            XSLFSlideMaster master = (XSLFSlideMaster)sm;
+            int textType = getPlaceholderType(ph);
+            XSLFSimpleShape masterShape = master.getPlaceholderByType(textType);
+            if (masterShape != null && visitor.fetch(masterShape)) {
+                return true;
             }
         }
-        return ok;
+        
+        return false;
+    }
+    
+    private static int getPlaceholderType(CTPlaceholder ph) {
+        if ( !ph.isSetType()) {
+            return STPlaceholderType.INT_BODY;
+        }
+        
+        switch (ph.getType().intValue()) {
+            case STPlaceholderType.INT_TITLE:
+            case STPlaceholderType.INT_CTR_TITLE:
+                return STPlaceholderType.INT_TITLE;
+            case STPlaceholderType.INT_FTR:
+            case STPlaceholderType.INT_SLD_NUM:
+            case STPlaceholderType.INT_DT:
+                return ph.getType().intValue();
+            default:
+                return STPlaceholderType.INT_BODY;
+        }
     }
 
     /**
@@ -358,7 +374,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      *
      * @return  the applied Paint or null if none was applied
      */
-    protected static PaintStyle selectPaint(XSLFFillProperties fp, final CTSchemeColor phClr, final PackagePart parentPart, final XSLFTheme theme) {
+    protected static PaintStyle selectPaint(XSLFFillProperties fp, final CTSchemeColor phClr, final PackagePart parentPart, final XSLFTheme theme, boolean hasPlaceholder) {
         if (fp == null || fp.isSetNoFill()) {
             return null;
         } else if (fp.isSetSolidFill()) {
@@ -368,15 +384,23 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         } else if (fp.isSetGradFill()) {
             return selectPaint(fp.getGradFill(), phClr, theme);
         } else if (fp.isSetMatrixStyle()) {
-            return selectPaint(fp.getMatrixStyle(), theme, fp.isLineStyle());
+            return selectPaint(fp.getMatrixStyle(), theme, fp.isLineStyle(), hasPlaceholder);
         } else {
             return null;
         }
     }
 
     protected static PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr, final XSLFTheme theme) {
-        if (phClr == null && solidFill.isSetSchemeClr()) {
-            phClr = solidFill.getSchemeClr();
+        if (solidFill.isSetSchemeClr()) {
+        	// if there's a reference to the placeholder color,
+        	// stop evaluating further and let the caller select
+        	// the next style inheritance level
+            if (STSchemeColorVal.PH_CLR.equals(solidFill.getSchemeClr().getVal())) {
+                return null;
+            }
+            if (phClr == null) {
+                phClr = solidFill.getSchemeClr();
+            }
         }
         final XSLFColor c = new XSLFColor(solidFill, theme, phClr);
         return DrawPaint.createSolidPaint(c.getColorStyle());
@@ -483,7 +507,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         };        
     }
     
-    protected static PaintStyle selectPaint(CTStyleMatrixReference fillRef, final XSLFTheme theme, boolean isLineStyle) {
+    protected static PaintStyle selectPaint(CTStyleMatrixReference fillRef, final XSLFTheme theme, boolean isLineStyle, boolean hasPlaceholder) {
         if (fillRef == null) return null;
         
         // The idx attribute refers to the index of a fill style or
@@ -492,7 +516,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         // values 1-999 refer to the index of a fill style within the fillStyleLst element
         // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
         int idx = (int)fillRef.getIdx();
-        CTSchemeColor phClr = fillRef.getSchemeClr();
         CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
         final XmlObject styleLst;
         int childIdx;
@@ -511,8 +534,16 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             fp = XSLFPropertiesDelegate.getFillDelegate(cur.getObject());
         }
         cur.dispose();
-        
-        return selectPaint(fp, phClr, theme.getPackagePart(), theme);
+            
+        CTSchemeColor phClr = fillRef.getSchemeClr();
+        PaintStyle res =  selectPaint(fp, phClr, theme.getPackagePart(), theme, hasPlaceholder);
+        // check for empty placeholder value
+        // see http://officeopenxml.com/prSlide-color.php - "Color Placeholders within Themes"
+        if (res != null || hasPlaceholder) {
+            return res;
+        }
+        XSLFColor col = new XSLFColor(fillRef, theme, phClr);
+        return DrawPaint.createSolidPaint(col.getColorStyle());
     }
     
     @Override

@@ -29,6 +29,8 @@ public class DrawSlide extends DrawSheet {
     }
     
     public void draw(Graphics2D graphics) {
+        graphics.setRenderingHint(Drawable.CURRENT_SLIDE, this.sheet);
+        
         Background<?,?> bg = sheet.getBackground();
         if(bg != null) {
             DrawFactory drawFact = DrawFactory.getInstance(graphics);
@@ -37,5 +39,6 @@ public class DrawSlide extends DrawSheet {
         }
 
         super.draw(graphics);
+        graphics.setRenderingHint(Drawable.CURRENT_SLIDE, null);
     }
 }

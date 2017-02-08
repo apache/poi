@@ -36,14 +36,35 @@ import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.MasterTextPropAtom;
+import org.apache.poi.hslf.record.OutlineTextRefAtom;
+import org.apache.poi.hslf.record.PPDrawing;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.TextRulerAtom;
+import org.apache.poi.hslf.record.TextSpecInfoAtom;
+import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
@@ -53,8 +74,6 @@ import org.apache.poi.util.Units;
  * This class represents a run of text in a powerpoint document. That
  *  run could be text on a sheet, or text in a note.
  *  It is only a very basic class for now
- *
- * @author Nick Burch
  */
 
 public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFTextParagraph,HSLFTextRun> {
@@ -74,6 +93,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private TextBytesAtom _byteAtom;
     private TextCharsAtom _charAtom;
     private TextPropCollection _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
+    private TextPropCollection _masterStyle;
 
     protected TextRulerAtom _ruler;
     protected final List<HSLFTextRun> _runs = new ArrayList<HSLFTextRun>();
@@ -139,7 +159,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public void setParagraphStyle(TextPropCollection paragraphStyle) {
         _paragraphStyle.copy(paragraphStyle);
     }
-
+    
     /**
      * Setting a master style reference
      *
@@ -148,8 +168,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * @since POI 3.14-Beta1
      */
     @Internal
-    /* package */ void setMasterStyleReference(TextPropCollection paragraphStyle) {
-        _paragraphStyle = paragraphStyle;
+    /* package */ void setMasterStyleReference(TextPropCollection masterStyle) {
+        _masterStyle = masterStyle;
     }
 
     /**
@@ -321,8 +341,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public Double getLeftMargin() {
-        TextProp val = getPropVal(_paragraphStyle, "text.offset", this);
-        return (val == null) ? null : Units.masterToPoints(val.getValue());
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, "text.offset");
+        return (tp == null) ? null : Units.masterToPoints(tp.getValue());
     }
 
     @Override
@@ -344,8 +364,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public Double getIndent() {
-        TextProp val = getPropVal(_paragraphStyle, "bullet.offset", this);
-        return (val == null) ? null : Units.masterToPoints(val.getValue());
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, "bullet.offset");
+        return (tp == null) ? null : Units.masterToPoints(tp.getValue());
     }
 
     @Override
@@ -393,7 +413,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public TextAlign getTextAlign() {
-        TextProp tp = getPropVal(_paragraphStyle, "alignment", this);
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, "alignment");
         if (tp == null) {
             return null;
         }
@@ -411,7 +431,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public FontAlign getFontAlign() {
-        TextProp tp = getPropVal(_paragraphStyle, FontAlignmentProp.NAME, this);
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, FontAlignmentProp.NAME);
         if (tp == null) {
             return null;
         }
@@ -577,7 +597,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Returns the bullet character
      */
     public Character getBulletChar() {
-        TextProp tp = getPropVal(_paragraphStyle, "bullet.char", this);
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, "bullet.char");
         return (tp == null) ? null : (char)tp.getValue();
     }
 
@@ -608,7 +628,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Returns the bullet color
      */
     public Color getBulletColor() {
-        TextProp tp = getPropVal(_paragraphStyle, "bullet.color", this);
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, "bullet.color");
         boolean hasColor = getFlag(ParagraphFlagsTextProp.BULLET_HARDCOLOR_IDX);
         if (tp == null || !hasColor) {
             // if bullet color is undefined, return color of first run
@@ -632,8 +652,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      */
     public void setBulletFont(String typeface) {
         if (typeface == null) {
-            setPropVal(_paragraphStyle, "bullet.font", null);
+            setPropVal(_paragraphStyle, _masterStyle, "bullet.font", null);
             setFlag(ParagraphFlagsTextProp.BULLET_HARDFONT_IDX, false);
+            return;
         }
 
         FontCollection fc = getSheet().getSlideShow().getFontCollection();
@@ -647,7 +668,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Returns the bullet font
      */
     public String getBulletFont() {
-        TextProp tp = getPropVal(_paragraphStyle, "bullet.font", this);
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, "bullet.font");
         boolean hasFont = getFlag(ParagraphFlagsTextProp.BULLET_HARDFONT_IDX);
         if (tp == null || !hasFont) {
             return getDefaultFontFamily();
@@ -694,7 +715,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     private Double getPctOrPoints(String propName) {
-        TextProp tp = getPropVal(_paragraphStyle, propName, this);
+        TextProp tp = getPropVal(_paragraphStyle, _masterStyle, propName);
         if (tp == null) {
             return null;
         }
@@ -711,7 +732,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     private boolean getFlag(int index) {
-        BitMaskTextProp tp = (BitMaskTextProp)getPropVal(_paragraphStyle, ParagraphFlagsTextProp.NAME, this);
+        BitMaskTextProp tp = (BitMaskTextProp)getPropVal(_paragraphStyle, _masterStyle, ParagraphFlagsTextProp.NAME);
         return (tp == null) ? false : tp.getSubValue(index);
     }
 
@@ -729,7 +750,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * The propName can be a comma-separated list, in case multiple equivalent values
      * are queried
      */
-    protected static TextProp getPropVal(TextPropCollection props, String propName, HSLFTextParagraph paragraph) {
+    protected TextProp getPropVal(TextPropCollection props, TextPropCollection masterProps, String propName) {
         String propNames[] = propName.split(",");
         for (String pn : propNames) {
             TextProp prop = props.findByName(pn);
@@ -740,41 +761,52 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             // Font properties (maybe other too???) can have an index of -1
             // so we check the master for this font index then
             if (pn.contains("font") && prop.getValue() == -1) {
-                return getMasterPropVal(props, pn, paragraph);
+                return getMasterPropVal(props, masterProps, pn);
             }
             
             return prop;
         }
         
-        return getMasterPropVal(props, propName, paragraph);
+        return getMasterPropVal(props, masterProps, propName);
     }
     
-    private static TextProp getMasterPropVal(TextPropCollection props, String propName, HSLFTextParagraph paragraph) {
-        String propNames[] = propName.split(",");
-        
-        BitMaskTextProp maskProp = (BitMaskTextProp) props.findByName(ParagraphFlagsTextProp.NAME);
-        boolean hardAttribute = (maskProp != null && maskProp.getValue() == 0);
-        if (hardAttribute) {
-            return null;
-        }
-
-        HSLFSheet sheet = paragraph.getSheet();
-        int txtype = paragraph.getRunType();
-        HSLFMasterSheet master = sheet.getMasterSheet();
-        if (master == null) {
-            logger.log(POILogger.WARN, "MasterSheet is not available");
-            return null;
-        }
-
+    private TextProp getMasterPropVal(TextPropCollection props, TextPropCollection masterProps, String propName) {
         boolean isChar = props.getTextPropType() == TextPropType.character;
 
-        for (String pn : propNames) {
-            TextProp prop = master.getStyleAttribute(txtype, paragraph.getIndentLevel(), pn, isChar);
-            if (prop != null) {
-                return prop;
+        // check if we can delegate to master for the property
+        if (!isChar) {
+            BitMaskTextProp maskProp = (BitMaskTextProp) props.findByName(ParagraphFlagsTextProp.NAME);
+            boolean hardAttribute = (maskProp != null && maskProp.getValue() == 0);
+            if (hardAttribute) {
+                return null;
             }
         }
 
+        String propNames[] = propName.split(",");
+        if (masterProps == null) { 
+            HSLFSheet sheet = getSheet();
+            int txtype = getRunType();
+            HSLFMasterSheet master = sheet.getMasterSheet();
+            if (master == null) {
+                logger.log(POILogger.WARN, "MasterSheet is not available");
+                return null;
+            }
+
+            for (String pn : propNames) {
+                TextProp prop = master.getStyleAttribute(txtype, getIndentLevel(), pn, isChar);
+                if (prop != null) {
+                    return prop;
+                }
+            }
+        } else {
+            for (String pn : propNames) {
+                TextProp prop = masterProps.findByName(pn);
+                if (prop != null) {
+                    return prop;
+                }
+            }
+        }
+        
         return null;
     }
 
@@ -786,14 +818,19 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * @param name the name of the TextProp to fetch/add
      * @param val the value, null if unset
      */
-    protected static void setPropVal(TextPropCollection props, String name, Integer val) {
+    protected void setPropVal(TextPropCollection props, TextPropCollection masterProps, String name, Integer val) {
+        TextPropCollection pc = props;
+        if (getSheet() instanceof MasterSheet && masterProps != null) {
+            pc = masterProps;
+        }
+        
         if (val == null) {
-            props.removeByName(name);
+            pc.removeByName(name);
             return;
         }
 
         // Fetch / Add the TextProp
-        TextProp tp = props.addWithName(name);
+        TextProp tp = pc.addWithName(name);
         tp.setValue(val);
     }
 
@@ -1517,38 +1554,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
     }
 
-    protected static List<HSLFTextParagraph> createEmptyParagraph() {
-        EscherTextboxWrapper wrapper = new EscherTextboxWrapper();
-        return createEmptyParagraph(wrapper);
-    }
-
-    protected static List<HSLFTextParagraph> createEmptyParagraph(EscherTextboxWrapper wrapper) {
-        TextHeaderAtom tha = new TextHeaderAtom();
-        tha.setParentRecord(wrapper);
-        wrapper.appendChildRecord(tha);
-
-        TextBytesAtom tba = new TextBytesAtom();
-        tba.setText("".getBytes(LocaleUtil.CHARSET_1252));
-        wrapper.appendChildRecord(tba);
-
-        StyleTextPropAtom sta = new StyleTextPropAtom(1);
-        TextPropCollection paraStyle = sta.addParagraphTextPropCollection(1);
-        TextPropCollection charStyle = sta.addCharacterTextPropCollection(1);
-        wrapper.appendChildRecord(sta);
-
-        List<HSLFTextParagraph> paragraphs = new ArrayList<HSLFTextParagraph>(1);
-        HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null, paragraphs);
-        htp.setParagraphStyle(paraStyle);
-        paragraphs.add(htp);
-
-        HSLFTextRun htr = new HSLFTextRun(htp);
-        htr.setCharacterStyle(charStyle);
-        htr.setText("");
-        htp.addTextRun(htr);
-
-        return paragraphs;
-    }
-
     public EscherTextboxWrapper getTextboxWrapper() {
         return (EscherTextboxWrapper) _headerAtom.getParentRecord();
     }
@@ -1583,7 +1588,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * @param val The value to set for the TextProp
      */
     public void setParagraphTextPropVal(String propName, Integer val) {
-        setPropVal(_paragraphStyle, propName, val);
+        setPropVal(_paragraphStyle, _masterStyle, propName, val);
         setDirty();
     }
 
@@ -1624,21 +1629,19 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      */
     @Override
     public boolean isHeaderOrFooter() {
-        HSLFShape s = getParentShape();
+        HSLFTextShape s = getParentShape();
         if (s == null) {
             return false;
         }
-        RoundTripHFPlaceholder12 hfPl = s.getClientDataRecord(RecordTypes.RoundTripHFPlaceholder12.typeID);
-        if (hfPl == null) {
+        Placeholder ph = s.getPlaceholder();
+        if (ph == null) {
             return false;
         }
-
-        int plId = hfPl.getPlaceholderId();
-        switch (plId) {
-            case OEPlaceholderAtom.MasterDate:
-            case OEPlaceholderAtom.MasterSlideNumber:
-            case OEPlaceholderAtom.MasterFooter:
-            case OEPlaceholderAtom.MasterHeader:
+        switch (ph) {
+            case DATETIME:
+            case SLIDE_NUMBER:
+            case FOOTER:
+            case HEADER:
                 return true;
             default:
                 return false;

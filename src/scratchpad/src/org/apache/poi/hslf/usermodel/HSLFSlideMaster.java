@@ -23,7 +23,9 @@ import java.util.List;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.MainMaster;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.TxMasterStyleAtom;
 import org.apache.poi.util.Internal;
 
 /**
@@ -49,13 +51,16 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
         super(record, sheetNo);
 
         for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
-            if (!_paragraphs.contains(l)) _paragraphs.add(l);
+            if (!_paragraphs.contains(l)) {
+                _paragraphs.add(l);
+            }
         }
     }
 
     /**
      * Returns an array of all the TextRuns found
      */
+    @Override
     public List<List<HSLFTextParagraph>> getTextParagraphs() {
         return _paragraphs;
     }
@@ -63,6 +68,7 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
     /**
      * Returns <code>null</code> since SlideMasters doen't have master sheet.
      */
+    @Override
     public HSLFMasterSheet getMasterSheet() {
         return null;
     }
@@ -71,8 +77,11 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
      * Pickup a style attribute from the master.
      * This is the "workhorse" which returns the default style attributes.
      */
+    @Override
     public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
-        if (_txmaster.length <= txtype) return null;
+        if (_txmaster.length <= txtype) {
+            return null;
+        }
         TxMasterStyleAtom t = _txmaster[txtype];
         List<TextPropCollection> styles = isCharacter ? t.getCharacterStyles() : t.getParagraphStyles();
         
@@ -81,7 +90,9 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
             prop = styles.get(i).findByName(name);
         }
 
-        if (prop != null) return prop;
+        if (prop != null) {
+            return prop;
+        }
         
         switch (txtype) {
             case TextHeaderAtom.CENTRE_BODY_TYPE:
@@ -146,6 +157,7 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
         }
     }
 
+    @Override
     protected void onAddTextShape(HSLFTextShape shape) {
         List<HSLFTextParagraph> runs = shape.getTextParagraphs();
         _paragraphs.add(runs);

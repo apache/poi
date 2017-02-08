@@ -16,22 +16,26 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextShape.TextAutofit;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
 import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
-/**
- * @author Yegor Kozlov
- */
 public class TestXSLFAutoShape {
     @Test
     public void testTextBodyProperies() throws IOException {
@@ -222,56 +226,58 @@ public class TestXSLFAutoShape {
         assertEquals(1, shape.getTextParagraphs().size());
         assertEquals(0, p.getTextRuns().size());
         XSLFTextRun r = p.addNewTextRun();
+        CTTextCharacterProperties rPr = r.getRPr(false);
+        assertNotNull(rPr);
         assertEquals(1, p.getTextRuns().size());
         assertSame(r, p.getTextRuns().get(0));
 
+        
         assertEquals(18.0, r.getFontSize(), 0); // default font size for text boxes
-        assertFalse(r.getXmlObject().getRPr().isSetSz());
+        assertFalse(rPr.isSetSz());
         r.setFontSize(10.0);
-        assertTrue(r.getXmlObject().isSetRPr());
-        assertEquals(1000, r.getXmlObject().getRPr().getSz());
+        assertEquals(1000, rPr.getSz());
         r.setFontSize(12.5);
-        assertEquals(1250, r.getXmlObject().getRPr().getSz());
+        assertEquals(1250, rPr.getSz());
         r.setFontSize(null);
-        assertFalse(r.getXmlObject().getRPr().isSetSz());
+        assertFalse(rPr.isSetSz());
 
-        assertFalse(r.getXmlObject().getRPr().isSetLatin());
+        assertFalse(rPr.isSetLatin());
         assertEquals("Calibri", r.getFontFamily()); // comes from the slide master
         r.setFontFamily(null);
         assertEquals("Calibri", r.getFontFamily()); // comes from the slide master
         r.setFontFamily("Arial");
         assertEquals("Arial", r.getFontFamily());
-        assertEquals("Arial", r.getXmlObject().getRPr().getLatin().getTypeface());
+        assertEquals("Arial", rPr.getLatin().getTypeface());
         r.setFontFamily("Symbol");
         assertEquals("Symbol", r.getFontFamily());
-        assertEquals("Symbol", r.getXmlObject().getRPr().getLatin().getTypeface());
+        assertEquals("Symbol", rPr.getLatin().getTypeface());
         r.setFontFamily(null);
         assertEquals("Calibri", r.getFontFamily()); // comes from the slide master
-        assertFalse(r.getXmlObject().getRPr().isSetLatin());
+        assertFalse(rPr.isSetLatin());
 
         assertFalse(r.isStrikethrough());
-        assertFalse(r.getXmlObject().getRPr().isSetStrike());
+        assertFalse(rPr.isSetStrike());
         r.setStrikethrough(true);
         assertTrue(r.isStrikethrough());
-        assertEquals(STTextStrikeType.SNG_STRIKE, r.getXmlObject().getRPr().getStrike());
+        assertEquals(STTextStrikeType.SNG_STRIKE, rPr.getStrike());
 
         assertFalse(r.isBold());
-        assertFalse(r.getXmlObject().getRPr().isSetB());
+        assertFalse(rPr.isSetB());
         r.setBold(true);
         assertTrue(r.isBold());
-        assertEquals(true, r.getXmlObject().getRPr().getB());
+        assertEquals(true, rPr.getB());
 
         assertFalse(r.isItalic());
-        assertFalse(r.getXmlObject().getRPr().isSetI());
+        assertFalse(rPr.isSetI());
         r.setItalic(true);
         assertTrue(r.isItalic());
-        assertEquals(true, r.getXmlObject().getRPr().getI());
+        assertEquals(true, rPr.getI());
 
         assertFalse(r.isUnderlined());
-        assertFalse(r.getXmlObject().getRPr().isSetU());
+        assertFalse(rPr.isSetU());
         r.setUnderlined(true);
         assertTrue(r.isUnderlined());
-        assertEquals(STTextUnderlineType.SNG, r.getXmlObject().getRPr().getU());
+        assertEquals(STTextUnderlineType.SNG, rPr.getU());
 
         r.setText("Apache");
         assertEquals("Apache", r.getRawText());
