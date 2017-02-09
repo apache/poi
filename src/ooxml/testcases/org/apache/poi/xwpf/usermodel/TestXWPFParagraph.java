@@ -613,6 +613,12 @@ public final class TestXWPFParagraph {
         assertEquals("This is a test.\n\n\n\n3\n4\n5\n\n\n\nThis is a whole paragraph where one word is deleted.\n", str.toString());
     }
     
+    /**
+     * Tests for numbered lists
+     * 
+     * See also https://github.com/jimklo/apache-poi-sample/blob/master/src/main/java/com/sri/jklo/StyledDocument.java
+     * for someone else trying a similar thing
+     */
     @Test
     public void testNumberedLists() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ComplexNumberedLists.docx");
