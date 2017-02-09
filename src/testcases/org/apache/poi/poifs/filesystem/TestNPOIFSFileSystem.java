@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -46,6 +47,8 @@ import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
+import org.junit.Assume;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1557,5 +1560,139 @@ public final class TestNPOIFSFileSystem {
        int count = 0;
        for (Property cp : p) { count++; }
        return count;
+   }
+   
+   /**
+    * To ensure we can create a file >2gb in size, as well as to
+    *  extend existing files past the 2gb boundary.
+    *
+    * Note that to run this test, you will require 2.5+gb of free
+    *  space on your TMP/TEMP partition/disk
+    * 
+    * TODO Fix this to work
+    * TODO Update this to use a "create as new file" constructor too
+    */
+   @Test
+   @Ignore("Work in progress test for #60670")
+   public void CreationAndExtensionPast2GB() throws Exception {
+       File big = TempFile.createTempFile("poi-test-", ".ole2");
+       Assume.assumeTrue("2.5gb of free space is required on your tmp/temp " +
+                         "partition/disk to run large file tests",
+                         big.getFreeSpace() > 2.5*1024*1024*1024);
+       
+       int s100mb = 100*1024*1024;
+       int s512mb = 512*1024*1024;
+       DocumentEntry entry;
+       
+       // TODO Provide a create method that takes a file
+       
+       // Create a just-sub 2gb file
+       NPOIFSFileSystem fs = new NPOIFSFileSystem();
+       fs.writeFilesystem(new FileOutputStream(big));
+       fs.close();
+       
+       fs = new NPOIFSFileSystem(big, false);
+       for (int i=0; i<19; i++) {
+           fs.createDocument(new DummyDataInputStream(s100mb), "Entry"+i);
+       }
+       fs.writeFilesystem();
+       fs.close();
+       
+       // Extend it past the 2gb mark
+       fs = new NPOIFSFileSystem(big, false);
+       for (int i=0; i<19; i++) {
+           entry = (DocumentEntry)fs.getRoot().getEntry("Entry"+i);
+           assertNotNull(entry);
+           assertEquals(s100mb, entry.getSize());
+       }
+       
+       fs.createDocument(new DummyDataInputStream(s512mb), "Bigger");
+       fs.writeFilesystem();
+       fs.close();
+       
+       // Check it still works
+       fs = new NPOIFSFileSystem(big, false);
+       for (int i=0; i<19; i++) {
+           entry = (DocumentEntry)fs.getRoot().getEntry("Entry"+i);
+           assertNotNull(entry);
+           assertEquals(s100mb, entry.getSize());
+       }
+       entry = (DocumentEntry)fs.getRoot().getEntry("Bigger");
+       assertNotNull(entry);
+       assertEquals(s512mb, entry.getSize());
+       
+       // Tidy
+       fs.close();
+       big.delete();
+       
+       
+       // Create a >2gb file
+       fs = new NPOIFSFileSystem();
+       fs.writeFilesystem(new FileOutputStream(big));
+       fs.close();
+       
+       fs = new NPOIFSFileSystem(big, false);
+       for (int i=0; i<4; i++) {
+           fs.createDocument(new DummyDataInputStream(s512mb), "Entry"+i);
+       }
+       fs.writeFilesystem();
+       fs.close();
+       
+       // Read it
+       fs = new NPOIFSFileSystem(big, false);
+       for (int i=0; i<4; i++) {
+           entry = (DocumentEntry)fs.getRoot().getEntry("Entry"+i);
+           assertNotNull(entry);
+           assertEquals(s512mb, entry.getSize());
+       }
+       
+       // Extend it
+       fs.createDocument(new DummyDataInputStream(s512mb), "Entry4");
+       fs.writeFilesystem();
+       fs.close();
+       
+       // Check it worked
+       fs = new NPOIFSFileSystem(big, false);
+       for (int i=0; i<5; i++) {
+           entry = (DocumentEntry)fs.getRoot().getEntry("Entry"+i);
+           assertNotNull(entry);
+           assertEquals(s512mb, entry.getSize());
+       }
+       
+       // Tidy
+       fs.close();
+       big.delete();
+
+       
+       // Create a file with a 2gb entry
+       // TODO Check we get a helpful error about the max size
+   }
+   
+   protected static class DummyDataInputStream extends InputStream {
+      protected final int maxSize;
+      protected int size;
+      public DummyDataInputStream(int maxSize) {
+          this.maxSize = maxSize;
+          this.size = 0;
+      }
+
+      public int read() throws IOException {
+          if (size >= maxSize) return -1;
+          size++;
+          return size % 128;
+      }
+
+      public int read(byte[] b) throws IOException {
+          return read(b, 0, b.length);
+      }
+      public int read(byte[] b, int offset, int len) throws IOException {
+          if (size >= maxSize) return -1;
+          int sz = Math.min(len, maxSize-size);
+          for (int i=0; i<sz; i++) {
+              b[i+offset] = (byte)((size+i) % 128);
+          }
+          size += sz;
+          return sz;
+      }
    }
 }
