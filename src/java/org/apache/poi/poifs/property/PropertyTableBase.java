@@ -24,6 +24,8 @@ import java.util.Stack;
 
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class embodies the Property Table for the filesystem,
@@ -33,6 +35,9 @@ import org.apache.poi.poifs.storage.HeaderBlock;
  *  for the different block schemes as needed.
  */
 public abstract class PropertyTableBase implements BATManaged {
+    private static final POILogger _logger =
+            POILogFactory.getLogger(PropertyTableBase.class);
+    
     private   final HeaderBlock    _header_block;
     protected final List<Property> _properties;
 
@@ -123,16 +128,27 @@ public abstract class PropertyTableBase implements BATManaged {
                 populatePropertyTree(( DirectoryProperty ) property);
             }
             index = property.getPreviousChildIndex();
-            if (Property.isValidIndex(index))
+            if (isValidIndex(index))
             {
                 children.push(_properties.get(index));
             }
             index = property.getNextChildIndex();
-            if (Property.isValidIndex(index))
+            if (isValidIndex(index))
             {
                 children.push(_properties.get(index));
             }
         }
+    }
+    
+    protected boolean isValidIndex(int index) {
+        if (! Property.isValidIndex(index))
+            return false;
+        if (index < 0 || index >= _properties.size()) {
+            _logger.log(POILogger.WARN, "Property index " + index +
+                        "outside the valid range 0.."+_properties.size());
+            return false;
+        }
+        return true;
     }
 
     /**
