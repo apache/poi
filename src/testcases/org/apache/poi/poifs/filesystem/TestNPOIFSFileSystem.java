@@ -1568,6 +1568,10 @@ public final class TestNPOIFSFileSystem {
     *
     * Note that to run this test, you will require 2.5+gb of free
     *  space on your TMP/TEMP partition/disk
+    *  
+    * Note that to run this test, you need to be able to mmap 2.5+gb
+    *  files, which may need bigger kernel.shmmax and vm.max_map_count
+    *  settings on Linux.
     * 
     * TODO Fix this to work...
     */
@@ -1578,13 +1582,16 @@ public final class TestNPOIFSFileSystem {
        Assume.assumeTrue("2.5gb of free space is required on your tmp/temp " +
                          "partition/disk to run large file tests",
                          big.getFreeSpace() > 2.5*1024*1024*1024);
+       System.out.println("Slow, memory heavy test in progress....");
        
        int s100mb = 100*1024*1024;
        int s512mb = 512*1024*1024;
+       long s2gb = 2l*1024*1024*1024;
        DocumentEntry entry;
-       
+       NPOIFSFileSystem fs;
+
        // Create a just-sub 2gb file
-       NPOIFSFileSystem fs = POIFSFileSystem.create(big);
+       fs = POIFSFileSystem.create(big);
        for (int i=0; i<19; i++) {
            fs.createDocument(new DummyDataInputStream(s100mb), "Entry"+i);
        }
@@ -1651,16 +1658,18 @@ public final class TestNPOIFSFileSystem {
        // Tidy
        fs.close();
        big.delete();
-
        
        // Create a file with a 2gb entry
+       fs = POIFSFileSystem.create(big);
+       fs.createDocument(new DummyDataInputStream(s100mb), "Small");
        // TODO Check we get a helpful error about the max size
+       fs.createDocument(new DummyDataInputStream(s2gb), "Big");
    }
    
    protected static class DummyDataInputStream extends InputStream {
-      protected final int maxSize;
-      protected int size;
-      public DummyDataInputStream(int maxSize) {
+      protected final long maxSize;
+      protected long size;
+      public DummyDataInputStream(long maxSize) {
           this.maxSize = maxSize;
           this.size = 0;
       }
@@ -1668,7 +1677,7 @@ public final class TestNPOIFSFileSystem {
       public int read() throws IOException {
           if (size >= maxSize) return -1;
           size++;
-          return size % 128;
+          return (int)(size % 128);
       }
 
       public int read(byte[] b) throws IOException {
@@ -1676,7 +1685,7 @@ public final class TestNPOIFSFileSystem {
       }
       public int read(byte[] b, int offset, int len) throws IOException {
           if (size >= maxSize) return -1;
-          int sz = Math.min(len, maxSize-size);
+          int sz = (int)Math.min(len, maxSize-size);
           for (int i=0; i<sz; i++) {
               b[i+offset] = (byte)((size+i) % 128);
           }
