@@ -88,6 +88,11 @@ public class FileBackedDataSource extends DataSource {
          throw new IndexOutOfBoundsException("Position " + position + " past the end of the file");
       }
       
+      // TODO Could we do the read-only case with MapMode.PRIVATE instead?
+      // See https://docs.oracle.com/javase/7/docs/api/java/nio/channels/FileChannel.MapMode.html#PRIVATE
+      // Or should we have 3 modes instead of the current boolean - 
+      //  read-write, read-only, read-to-write-elsewhere? 
+      
       // Do we read or map (for read/write)?
       ByteBuffer dst;
       if (writable) {
