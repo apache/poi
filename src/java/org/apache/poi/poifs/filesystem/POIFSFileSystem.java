@@ -27,9 +27,10 @@ import org.apache.poi.util.CloseIgnoringInputStream;
 /**
  * Transition class for the move from {@link POIFSFileSystem} to 
  *  {@link OPOIFSFileSystem}, and from {@link NPOIFSFileSystem} to
- *  {@link POIFSFileSystem}. Currently, this is OPOIFS-powered
+ *  {@link POIFSFileSystem}. 
+ * <p>This has been updated to be powered by the NIO-based NPOIFS
+ *  {@link NPOIFSFileSystem}.
  */
-
 public class POIFSFileSystem
     extends NPOIFSFileSystem // TODO Temporary workaround during #56791
     implements POIFSViewable
