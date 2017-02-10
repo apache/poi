@@ -1569,8 +1569,7 @@ public final class TestNPOIFSFileSystem {
     * Note that to run this test, you will require 2.5+gb of free
     *  space on your TMP/TEMP partition/disk
     * 
-    * TODO Fix this to work
-    * TODO Update this to use a "create as new file" constructor too
+    * TODO Fix this to work...
     */
    @Test
    @Ignore("Work in progress test for #60670")
@@ -1584,14 +1583,8 @@ public final class TestNPOIFSFileSystem {
        int s512mb = 512*1024*1024;
        DocumentEntry entry;
        
-       // TODO Provide a create method that takes a file
-       
        // Create a just-sub 2gb file
-       NPOIFSFileSystem fs = new NPOIFSFileSystem();
-       fs.writeFilesystem(new FileOutputStream(big));
-       fs.close();
-       
-       fs = new NPOIFSFileSystem(big, false);
+       NPOIFSFileSystem fs = POIFSFileSystem.create(big);
        for (int i=0; i<19; i++) {
            fs.createDocument(new DummyDataInputStream(s100mb), "Entry"+i);
        }
@@ -1627,11 +1620,7 @@ public final class TestNPOIFSFileSystem {
        
        
        // Create a >2gb file
-       fs = new NPOIFSFileSystem();
-       fs.writeFilesystem(new FileOutputStream(big));
-       fs.close();
-       
-       fs = new NPOIFSFileSystem(big, false);
+       fs = POIFSFileSystem.create(big);
        for (int i=0; i<4; i++) {
            fs.createDocument(new DummyDataInputStream(s512mb), "Entry"+i);
        }
