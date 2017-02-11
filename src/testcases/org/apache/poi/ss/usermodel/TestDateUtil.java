@@ -111,16 +111,16 @@ public class TestDateUtil {
         assertTrue(DateUtil.isADateFormat(186, "[$-409]mmmmm\\-yy;@"));
 
         // Cell show "2016年12月8日"
-        assertTrue(DateUtil.isADateFormat(165, "yyyy\"年\"m\"月\"d\"日\";@"));
+        assertTrue(DateUtil.isADateFormat(165, "yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\";@"));
         // Cell show "2016年12月"
-        assertTrue(DateUtil.isADateFormat(164, "yyyy\"年\"m\"月\";@"));
+        assertTrue(DateUtil.isADateFormat(164, "yyyy\"\u5e74\"m\"\u6708\";@"));
         // Cell show "12月8日"
-        assertTrue(DateUtil.isADateFormat(168, "m\"月\"d\"日\";@"));
+        assertTrue(DateUtil.isADateFormat(168, "m\"\u6708\"d\"\u65e5\";@"));
         // Cell show "十二月八日"
-        assertTrue(DateUtil.isADateFormat(181, "[DBNum1][$-404]m\"月\"d\"日\";@"));
+        assertTrue(DateUtil.isADateFormat(181, "[DBNum1][$-404]m\"\u6708\"d\"\u65e5\";@"));
         // Cell show "贰零壹陆年壹拾贰月捌日"
-        assertTrue(DateUtil.isADateFormat(177, "[DBNum2][$-804]yyyy\"年\"m\"月\"d\"日\";@"));
+        assertTrue(DateUtil.isADateFormat(177, "[DBNum2][$-804]yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\";@"));
         // Cell show "２０１６年１２月８日"
-        assertTrue(DateUtil.isADateFormat(178, "[DBNum3][$-804]yyyy\"年\"m\"月\"d\"日\";@"));
+        assertTrue(DateUtil.isADateFormat(178, "[DBNum3][$-804]yyyy\"\u5e74\"m\"\u6708\"d\"\u65e5\";@"));
     }
 }
