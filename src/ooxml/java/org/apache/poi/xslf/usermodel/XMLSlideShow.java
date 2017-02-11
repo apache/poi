@@ -72,7 +72,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument
 @Beta
 public class XMLSlideShow extends POIXMLDocument
 implements SlideShow<XSLFShape,XSLFTextParagraph> {
-    private final static POILogger _logger = POILogFactory.getLogger(XMLSlideShow.class);
+    private static final POILogger LOG = POILogFactory.getLogger(XMLSlideShow.class);
 
     private CTPresentation _presentation;
     private List<XSLFSlide> _slides;
@@ -154,7 +154,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 for (CTSlideIdListEntry slId : _presentation.getSldIdLst().getSldIdList()) {
                     XSLFSlide sh = shIdMap.get(slId.getId2());
                     if (sh == null) {
-                        _logger.log(POILogger.WARN, "Slide with r:id " + slId.getId() + " was defined, but didn't exist in package, skipping");
+                        LOG.log(POILogger.WARN, "Slide with r:id " + slId.getId() + " was defined, but didn't exist in package, skipping");
                         continue;
                     }
                     _slides.add(sh);
@@ -206,8 +206,9 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
         int slideNumber = 256, cnt = 1;
         CTSlideIdList slideList;
-        if (!_presentation.isSetSldIdLst()) slideList = _presentation.addNewSldIdLst();
-        else {
+        if (!_presentation.isSetSldIdLst()) {
+            slideList = _presentation.addNewSldIdLst();
+        } else {
             slideList = _presentation.getSldIdLst();
             for(CTSlideIdListEntry slideId : slideList.getSldIdArray()){
                 slideNumber = (int)Math.max(slideId.getId() + 1, slideNumber);
@@ -255,31 +256,39 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         _slides.add(slide);
         return slide;
     }
-    
+
     /**
      * Create a blank slide using the default (first) master.
      */
     @Override
     public XSLFSlide createSlide() {
-        XSLFSlideLayout layout = _masters.get(0).getLayout(SlideLayout.BLANK);
-        if(layout == null) throw new IllegalArgumentException("Blank layout was not found");
-
+        XSLFSlideMaster sm = _masters.get(0);
+        XSLFSlideLayout layout = sm.getLayout(SlideLayout.BLANK);
+        if (layout == null) {
+            LOG.log(POILogger.WARN, "Blank layout was not found - defaulting to first slide layout in master");
+            XSLFSlideLayout sl[] = sm.getSlideLayouts();
+            if (sl.length == 0) {
+                throw new POIXMLException("SlideMaster must contain a SlideLayout.");
+            }
+            layout = sl[0];
+        }
+        
         return createSlide(layout);
     }
-    
+
     /**
      * Return notes slide for the specified slide or create new if it does not exist yet.
      */
     public XSLFNotes getNotesSlide(XSLFSlide slide) {
-        
+
         XSLFNotes notesSlide = slide.getNotes();
         if (notesSlide == null) {
             notesSlide = createNotesSlide(slide);
         }
-        
+
         return notesSlide;
-    }    
-    
+    }
+
     /**
      * Create a blank notes slide.
      */
@@ -288,10 +297,10 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         if (_notesMaster == null) {
             createNotesMaster();
         }
-        
+
         Integer slideIndex = XSLFRelation.SLIDE.getFileNameIndex(slide);
-        
-        // add notes slide to presentation 
+
+        // add notes slide to presentation
         XSLFNotes notesSlide = (XSLFNotes) createRelationship
             (XSLFRelation.NOTES, XSLFFactory.getInstance(), slideIndex);
         // link slide and notes slide with each other
@@ -300,22 +309,22 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         notesSlide.addRelation(null, XSLFRelation.SLIDE, slide);
 
         notesSlide.importContent(_notesMaster);
-        
+
         return notesSlide;
     }
 
     /**
      * Create a notes master.
-     */ 
+     */
     public void createNotesMaster() {
         RelationPart rp = createRelationship
             (XSLFRelation.NOTES_MASTER, XSLFFactory.getInstance(), 1, false);
         _notesMaster = rp.getDocumentPart();
-        
+
         CTNotesMasterIdList notesMasterIdList = _presentation.addNewNotesMasterIdLst();
         CTNotesMasterIdListEntry notesMasterId = notesMasterIdList.addNewNotesMasterId();
         notesMasterId.setId(rp.getRelationship().getId());
-        
+
         Integer themeIndex = 1;
         // TODO: check if that list can be replaced by idx = Math.max(idx,themeIdx)
         List<Integer> themeIndexList = new ArrayList<Integer>();
@@ -324,7 +333,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 themeIndexList.add(XSLFRelation.THEME.getFileNameIndex(p));
             }
         }
-         
+
         if (!themeIndexList.isEmpty()) {
             Boolean found = false;
             for (Integer i = 1; i <= themeIndexList.size(); i++) {
@@ -337,20 +346,20 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 themeIndex = themeIndexList.size() + 1;
             }
         }
-        
+
         XSLFTheme theme = (XSLFTheme) createRelationship
             (XSLFRelation.THEME, XSLFFactory.getInstance(), themeIndex);
         theme.importTheme(getSlides().get(0).getTheme());
-        
+
         _notesMaster.addRelation(null, XSLFRelation.THEME, theme);
     }
-    
+
     /**
      * Return the Notes Master, if there is one.
-     * (May not be present if no notes exist)  
+     * (May not be present if no notes exist)
      */
     public XSLFNotesMaster getNotesMaster() {
-        return _notesMaster; 
+        return _notesMaster;
     }
 
     @Override
@@ -361,10 +370,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     /**
      * Return all the slides in the slideshow
      */
+    @Override
     public List<XSLFSlide> getSlides() {
         return _slides;
     }
-    
+
     /**
      * Returns the list of comment authors, if there is one.
      * Will only be present if at least one slide has comments on it.
@@ -379,8 +389,12 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      */
     public void setSlideOrder(XSLFSlide slide, int newIndex){
         int oldIndex = _slides.indexOf(slide);
-        if(oldIndex == -1) throw new IllegalArgumentException("Slide not found");
-        if (oldIndex == newIndex) return;
+        if(oldIndex == -1) {
+            throw new IllegalArgumentException("Slide not found");
+        }
+        if (oldIndex == newIndex) {
+            return;
+        }
 
         // fix the usermodel container
         _slides.add(newIndex, _slides.remove(oldIndex));
@@ -404,7 +418,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
          _presentation.getSldIdLst().removeSldId(index);
         return slide;
     }
-    
+
     @Override
     public Dimension getPageSize(){
         CTSlideSize sz = _presentation.getSldSz();
@@ -424,7 +438,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
     @Internal
     public CTPresentation getCTPresentation(){
-        return _presentation;        
+        return _presentation;
     }
 
     /**
@@ -435,11 +449,14 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      *
      * @return the picture data
      */
+    @Override
     public XSLFPictureData addPicture(byte[] pictureData, PictureType format) {
         XSLFPictureData img = findPictureData(pictureData);
 
-        if (img != null) return img;
-        
+        if (img != null) {
+            return img;
+        }
+
         int imageNumber = _pictures.size();
         XSLFRelation relType = XSLFPictureData.getRelationForType(format);
         if (relType == null) {
@@ -455,7 +472,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         } catch (IOException e) {
             throw new POIXMLException(e);
         }
-        
+
         return img;
     }
 
@@ -502,7 +519,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
     /**
      * check if a picture with this picture data already exists in this presentation
-     * 
+     *
      * @param pictureData The picture data to find in the SlideShow
      * @return {@code null} if picture data is not found in this slideshow
      * @since 3.15 beta 2
@@ -560,6 +577,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Resources getResources() {
         // TODO: implement!
         throw new UnsupportedOperationException();

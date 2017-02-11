@@ -71,7 +71,7 @@ import org.junit.Test;
 
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-    
+
     @Test
     public void bug51187() throws Exception {
        XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("51187.pptx");
@@ -586,4 +586,10 @@ public class TestXSLFBugs {
         return cell;
     }
 
+    @Test
+    public void bug60715() throws IOException {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("bug60715.pptx");
+        ppt.createSlide();
+        ppt.close();
+    }
 }
