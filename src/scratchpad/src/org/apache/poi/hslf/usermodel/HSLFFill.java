@@ -31,6 +31,7 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.FillStyle;
@@ -38,6 +39,8 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint.GradientType;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -101,6 +104,108 @@ public final class HSLFFill {
      */
     public static final int FILL_BACKGROUND = 9;
 
+    /**
+     * A bit that specifies whether the RecolorFillAsPicture bit is set.
+     * A value of 0x0 specifies that the fRecolorFillAsPicture MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_RECOLOR_FILL_AS_PICTURE = BitFieldFactory.getInstance(0x00400000);
+
+    /**
+     * A bit that specifies whether the UseShapeAnchor bit is set.
+     * A value of 0x0 specifies that the fUseShapeAnchor MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_USE_SHAPE_ANCHOR = BitFieldFactory.getInstance(0x00200000);
+
+    /**
+     * A bit that specifies whether the Filled bit is set.
+     * A value of 0x0 specifies that the Filled MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_FILLED = BitFieldFactory.getInstance(0x00100000);
+
+    /**
+     * A bit that specifies whether the HitTestFill bit is set.
+     * A value of 0x0 specifies that the HitTestFill MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_HIT_TEST_FILL = BitFieldFactory.getInstance(0x00080000);
+    
+    /**
+     * A bit that specifies whether the fillShape bit is set.
+     * A value of 0x0 specifies that the fillShape MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_FILL_SHAPE = BitFieldFactory.getInstance(0x00040000);
+    
+    /**
+     * A bit that specifies whether the fillUseRect bit is set.
+     * A value of 0x0 specifies that the fillUseRect MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_FILL_USE_RECT = BitFieldFactory.getInstance(0x00020000);
+    
+    /**
+     * A bit that specifies whether the fNoFillHitTest bit is set.
+     * A value of 0x0 specifies that the fNoFillHitTest MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_NO_FILL_HIT_TEST = BitFieldFactory.getInstance(0x00010000);
+    
+    /**
+     * A bit that specifies how to recolor a picture fill. If this bit is set to 0x1, the pictureFillCrMod
+     * property of the picture fill is used for recoloring. If this bit is set to 0x0, the fillCrMod property,
+     * as defined in section 2.3.7.6, is used for recoloring.
+     * If UsefRecolorFillAsPicture equals 0x0, this value MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_RECOLOR_FILL_AS_PICTURE = BitFieldFactory.getInstance(0x00000040);
+    
+    /**
+     * A bit that specifies whether the fill is rotated with the shape.
+     * If UseUseShapeAnchor equals 0x0, this value MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_USE_SHAPE_ANCHOR = BitFieldFactory.getInstance(0x00000020);
+    
+    /**
+     * A bit that specifies whether the fill is rendered if the shape is a 2-D shape.
+     * If this bit is set to 0x1, the fill of this shape is rendered based on the properties of the Fill Style
+     * property set. If this bit is set to 0x0, the fill of this shape is not rendered.
+     * If UseFilled is 0x0, this value MUST be ignored. The default value for this property is 0x1.
+     */
+    private static final BitField FILL_FILLED = BitFieldFactory.getInstance(0x00000010);
+    
+    /**
+     * A bit that specifies whether this fill will be hit tested.
+     * If UsefHitTestFill equals 0x0, this value MUST be ignored.
+     * The default value for this property is 0x1.
+     */
+    private static final BitField FILL_HIT_TEST_FILL = BitFieldFactory.getInstance(0x00000008);
+    
+    /**
+     * A bit that specifies how the fill is aligned. If this bit is set to 0x1, the fill is
+     * aligned relative to the shape so that it moves with the shape. If this bit is set to 0x0,
+     * the fill is aligned with the origin of the view. If fUsefillShape equals 0x0, this value MUST be ignored.
+     * The default value for this property is 0x1.
+     */
+    private static final BitField FILL_FILL_SHAPE = BitFieldFactory.getInstance(0x00000004);
+    
+    /**
+     * A bit that specifies whether to use the rectangle specified by the fillRectLeft, fillRectRight,
+     * fillRectTop, and fillRectBottom properties, rather than the bounding rectangle of the shape,
+     * as the filled area. If fUsefillUseRect equals 0x0, this value MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_FILL_USE_RECT = BitFieldFactory.getInstance(0x00000002);
+    
+    /**
+     * A bit that specifies whether this shape will be hit tested as though it were filled.
+     * If UsefNoFillHitTest equals 0x0, this value MUST be ignored.
+     * The default value for this property is 0x0.
+     */
+    private static final BitField FILL_NO_FILL_HIT_TEST = BitFieldFactory.getInstance(0x00000001);
 
 
     /**
@@ -121,6 +226,7 @@ public final class HSLFFill {
 
     public FillStyle getFillStyle() {
         return new FillStyle() {
+            @Override
             public PaintStyle getPaint() {
                 final int fillType = getFillType();
                 // TODO: fix gradient types, this mismatches with the MS-ODRAW definition ...
@@ -150,11 +256,19 @@ public final class HSLFFill {
     
 
     private GradientPaint getGradientPaint(final GradientType gradientType) {
-        final AbstractEscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         final EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
         final int colorCnt = (ep == null) ? 0 : ep.getNumberOfElementsInArray();
 
+        // NOFILLHITTEST can be in the normal escher opt record but also in the tertiary record
+        // the extended bit fields seem to be in the second
+        opt = (AbstractEscherOptRecord)shape.getEscherChild(RecordTypes.EscherUserDefined);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        int propVal = (p == null) ? 0 : p.getPropertyValue();
+        final boolean rotateWithShape = FILL_USE_USE_SHAPE_ANCHOR.isSet(propVal) && FILL_USE_SHAPE_ANCHOR.isSet(propVal);
+        
         return new GradientPaint() {
+            @Override
             public double getGradientAngle() {
                 // A value of type FixedPoint, as specified in [MS-OSHARED] section 2.2.1.6,
                 // that specifies the angle of the gradient fill. Zero degrees represents a vertical vector from
@@ -162,6 +276,8 @@ public final class HSLFFill {
                 int rot = shape.getEscherProperty(EscherProperties.FILL__ANGLE);
                 return 90-Units.fixedPointToDouble(rot);
             }
+            
+            @Override
             public ColorStyle[] getGradientColors() {
                 ColorStyle cs[];
                 if (colorCnt == 0) {
@@ -179,9 +295,12 @@ public final class HSLFFill {
                 }
                 return cs;
             }
+            
             private ColorStyle wrapColor(Color col) {
                 return (col == null) ? null : DrawPaint.createSolidPaint(col).getSolidColor();
             }
+            
+            @Override
             public float[] getGradientFractions() {
                 float frc[];
                 if (colorCnt == 0) {
@@ -196,9 +315,13 @@ public final class HSLFFill {
                 }
                 return frc;
             }
+            
+            @Override
             public boolean isRotatedWithShape() {
-                return false;
+                return rotateWithShape;
             }
+            
+            @Override
             public GradientType getGradientType() {
                 return gradientType;
             }
@@ -212,14 +335,17 @@ public final class HSLFFill {
         }
 
         return new TexturePaint() {
+            @Override
             public InputStream getImageData() {
                 return new ByteArrayInputStream(pd.getData());
             }
 
+            @Override
             public String getContentType() {
                 return pd.getContentType();
             }
 
+            @Override
             public int getAlpha() {
                 return (int)(shape.getAlpha(EscherProperties.FILL__FILLOPACITY)*100000.0);
             }
@@ -286,11 +412,11 @@ public final class HSLFFill {
     public Color getForegroundColor(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
-
-        if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
-
-        return shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
-
+        int propVal = (p == null) ? 0 : p.getPropertyValue();
+        
+        return (FILL_USE_FILLED.isSet(propVal) && !FILL_FILLED.isSet(propVal))
+            ? null
+            : shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
     }
 
     /**
@@ -298,22 +424,30 @@ public final class HSLFFill {
      */
     public void setForegroundColor(Color color){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        if (color == null) {
-            opt.removeEscherProperty(EscherProperties.FILL__FILLCOLOR);
-            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
-        }
-        else {
+        opt.removeEscherProperty(EscherProperties.FILL__FILLOPACITY);
+        opt.removeEscherProperty(EscherProperties.FILL__FILLCOLOR);
+
+        if (color != null) {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
             HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
             int alpha = color.getAlpha();
-            if (alpha == 255) {
-                opt.removeEscherProperty(EscherProperties.FILL__FILLOPACITY);
-            } else {
+            if (alpha < 255) {
                 int alphaFP = Units.doubleToFixedPoint(alpha/255d);
                 HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLOPACITY, alphaFP);
             }
-            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150011);
         }
+        
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        int propVal = (p == null) ? 0 : p.getPropertyValue();
+        propVal = FILL_FILLED.setBoolean(propVal, color != null);
+        propVal = FILL_NO_FILL_HIT_TEST.setBoolean(propVal, color != null);
+        propVal = FILL_USE_FILLED.set(propVal);
+        propVal = FILL_USE_FILL_SHAPE.set(propVal);
+        propVal = FILL_USE_NO_FILL_HIT_TEST.set(propVal);
+        // TODO: check why we always clear this ...
+        propVal = FILL_FILL_SHAPE.clear(propVal);
+
+        HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, propVal);
     }
 
     /**
@@ -322,10 +456,11 @@ public final class HSLFFill {
     public Color getBackgroundColor(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        int propVal = (p == null) ? 0 : p.getPropertyValue();
 
-        if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
-
-        return shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
+        return (FILL_USE_FILLED.isSet(propVal) && !FILL_FILLED.isSet(propVal))
+            ? null
+            : shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
     }
 
     /**
@@ -349,7 +484,9 @@ public final class HSLFFill {
     public HSLFPictureData getPictureData(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
-        if (p == null) return null;
+        if (p == null) {
+            return null;
+        }
 
         HSLFSlideShow ppt = shape.getSheet().getSlideShow();
         List<HSLFPictureData> pict = ppt.getPictureData();

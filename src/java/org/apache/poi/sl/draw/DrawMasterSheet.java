@@ -33,21 +33,21 @@ public class DrawMasterSheet extends DrawSheet {
     }
 
     /**
-     * Checks if this <code>sheet</code> displays the specified shape.
+     * Checks if this {@code sheet} displays the specified shape.
      *
      * Subclasses can override it and skip certain shapes from drawings,
      * for instance, slide masters and layouts don't display placeholders
      */
     @Override
     protected boolean canDraw(Graphics2D graphics, Shape<?,?> shape) {
+        Slide<?,?> slide = (Slide<?,?>)graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
         if (shape instanceof SimpleShape) {
             // in XSLF, slidenumber and date shapes aren't marked as placeholders opposed to HSLF
             Placeholder ph = ((SimpleShape<?,?>)shape).getPlaceholder();
             if (ph != null) {
-                Slide<?,?> slide = (Slide<?,?>)graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
                 return slide.getDisplayPlaceholder(ph);
             }
         }
-        return true;
+        return slide.getFollowMasterGraphics();
     }
 }

@@ -320,6 +320,12 @@ public abstract class XSLFSimpleShape extends XSLFShape
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties spPr = getLn(shape, false);
                 XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(spPr);
+
+                if (fp != null && fp.isSetNoFill()) {
+                    setValue(null);
+                    return true;
+                }
+                
                 PackagePart pp = shape.getSheet().getPackagePart();
                 PaintStyle paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
                 if (paint != null) {
@@ -331,39 +337,41 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 if (style != null) {
                     fp = XSLFPropertiesDelegate.getFillDelegate(style.getLnRef());
                     paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
+
+                    // line color was not found, check if it is defined in the theme
+                    if (paint == null) {
+                        paint = getThemePaint(style, pp);
+                    }
                 }
+                
                 if (paint != null) {
                     setValue(paint);
                     return true;
                 }
+                
                 return false;
+            }
+
+            PaintStyle getThemePaint(CTShapeStyle style, PackagePart pp) {
+                // get a reference to a line style within the style matrix.
+                CTStyleMatrixReference lnRef = style.getLnRef();
+                if (lnRef == null) {
+                    return null;
+                }
+                int idx = (int)lnRef.getIdx();
+                CTSchemeColor phClr = lnRef.getSchemeClr();
+                if(idx <= 0){
+                    return null;
+                }
+
+                CTLineProperties props = theme.getXmlObject().getThemeElements().getFmtScheme().getLnStyleLst().getLnArray(idx - 1);
+                XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
+                return selectPaint(fp, phClr, pp, theme, hasPlaceholder);
             }
         };
         fetchShapeProperty(fetcher);
 
-        PaintStyle paint = fetcher.getValue();
-        if (paint != null) {
-            return paint;
-        }
-
-        // line color was not found, check if it is defined in the theme
-        CTShapeStyle style = getSpStyle();
-        if (style == null) {
-            return null;
-        }
-
-        // get a reference to a line style within the style matrix.
-        CTStyleMatrixReference lnRef = style.getLnRef();
-        int idx = (int)lnRef.getIdx();
-        CTSchemeColor phClr = lnRef.getSchemeClr();
-        if(idx > 0){
-            CTLineProperties props = theme.getXmlObject().getThemeElements().getFmtScheme().getLnStyleLst().getLnArray(idx - 1);
-            XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
-            PackagePart pp = sheet.getPackagePart();
-            paint = selectPaint(fp, phClr, pp, theme, hasPlaceholder);
-        }
-
-        return paint;
+        return fetcher.getValue();
     }
 
     /**
