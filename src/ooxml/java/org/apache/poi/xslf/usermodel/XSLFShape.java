@@ -58,7 +58,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillPropertie
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
@@ -395,9 +394,9 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         	// if there's a reference to the placeholder color,
         	// stop evaluating further and let the caller select
         	// the next style inheritance level
-            if (STSchemeColorVal.PH_CLR.equals(solidFill.getSchemeClr().getVal())) {
-                return null;
-            }
+//            if (STSchemeColorVal.PH_CLR.equals(solidFill.getSchemeClr().getVal())) {
+//                return null;
+//            }
             if (phClr == null) {
                 phClr = solidFill.getSchemeClr();
             }
@@ -483,8 +482,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             }
 
             public boolean isRotatedWithShape() {
-                // TODO: is this correct???
-                return (gradFill.isSetRotWithShape() || !gradFill.getRotWithShape());
+                return gradFill.getRotWithShape();
             }
 
             public GradientType getGradientType() {

@@ -74,42 +74,52 @@ public class XSLFColor {
 
     public ColorStyle getColorStyle() {
         return new ColorStyle() {
+            @Override
             public Color getColor() {
                 return _color;
             }
 
+            @Override
             public int getAlpha() {
                 return getRawValue("alpha");
             }
 
+            @Override
             public int getHueOff() {
                 return getRawValue("hueOff");
             }
 
+            @Override
             public int getHueMod() {
                 return getRawValue("hueMod");
             }
 
+            @Override
             public int getSatOff() {
                 return getRawValue("satOff");
             }
 
+            @Override
             public int getSatMod() {
                 return getRawValue("satMod");
             }
 
+            @Override
             public int getLumOff() {
                 return getRawValue("lumOff");
             }
 
+            @Override
             public int getLumMod() {
                 return getRawValue("lumMod");
             }
 
+            @Override
             public int getShade() {
                 return getRawValue("shade");
             }
 
+            @Override
             public int getTint() {
                 return getRawValue("tint");
             }
@@ -141,7 +151,9 @@ public class XSLFColor {
                 }
                 // find referenced CTColor in the theme and convert it to java.awt.Color via a recursive call
                 CTColor ctColor = theme.getCTColor(colorRef);
-                if(ctColor != null) color = toColor(ctColor, null);
+                if(ctColor != null) {
+                    color = toColor(ctColor, null);
+                }
             } else if (ch instanceof CTScRgbColor) {
                 // color in percentage is in linear RGB color space, i.e. needs to be gamma corrected for AWT color
                 CTScRgbColor scrgb = (CTScRgbColor)ch;
