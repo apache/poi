@@ -47,6 +47,8 @@ import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.POILogFactory;
@@ -925,8 +927,8 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return null, if there's no alternative representation, otherwise the text shape
      */
-    public TextShape<?,?> getMetroShape() {
-        HSLFMetroShape<TextShape<?,?>> mbs = new HSLFMetroShape<TextShape<?,?>>(this);
+    public TextShape<?,? extends TextParagraph<?,?,TextRun>> getMetroShape() {
+        HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,TextRun>>> mbs = new HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,TextRun>>>(this);
         return mbs.getShape();
     }
 }

@@ -26,10 +26,13 @@ import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -426,7 +429,9 @@ public final class HSLFTextRun implements TextRun {
     
     @Override
     public FieldType getFieldType() {
-        Placeholder ph = getTextParagraph().getParentShape().getPlaceholder();
+        HSLFTextShape ts = getTextParagraph().getParentShape();
+        Placeholder ph = ts.getPlaceholder();
+        
         if (ph != null) {
             switch (ph) {
             case SLIDE_NUMBER:
@@ -437,6 +442,16 @@ public final class HSLFTextRun implements TextRun {
                 break;
             }
         }
+
+        if (ts.getSheet() instanceof MasterSheet) {
+            TextShape<?,? extends TextParagraph<?,?,TextRun>> ms = ts.getMetroShape();
+            if (ms == null) {
+                return null;
+            }
+            TextRun tr = ms.getTextParagraphs().get(0).getTextRuns().get(0);
+            return tr.getFieldType();
+        }
+        
         return null;
     }
 }
