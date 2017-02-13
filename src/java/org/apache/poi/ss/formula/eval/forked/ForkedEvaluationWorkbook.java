@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.eval.forked;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
 import org.apache.poi.ss.formula.EvaluationSheet;
@@ -153,6 +154,10 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     @Override
     public UDFFinder getUDFFinder() {
         return _masterBook.getUDFFinder();
+    }
+    
+    public SpreadsheetVersion getSpreadsheetVersion() {
+        return _masterBook.getSpreadsheetVersion();
     }
     
     /* (non-Javadoc)

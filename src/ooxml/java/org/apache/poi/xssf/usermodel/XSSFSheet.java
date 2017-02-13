@@ -3869,7 +3869,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             throw new IllegalArgumentException("Specified cell does not belong to this sheet.");
         }
         for (CellRangeAddress range : arrayFormulas) {
-            if (range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
+            if (range.isInRange(cell)) {
                 arrayFormulas.remove(range);
                 CellRange<XSSFCell> cr = getCellRange(range);
                 for (XSSFCell c : cr) {

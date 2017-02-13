@@ -83,6 +83,32 @@ public interface ConditionalFormattingRule {
      * @return the type of condition
      */
     ConditionType getConditionType();
+    
+    /**
+     * This is null if 
+     * <p/>
+     * <code>{@link #getConditionType()} != {@link ConditionType#FILTER}</code>
+     * <p/>
+     * This is always {@link ConditionFilterType#FILTER} for HSSF rules of type {@link ConditionType#FILTER}.
+     * <p/>
+     * For XSSF filter rules, this will indicate the specific type of filter.
+     * 
+     * @return filter type for filter rules, or null if not a filter rule.
+     */
+    ConditionFilterType getConditionFilterType();
+    
+    /**
+     * This is null if 
+     * <p/>
+     * <code>{@link #getConditionFilterType()} == null</code>
+     * <p/>
+     * This means it is always null for HSSF, which does not define the extended condition types.
+     * <p/>
+     * This object contains the additional configuration information for XSSF filter conditions.
+     * 
+     * @return
+     */
+    public ConditionFilterData getFilterConfiguration();
 
     /**
      * The comparison function used when the type of conditional formatting is set to
@@ -119,4 +145,25 @@ public interface ConditionalFormattingRule {
      * @return  the second formula
      */
     String getFormula2();
+
+    /**
+     * HSSF just returns 0, XSSF uses the value stored in the model if present, 
+     * otherwise uses 0.
+     * <p/>
+     * If priority is 0, just use definition order, as that's how HSSF rules are evaluated.
+     * <p/>
+     * If a rule is created but not yet added to a sheet, this value may not be valid.
+
+     * @return rule priority
+     */
+    int getPriority();
+    
+    /**
+     * Always true for HSSF rules, optional flag for XSSF rules.
+     * See Excel help for more.
+     * 
+     * @return true if conditional formatting rule processing stops when this one is true, false if not
+     * @see <a href="https://support.office.com/en-us/article/Manage-conditional-formatting-rule-precedence-063cde21-516e-45ca-83f5-8e8126076249">Microsoft Excel help</a>
+     */
+    boolean getStopIfTrue();
 }

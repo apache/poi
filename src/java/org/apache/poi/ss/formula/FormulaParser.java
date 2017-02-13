@@ -785,6 +785,7 @@ public final class FormulaParser {
                 actualEndRow = _rowIndex; 
             } else { // Really no special quantifiers
                 actualStartRow++;
+                if (tbl.isHasTotalsRow()) actualEndRow--;
             }
         }
 

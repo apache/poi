@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -45,39 +46,11 @@ import org.apache.poi.ss.formula.functions.Choose;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.IfFunc;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.Area3DPxg;
-import org.apache.poi.ss.formula.ptg.AreaErrPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.BoolPtg;
-import org.apache.poi.ss.formula.ptg.ControlPtg;
-import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
-import org.apache.poi.ss.formula.ptg.DeletedRef3DPtg;
-import org.apache.poi.ss.formula.ptg.ErrPtg;
-import org.apache.poi.ss.formula.ptg.ExpPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.IntPtg;
-import org.apache.poi.ss.formula.ptg.MemAreaPtg;
-import org.apache.poi.ss.formula.ptg.MemErrPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.MissingArgPtg;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.NameXPxg;
-import org.apache.poi.ss.formula.ptg.NumberPtg;
-import org.apache.poi.ss.formula.ptg.OperationPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.Ref3DPxg;
-import org.apache.poi.ss.formula.ptg.RefErrorPtg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.ss.formula.ptg.StringPtg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
-import org.apache.poi.ss.formula.ptg.UnknownPtg;
+import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.util.CellRangeAddressBase;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -753,6 +726,107 @@ public final class WorkbookEvaluator {
         return _udfFinder.findFunction(functionName);
     }
 
+    /**
+     * Evaluate a formula outside a cell value, e.g. conditional format rules or data validation expressions
+     * 
+     * @param formula to evaluate
+     * @param ref defines the sheet and optionally row/column base for the formula, if it is relative
+     * @param formulaType used in some contexts to define branches of logic
+     * @return value
+     * @throws IllegalArgumentException if ref does not define a sheet name to evaluate the formula on.
+     */
+    public ValueEval evaluate(String formula, CellReference ref) {
+        final String sheetName = ref == null ? null : ref.getSheetName();
+        if (sheetName == null) throw new IllegalArgumentException("Sheet name is required");
+        final int sheetIndex = getWorkbook().getSheetIndex(sheetName);
+        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, ref.getRow(), ref.getCol(), new EvaluationTracker(_cache));
+        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, ref.getRow());
+        return evaluateNameFormula(ptgs, ec);
+    }
+    
+    /**
+     * Some expressions need to be evaluated in terms of an offset from the top left corner of a region,
+     * such as some data validation and conditional format expressions, when those constraints apply
+     * to contiguous cells.  When a relative formula is used, it must be evaluated by shifting by the target
+     * offset position relative to the top left of the range.
+     * 
+     * @param formula
+     * @param target cell context for the operation
+     * @param region containing the cell
+     * @return value
+     * @throws IllegalArgumentException if target does not define a sheet name to evaluate the formula on.
+     */
+    public ValueEval evaluate(String formula, CellReference target, CellRangeAddressBase region) {
+        final String sheetName = target == null ? null : target.getSheetName();
+        if (sheetName == null) throw new IllegalArgumentException("Sheet name is required");
+        
+        final int sheetIndex = getWorkbook().getSheetIndex(sheetName);
+        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, target.getRow());
+
+        adjustRegionRelativeReference(ptgs, target, region);
+        
+        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, target.getRow(), target.getCol(), new EvaluationTracker(_cache));
+        return evaluateNameFormula(ptgs, ec);
+    }
+    
+    /**
+     * Adjust formula relative references by the offset between the start of the given region and the given target cell.
+     * @param ptgs
+     * @param target cell within the region to use.
+     * @param region containing the cell
+     * @return true if any Ptg references were shifted
+     * @throws IndexOutOfBoundsException if the resulting shifted row/column indexes are over the document format limits
+     * @throws IllegalArgumentException if target is not within region.
+     */
+    protected boolean adjustRegionRelativeReference(Ptg[] ptgs, CellReference target, CellRangeAddressBase region) {
+        if (! region.isInRange(target)) {
+            throw new IllegalArgumentException(target + " is not within " + region);
+        }
+        
+        return adjustRegionRelativeReference(ptgs, target.getRow() - region.getFirstRow(), target.getCol() - region.getFirstColumn());
+    }
+    
+    /**
+     * Adjust the formula relative cell references by a given delta
+     * @param ptgs
+     * @param deltaRow target row offset from the top left cell of a region
+     * @param deltaColumn target column offset from the top left cell of a region
+     * @return true if any Ptg references were shifted
+     * @throws IndexOutOfBoundsException if the resulting shifted row/column indexes are over the document format limits
+     * @throws IllegalArgumentException if either of the deltas are negative, as the assumption is we are shifting formulas
+     * relative to the top left cell of a region.
+     */
+    protected boolean adjustRegionRelativeReference(Ptg[] ptgs, int deltaRow, int deltaColumn) {
+        if (deltaRow < 0) throw new IllegalArgumentException("offset row must be positive");
+        if (deltaColumn < 0) throw new IllegalArgumentException("offset column must be positive");
+        boolean shifted = false;
+        for (Ptg ptg : ptgs) {
+            // base class for cell reference "things"
+            if (ptg instanceof RefPtgBase) {
+                RefPtgBase ref = (RefPtgBase) ptg;
+                // re-calculate cell references
+                final SpreadsheetVersion version = _workbook.getSpreadsheetVersion();
+                if (ref.isRowRelative()) {
+                    final int rowIndex = ref.getRow() + deltaRow;
+                    if (rowIndex > version.getMaxRows()) {
+                        throw new IndexOutOfBoundsException(version.name() + " files can only have " + version.getMaxRows() + " rows, but row " + rowIndex + " was requested.");
+                    }
+                    ref.setRow(rowIndex);
+                    shifted = true;
+                }
+                if (ref.isColRelative()) {
+                    final int colIndex = ref.getColumn() + deltaColumn;
+                    if (colIndex > version.getMaxColumns()) {
+                        throw new IndexOutOfBoundsException(version.name() + " files can only have " + version.getMaxColumns() + " columns, but column " + colIndex + " was requested.");
+                    }
+                    ref.setColumn(colIndex);
+                    shifted = true;
+                }
+            }
+        }
+        return shifted;
+    }
+    
     /**
      * Whether to ignore missing references to external workbooks and
      * use cached formula results in the main workbook instead.

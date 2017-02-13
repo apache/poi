@@ -352,6 +352,29 @@ public class SheetUtil {
     }
 
     /**
+     * Return the cell, without taking account of merged regions.
+     * <p/>
+     * Use {@link #getCellWithMerges(Sheet, int, int)} if you want the top left
+     * cell from merged regions instead when the reference is a merged cell.
+     * <p/>
+     * Use this where you want to know if the given cell is explicitly defined
+     * or not.
+     *
+     * @param sheet
+     * @param rowIx
+     * @param colIx
+     * @return cell at the given location, or null if not defined
+     * @throws NullPointerException if sheet is null
+     */
+    public static Cell getCell(Sheet sheet, int rowIx, int colIx) {
+        Row r = sheet.getRow(rowIx);
+        if (r != null) {
+            return r.getCell(colIx);
+        }
+        return null;
+    }
+
+    /**
      * Return the cell, taking account of merged regions. Allows you to find the
      *  cell who's contents are shown in a given position in the sheet.
      * 
@@ -361,22 +384,22 @@ public class SheetUtil {
      *  then will return the cell itself.
      * <p>If there is no cell defined at the given co-ordinates, will return
      *  null.
+     *  
+     * @param sheet
+     * @param rowIx
+     * @param colIx
+     * @return cell at the given location, its base merged cell, or null if not defined
+     * @throws NullPointerException if sheet is null
      */
     public static Cell getCellWithMerges(Sheet sheet, int rowIx, int colIx) {
-        Row r = sheet.getRow(rowIx);
-        if (r != null) {
-            Cell c = r.getCell(colIx);
-            if (c != null) {
-                // Normal, non-merged cell
-                return c;
-            }
-        }
+        final Cell c = getCell(sheet, rowIx, colIx);
+        if (c != null) return c;
         
         for (CellRangeAddress mergedRegion : sheet.getMergedRegions()) {
             if (mergedRegion.isInRange(rowIx, colIx)) {
                 // The cell wanted is in this merged range
                 // Return the primary (top-left) cell for the range
-                r = sheet.getRow(mergedRegion.getFirstRow());
+                Row r = sheet.getRow(mergedRegion.getFirstRow());
                 if (r != null) {
                     return r.getCell(mergedRegion.getFirstColumn());
                 }
