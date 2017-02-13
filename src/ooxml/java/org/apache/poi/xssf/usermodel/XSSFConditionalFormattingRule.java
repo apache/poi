@@ -30,13 +30,14 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
- * XSSF suport for Conditional Formatting rules
+ * XSSF support for Conditional Formatting rules
  */
 public class XSSFConditionalFormattingRule implements ConditionalFormattingRule {
     private final CTCfRule _cfRule;
     private XSSFSheet _sh;
     
     private static Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<STCfType.Enum, ConditionType>();
+    private static Map<STCfType.Enum, ConditionFilterType> filterTypeLookup = new HashMap<STCfType.Enum, ConditionFilterType>();
     static {
         typeLookup.put(STCfType.CELL_IS, ConditionType.CELL_VALUE_IS);
         typeLookup.put(STCfType.EXPRESSION, ConditionType.FORMULA);
@@ -58,8 +59,27 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         typeLookup.put(STCfType.NOT_CONTAINS_ERRORS, ConditionType.FILTER);
         typeLookup.put(STCfType.TIME_PERIOD, ConditionType.FILTER);
         typeLookup.put(STCfType.ABOVE_AVERAGE, ConditionType.FILTER);
+        
+        filterTypeLookup.put(STCfType.TOP_10, ConditionFilterType.TOP_10);
+        filterTypeLookup.put(STCfType.UNIQUE_VALUES, ConditionFilterType.UNIQUE_VALUES);
+        filterTypeLookup.put(STCfType.DUPLICATE_VALUES, ConditionFilterType.DUPLICATE_VALUES);
+        filterTypeLookup.put(STCfType.CONTAINS_TEXT, ConditionFilterType.CONTAINS_TEXT);
+        filterTypeLookup.put(STCfType.NOT_CONTAINS_TEXT, ConditionFilterType.NOT_CONTAINS_TEXT);
+        filterTypeLookup.put(STCfType.BEGINS_WITH, ConditionFilterType.BEGINS_WITH);
+        filterTypeLookup.put(STCfType.ENDS_WITH, ConditionFilterType.ENDS_WITH);
+        filterTypeLookup.put(STCfType.CONTAINS_BLANKS, ConditionFilterType.CONTAINS_BLANKS);
+        filterTypeLookup.put(STCfType.NOT_CONTAINS_BLANKS, ConditionFilterType.NOT_CONTAINS_BLANKS);
+        filterTypeLookup.put(STCfType.CONTAINS_ERRORS, ConditionFilterType.CONTAINS_ERRORS);
+        filterTypeLookup.put(STCfType.NOT_CONTAINS_ERRORS, ConditionFilterType.NOT_CONTAINS_ERRORS);
+        filterTypeLookup.put(STCfType.TIME_PERIOD, ConditionFilterType.TIME_PERIOD);
+        filterTypeLookup.put(STCfType.ABOVE_AVERAGE, ConditionFilterType.ABOVE_AVERAGE);
+
     }
     
+    /**
+     * NOTE: does not set priority, so this assumes the rule will not be added to the sheet yet
+     * @param sh
+     */
     /*package*/ XSSFConditionalFormattingRule(XSSFSheet sh){
         _cfRule = CTCfRule.Factory.newInstance();
         _sh = sh;
@@ -89,6 +109,16 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         return dxf;
     }
 
+    public int getPriority() {
+        final int priority = _cfRule.getPriority();
+        // priorities start at 1, if it is less, it is undefined, use definition order in caller
+        return priority >=1 ? priority : 0;
+    }
+    
+    public boolean getStopIfTrue() {
+        return _cfRule.getStopIfTrue();
+    }
+    
     /**
      * Create a new border formatting structure if it does not exist,
      * otherwise just return existing object.
@@ -303,6 +333,18 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         return typeLookup.get(_cfRule.getType());
     }
 
+    /**
+     * Will return null if {@link #getConditionType()} != {@link ConditionType#FILTER}
+     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getConditionFilterType()
+     */
+    public ConditionFilterType getConditionFilterType() {
+        return filterTypeLookup.get(_cfRule.getType());
+    }
+    
+    public ConditionFilterData getFilterConfiguration() {
+        return new XSSFConditionFilterData(_cfRule);
+    }
+    
     /**
      * The comparison function used when the type of conditional formatting is set to
      * {@link ConditionType#CELL_VALUE_IS}

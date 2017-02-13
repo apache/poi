@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -75,6 +76,7 @@ public interface EvaluationWorkbook {
     String resolveNameXText(NameXPtg ptg);
     Ptg[] getFormulaTokens(EvaluationCell cell);
     UDFFinder getUDFFinder();
+    SpreadsheetVersion getSpreadsheetVersion();
     
     /**
      * Propagated from {@link WorkbookEvaluator#clearAllCachedResultValues()} to clear locally cached data.

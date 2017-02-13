@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Cell;
 
 
 /**
@@ -123,6 +124,34 @@ public abstract class CellRangeAddressBase {
 	public boolean isInRange(int rowInd, int colInd) {
 		return _firstRow <= rowInd && rowInd <= _lastRow && //containsRow
 				_firstCol <= colInd && colInd <= _lastCol; //containsColumn
+	}
+	
+    /**
+     * Determines if the given {@link CellReference} lies within the bounds 
+     * of this range.  
+     * <p/>NOTE: It is up to the caller to ensure the reference is 
+     * for the correct sheet, since this instance doesn't have a sheet reference.
+     *
+     * @param ref the CellReference to check
+     * @return True if the reference lies within the bounds, false otherwise.
+     * @see #intersects(CellRangeAddressBase) for checking if two ranges overlap
+     */
+	public boolean isInRange(CellReference ref) {
+	    return isInRange(ref.getRow(), ref.getCol());
+	}
+	
+	/**
+	 * Determines if the given {@link Cell} lies within the bounds 
+	 * of this range.  
+	 * <p/>NOTE: It is up to the caller to ensure the reference is 
+	 * for the correct sheet, since this instance doesn't have a sheet reference.
+	 *
+	 * @param cell the Cell to check
+	 * @return True if the cell lies within the bounds, false otherwise.
+	 * @see #intersects(CellRangeAddressBase) for checking if two ranges overlap
+	 */
+	public boolean isInRange(Cell cell) {
+	    return isInRange(cell.getRowIndex(), cell.getColumnIndex());
 	}
 	
 	/**

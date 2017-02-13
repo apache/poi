@@ -29,6 +29,8 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.ConditionFilterData;
+import org.apache.poi.ss.usermodel.ConditionFilterType;
 import org.apache.poi.ss.usermodel.ConditionType;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 
@@ -57,6 +59,22 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         cfRuleRecord = pRuleRecord;
     }
 
+    /**
+     * we don't know priority for these, other than definition/model order, which appears to be what Excel uses.
+     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getPriority()
+     */
+    public int getPriority() {
+        return 0;
+    }
+    
+    /**
+     * Always true for HSSF files, per Microsoft Excel documentation
+     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getStopIfTrue()
+     */
+    public boolean getStopIfTrue() {
+        return true;
+    }
+    
     CFRuleBase getCfRuleRecord() {
         return cfRuleRecord;
     }
@@ -236,6 +254,18 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return ConditionType.forId(code);
     }
 
+    /**
+     * always null (not a filter condition) or {@link ConditionFilterType#FILTER} if it is.
+     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getConditionFilterType()
+     */
+    public ConditionFilterType getConditionFilterType() {
+        return getConditionType() == ConditionType.FILTER ? ConditionFilterType.FILTER : null;
+    }
+    
+    public ConditionFilterData getFilterConfiguration() {
+        return null;
+    }
+    
     /**
      * @return - the comparisionoperatation for the cfrule
      */
