@@ -444,7 +444,7 @@ public final class HSLFTextRun implements TextRun {
         }
 
         if (ts.getSheet() instanceof MasterSheet) {
-            TextShape<?,? extends TextParagraph<?,?,TextRun>> ms = ts.getMetroShape();
+            TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> ms = ts.getMetroShape();
             if (ms == null) {
                 return null;
             }

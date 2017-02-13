@@ -927,8 +927,8 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return null, if there's no alternative representation, otherwise the text shape
      */
-    public TextShape<?,? extends TextParagraph<?,?,TextRun>> getMetroShape() {
-        HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,TextRun>>> mbs = new HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,TextRun>>>(this);
+    public TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> getMetroShape() {
+        HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>> mbs = new HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>>(this);
         return mbs.getShape();
     }
 }
