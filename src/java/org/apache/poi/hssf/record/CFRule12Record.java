@@ -331,6 +331,13 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         formula_scale = Formula.create(ptgs);
     }
 
+    public int getPriority() {
+        return priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
     public short getSid() {
         return sid;
     }
