@@ -79,7 +79,7 @@ public class XSSFFontFormatting implements FontFormatting {
      */
     @Override
     public boolean isStruckout() {
-        for (CTBooleanProperty bProp : _font.getStrikeArray()) if (bProp.getVal()) return true;
+        for (CTBooleanProperty bProp : _font.getStrikeArray()) return bProp.getVal();
         return false; 
     }
 
