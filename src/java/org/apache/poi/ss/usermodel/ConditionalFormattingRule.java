@@ -106,7 +106,7 @@ public interface ConditionalFormattingRule {
      * <p/>
      * This object contains the additional configuration information for XSSF filter conditions.
      * 
-     * @return
+     * @return the Filter Configuration Data, or null if there isn't any
      */
     public ConditionFilterData getFilterConfiguration();
 
@@ -153,7 +153,6 @@ public interface ConditionalFormattingRule {
      * If priority is 0, just use definition order, as that's how HSSF rules are evaluated.
      * <p/>
      * If a rule is created but not yet added to a sheet, this value may not be valid.
-
      * @return rule priority
      */
     int getPriority();

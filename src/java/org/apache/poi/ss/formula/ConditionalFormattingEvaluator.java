@@ -141,8 +141,8 @@ public class ConditionalFormattingEvaluator {
      * formula by the relative position of the current cell, or the wrong value is checked.
      * This is handled by {@link WorkbookEvaluator#evaluate(String, CellReference, CellRangeAddressBase)}.
      * 
-     * @param cell NOTE: if no sheet name is specified, this uses the workbook active sheet
-     * @return Unmodifiable List of {@link EvaluationConditionalFormattingRule}s that apply to the current cell value,
+     * @param cellRef NOTE: if no sheet name is specified, this uses the workbook active sheet
+     * @return Unmodifiable List of {@link EvaluationConditionalFormatRule}s that apply to the current cell value,
      *         in priority order, as evaluated by Excel (smallest priority # for XSSF, definition order for HSSF), 
      *         or null if none apply
      */
@@ -172,7 +172,7 @@ public class ConditionalFormattingEvaluator {
      * This is handled by {@link WorkbookEvaluator#evaluate(String, CellReference, CellRangeAddressBase)}.
      * 
      * @param cell
-     * @return Unmodifiable List of {@link EvaluationConditionalFormattingRule}s that apply to the current cell value,
+     * @return Unmodifiable List of {@link EvaluationConditionalFormatRule}s that apply to the current cell value,
      *         in priority order, as evaluated by Excel (smallest priority # for XSSF, definition order for HSSF), 
      *         or null if none apply
      */
@@ -243,7 +243,8 @@ public class ConditionalFormattingEvaluator {
      * We could overload this with convenience methods taking a sheet name and sheet index as well.
      * <p/>
      * @param sheet containing the rule
-     * @param index of the {@link ConditionalFormatting} instance in the sheet's array
+     * @param conditionalFormattingIndex of the {@link ConditionalFormatting} instance in the sheet's array
+     * @param ruleIndex of the {@link ConditionalFormattingRule} instance within the {@link ConditionalFormatting}
      * @return unmodifiable List of all cells in the rule's region matching the rule's condition
      */
     public List<Cell> getMatchingCells(Sheet sheet, int conditionalFormattingIndex, int ruleIndex) {
