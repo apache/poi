@@ -594,16 +594,18 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         },
         EQUAL {
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (cellValue instanceof String) {
-                    return ((String) cellValue).compareToIgnoreCase((String) v1) == 0;
+                // need to avoid instanceof, to work around a 1.6 compiler bug
+                if (cellValue.getClass() == String.class) {
+                    return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
                 }
                 return cellValue.compareTo(v1) == 0;
             }
         },
         NOT_EQUAL {
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
-                if (cellValue instanceof String) {
-                    return ((String) cellValue).compareToIgnoreCase((String) v1) != 0;
+                // need to avoid instanceof, to work around a 1.6 compiler bug
+                if (cellValue.getClass() == String.class) {
+                    return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
                 }
                 return cellValue.compareTo(v1) != 0;
             }
