@@ -147,10 +147,13 @@ public interface ConditionalFormattingRule {
     String getFormula2();
 
     /**
-     * HSSF just returns 0, XSSF uses the value stored in the model if present, 
-     * otherwise uses 0.
+     * The priority of the rule, if defined, otherwise 0.
      * <p/>
-     * If priority is 0, just use definition order, as that's how HSSF rules are evaluated.
+     * If priority is 0, just use definition order, as that's how older HSSF rules 
+     *  are evaluated.
+     * <p/>
+     * For XSSF, this should always be set. For HSSF, only newer style rules
+     *  have this set, older ones will return 0.
      * <p/>
      * If a rule is created but not yet added to a sheet, this value may not be valid.
      * @return rule priority

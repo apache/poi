@@ -60,11 +60,15 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     /**
-     * we don't know priority for these, other than definition/model order, which appears to be what Excel uses.
+     * Only newer style formatting rules have priorities. For older ones,
+     *  we don't know priority for these, other than definition/model order, 
+     *  which appears to be what Excel uses.
      * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getPriority()
      */
     public int getPriority() {
-        return 0;
+        CFRule12Record rule12 = getCFRule12Record(false);
+        if (rule12 == null) return 0;
+        return rule12.getPriority();
     }
     
     /**
