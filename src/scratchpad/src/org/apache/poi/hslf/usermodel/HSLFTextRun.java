@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
@@ -445,11 +446,14 @@ public final class HSLFTextRun implements TextRun {
 
         if (ts.getSheet() instanceof MasterSheet) {
             TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> ms = ts.getMetroShape();
-            if (ms == null) {
+            if (ms == null || ms.getTextParagraphs().isEmpty()) {
                 return null;
             }
-            TextRun tr = ms.getTextParagraphs().get(0).getTextRuns().get(0);
-            return tr.getFieldType();
+            List<? extends TextRun> trList = ms.getTextParagraphs().get(0).getTextRuns();
+            if (trList.isEmpty()) {
+                return null;
+            }
+            return trList.get(0).getFieldType();
         }
         
         return null;
