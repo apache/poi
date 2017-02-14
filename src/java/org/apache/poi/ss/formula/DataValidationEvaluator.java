@@ -82,9 +82,9 @@ public class DataValidationEvaluator {
     }
     
     /**
-     * lazy load validations by sheet, since reading the CT* types is expensive
+     * Lazy load validations by sheet, since reading the CT* types is expensive
      * @param sheet
-     * @return
+     * @return The {@link DataValidation}s for the sheet
      */
     private List<? extends DataValidation> getValidations(Sheet sheet) {
         List<? extends DataValidation> dvs = validations.get(sheet.getSheetName());
@@ -130,7 +130,7 @@ public class DataValidationEvaluator {
     }
 
     /**
-     * If {@link #getValidationForCell(Cell)} returns an instance, and the
+     * If {@link #getValidationForCell(CellReference)} returns an instance, and the
      * {@link ValidationType} is {@link ValidationType#LIST}, return the valid
      * values, whether they are from a static list or cell range.
      * <p/>
@@ -155,8 +155,6 @@ public class DataValidationEvaluator {
 
     /**
      * static so enums can reference it without creating a whole instance
-     * @param cell
-     * @param val
      * @return returns an unmodifiable {@link List} of {@link ValueEval}s, which may be empty
      */
     protected static List<ValueEval> getValidationValuesForConstraint(DataValidationContext context) {
@@ -189,7 +187,7 @@ public class DataValidationEvaluator {
     }
 
     /**
-     * Use the validation returned by {@link #getValidationForCell(Cell)} if you
+     * Use the validation returned by {@link #getValidationForCell(CellReference)} if you
      * want the error display details. This is the validation checked by this
      * method, which attempts to replicate Excel's data validation rules.
      * <p/>
@@ -197,7 +195,7 @@ public class DataValidationEvaluator {
      * offset the base validation formula by the relative position of the
      * current cell, or the wrong value is checked.
      * 
-     * @param cell
+     * @param cellRef The reference of the cell to evaluate
      * @return true if the cell has no validation or the cell value passes the
      *         defined validation, false if it fails
      */
@@ -351,10 +349,7 @@ public class DataValidationEvaluator {
          * We won't re-evaluate cells here.  This validation would be after the cell value was updated externally.
          * Excel allows invalid values through methods like copy/paste, and only validates them when the user 
          * interactively edits the cell.   
-         * @param cell
-         * @param dvc
-         * @param wbe
-         * @return
+         * @return if the cell is a valid numeric cell for the validation or not
          */
         protected boolean isValidNumericCell(Cell cell, DataValidationContext context) {
             if ( ! isType(cell, CellType.NUMERIC)) return false;
@@ -364,10 +359,7 @@ public class DataValidationEvaluator {
         }
 
         /**
-         *
-         * @param value
-         * @param context
-         * @return
+         * Is the number a valid option for the validation?
          */
         protected boolean isValidNumericValue(Double value, final DataValidationContext context) {
             try {
@@ -419,10 +411,9 @@ public class DataValidationEvaluator {
         }
         
         /**
-         * Validates against the type defined in dvc, as an index of the enum values array.
-         * @param cell
-         * @param dvc
-         * @param wbe
+         * Validates against the type defined in context, as an index of the enum values array.
+         * @param cell Cell to check validity of
+         * @param context The Data Validation to check against
          * @return true if validation passes
          * @throws ArrayIndexOutOfBoundsException if the constraint type is an invalid index
          */
