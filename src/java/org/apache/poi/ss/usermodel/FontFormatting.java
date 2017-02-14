@@ -136,6 +136,12 @@ public interface FontFormatting {
      */
     boolean isItalic();
 
+
+    /**
+     * @return true if font strikeout is on
+     */
+    boolean isStruckout();
+
     /**
      * set font style options.
      *

@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
@@ -68,6 +69,18 @@ public class XSSFFontFormatting implements FontFormatting {
         if(escapementType != SS_NONE){
             _font.addNewVertAlign().setVal(STVerticalAlignRun.Enum.forInt(escapementType + 1));
         }
+    }
+
+    /**
+     * XMLBeans and the XSD make this look like it can have multiple values, but it is maxOccurrs=1.
+     * Use get*Array(), it is much faster than get*List().
+     * 
+     * @see org.apache.poi.ss.usermodel.FontFormatting#isStruckout()
+     */
+    @Override
+    public boolean isStruckout() {
+        for (CTBooleanProperty bProp : _font.getStrikeArray()) if (bProp.getVal()) return true;
+        return false; 
     }
 
     /**
