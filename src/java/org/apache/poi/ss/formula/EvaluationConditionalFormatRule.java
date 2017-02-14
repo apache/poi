@@ -213,9 +213,9 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);
         if (cmp != 0) return cmp;
 
-        cmp = Integer.compare(getFormattingIndex(), o.getFormattingIndex());
+        cmp = new Integer(getFormattingIndex()).compareTo(new Integer(o.getFormattingIndex()));
         if (cmp != 0) return cmp;
-        return Integer.compare(getRuleIndex(), o.getRuleIndex());
+        return new Integer(getRuleIndex()).compareTo(new Integer(o.getRuleIndex()));
     }
     
     public int hashCode() {
