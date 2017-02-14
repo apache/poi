@@ -18,6 +18,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -25,13 +28,44 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+/**
+ * Test the COUNTIFS() function
+ */
+public class CountifsTests {
 
-public class CountifsTests extends TestCase {
-
+    private Workbook workbook;
+    
+    /**
+     * initialize a workbook
+     */
+    @Before
+    public void before() {
+        // not sure why we allow this, COUNTIFS() is only available
+        // in OOXML, it was introduced with Office 2007
+        workbook = new HSSFWorkbook();
+    }
+    
+    /**
+     * Close the workbook if needed
+     */
+    @After
+    public void after() {
+        IOUtils.closeQuietly(workbook);
+    }
+    
+    /**
+     * Basic call
+     */
+    @Test
     public void testCallFunction() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row1 = sheet.createRow(0);
         Cell cellA1 = row1.createCell(0, CellType.FORMULA);
@@ -47,11 +81,14 @@ public class CountifsTests extends TestCase {
         cellA1.setCellFormula("COUNTIFS(B1:C1,1, D1:E1,2)");
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         CellValue evaluate = evaluator.evaluate(cellA1);
-        assertEquals(1.0d, evaluate.getNumberValue());
+        assertEquals(1.0d, evaluate.getNumberValue(), 0.000000000000001);
     }
 
+    /**
+     * Test argument count check
+     */
+    @Test
     public void testCallFunction_invalidArgs() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row1 = sheet.createRow(0);
         Cell cellA1 = row1.createCell(0, CellType.FORMULA);
@@ -67,5 +104,19 @@ public class CountifsTests extends TestCase {
         evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         evaluate = evaluator.evaluate(cellA1);
         assertEquals(15, evaluate.getErrorValue());
+    }
+    
+    /**
+     * the bug returned the wrong count, this verifies the fix
+     * @throws Exception if the file can't be read
+     */
+    @Test
+    public void testBug56822() throws Exception {
+        workbook = XSSFTestDataSamples.openSampleWorkbook("56822-Countifs.xlsx");
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        Cell cell = SheetUtil.getCell(workbook.getSheetAt(0), 0, 3);
+        assertNotNull("Test workbook missing cell D1", cell);
+        CellValue evaluate = evaluator.evaluate(cell);
+        assertEquals(2.0d, evaluate.getNumberValue(), 0.00000000000001);
     }
 }
