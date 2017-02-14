@@ -731,7 +731,6 @@ public final class WorkbookEvaluator {
      * 
      * @param formula to evaluate
      * @param ref defines the sheet and optionally row/column base for the formula, if it is relative
-     * @param formulaType used in some contexts to define branches of logic
      * @return value
      * @throws IllegalArgumentException if ref does not define a sheet name to evaluate the formula on.
      */

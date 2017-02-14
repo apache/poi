@@ -266,9 +266,9 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     }
     
     /**
-     * @param cell
+     * @param cell the cell to check for
      * @param region for adjusting relative formulas
-     * @return
+     * @return if the value of the cell is valid or not for the formatting rule
      */
     private boolean checkValue(Cell cell, CellRangeAddress region) {
         if (cell == null || DataValidationEvaluator.isType(cell, CellType.BLANK)
@@ -518,7 +518,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
      * numbers stored as text are ignored, but numbers formatted as text are treated as numbers.
      * 
      * @param region
-     * @return
+     * @return the meaningful values in the range of cells specified
      */
     private Set<ValueAndFormat> getMeaningfulValues(CellRangeAddress region, boolean withText, ValueFunction func) {
         Set<ValueAndFormat> values = meaningfulRegionValues.get(region);
