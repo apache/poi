@@ -69,7 +69,7 @@ def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
 def defaultJdk = '1.6'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
-def defaultAnt = 'Ant (latest)'
+def defaultAnt = 'Ant 1.9.9'
 // currently a lot of H?? slaves don't have Ant installed ...
 def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4'
 
