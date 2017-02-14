@@ -20,7 +20,7 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
         // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
-        slaveAdd: '&&!H12&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!ubuntu-eu2',
+        slaveAdd: '&&!H12&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!H22&&!ubuntu-eu2',
         // the JDK is missing on some slaves so builds are unstable
         skipcigame: true
     ],
@@ -70,7 +70,8 @@ def defaultJdk = '1.6'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant (latest)'
-def defaultSlaves = 'ubuntu&&!cloud-slave&&!H24&&!ubuntu-4'
+// currently a lot of H?? slaves don't have Ant installed ...
+def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4'
 
 def jdkMapping = [
     '1.6': 'JDK 1.6 (latest)',
