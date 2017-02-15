@@ -20,7 +20,7 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
         // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
-        slaveAdd: '&&!H12&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!H22&&!ubuntu-eu2',
+        slaveAdd: '&&!H12&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!H21&&!H22&&!H23&&!H24&&!ubuntu-eu2',
         // the JDK is missing on some slaves so builds are unstable
         skipcigame: true
     ],
@@ -77,7 +77,7 @@ def jdkMapping = [
     '1.6': 'JDK 1.6 (latest)',
     '1.7': 'JDK 1.7 (latest)',
     '1.8': 'JDK 1.8 (latest)',
-    '1.9': 'JDK 9 b142 (early access build) with project Jigsaw',
+    '1.9': 'JDK 9 b156 (early access build) with project Jigsaw',
     'OpenJDK': 'OpenJDK 6 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
     'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
