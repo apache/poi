@@ -279,6 +279,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/WithChartSheet.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/chart_sheet.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/SimpleScatterChart.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/ConditionalFormattingSamples.xls");
     }
 
     private static final Set<String> IGNORED = new HashSet<String>();
