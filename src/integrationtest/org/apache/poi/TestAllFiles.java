@@ -177,118 +177,119 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
     }
 
-    // Old Word Documents where we can at least extract some text
-    private static final Set<String> OLD_FILES = new HashSet<String>();
-    static {
-        OLD_FILES.add("document/Bug49933.doc");
-        OLD_FILES.add("document/Bug51944.doc");
-        OLD_FILES.add("document/Word6.doc");
-        OLD_FILES.add("document/Word6_sections.doc");
-        OLD_FILES.add("document/Word6_sections2.doc");
-        OLD_FILES.add("document/Word95.doc");
-        OLD_FILES.add("document/word95err.doc");
-        OLD_FILES.add("hpsf/TestMickey.doc");
-        OLD_FILES.add("document/52117.doc");
+    private static final Set<String> hashSet(String... a) {
+        return new HashSet<String>(Arrays.asList(a));
     }
 
-    private static final Set<String> EXPECTED_FAILURES = new HashSet<String>();
-    static {
+    // Old Word Documents where we can at least extract some text
+    private static final Set<String> OLD_FILES = hashSet(
+        "document/Bug49933.doc",
+        "document/Bug51944.doc",
+        "document/Word6.doc",
+        "document/Word6_sections.doc",
+        "document/Word6_sections2.doc",
+        "document/Word95.doc",
+        "document/word95err.doc",
+        "hpsf/TestMickey.doc",
+        "document/52117.doc"
+    );
+
+    private static final Set<String> EXPECTED_FAILURES = hashSet(
         // password protected files
-        EXPECTED_FAILURES.add("spreadsheet/password.xls");
-        EXPECTED_FAILURES.add("spreadsheet/protected_passtika.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/51832.xls");
-        EXPECTED_FAILURES.add("document/PasswordProtected.doc");
-        EXPECTED_FAILURES.add("slideshow/Password_Protected-hello.ppt");
-        EXPECTED_FAILURES.add("slideshow/Password_Protected-56-hello.ppt");
-        EXPECTED_FAILURES.add("slideshow/Password_Protected-np-hello.ppt");
-        EXPECTED_FAILURES.add("slideshow/cryptoapi-proc2356.ppt");
-        //EXPECTED_FAILURES.add("document/bug53475-password-is-pass.docx");
-        //EXPECTED_FAILURES.add("document/bug53475-password-is-solrcell.docx");
-        EXPECTED_FAILURES.add("spreadsheet/xor-encryption-abc.xls");
-        EXPECTED_FAILURES.add("spreadsheet/35897-type4.xls");
-        //EXPECTED_FAILURES.add("poifs/protect.xlsx");
-        //EXPECTED_FAILURES.add("poifs/protected_sha512.xlsx");
-        //EXPECTED_FAILURES.add("poifs/extenxls_pwd123.xlsx");
-        //EXPECTED_FAILURES.add("poifs/protected_agile.docx");
-        EXPECTED_FAILURES.add("spreadsheet/58616.xlsx");
-        EXPECTED_FAILURES.add("poifs/60320-protected.xlsx");
+        "spreadsheet/password.xls",
+        "spreadsheet/protected_passtika.xlsx",
+        "spreadsheet/51832.xls",
+        "document/PasswordProtected.doc",
+        "slideshow/Password_Protected-hello.ppt",
+        "slideshow/Password_Protected-56-hello.ppt",
+        "slideshow/Password_Protected-np-hello.ppt",
+        "slideshow/cryptoapi-proc2356.ppt",
+        //"document/bug53475-password-is-pass.docx",
+        //"document/bug53475-password-is-solrcell.docx",
+        "spreadsheet/xor-encryption-abc.xls",
+        "spreadsheet/35897-type4.xls",
+        //"poifs/protect.xlsx",
+        //"poifs/protected_sha512.xlsx",
+        //"poifs/extenxls_pwd123.xlsx",
+        //"poifs/protected_agile.docx",
+        "spreadsheet/58616.xlsx",
+        "poifs/60320-protected.xlsx",
 
         // TODO: fails XMLExportTest, is this ok?
-        EXPECTED_FAILURES.add("spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/55864.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/57890.xlsx");
+        "spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx",
+        "spreadsheet/55864.xlsx",
+        "spreadsheet/57890.xlsx",
 
         // TODO: these fail now with some NPE/file read error because we now try to compute every value via Cell.toString()!
-        EXPECTED_FAILURES.add("spreadsheet/44958.xls");
-        EXPECTED_FAILURES.add("spreadsheet/44958_1.xls");
-        EXPECTED_FAILURES.add("spreadsheet/testArraysAndTables.xls");
+        "spreadsheet/44958.xls",
+        "spreadsheet/44958_1.xls",
+        "spreadsheet/testArraysAndTables.xls",
 
         // TODO: good to ignore?
-        EXPECTED_FAILURES.add("spreadsheet/sample-beta.xlsx");
+        "spreadsheet/sample-beta.xlsx",
 
         // This is actually a spreadsheet!
-        EXPECTED_FAILURES.add("hpsf/TestRobert_Flaherty.doc");
+        "hpsf/TestRobert_Flaherty.doc",
 
         // some files that are broken, eg Word 95, ...
-        EXPECTED_FAILURES.add("spreadsheet/43493.xls");
-        EXPECTED_FAILURES.add("spreadsheet/46904.xls");
-        EXPECTED_FAILURES.add("document/Bug50955.doc");
-        EXPECTED_FAILURES.add("document/57843.doc");
-        EXPECTED_FAILURES.add("slideshow/PPT95.ppt");
-        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx");
-        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx");
-        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_NotPresentFAIL.docx");
-        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
-        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx");
-        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx");
-        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_DerivedPartNameFAIL.docx");
-        EXPECTED_FAILURES.add("openxml4j/invalid.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/54764-2.xlsx");   // see TestXSSFBugs.bug54764()
-        EXPECTED_FAILURES.add("spreadsheet/54764.xlsx");     // see TestXSSFBugs.bug54764()
-        EXPECTED_FAILURES.add("spreadsheet/Simple.xlsb");
-        EXPECTED_FAILURES.add("poifs/unknown_properties.msg"); // POIFS properties corrupted
-        EXPECTED_FAILURES.add("poifs/only-zero-byte-streams.ole2"); // No actual contents
-        EXPECTED_FAILURES.add("spreadsheet/poc-xmlbomb.xlsx");  // contains xml-entity-expansion
-        EXPECTED_FAILURES.add("spreadsheet/poc-shared-strings.xlsx");  // contains shared-string-entity-expansion
-        EXPECTED_FAILURES.add("spreadsheet/60255_extra_drawingparts.xlsx"); // Non-drawing drawing
+        "spreadsheet/43493.xls",
+        "spreadsheet/46904.xls",
+        "document/Bug50955.doc",
+        "document/57843.doc",
+        "slideshow/PPT95.ppt",
+        "openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_NotPresentFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx",
+        "openxml4j/OPCCompliance_DerivedPartNameFAIL.docx",
+        "openxml4j/invalid.xlsx",
+        "spreadsheet/54764-2.xlsx",   // see TestXSSFBugs.bug54764()
+        "spreadsheet/54764.xlsx",     // see TestXSSFBugs.bug54764()
+        "spreadsheet/Simple.xlsb",
+        "poifs/unknown_properties.msg", // POIFS properties corrupted
+        "poifs/only-zero-byte-streams.ole2", // No actual contents
+        "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
+        "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
+        "spreadsheet/60255_extra_drawingparts.xlsx", // Non-drawing drawing
         
         // old Excel files, which we only support simple text extraction of
-        EXPECTED_FAILURES.add("spreadsheet/testEXCEL_2.xls");
-        EXPECTED_FAILURES.add("spreadsheet/testEXCEL_3.xls");
-        EXPECTED_FAILURES.add("spreadsheet/testEXCEL_4.xls");
-        EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
-        EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
-        EXPECTED_FAILURES.add("spreadsheet/59074.xls");
-        EXPECTED_FAILURES.add("spreadsheet/60284.xls");
+        "spreadsheet/testEXCEL_2.xls",
+        "spreadsheet/testEXCEL_3.xls",
+        "spreadsheet/testEXCEL_4.xls",
+        "spreadsheet/testEXCEL_5.xls",
+        "spreadsheet/testEXCEL_95.xls",
+        "spreadsheet/59074.xls",
+        "spreadsheet/60284.xls",
         
         // OOXML Strict is not yet supported, see bug #57699
-        EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/SimpleStrict.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/sample.strict.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/57914.xlsx");
+        "spreadsheet/SampleSS.strict.xlsx",
+        "spreadsheet/SimpleStrict.xlsx",
+        "spreadsheet/sample.strict.xlsx",
+        "spreadsheet/57914.xlsx",
 
         // non-TNEF files
-        EXPECTED_FAILURES.add("ddf/Container.dat");
-        EXPECTED_FAILURES.add("ddf/47143.dat");
+        "ddf/Container.dat",
+        "ddf/47143.dat",
 
         // sheet cloning errors
-        EXPECTED_FAILURES.add("spreadsheet/47813.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/56450.xls");
-        EXPECTED_FAILURES.add("spreadsheet/57231_MixedGasReport.xls");
-        EXPECTED_FAILURES.add("spreadsheet/OddStyleRecord.xls");
-        EXPECTED_FAILURES.add("spreadsheet/WithChartSheet.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/chart_sheet.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/SimpleScatterChart.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/ConditionalFormattingSamples.xls");
-    }
+        "spreadsheet/47813.xlsx",
+        "spreadsheet/56450.xls",
+        "spreadsheet/57231_MixedGasReport.xls",
+        "spreadsheet/OddStyleRecord.xls",
+        "spreadsheet/WithChartSheet.xlsx",
+        "spreadsheet/chart_sheet.xlsx",
+        "spreadsheet/SimpleScatterChart.xlsx",
+        "spreadsheet/ConditionalFormattingSamples.xls"
+    );
 
-    private static final Set<String> IGNORED = new HashSet<String>();
-    static {
+    private static final Set<String> IGNORED = hashSet(
         // need JDK8+ - https://bugs.openjdk.java.net/browse/JDK-8038081
-        IGNORED.add("slideshow/42474-2.ppt");
+        "slideshow/42474-2.ppt",
         // OPC handler works / XSSF handler fails
-        IGNORED.add("spreadsheet/57181.xlsm");
-    }
+        "spreadsheet/57181.xlsm"
+    );
     
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
