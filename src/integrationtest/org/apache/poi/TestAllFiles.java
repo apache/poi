@@ -177,12 +177,15 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
     }
 
+    private static final Set<String> unmodifiableHashSet(String... a) {
+        return Collections.unmodifiableSet(hashSet(a));
+    }
     private static final Set<String> hashSet(String... a) {
         return new HashSet<String>(Arrays.asList(a));
     }
 
     // Old Word Documents where we can at least extract some text
-    private static final Set<String> OLD_FILES = hashSet(
+    private static final Set<String> OLD_FILES = unmodifiableHashSet(
         "document/Bug49933.doc",
         "document/Bug51944.doc",
         "document/Word6.doc",
@@ -194,7 +197,7 @@ public class TestAllFiles {
         "document/52117.doc"
     );
 
-    private static final Set<String> EXPECTED_FAILURES = hashSet(
+    private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
         // password protected files
         "spreadsheet/password.xls",
         "spreadsheet/protected_passtika.xlsx",
@@ -284,7 +287,7 @@ public class TestAllFiles {
         "spreadsheet/ConditionalFormattingSamples.xls"
     );
 
-    private static final Set<String> IGNORED = hashSet(
+    private static final Set<String> IGNORED = unmodifiableHashSet(
         // need JDK8+ - https://bugs.openjdk.java.net/browse/JDK-8038081
         "slideshow/42474-2.ppt",
         // OPC handler works / XSSF handler fails
