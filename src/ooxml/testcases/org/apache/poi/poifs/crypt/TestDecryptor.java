@@ -165,11 +165,14 @@ public class TestDecryptor {
 
     @Test
     public void test58616() throws IOException, GeneralSecurityException {
-        POIFSFileSystem pfs = new POIFSFileSystem(new FileInputStream(XSSFTestDataSamples.getSampleFile("58616.xlsx")));                
+        FileInputStream fis = new FileInputStream(XSSFTestDataSamples.getSampleFile("58616.xlsx"));                
+        POIFSFileSystem pfs = new POIFSFileSystem(fis);                
         EncryptionInfo info = new EncryptionInfo(pfs);             
         Decryptor dec = Decryptor.getInstance(info);   
         //dec.verifyPassword(null);
         dec.getDataStream(pfs);
+        pfs.close();
+        fis.close();
     }
 
     @Test

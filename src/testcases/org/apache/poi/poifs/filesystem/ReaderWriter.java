@@ -44,7 +44,7 @@ public class ReaderWriter
     private final DirectoryEntry  root;
 
     // keys are DocumentDescriptors, values are byte[]s
-    private final Map<DocumentDescriptor, byte[]>             dataMap;
+    private final Map<DocumentDescriptor, byte[]> dataMap;
 
     /**
      * Constructor ReaderWriter
@@ -93,6 +93,8 @@ public class ReaderWriter
 
             filesystem.writeFilesystem(ostream);
             ostream.close();
+
+            filesystem.close();
         }
     }
 
