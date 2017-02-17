@@ -44,8 +44,6 @@ import org.w3c.dom.Element;
 
 /**
  * Zip part marshaller. This marshaller is use to save any part in a zip stream.
- *
- * @author Julien Chable
  */
 public final class ZipPartMarshaller implements PartMarshaller {
 	private final static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
@@ -56,6 +54,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	 * @throws OpenXML4JException
 	 *             Throws if an internal exception is thrown.
 	 */
+	@Override
 	public boolean marshall(PackagePart part, OutputStream os)
 			throws OpenXML4JException {
 		if (!(os instanceof ZipOutputStream)) {

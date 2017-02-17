@@ -76,11 +76,9 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     @Override
     public int read() throws IOException {
-        byte[] b = new byte[1];
-        if (read(b) == 1) {
-            return b[0];
-        }
-        return -1;
+        byte[] b = { 0 };
+        // FIXME: compare against -1 or 1?
+        return (read(b) == -1) ? -1 : b[0];
     }
 
     // do not implement! -> recursion

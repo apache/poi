@@ -33,13 +33,13 @@ public final class ODocumentInputStream extends DocumentInputStream {
 	private int _marked_offset;
 
 	/** the Document's size */
-	private int _document_size;
+	private final int _document_size;
 
 	/** have we been closed? */
 	private boolean _closed;
 
 	/** the actual Document */
-	private OPOIFSDocument _document;
+	private final OPOIFSDocument _document;
 
 	/** the data block containing the current stream pointer */
 	private DataInputBlock _currentBlock;

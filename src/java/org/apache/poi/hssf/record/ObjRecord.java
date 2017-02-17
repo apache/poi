@@ -58,12 +58,10 @@ public final class ObjRecord extends Record implements Cloneable {
 	public ObjRecord(RecordInputStream in) {
 		// TODO - problems with OBJ sub-records stream
 		// MS spec says first sub-record is always CommonObjectDataSubRecord,
-		// and last is
-		// always EndSubRecord. OOO spec does not mention ObjRecord(0x005D).
+		// and last is always EndSubRecord. OOO spec does not mention ObjRecord(0x005D).
 		// Existing POI test data seems to violate that rule. Some test data
-		// seems to contain
-		// garbage, and a crash is only averted by stopping at what looks like
-		// the 'EndSubRecord'
+		// seems to contain garbage, and a crash is only averted by stopping at
+                // what looks like the 'EndSubRecord'
 
 		// Check if this can be continued, if so then the
 		// following wont work properly
@@ -141,10 +139,9 @@ public final class ObjRecord extends Record implements Cloneable {
 
 		sb.append("[OBJ]\n");
 		if(subrecords != null) {	// there are special cases where this can be, see comments in constructor above
-    		for (int i = 0; i < subrecords.size(); i++) {
-    			SubRecord record = subrecords.get(i);
-    			sb.append("SUBRECORD: ").append(record.toString());
-    		}
+			for (final SubRecord record : subrecords) {
+				sb.append("SUBRECORD: ").append(record.toString());
+			}
 		}
 		sb.append("[/OBJ]\n");
 		return sb.toString();
@@ -156,8 +153,7 @@ public final class ObjRecord extends Record implements Cloneable {
 			return _uninterpretedData.length + 4;
 		}
 		int size = 0;
-		for (int i=subrecords.size()-1; i>=0; i--) {
-			SubRecord record = subrecords.get(i);
+		for (SubRecord record : subrecords) {
 			size += record.getDataSize()+4;
 		}
 		if (_isPaddedToQuadByteMultiple) {
@@ -203,6 +199,7 @@ public final class ObjRecord extends Record implements Cloneable {
 		return sid;
 	}
 
+        // FIXME: return Collections.unmodifiableList?
 	public List<SubRecord> getSubRecords() {
 		return subrecords;
 	}
@@ -223,9 +220,8 @@ public final class ObjRecord extends Record implements Cloneable {
 	public ObjRecord clone() {
 		ObjRecord rec = new ObjRecord();
 
-		for (int i = 0; i < subrecords.size(); i++) {
-			SubRecord record = subrecords.get(i);
-			rec.addSubRecord((SubRecord) record.clone());
+		for (SubRecord record : subrecords) {
+			rec.addSubRecord(record.clone());
 		}
 		return rec;
 	}

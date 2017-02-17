@@ -199,6 +199,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.SuppressForbidden;
 
 /**
  *  Utility for reading in BIFF8 records and displaying data from them.
@@ -612,7 +613,9 @@ public final class BiffViewer {
         public void processRecord(int globalOffset, int recordCounter, int sid, int dataSize,
 				byte[] data) {
 			String header = formatRecordDetails(globalOffset, sid, dataSize, recordCounter);
-			if(!_noHeader) _headers.add(header);
+			if(!_noHeader) {
+				_headers.add(header);
+			}
 			Writer w = _hexDumpWriter;
 			if (w != null) {
 				try {
@@ -708,6 +711,7 @@ public final class BiffViewer {
 		}
 
 		@Override
+		@SuppressForbidden("just delegating the call")
 		public int available() throws IOException {
 			return _currentSize - _currentPos + _is.available();
 		}

@@ -40,13 +40,13 @@ public final class NDocumentInputStream extends DocumentInputStream {
     private int _marked_offset_count;
 
     /** the Document's size */
-    private int _document_size;
+    private final int _document_size;
 
     /** have we been closed? */
     private boolean _closed;
 
     /** the actual Document */
-    private NPOIFSDocument _document;
+    private final NPOIFSDocument _document;
 
     private Iterator<ByteBuffer> _data;
     private ByteBuffer _buffer;
@@ -97,6 +97,15 @@ public final class NDocumentInputStream extends DocumentInputStream {
 
     @Override
     public int available() {
+        return remainingBytes();
+    }
+
+    /**
+     * Helper methods for forbidden api calls
+     *
+     * @return the bytes remaining until the end of the stream
+     */
+    private int remainingBytes() {
         if (_closed) {
             throw new IllegalStateException("cannot perform requested operation on a closed stream");
         }
@@ -146,7 +155,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
         if (atEOD()) {
             return EOF;
         }
-        int limit = Math.min(available(), len);
+        int limit = Math.min(remainingBytes(), len);
         readFully(b, off, limit);
         return limit;
     }
@@ -297,13 +306,13 @@ public final class NDocumentInputStream extends DocumentInputStream {
       return LittleEndian.getUShort(data);
 	}
 
-   @Override
-	public int readUByte() {
-		checkAvaliable(1);
-      byte[] data = new byte[1];
-      readFully(data, 0, 1);
-      if(data[0] >= 0)
-         return data[0];
-      return data[0] + 256;
-	}
+    @Override
+    public int readUByte() {
+        checkAvaliable(1);
+        byte[] data = new byte[1];
+        readFully(data, 0, 1);
+        if (data[0] >= 0)
+            return data[0];
+        return data[0] + 256;
+    }
 }
