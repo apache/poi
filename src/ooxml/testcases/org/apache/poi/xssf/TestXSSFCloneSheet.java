@@ -83,14 +83,12 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
         assertNotNull(wbBack);
         wbBack.close();
 
-        // FIXME: why are we doing both writeOutAndReadBack and write? Was the temp file created for manual debugging?
-        File tmp = TempFile.createTempFile("60512.xlsx", ".tmp");
-        OutputStream ostream = new FileOutputStream(tmp);
+        /*OutputStream str = new FileOutputStream("/tmp/60512.xlsx");
         try {
             wb.write(ostream);
         } finally {
-            ostream.close();
-        }
+            str.close();
+        }*/
 
         wb.close();
     }
