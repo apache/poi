@@ -19,6 +19,8 @@ package org.apache.poi.util;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.util.SuppressForbidden;
+
 /**
  * This is a stream that will only supply bytes up to a certain length - if its
  * position goes above that, it will stop.
@@ -146,6 +148,7 @@ public class BoundedInputStream extends InputStream {
      * {@inheritDoc}
      */
     @Override
+    @SuppressForbidden("just delegating")
     public int available() throws IOException {
         if (max>=0 && pos>=max) {
             return 0;
