@@ -25,11 +25,13 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -81,11 +83,13 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
         assertNotNull(wbBack);
         wbBack.close();
 
-        OutputStream str = new FileOutputStream("/tmp/60512.xlsx");
+        // FIXME: why are we doing both writeOutAndReadBack and write? Was the temp file created for manual debugging?
+        File tmp = TempFile.createTempFile("60512.xlsx", ".tmp");
+        OutputStream ostream = new FileOutputStream(tmp);
         try {
-            wb.write(str);
+            wb.write(ostream);
         } finally {
-            str.close();
+            ostream.close();
         }
 
         wb.close();
