@@ -151,7 +151,8 @@ public class TestEncryptor {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
         fs.writeFilesystem(bos);
-        
+        fs.close();
+
         nfs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
         infoActual = new EncryptionInfo(nfs.getRoot());
         Decryptor decActual = Decryptor.getInstance(infoActual);
@@ -297,11 +298,13 @@ public class TestEncryptor {
         enc.confirmPassword("password");
         OutputStream os = enc.getDataStream(fs);
         pkg.save(os);
+        os.close();
         pkg.revert();
         
         // Save the resulting OLE2 document, and re-open it
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         fs.writeFilesystem(baos);
+        fs.close();
         
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         NPOIFSFileSystem inpFS = new NPOIFSFileSystem(bais);
@@ -318,6 +321,9 @@ public class TestEncryptor {
         assertNotNull(inpPkg.getPackageProperties());
         assertNotNull(inpPkg.getPackageProperties().getLanguageProperty());
         assertNull(inpPkg.getPackageProperties().getLanguageProperty().getValue());
+
+        inpPkg.close();
+        inpFS.close();
     }
     
     @Test
@@ -340,7 +346,8 @@ public class TestEncryptor {
         assertTrue(b);
 
         // do some strange things with it ;)
-        XWPFDocument docx = new XWPFDocument(d.getDataStream(fs));
+        InputStream docIS = d.getDataStream(fs);
+        XWPFDocument docx = new XWPFDocument(docIS);
         docx.getParagraphArray(0).insertNewRun(0).setText("POI was here! All your base are belong to us!");
         docx.getParagraphArray(0).insertNewRun(1).addBreak();
 
@@ -348,6 +355,8 @@ public class TestEncryptor {
         Encryptor e = encInfo.getEncryptor();
         e.confirmPassword("AYBABTU");
         docx.write(e.getDataStream(fs));
+        docx.close();
+        docIS.close();
         
         docx.close();
         fs.close();
