@@ -83,13 +83,6 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
         assertNotNull(wbBack);
         wbBack.close();
 
-        /*OutputStream str = new FileOutputStream("/tmp/60512.xlsx");
-        try {
-            wb.write(ostream);
-        } finally {
-            str.close();
-        }*/
-
         wb.close();
     }
 }
