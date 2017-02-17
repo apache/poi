@@ -42,6 +42,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 public final class ZipHelper {
     /**
@@ -54,7 +55,11 @@ public final class ZipHelper {
      * Buffer to read data from file. Use big buffer to improve performaces. the
      * InputStream class is reading only 8192 bytes per read call (default value
      * set by sun)
+     * 
+     * @deprecated in POI 3.16-beta3, not used anymore
      */
+    @Deprecated
+    @Removal(version="3.18")
     public static final int READ_WRITE_FILE_BUFFER_SIZE = 8192;
 
     /**
@@ -74,8 +79,9 @@ public final class ZipHelper {
         PackageRelationship corePropsRel = pkg.getRelationshipsByType(
                 PackageRelationshipTypes.CORE_PROPERTIES).getRelationship(0);
 
-        if (corePropsRel == null)
+        if (corePropsRel == null) {
             return null;
+        }
 
         return new ZipEntry(corePropsRel.getTargetURI().getPath());
     }
@@ -91,8 +97,9 @@ public final class ZipHelper {
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             if (entry.getName().equals(
-                    ContentTypeManager.CONTENT_TYPES_PART_NAME))
+                    ContentTypeManager.CONTENT_TYPES_PART_NAME)) {
                 return entry;
+            }
         }
         return null;
     }
@@ -106,8 +113,9 @@ public final class ZipHelper {
      * @return An OPC compliant name.
      */
     public static String getOPCNameFromZipItemName(String zipItemName) {
-        if (zipItemName == null)
-            throw new IllegalArgumentException("zipItemName");
+        if (zipItemName == null) {
+            throw new IllegalArgumentException("zipItemName cannot be null");
+        }
         if (zipItemName.startsWith(FORWARD_SLASH)) {
             return zipItemName;
         }
@@ -123,12 +131,14 @@ public final class ZipHelper {
      * @return A zip item name without any leading slashes.
      */
     public static String getZipItemNameFromOPCName(String opcItemName) {
-        if (opcItemName == null)
-            throw new IllegalArgumentException("opcItemName");
+        if (opcItemName == null) {
+            throw new IllegalArgumentException("opcItemName cannot be null");
+        }
 
         String retVal = opcItemName;
-        while (retVal.startsWith(FORWARD_SLASH))
+        while (retVal.startsWith(FORWARD_SLASH)) {
             retVal = retVal.substring(1);
+        }
         return retVal;
     }
 
@@ -141,12 +151,14 @@ public final class ZipHelper {
      * @return A zip URI without any leading slashes.
      */
     public static URI getZipURIFromOPCName(String opcItemName) {
-        if (opcItemName == null)
+        if (opcItemName == null) {
             throw new IllegalArgumentException("opcItemName");
+        }
 
         String retVal = opcItemName;
-        while (retVal.startsWith(FORWARD_SLASH))
+        while (retVal.startsWith(FORWARD_SLASH)) {
             retVal = retVal.substring(1);
+        }
         try {
             return new URI(retVal);
         } catch (URISyntaxException e) {

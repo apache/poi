@@ -160,6 +160,7 @@ public class ZipSecureFile extends ZipFile {
      * @throws IOException if an I/O error has occurred
      * @throws IllegalStateException if the zip file has been closed
      */
+    @Override
     @SuppressWarnings("resource")
     public InputStream getInputStream(ZipEntry entry) throws IOException {
         InputStream zipIS = super.getInputStream(entry);
@@ -170,6 +171,7 @@ public class ZipSecureFile extends ZipFile {
         ThresholdInputStream newInner;
         if (zipIS instanceof InflaterInputStream) {
             newInner = AccessController.doPrivileged(new PrivilegedAction<ThresholdInputStream>() { // NOSONAR
+                @Override
                 @SuppressForbidden("TODO: Fix this to not use reflection (it will break in Java 9)! " +
                         "Better would be to wrap *before* instead of trying to insert wrapper afterwards.")
                 public ThresholdInputStream run() {
@@ -177,9 +179,9 @@ public class ZipSecureFile extends ZipFile {
                         Field f = FilterInputStream.class.getDeclaredField("in");
                         f.setAccessible(true);
                         InputStream oldInner = (InputStream)f.get(zipIS);
-                        ThresholdInputStream newInner = new ThresholdInputStream(oldInner, null);
-                        f.set(zipIS, newInner);
-                        return newInner;
+                        ThresholdInputStream newInner2 = new ThresholdInputStream(oldInner, null);
+                        f.set(zipIS, newInner2);
+                        return newInner2;
                     } catch (Exception ex) {
                         LOG.log(POILogger.WARN, "SecurityManager doesn't allow manipulation via reflection for zipbomb detection - continue with original input stream", ex);
                     }
@@ -203,24 +205,31 @@ public class ZipSecureFile extends ZipFile {
             this.cis = cis;
         }
 
+        @Override
         public int read() throws IOException {
             int b = in.read();
-            if (b > -1) advance(1);
+            if (b > -1) {
+                advance(1);
+            }
             return b;
         }
 
+        @Override
         public int read(byte b[], int off, int len) throws IOException {
             int cnt = in.read(b, off, len);
-            if (cnt > -1) advance(cnt);
+            if (cnt > -1) {
+                advance(cnt);
+            }
             return cnt;
-
         }
 
+        @Override
         public long skip(long n) throws IOException {
             counter = 0;
             return in.skip(n);
         }
 
+        @Override
         public synchronized void reset() throws IOException {
             counter = 0;
             in.reset();
@@ -277,31 +286,41 @@ public class ZipSecureFile extends ZipFile {
             ((ZipInputStream)in).closeEntry();
         }
 
+        @Override
         public void unread(int b) throws IOException {
             if (!(in instanceof PushbackInputStream)) {
                 throw new UnsupportedOperationException("underlying stream is not a PushbackInputStream");
             }
-            if (--counter < 0) counter = 0;
+            if (--counter < 0) {
+                counter = 0;
+            }
             ((PushbackInputStream)in).unread(b);
         }
 
+        @Override
         public void unread(byte[] b, int off, int len) throws IOException {
             if (!(in instanceof PushbackInputStream)) {
                 throw new UnsupportedOperationException("underlying stream is not a PushbackInputStream");
             }
             counter -= len;
-            if (--counter < 0) counter = 0;
+            if (--counter < 0) {
+                counter = 0;
+            }
             ((PushbackInputStream)in).unread(b, off, len);
         }
 
+        @Override
+        @SuppressForbidden("just delegating")
         public int available() throws IOException {
             return in.available();
         }
 
+        @Override
         public boolean markSupported() {
             return in.markSupported();
         }
 
+        @Override
         public synchronized void mark(int readlimit) {
             in.mark(readlimit);
         }

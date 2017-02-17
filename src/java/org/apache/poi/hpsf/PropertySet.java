@@ -37,6 +37,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.NotImplemented;
 
 /**
  * Represents a property set in the Horrible Property Set Format
@@ -419,17 +420,17 @@ public class PropertySet {
          */
         int o = offset;
         final int byteOrder = LittleEndian.getUShort(src, o);
-        o += LittleEndian.SHORT_SIZE;
+        o += LittleEndianConsts.SHORT_SIZE;
         if (byteOrder != BYTE_ORDER_ASSERTION) {
             return false;
         }
         final int format = LittleEndian.getUShort(src, o);
-        o += LittleEndian.SHORT_SIZE;
+        o += LittleEndianConsts.SHORT_SIZE;
         if (format != FORMAT_ASSERTION) {
             return false;
         }
         // final long osVersion = LittleEndian.getUInt(src, offset);
-        o += LittleEndian.INT_SIZE;
+        o += LittleEndianConsts.INT_SIZE;
         // final ClassID classID = new ClassID(src, offset);
         o += ClassID.LENGTH;
         final long sectionCount = LittleEndian.getUInt(src, o);
@@ -460,15 +461,15 @@ public class PropertySet {
          */
         int o = offset;
         byteOrder = LittleEndian.getUShort(src, o);
-        o += LittleEndian.SHORT_SIZE;
+        o += LittleEndianConsts.SHORT_SIZE;
         format = LittleEndian.getUShort(src, o);
-        o += LittleEndian.SHORT_SIZE;
+        o += LittleEndianConsts.SHORT_SIZE;
         osVersion = (int) LittleEndian.getUInt(src, o);
-        o += LittleEndian.INT_SIZE;
+        o += LittleEndianConsts.INT_SIZE;
         classID = new ClassID(src, o);
         o += ClassID.LENGTH;
         final int sectionCount = LittleEndian.getInt(src, o);
-        o += LittleEndian.INT_SIZE;
+        o += LittleEndianConsts.INT_SIZE;
         if (sectionCount < 0) {
             throw new HPSFRuntimeException("Section count " + sectionCount + " is negative.");
         }
@@ -492,7 +493,7 @@ public class PropertySet {
          */
         for (int i = 0; i < sectionCount; i++) {
             final Section s = new MutableSection(src, o);
-            o += ClassID.LENGTH + LittleEndian.INT_SIZE;
+            o += ClassID.LENGTH + LittleEndianConsts.INT_SIZE;
             sections.add(s);
         }
     }
@@ -835,6 +836,8 @@ public class PropertySet {
     /**
      * @see Object#hashCode()
      */
+    @NotImplemented
+    @Override
     public int hashCode() {
         throw new UnsupportedOperationException("FIXME: Not yet implemented.");
     }
@@ -844,6 +847,7 @@ public class PropertySet {
     /**
      * @see Object#toString()
      */
+    @Override
     public String toString() {
         final StringBuilder b = new StringBuilder();
         final int sectionCount = getSectionCount();

@@ -84,10 +84,12 @@ public abstract class SubRecord {
 	}
 
 	public abstract void serialize(LittleEndianOutput out);
-	public abstract Object clone();
+
+	@Override
+	public abstract SubRecord clone();
 
     /**
-     * Wether this record terminates the sub-record stream.
+     * Whether this record terminates the sub-record stream.
      * There are two cases when this method must be overridden and return <code>true</code>
      *  - EndSubRecord (sid = 0x00)
      *  - LbsDataSubRecord (sid = 0x12)
@@ -109,19 +111,23 @@ public abstract class SubRecord {
 	    	in.readFully(buf);
 	        _data = buf;
 		}
+		@Override
 		protected int getDataSize() {
 			return _data.length;
 		}
+		@Override
 		public void serialize(LittleEndianOutput out) {
 			out.writeShort(_sid);
 			out.writeShort(_data.length);
 			out.write(_data);
 		}
-		public Object clone() {
+		@Override
+		public UnknownSubRecord clone() {
 			return this;
 		}
+		@Override
 		public String toString() {
-			StringBuffer sb = new StringBuffer(64);
+			StringBuilder sb = new StringBuilder(64);
 			sb.append(getClass().getName()).append(" [");
 			sb.append("sid=").append(HexDump.shortToHex(_sid));
 			sb.append(" size=").append(_data.length);

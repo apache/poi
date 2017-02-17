@@ -64,6 +64,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     // the cipher can't be final, because for the last chunk we change the padding
     // and therefore need to change the cipher too
     private Cipher cipher;
+    private boolean isClosed = false;
 
     public ChunkedCipherOutputStream(DirectoryNode dir, int chunkSize) throws IOException, GeneralSecurityException {
         super(null);
@@ -224,6 +225,13 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     
     @Override
     public void close() throws IOException {
+        if (isClosed) {
+            LOG.log(POILogger.DEBUG, "ChunkedCipherOutputStream was already closed - ignoring");
+            return;
+        }
+
+        isClosed = true;
+
         try {
             writeChunk(false);
 

@@ -30,6 +30,7 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
+import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockList;
 import org.apache.poi.poifs.storage.HeaderBlock;
@@ -94,13 +95,15 @@ public class POIFSReader
             new PropertyTable(header_block, data_blocks);
 
         // process documents
+        RootProperty root = properties.getRoot();
         processProperties(SmallBlockTableReader
             .getSmallDocumentBlocks(
                   header_block.getBigBlockSize(),
-                  data_blocks, properties.getRoot(), 
-                  header_block.getSBATStart()), 
-                  data_blocks, properties.getRoot()
-                        .getChildren(), new POIFSDocumentPath());
+                  data_blocks, root,
+                  header_block.getSBATStart()
+            ),
+            data_blocks, root.getChildren(), new POIFSDocumentPath()
+        );
     }
 
     /**

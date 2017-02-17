@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.SuppressForbidden;
 
 /**
  * This class provides methods to read a DocumentEntry managed by a
@@ -86,6 +87,7 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
    }
 
     @Override
+    @SuppressForbidden("just delegating")
 	public int available() {
 	   return delegate.available();
 	}

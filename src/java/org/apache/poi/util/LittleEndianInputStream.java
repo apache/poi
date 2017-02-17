@@ -26,8 +26,6 @@ import java.io.InputStream;
  *
  * This class does not buffer any input, so the stream read position maintained
  * by this class is consistent with that of the inner stream.
- *
- * @author Josh Micich
  */
 public class LittleEndianInputStream extends FilterInputStream implements LittleEndianInput {
 	public LittleEndianInputStream(InputStream is) {
@@ -35,7 +33,8 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	}
 	
 	@Override
-    public int available() {
+	@SuppressForbidden("just delegating")
+	public int available() {
 		try {
 			return super.available();
 		} catch (IOException e) {
@@ -44,12 +43,12 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	}
 	
 	@Override
-    public byte readByte() {
+	public byte readByte() {
 		return (byte)readUByte();
 	}
 	
 	@Override
-    public int readUByte() {
+	public int readUByte() {
 		byte buf[] = new byte[1];
 		try {
 			checkEOF(read(buf), 1);
@@ -60,15 +59,15 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	}
 	
 	@Override
-    public double readDouble() {
+	public double readDouble() {
 		return Double.longBitsToDouble(readLong());
 	}
 	
 	@Override
-    public int readInt() {
-	    byte buf[] = new byte[LittleEndianConsts.INT_SIZE];
+	public int readInt() {
+		byte buf[] = new byte[LittleEndianConsts.INT_SIZE];
 		try {
-		    checkEOF(read(buf), buf.length);
+			checkEOF(read(buf), buf.length);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -82,13 +81,14 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
      * @exception RuntimeException
      *                wraps any IOException thrown from reading the stream.
      */
+    //@Override
     public long readUInt() {
        long retNum = readInt();
        return retNum & 0x00FFFFFFFFL;
     }
 	
 	@Override
-    public long readLong() {
+	public long readLong() {
 		byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
 		try {
 		    checkEOF(read(buf), LittleEndianConsts.LONG_SIZE);
@@ -99,12 +99,12 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	}
 	
 	@Override
-    public short readShort() {
+	public short readShort() {
 		return (short)readUShort();
 	}
 	
 	@Override
-    public int readUShort() {
+	public int readUShort() {
 		byte buf[] = new byte[LittleEndianConsts.SHORT_SIZE];
 		try {
 		    checkEOF(read(buf), LittleEndianConsts.SHORT_SIZE);
@@ -120,19 +120,19 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 		}
 	}
 
-	@Override
+    @Override
     public void readFully(byte[] buf) {
-		readFully(buf, 0, buf.length);
-	}
+        readFully(buf, 0, buf.length);
+    }
 
-	@Override
+    @Override
     public void readFully(byte[] buf, int off, int len) {
-	    try {
-	        checkEOF(read(buf, off, len), len);
-	    } catch (IOException e) {
+        try {
+            checkEOF(read(buf, off, len), len);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-	}
+    }
 
     @Override
     public void readPlain(byte[] buf, int off, int len) {

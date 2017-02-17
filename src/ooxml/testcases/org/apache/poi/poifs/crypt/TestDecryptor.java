@@ -50,6 +50,8 @@ public class TestDecryptor {
         Decryptor d = Decryptor.getInstance(info);
 
         assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
+
+        fs.close();
     }
 
     @Test
@@ -63,6 +65,8 @@ public class TestDecryptor {
         d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
 
         zipOk(fs.getRoot(), d);
+
+        fs.close();
     }
 
     @Test
@@ -78,6 +82,8 @@ public class TestDecryptor {
         assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
 
         zipOk(fs.getRoot(), d);
+
+        fs.close();
     }
 
     private void zipOk(DirectoryNode root, Decryptor d) throws IOException, GeneralSecurityException {
@@ -85,9 +91,13 @@ public class TestDecryptor {
 
         while (true) {
             ZipEntry entry = zin.getNextEntry();
-            if (entry==null) break;
+            if (entry==null) {
+                break;
+            }
             // crc32 is checked within zip-stream
-            if (entry.isDirectory()) continue;
+            if (entry.isDirectory()) {
+                continue;
+            }
             zin.skip(entry.getSize());
             byte buf[] = new byte[10];
             int readBytes = zin.read(buf);
