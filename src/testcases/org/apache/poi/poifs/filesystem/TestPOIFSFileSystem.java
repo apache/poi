@@ -67,7 +67,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 		}
 
 		@Override
-        public int read() throws IOException {
+		public int read() throws IOException {
 			int result = _is.read();
 			if(result >=0) {
 				checkRead(1);
@@ -75,7 +75,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 			return result;
 		}
 		@Override
-        public int read(byte[] b, int off, int len) throws IOException {
+		public int read(byte[] b, int off, int len) throws IOException {
 			int result = _is.read(b, off, len);
 			checkRead(result);
 			return result;

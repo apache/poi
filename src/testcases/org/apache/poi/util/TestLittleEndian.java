@@ -17,25 +17,28 @@
 
 package org.apache.poi.util;
 
-import junit.framework.TestCase;
-import org.apache.poi.util.LittleEndian.BufferUnderrunException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.util.LittleEndian.BufferUnderrunException;
+import org.junit.Test;
+
 /**
  * Class to test LittleEndian functionality
- *
- * @author Marc Johnson
  */
-public final class TestLittleEndian extends TestCase {
+public final class TestLittleEndian {
 
     /**
      * test the getShort() method
      */
+    @Test
     public void testGetShort() {
-        byte[] testdata = new byte[ LittleEndian.SHORT_SIZE + 1 ];
+        byte[] testdata = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
 
         testdata[0] = 0x01;
         testdata[1] = (byte) 0xFF;
@@ -48,6 +51,7 @@ public final class TestLittleEndian extends TestCase {
         assertEquals(expected[1], LittleEndian.getShort(testdata, 1));
     }
 
+    @Test
     public void testGetUShort() {
         byte[] testdata = {
             (byte) 0x01,
@@ -69,7 +73,7 @@ public final class TestLittleEndian extends TestCase {
         assertEquals(expected2, LittleEndian.getUShort(testdata2));
         assertEquals(expected3, LittleEndian.getUShort(testdata2, 1));
 
-        byte[] testdata3 = new byte[ LittleEndian.SHORT_SIZE + 1 ];
+        byte[] testdata3 = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
         LittleEndian.putUShort(testdata3, 0, expected2);
         LittleEndian.putUShort(testdata3, 1, expected3);
         assertEquals(testdata3[0], 0x0D);
@@ -94,9 +98,10 @@ public final class TestLittleEndian extends TestCase {
     /**
      * test the getDouble() method
      */
+    @Test
     public void testGetDouble() {
         assertEquals(_doubles[0], LittleEndian.getDouble(_double_array, 0), 0.000001 );
-        assertEquals(_doubles[1], LittleEndian.getDouble( _double_array, LittleEndian.DOUBLE_SIZE), 0.000001);
+        assertEquals(_doubles[1], LittleEndian.getDouble( _double_array, LittleEndianConsts.DOUBLE_SIZE), 0.000001);
         assertTrue(Double.isNaN(LittleEndian.getDouble(_nan_double_array, 0)));
 
         double nan = LittleEndian.getDouble(_nan_double_array, 0);
@@ -110,6 +115,7 @@ public final class TestLittleEndian extends TestCase {
     /**
      * test the getInt() method
      */
+    @Test
     public void testGetInt() {
         // reading 4 byte data from a 5 byte buffer
         byte[] testdata = {
@@ -127,6 +133,7 @@ public final class TestLittleEndian extends TestCase {
     /**
      * test the getLong method
      */
+    @Test
     public void testGetLong() {
 
         // reading 8 byte values from a 9 byte buffer
@@ -149,26 +156,28 @@ public final class TestLittleEndian extends TestCase {
     /**
      * test the PutShort method
      */
+    @Test
     public void testPutShort() {
-        byte[] expected = new byte[ LittleEndian.SHORT_SIZE + 1 ];
+        byte[] expected = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
 
         expected[0] = 0x01;
         expected[1] = (byte) 0xFF;
         expected[2] = 0x02;
-        byte[] received   = new byte[ LittleEndian.SHORT_SIZE + 1 ];
+        byte[] received   = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
         short  testdata[] = new short[2];
 
         testdata[0] = ( short ) 0xFF01;
         testdata[1] = 0x02FF;
         LittleEndian.putShort(received, 0, testdata[0]);
-        assertTrue(compareByteArrays(received, expected, 0, LittleEndian.SHORT_SIZE));
+        assertTrue(compareByteArrays(received, expected, 0, LittleEndianConsts.SHORT_SIZE));
         LittleEndian.putShort(received, 1, testdata[1]);
-        assertTrue(compareByteArrays(received, expected, 1, LittleEndian.SHORT_SIZE));
+        assertTrue(compareByteArrays(received, expected, 1, LittleEndianConsts.SHORT_SIZE));
     }
 
     /**
      * test the putInt method
      */
+    @Test
     public void testPutInt() {
         // writing 4 byte data to a 5 byte buffer
         byte[] expected = {
@@ -178,33 +187,35 @@ public final class TestLittleEndian extends TestCase {
                 (byte) 0xFF,
                 (byte) 0x02,
         };
-        byte[] received = new byte[ LittleEndian.INT_SIZE + 1 ];
+        byte[] received = new byte[ LittleEndianConsts.INT_SIZE + 1 ];
 
         LittleEndian.putInt(received, 0, 0xFFFFFF01);
-        assertTrue(compareByteArrays(received, expected, 0, LittleEndian.INT_SIZE));
+        assertTrue(compareByteArrays(received, expected, 0, LittleEndianConsts.INT_SIZE));
         LittleEndian.putInt(received, 1, 0x02FFFFFF);
-        assertTrue(compareByteArrays(received, expected, 1, LittleEndian.INT_SIZE));
+        assertTrue(compareByteArrays(received, expected, 1, LittleEndianConsts.INT_SIZE));
     }
 
     /**
      * test the putDouble methods
      */
+    @Test
     public void testPutDouble() {
-        byte[] received = new byte[ LittleEndian.DOUBLE_SIZE + 1 ];
+        byte[] received = new byte[ LittleEndianConsts.DOUBLE_SIZE + 1 ];
 
         LittleEndian.putDouble(received, 0, _doubles[0]);
-        assertTrue(compareByteArrays(received, _double_array, 0, LittleEndian.DOUBLE_SIZE));
+        assertTrue(compareByteArrays(received, _double_array, 0, LittleEndianConsts.DOUBLE_SIZE));
         LittleEndian.putDouble(received, 1, _doubles[1]);
-        byte[] expected = new byte[ LittleEndian.DOUBLE_SIZE + 1 ];
+        byte[] expected = new byte[ LittleEndianConsts.DOUBLE_SIZE + 1 ];
 
-        System.arraycopy(_double_array, LittleEndian.DOUBLE_SIZE, expected,
-                         1, LittleEndian.DOUBLE_SIZE);
-        assertTrue(compareByteArrays(received, expected, 1, LittleEndian.DOUBLE_SIZE));
+        System.arraycopy(_double_array, LittleEndianConsts.DOUBLE_SIZE, expected,
+                         1, LittleEndianConsts.DOUBLE_SIZE);
+        assertTrue(compareByteArrays(received, expected, 1, LittleEndianConsts.DOUBLE_SIZE));
     }
 
     /**
      * test the putLong method
      */
+    @Test
     public void testPutLong() {
         // writing 8 byte values to a 9 byte buffer
         byte[] expected = {
@@ -218,14 +229,14 @@ public final class TestLittleEndian extends TestCase {
             (byte) 0xFF,
             (byte) 0x02,
         };
-        byte[] received   = new byte[ LittleEndian.LONG_SIZE + 1 ];
+        byte[] received   = new byte[ LittleEndianConsts.LONG_SIZE + 1 ];
 
         long testdata0 = 0xFFFFFFFFFFFFFF01L;
         long testdata1 = 0x02FFFFFFFFFFFFFFL;
         LittleEndian.putLong(received, 0, testdata0);
-        assertTrue(compareByteArrays(received, expected, 0, LittleEndian.LONG_SIZE));
+        assertTrue(compareByteArrays(received, expected, 0, LittleEndianConsts.LONG_SIZE));
         LittleEndian.putLong(received, 1, testdata1);
-        assertTrue(compareByteArrays(received, expected, 1, LittleEndian.LONG_SIZE));
+        assertTrue(compareByteArrays(received, expected, 1, LittleEndianConsts.LONG_SIZE));
     }
 
     private static byte[] _good_array = {
@@ -241,6 +252,7 @@ public final class TestLittleEndian extends TestCase {
     /**
      * test the readShort method
      */
+    @Test
     public void testReadShort() throws IOException {
         short       expected_value = 0x0201;
         InputStream stream         = new ByteArrayInputStream(_good_array);
@@ -265,6 +277,7 @@ public final class TestLittleEndian extends TestCase {
     /**
      * test the readInt method
      */
+    @Test
     public void testReadInt() throws IOException {
         int         expected_value = 0x02010201;
         InputStream stream         = new ByteArrayInputStream(_good_array);
@@ -289,6 +302,7 @@ public final class TestLittleEndian extends TestCase {
     /**
      * test the readLong method
      */
+    @Test
     public void testReadLong() throws IOException {
         long        expected_value = 0x0201020102010201L;
         InputStream stream         = new ByteArrayInputStream(_good_array);
@@ -326,6 +340,7 @@ public final class TestLittleEndian extends TestCase {
 //        }
 //    }
 
+    @Test
     public void testUnsignedByteToInt() {
         assertEquals(255, LittleEndian.ubyteToInt((byte)255));
     }
@@ -342,6 +357,7 @@ public final class TestLittleEndian extends TestCase {
         return true;
     }
 
+    @Test
     public void testUnsignedShort() {
         assertEquals(0xffff, LittleEndian.getUShort(new byte[] { (byte)0xff, (byte)0xff }, 0));
     }
