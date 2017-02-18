@@ -52,6 +52,7 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
+import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFHyperlink;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
@@ -67,6 +68,8 @@ import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 
 public class TestXSLFBugs {
@@ -591,5 +594,34 @@ public class TestXSLFBugs {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("bug60715.pptx");
         ppt.createSlide();
         ppt.close();
+    }
+
+    @Test
+    public void bug60662() throws IOException {
+        XMLSlideShow src = new XMLSlideShow();
+        XSLFSlide sl = src.createSlide();
+        XSLFGroupShape gs = sl.createGroup();
+        gs.setAnchor(new Rectangle2D.Double(100,100,100,100));
+        gs.setInteriorAnchor(new Rectangle2D.Double(0,0,100,100));
+        XSLFAutoShape as = gs.createAutoShape();
+        as.setAnchor(new Rectangle2D.Double(0,0,100,100));
+        as.setShapeType(ShapeType.STAR_24);
+        as.setFillColor(Color.YELLOW);
+        CTShape csh = (CTShape)as.getXmlObject();
+        CTOuterShadowEffect shadow = csh.getSpPr().addNewEffectLst().addNewOuterShdw();
+        shadow.setDir(270000);
+        shadow.setDist(100000);
+        shadow.addNewSrgbClr().setVal(new byte[] {0x00, (byte)0xFF, 0x00});
+        
+        XMLSlideShow dst = new XMLSlideShow();
+        XSLFSlide sl2 = dst.createSlide();
+        sl2.importContent(sl);
+        XSLFGroupShape gs2 = (XSLFGroupShape)sl2.getShapes().get(0);
+        XSLFAutoShape as2 = (XSLFAutoShape)gs2.getShapes().get(0);
+        CTShape csh2 = (CTShape)as2.getXmlObject();
+        assertTrue(csh2.getSpPr().isSetEffectLst());
+        
+        dst.close();
+        src.close();
     }
 }

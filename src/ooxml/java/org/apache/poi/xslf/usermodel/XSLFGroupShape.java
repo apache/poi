@@ -67,6 +67,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         _grpSpPr = shape.getGrpSpPr();
     }
 
+    @Override
     protected CTGroupShapeProperties getGrpSpPr() {
         return _grpSpPr;
     }
@@ -159,6 +160,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
      *
      * @return an iterator over the shapes in this sheet
      */
+    @Override
     public Iterator<XSLFShape> iterator(){
         return _shapes.iterator();
     }
@@ -166,6 +168,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     /**
      * Remove the specified shape from this group
      */
+    @Override
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
         CTGroupShape grpSp = (CTGroupShape)getXmlObject();
@@ -214,6 +217,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return _drawing;
     }
 
+    @Override
     public XSLFAutoShape createAutoShape(){
         XSLFAutoShape sh = getDrawing().createAutoShape();
         _shapes.add(sh);
@@ -221,6 +225,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
+    @Override
     public XSLFFreeformShape createFreeform(){
         XSLFFreeformShape sh = getDrawing().createFreeform();
         _shapes.add(sh);
@@ -228,6 +233,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
+    @Override
     public XSLFTextBox createTextBox(){
         XSLFTextBox sh = getDrawing().createTextBox();
         _shapes.add(sh);
@@ -235,6 +241,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
+    @Override
     public XSLFConnectorShape createConnector(){
         XSLFConnectorShape sh = getDrawing().createConnector();
         _shapes.add(sh);
@@ -242,6 +249,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
+    @Override
     public XSLFGroupShape createGroup(){
         XSLFGroupShape sh = getDrawing().createGroup();
         _shapes.add(sh);
@@ -249,6 +257,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
+    @Override
     public XSLFPictureShape createPicture(PictureData pictureData){
         if (!(pictureData instanceof XSLFPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
@@ -327,36 +336,52 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     @Override
     void copy(XSLFShape src){
         XSLFGroupShape gr = (XSLFGroupShape)src;
-        
-        // clear shapes
-        clear();
-        
-        // recursively update each shape
-        for(XSLFShape shape : gr.getShapes()) {
-            XSLFShape newShape;
-            if (shape instanceof XSLFTextBox) {
-                newShape = createTextBox();
-            } else if (shape instanceof XSLFAutoShape) {
-                newShape = createAutoShape();
-            } else if (shape instanceof XSLFConnectorShape) {
-                newShape = createConnector();
-            } else if (shape instanceof XSLFFreeformShape) {
-                newShape = createFreeform();
-            } else if (shape instanceof XSLFPictureShape) {
-                XSLFPictureShape p = (XSLFPictureShape)shape;
-                XSLFPictureData pd = p.getPictureData();
-                XSLFPictureData pdNew = getSheet().getSlideShow().addPicture(pd.getData(), pd.getType());
-                newShape = createPicture(pdNew);
-            } else if (shape instanceof XSLFGroupShape) {
-                newShape = createGroup();
-            } else if (shape instanceof XSLFTable) {
-                newShape = createTable();
-            } else {
-                _logger.log(POILogger.WARN, "copying of class "+shape.getClass()+" not supported.");
-                continue;
-            }
 
-            newShape.copy(shape);
+        // recursively update each shape
+        List<XSLFShape> tgtShapes = getShapes();
+        List<XSLFShape> srcShapes = gr.getShapes();
+        
+        // workaround for a call by XSLFSheet.importContent:
+        // if we have already the same amount of child shapes
+        // then assume, that we've been called by import content and only need to update the children
+        if (tgtShapes.size() == srcShapes.size()) {
+            for(int i = 0; i < tgtShapes.size(); i++){
+                XSLFShape s1 = srcShapes.get(i);
+                XSLFShape s2 = tgtShapes.get(i);
+    
+                s2.copy(s1);
+            }
+        } else {
+            // otherwise recreate the shapes from scratch
+            clear();
+            
+            // recursively update each shape
+            for(XSLFShape shape : srcShapes) {
+                XSLFShape newShape;
+                if (shape instanceof XSLFTextBox) {
+                    newShape = createTextBox();
+                } else if (shape instanceof XSLFAutoShape) {
+                    newShape = createAutoShape();
+                } else if (shape instanceof XSLFConnectorShape) {
+                    newShape = createConnector();
+                } else if (shape instanceof XSLFFreeformShape) {
+                    newShape = createFreeform();
+                } else if (shape instanceof XSLFPictureShape) {
+                    XSLFPictureShape p = (XSLFPictureShape)shape;
+                    XSLFPictureData pd = p.getPictureData();
+                    XSLFPictureData pdNew = getSheet().getSlideShow().addPicture(pd.getData(), pd.getType());
+                    newShape = createPicture(pdNew);
+                } else if (shape instanceof XSLFGroupShape) {
+                    newShape = createGroup();
+                } else if (shape instanceof XSLFTable) {
+                    newShape = createTable();
+                } else {
+                    _logger.log(POILogger.WARN, "copying of class "+shape.getClass()+" not supported.");
+                    continue;
+                }
+    
+                newShape.copy(shape);
+            }
         }
     }
 
@@ -364,6 +389,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
      * Removes all of the elements from this container (optional operation).
      * The container will be empty after this call returns.
      */
+    @Override
     public void clear() {
         List<XSLFShape> shapes = new ArrayList<XSLFShape>(getShapes());
         for(XSLFShape shape : shapes){
@@ -371,6 +397,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         }
     }
 
+    @Override
     public void addShape(XSLFShape shape) {
         throw new UnsupportedOperationException(
             "Adding a shape from a different container is not supported -"
