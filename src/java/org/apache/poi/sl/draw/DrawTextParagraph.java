@@ -649,12 +649,12 @@ public class DrawTextParagraph implements Drawable {
             
             // check for unsupported characters and add a fallback font for these
             char textChr[] = runText.toCharArray();
-            int nextEnd = f.canDisplayUpTo(textChr, 0, textChr.length);
+            int nextEnd = canDisplayUpTo(f, textChr, 0, textChr.length);
             int last = nextEnd;
             boolean isNextValid = (nextEnd == 0);
             while ( nextEnd != -1 && nextEnd <= textChr.length ) {
                 if (isNextValid) {
-                    nextEnd = f.canDisplayUpTo(textChr, nextEnd, textChr.length);
+                    nextEnd = canDisplayUpTo(f, textChr, nextEnd, textChr.length);
                     isNextValid = false;
                 } else {
                     if (nextEnd >= textChr.length || f.canDisplay(Character.codePointAt(textChr, nextEnd, textChr.length)) ) {
@@ -727,5 +727,44 @@ public class DrawTextParagraph implements Drawable {
             }
         }
         return attStr;
+    }
+    
+    /**
+     * Indicates whether or not this {@code Font} can display the characters in the specified {@code text}
+     * starting at {@code start} and ending at {@code limit}.<p>
+     * 
+     * This is a workaround for the Java 6 implementation of {@link Font#canDisplayUpTo(char[], int, int)}
+     *
+     * @param font the font to inspect
+     * @param text the specified array of {@code char} values
+     * @param start the specified starting offset (in
+     *              {@code char}s) into the specified array of
+     *              {@code char} values
+     * @param limit the specified ending offset (in
+     *              {@code char}s) into the specified array of
+     *              {@code char} values
+     * @return an offset into {@code text} that points
+     *          to the first character in {@code text} that this
+     *          {@code Font} cannot display; or {@code -1} if
+     *          this {@code Font} can display all characters in
+     *          {@code text}.
+     * 
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-6623219">Font.canDisplayUpTo does not work with supplementary characters</a>
+     */
+    protected static int canDisplayUpTo(Font font, char[] text, int start, int limit) {
+        for (int i = start; i < limit; i++) {
+            char c = text[i];
+            if (font.canDisplay(c)) {
+                continue;
+            }
+            if (!Character.isHighSurrogate(c)) {
+                return i;
+            }
+            if (!font.canDisplay(Character.codePointAt(text, i, limit))) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
     }
 }
