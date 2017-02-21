@@ -68,15 +68,28 @@ public class DataValidationEvaluator {
     private final Workbook workbook;
     private final WorkbookEvaluator workbookEvaluator;
 
+    /**
+     * Use the same formula evaluation context used for other operations, so cell value
+     * changes are automatically noticed
+     * @param wb the workbook this operates on
+     * @param provider provider for formula evaluation
+     */
     public DataValidationEvaluator(Workbook wb, WorkbookEvaluatorProvider provider) {
         this.workbook = wb;
         this.workbookEvaluator = provider._getWorkbookEvaluator();
     }
     
+    /**
+     * @return evaluator
+     */
     protected WorkbookEvaluator getWorkbookEvaluator() {
         return workbookEvaluator;
     }
     
+    /**
+     * Call this whenever validation structures change,
+     * so future results stay in sync with the Workbook state.
+     */
     public void clearAllCachedValues() {
         validations.clear();
     }
@@ -111,8 +124,18 @@ public class DataValidationEvaluator {
         return vc == null ? null : vc.getValidation();
     }
 
+    /**
+     * Finds and returns the {@link DataValidationContext} for the cell, if there is
+     * one. Lookup is based on the first match from
+     * {@link DataValidation#getRegions()} for the cell's sheet. DataValidation
+     * regions must be in the same sheet as the DataValidation. Allowed values
+     * expressions may reference other sheets, however.
+     * 
+     * @param cell reference to check
+     * @return the DataValidationContext applicable to the given cell, or null if no
+     *         validation applies
+     */
     public DataValidationContext getValidationContextForCell(CellReference cell) {
-        // TODO
         final Sheet sheet = workbook.getSheet(cell.getSheetName());
         if (sheet == null) return null;
         final List<? extends DataValidation> dataValidations = getValidations(sheet);
@@ -483,6 +506,12 @@ public class DataValidationEvaluator {
         public abstract boolean isValid(Double cellValue, Double v1, Double v2);
     }
     
+    /**
+     * This class organizes and encapsulates all the pieces of information related to a single
+     * data validation configuration for a single cell.  It cleanly separates the validation region,
+     * the cells it applies to, the specific cell this instance references, and the validation
+     * configuration and current values if applicable.
+     */
     public static class DataValidationContext {
         private final DataValidation dv;
         private final DataValidationEvaluator dve;
