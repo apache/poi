@@ -107,7 +107,8 @@ public class DataValidationEvaluator {
      *         validation applies
      */
     public DataValidation getValidationForCell(CellReference cell) {
-        return getValidationContextForCell(cell).getValidation();
+        final DataValidationContext vc = getValidationContextForCell(cell);
+        return vc == null ? null : vc.getValidation();
     }
 
     public DataValidationContext getValidationContextForCell(CellReference cell) {
