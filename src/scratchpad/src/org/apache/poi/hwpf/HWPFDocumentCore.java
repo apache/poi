@@ -17,162 +17,194 @@
 
 package org.apache.poi.hwpf;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-
 import org.apache.poi.POIDocument;
-import org.apache.poi.hwpf.model.CHPBinTable;
-import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.FontTable;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.PAPBinTable;
-import org.apache.poi.hwpf.model.SectionTable;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.TextPieceTable;
+import org.apache.poi.hwpf.model.*;
 import org.apache.poi.hwpf.usermodel.ObjectPoolImpl;
 import org.apache.poi.hwpf.usermodel.ObjectsPool;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
 
 
 /**
  * This class holds much of the core of a Word document, but
- *  without some of the table structure information.
+ * without some of the table structure information.
  * You generally want to work with one of
- *  {@link HWPFDocument} or {@link HWPFOldDocument} 
+ * {@link HWPFDocument} or {@link HWPFOldDocument}
  */
-public abstract class HWPFDocumentCore extends POIDocument
-{
-    protected static final String STREAM_OBJECT_POOL = "ObjectPool";
-    protected static final String STREAM_WORD_DOCUMENT = "WordDocument";
+public abstract class HWPFDocumentCore extends POIDocument {
+    static final String STREAM_OBJECT_POOL = "ObjectPool";
+    static final String STREAM_WORD_DOCUMENT = "WordDocument";
 
-  /** Holds OLE2 objects */
-  protected ObjectPoolImpl _objectPool;
+    /**
+     * Holds OLE2 objects
+     */
+    ObjectPoolImpl _objectPool;
 
-  /** The FIB */
-  protected FileInformationBlock _fib;
+    /**
+     * The FIB
+     */
+    FileInformationBlock _fib;
 
-  /** Holds styles for this document.*/
-  protected StyleSheet _ss;
+    /**
+     * Holds styles for this document.
+     */
+    StyleSheet _ss;
 
-  /** Contains formatting properties for text*/
-  protected CHPBinTable _cbt;
+    /**
+     * Contains formatting properties for text
+     */
+    CHPBinTable _cbt;
 
-  /** Contains formatting properties for paragraphs*/
-  protected PAPBinTable _pbt;
+    /**
+     * Contains formatting properties for paragraphs
+     */
+    PAPBinTable _pbt;
 
-  /** Contains formatting properties for sections.*/
-  protected SectionTable _st;
+    /**
+     * Contains formatting properties for sections.
+     */
+    SectionTable _st;
 
-  /** Holds fonts for this document.*/
-  protected FontTable _ft;
+    /**
+     * Holds fonts for this document.
+     */
+    FontTable _ft;
 
-  /** Hold list tables */
-  protected ListTables _lt;
+    /**
+     * Hold list tables
+     */
+    ListTables _lt;
 
-  /** main document stream buffer*/
-  protected byte[] _mainStream;
+    /**
+     * main document stream buffer
+     */
+    protected byte[] _mainStream;
 
-  protected HWPFDocumentCore()
-  {
-     super((DirectoryNode)null);
-  }
+    protected HWPFDocumentCore() {
+        super((DirectoryNode) null);
+    }
 
-  /**
-   * Takes an InputStream, verifies that it's not RTF or PDF, builds a
-   *  POIFSFileSystem from it, and returns that.
-   */
-  public static POIFSFileSystem verifyAndBuildPOIFS(InputStream istream) throws IOException {
-	// Open a PushbackInputStream, so we can peek at the first few bytes
-	PushbackInputStream pis = new PushbackInputStream(istream,6);
-	byte[] first6 = IOUtils.toByteArray(pis, 6);
+    /**
+     * This constructor loads a Word document from an InputStream.
+     *
+     * @param istream The InputStream that contains the Word document.
+     * @throws IOException If there is an unexpected IOException from the passed
+     *                     in InputStream.
+     */
+    public HWPFDocumentCore(InputStream istream) throws IOException {
+        //do Ole stuff
+        this(verifyAndBuildPOIFS(istream));
+    }
 
-	// Does it start with {\rtf ? If so, it's really RTF
-	if(first6[0] == '{' && first6[1] == '\\' && first6[2] == 'r'
-		&& first6[3] == 't' && first6[4] == 'f') {
-		throw new IllegalArgumentException("The document is really a RTF file");
-	} else if(first6[0] == '%' && first6[1] == 'P' && first6[2] == 'D' && first6[3] == 'F' ) {
-		throw new IllegalArgumentException("The document is really a PDF file");
-	}
+    /**
+     * This constructor loads a Word document from a POIFSFileSystem
+     *
+     * @param pfilesystem The POIFSFileSystem that contains the Word document.
+     * @throws IOException If there is an unexpected IOException from the passed
+     *                     in POIFSFileSystem.
+     */
+    public HWPFDocumentCore(POIFSFileSystem pfilesystem) throws IOException {
+        this(pfilesystem.getRoot());
+    }
 
-	// OK, so it's neither RTF nor PDF
-	// Open a POIFSFileSystem on the (pushed back) stream
-	pis.unread(first6);
-	return new POIFSFileSystem(pis);
-  }
+    /**
+     * This constructor loads a Word document from a specific point
+     * in a POIFSFileSystem, probably not the default.
+     * Used typically to open embeded documents.
+     *
+     * @param directory The DirectoryNode that contains the Word document.
+     * @throws IOException If there is an unexpected IOException from the passed
+     *                     in POIFSFileSystem.
+     */
+    public HWPFDocumentCore(DirectoryNode directory) throws IOException {
+        // Sort out the hpsf properties
+        super(directory);
 
-  /**
-   * This constructor loads a Word document from an InputStream.
-   *
-   * @param istream The InputStream that contains the Word document.
-   * @throws IOException If there is an unexpected IOException from the passed
-   *         in InputStream.
-   */
-  public HWPFDocumentCore(InputStream istream) throws IOException
-  {
-    //do Ole stuff
-    this( verifyAndBuildPOIFS(istream) );
-  }
+        // read in the main stream.
+        DocumentEntry documentProps = (DocumentEntry)
+                directory.getEntry("WordDocument");
+        _mainStream = new byte[documentProps.getSize()];
 
-  /**
-   * This constructor loads a Word document from a POIFSFileSystem
-   *
-   * @param pfilesystem The POIFSFileSystem that contains the Word document.
-   * @throws IOException If there is an unexpected IOException from the passed
-   *         in POIFSFileSystem.
-   */
-  public HWPFDocumentCore(POIFSFileSystem pfilesystem) throws IOException
-  {
-	this(pfilesystem.getRoot());
-  }
+        directory.createDocumentInputStream(STREAM_WORD_DOCUMENT).read(_mainStream);
 
-  /**
-   * This constructor loads a Word document from a specific point
-   *  in a POIFSFileSystem, probably not the default.
-   * Used typically to open embeded documents.
-   *
-   * @param directory The DirectoryNode that contains the Word document.
-   * @throws IOException If there is an unexpected IOException from the passed
-   *         in POIFSFileSystem.
-   */
-  public HWPFDocumentCore(DirectoryNode directory) throws IOException {
-    // Sort out the hpsf properties
-    super(directory);
+        // Create our FIB, and check for the doc being encrypted
+        _fib = new FileInformationBlock(_mainStream);
 
-    // read in the main stream.
-    DocumentEntry documentProps = (DocumentEntry)directory.getEntry("WordDocument");
-    DocumentInputStream dis = null;
-    try {
-        dis = directory.createDocumentInputStream(STREAM_WORD_DOCUMENT);
-        _mainStream = IOUtils.toByteArray(dis, documentProps.getSize());
-    } finally {
-        if (dis != null) {
-            dis.close();
+        DirectoryEntry objectPoolEntry;
+        try {
+            objectPoolEntry = (DirectoryEntry) directory
+                    .getEntry(STREAM_OBJECT_POOL);
+        } catch (FileNotFoundException exc) {
+            objectPoolEntry = null;
         }
+        _objectPool = new ObjectPoolImpl(objectPoolEntry);
     }
 
-    // Create our FIB, and check for the doc being encrypted
-    _fib = new FileInformationBlock(_mainStream);
+    /**
+     * This constructor loads a encrypted Word97-03 document from a specific point
+     * in a POIFSFileSystem, probably not the default.
+     * Used typically to open embeded documents.
+     *
+     * @param directory The DirectoryNode that contains the Word document.
+     * @throws IOException If there is an unexpected IOException from the passed
+     *                     in POIFSFileSystem.
+     */
+    public HWPFDocumentCore(DirectoryNode directory, String password) throws IOException {
+        // Sort out the hpsf properties
 
-    DirectoryEntry objectPoolEntry;
-    try {
-      objectPoolEntry = (DirectoryEntry) directory
-              .getEntry(STREAM_OBJECT_POOL);
-    } catch (FileNotFoundException exc) {
-      objectPoolEntry = null;
+        super(directory);
+
+        // read in the main stream.
+        DocumentEntry documentProps = (DocumentEntry)
+                directory.getEntry("WordDocument");
+        _mainStream = new byte[documentProps.getSize()];
+
+        directory.createDocumentInputStream(STREAM_WORD_DOCUMENT).read(_mainStream);
+        // Create our FIB, and check for the doc being encrypted
+        _fib = new FileInformationBlock(_mainStream);
+
+        DirectoryEntry objectPoolEntry;
+        try {
+            objectPoolEntry = (DirectoryEntry) directory
+                    .getEntry(STREAM_OBJECT_POOL);
+        } catch (FileNotFoundException exc) {
+            objectPoolEntry = null;
+        }
+        _objectPool = new ObjectPoolImpl(objectPoolEntry);
     }
-    _objectPool = new ObjectPoolImpl(objectPoolEntry);
-  }
 
-  /**
+    /**
+     * Takens an InputStream, verifies that it's not RTF, builds a
+     * POIFSFileSystem from it, and returns that.
+     */
+    public static POIFSFileSystem verifyAndBuildPOIFS(InputStream istream) throws IOException {
+        // Open a PushbackInputStream, so we can peek at the first few bytes
+        PushbackInputStream pis = new PushbackInputStream(istream, 6);
+        byte[] first6 = new byte[6];
+        pis.read(first6);
+
+        // Does it start with {\rtf ? If so, it's really RTF
+        if (first6[0] == '{' && first6[1] == '\\' && first6[2] == 'r'
+                && first6[3] == 't' && first6[4] == 'f') {
+            throw new IllegalArgumentException("The document is really a RTF file");
+        }
+
+        // OK, so it's not RTF
+        // Open a POIFSFileSystem on the (pushed back) stream
+        pis.unread(first6);
+        return new POIFSFileSystem(pis);
+    }
+
+    /**
      * Returns the range which covers the whole of the document, but excludes
      * any headers and footers.
      */
@@ -198,50 +230,37 @@ public abstract class HWPFDocumentCore extends POIDocument
     @Internal
     public abstract StringBuilder getText();
 
-  public CHPBinTable getCharacterTable()
-  {
-    return _cbt;
-  }
+    public CHPBinTable getCharacterTable() {
+        return _cbt;
+    }
 
-  public PAPBinTable getParagraphTable()
-  {
-    return _pbt;
-  }
+    public PAPBinTable getParagraphTable() {
+        return _pbt;
+    }
 
-  public SectionTable getSectionTable()
-  {
-    return _st;
-  }
+    public SectionTable getSectionTable() {
+        return _st;
+    }
 
-  public StyleSheet getStyleSheet()
-  {
-    return _ss;
-  }
+    public StyleSheet getStyleSheet() {
+        return _ss;
+    }
 
-  public ListTables getListTables()
-  {
-    return _lt;
-  }
+    public ListTables getListTables() {
+        return _lt;
+    }
 
-  public FontTable getFontTable()
-  {
-    return _ft;
-  }
+    public FontTable getFontTable() {
+        return _ft;
+    }
 
-  public FileInformationBlock getFileInformationBlock()
-  {
-    return _fib;
-  }
+    public FileInformationBlock getFileInformationBlock() {
+        return _fib;
+    }
 
-    public ObjectsPool getObjectsPool()
-    {
+    public ObjectsPool getObjectsPool() {
         return _objectPool;
     }
 
     public abstract TextPieceTable getTextTable();
-
-    @Internal
-    public byte[] getMainStream() {
-        return _mainStream;
-    }
 }

@@ -52,7 +52,7 @@ public abstract class POIDocument implements Closeable {
     /** Holds further metadata on our document */
     private DocumentSummaryInformation dsInf;
     /**	The directory that our document lives in */
-    private DirectoryNode directory;
+    public DirectoryNode directory;
 
     /** For our own logging use */
     private static final POILogger logger = POILogFactory.getLogger(POIDocument.class);

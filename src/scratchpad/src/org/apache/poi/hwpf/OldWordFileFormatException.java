@@ -19,7 +19,7 @@ package org.apache.poi.hwpf;
 import org.apache.poi.OldFileFormatException;
 
 public class OldWordFileFormatException extends OldFileFormatException {
-    public OldWordFileFormatException(String s) {
+    OldWordFileFormatException(String s) {
         super(s);
     }
 }
