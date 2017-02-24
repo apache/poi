@@ -58,4 +58,6 @@ public @interface Removal {
      * Example: "3.15"
      */
     String version() default "";
+    // TODO: Verify that the version syntax is valid by parsing with a version-aware parser like
+    // org.apache.maven.artifact.versioning.DefaultArtifactVersion
 }
