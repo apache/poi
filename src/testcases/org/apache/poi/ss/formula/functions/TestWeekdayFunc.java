@@ -18,49 +18,76 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.util.StringUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-
+/**
+ * Tests WEEKDAY(serial_number[, return_type]) excep function
+ * https://support.office.com/en-us/article/WEEKDAY-function-60E44483-2ED1-439F-8BD0-E404C190949A
+ */
 public class TestWeekdayFunc {
+    private static final double TOLERANCE = 0.001;
+    
+    private void assertEvaluateEquals(double expected, double serial_number) {
+        String formula = "WEEKDAY(" + serial_number + ")";
+        ValueEval[] args = new ValueEval[] { new NumberEval(serial_number) };
+        NumberEval result = (NumberEval) WeekdayFunc.instance.evaluate(args, 0, 0);
+        assertEquals(formula, expected, result.getNumberValue(), TOLERANCE);
+    }
+    private void assertEvaluateEquals(double expected, double serial_number, double return_type) {
+        String formula = "WEEKDAY(" + serial_number + ", " + return_type + ")";
+        ValueEval[] args = new ValueEval[] { new NumberEval(serial_number), new NumberEval(return_type) };
+        NumberEval result = (NumberEval) WeekdayFunc.instance.evaluate(args, 0, 0);
+        assertEquals(formula, expected, result.getNumberValue(), TOLERANCE);
+    }
+    
+
     @Test
     public void testEvaluate() throws Exception {
-        assertEquals(2.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(2.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(1.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(1.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(2.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(0.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(3.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(1.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(11.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(7.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(12.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(6.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(13.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(5.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(14.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(4.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(15.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(3.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(16.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(2.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(17.0)}, 0, 0)).getNumberValue(), 0.001);
+        assertEvaluateEquals(2.0,  1.0);
+        assertEvaluateEquals(2.0,  1.0, 1.0);
+        assertEvaluateEquals(1.0,  1.0, 2.0);
+        assertEvaluateEquals(0.0,  1.0, 3.0);
+        assertEvaluateEquals(1.0, 1.0, 11.0);
+        assertEvaluateEquals(7.0, 1.0, 12.0); 
+        assertEvaluateEquals(6.0, 1.0, 13.0); 
+        assertEvaluateEquals(5.0, 1.0, 14.0); 
+        assertEvaluateEquals(4.0, 1.0, 15.0); 
+        assertEvaluateEquals(3.0, 1.0, 16.0); 
+        assertEvaluateEquals(2.0, 1.0, 17.0); 
 
-        assertEquals(3.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(3.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(1.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(2.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(2.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(1.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(3.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(2.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(11.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(1.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(12.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(7.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(13.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(6.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(14.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(5.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(15.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(4.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(16.0)}, 0, 0)).getNumberValue(), 0.001);
-        assertEquals(3.0, ((NumberEval)WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(39448.0), new NumberEval(17.0)}, 0, 0)).getNumberValue(), 0.001);
+        
+        assertEvaluateEquals(3.0, 39448.0); 
+        assertEvaluateEquals(3.0, 39448.0, 1.0); 
+        assertEvaluateEquals(2.0, 39448.0, 2.0); 
+        assertEvaluateEquals(1.0, 39448.0, 3.0); 
+        assertEvaluateEquals(2.0, 39448.0, 11.0); 
+        assertEvaluateEquals(1.0, 39448.0, 12.0); 
+        assertEvaluateEquals(7.0, 39448.0, 13.0); 
+        assertEvaluateEquals(6.0, 39448.0, 14.0); 
+        assertEvaluateEquals(5.0, 39448.0, 15.0); 
+        assertEvaluateEquals(4.0, 39448.0, 16.0); 
+        assertEvaluateEquals(3.0, 39448.0, 17.0); 
+    }
+
+    // for testing invalid invocations
+    private void assertEvaluateEquals(String message, ErrorEval expected, ValueEval... args) {
+        String formula = "WEEKDAY(" + StringUtil.join(args, ", ") + ")";
+        ValueEval result = WeekdayFunc.instance.evaluate(args, 0, 0);
+        assertEquals(formula + ": " + message, expected, result);
     }
 
     @Test
     public void testEvaluateInvalid() throws Exception {
-        assertEquals(ErrorEval.VALUE_INVALID, WeekdayFunc.instance.evaluate(new ValueEval[]{}, 0, 0));
-        assertEquals(ErrorEval.VALUE_INVALID, WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(1.0), new NumberEval(1.0)}, 0, 0));
-
-        assertEquals(ErrorEval.NUM_ERROR, WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(-1.0)}, 0, 0));
-        assertEquals(ErrorEval.VALUE_INVALID, WeekdayFunc.instance.evaluate(new ValueEval[]{new StringEval("")}, 0, 0));
-        assertEquals(ErrorEval.VALUE_INVALID, WeekdayFunc.instance.evaluate(new ValueEval[]{new StringEval("1"), new StringEval("")}, 0, 0));
-        assertEquals(ErrorEval.NUM_ERROR, WeekdayFunc.instance.evaluate(new ValueEval[]{new StringEval("2"), BlankEval.instance}, 0, 0));
-        assertEquals(ErrorEval.NUM_ERROR, WeekdayFunc.instance.evaluate(new ValueEval[]{new StringEval("3"), MissingArgEval.instance}, 0, 0));
-        assertEquals(ErrorEval.NUM_ERROR, WeekdayFunc.instance.evaluate(new ValueEval[]{new NumberEval(1.0), new NumberEval(18.0)}, 0, 0));
+        assertEvaluateEquals("no args",       ErrorEval.VALUE_INVALID);
+        assertEvaluateEquals("too many args", ErrorEval.VALUE_INVALID, new NumberEval(1.0), new NumberEval(1.0), new NumberEval(1.0));
+        assertEvaluateEquals("negative date", ErrorEval.NUM_ERROR, new NumberEval(-1.0));
+        assertEvaluateEquals("cannot coerce serial_number to number", ErrorEval.VALUE_INVALID, new StringEval(""));
+        assertEvaluateEquals("cannot coerce return_type to number",   ErrorEval.VALUE_INVALID, new StringEval("1"), new StringEval(""));
+        assertEvaluateEquals("return_type is blank",   ErrorEval.NUM_ERROR, new StringEval("2"), BlankEval.instance);
+        assertEvaluateEquals("return_type is missing", ErrorEval.NUM_ERROR, new StringEval("3"), MissingArgEval.instance);
+        assertEvaluateEquals("invalid return_type",    ErrorEval.NUM_ERROR, new NumberEval(1.0), new NumberEval(18.0));
     }
 }
