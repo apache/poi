@@ -40,15 +40,18 @@ Getting started
 Website: https://poi.apache.org/
 
 `Mailing lists`_:
+
 * `Developers`_
 * `Users`_
 * `General`_ (release announcements)
 
 Bug tracker:
+
 * `Bugzilla`_
 * `GitHub pull requests`_
 
 Source code:
+
 * Official `Apache Subversion repo`_ at apache.org
 * `ViewVC repo browser`_ at apache.org
 * Official `Apache git mirror`_ at apache.org
