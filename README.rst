@@ -64,14 +64,20 @@ Contributing
 ------------------
 
 * Download and install svn or git, Java JDK 1.6+, and Apache Ant 1.8+ or Gradle
+
 * Check out the code from svn or git
+
 * Import the project into Eclipse or your favorite IDE
+
 * Write a unit test:
+
   * Binary formats and Common APIs: src/testcases/org/apache/poi/
   * OOXML APIs only: src/ooxml/testcases/org/apache/poi/
   * Scratchpad (Binary formats): src/scratchpad/testcases/org/apache/poi/
   * test files: test-data/
+
 * Navigate the source, make changes, and run unit tests to verify
+
   * Binary formats and Common APIs: src/java/org/apache/poi/
   * OOXML APIs only: src/ooxml/java/org/apache/poi/
   * Scratchpad (Binary formats): src/scratchpad/src/org/apache/poi/
