@@ -26,13 +26,14 @@ This library includes the following components, roughly in descending order of m
 * Publisher (HPBF)
 
 And lower-level, supporting components:
+
 * OLE2 Filesystem (POIFS)
 * OLE2 Document Properties (HPSF)
 * TNEF (HMEF) for Outlook winmail.dat files
 * OpenXML4J (OOXML)
 
-Components named H??F are for reading or writing OLE2 binary formats.
-Components named X??F are for reading or writing OpenOffice XML (OOXML) formats.
+| Components named H??F are for reading or writing OLE2 binary formats.
+| Components named X??F are for reading or writing OpenOffice XML (OOXML) formats.
 
 Getting started
 ------------------
