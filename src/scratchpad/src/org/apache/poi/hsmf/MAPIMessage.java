@@ -52,6 +52,7 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
@@ -542,8 +543,10 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * For emails the class will be IPM.Note
     *
     * @throws ChunkNotFoundException
-    * @deprecated use {@link #getMessageClassEnum()}
+    * @deprecated 3.16 beta 3. Use {@link #getMessageClassEnum()} instead.
     */
+   @Deprecated
+   @Removal(version="3.18")
    public String getMessageClass() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getMessageClass());
    }
@@ -557,7 +560,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @throws ChunkNotFoundException
     */
    public MESSAGE_CLASS getMessageClassEnum() throws ChunkNotFoundException {
-      String mc = getMessageClass();
+      String mc = getStringFromChunk(mainChunks.getMessageClass());
       if (mc == null || mc.trim().length() == 0) {
          return MESSAGE_CLASS.UNSPECIFIED;
       } else if (mc.equalsIgnoreCase("IPM.Note")) {
