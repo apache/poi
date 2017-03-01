@@ -49,7 +49,6 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -63,6 +62,21 @@ import org.apache.poi.util.POILogger;
  * [MS-OXCMSG]: Message and Attachment Object Protocol Specification
  */
 public class MAPIMessage extends POIReadOnlyDocument {
+
+   /**
+    * A MAPI file can be an email (NOTE) or a number of other types
+    */
+   public enum MESSAGE_CLASS {
+      APPOINTMENT,
+      CONTACT,
+      NOTE,
+      POST,
+      STICKY_NOTE,
+      TASK,
+      UNKNOWN,
+      UNSPECIFIED
+   }
+
    /** For logging problems we spot with the file */
    private POILogger logger = POILogFactory.getLogger(MAPIMessage.class);
    
@@ -528,11 +542,42 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * For emails the class will be IPM.Note
     *
     * @throws ChunkNotFoundException
+    * @deprecated use {@link #getMessageClassEnum()}
     */
    public String getMessageClass() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getMessageClass());
    }
 
+   /**
+    * Gets the message class of the parsed Outlook Message.
+    * (Yes, you can use this to determine if a message is a calendar
+    *  item, note, or actual outlook Message)
+    * For emails the class will be IPM.Note
+    *
+    * @throws ChunkNotFoundException
+    */
+   public MESSAGE_CLASS getMessageClassEnum() throws ChunkNotFoundException {
+      String mc = getMessageClass();
+      if (mc == null || mc.trim().length() == 0) {
+         return MESSAGE_CLASS.UNSPECIFIED;
+      } else if (mc.equalsIgnoreCase("IPM.Note")) {
+         return MESSAGE_CLASS.NOTE;
+      } else if (mc.equalsIgnoreCase("IPM.Contact")) {
+         return MESSAGE_CLASS.CONTACT;
+      } else if (mc.equalsIgnoreCase("IPM.Appointment")) {
+         return MESSAGE_CLASS.APPOINTMENT;
+      } else if (mc.equalsIgnoreCase("IPM.StickyNote")) {
+         return MESSAGE_CLASS.STICKY_NOTE;
+      } else if (mc.equalsIgnoreCase("IPM.Task")) {
+         return MESSAGE_CLASS.TASK;
+      } else if (mc.equalsIgnoreCase("IPM.Post")) {
+         return MESSAGE_CLASS.POST;
+      } else {
+         logger.log(POILogger.WARN, "I don't recognize message class '"+mc+"'. " +
+                 "Please open an issue on POI's bugzilla");
+         return MESSAGE_CLASS.UNKNOWN;
+      }
+   }
    /**
     * Gets the date that the message was accepted by the
     *  server on.

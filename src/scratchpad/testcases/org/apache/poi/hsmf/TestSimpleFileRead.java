@@ -19,11 +19,10 @@ package org.apache.poi.hsmf;
 
 import java.io.IOException;
 
-import org.apache.poi.hsmf.MAPIMessage;
-import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.apache.poi.POIDataSamples;
-
 import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.junit.Test;
 
 /**
  * Tests to verify that we can read a simple msg file, that is in plain/text
@@ -133,5 +132,26 @@ public final class TestSimpleFileRead extends TestCase {
     public void testReadMessageClass() throws Exception {
         String obtained = mapiMessage.getMessageClass();
         TestCase.assertEquals("IPM.Note", obtained);
+    }
+
+    /**
+     * Check the various message classes
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testReadMessageClass2() throws Exception {
+        TestCase.assertEquals(
+                MAPIMessage.MESSAGE_CLASS.NOTE, mapiMessage.getMessageClassEnum());
+
+        for (String messageClass : new String[]{
+                "Appointment", "Contact", "Post", "StickyNote", "Task"
+        }) {
+            MAPIMessage.MESSAGE_CLASS mc = new MAPIMessage(
+                    POIDataSamples.getHSMFInstance().getFile("msgClass"+messageClass+".msg")
+            ).getMessageClassEnum();
+            assertTrue( mc + " but expected " + messageClass,
+                    messageClass.equalsIgnoreCase(mc.toString().replaceAll("_", "")));
+        }
     }
 }
