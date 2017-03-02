@@ -522,7 +522,6 @@ public final class CellUtil {
                 log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map uses Short values for "
                         + name + ". Should use BorderStyle enums instead.");
             }
-            System.out.println("BorderStyle short usage");
             short code = ((Short) value).shortValue();
             border = BorderStyle.valueOf(code);
         }
@@ -555,7 +554,6 @@ public final class CellUtil {
                 log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map uses Short values for "
                         + name + ". Should use FillPatternType enums instead.");
             }
-            System.out.println("FillPatternType short usage");
             short code = ((Short) value).shortValue();
             pattern = FillPatternType.forInt(code);
         }
@@ -588,7 +586,6 @@ public final class CellUtil {
                 log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map used a Short value for "
                         + name + ". Should use HorizontalAlignment enums instead.");
             }
-            System.out.println("HorizontalAlignment short usage");
             short code = ((Short) value).shortValue();
             align = HorizontalAlignment.forInt(code);
         }
@@ -621,7 +618,6 @@ public final class CellUtil {
                 log.log(POILogger.WARN, "Deprecation warning: CellUtil properties map used a Short value for "
                         + name + ". Should use VerticalAlignment enums instead.");
             }
-            System.out.println("VerticalAlignment usage " + name + " " + value);
             short code = ((Short) value).shortValue();
             align = VerticalAlignment.forInt(code);
         }
