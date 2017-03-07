@@ -58,17 +58,19 @@ public class TestZipPackage {
         
         // Check we found the contents of it
         boolean foundCoreProps = false, foundDocument = false, foundTheme1 = false;
-        for (PackagePart part : p.getParts()) {
-            if (part.getPartName().toString().equals("/docProps/core.xml")) {
-                assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentType());
+        for (final PackagePart part : p.getParts()) {
+            final String partName = part.getPartName().toString();
+            final String contentType = part.getContentType();
+            if ("/docProps/core.xml".equals(partName)) {
+                assertEquals(ContentTypes.CORE_PROPERTIES_PART, contentType);
                 foundCoreProps = true;
             }
-            if (part.getPartName().toString().equals("/word/document.xml")) {
-                assertEquals(XWPFRelation.DOCUMENT.getContentType(), part.getContentType());
+            if ("/word/document.xml".equals(partName)) {
+                assertEquals(XWPFRelation.DOCUMENT.getContentType(), contentType);
                 foundDocument = true;
             }
-            if (part.getPartName().toString().equals("/word/theme/theme1.xml")) {
-                assertEquals(XWPFRelation.THEME.getContentType(), part.getContentType());
+            if ("/word/theme/theme1.xml".equals(partName)) {
+                assertEquals(XWPFRelation.THEME.getContentType(), contentType);
                 foundTheme1 = true;
             }
         }
