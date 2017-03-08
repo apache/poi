@@ -19,8 +19,11 @@
 
 package org.apache.poi.xssf.eventusermodel;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Pattern;
 
+import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -28,10 +31,6 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Tests for {@link org.apache.poi.xssf.eventusermodel.XSSFReader}
@@ -59,7 +58,22 @@ public final class TestReadOnlySharedStringsTable extends TestCase {
         }
 
 	}
-    
+
+	public void testPhoneticRuns() throws Exception {
+        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsx"));
+        List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
+        assertEquals(1, parts.size());
+
+        ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
+        List<String> strings = rtbl.getItems();
+        assertEquals(49, strings.size());
+
+        assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getEntryAt(0));
+        assertNull(rtbl.getPhoneticStringAt(0));
+        assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB", rtbl.getEntryAt(3));
+        assertEquals("\u30CB\u30DB\u30F3", rtbl.getPhoneticStringAt(3));
+    }
+
     public void testEmptySSTOnPackageObtainedViaWorkbook() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"));
         OPCPackage pkg = wb.getPackage();

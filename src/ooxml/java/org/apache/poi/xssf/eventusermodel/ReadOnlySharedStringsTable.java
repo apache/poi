@@ -18,13 +18,14 @@ package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.Map;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -94,6 +95,12 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      * The shared strings table.
      */
     private List<String> strings;
+
+    /**
+     * Map of phonetic strings (if they exist) indexed
+     * with the integer matching the index in strings
+     */
+    private Map<Integer, String> phoneticStrings;
 
     /**
      * @param pkg The {@link OPCPackage} to use as basis for the shared-strings table.
@@ -177,6 +184,22 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
         return strings.get(idx);
     }
 
+    /**
+     * Return the phonetic string at a given index.
+     * Returns <code>null</code> if no phonetic string
+     * exists at that index.
+     * @param idx
+     * @return
+     */
+    public String getPhoneticStringAt(int idx) {
+        //avoid an NPE.  If the parser hasn't
+        //yet hit <sst/> phoneticStrings could be null
+        if (phoneticStrings == null) {
+            return null;
+        }
+        return phoneticStrings.get(idx);
+    }
+
     public List<String> getItems() {
         return strings;
     }
@@ -184,14 +207,16 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     //// ContentHandler methods ////
 
     private StringBuffer characters;
+    private StringBuffer rphCharacters;
     private boolean tIsOpen;
+    private boolean inRPh;
 
     public void startElement(String uri, String localName, String name,
                              Attributes attributes) throws SAXException {
         if (uri != null && ! uri.equals(NS_SPREADSHEETML)) {
             return;
         }
-        
+
         if ("sst".equals(localName)) {
             String count = attributes.getValue("count");
             if(count != null) this.count = Integer.parseInt(count);
@@ -199,12 +224,15 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
             if(uniqueCount != null) this.uniqueCount = Integer.parseInt(uniqueCount);
 
             this.strings = new ArrayList<String>(this.uniqueCount);
-
+            this.phoneticStrings = new HashMap<Integer, String>();
             characters = new StringBuffer();
+            rphCharacters = new StringBuffer();
         } else if ("si".equals(localName)) {
             characters.setLength(0);
         } else if ("t".equals(localName)) {
             tIsOpen = true;
+        } else if ("rPh".equals(localName)) {
+            inRPh = true;
         }
     }
 
@@ -213,11 +241,17 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
         if (uri != null && ! uri.equals(NS_SPREADSHEETML)) {
             return;
         }
-        
+
         if ("si".equals(localName)) {
             strings.add(characters.toString());
+            if (rphCharacters.length() > 0) {
+                phoneticStrings.put(strings.size()-1, rphCharacters.toString());
+                rphCharacters.setLength(0);
+            }
         } else if ("t".equals(localName)) {
-           tIsOpen = false;
+            tIsOpen = false;
+        } else if ("rPh".equals(localName)) {
+            inRPh = false;
         }
     }
 
@@ -226,8 +260,12 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      */
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        if (tIsOpen)
-            characters.append(ch, start, length);
+        if (tIsOpen) {
+            if (inRPh) {
+                rphCharacters.append(ch, start, length);
+            } else {
+                characters.append(ch, start, length);
+            }
+        }
     }
-
 }
