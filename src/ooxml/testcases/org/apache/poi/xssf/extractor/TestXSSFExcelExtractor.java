@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -225,5 +224,19 @@ public class TestXSSFExcelExtractor extends TestCase {
 	    } finally {
 	        extractor.close();
 	    }
+	}
+
+	public void testPhoneticRuns() throws Exception {
+		XSSFExcelExtractor extractor = getExtractor("51519.xlsx");
+		try {
+			String text = extractor.getText();
+			assertTrue(text.contains("\u8C4A\u7530"));
+			//this shows up only as a phonetic run and should not appear
+			//in the extracted text
+			assertFalse(text.contains("\u30CB\u30DB\u30F3"));
+		} finally {
+			extractor.close();
+		}
+
 	}
 }
