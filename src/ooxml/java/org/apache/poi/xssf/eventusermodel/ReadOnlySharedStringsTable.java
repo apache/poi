@@ -78,6 +78,8 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class ReadOnlySharedStringsTable extends DefaultHandler {
+
+    private final boolean includePhoneticRuns;
     /**
      * An integer representing the total count of strings in the workbook. This count does not
      * include any numbers, it counts only the total of text strings in the workbook.
@@ -103,12 +105,29 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     private Map<Integer, String> phoneticStrings;
 
     /**
+     * Calls {{@link #ReadOnlySharedStringsTable(OPCPackage, boolean)}} with
+     * a value of <code>true</code> for including phonetic runs
+     *
      * @param pkg The {@link OPCPackage} to use as basis for the shared-strings table.
      * @throws IOException If reading the data from the package fails.
      * @throws SAXException if parsing the XML data fails.
      */
     public ReadOnlySharedStringsTable(OPCPackage pkg)
             throws IOException, SAXException {
+        this(pkg, true);
+    }
+
+    /**
+     *
+     * @param pkg The {@link OPCPackage} to use as basis for the shared-strings table.
+     * @param includePhoneticRuns whether or not to concatenate phoneticRuns onto the shared string
+     * @since POI 3.14-Beta3
+     * @throws IOException If reading the data from the package fails.
+     * @throws SAXException if parsing the XML data fails.
+     */
+    public ReadOnlySharedStringsTable(OPCPackage pkg, boolean includePhoneticRuns)
+            throws IOException, SAXException {
+        this.includePhoneticRuns = includePhoneticRuns;
         ArrayList<PackagePart> parts =
                 pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
 
@@ -121,10 +140,24 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
 
     /**
      * Like POIXMLDocumentPart constructor
-     * 
+     *
+     * Calls {@link #ReadOnlySharedStringsTable(PackagePart, boolean)}, with a
+     * value of <code>true</code> to include phonetic runs.
+     *
      * @since POI 3.14-Beta1
      */
     public ReadOnlySharedStringsTable(PackagePart part) throws IOException, SAXException {
+        this(part, true);
+    }
+
+    /**
+     * Like POIXMLDocumentPart constructor
+     *
+     * @since POI 3.14-Beta3
+     */
+    public ReadOnlySharedStringsTable(PackagePart part, boolean includePhoneticRuns)
+        throws IOException, SAXException {
+        this.includePhoneticRuns = includePhoneticRuns;
         readFrom(part.getInputStream());
     }
     
@@ -184,22 +217,6 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
         return strings.get(idx);
     }
 
-    /**
-     * Return the phonetic string at a given index.
-     * Returns <code>null</code> if no phonetic string
-     * exists at that index.
-     * @param idx
-     * @return
-     */
-    public String getPhoneticStringAt(int idx) {
-        //avoid an NPE.  If the parser hasn't
-        //yet hit <sst/> phoneticStrings could be null
-        if (phoneticStrings == null) {
-            return null;
-        }
-        return phoneticStrings.get(idx);
-    }
-
     public List<String> getItems() {
         return strings;
     }
@@ -207,7 +224,6 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     //// ContentHandler methods ////
 
     private StringBuffer characters;
-    private StringBuffer rphCharacters;
     private boolean tIsOpen;
     private boolean inRPh;
 
@@ -226,13 +242,16 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
             this.strings = new ArrayList<String>(this.uniqueCount);
             this.phoneticStrings = new HashMap<Integer, String>();
             characters = new StringBuffer();
-            rphCharacters = new StringBuffer();
         } else if ("si".equals(localName)) {
             characters.setLength(0);
         } else if ("t".equals(localName)) {
             tIsOpen = true;
         } else if ("rPh".equals(localName)) {
             inRPh = true;
+            //append space...this assumes that rPh always comes after regular <t>
+            if (includePhoneticRuns && characters.length() > 0) {
+                characters.append(" ");
+            }
         }
     }
 
@@ -244,10 +263,6 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
 
         if ("si".equals(localName)) {
             strings.add(characters.toString());
-            if (rphCharacters.length() > 0) {
-                phoneticStrings.put(strings.size()-1, rphCharacters.toString());
-                rphCharacters.setLength(0);
-            }
         } else if ("t".equals(localName)) {
             tIsOpen = false;
         } else if ("rPh".equals(localName)) {
@@ -261,9 +276,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     public void characters(char[] ch, int start, int length)
             throws SAXException {
         if (tIsOpen) {
-            if (inRPh) {
-                rphCharacters.append(ch, start, length);
-            } else {
+            if (inRPh && includePhoneticRuns) {
+                characters.append(ch, start, length);
+            } else if (! inRPh){
                 characters.append(ch, start, length);
             }
         }

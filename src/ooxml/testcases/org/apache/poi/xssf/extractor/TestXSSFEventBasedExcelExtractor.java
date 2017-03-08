@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.extractor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -358,5 +359,26 @@ public class TestXSSFEventBasedExcelExtractor {
 		assertTrue("can't find Abhkazia", text.contains("Abkhazia - Fixed"));
 		assertTrue("can't find 10/02/2016", text.contains("10/02/2016"));
 		ex.close();
+	}
+
+	@Test
+	public void test51519() throws Exception {
+    	//default behavior: include phonetic runs
+		XSSFEventBasedExcelExtractor ex =
+				new XSSFEventBasedExcelExtractor(
+						XSSFTestDataSamples.openSamplePackage("51519.xlsx"));
+		String text = ex.getText();
+		assertTrue("can't find appended phonetic run", text.contains("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3"));
+		ex.close();
+
+		//now try turning them off
+		ex =
+				new XSSFEventBasedExcelExtractor(
+						XSSFTestDataSamples.openSamplePackage("51519.xlsx"));
+		ex.setConcatenatePhoneticRuns(false);
+		text = ex.getText();
+		assertFalse("should not be able to find appended phonetic run", text.contains("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3"));
+		ex.close();
+
 	}
 }

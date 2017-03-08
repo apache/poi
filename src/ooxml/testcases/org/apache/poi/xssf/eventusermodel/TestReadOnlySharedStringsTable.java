@@ -59,19 +59,27 @@ public final class TestReadOnlySharedStringsTable extends TestCase {
 
 	}
 
+	//51519
 	public void testPhoneticRuns() throws Exception {
         OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsx"));
         List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
         assertEquals(1, parts.size());
 
-        ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
+        ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0), true);
         List<String> strings = rtbl.getItems();
         assertEquals(49, strings.size());
 
         assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getEntryAt(0));
-        assertNull(rtbl.getPhoneticStringAt(0));
+        assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3", rtbl.getEntryAt(3));
+
+        //now do not include phonetic runs
+        rtbl = new ReadOnlySharedStringsTable(parts.get(0), false);
+        strings = rtbl.getItems();
+        assertEquals(49, strings.size());
+
+        assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getEntryAt(0));
         assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB", rtbl.getEntryAt(3));
-        assertEquals("\u30CB\u30DB\u30F3", rtbl.getPhoneticStringAt(3));
+
     }
 
     public void testEmptySSTOnPackageObtainedViaWorkbook() throws Exception {
