@@ -16,14 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xssf.extractor;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.POIXMLProperties.CoreProperties;
@@ -64,6 +63,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     private boolean includeCellComments = false;
     private boolean includeHeadersFooters = true;
     private boolean formulasNotResults = false;
+    private boolean concatenatePhoneticRuns = true;
 
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
         this(OPCPackage.open(path));
@@ -120,6 +120,14 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         this.includeCellComments = includeCellComments;
     }
 
+    /**
+     * Concatenate text from &lt;rPh&gt; text elements in SharedStringsTable
+     * Default is true;
+     * @param concatenatePhoneticRuns
+     */
+    public void setConcatenatePhoneticRuns(boolean concatenatePhoneticRuns) {
+        this.concatenatePhoneticRuns = concatenatePhoneticRuns;
+    }
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
@@ -189,7 +197,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     */
    public String getText() {
        try {
-          ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container);
+          ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
           XSSFReader xssfReader = new XSSFReader(container);
           StylesTable styles = xssfReader.getStylesTable();
           XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
