@@ -585,20 +585,8 @@ public class DrawTextParagraph implements Drawable {
                     fallbackFont = font;
                 }
             } else {
-                if (fontMap != null) {
-                    if (fontMap.containsKey(mappedFont)) {
-                        mappedFont = fontMap.get(mappedFont);
-                    } else if (fontMap.containsKey("*")) {
-                        mappedFont = fontMap.get("*");
-                    }
-                }
-                if (fallbackMap != null) {
-                    if (fallbackMap.containsKey(mappedFont)) {
-                        fallbackFont = fallbackMap.get(mappedFont);
-                    } else if (fallbackMap.containsKey("*")) {
-                        fallbackFont = fallbackMap.get("*");
-                    }
-                }
+                mappedFont = getFontWithFallback(fontMap, mappedFont);
+                fallbackFont = getFontWithFallback(fallbackMap, mappedFont);
             }
             
             runText = mapFontCharset(runText,mappedFont);
@@ -686,6 +674,17 @@ public class DrawTextParagraph implements Drawable {
         }
 
         return string;
+    }
+
+    private String getFontWithFallback(Map<String, String> fontMap, String mappedFont) {
+        if (fontMap != null) {
+            if (fontMap.containsKey(mappedFont)) {
+                mappedFont = fontMap.get(mappedFont);
+            } else if (fontMap.containsKey("*")) {
+                mappedFont = fontMap.get("*");
+            }
+        }
+        return mappedFont;
     }
 
     /**

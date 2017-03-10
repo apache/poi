@@ -16,17 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.awt.Color;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -41,6 +30,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+
+import java.awt.Color;
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class TestXSSFDrawing {
     @Test
@@ -628,6 +623,7 @@ public class TestXSSFDrawing {
         String paraString10 = "Fifth Bullet";
 
         XSSFTextParagraph para = shape.addNewTextParagraph(paraString1);
+        assertNotNull(para);
         para = shape.addNewTextParagraph(paraString2);
         para.setBullet(true);
 
@@ -639,6 +635,7 @@ public class TestXSSFDrawing {
         para.setBullet(true);
 
         para = shape.addNewTextParagraph(paraString5);
+        assertNotNull(para);
         para = shape.addNewTextParagraph(paraString6);
         para.setBullet(ListAutoNumber.ARABIC_PERIOD);
 
@@ -678,39 +675,38 @@ public class TestXSSFDrawing {
         List<XSSFTextParagraph> paras = sshape.getTextParagraphs();
         assertEquals(12, paras.size());  // this should be 12 as XSSFSimpleShape creates a default paragraph (no text), and then we added to that
 
-        StringBuilder builder = new StringBuilder();
+        String builder =
+                paraString1 +
+                "\n" +
+                "\u2022 " +
+                paraString2 +
+                "\n" +
+                "\t\u2022 " +
+                paraString3 +
+                "\n" +
+                "\u2022 " +
+                paraString4 +
+                "\n" +
+                paraString5 +
+                "\n" +
+                "1. " +
+                paraString6 +
+                "\n" +
+                "\t3. " +
+                paraString7 +
+                "\n" +
+                "\t4. " +
+                paraString8 +
+                "\n" +
+                "\t" +   // should be empty
+                "\n" +
+                "\t5. " +
+                paraString9 +
+                "\n" +
+                "2. " +
+                paraString10;
 
-        builder.append(paraString1);
-        builder.append("\n");
-        builder.append("\u2022 ");
-        builder.append(paraString2);
-        builder.append("\n");
-        builder.append("\t\u2022 ");
-        builder.append(paraString3);
-        builder.append("\n");
-        builder.append("\u2022 ");
-        builder.append(paraString4);
-        builder.append("\n");
-        builder.append(paraString5);
-        builder.append("\n");
-        builder.append("1. ");
-        builder.append(paraString6);
-        builder.append("\n");
-        builder.append("\t3. ");
-        builder.append(paraString7);
-        builder.append("\n");
-        builder.append("\t4. ");
-        builder.append(paraString8);
-        builder.append("\n");
-        builder.append("\t");   // should be empty
-        builder.append("\n");
-        builder.append("\t5. ");
-        builder.append(paraString9);
-        builder.append("\n");
-        builder.append("2. ");
-        builder.append(paraString10);
-
-        assertEquals(builder.toString(), sshape.getText());
+        assertEquals(builder, sshape.getText());
 
         checkRewrite(wb2);
         wb2.close();
@@ -727,18 +723,18 @@ public class TestXSSFDrawing {
         List<XSSFShape> shapes = drawing.getShapes();
         XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(0);
         String extracted = textbox.getText();
-        StringBuilder sb = new StringBuilder();
-        sb.append("1. content1A\n");
-        sb.append("\t1. content1B\n");
-        sb.append("\t2. content2B\n");
-        sb.append("\t3. content3B\n");
-        sb.append("2. content2A\n");
-        sb.append("\t3. content2BStartAt3\n");
-        sb.append("\t\n\t\n\t");
-        sb.append("4. content2BStartAt3Incremented\n");
-        sb.append("\t\n\t\n\t\n\t");
+        String sb =
+                "1. content1A\n" +
+                "\t1. content1B\n" +
+                "\t2. content2B\n" +
+                "\t3. content3B\n" +
+                "2. content2A\n" +
+                "\t3. content2BStartAt3\n" +
+                "\t\n\t\n\t" +
+                "4. content2BStartAt3Incremented\n" +
+                "\t\n\t\n\t\n\t";
 
-        assertEquals(sb.toString(), extracted);
+        assertEquals(sb, extracted);
         checkRewrite(wb);
         wb.close();
     }
