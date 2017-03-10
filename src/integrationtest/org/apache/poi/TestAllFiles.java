@@ -177,10 +177,10 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
     }
 
-    private static final Set<String> unmodifiableHashSet(String... a) {
+    private static Set<String> unmodifiableHashSet(String... a) {
         return Collections.unmodifiableSet(hashSet(a));
     }
-    private static final Set<String> hashSet(String... a) {
+    private static Set<String> hashSet(String... a) {
         return new HashSet<String>(Arrays.asList(a));
     }
 
@@ -279,12 +279,10 @@ public class TestAllFiles {
         // sheet cloning errors
         "spreadsheet/47813.xlsx",
         "spreadsheet/56450.xls",
-        "spreadsheet/57231_MixedGasReport.xls",
         "spreadsheet/OddStyleRecord.xls",
         "spreadsheet/WithChartSheet.xlsx",
         "spreadsheet/chart_sheet.xlsx",
-        "spreadsheet/SimpleScatterChart.xlsx",
-        "spreadsheet/ConditionalFormattingSamples.xls"
+        "spreadsheet/SimpleScatterChart.xlsx"
     );
 
     private static final Set<String> IGNORED = unmodifiableHashSet(
