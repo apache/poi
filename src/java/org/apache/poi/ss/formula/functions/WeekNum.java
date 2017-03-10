@@ -47,7 +47,7 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
     public static final FreeRefFunction instance = new WeekNum();
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval serialNumVE, ValueEval returnTypeVE) {
-        double serialNum = 0.0;
+        double serialNum;
         try {
             serialNum = NumericFunction.singleOperandEvaluate(serialNumVE, srcRowIndex, srcColumnIndex);
         } catch (EvaluationException e) {
@@ -56,7 +56,7 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
         Calendar serialNumCalendar = LocaleUtil.getLocaleCalendar();
         serialNumCalendar.setTime(DateUtil.getJavaDate(serialNum, false));
 
-        int returnType = 0;
+        int returnType;
         try {
             ValueEval ve = OperandResolver.getSingleValue(returnTypeVE, srcRowIndex, srcColumnIndex);
             returnType = OperandResolver.coerceValueToInt(ve);

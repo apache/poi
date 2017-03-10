@@ -149,7 +149,7 @@ public final class PackageRelationshipCollection implements
         this();
 
         if (container == null)
-            throw new IllegalArgumentException("container");
+            throw new IllegalArgumentException("container needs to be specified");
 
         // Check if the specified part is not a relationship part
         if (part != null && part.isRelationshipPart())
@@ -379,9 +379,7 @@ public final class PackageRelationshipCollection implements
      * @return All relationships of the type specified by the filter.
      */
     public PackageRelationshipCollection getRelationships(String typeFilter) {
-        PackageRelationshipCollection coll = new PackageRelationshipCollection(
-                this, typeFilter);
-        return coll;
+        return new PackageRelationshipCollection(this, typeFilter);
     }
 
     /**
