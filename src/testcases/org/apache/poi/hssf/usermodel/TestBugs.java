@@ -3080,4 +3080,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         //fos.close();
         wb.close();
     }
+
+    @Test
+    public void test45353a() throws IOException {
+        final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("named-cell-in-formula-test.xls");
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+        wb.close();
+    }
+
+    @Test
+    public void test45353b() throws IOException {
+        final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("named-cell-test.xls");
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+        wb.close();
+    }
 }
