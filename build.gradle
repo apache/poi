@@ -21,14 +21,15 @@ buildscript {
 
 	dependencies {
 		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'
+		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
 	}
 }
 
-/* We cannot add this here as the Sonar-plugin requires Java 8, but
- * we want to at least keep Java 7 compatibility for building POI via Gradle for now
-plugins {
-  id "org.sonarqube" version "2.2.1"
-}*/
+// Only add the plugin for Sonar if enabled as it requires Java 8
+if (project.hasProperty('enableSonar')) {
+	println 'Enabling Sonar support'
+	apply plugin: "org.sonarqube"
+}
 
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html

@@ -63,6 +63,8 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-SonarQube', jdk: '1.8', trigger: 'H 9 * * *', maven: true, sonar: true
     ],
+    [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
+    ],
 ]
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
@@ -237,6 +239,24 @@ for more details about the DSL.</b>
             }
             publishers {
                 archiveArtifacts('build/*/build/reports/japi.html')
+                if (!poijob.skipcigame) {
+                    configure { project ->
+                        project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                    }
+                }
+                mailer(email, false, false)
+            }
+        } else if(poijob.sonar) {
+            steps {
+                shell(shellcmds)
+                gradle {
+                    switches('-PenableSonar')
+                    switches('-PsystemProp.sonar.host.url=$SONAR_HOST_URL')
+                    tasks('sonarqube')
+                    useWrapper(false)
+                }
+            }
+            publishers {
                 if (!poijob.skipcigame) {
                     configure { project ->
                         project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
