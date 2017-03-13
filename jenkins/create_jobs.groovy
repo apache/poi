@@ -251,7 +251,7 @@ for more details about the DSL.</b>
                 shell(shellcmds)
                 gradle {
                     switches('-PenableSonar')
-                    switches('-PsystemProp.sonar.host.url=$SONAR_HOST_URL')
+                    switches('-Dsonar.host.url=$SONAR_HOST_URL')
                     tasks('sonarqube')
                     useWrapper(false)
                 }
