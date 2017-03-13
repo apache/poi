@@ -283,33 +283,19 @@ public final class WSBoolRecord extends StandardRecord {
     }
 
     // end bitfields
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[WSBOOL]\n");
-        buffer.append("    .wsbool1        = ")
-            .append(Integer.toHexString(getWSBool1())).append("\n");
-        buffer.append("        .autobreaks = ").append(getAutobreaks())
-            .append("\n");
-        buffer.append("        .dialog     = ").append(getDialog())
-            .append("\n");
-        buffer.append("        .rowsumsbelw= ").append(getRowSumsBelow())
-            .append("\n");
-        buffer.append("        .rowsumsrigt= ").append(getRowSumsRight())
-            .append("\n");
-        buffer.append("    .wsbool2        = ")
-            .append(Integer.toHexString(getWSBool2())).append("\n");
-        buffer.append("        .fittopage  = ").append(getFitToPage())
-            .append("\n");
-        buffer.append("        .displayguts= ").append(getDisplayGuts())
-            .append("\n");
-        buffer.append("        .alternateex= ")
-            .append(getAlternateExpression()).append("\n");
-        buffer.append("        .alternatefo= ").append(getAlternateFormula())
-            .append("\n");
-        buffer.append("[/WSBOOL]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[WSBOOL]\n" +
+                "    .wsbool1        = " + Integer.toHexString(getWSBool1()) + "\n" +
+                "        .autobreaks = " + getAutobreaks() + "\n" +
+                "        .dialog     = " + getDialog() + "\n" +
+                "        .rowsumsbelw= " + getRowSumsBelow() + "\n" +
+                "        .rowsumsrigt= " + getRowSumsRight() + "\n" +
+                "    .wsbool2        = " + Integer.toHexString(getWSBool2()) + "\n" +
+                "        .fittopage  = " + getFitToPage() + "\n" +
+                "        .displayguts= " + getDisplayGuts() + "\n" +
+                "        .alternateex= " + getAlternateExpression() + "\n" +
+                "        .alternatefo= " + getAlternateFormula() + "\n" +
+                "[/WSBOOL]\n";
     }
 
     public void serialize(LittleEndianOutput out) {

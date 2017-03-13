@@ -908,13 +908,12 @@ public class HSSFCell implements Cell {
             case ERROR:
                 return (( BoolErrRecord ) _record).getErrorValue();
             case FORMULA:
-                break;
+                FormulaRecord fr = ((FormulaRecordAggregate)_record).getFormulaRecord();
+                checkFormulaCachedValueType(CellType.ERROR, fr);
+                return (byte) fr.getCachedErrorValue();
             default:
                 throw typeMismatch(CellType.ERROR, _cellType, false);
         }
-        FormulaRecord fr = ((FormulaRecordAggregate)_record).getFormulaRecord();
-        checkFormulaCachedValueType(CellType.ERROR, fr);
-        return (byte) fr.getCachedErrorValue();
     }
 
     /**
