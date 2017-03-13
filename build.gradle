@@ -45,7 +45,7 @@ allprojects {
 	apply plugin: 'eclipse'
 
 	task wrapper(type: Wrapper) {
-	    gradleVersion = '2.14.1'
+	    gradleVersion = '3.4.1'
 	}
 	
 	task adjustWrapperPropertiesFile {
@@ -129,6 +129,16 @@ subprojects {
     
     // ensure the build-dir exists
     projectDir.mkdirs()
+
+	if (project.hasProperty('enableSonar')) {
+		sonarqube {
+			properties {
+				// as we currently use build/<module>/ as project-basedir, we need to tell Sonar to use
+				// the root-folder as "basedir" for the projects
+				property "sonar.projectBaseDir", "$projectDir/../.."
+			}
+		}
+	}
 }
 
 project('main') {
