@@ -135,7 +135,8 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
                     AreaEval aeRange = ranges[i];
                     I_MatchPredicate mp = predicates[i];
 
-                    if (!mp.matches(aeRange.getRelativeValue(r, c))) {
+                    // Bugs 60858 and 56420 show predicate can be null
+                    if (mp == null || !mp.matches(aeRange.getRelativeValue(r, c))) {
                         matches = false;
                         break;
                     }
