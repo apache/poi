@@ -16,15 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.POIXMLException;
@@ -39,6 +40,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -47,9 +49,11 @@ import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This class makes it easy to get at individual parts
@@ -62,8 +66,8 @@ public class XSSFReader {
 
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFReader.class);
 
-    private OPCPackage pkg;
-    private PackagePart workbookPart;
+    protected OPCPackage pkg;
+    protected PackagePart workbookPart;
 
     /**
      * Creates a new XSSFReader, for the given package
@@ -194,23 +198,23 @@ public class XSSFReader {
         private final Map<String, PackagePart> sheetMap;
 
         /**
-         * Current CTSheet bean
+         * Current sheet reference
          */
-        private CTSheet ctSheet;
-        
+        XSSFSheetRef xssfSheetRef;
+
         /**
          * Iterator over CTSheet objects, returns sheets in <tt>logical</tt> order.
          * We can't rely on the Ooxml4J's relationship iterator because it returns objects in physical order,
          * i.e. as they are stored in the underlying package
          */
-        private final Iterator<CTSheet> sheetIterator;
+        final Iterator<XSSFSheetRef> sheetIterator;
 
         /**
          * Construct a new SheetIterator
          *
          * @param wb package part holding workbook.xml
          */
-        private SheetIterator(PackagePart wb) throws IOException {
+        SheetIterator(PackagePart wb) throws IOException {
 
             /**
              * The order of sheets is defined by the order of CTSheet elements in workbook.xml
@@ -228,24 +232,43 @@ public class XSSFReader {
                         sheetMap.put(rel.getId(), pkg.getPart(relName));
                     }
                 }
-                //step 2. Read array of CTSheet elements, wrap it in a ArayList and construct an iterator
-                //Note, using XMLBeans might be expensive, consider refactoring to use SAX or a plain regexp search
-                CTWorkbook wbBean = WorkbookDocument.Factory.parse(wb.getInputStream(), DEFAULT_XML_OPTIONS).getWorkbook();
-                List<CTSheet> validSheets = new ArrayList<CTSheet>();
-                for (CTSheet ctSheet : wbBean.getSheets().getSheetList()) {
-                    //if there's no relationship id, silently skip the sheet
-                    String sheetId = ctSheet.getId();
-                    if (sheetId != null && sheetId.length() > 0) {
-                        validSheets.add(ctSheet);
-                    }
-                }
-                sheetIterator = validSheets.iterator();
+                //step 2. Read array of CTSheet elements, wrap it in a LinkedList
+                //and construct an iterator
+                sheetIterator = createSheetIteratorFromWB(wb);
             } catch (InvalidFormatException e){
-                throw new POIXMLException(e);
-            } catch (XmlException e){
                 throw new POIXMLException(e);
             }
         }
+
+        Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
+
+            XMLSheetRefReader xmlSheetRefReader = new XMLSheetRefReader();
+            XMLReader xmlReader = null;
+            try {
+                xmlReader = SAXHelper.newXMLReader();
+            } catch (ParserConfigurationException e) {
+                throw new POIXMLException(e);
+            } catch (SAXException e) {
+                throw new POIXMLException(e);
+            }
+            xmlReader.setContentHandler(xmlSheetRefReader);
+            try {
+                xmlReader.parse(new InputSource(wb.getInputStream()));
+            } catch (SAXException e) {
+                throw new POIXMLException(e);
+            }
+
+            List<XSSFSheetRef> validSheets = new ArrayList<XSSFSheetRef>();
+            for (XSSFSheetRef xssfSheetRef : xmlSheetRefReader.getSheetRefs()) {
+                //if there's no relationship id, silently skip the sheet
+                String sheetId = xssfSheetRef.getId();
+                if (sheetId != null && sheetId.length() > 0) {
+                    validSheets.add(xssfSheetRef);
+                }
+            }
+            return validSheets.iterator();
+        }
+
 
         /**
          * Returns <tt>true</tt> if the iteration has more elements.
@@ -264,9 +287,9 @@ public class XSSFReader {
          */
         @Override
         public InputStream next() {
-            ctSheet = sheetIterator.next();
+            xssfSheetRef = sheetIterator.next();
 
-            String sheetId = ctSheet.getId();
+            String sheetId = xssfSheetRef.getId();
             try {
                 PackagePart sheetPkg = sheetMap.get(sheetId);
                 return sheetPkg.getInputStream();
@@ -281,7 +304,7 @@ public class XSSFReader {
          * @return name of the current sheet
          */
         public String getSheetName() {
-            return ctSheet.getName();
+            return xssfSheetRef.getName();
         }
         
         /**
@@ -344,7 +367,7 @@ public class XSSFReader {
         }
         
         public PackagePart getSheetPart() {
-           String sheetId = ctSheet.getId();
+           String sheetId = xssfSheetRef.getId();
            return sheetMap.get(sheetId);
         }
 
@@ -354,6 +377,54 @@ public class XSSFReader {
         @Override
         public void remove() {
             throw new IllegalStateException("Not supported");
+        }
+    }
+
+    protected final static class XSSFSheetRef {
+        //do we need to store sheetId, too?
+        private final String id;
+        private final String name;
+
+        public XSSFSheetRef(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    //scrapes sheet reference info and order from workbook.xml
+    private static class XMLSheetRefReader extends DefaultHandler {
+        private final static String SHEET = "sheet";
+        private final static String ID = "id";
+        private final static String NAME = "name";
+
+        private final List<XSSFSheetRef> sheetRefs = new LinkedList();
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+            if (localName.toLowerCase(Locale.US).equals(SHEET)) {
+                String name = null;
+                String id = null;
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    if (attrs.getLocalName(i).toLowerCase(Locale.US).equals(NAME)) {
+                        name = attrs.getValue(i);
+                    } else if (attrs.getLocalName(i).toLowerCase(Locale.US).equals(ID)) {
+                        id = attrs.getValue(i);
+                    }
+                    sheetRefs.add(new XSSFSheetRef(id, name));
+                }
+            }
+        }
+
+        List<XSSFSheetRef> getSheetRefs() {
+            return Collections.unmodifiableList(sheetRefs);
         }
     }
 }

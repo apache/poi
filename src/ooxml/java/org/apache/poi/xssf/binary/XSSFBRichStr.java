@@ -14,20 +14,34 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf;
 
-import org.apache.poi.UnsupportedFileFormatException;
+package org.apache.poi.xssf.binary;
 
-/**
- * We don't support .xlsb for read and write via {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}.
- * As of POI 3.15-beta3, we do support streaming reading of xlsb files
- * via {@link org.apache.poi.xssf.eventusermodel.XSSFBReader}
- */
-public class XLSBUnsupportedException extends UnsupportedFileFormatException {
-    private static final long serialVersionUID = 7849681804154571175L;
-    public static final String MESSAGE = ".XLSB Binary Workbooks are not supported"; 
+import org.apache.poi.util.Internal;
 
-    public XLSBUnsupportedException() {
-		super(MESSAGE);
-	}
+@Internal
+class XSSFBRichStr {
+
+    public static XSSFBRichStr build(byte[] bytes, int offset) throws XSSFBParseException {
+        byte first = bytes[offset];
+        boolean dwSizeStrRunExists = (first >> 7 & 1) == 1;//first bit == 1?
+        boolean phoneticExists = (first >> 6 & 1) == 1;//second bit == 1?
+        StringBuilder sb = new StringBuilder();
+
+        int read = XSSFBUtils.readXLWideString(bytes, offset+1, sb);
+        //TODO: parse phonetic strings.
+        return new XSSFBRichStr(sb.toString(), "");
+    }
+
+    private final String string;
+    private final String phoneticString;
+
+    XSSFBRichStr(String string, String phoneticString) {
+        this.string = string;
+        this.phoneticString = phoneticString;
+    }
+
+    public String getString() {
+        return string;
+    }
 }

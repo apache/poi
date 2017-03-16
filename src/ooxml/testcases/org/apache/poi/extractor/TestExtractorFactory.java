@@ -68,6 +68,7 @@ public class TestExtractorFactory {
     private static File xlsxStrict;
     private static File xltx;
     private static File xlsEmb;
+    private static File xlsb;
 
     private static File doc;
     private static File doc6;
@@ -108,6 +109,7 @@ public class TestExtractorFactory {
         xlsxStrict = getFileAndCheck(ssTests, "SampleSS.strict.xlsx");
         xltx = getFileAndCheck(ssTests, "test.xltx");
         xlsEmb = getFileAndCheck(ssTests, "excel_with_embeded.xls");
+        xlsb = getFileAndCheck(ssTests, "testVarious.xlsb");
 
         POIDataSamples wpTests = POIDataSamples.getDocumentInstance();
         doc = getFileAndCheck(wpTests, "SampleDoc.doc");
@@ -171,6 +173,13 @@ public class TestExtractorFactory {
                 instanceof XSSFExcelExtractor
         );
         extractor.close();
+
+        extractor = ExtractorFactory.createExtractor(xlsb);
+        assertTrue(
+                extractor.getText().contains("test")
+        );
+        extractor.close();
+
 
         extractor = ExtractorFactory.createExtractor(xltx);
         assertTrue(
