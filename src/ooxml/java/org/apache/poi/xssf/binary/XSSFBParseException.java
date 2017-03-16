@@ -14,20 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf;
 
-import org.apache.poi.UnsupportedFileFormatException;
+package org.apache.poi.xssf.binary;
 
 /**
- * We don't support .xlsb for read and write via {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}.
- * As of POI 3.15-beta3, we do support streaming reading of xlsb files
- * via {@link org.apache.poi.xssf.eventusermodel.XSSFBReader}
+ * Parse exception while reading an xssfb
  */
-public class XLSBUnsupportedException extends UnsupportedFileFormatException {
-    private static final long serialVersionUID = 7849681804154571175L;
-    public static final String MESSAGE = ".XLSB Binary Workbooks are not supported"; 
+public class XSSFBParseException extends RuntimeException {
 
-    public XLSBUnsupportedException() {
-		super(MESSAGE);
-	}
+    public XSSFBParseException(String msg) {
+        super(msg);
+    }
 }

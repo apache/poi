@@ -56,6 +56,7 @@ import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -242,6 +243,13 @@ public class ExtractorFactory {
             // special handling for SlideShow-Theme-files, 
             if (XSLFRelation.THEME_MANAGER.getContentType().equals(contentType)) {
                 return new XSLFPowerPointExtractor(new XSLFSlideShow(pkg));
+            }
+
+            // How about xlsb?
+            for (XSSFRelation rel : XSSFBEventBasedExcelExtractor.SUPPORTED_TYPES) {
+                if (rel.getContentType().equals(contentType)) {
+                    return new XSSFBEventBasedExcelExtractor(pkg);
+                }
             }
 
             throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+contentType+")");
