@@ -19,18 +19,24 @@ package org.apache.poi.stress;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -131,8 +137,6 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/SimpleStrict.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample.strict.xlsx");
-        // binary format
-        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/Simple.xlsb");
         // TODO: good to ignore?
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample-beta.xlsx");
         
