@@ -17,22 +17,46 @@
 package org.apache.poi;
 
 
-import org.apache.poi.stress.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.poi.stress.AbstractFileHandler;
+import org.apache.poi.stress.FileHandler;
+import org.apache.poi.stress.HDGFFileHandler;
+import org.apache.poi.stress.HMEFFileHandler;
+import org.apache.poi.stress.HPBFFileHandler;
+import org.apache.poi.stress.HPSFFileHandler;
+import org.apache.poi.stress.HSLFFileHandler;
+import org.apache.poi.stress.HSMFFileHandler;
+import org.apache.poi.stress.HSSFFileHandler;
+import org.apache.poi.stress.HWPFFileHandler;
+import org.apache.poi.stress.OPCFileHandler;
+import org.apache.poi.stress.POIFSFileHandler;
+import org.apache.poi.stress.XDGFFileHandler;
+import org.apache.poi.stress.XSLFFileHandler;
+import org.apache.poi.stress.XSSFBFileHandler;
+import org.apache.poi.stress.XSSFFileHandler;
+import org.apache.poi.stress.XWPFFileHandler;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.*;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *  This is an integration test which performs various actions on all stored test-files and tries
@@ -60,7 +84,8 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(Parameterized.class)
 public class TestAllFiles {
-    private static final File ROOT_DIR = new File("test-data");
+
+    private static final File ROOT_DIR = new File("C:/users/tallison/idea projects/poi-trunk/test-data");
 
     static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
     
@@ -72,7 +97,7 @@ public class TestAllFiles {
         HANDLERS.put(".xlsx", new XSSFFileHandler());
         HANDLERS.put(".xlsm", new XSSFFileHandler());
         HANDLERS.put(".xltx", new XSSFFileHandler());
-        HANDLERS.put(".xlsb", new XSSFFileHandler());
+        HANDLERS.put(".xlsb", new XSSFBFileHandler());
 
         // Word
         HANDLERS.put(".doc", new HWPFFileHandler());
@@ -250,7 +275,6 @@ public class TestAllFiles {
         "openxml4j/invalid.xlsx",
         "spreadsheet/54764-2.xlsx",   // see TestXSSFBugs.bug54764()
         "spreadsheet/54764.xlsx",     // see TestXSSFBugs.bug54764()
-        "spreadsheet/Simple.xlsb",
         "poifs/unknown_properties.msg", // POIFS properties corrupted
         "poifs/only-zero-byte-streams.ole2", // No actual contents
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
