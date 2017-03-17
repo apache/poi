@@ -19,6 +19,9 @@ package org.apache.poi.xssf.binary;
 
 import org.apache.poi.util.Internal;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 class XSSFBRichStr {
 

@@ -32,6 +32,8 @@ import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
@@ -54,15 +56,18 @@ import org.xml.sax.XMLReader;
  */
 public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor 
        implements org.apache.poi.ss.extractor.ExcelExtractor {
-    OPCPackage container;
+
+    private static final POILogger LOGGER = POILogFactory.getLogger(XSSFEventBasedExcelExtractor.class);
+
+    private OPCPackage container;
     private POIXMLProperties properties;
 
-    Locale locale;
-    boolean includeTextBoxes = true;
-    boolean includeSheetNames = true;
-    boolean includeCellComments = false;
-    boolean includeHeadersFooters = true;
-    boolean formulasNotResults = false;
+    private Locale locale;
+    private boolean includeTextBoxes = true;
+    private boolean includeSheetNames = true;
+    private boolean includeCellComments = false;
+    private boolean includeHeadersFooters = true;
+    private boolean formulasNotResults = false;
     private boolean concatenatePhoneticRuns = true;
 
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
@@ -93,6 +98,18 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public void setIncludeSheetNames(boolean includeSheetNames) {
         this.includeSheetNames = includeSheetNames;
     }
+
+
+    /**
+     *
+     * @return whether to include sheet names
+     *
+     * @since 3.16-beta3
+     */
+    public boolean getIncludeSheetNames() {
+        return includeSheetNames;
+    }
+
     /**
      * Should we return the formula itself, and not
      *  the result it produces? Default is false
@@ -100,11 +117,32 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public void setFormulasNotResults(boolean formulasNotResults) {
         this.formulasNotResults = formulasNotResults;
     }
+
+    /**
+     *
+     * @return whether to include formulas but not results
+     *
+     * @since 3.16-beta3
+     */
+    public boolean getFormulasNotResults() {
+        return formulasNotResults;
+    }
+
     /**
      * Should headers and footers be included? Default is true
      */
     public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
         this.includeHeadersFooters = includeHeadersFooters;
+    }
+
+    /**
+     *
+     * @return whether or not to include headers and footers
+     *
+     * @since 3.16-beta3
+     */
+    public boolean getIncludeHeadersFooters() {
+        return includeHeadersFooters;
     }
     /**
      * Should text from textboxes be included? Default is true
@@ -114,12 +152,29 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     }
 
     /**
+     *
+     * @return whether or not to extract textboxes
+     *
+     * @since 3.16-beta3
+     */
+    public boolean getIncludeTextBoxes() {
+        return includeTextBoxes;
+    }
+    /**
      * Should cell comments be included? Default is false
      */
     public void setIncludeCellComments(boolean includeCellComments) {
         this.includeCellComments = includeCellComments;
     }
 
+    /**
+     * @return whether cell comments should be included
+     *
+     * @since 3.16-beta3
+     */
+    public boolean getIncludeCellComments() {
+        return includeCellComments;
+    }
     /**
      * Concatenate text from &lt;rPh&gt; text elements in SharedStringsTable
      * Default is true;
@@ -132,6 +187,14 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         this.locale = locale;
     }
 
+    /**
+     * @return locale
+     *
+     * @since 3.16-beta3
+     */
+    public Locale getLocale() {
+        return locale;
+    }
     /**
      * Returns the opened OPCPackage container.
      */
@@ -161,6 +224,8 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public CustomProperties getCustomProperties() {
         return properties.getCustomProperties();
     }
+
+
 
     /**
      * Processes the given sheet
@@ -229,13 +294,13 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
           
           return text.toString();
        } catch(IOException e) {
-          System.err.println(e);
+          LOGGER.log(POILogger.WARN, e);
           return null;
        } catch(SAXException se) {
-          System.err.println(se);
+           LOGGER.log(POILogger.WARN, se);
           return null;
        } catch(OpenXML4JException o4je) {
-          System.err.println(o4je);
+           LOGGER.log(POILogger.WARN, o4je);
           return null;
        }
    }

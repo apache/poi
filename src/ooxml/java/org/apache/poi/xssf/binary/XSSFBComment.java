@@ -24,6 +24,9 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 class XSSFBComment extends XSSFComment {
 

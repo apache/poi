@@ -18,14 +18,13 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -40,13 +39,32 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSourceType;
 
 public class XSSFPivotTable extends POIXMLDocumentPart {
 
-    protected final static short CREATED_VERSION = 3;
-    protected final static short MIN_REFRESHABLE_VERSION = 3;
-    protected final static short UPDATED_VERSION = 3;
+    protected static final short CREATED_VERSION = 3;
+    protected static final short MIN_REFRESHABLE_VERSION = 3;
+    protected static final short UPDATED_VERSION = 3;
 
     private CTPivotTableDefinition pivotTableDefinition;
     private XSSFPivotCacheDefinition pivotCacheDefinition;

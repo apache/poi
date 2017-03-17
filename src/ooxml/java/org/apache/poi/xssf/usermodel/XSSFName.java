@@ -59,19 +59,19 @@ public final class XSSFName implements Name {
     /**
      * A built-in defined name that specifies the workbook's print area
      */
-    public final static String BUILTIN_PRINT_AREA = "_xlnm.Print_Area";
+    public static final String BUILTIN_PRINT_AREA = "_xlnm.Print_Area";
 
     /**
      * A built-in defined name that specifies the row(s) or column(s) to repeat
      * at the top of each printed page.
      */
-    public final static String BUILTIN_PRINT_TITLE = "_xlnm.Print_Titles";
+    public static final String BUILTIN_PRINT_TITLE = "_xlnm.Print_Titles";
 
     /**
      * A built-in defined name that refers to a range containing the criteria values
      * to be used in applying an advanced filter to a range of data
      */
-    public final static String BUILTIN_CRITERIA = "_xlnm.Criteria:";
+    public static final String BUILTIN_CRITERIA = "_xlnm.Criteria:";
 
 
     /**
@@ -79,7 +79,7 @@ public final class XSSFName implements Name {
      * output values resulting from applying an advanced filter criteria to a source
      * range
      */
-    public final static String BUILTIN_EXTRACT = "_xlnm.Extract:";
+    public static final String BUILTIN_EXTRACT = "_xlnm.Extract:";
 
     /**
      * ?an be one of the following
@@ -88,22 +88,22 @@ public final class XSSFName implements Name {
      * <li> This defined name refers to a range to which an AutoFilter has been
      * applied
      */
-    public final static String BUILTIN_FILTER_DB = "_xlnm._FilterDatabase";
+    public static final String BUILTIN_FILTER_DB = "_xlnm._FilterDatabase";
 
     /**
      * A built-in defined name that refers to a consolidation area
      */
-    public final static String BUILTIN_CONSOLIDATE_AREA = "_xlnm.Consolidate_Area";
+    public static final String BUILTIN_CONSOLIDATE_AREA = "_xlnm.Consolidate_Area";
 
     /**
      * A built-in defined name that specified that the range specified is from a database data source
      */
-    public final static String BUILTIN_DATABASE = "_xlnm.Database";
+    public static final String BUILTIN_DATABASE = "_xlnm.Database";
 
     /**
      * A built-in defined name that refers to a sheet title.
      */
-    public final static String BUILTIN_SHEET_TITLE = "_xlnm.Sheet_Title";
+    public static final String BUILTIN_SHEET_TITLE = "_xlnm.Sheet_Title";
 
     private XSSFWorkbook _workbook;
     private CTDefinedName _ctName;

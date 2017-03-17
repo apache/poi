@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.binary;
 
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -25,6 +24,8 @@ import org.apache.poi.util.LittleEndian;
  * This class encapsulates what the spec calls a "Cell" object.
  * I added "Header" to clarify that this does not contain the contents
  * of the cell, only the column number, the style id and the phonetic boolean
+ *
+ * @since 3.16-beta3
  */
 @Internal
 class XSSFBCellHeader {
@@ -59,10 +60,6 @@ class XSSFBCellHeader {
 
     int getColNum() {
         return colNum;
-    }
-
-    String formatAddressAsString() {
-        return CellReference.convertNumToColString(colNum)+(rowNum+1);
     }
 
     int getStyleIdx() {

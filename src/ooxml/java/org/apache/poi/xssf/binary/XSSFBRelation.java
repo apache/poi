@@ -17,19 +17,9 @@
 
 package org.apache.poi.xssf.binary;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLRelation;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -64,22 +54,4 @@ public class XSSFBRelation extends POIXMLRelation {
         super(type, rel, defaultName, cls);
     }
 
-    /**
-     * Fetches the InputStream to read the contents, based
-     * of the specified core part, for which we are defined
-     * as a suitable relationship
-     */
-    public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
-        PackageRelationshipCollection prc =
-                corePart.getRelationshipsByType(getRelation());
-        Iterator<PackageRelationship> it = prc.iterator();
-        if (it.hasNext()) {
-            PackageRelationship rel = it.next();
-            PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-            PackagePart part = corePart.getPackage().getPart(relName);
-            return part.getInputStream();
-        }
-        log.log(POILogger.WARN, "No part " + getDefaultFileName() + " found");
-        return null;
-    }
 }

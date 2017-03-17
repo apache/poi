@@ -1069,8 +1069,8 @@ public class SXSSFCell implements Cell {
 
     static abstract class Property
     {
-        final static int COMMENT=1;
-        final static int HYPERLINK=2;
+        static final int COMMENT=1;
+        static final int HYPERLINK=2;
         Object _value;
         Property _next;
         public Property(Object value)

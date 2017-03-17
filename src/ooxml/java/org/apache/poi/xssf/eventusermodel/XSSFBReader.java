@@ -44,6 +44,8 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 
 /**
  * Reader for xlsb files.
+ *
+ * @since 3.16-beta3
  */
 public class XSSFBReader extends XSSFReader {
     /**

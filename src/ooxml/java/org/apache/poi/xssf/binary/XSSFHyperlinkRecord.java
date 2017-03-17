@@ -29,6 +29,7 @@ import org.apache.poi.util.Internal;
  * The {@link #display} is often empty and should be filled from
  * the contents of the anchor cell.
  *
+ * @since 3.16-beta3
  */
 @Internal
 public class XSSFHyperlinkRecord {

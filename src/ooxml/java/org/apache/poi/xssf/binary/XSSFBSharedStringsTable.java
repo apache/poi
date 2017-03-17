@@ -28,6 +28,9 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.xml.sax.SAXException;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 public class XSSFBSharedStringsTable {
 
@@ -69,8 +72,6 @@ public class XSSFBSharedStringsTable {
 
     /**
      * Like POIXMLDocumentPart constructor
-     *
-     * @since POI 3.14-Beta3
      */
     XSSFBSharedStringsTable(PackagePart part) throws IOException, SAXException {
         readFrom(part.getInputStream());
@@ -81,8 +82,14 @@ public class XSSFBSharedStringsTable {
         reader.parse();
     }
 
+    /**
+     *
+     * @return a defensive copy of strings
+     */
     public List<String> getItems() {
-        return strings;
+        List<String> ret = new ArrayList<String>(strings.size());
+        ret.addAll(strings);
+        return ret;
     }
 
     public String getEntryAt(int i) {

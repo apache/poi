@@ -24,6 +24,9 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 public class XSSFBUtils {
 

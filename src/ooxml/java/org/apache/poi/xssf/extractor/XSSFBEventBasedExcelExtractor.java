@@ -23,6 +23,8 @@ import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.binary.XSSFBCommentsTable;
 import org.apache.poi.xssf.binary.XSSFBHyperlinksTable;
 import org.apache.poi.xssf.binary.XSSFBSharedStringsTable;
@@ -37,11 +39,15 @@ import org.xml.sax.SAXException;
 /**
  * Implementation of a text extractor or xlsb Excel
  * files that uses SAX-like binary parsing.
+ *
+ * @since 3.16-beta3
  */
 public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
         implements org.apache.poi.ss.extractor.ExcelExtractor {
 
-    public static final XSSFRelation[] SUPPORTED_TYPES = new XSSFRelation[] {
+    private static final POILogger LOGGER = POILogFactory.getLogger(XSSFBEventBasedExcelExtractor.class);
+
+    public static final XSSFRelation[] SUPPORTED_TYPES = new XSSFRelation[]{
             XSSFRelation.XLSB_BINARY_WORKBOOK
     };
 
@@ -93,15 +99,15 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
             throws IOException, SAXException {
 
         DataFormatter formatter;
-        if (locale == null) {
+        if (getLocale() == null) {
             formatter = new DataFormatter();
         } else {
-            formatter = new DataFormatter(locale);
+            formatter = new DataFormatter(getLocale());
         }
 
         XSSFBSheetHandler xssfbSheetHandler = new XSSFBSheetHandler(
                 sheetInputStream,
-                styles, comments, strings, sheetContentsExtractor, formatter, formulasNotResults
+                styles, comments, strings, sheetContentsExtractor, formatter, getFormulasNotResults()
         );
         xssfbSheetHandler.parse();
     }
@@ -111,8 +117,8 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
      */
     public String getText() {
         try {
-            XSSFBSharedStringsTable strings = new XSSFBSharedStringsTable(container);
-            XSSFBReader xssfbReader = new XSSFBReader(container);
+            XSSFBSharedStringsTable strings = new XSSFBSharedStringsTable(getPackage());
+            XSSFBReader xssfbReader = new XSSFBReader(getPackage());
             XSSFBStylesTable styles = xssfbReader.getXSSFBStylesTable();
             XSSFBReader.SheetIterator iter = (XSSFBReader.SheetIterator) xssfbReader.getSheetsData();
 
@@ -121,23 +127,23 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
             XSSFBHyperlinksTable hyperlinksTable = null;
             while (iter.hasNext()) {
                 InputStream stream = iter.next();
-                if (includeSheetNames) {
+                if (getIncludeSheetNames()) {
                     text.append(iter.getSheetName());
                     text.append('\n');
                 }
                 if (handleHyperlinksInCells) {
                     hyperlinksTable = new XSSFBHyperlinksTable(iter.getSheetPart());
                 }
-                XSSFBCommentsTable comments = includeCellComments ? iter.getXSSFBSheetComments() : null;
+                XSSFBCommentsTable comments = getIncludeCellComments() ? iter.getXSSFBSheetComments() : null;
                 processSheet(sheetExtractor, styles, comments, strings, stream);
-                if (includeHeadersFooters) {
+                if (getIncludeHeadersFooters()) {
                     sheetExtractor.appendHeaderText(text);
                 }
                 sheetExtractor.appendCellText(text);
-                if (includeTextBoxes) {
+                if (getIncludeTextBoxes()) {
                     processShapes(iter.getShapes(), text);
                 }
-                if (includeHeadersFooters) {
+                if (getIncludeHeadersFooters()) {
                     sheetExtractor.appendFooterText(text);
                 }
                 sheetExtractor.reset();
@@ -146,13 +152,13 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
 
             return text.toString();
         } catch (IOException e) {
-            System.err.println(e);
+            LOGGER.log(POILogger.WARN, e);
             return null;
         } catch (SAXException se) {
-            System.err.println(se);
+            LOGGER.log(POILogger.WARN, se);
             return null;
         } catch (OpenXML4JException o4je) {
-            System.err.println(o4je);
+            LOGGER.log(POILogger.WARN, o4je);
             return null;
         }
     }

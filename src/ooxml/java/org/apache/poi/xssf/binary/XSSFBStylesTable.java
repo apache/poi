@@ -28,6 +28,12 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.util.Internal;
 
+/**
+ * This is a very thin shim to gather number formats from styles.bin
+ * files.
+ *
+ * @since 3.16-beta3
+ */
 @Internal
 public class XSSFBStylesTable extends XSSFBParser {
 

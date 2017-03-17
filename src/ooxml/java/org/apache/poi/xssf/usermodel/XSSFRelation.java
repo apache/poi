@@ -16,24 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLRelation;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.ExternalLinksTable;
@@ -48,8 +37,6 @@ import org.apache.poi.xssf.model.ThemesTable;
  *  patterns, for the well-known XSSF format parts. 
  */
 public final class XSSFRelation extends POIXMLRelation {
-
-    private static final POILogger log = POILogFactory.getLogger(XSSFRelation.class);
 
     /**
      * A map to lookup POIXMLRelation by its relation type
@@ -366,25 +353,6 @@ public final class XSSFRelation extends POIXMLRelation {
     private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
         _table.put(rel, this);
-    }
-
-    /**
-     *  Fetches the InputStream to read the contents, based
-     *  of the specified core part, for which we are defined
-     *  as a suitable relationship
-     */
-    public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
-        PackageRelationshipCollection prc =
-            corePart.getRelationshipsByType(getRelation());
-        Iterator<PackageRelationship> it = prc.iterator();
-        if(it.hasNext()) {
-            PackageRelationship rel = it.next();
-            PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-            PackagePart part = corePart.getPackage().getPart(relName);
-            return part.getInputStream();
-        }
-        log.log(POILogger.WARN, "No part " + getDefaultFileName() + " found");
-        return null;
     }
 
     /**

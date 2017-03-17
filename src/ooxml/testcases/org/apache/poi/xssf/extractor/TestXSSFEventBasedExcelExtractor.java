@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.extractor;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -130,21 +131,21 @@ public class TestXSSFEventBasedExcelExtractor {
       String text = extractor.getText();
 
       // Numbers
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("43"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("22"));
+      assertContains(text, "43");
+      assertContains(text, "22");
       
       // Strings
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("ABCDE"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("Long Text"));
-      
+      assertContains(text, "ABCDE");
+      assertContains(text, "Long Text");
+
       // Inline Strings
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("1st Inline String"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("And More"));
-      
+	  assertContains(text, "1st Inline String");
+	  assertContains(text, "And More");
+
       // Formulas
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("A2"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("A5-A$2"));
-		
+	  assertContains(text, "A2");
+	  assertContains(text, "A5-A$2");
+
       extractor.close();
     }
    
@@ -185,10 +186,9 @@ public class TestXSSFEventBasedExcelExtractor {
 	       
 	    try {
     	    String text = ooxmlExtractor.getText();
-    
-    	    assertTrue(text.indexOf("Line 1") > -1);
-    	    assertTrue(text.indexOf("Line 2") > -1);
-    	    assertTrue(text.indexOf("Line 3") > -1);
+			assertContains(text, "Line 1");
+			assertContains(text, "Line 2");
+			assertContains(text, "Line 3");
 	    } finally {
 	        ooxmlExtractor.close();
 	    }
@@ -356,8 +356,8 @@ public class TestXSSFEventBasedExcelExtractor {
 				new XSSFEventBasedExcelExtractor(
 						XSSFTestDataSamples.openSamplePackage("59021.xlsx"));
 		String text = ex.getText();
-		assertTrue("can't find Abhkazia", text.contains("Abkhazia - Fixed"));
-		assertTrue("can't find 10/02/2016", text.contains("10/02/2016"));
+		assertContains(text, "Abkhazia - Fixed");
+		assertContains(text, "10/02/2016");
 		ex.close();
 	}
 
@@ -368,7 +368,7 @@ public class TestXSSFEventBasedExcelExtractor {
 				new XSSFEventBasedExcelExtractor(
 						XSSFTestDataSamples.openSamplePackage("51519.xlsx"));
 		String text = ex.getText();
-		assertTrue("can't find appended phonetic run", text.contains("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3"));
+		assertContains(text, "\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3");
 		ex.close();
 
 		//now try turning them off

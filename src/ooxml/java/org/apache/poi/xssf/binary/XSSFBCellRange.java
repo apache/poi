@@ -21,10 +21,14 @@ package org.apache.poi.xssf.binary;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 class XSSFBCellRange {
+    //TODO: Convert this to generate an AreaReference
 
-    public final static int length = 4* LittleEndian.INT_SIZE;
+    public static final int length = 4* LittleEndian.INT_SIZE;
     /**
      * Parses an RfX cell range from the data starting at the offset.
      * This performs no range checking.

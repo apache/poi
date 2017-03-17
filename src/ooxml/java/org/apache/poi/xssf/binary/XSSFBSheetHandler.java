@@ -29,10 +29,13 @@ import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 public class XSSFBSheetHandler extends XSSFBParser {
 
-    private final static int CHECK_ALL_ROWS = -1;
+    private static final int CHECK_ALL_ROWS = -1;
 
     private final XSSFBSharedStringsTable stringsTable;
     private final XSSFSheetXMLHandler.SheetContentsHandler handler;
