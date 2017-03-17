@@ -19,11 +19,14 @@ package org.apache.poi.xssf.binary;
 
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  * Wrapper class around String so that we can use it in Comment.
  * Nothing has been implemented yet except for {@link #getString()}.
+ *
+ * @since 3.16-beta3
  */
 @Internal
 class XSSFBRichTextString extends XSSFRichTextString {
@@ -34,21 +37,25 @@ class XSSFBRichTextString extends XSSFRichTextString {
     }
 
     @Override
+    @NotImplemented
     public void applyFont(int startIndex, int endIndex, short fontIndex) {
 
     }
 
     @Override
+    @NotImplemented
     public void applyFont(int startIndex, int endIndex, Font font) {
 
     }
 
     @Override
+    @NotImplemented
     public void applyFont(Font font) {
 
     }
 
     @Override
+    @NotImplemented
     public void clearFormatting() {
 
     }
@@ -64,16 +71,19 @@ class XSSFBRichTextString extends XSSFRichTextString {
     }
 
     @Override
+    @NotImplemented
     public int numFormattingRuns() {
         return 0;
     }
 
     @Override
+    @NotImplemented
     public int getIndexOfFormattingRun(int index) {
         return 0;
     }
 
     @Override
+    @NotImplemented
     public void applyFont(short fontIndex) {
 
     }

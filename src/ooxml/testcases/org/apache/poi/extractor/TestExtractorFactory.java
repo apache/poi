@@ -175,16 +175,12 @@ public class TestExtractorFactory {
         extractor.close();
 
         extractor = ExtractorFactory.createExtractor(xlsb);
-        assertTrue(
-                extractor.getText().contains("test")
-        );
+        assertContains(extractor.getText(), "test");
         extractor.close();
 
 
         extractor = ExtractorFactory.createExtractor(xltx);
-        assertTrue(
-                extractor.getText().contains("test")
-        );
+        assertContains(extractor.getText(), "test");
         extractor.close();
 
         // TODO Support OOXML-Strict, see bug #57699
@@ -258,9 +254,7 @@ public class TestExtractorFactory {
         extractor.close();
 
         extractor = ExtractorFactory.createExtractor(dotx);
-        assertTrue(
-                extractor.getText().contains("Test")
-        );
+        assertContains(extractor.getText(), "Test");
         extractor.close();
 
         // PowerPoint (PPT)

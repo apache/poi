@@ -18,10 +18,14 @@ package org.apache.poi.xssf.binary;
 
 import org.apache.poi.util.Internal;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 class XSSFBHeaderFooters {
 
     public static XSSFBHeaderFooters parse(byte[] data) {
+        //parse these at some point.
         boolean diffOddEven = false;
         boolean diffFirst = false;
         boolean scaleWDoc = false;

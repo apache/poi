@@ -17,8 +17,14 @@
 
 package org.apache.poi.xssf.binary;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.util.Internal;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 public enum XSSFBRecordType {
 
@@ -69,6 +75,14 @@ public enum XSSFBRecordType {
     BrtBundleSh(156), //defines worksheet in wb part
     Unimplemented(-1);
 
+    private static final Map<Integer, XSSFBRecordType> TYPE_MAP =
+            new HashMap<Integer, XSSFBRecordType>();
+
+    static {
+        for (XSSFBRecordType type : XSSFBRecordType.values()) {
+            TYPE_MAP.put(type.getId(), type);
+        }
+    }
 
     private final int id;
 
@@ -81,12 +95,11 @@ public enum XSSFBRecordType {
     }
 
     public static XSSFBRecordType lookup(int id) {
-        for (XSSFBRecordType r : XSSFBRecordType.values()) {
-            if (r.id == id) {
-                return r;
-            }
+        XSSFBRecordType type = TYPE_MAP.get(id);
+        if (type == null) {
+            return Unimplemented;
         }
-        return Unimplemented;
+        return type;
     }
 
 }

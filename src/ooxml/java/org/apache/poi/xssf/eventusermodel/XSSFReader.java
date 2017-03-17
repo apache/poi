@@ -380,7 +380,7 @@ public class XSSFReader {
         }
     }
 
-    protected final static class XSSFSheetRef {
+    protected static final class XSSFSheetRef {
         //do we need to store sheetId, too?
         private final String id;
         private final String name;
@@ -401,9 +401,9 @@ public class XSSFReader {
 
     //scrapes sheet reference info and order from workbook.xml
     private static class XMLSheetRefReader extends DefaultHandler {
-        private final static String SHEET = "sheet";
-        private final static String ID = "id";
-        private final static String NAME = "name";
+        private static final String SHEET = "sheet";
+        private static final String ID = "id";
+        private static final String NAME = "name";
 
         private final List<XSSFSheetRef> sheetRefs = new LinkedList();
 

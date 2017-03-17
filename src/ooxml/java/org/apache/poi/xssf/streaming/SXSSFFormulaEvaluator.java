@@ -34,7 +34,7 @@ import org.apache.poi.xssf.usermodel.BaseXSSFFormulaEvaluator;
  *  lookup cells within the current Window.
  */
 public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
-    private final static POILogger logger = POILogFactory.getLogger(SXSSFFormulaEvaluator.class);
+    private static final POILogger logger = POILogFactory.getLogger(SXSSFFormulaEvaluator.class);
     
     private SXSSFWorkbook wb;
     

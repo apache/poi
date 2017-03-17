@@ -85,7 +85,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
 
     private SstDocument _sstDoc;
 
-    private final static XmlOptions options = new XmlOptions();
+    private static final XmlOptions options = new XmlOptions();
     static {
         options.put( XmlOptions.SAVE_INNER );
      	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );

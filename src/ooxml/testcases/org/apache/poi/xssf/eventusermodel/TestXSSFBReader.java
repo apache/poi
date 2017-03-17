@@ -17,9 +17,9 @@
 
 package org.apache.poi.xssf.eventusermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -44,54 +44,52 @@ public class TestXSSFBReader {
 
         assertEquals(1, sheetTexts.size());
         String xsxml = sheetTexts.get(0);
-        assertContains("This is a string", xsxml);
-        assertContains("<td ref=\"B2\">13</td>", xsxml);
-        assertContains("<td ref=\"B3\">13.12112313</td>", xsxml);
-        assertContains("<td ref=\"B4\">$   3.03</td>", xsxml);
-        assertContains("<td ref=\"B5\">20%</td>", xsxml);
-        assertContains("<td ref=\"B6\">13.12</td>", xsxml);
-        assertContains("<td ref=\"B7\">1.23457E+14</td>", xsxml);
-        assertContains("<td ref=\"B8\">1.23457E+15</td>", xsxml);
+        assertContains(xsxml, "This is a string");
+        assertContains(xsxml, "<td ref=\"B2\">13</td>");
+        assertContains(xsxml, "<td ref=\"B3\">13.12112313</td>");
+        assertContains(xsxml, "<td ref=\"B4\">$   3.03</td>");
+        assertContains(xsxml, "<td ref=\"B5\">20%</td>");
+        assertContains(xsxml, "<td ref=\"B6\">13.12</td>");
+        assertContains(xsxml, "<td ref=\"B7\">1.23457E+14</td>");
+        assertContains(xsxml, "<td ref=\"B8\">1.23457E+15</td>");
 
-        assertContains("46/1963", xsxml);//custom format 1
-        assertContains("3/128", xsxml);//custom format 2
+        assertContains(xsxml, "46/1963");//custom format 1
+        assertContains(xsxml, "3/128");//custom format 2
 
-        assertContains("<tr num=\"7>\n" +
+        assertContains(xsxml, "<tr num=\"7>\n" +
                 "\t<td ref=\"A8\">longer int</td>\n" +
                 "\t<td ref=\"B8\">1.23457E+15</td>\n" +
                 "\t<td ref=\"C8\"><span type=\"comment\" author=\"Allison, Timothy B.\">Allison, Timothy B.:\n" +
                 "test comment2</span></td>\n" +
-                "</tr num=\"7>", xsxml);
+                "</tr num=\"7>");
 
-        assertContains("<tr num=\"34>\n" +
+        assertContains(xsxml, "<tr num=\"34>\n" +
                 "\t<td ref=\"B35\">comment6<span type=\"comment\" author=\"Allison, Timothy B.\">Allison, Timothy B.:\n" +
                 "comment6 actually in cell</span></td>\n" +
-                "</tr num=\"34>", xsxml);
+                "</tr num=\"34>");
 
-        assertContains("<tr num=\"64>\n" +
+        assertContains(xsxml, "<tr num=\"64>\n" +
                 "\t<td ref=\"I65\"><span type=\"comment\" author=\"Allison, Timothy B.\">Allison, Timothy B.:\n" +
                 "comment7 end of file</span></td>\n" +
-                "</tr num=\"64>", xsxml);
+                "</tr num=\"64>");
 
-        assertContains("<tr num=\"65>\n" +
+        assertContains(xsxml, "<tr num=\"65>\n" +
                 "\t<td ref=\"I66\"><span type=\"comment\" author=\"Allison, Timothy B.\">Allison, Timothy B.:\n" +
                 "comment8 end of file</span></td>\n" +
-                "</tr num=\"65>", xsxml);
+                "</tr num=\"65>");
 
-        assertContains("<header tagName=\"header\">OddLeftHeader OddCenterHeader OddRightHeader</header>", xsxml);
-        assertContains("<footer tagName=\"footer\">OddLeftFooter OddCenterFooter OddRightFooter</footer>", xsxml);
-        assertContains(
-                "<header tagName=\"evenHeader\">EvenLeftHeader EvenCenterHeader EvenRightHeader\n</header>",
-                xsxml);
-        assertContains(
-                "<footer tagName=\"evenFooter\">EvenLeftFooter EvenCenterFooter EvenRightFooter</footer>",
-                xsxml);
-        assertContains(
-                "<header tagName=\"firstHeader\">FirstPageLeftHeader FirstPageCenterHeader FirstPageRightHeader</header>",
-                xsxml);
-        assertContains(
-                "<footer tagName=\"firstFooter\">FirstPageLeftFooter FirstPageCenterFooter FirstPageRightFooter</footer>",
-                xsxml);
+        assertContains(xsxml,
+                "<header tagName=\"header\">OddLeftHeader OddCenterHeader OddRightHeader</header>");
+        assertContains(xsxml,
+                "<footer tagName=\"footer\">OddLeftFooter OddCenterFooter OddRightFooter</footer>");
+        assertContains(xsxml,
+                "<header tagName=\"evenHeader\">EvenLeftHeader EvenCenterHeader EvenRightHeader\n</header>");
+        assertContains(xsxml,
+                "<footer tagName=\"evenFooter\">EvenLeftFooter EvenCenterFooter EvenRightFooter</footer>");
+        assertContains(xsxml,
+                "<header tagName=\"firstHeader\">FirstPageLeftHeader FirstPageCenterHeader FirstPageRightHeader</header>");
+        assertContains(xsxml,
+                "<footer tagName=\"firstFooter\">FirstPageLeftFooter FirstPageCenterFooter FirstPageRightFooter</footer>");
 
     }
 
@@ -99,25 +97,24 @@ public class TestXSSFBReader {
     public void testComments() throws Exception {
         List<String> sheetTexts = getSheets("comments.xlsb");
         String xsxml = sheetTexts.get(0);
-        assertContains(
+        assertContains(xsxml,
                 "<tr num=\"0>\n" +
                         "\t<td ref=\"A1\"><span type=\"comment\" author=\"Sven Nissel\">comment top row1 (index0)</span></td>\n" +
                         "\t<td ref=\"B1\">row1</td>\n" +
-                        "</tr num=\"0>",  xsxml);
-        assertContains(
+                        "</tr num=\"0>");
+        assertContains(xsxml,
                 "<tr num=\"1>\n" +
                         "\t<td ref=\"A2\"><span type=\"comment\" author=\"Allison, Timothy B.\">Allison, Timothy B.:\n" +
                         "comment row2 (index1)</span></td>\n" +
-                        "</tr num=\"1>",
-                xsxml);
-        assertContains("<tr num=\"2>\n" +
+                        "</tr num=\"1>");
+        assertContains(xsxml, "<tr num=\"2>\n" +
                 "\t<td ref=\"A3\">row3<span type=\"comment\" author=\"Sven Nissel\">comment top row3 (index2)</span></td>\n" +
-                "\t<td ref=\"B3\">row3</td>\n", xsxml);
+                "\t<td ref=\"B3\">row3</td>\n");
 
-        assertContains("<tr num=\"3>\n" +
+        assertContains(xsxml, "<tr num=\"3>\n" +
                 "\t<td ref=\"A4\"><span type=\"comment\" author=\"Sven Nissel\">comment top row4 (index3)</span></td>\n" +
                 "\t<td ref=\"B4\">row4</td>\n" +
-                "</tr num=\"3></sheet>", xsxml);
+                "</tr num=\"3></sheet>");
 
     }
 
@@ -131,7 +128,7 @@ public class TestXSSFBReader {
         assertNotNull(r.getXSSFBStylesTable());
         XSSFBSharedStringsTable sst = new XSSFBSharedStringsTable(pkg);
         XSSFBStylesTable xssfbStylesTable = r.getXSSFBStylesTable();
-        XSSFBReader.SheetIterator it = (XSSFBReader.SheetIterator)r.getSheetsData();
+        XSSFBReader.SheetIterator it = (XSSFBReader.SheetIterator) r.getSheetsData();
 
         while (it.hasNext()) {
             InputStream is = it.next();
@@ -152,22 +149,11 @@ public class TestXSSFBReader {
 
     }
 
-    //This converts all [\r\n\t]+ to " "
-    private void assertContains(String needle, String haystack) {
-        needle = needle.replaceAll("[\r\n\t]+", " ");
-        haystack = haystack.replaceAll("[\r\n\t]+", " ");
-        if (haystack.indexOf(needle) < 0) {
-            fail("couldn't find >"+needle+"< in: "+haystack );
-        }
-    }
-
-
     @Test
     public void testDate() throws Exception {
         List<String> sheets = getSheets("date.xlsb");
         assertEquals(1, sheets.size());
-        assertContains("1/12/13", sheets.get(0));
-
+        assertContains(sheets.get(0), "1/12/13");
     }
 
 
@@ -178,9 +164,10 @@ public class TestXSSFBReader {
             sb.append("<sheet name=\"").append(sheetName).append(">");
         }
 
-        public void endSheet(){
+        public void endSheet() {
             sb.append("</sheet>");
         }
+
         @Override
         public void startRow(int rowNum) {
             sb.append("\n<tr num=\"").append(rowNum).append(">");
@@ -209,9 +196,9 @@ public class TestXSSFBReader {
         @Override
         public void headerFooter(String text, boolean isHeader, String tagName) {
             if (isHeader) {
-                sb.append("<header tagName=\""+tagName+"\">"+text+"</header>");
+                sb.append("<header tagName=\"" + tagName + "\">" + text + "</header>");
             } else {
-                sb.append("<footer tagName=\""+tagName+"\">"+text+"</footer>");
+                sb.append("<footer tagName=\"" + tagName + "\">" + text + "</footer>");
 
             }
         }

@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.extractor;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -90,10 +91,9 @@ public class TestXSSFBEventBasedExcelExtractor {
 
         try {
             String text = ooxmlExtractor.getText();
-
-            assertTrue(text.indexOf("Line 1") > -1);
-            assertTrue(text.indexOf("Line 2") > -1);
-            assertTrue(text.indexOf("Line 3") > -1);
+            assertContains(text, "Line 1");
+            assertContains(text, "Line 2");
+            assertContains(text, "Line 3");
         } finally {
             ooxmlExtractor.close();
         }

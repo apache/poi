@@ -18,7 +18,9 @@
 package org.apache.poi.xssf.binary;
 
 /**
- * Parse exception while reading an xssfb
+ * Parse exception while reading an xssfb.
+ *
+ * @since 3.16-beta3
  */
 public class XSSFBParseException extends RuntimeException {
 

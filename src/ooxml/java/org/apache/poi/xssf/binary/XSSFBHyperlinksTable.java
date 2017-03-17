@@ -36,10 +36,13 @@ import org.apache.poi.ss.util.CellRangeUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 public class XSSFBHyperlinksTable {
 
-    private final static BitSet RECORDS = new BitSet();
+    private static final BitSet RECORDS = new BitSet();
 
 
     static {

@@ -25,9 +25,11 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
 /**
- * Experimental parser for Microsoft's ooxml xssfb format.
+ * Experimental parser for Microsoft's ooxml xlsb format.
  * Not thread safe, obviously.  Need to create a new one
  * for each thread.
+ *
+ * @since 3.16-beta3
  */
 @Internal
 public abstract class XSSFBParser {
@@ -40,6 +42,11 @@ public abstract class XSSFBParser {
         records = null;
     }
 
+    /**
+     *
+     * @param is inputStream
+     * @param bitSet call {@link #handleRecord(int, byte[])} only on those records in this bitSet
+     */
     XSSFBParser(InputStream is, BitSet bitSet) {
         this.is = new LittleEndianInputStream(is);
         records = bitSet;
@@ -98,7 +105,7 @@ public abstract class XSSFBParser {
     //However, on a large Excel spreadsheet, this parser was 1/3 faster than
     //the ooxml sax parser (5 seconds for xssfb and 7.5 seconds for xssf.
     //The code is far cleaner to have the parser read all
-    //of the data rather than having every component promise that it read
+    //of the data rather than having every component promise that it will read
     //the correct amount.
     abstract public void handleRecord(int recordType, byte[] data) throws XSSFBParseException;
 

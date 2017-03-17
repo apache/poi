@@ -20,7 +20,6 @@ package org.apache.poi.xssf.binary;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +30,13 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
+/**
+ * @since 3.16-beta3
+ */
 @Internal
 public class XSSFBCommentsTable extends XSSFBParser {
 
-    private Map<CellAddress, XSSFBComment> comments = new TreeMap<CellAddress, XSSFBComment>(new CellAddressComparator());//String is the cellAddress A1
+    private Map<CellAddress, XSSFBComment> comments = new TreeMap<CellAddress, XSSFBComment>();
     private Queue<CellAddress> commentAddresses = new LinkedList<CellAddress>();
     private List<String> authors = new ArrayList<String>();
 
@@ -91,23 +93,5 @@ public class XSSFBCommentsTable extends XSSFBParser {
             return null;
         }
         return comments.get(cellAddress);
-    }
-
-    private final static class CellAddressComparator implements Comparator<CellAddress> {
-
-        @Override
-        public int compare(CellAddress o1, CellAddress o2) {
-            if (o1.getRow() < o2.getRow()) {
-                return -1;
-            } else if (o1.getRow() > o2.getRow()) {
-                return 1;
-            }
-            if (o1.getColumn() < o2.getColumn()) {
-                return -1;
-            } else if (o1.getColumn() > o2.getColumn()) {
-                return 1;
-            }
-            return 0;
-        }
     }
 }
