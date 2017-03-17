@@ -39,7 +39,6 @@ public class XSSFBFileHandler extends AbstractFileHandler {
         );
     }
 
-
     @Override
     public void handleFile(InputStream stream) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -54,13 +53,11 @@ public class XSSFBFileHandler extends AbstractFileHandler {
         }
 
         testNotHandledByWorkbookException(OPCPackage.open(new ByteArrayInputStream(bytes)));
-
     }
 
     private void testNotHandledByWorkbookException(OPCPackage pkg) throws IOException {
-
         try {
-            XSSFWorkbook workbook = new XSSFWorkbook(pkg);
+            new XSSFWorkbook(pkg);
         } catch (XLSBUnsupportedException e) {
             //this is what we'd expect
             //swallow
@@ -90,7 +87,5 @@ public class XSSFBFileHandler extends AbstractFileHandler {
         if (txt.length() < 1) {
             throw new RuntimeException("Should have gotten some text.");
         }
-
     }
-
 }

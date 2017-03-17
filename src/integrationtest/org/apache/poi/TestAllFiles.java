@@ -85,7 +85,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class TestAllFiles {
 
-    private static final File ROOT_DIR = new File("C:/users/tallison/idea projects/poi-trunk/test-data");
+    private static final File ROOT_DIR = new File("test-data");
 
     static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
     
