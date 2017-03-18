@@ -69,17 +69,14 @@ public class XSLFFileHandler extends SlideShowHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
+		File file = new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
+		InputStream stream = new FileInputStream(file);
 		try {
 			handleFile(stream);
 		} finally {
 			stream.close();
 		}
-	}
 
-    // a test-case to test this locally without executing the full TestAllFiles
-    @Test
-    public void testExtractor() throws Exception {
-        handleExtracting(new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx"));
+        handleExtracting(file);
    }
 }

@@ -38,7 +38,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 		
 		// TODO: some documents fail currently...
         // Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
-        // IntesectionPtg.  However it is still not capable of parsing it.
+        // IntersectionPtg.  However it is still not capable of parsing it.
         // So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
         //HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
         //evaluator.evaluateAll();
@@ -100,17 +100,14 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/spreadsheet/49219.xls");
+	    File file = new File("test-data/spreadsheet/49219.xls");
+		
+		InputStream stream = new FileInputStream(file);
 		try {
 			handleFile(stream);
 		} finally {
 			stream.close();
 		}
+        handleExtracting(file);
 	}
-
-	// a test-case to test this locally without executing the full TestAllFiles
-    @Test
-    public void testExtractor() throws Exception {
-        handleExtracting(new File("test-data/spreadsheet/BOOK_in_capitals.xls"));
-    }
 }

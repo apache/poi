@@ -50,7 +50,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         
         readContent(ss);
 
-        // read in the writen file
+        // read in the written file
         SlideShow<?,?> read = SlideShowFactory.create(new ByteArrayInputStream(out.toByteArray()));
         try {
             assertNotNull(read);

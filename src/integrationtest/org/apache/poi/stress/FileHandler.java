@@ -31,8 +31,8 @@ public interface FileHandler {
 	 * 
 	 * Closing is handled by the framework outside this call.
 	 *
-	 * @param stream
-	 * @throws Exception
+	 * @param stream The input stream to read the file from.
+	 * @throws Exception If an error happens in the file-specific handler
 	 */
 	void handleFile(InputStream stream) throws Exception;
 	
