@@ -255,6 +255,7 @@ public class TestAllFiles {
 
         // TODO: good to ignore?
         "spreadsheet/sample-beta.xlsx",
+        "document/cpansearch.perl.org_src_tobyink_acme-rundoc-0.001_word-lib_hello_world.docm",
 
         // This is actually a spreadsheet!
         "hpsf/TestRobert_Flaherty.doc",
