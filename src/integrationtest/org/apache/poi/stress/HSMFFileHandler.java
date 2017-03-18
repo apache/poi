@@ -18,6 +18,7 @@ package org.apache.poi.stress;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -75,11 +76,14 @@ public class HSMFFileHandler extends POIFSFileHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/hsmf/example_received_regular.msg");
+		File file = new File("test-data/hsmf/logsat.com_signatures_valid.msg");
+        InputStream stream = new FileInputStream(file);
 		try {
 			handleFile(stream);
 		} finally {
 			stream.close();
 		}
+		
+		handleExtracting(file);
 	}
 }

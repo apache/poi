@@ -81,9 +81,9 @@ public abstract class AbstractFileHandler implements FileHandler {
         
         POITextExtractor extractor = ExtractorFactory.createExtractor(file);
         try  {
-            assertNotNull(extractor);
+            assertNotNull("Should get a POITextExtractor but had none for file " + file, extractor);
 
-            assertNotNull(extractor.getText());
+            assertNotNull("Should get some text but had none for file " + file, extractor.getText());
             
             // also try metadata
             @SuppressWarnings("resource")

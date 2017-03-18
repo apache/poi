@@ -19,9 +19,7 @@ package org.apache.poi.stress;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -39,30 +37,65 @@ public class HSLFFileHandler extends SlideShowHandler {
 		Record[] records = slide.getRecords();
 		assertNotNull(records);
 		for(Record record : records) {
+		    assertNotNull("Found a record which was null", record);
 			assertTrue(record.getRecordType() >= 0);
 		}
-		
+
 		handlePOIDocument(slide);
-		
+
 		HSLFSlideShow ss = new HSLFSlideShow(slide);
 		handleSlideShow(ss);
 	}
-	
+
+	@Test
+	public void testOne() throws Exception {
+		testOneFile(new File("test-data/slideshow/54880_chinese.ppt"));
+	}
+
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/hpsf/Test_Humor-Generation.ppt");
-		try {
-			handleFile(stream);
-		} finally {
-			stream.close();
+		File[] files = new File("test-data/slideshow/").listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".ppt");
+			}
+		});
+		assertNotNull(files);
+
+		System.out.println("Testing " + files.length + " files");
+
+		for(File file : files) {
+			try {
+				testOneFile(file);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
 		}
+   }
+
+	private void testOneFile(File file) throws Exception {
+		System.out.println(file);
+
+		//System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
+		InputStream stream = new FileInputStream(file);
+		try {
+            handleFile(stream);
+        } finally {
+            stream.close();
+        }
+
+		handleExtracting(file);
 	}
 
-    // a test-case to test this locally without executing the full TestAllFiles
-    @Test
-    public void testExtractor() throws Exception {
-        handleExtracting(new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx"));
+	public static void main(String[] args) throws Exception {
+	   System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
+	   InputStream stream = new FileInputStream(args[0]);
+	   try {
+		   new HSLFFileHandler().handleFile(stream);
+	   } finally {
+		   stream.close();
+	   }
    }
 }

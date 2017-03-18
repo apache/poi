@@ -57,7 +57,7 @@ public class OPCFileHandler extends AbstractFileHandler {
 	
     @Override
     public void handleExtracting(File file) throws Exception {
-        // text-extraction is not possible currenlty for these types of files
+        // text-extraction is not possible currently for these types of files
     }
 
 	// a test-case to test this locally without executing the full TestAllFiles
