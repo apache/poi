@@ -31,6 +31,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 public class XSSFFileHandler extends SpreadsheetHandler {
     @Override
     public void handleFile(InputStream stream) throws Exception {
