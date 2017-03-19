@@ -300,6 +300,32 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
         Integer slideIndex = XSLFRelation.SLIDE.getFileNameIndex(slide);
 
+        // Bug 55791: We also need to check that the resulting file name is not already taken
+        // this can happen when removing/adding slides
+        while(true) {
+            String slideName = XSLFRelation.NOTES.getFileName(slideIndex);
+            boolean found = false;
+            for (POIXMLDocumentPart relation : getRelations()) {
+                if (relation.getPackagePart() != null &&
+                    slideName.equals(relation.getPackagePart().getPartName().getName())) {
+                    // name is taken => try next one
+                    found = true;
+                    break;
+                }
+            }
+
+            if(!found &&
+                getPackage().getPartsByName(Pattern.compile(Pattern.quote(slideName))).size() > 0) {
+                // name is taken => try next one
+                found = true;
+            }
+
+            if (!found) {
+                break;
+            }
+            slideIndex++;
+        }
+
         // add notes slide to presentation
         XSLFNotes notesSlide = (XSLFNotes) createRelationship
             (XSLFRelation.NOTES, XSLFFactory.getInstance(), slideIndex);

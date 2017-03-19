@@ -16,27 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collection;
-
-import javax.imageio.ImageIO;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
@@ -50,26 +29,27 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFAutoShape;
-import org.apache.poi.xslf.usermodel.XSLFGroupShape;
-import org.apache.poi.xslf.usermodel.XSLFHyperlink;
-import org.apache.poi.xslf.usermodel.XSLFPictureData;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
-import org.apache.poi.xslf.usermodel.XSLFRelation;
-import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
-import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
-import org.apache.poi.xslf.usermodel.XSLFTable;
-import org.apache.poi.xslf.usermodel.XSLFTableCell;
-import org.apache.poi.xslf.usermodel.XSLFTableRow;
-import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
-import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xslf.usermodel.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collection;
+
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.*;
 
 
 public class TestXSLFBugs {
@@ -109,6 +89,7 @@ public class TestXSLFBugs {
     
     private static void assertRelation(XSLFSlide slide, String exp, String rId) {
         POIXMLDocumentPart pd = (rId != null) ? slide.getRelationById(rId) : slide;
+        assertNotNull(pd);
         assertEquals(exp, pd.getPackagePart().getPartName().getName());
     }
     
@@ -147,8 +128,9 @@ public class TestXSLFBugs {
        for(RelationPart p : rels) {
           if(p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
              URI target = p.getRelationship().getTargetURI();
-             
-             if(target.getFragment().equals("_ftn1") ||
+
+              //noinspection StatementWithEmptyBody
+              if(target.getFragment().equals("_ftn1") ||
                 target.getFragment().equals("_ftnref1")) {
                 // Good
              } else {
@@ -623,5 +605,23 @@ public class TestXSLFBugs {
         
         dst.close();
         src.close();
+    }
+
+    @Test
+    public void test60810() throws IOException {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("60810.pptx");
+        for(XSLFSlide slide : ppt.getSlides()) {
+            XSLFNotes notesSlide = ppt.getNotesSlide(slide);
+            assertNotNull(notesSlide);
+        }
+
+        /*OutputStream stream = new FileOutputStream("/tmp/test.pptx");
+        try {
+            ppt.write(stream);
+        } finally {
+            stream.close();
+        }*/
+
+        ppt.close();
     }
 }
