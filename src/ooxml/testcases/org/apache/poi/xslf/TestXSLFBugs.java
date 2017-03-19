@@ -624,4 +624,11 @@ public class TestXSLFBugs {
 
         ppt.close();
     }
+
+    @Test
+    public void test60042() {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("60042.pptx");
+        ppt.removeSlide(0);
+        ppt.createSlide();
+    }
 }
