@@ -84,7 +84,7 @@ public final class EscherPropertyFactory {
 
                     int leftover = data.length - pos;
                     if (leftover < complexData.length) {
-                        throw new IllegalStateException("Could not read complex escher property, lenght was " + complexData.length + ", but had only " +
+                        throw new IllegalStateException("Could not read complex escher property, length was " + complexData.length + ", but had only " +
                                 leftover + " bytes left");
                     }
 
