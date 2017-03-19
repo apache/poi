@@ -36,10 +36,18 @@ public final class DGet implements IDStarAlgorithm {
         {
             result = eval;
         }
-        else // There was a previous match, since there is only exactly one allowed, bail out.
+        else // There was a previous match. Only one non-blank result is allowed. #NUM! on multiple values.
         {
-            result = ErrorEval.NUM_ERROR;
-            return false;
+            if(result instanceof BlankEval) {
+                result = eval;
+            }
+            else {
+                // We have a previous filled result.
+                if(!(eval instanceof BlankEval)) {
+                    result = ErrorEval.NUM_ERROR;
+                    return false;
+                }
+            }
         }
 
         return true;
