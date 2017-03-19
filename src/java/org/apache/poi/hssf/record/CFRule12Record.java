@@ -419,7 +419,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("[CFRULE12]\n");
         buffer.append("    .condition_type=").append(getConditionType()).append("\n");
         buffer.append("    .dxfn12_length =0x").append(Integer.toHexString(ext_formatting_length)).append("\n");
@@ -462,7 +462,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         
         super.copyTo(rec);
 
-        // use min() to gracefully handle cases where the length-property and the array-lenght do not match
+        // use min() to gracefully handle cases where the length-property and the array-length do not match
         // we saw some such files in circulation
         rec.ext_formatting_length = Math.min(ext_formatting_length, ext_formatting_data.length);
         rec.ext_formatting_data = new byte[ext_formatting_length];
