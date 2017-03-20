@@ -32,6 +32,7 @@ import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
@@ -79,4 +80,40 @@ public class TestSecureTempZip {
         poifs.close();
         fis.close();
     }
+
+    /**
+     * Test case for #59841 - this is an example on how to use encrypted temp files,
+     * which are streamed into POI opposed to having everything in memory
+     */
+    @Test
+    public void protectedXLSBZip() throws IOException, GeneralSecurityException, XmlException, OpenXML4JException {
+        File tikaProt = XSSFTestDataSamples.getSampleFile("protected_passtika.xlsb");
+        FileInputStream fis = new FileInputStream(tikaProt);
+        POIFSFileSystem poifs = new POIFSFileSystem(fis);
+        EncryptionInfo ei = new EncryptionInfo(poifs);
+        Decryptor dec = ei.getDecryptor();
+        boolean passOk = dec.verifyPassword("tika");
+        assertTrue(passOk);
+
+        // extract encrypted ooxml file and write to custom encrypted zip file
+        InputStream is = dec.getDataStream(poifs);
+
+        // provide ZipEntrySource to poi which decrypts on the fly
+        ZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(is);
+
+        // test the source
+        OPCPackage opc = OPCPackage.open(source);
+        String expected = "You can't see me";
+
+        XSSFBEventBasedExcelExtractor extractor = new XSSFBEventBasedExcelExtractor(opc);
+        extractor.setIncludeSheetNames(false);
+        String txt = extractor.getText();
+        assertEquals(expected, txt.trim());
+
+        extractor.close();
+        opc.close();
+        poifs.close();
+        fis.close();
+    }
+
 }

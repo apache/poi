@@ -33,7 +33,7 @@ public class XSSFBFileHandler extends AbstractFileHandler {
 
     static {
         //add expected failures here:
-//        AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.add("spreadsheet/Simple.xlsb");
+        AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.add("spreadsheet/protected_passtika.xlsb");
     }
 
     @Override

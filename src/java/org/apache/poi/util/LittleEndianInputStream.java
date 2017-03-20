@@ -28,6 +28,9 @@ import java.io.InputStream;
  * by this class is consistent with that of the inner stream.
  */
 public class LittleEndianInputStream extends FilterInputStream implements LittleEndianInput {
+
+	private static final int EOF = -1;
+
 	public LittleEndianInputStream(InputStream is) {
 		super(is);
 	}
@@ -128,11 +131,27 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
     @Override
     public void readFully(byte[] buf, int off, int len) {
         try {
-            checkEOF(read(buf, off, len), len);
+        	checkEOF(_read(buf, off, len), len);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+    //Makes repeated calls to super.read() until length is read or EOF is reached
+	private int _read(byte[] buffer, int offset, int length) throws IOException {
+    	//lifted directly from org.apache.commons.io.IOUtils 2.4
+		int remaining = length;
+		while (remaining > 0) {
+			int location = length - remaining;
+			int count = read(buffer, offset + location, remaining);
+			if (EOF == count) { // EOF
+				break;
+			}
+			remaining -= count;
+		}
+
+		return length - remaining;
+	}
 
     @Override
     public void readPlain(byte[] buf, int off, int len) {
