@@ -32,11 +32,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class XSSFBFileHandler extends AbstractFileHandler {
 
     static {
-        //this is a "Beta" xlsb version and is not openable with Excel 2016
-        //TODO: see if we can support this easily enough
-        AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.add(
-                "spreadsheet/Simple.xlsb"
-        );
+        //add expected failures here:
+//        AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.add("spreadsheet/Simple.xlsb");
     }
 
     @Override
