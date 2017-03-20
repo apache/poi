@@ -99,4 +99,13 @@ public class TestXSSFBEventBasedExcelExtractor {
         }
     }
 
+    @Test
+    public void testBeta() throws Exception {
+        XSSFEventBasedExcelExtractor extractor = getExtractor("Simple.xlsb");
+        extractor.setIncludeCellComments(true);
+        String text = extractor.getText();
+        assertContains(text,
+                "This is an example spreadsheet created with Microsoft Excel 2007 Beta 2.");
+    }
+
 }

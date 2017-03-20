@@ -73,6 +73,10 @@ public enum XSSFBRecordType {
     BrtEndSst(160),   //stored strings end sst
 
     BrtBundleSh(156), //defines worksheet in wb part
+
+    //TODO -- implement these as needed
+    //BrtFileVersion(128), //file version
+    //BrtWbProp(153), //Workbook prop contains 1904/1900-date based bit
     Unimplemented(-1);
 
     private static final Map<Integer, XSSFBRecordType> TYPE_MAP =

@@ -32,6 +32,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.binary.XSSFBCommentsTable;
 import org.apache.poi.xssf.binary.XSSFBParseException;
 import org.apache.poi.xssf.binary.XSSFBParser;
@@ -48,6 +50,9 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
  * @since 3.16-beta3
  */
 public class XSSFBReader extends XSSFReader {
+
+    private final static POILogger log = POILogFactory.getLogger(XSSFBReader.class);
+
     /**
      * Creates a new XSSFReader, for the given package
      *
@@ -147,6 +152,23 @@ public class XSSFBReader extends XSSFReader {
         }
 
         private void addWorksheet(byte[] data) {
+            //try to parse the BrtBundleSh
+            //if there's an exception, catch it and
+            //try to figure out if this is one of the old beta-created xlsb files
+            //or if this is a general exception
+            try {
+                tryToAddWorksheet(data);
+            } catch (XSSFBParseException e) {
+                if (tryOldFormat(data)) {
+                    log.log(POILogger.WARN, "This file was written with a beta version of Excel. "+
+                            "POI will try to parse the file as a regular xlsb.");
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        private void tryToAddWorksheet(byte[] data) throws XSSFBParseException {
             int offset = 0;
             //this is the sheet state #2.5.142
             long hsShtat = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
@@ -158,13 +180,35 @@ public class XSSFBReader extends XSSFReader {
             }
             StringBuilder sb = new StringBuilder();
             offset += XSSFBUtils.readXLWideString(data, offset, sb);
-            String relId = sb.toString();
-            sb.setLength(0);
-            XSSFBUtils.readXLWideString(data, offset, sb);
+            String relId = sb.toString(); sb.setLength(0);
+            offset += XSSFBUtils.readXLWideString(data, offset, sb);
             String name = sb.toString();
             if (relId != null && relId.trim().length() > 0) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
+        }
+
+        private boolean tryOldFormat(byte[] data) throws XSSFBParseException {
+            //undocumented what is contained in these 8 bytes.
+            //for the non-beta xlsb files, this would be 4, not 8.
+            int offset = 8;
+            long iTabID = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+            if (iTabID < 1 || iTabID > 0x0000FFFFL) {
+                throw new XSSFBParseException("table id out of range: "+iTabID);
+            }
+            StringBuilder sb = new StringBuilder();
+            offset += XSSFBUtils.readXLWideString(data, offset, sb);
+            String relId = sb.toString();
+            sb.setLength(0);
+            offset += XSSFBUtils.readXLWideString(data, offset, sb);
+            String name = sb.toString();
+            if (relId != null && relId.trim().length() > 0) {
+                sheets.add(new XSSFSheetRef(relId, name));
+            }
+            if (offset == data.length) {
+                return true;
+            }
+            return false;
         }
 
         List<XSSFSheetRef> getSheets() {
