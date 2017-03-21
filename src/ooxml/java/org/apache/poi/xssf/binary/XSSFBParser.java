@@ -71,7 +71,7 @@ public abstract class XSSFBParser {
             byte b2 = is.readByte();
             b1 &= ~(1<<7); //unset highest bit
             b2 &= ~(1<<7); //unset highest bit (if it exists?)
-            recordId = (128*(int)b2)+(int)b1;
+            recordId = ((int)b2 << 7)+(int)b1;
         } else {
             recordId = (int)b1;
         }

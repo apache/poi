@@ -41,9 +41,6 @@ import org.junit.Test;
 
 public class TestSecureTempZip {
 
-    static {
-        System.setProperty("POI.testdata.path", "C:/users/tallison/idea projects/poi-trunk/test-data");
-    }
     /**
      * Test case for #59841 - this is an example on how to use encrypted temp files,
      * which are streamed into POI opposed to having everything in memory
