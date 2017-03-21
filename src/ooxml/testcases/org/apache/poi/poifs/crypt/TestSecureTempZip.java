@@ -20,6 +20,7 @@ package org.apache.poi.poifs.crypt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import javax.crypto.Cipher;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,6 +40,10 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
 public class TestSecureTempZip {
+
+    static {
+        System.setProperty("POI.testdata.path", "C:/users/tallison/idea projects/poi-trunk/test-data");
+    }
     /**
      * Test case for #59841 - this is an example on how to use encrypted temp files,
      * which are streamed into POI opposed to having everything in memory
@@ -82,11 +87,16 @@ public class TestSecureTempZip {
     }
 
     /**
-     * Test case for #59841 - this is an example on how to use encrypted temp files,
-     * which are streamed into POI opposed to having everything in memory
+     * Now try with xlsb.
      */
     @Test
     public void protectedXLSBZip() throws IOException, GeneralSecurityException, XmlException, OpenXML4JException {
+        //The test file requires that JCE unlimited be installed.
+        //If it isn't installed, skip this test.
+        int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
+        if (maxKeyLen <= 128) {
+            return;
+        }
         File tikaProt = XSSFTestDataSamples.getSampleFile("protected_passtika.xlsb");
         FileInputStream fis = new FileInputStream(tikaProt);
         POIFSFileSystem poifs = new POIFSFileSystem(fis);
