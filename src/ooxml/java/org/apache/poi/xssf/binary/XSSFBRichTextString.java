@@ -30,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  */
 @Internal
 class XSSFBRichTextString extends XSSFRichTextString {
+
     private final String string;
 
     XSSFBRichTextString(String string) {

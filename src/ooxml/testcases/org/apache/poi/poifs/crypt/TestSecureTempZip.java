@@ -37,6 +37,7 @@ import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
+import org.junit.Assume;
 import org.junit.Test;
 
 public class TestSecureTempZip {
@@ -91,9 +92,9 @@ public class TestSecureTempZip {
         //The test file requires that JCE unlimited be installed.
         //If it isn't installed, skip this test.
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-        if (maxKeyLen <= 128) {
-            return;
-        }
+        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256",
+                maxKeyLen == 2147483647);
+
         File tikaProt = XSSFTestDataSamples.getSampleFile("protected_passtika.xlsb");
         FileInputStream fis = new FileInputStream(tikaProt);
         POIFSFileSystem poifs = new POIFSFileSystem(fis);
