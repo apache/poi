@@ -48,11 +48,16 @@ public class XSSFBStylesTable extends XSSFBParser {
     }
 
     String getNumberFormatString(int idx) {
-        if (numberFormats.containsKey(styleIds.get((short)idx))) {
-            return numberFormats.get(styleIds.get((short)idx));
+        short numberFormatIdx = getNumberFormatIndex(idx);
+        if (numberFormats.containsKey(numberFormatIdx)) {
+            return numberFormats.get(numberFormatIdx);
         }
 
-        return BuiltinFormats.getBuiltinFormat(styleIds.get((short)idx));
+        return BuiltinFormats.getBuiltinFormat(numberFormatIdx);
+    }
+
+    short getNumberFormatIndex(int idx) {
+        return styleIds.get(idx);
     }
 
     @Override

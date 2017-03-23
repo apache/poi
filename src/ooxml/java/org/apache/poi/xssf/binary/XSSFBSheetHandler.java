@@ -192,7 +192,8 @@ public class XSSFBSheetHandler extends XSSFBParser {
         beforeCellValue(data);
         double val = rkNumber(data, XSSFBCellHeader.length);
         String formatString = styles.getNumberFormatString(cellBuffer.getStyleIdx());
-        String formattedVal = dataFormatter.formatRawCellContents(val, cellBuffer.getStyleIdx(), formatString);
+        short styleIndex = styles.getNumberFormatIndex(cellBuffer.getStyleIdx());
+        String formattedVal = dataFormatter.formatRawCellContents(val, styleIndex, formatString);
         handleCellValue(formattedVal);
     }
 
