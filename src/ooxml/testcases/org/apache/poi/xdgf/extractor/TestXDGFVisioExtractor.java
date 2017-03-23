@@ -65,6 +65,7 @@ public class TestXDGFVisioExtractor {
 
     //the point of this is to trigger the addition of
     //some common visio classes -- ConnectsType
+    @Test
     public void testVisioConnects() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream("60489.vsdx");
         XmlVisioDocument document = new XmlVisioDocument(is);
