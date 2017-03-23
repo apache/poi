@@ -74,11 +74,11 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
         switch(type) {
             case BrtRowHdr:
-                long rw = LittleEndian.getUInt(data, 0);
-                if (rw > 0x00100000L) {//could make sure this is larger than currentRow, according to spec?
+                int rw = XSSFBUtils.castToInt(LittleEndian.getUInt(data, 0));
+                if (rw > 0x00100000) {//could make sure this is larger than currentRow, according to spec?
                     throw new XSSFBParseException("Row number beyond allowable range: "+rw);
                 }
-                currentRow = (int)rw;
+                currentRow = rw;
                 checkMissedComments(currentRow);
                 startRow(currentRow);
                 break;
@@ -142,9 +142,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
         beforeCellValue(data);
         //xNum
         double val = LittleEndian.getDouble(data, XSSFBCellHeader.length);
-        String formatString = styles.getNumberFormatString(cellBuffer.getStyleIdx());
-        String formattedVal = dataFormatter.formatRawCellContents(val, cellBuffer.getStyleIdx(), formatString);
-        handleCellValue(formattedVal);
+        handleCellValue(formatVal(val, cellBuffer.getStyleIdx()));
     }
 
     private void handleCellSt(byte[] data) {
@@ -183,26 +181,25 @@ public class XSSFBSheetHandler extends XSSFBParser {
         beforeCellValue(data);
         //xNum
         double val = LittleEndian.getDouble(data, XSSFBCellHeader.length);
-        String formatString = styles.getNumberFormatString(cellBuffer.getStyleIdx());
-        String formattedVal = dataFormatter.formatRawCellContents(val, cellBuffer.getStyleIdx(), formatString);
-        handleCellValue(formattedVal);
+        handleCellValue(formatVal(val, cellBuffer.getStyleIdx()));
     }
 
     private void handleCellRk(byte[] data) {
         beforeCellValue(data);
         double val = rkNumber(data, XSSFBCellHeader.length);
-        String formatString = styles.getNumberFormatString(cellBuffer.getStyleIdx());
-        short styleIndex = styles.getNumberFormatIndex(cellBuffer.getStyleIdx());
-        String formattedVal = dataFormatter.formatRawCellContents(val, styleIndex, formatString);
-        handleCellValue(formattedVal);
+        handleCellValue(formatVal(val, cellBuffer.getStyleIdx()));
+    }
+
+    private String formatVal(double val, int styleIdx) {
+        String formatString = styles.getNumberFormatString(styleIdx);
+        short styleIndex = styles.getNumberFormatIndex(styleIdx);
+        return dataFormatter.formatRawCellContents(val, styleIndex, formatString);
     }
 
     private void handleBrtCellIsst(byte[] data) {
         beforeCellValue(data);
-        long idx = LittleEndian.getUInt(data, XSSFBCellHeader.length);
-        //check for out of range, buffer overflow
-
-        XSSFRichTextString rtss = new XSSFRichTextString(stringsTable.getEntryAt((int)idx));
+        int idx = XSSFBUtils.castToInt(LittleEndian.getUInt(data, XSSFBCellHeader.length));
+        XSSFRichTextString rtss = new XSSFRichTextString(stringsTable.getEntryAt(idx));
         handleCellValue(rtss.getString());
     }
 
