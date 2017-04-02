@@ -57,7 +57,7 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-Gradle', jdk: '1.7', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
         // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
-        addShell: 'touch --no-create build/*/build/test-results/test/TEST-*.xml'
+        addShell: 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml'
     ],
     [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
     ],
