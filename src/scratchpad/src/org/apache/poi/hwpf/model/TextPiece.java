@@ -60,14 +60,17 @@ public class TextPiece extends PropertyNode<TextPiece> {
 
         // Validate
         int textLength = ((CharSequence) _buf).length();
-        if (end - start != textLength) {
-            throw new IllegalStateException("Told we're for characters " + start + " -> " + end + ", but actually covers " + textLength + " characters!");
-        }
+        validateLengths(start, end, textLength, pd);
         if (end < start) {
             throw new IllegalStateException("Told we're of negative size! start=" + start + " end=" + end);
         }
     }
 
+    protected void validateLengths(int start, int end, int textLength, PieceDescriptor pd) {
+        if (end - start != textLength) {
+            throw new IllegalStateException("Told we're for characters " + start + " -> " + end + ", but actually covers " + textLength + " characters!");
+        }
+    }
     /**
      * Create the StringBuilder from the text and unicode flag
      */

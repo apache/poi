@@ -226,6 +226,26 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         assertContains(txt, "also maintain");//this is at a critical juncture
         assertContains(txt, "which are available for");//this too
 
+        /*
+            The bytes for the following test:
+            170 : 78 : x
+            171 : 0 :
+            172 : d : <r>
+            173 : 35 : 5
+            174 : 39 : 9
+            175 : 0 :
+            176 : 2d : -
+            177 : 0 :
+            178 : 35 : 5
+            179 : 0 :
+            180 : 35 : 5
+
+            Note that we are skipping over the value "5" at offset 173.
+            This is an apparently invalid sequence in MS's encoding scheme
+
+            When I open the document in MSWord, I also see "\r9-55"
+        */
+        assertContains(txt, "\n9-55 xxxxx block5");
         //TODO: figure out why these two aren't passing
 //        assertContains(txt, "\u2019\u0078 block2");//make sure smart quote is extracted correctly
 //        assertContains(txt, "We are able to");//not sure if we can get this easily?

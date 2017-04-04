@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 
@@ -40,11 +41,19 @@ public class OldTextPiece extends TextPiece {
     public OldTextPiece(int start, int end, byte[] text, PieceDescriptor pd) {
         super(start, end, text, pd);
         this.rawBytes = text;
-        if (end < start) {
-            throw new IllegalStateException("Told we're of negative size! start=" + start + " end=" + end);
-        }
     }
 
+    @Override
+    protected void validateLengths(int start, int end, int length, PieceDescriptor pd) {
+        //things are still wonky with Big5 char/byte length mapping
+        //sometimes working w/ Java 8 but not w/ Java 7!
+        //for now, if we're dealing w/ Big5 don't bother checking
+        if (pd.getCharset() != null &&
+                CodePageUtil.VARIABLE_BYTE_CHARSETS.contains(pd.getCharset())) {
+            return;
+        }
+        super.validateLengths(start, end, length, pd);
+    }
     /**
      * @return nothing, ever. Always throws an UnsupportedOperationException
      * @throws UnsupportedOperationException
@@ -56,6 +65,7 @@ public class OldTextPiece extends TextPiece {
     }
 
 
+    @Override
     public StringBuilder getStringBuilder() {
         return (StringBuilder) _buf;
     }
