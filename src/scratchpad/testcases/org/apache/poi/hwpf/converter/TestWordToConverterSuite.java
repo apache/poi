@@ -16,18 +16,19 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static org.junit.Assert.assertNotNull;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -36,8 +37,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static org.junit.Assert.assertNotNull;
-
 @RunWith(Parameterized.class)
 public class TestWordToConverterSuite
 {
@@ -45,7 +44,11 @@ public class TestWordToConverterSuite
      * YK: a quick hack to exclude failing documents from the suite.
      */
     private static List<String> failingFiles = Arrays
-            .asList( "ProblemExtracting.doc" );
+            .asList( "ProblemExtracting.doc",
+                    "Bug50955.doc" //basic extraction works,
+                                    // but these extractors modify the document,
+                                    // which is a no-go for this Word 6.0 file
+            );
 
     @Parameterized.Parameters(name="{index}: {0}")
     public static Iterable<Object[]> files() {

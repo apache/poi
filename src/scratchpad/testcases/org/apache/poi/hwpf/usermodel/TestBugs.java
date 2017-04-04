@@ -57,6 +57,7 @@ import junit.framework.TestCase;
  *  against HWPF
  */
 public class TestBugs{
+
     private static final POILogger logger = POILogFactory.getLogger(TestBugs.class);
 
     public static void assertEqualsIgnoreNewline(String expected, String actual )
@@ -536,13 +537,6 @@ public class TestBugs{
         hwpfDocument.getPicturesTable().getAllPictures();
     }
 
-    /**
-     * [FAILING] Bug 50955 - error while retrieving the text file
-     */
-    @Test(expected=IllegalStateException.class)
-    public void test50955() throws IOException {
-        getTextOldFile("Bug50955.doc");
-    }
 
     /**
      * [RESOLVED FIXED] Bug 51604 - replace text fails for doc (poi 3.8 beta

@@ -17,14 +17,19 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.poi.OldFileFormatException;
+import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.extractor.Word6Extractor;
+import org.apache.poi.hwpf.model.OldFontTable;
 import org.junit.Test;
 
 /**
@@ -98,7 +103,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         assertEquals(1, doc.getRange().getParagraph(5).numCharacterRuns());
         // Normal, superscript for 4th, normal
         assertEquals(3, doc.getRange().getParagraph(6).numCharacterRuns());
-        
+
         doc.close();
     }
 
@@ -143,4 +148,87 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
                 doc.getRange().getParagraph(1).text());
         doc.close();
     }
+
+    @Test
+    public void testDefaultCodePageEncoding() throws IOException {
+        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug60942.doc");
+        Word6Extractor ex = new Word6Extractor(doc);
+        String txt = ex.getText();
+        assertContains(txt, "BERTHOD");
+        assertContains(txt, "APPLICOLOR");
+        assertContains(txt, "les meilleurs");
+        assertContains(txt, "GUY LECOLE");
+    }
+
+
+    @Test
+    public void testCodePageBug50955() throws IOException {
+        //windows 1251
+        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug50955.doc");
+        Word6Extractor ex = new Word6Extractor(doc);
+
+        StringBuilder sb = new StringBuilder();
+        for (String p : ex.getParagraphText()) {
+            sb.append(p);
+        }
+        assertContains(sb.toString(), "\u043F\u0440\u0438\u0432\u0435\u0442");//Greetings!
+    }
+
+    @Test
+    public void testCodePageBug60936() throws IOException {
+        //windows 1250 -- this test file was generated with OpenOffice
+        //see https://bz.apache.org/ooo/show_bug.cgi?id=12445 for the inspiration
+
+
+        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug60936.doc");
+        Word6Extractor ex = new Word6Extractor(doc);
+        StringBuilder sb = new StringBuilder();
+        for (String p : ex.getParagraphText()) {
+            sb.append(p);
+        }
+        assertContains(sb.toString(), "4 sk\u00f3re a p\u0159ed 7 lety");//Greetings!
+    }
+
+    @Test
+    public void testOldFontTableEncoding() throws IOException {
+        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug51944.doc");
+        OldFontTable oldFontTable = doc.getOldFontTable();
+        assertEquals(5, oldFontTable.getFontNames().length);
+        assertEquals("\u7D30\u660E\u9AD4", oldFontTable.getFontNames()[0].getMainFontName());
+        assertEquals(HwmfFont.WmfCharset.CHINESEBIG5_CHARSET.getCharset(), Charset.forName("Big5"));
+        assertEquals("Times New Roman", oldFontTable.getFontNames()[1].getMainFontName());
+        doc.close();
+
+    }
+
+    @Test
+    public void testOldFontTableAltName() throws IOException {
+        HWPFOldDocument doc  = HWPFTestDataSamples.openOldSampleFile("Bug60942b.doc");
+        OldFontTable oldFontTable = doc.getOldFontTable();
+        assertEquals(5, oldFontTable.getFontNames().length);
+        assertEquals("Roboto", oldFontTable.getFontNames()[3].getMainFontName());
+        assertEquals("arial", oldFontTable.getFontNames()[3].getAltFontName());
+        assertEquals("Roboto", oldFontTable.getFontNames()[4].getMainFontName());
+        assertEquals("arial", oldFontTable.getFontNames()[4].getAltFontName());
+    }
+
+
+    @Test
+    public void test51944() throws IOException {
+        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug51944.doc");
+        Word6Extractor ex = new Word6Extractor(doc);
+        StringBuilder sb = new StringBuilder();
+        for (String p : ex.getParagraphText()) {
+            sb.append(p.replaceAll("[\r\n]+", "\n"));
+        }
+        String txt = sb.toString();
+        assertContains(txt, "Post and Fax");
+        assertContains(txt, "also maintain");//this is at a critical juncture
+        assertContains(txt, "which are available for");//this too
+
+        //TODO: figure out why these two aren't passing
+//        assertContains(txt, "\u2019\u0078 block2");//make sure smart quote is extracted correctly
+//        assertContains(txt, "We are able to");//not sure if we can get this easily?
+    }
+
 }

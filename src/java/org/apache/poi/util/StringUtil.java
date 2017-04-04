@@ -17,6 +17,8 @@
 
 package org.apache.poi.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,9 +29,14 @@ import java.util.Map;
  */
 @Internal
 public class StringUtil {
+
+    private static final POILogger logger = POILogFactory
+            .getLogger(StringUtil.class);
     protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
-    protected static final Charset UTF16LE = Charset.forName("UTF-16LE");
+    public static final Charset UTF16LE = Charset.forName("UTF-16LE");
     public static final Charset UTF8 = Charset.forName("UTF-8");
+    public static final Charset WIN_1252 = Charset.forName("cp1252");
+    public static final Charset BIG5 = Charset.forName("Big5");
 
     private static Map<Integer,Integer> msCodepointToUnicode;
 
@@ -573,7 +580,28 @@ public class StringUtil {
        9133, // 0xf0fe bracerightbt
        ' ', // 0xf0ff not defined
    };
-   
+
+    /**
+     * This tries to convert a LE byte array in Big5 to a String.
+     * We know MS zero-padded ascii, and we drop those.
+     * However, there may be areas for improvement in this.
+     *
+     * @param data
+     * @param offset
+     * @param lengthInBytes
+     * @return
+     */
+   public static String littleEndianBig5Stream(byte[] data, int offset, int lengthInBytes) {
+       ByteArrayOutputStream os = new ByteArrayOutputStream();
+       try {
+           IOUtils.copy(new LittleEndianBig5Stream(data, offset, lengthInBytes), os);
+       } catch (IOException e) {
+           logger.log(POILogger.WARN,
+                   "IOException while copying a byte array stream to a byte array stream?!");
+       }
+       return new String(os.toByteArray(), BIG5);
+   }
+
    // Could be replaced with org.apache.commons.lang3.StringUtils#join
    @Internal
    public static String join(Object[] array, String separator) {

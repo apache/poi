@@ -19,27 +19,43 @@ package org.apache.poi.hwpf;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
+import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwpf.model.ComplexFileTable;
+import org.apache.poi.hwpf.model.FontTable;
 import org.apache.poi.hwpf.model.OldCHPBinTable;
+import org.apache.poi.hwpf.model.OldComplexFileTable;
+import org.apache.poi.hwpf.model.OldFfn;
+import org.apache.poi.hwpf.model.OldFontTable;
 import org.apache.poi.hwpf.model.OldPAPBinTable;
 import org.apache.poi.hwpf.model.OldSectionTable;
+import org.apache.poi.hwpf.model.OldTextPieceTable;
 import org.apache.poi.hwpf.model.PieceDescriptor;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Provides very simple support for old (Word 6 / Word 95)
  *  files.
  */
 public class HWPFOldDocument extends HWPFDocumentCore {
-    private TextPieceTable tpt;
+
+    private final static Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
+
+    private OldTextPieceTable tpt;
     
     private StringBuilder _text;
+
+    private final OldFontTable fontTable;
+    private final Charset guessedCharset;
     
     public HWPFOldDocument(POIFSFileSystem fs) throws IOException {
         this(fs.getRoot());
@@ -56,45 +72,52 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         int chpTableSize   = LittleEndian.getInt(_mainStream, 0xbc);
         int papTableOffset = LittleEndian.getInt(_mainStream, 0xc0);
         int papTableSize   = LittleEndian.getInt(_mainStream, 0xc4);
-        //int shfTableOffset = LittleEndian.getInt(_mainStream, 0x60);
-        //int shfTableSize   = LittleEndian.getInt(_mainStream, 0x64);
+        int fontTableOffset = LittleEndian.getInt(_mainStream, 0xd0);
+        int fontTableSize = LittleEndian.getInt(_mainStream, 0xd4);
+
+        fontTable = new OldFontTable(_mainStream, fontTableOffset, fontTableSize);
+        //TODO: figure out how to map runs/text pieces to fonts
+        //for now, if there's a non standard codepage in one of the fonts
+        //assume that the doc is in that codepage.
+        guessedCharset = guessCodePage(fontTable);
+
         int complexTableOffset = LittleEndian.getInt(_mainStream, 0x160);
         
         // We need to get hold of the text that makes up the
         //  document, which might be regular or fast-saved
         ComplexFileTable cft = null;
-        StringBuffer text = new StringBuffer();
         if(_fib.getFibBase().isFComplex()) {
-            cft = new ComplexFileTable(
+            cft = new OldComplexFileTable(
                     _mainStream, _mainStream,
-                    complexTableOffset, _fib.getFibBase().getFcMin()
+                    complexTableOffset, _fib.getFibBase().getFcMin(), guessedCharset
             );
-            tpt = cft.getTextPieceTable();
+            tpt = (OldTextPieceTable)cft.getTextPieceTable();
             
-            for(TextPiece tp : tpt.getTextPieces()) {
-                text.append( tp.getStringBuilder() );
-            }
         } else {
             // TODO Discover if these older documents can ever hold Unicode Strings?
             //  (We think not, because they seem to lack a Piece table)
             // TODO Build the Piece Descriptor properly
             //  (We have to fake it, as they don't seem to have a proper Piece table)
-            PieceDescriptor pd = new PieceDescriptor(new byte[] {0,0, 0,0,0,127, 0,0}, 0);
+            PieceDescriptor pd = new PieceDescriptor(new byte[] {0,0, 0,0,0,127, 0,0}, 0, guessedCharset);
             pd.setFilePosition(_fib.getFibBase().getFcMin());
 
             // Generate a single Text Piece Table, with a single Text Piece
             //  which covers all the (8 bit only) text in the file
-            tpt = new TextPieceTable();
+            tpt = new OldTextPieceTable();
             byte[] textData = new byte[_fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin()];
             System.arraycopy(_mainStream, _fib.getFibBase().getFcMin(), textData, 0, textData.length);
+
+            int numChars = textData.length;
+            if (CodePageUtil.VARIABLE_BYTE_CHARSETS.contains(guessedCharset)) {
+                numChars /= 2;
+            }
+
             TextPiece tp = new TextPiece(
-                    0, textData.length, textData, pd
+                    0, numChars, textData, pd
             );
             tpt.add(tp);
             
-            text.append(tp.getStringBuilder());
         }
-        
         _text = tpt.getText();
 
         // Now we can fetch the character and paragraph properties
@@ -133,12 +156,54 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         }
     }
 
+
+    /**
+     * Take the first codepage that is not default, ansi or symbol.
+     * Ideally, we'd want to track fonts with runs, but we don't yet
+     * know how to do that.
+     *
+     * Consider throwing an exception if > 1 unique codepage that is not default, symbol or ansi
+     * appears here.
+     *
+     * @param fontTable
+     * @return
+     */
+    private Charset guessCodePage(OldFontTable fontTable) {
+
+        for (OldFfn oldFfn : fontTable.getFontNames()) {
+            HwmfFont.WmfCharset wmfCharset = HwmfFont.WmfCharset.valueOf(oldFfn.getChs()& 0xff);
+            if (wmfCharset != null &&
+                    wmfCharset != HwmfFont.WmfCharset.ANSI_CHARSET &&
+                    wmfCharset != HwmfFont.WmfCharset.DEFAULT_CHARSET &&
+                    wmfCharset != HwmfFont.WmfCharset.SYMBOL_CHARSET ) {
+                return wmfCharset.getCharset();
+            }
+        }
+        return DEFAULT_CHARSET;
+    }
+
     public Range getOverallRange()
     {
         // Life is easy when we have no footers, headers or unicode!
         return new Range( 0, _fib.getFibBase().getFcMac() - _fib.getFibBase().getFcMin(), this );
     }
 
+    /**
+     * Use {@link #getOldFontTable()} instead!!!
+     * This always throws an IllegalArgumentException.
+     *
+     * @return nothing
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public FontTable getFontTable() {
+        throw new UnsupportedOperationException("Use getOldFontTable instead.");
+    }
+
+    public OldFontTable getOldFontTable() {
+        return fontTable;
+    }
     public Range getRange()
     {
         return getOverallRange();
@@ -167,4 +232,19 @@ public class HWPFOldDocument extends HWPFDocumentCore {
     public void write(OutputStream out) throws IOException {
         throw new IllegalStateException("Writing is not available for the older file formats");
     }
+
+    /**
+     * As a rough heuristic (total hack), read through the font table
+     * and take the first non-default, non-ansi, non-symbol
+     * font's charset and return that.
+     *
+     * Once we figure out how to link a font to a text piece, we should
+     * use the font information per text piece.
+     *
+     * @return charset
+     */
+    public Charset getGuessedCharset() {
+        return guessedCharset;
+    }
+
 }

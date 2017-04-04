@@ -108,7 +108,7 @@ public class HwmfFont {
             return charset;
         }
 
-        static WmfCharset valueOf(int flag) {
+        public static WmfCharset valueOf(int flag) {
             for (WmfCharset cs : values()) {
                 if (cs.flag == flag) return cs;
             }

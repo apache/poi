@@ -44,7 +44,7 @@ public final class OldCHPBinTable extends CHPBinTable
    * @param fcMin
    */
   public OldCHPBinTable(byte[] documentStream, int offset,
-                     int size, int fcMin, TextPieceTable tpt)
+                     int size, int fcMin, OldTextPieceTable tpt)
   {
     PlexOfCps binTable = new PlexOfCps(documentStream, offset, size, 2);
 

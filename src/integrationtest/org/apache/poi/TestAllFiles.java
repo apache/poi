@@ -218,6 +218,9 @@ public class TestAllFiles {
         "document/Word6_sections2.doc",
         "document/Word95.doc",
         "document/word95err.doc",
+        "document/Bug60936.doc",
+        "document/Bug60942.doc",
+        "document/Bug60942b.doc",
         "hpsf/TestMickey.doc",
         "document/52117.doc"
     );
