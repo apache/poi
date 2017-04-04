@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.FFData;
 import org.apache.poi.hwpf.model.Ffn;
@@ -438,6 +439,10 @@ public final class CharacterRun extends Range
 
   public String getFontName()
   {
+    if (_doc instanceof HWPFOldDocument) {
+      return ((HWPFOldDocument) _doc).getOldFontTable().getMainFont(_props.getFtcAscii());
+    }
+
     if (_doc.getFontTable() == null)
       // old word format
       return null;

@@ -17,10 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.nio.charset.Charset;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 @Internal
 public final class PieceDescriptor
@@ -32,28 +35,50 @@ public final class PieceDescriptor
    private static BitField fCopied = BitFieldFactory.getInstance(0x04);
   int fc;
   PropertyModifier prm;
-  boolean unicode;
+  boolean unicode = false;
+  private final Charset charset;
 
 
-  public PieceDescriptor(byte[] buf, int offset)
-  {
-    descriptor = LittleEndian.getShort(buf, offset);
-    offset += LittleEndian.SHORT_SIZE;
-    fc = LittleEndian.getInt(buf, offset);
-    offset += LittleEndian.INT_SIZE;
-    prm = new PropertyModifier( LittleEndian.getShort(buf, offset));
-
-    // see if this piece uses unicode.
-    if ((fc & 0x40000000) == 0)
-    {
-        unicode = true;
+    public PieceDescriptor(byte[] buf, int offset) {
+        this(buf, offset, null);
     }
-    else
-    {
-        unicode = false;
-        fc &= ~(0x40000000);//gives me FC in doc stream
-        fc /= 2;
-    }
+
+    /**
+     *
+     * This initializer should only be used for HWPFOldDocuments.
+     *
+     * @param buf
+     * @param offset
+     * @param charset which charset to use if this is not unicode
+     */
+  public PieceDescriptor(byte[] buf, int offset, Charset charset) {
+      descriptor = LittleEndian.getShort(buf, offset);
+      offset += LittleEndian.SHORT_SIZE;
+      fc = LittleEndian.getInt(buf, offset);
+      offset += LittleEndian.INT_SIZE;
+      prm = new PropertyModifier(LittleEndian.getShort(buf, offset));
+      if (charset == null) {
+        // see if this piece uses unicode.
+        //From the documentation: If the second most significant bit
+          //is clear, then this indicates the actual file offset of the Unicode character (two bytes). If the
+          //second most significant bit is set, then the actual address of the codepage-1252
+          //compressed version of the Unicode character (one byte), is actually at the offset indicated
+          //by clearing this bit and dividing by two.
+        if ((fc & 0x40000000) == 0) {
+          unicode = true;
+          this.charset = null;
+        } else {
+          unicode = false;
+          fc &= ~(0x40000000);//gives me FC in doc stream
+          fc /= 2;
+          this.charset = StringUtil.WIN_1252;
+        }
+      } else {
+          if (charset == StringUtil.UTF16LE) {
+              unicode = true;
+          }
+          this.charset = charset;
+      }
 
   }
 
@@ -70,6 +95,15 @@ public final class PieceDescriptor
   public boolean isUnicode()
   {
     return unicode;
+  }
+
+    /**
+     *
+     * @return charset to use if this is not a Unicode PieceDescriptor
+     * this can be <code>null</code>
+     */
+  public Charset getCharset() {
+    return charset;
   }
 
     public PropertyModifier getPrm()

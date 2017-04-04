@@ -18,6 +18,9 @@
 package org.apache.poi.util;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Utilities for working with Microsoft CodePages.
@@ -27,6 +30,13 @@ import java.io.UnsupportedEncodingException;
  */
 public class CodePageUtil
 {
+
+    public static final Set<Charset> VARIABLE_BYTE_CHARSETS = new HashSet<Charset>();
+    static {
+        //others?
+        VARIABLE_BYTE_CHARSETS.add(StringUtil.BIG5);
+    }
+
     /** <p>Codepage 037, a special case</p> */
     public static final int CP_037 = 37;
 

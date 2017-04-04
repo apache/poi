@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,9 +27,10 @@ import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 @Internal
-public final class ComplexFileTable {
+public class ComplexFileTable {
     private static final byte GRPPRL_TYPE = 1;
     private static final byte TEXT_PIECE_TABLE_TYPE = 2;
 
@@ -40,7 +42,8 @@ public final class ComplexFileTable {
         _tpt = new TextPieceTable();
     }
 
-    public ComplexFileTable(byte[] documentStream, byte[] tableStream, int offset, int fcMin) throws IOException {
+    protected ComplexFileTable(byte[] documentStream, byte[] tableStream, int offset, int fcMin,
+                               Charset charset) throws IOException {
         //skips through the prms before we reach the piece table. These contain data
         //for actual fast saved files
         List<SprmBuffer> sprmBuffers = new LinkedList<SprmBuffer>();
@@ -61,7 +64,12 @@ public final class ComplexFileTable {
         }
         int pieceTableSize = LittleEndian.getInt(tableStream, ++offset);
         offset += LittleEndian.INT_SIZE;
-        _tpt = new TextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin);
+        _tpt = newTextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin, charset);
+
+    }
+
+    public ComplexFileTable(byte[] documentStream, byte[] tableStream, int offset, int fcMin) throws IOException {
+        this(documentStream, tableStream, offset, fcMin, StringUtil.WIN_1252);
     }
 
     public TextPieceTable getTextPieceTable() {
@@ -91,5 +99,12 @@ public final class ComplexFileTable {
         tableStream.write(numHolder);
         tableStream.write(table);
     }
+
+    protected TextPieceTable newTextPieceTable(byte[] documentStream,
+                                               byte[] tableStream, int offset, int pieceTableSize, int fcMin,
+                                               Charset charset) {
+        return new TextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin);
+    }
+
 
 }

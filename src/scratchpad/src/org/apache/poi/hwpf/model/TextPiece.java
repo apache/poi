@@ -21,6 +21,7 @@ package org.apache.poi.hwpf.model;
 import java.nio.charset.Charset;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Lightweight representation of a text piece.
@@ -40,7 +41,6 @@ public class TextPiece extends PropertyNode<TextPiece> {
      * @param start Beginning offset in main document stream, in characters.
      * @param end   Ending offset in main document stream, in characters.
      * @param text  The raw bytes of our text
-     * @deprecated Use {@link #TextPiece(int, int, byte[], PieceDescriptor)}
      * instead
      */
     public TextPiece(int start, int end, byte[] text, PieceDescriptor pd,
@@ -72,8 +72,13 @@ public class TextPiece extends PropertyNode<TextPiece> {
      * Create the StringBuilder from the text and unicode flag
      */
     private static StringBuilder buildInitSB(byte[] text, PieceDescriptor pd) {
-        String str = new String(text, Charset.forName(pd.isUnicode() ? "UTF-16LE" : "Cp1252"));
+        byte[] textBuffer = text;
+        if (StringUtil.BIG5.equals(pd.getCharset())) {
+            String txt = new StringBuilder(StringUtil.littleEndianBig5Stream(text, 0, text.length)).toString();
+            return new StringBuilder(txt);
+        }
 
+        String str = new String(textBuffer, 0, textBuffer.length, (pd.isUnicode()) ? StringUtil.UTF16LE : pd.getCharset());
         return new StringBuilder(str);
     }
 
@@ -207,4 +212,5 @@ public class TextPiece extends PropertyNode<TextPiece> {
         return "TextPiece from " + getStart() + " to " + getEnd() + " ("
                 + getPieceDescriptor() + ")";
     }
+
 }

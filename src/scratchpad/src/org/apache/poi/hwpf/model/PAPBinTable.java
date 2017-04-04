@@ -260,7 +260,7 @@ public class PAPBinTable
             SprmBuffer sprmBuffer = null;
             for ( PAPX papx : papxs )
             {
-                if ( papx.getGrpprl() == null || papx.getGrpprl().length == 0 )
+                if ( papx.getGrpprl() == null || papx.getGrpprl().length <= 2 )
                     continue;
 
                 if ( sprmBuffer == null ) {

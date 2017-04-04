@@ -101,7 +101,7 @@ public class TextPieceTable implements CharIndexTranslator {
             System.arraycopy(documentStream, start, buf, 0, textSizeBytes);
 
             // And now build the piece
-            final TextPiece newTextPiece = new TextPiece(nodeStartChars, nodeEndChars, buf,
+            final TextPiece newTextPiece = newTextPiece(nodeStartChars, nodeEndChars, buf,
                     pieces[x]);
 
             _textPieces.add(newTextPiece);
@@ -112,6 +112,10 @@ public class TextPieceTable implements CharIndexTranslator {
         Collections.sort(_textPieces);
         _textPiecesFCOrder = new ArrayList<TextPiece>(_textPieces);
         Collections.sort(_textPiecesFCOrder, new FCComparator());
+    }
+
+    protected TextPiece newTextPiece(int nodeStartChars, int nodeEndChars, byte[] buf, PieceDescriptor pd) {
+        return new TextPiece(nodeStartChars, nodeEndChars, buf, pd);
     }
 
     public void add(TextPiece piece) {
@@ -249,7 +253,7 @@ public class TextPieceTable implements CharIndexTranslator {
             if (rangeStartBytes > rangeEndBytes)
                 continue;
 
-            final int encodingMultiplier = textPiece.isUnicode() ? 2 : 1;
+            final int encodingMultiplier = getEncodingMultiplier(textPiece);
 
             final int rangeStartCp = textPiece.getStart()
                     + (rangeStartBytes - tpStart) / encodingMultiplier;
@@ -260,6 +264,10 @@ public class TextPieceTable implements CharIndexTranslator {
         }
 
         return result.toArray(new int[result.size()][]);
+    }
+
+    protected int getEncodingMultiplier(TextPiece textPiece) {
+        return textPiece.isUnicode() ? 2 : 1;
     }
 
     public int getCpMin() {
@@ -439,7 +447,7 @@ public class TextPieceTable implements CharIndexTranslator {
         return textPlex.toByteArray();
     }
 
-    private static class FCComparator implements Comparator<TextPiece>, Serializable {
+    protected static class FCComparator implements Comparator<TextPiece>, Serializable {
         public int compare(TextPiece textPiece, TextPiece textPiece1) {
             if (textPiece.getPieceDescriptor().fc > textPiece1
                     .getPieceDescriptor().fc) {
