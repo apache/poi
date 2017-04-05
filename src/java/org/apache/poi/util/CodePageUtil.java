@@ -31,10 +31,12 @@ import java.util.Set;
 public class CodePageUtil
 {
 
-    public static final Set<Charset> VARIABLE_BYTE_CHARSETS = new HashSet<Charset>();
+    public static final Set<Charset> DOUBLE_BYTE_CHARSETS
+            = new HashSet<Charset>();
+
     static {
+        DOUBLE_BYTE_CHARSETS.add(StringUtil.BIG5);
         //others?
-        VARIABLE_BYTE_CHARSETS.add(StringUtil.BIG5);
     }
 
     /** <p>Codepage 037, a special case</p> */
@@ -449,5 +451,27 @@ public class CodePageUtil
             default:
                 return "cp" + codepage;
         }
+    }
+
+    /**
+     * This tries to convert a LE byte array in cp950
+     * (Microsoft's dialect of Big5) to a String.
+     * We know MS zero-padded ascii, and we drop those.
+     * There may be areas for improvement in this.
+     *
+     * @param data
+     * @param offset
+     * @param lengthInBytes
+     * @return
+     */
+    public static String cp950ToString(byte[] data, int offset, int lengthInBytes) {
+        StringBuilder sb = new StringBuilder();
+        LittleEndianCP950Reader reader = new LittleEndianCP950Reader(data, offset, lengthInBytes);
+        int c = reader.read();
+        while (c != -1) {
+            sb.append((char)c);
+            c = reader.read();
+        }
+        return sb.toString();
     }
 }

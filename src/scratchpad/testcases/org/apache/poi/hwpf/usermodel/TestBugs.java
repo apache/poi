@@ -49,7 +49,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -729,7 +728,6 @@ public class TestBugs{
      * Bug 51944 - PAPFormattedDiskPage.getPAPX - IndexOutOfBounds
      */
     @Test
-    @Ignore("Test now passes in Java 1.7 and 1.8, but not 1.6")
     public void testBug51944() throws Exception
     {
         HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug51944.doc");
