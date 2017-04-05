@@ -456,7 +456,7 @@ public class CodePageUtil
      * @param data
      * @param offset
      * @param lengthInBytes
-     * @return
+     * @return Decoded String
      */
     public static String cp950ToString(byte[] data, int offset, int lengthInBytes) {
         StringBuilder sb = new StringBuilder();

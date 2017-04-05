@@ -166,7 +166,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
      * appears here.
      *
      * @param fontTable
-     * @return
+     * @return The detected Charset from the old font table
      */
     private Charset guessCodePage(OldFontTable fontTable) {
 
