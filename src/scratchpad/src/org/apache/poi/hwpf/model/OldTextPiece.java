@@ -102,14 +102,6 @@ public class OldTextPiece extends TextPiece {
         return 42; // any arbitrary constant will do
     }
 
-
-    /**
-     * Returns the character position we start at.
-     */
-    public int getCP() {
-        return getStart();
-    }
-
     public String toString() {
         return "OldTextPiece from " + getStart() + " to " + getEnd() + " ("
                 + getPieceDescriptor() + ")";

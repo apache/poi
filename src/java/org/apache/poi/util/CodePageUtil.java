@@ -19,7 +19,7 @@ package org.apache.poi.util;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -31,13 +31,7 @@ import java.util.Set;
 public class CodePageUtil
 {
 
-    public static final Set<Charset> DOUBLE_BYTE_CHARSETS
-            = new HashSet<Charset>();
-
-    static {
-        DOUBLE_BYTE_CHARSETS.add(StringUtil.BIG5);
-        //others?
-    }
+    public static final Set<Charset> DOUBLE_BYTE_CHARSETS = Collections.singleton(StringUtil.BIG5);
 
     /** <p>Codepage 037, a special case</p> */
     public static final int CP_037 = 37;
