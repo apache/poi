@@ -108,7 +108,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             System.arraycopy(_mainStream, _fib.getFibBase().getFcMin(), textData, 0, textData.length);
 
             int numChars = textData.length;
-            if (CodePageUtil.VARIABLE_BYTE_CHARSETS.contains(guessedCharset)) {
+            if (CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(guessedCharset)) {
                 numChars /= 2;
             }
 

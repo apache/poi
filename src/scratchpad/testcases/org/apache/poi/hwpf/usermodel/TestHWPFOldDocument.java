@@ -247,8 +247,8 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         */
         assertContains(txt, "\n9-55 xxxxx block5");
         //TODO: figure out why these two aren't passing
-//        assertContains(txt, "\u2019\u0078 block2");//make sure smart quote is extracted correctly
-//        assertContains(txt, "We are able to");//not sure if we can get this easily?
+        //assertContains(txt, "\u2019\u0078 block2");//make sure smart quote is extracted correctly
+        //assertContains(txt, "We are able to");//not sure if we can get this easily?
     }
 
 }

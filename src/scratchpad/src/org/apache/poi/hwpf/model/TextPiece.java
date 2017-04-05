@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 
 import java.nio.charset.Charset;
 
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
 
@@ -60,25 +61,21 @@ public class TextPiece extends PropertyNode<TextPiece> {
 
         // Validate
         int textLength = ((CharSequence) _buf).length();
-        validateLengths(start, end, textLength, pd);
+        if (end - start != textLength) {
+            throw new IllegalStateException("Told we're for characters " + start + " -> " + end + ", but actually covers " + textLength + " characters!");
+        }
         if (end < start) {
             throw new IllegalStateException("Told we're of negative size! start=" + start + " end=" + end);
         }
     }
 
-    protected void validateLengths(int start, int end, int textLength, PieceDescriptor pd) {
-        if (end - start != textLength) {
-            throw new IllegalStateException("Told we're for characters " + start + " -> " + end + ", but actually covers " + textLength + " characters!");
-        }
-    }
     /**
      * Create the StringBuilder from the text and unicode flag
      */
     private static StringBuilder buildInitSB(byte[] text, PieceDescriptor pd) {
         byte[] textBuffer = text;
         if (StringUtil.BIG5.equals(pd.getCharset())) {
-            String txt = new StringBuilder(StringUtil.littleEndianBig5Stream(text, 0, text.length)).toString();
-            return new StringBuilder(txt);
+            return new StringBuilder(CodePageUtil.cp950ToString(text, 0, text.length));
         }
 
         String str = new String(textBuffer, 0, textBuffer.length, (pd.isUnicode()) ? StringUtil.UTF16LE : pd.getCharset());

@@ -76,7 +76,7 @@ public class OldTextPieceTable extends TextPieceTable {
             boolean unicode = pieces[x].isUnicode();
             int multiple = 1;
             if (unicode ||
-                    (charset != null && CodePageUtil.VARIABLE_BYTE_CHARSETS.contains(charset))) {
+                    (charset != null && CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(charset))) {
                 multiple = 2;
             }
 
@@ -111,7 +111,7 @@ public class OldTextPieceTable extends TextPieceTable {
     @Override
     protected int getEncodingMultiplier(TextPiece textPiece) {
         Charset charset = textPiece.getPieceDescriptor().getCharset();
-        if (charset != null && CodePageUtil.VARIABLE_BYTE_CHARSETS.contains(charset)) {
+        if (charset != null && CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(charset)) {
             return 2;
         }
         return 1;
