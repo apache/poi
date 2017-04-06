@@ -129,6 +129,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764-2.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/poc-xmlbomb.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/poc-xmlbomb-empty.xlsx");
         // strict OOXML
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/57914.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
@@ -136,7 +137,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample.strict.xlsx");
         // TODO: good to ignore?
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample-beta.xlsx");
-        
+
         // corrupt/invalid
         EXPECTED_ADDITIONAL_FAILURES.add("openxml4j/invalid.xlsx");
     }
