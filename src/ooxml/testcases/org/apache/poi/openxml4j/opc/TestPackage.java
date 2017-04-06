@@ -17,21 +17,29 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.apache.poi.*;
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.openxml4j.exceptions.*;
+import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.apache.poi.openxml4j.opc.internal.FileHelper;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.*;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.xmlbeans.XmlException;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,35 +52,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.UnsupportedFileFormatException;
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.FileHelper;
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.DocumentHelper;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.TempFile;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import static org.junit.Assert.*;
 
 public final class TestPackage {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
@@ -103,10 +83,6 @@ public final class TestPackage {
 	/**
 	 * Test that when we create a new Package, we give it
 	 *  the correct default content types
-	 * @throws IllegalAccessException 
-	 * @throws NoSuchFieldException 
-	 * @throws IllegalArgumentException 
-	 * @throws SecurityException 
 	 */
     @Test
 	public void createGetsContentTypes()
@@ -195,7 +171,6 @@ public final class TestPackage {
 	 * Tests that we can create a new package, add a core
 	 *  document and another part, save and re-load and
 	 *  have everything setup as expected
-	 * @throws SAXException 
 	 */
     @Test
 	public void createPackageWithCoreDocument() throws IOException, InvalidFormatException, URISyntaxException, SAXException {
@@ -410,7 +385,6 @@ public final class TestPackage {
 
     /**
      * TODO: fix and enable
-     * @throws URISyntaxException 
      */
     @Test
     @Ignore
@@ -835,10 +809,39 @@ public final class TestPackage {
         wb.close();
         zipFile.close();
     }
+
+    @Test
+	public void zipBombSampleFiles() throws IOException, OpenXML4JException, XmlException {
+    	openZipBombFile("poc-shared-strings.xlsx");
+    	openZipBombFile("poc-xmlbomb.xlsx");
+    	openZipBombFile("poc-xmlbomb-empty.xlsx");
+	}
+
+	private void openZipBombFile(String file) throws IOException, OpenXML4JException, XmlException {
+    	try {
+			Workbook wb = XSSFTestDataSamples.openSampleWorkbook(file);
+			wb.close();
+
+			POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"));
+			try  {
+				assertNotNull(extractor);
+				extractor.getText();
+			} finally {
+				extractor.close();
+			}
+
+			fail("Should catch an exception because of a ZipBomb");
+		} catch (IllegalStateException e) {
+    		if(!e.getMessage().contains("The text would exceed the max allowed overall size of extracted text.")) {
+				throw e;
+			}
+		} catch (POIXMLException e) {
+    		checkForZipBombException(e);
+		}
+	}
     
     @Test
-    public void zipBombCheckSizes()
-    throws IOException, EncryptedDocumentException, InvalidFormatException {
+    public void zipBombCheckSizes() throws IOException, EncryptedDocumentException, InvalidFormatException {
         File file = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
 
         try {
@@ -897,13 +900,15 @@ public final class TestPackage {
         if(e instanceof InvocationTargetException) {
             InvocationTargetException t = (InvocationTargetException)e;
             IOException t2 = (IOException)t.getTargetException();
-            if(t2.getMessage().startsWith("Zip bomb detected!")) {
+            if(t2.getMessage().startsWith("Zip bomb detected!") ||
+					t2.getMessage().startsWith("The parser has encountered more than \"4,096\" entity expansions in this document;")) {
                 return;
             }
         }
         
         String msg = e.getMessage();
-        if(msg != null && msg.startsWith("Zip bomb detected!")) {
+        if(msg != null && (msg.startsWith("Zip bomb detected!") ||
+				msg.startsWith("The parser has encountered more than \"4,096\" entity expansions in this document;"))) {
             return;
         }
         

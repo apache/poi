@@ -282,6 +282,7 @@ public class TestAllFiles {
         "poifs/unknown_properties.msg", // POIFS properties corrupted
         "poifs/only-zero-byte-streams.ole2", // No actual contents
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
+        "spreadsheet/poc-xmlbomb-empty.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
         "spreadsheet/60255_extra_drawingparts.xlsx", // Non-drawing drawing
         
