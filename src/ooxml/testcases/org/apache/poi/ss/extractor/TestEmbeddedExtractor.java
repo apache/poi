@@ -18,6 +18,7 @@
 package org.apache.poi.ss.extractor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,8 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -111,5 +114,21 @@ public class TestEmbeddedExtractor {
             // doesn't happen
             throw new RuntimeException(e);
         }
+    }
+
+
+    @Test
+    public void testNPE() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("angelo.edu_content_files_19555-nsse-2011-multiyear-benchmark.xls");
+        EmbeddedExtractor ee = new EmbeddedExtractor();
+
+        for (Sheet s : wb) {
+            for (EmbeddedData ed : ee.extractAll(s)) {
+                assertNotNull(ed.getFilename());
+                assertNotNull(ed.getEmbeddedData());
+                assertNotNull(ed.getShape());
+            }
+        }
+
     }
 }

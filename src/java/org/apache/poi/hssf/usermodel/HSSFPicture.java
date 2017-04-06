@@ -204,7 +204,17 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return picture data for this shape
      */
     public HSSFPictureData getPictureData(){
-        InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
+        HSSFPatriarch patriarch = getPatriarch();
+        HSSFShape parent = getParent();
+        while(patriarch == null && parent != null) {
+            patriarch = parent.getPatriarch();
+            parent = parent.getParent();
+        }
+        if(patriarch == null) {
+            throw new IllegalStateException("Could not find a patriarch for a HSSPicture");
+        }
+
+        InternalWorkbook iwb = patriarch.getSheet().getWorkbook().getWorkbook();
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
     	EscherBlipRecord blipRecord = bse.getBlipRecord();
     	return new HSSFPictureData(blipRecord);
