@@ -897,18 +897,15 @@ public final class TestPackage {
     }
 
     private void checkForZipBombException(Throwable e) {
+    	// unwrap InvocationTargetException as they usually contain the nested exception in the "target" member
         if(e instanceof InvocationTargetException) {
-            InvocationTargetException t = (InvocationTargetException)e;
-            IOException t2 = (IOException)t.getTargetException();
-            if(t2.getMessage().startsWith("Zip bomb detected!") ||
-					t2.getMessage().startsWith("The parser has encountered more than \"4,096\" entity expansions in this document;")) {
-                return;
-            }
+			e = ((InvocationTargetException)e).getTargetException();
         }
         
         String msg = e.getMessage();
         if(msg != null && (msg.startsWith("Zip bomb detected!") ||
-				msg.startsWith("The parser has encountered more than \"4,096\" entity expansions in this document;"))) {
+				msg.contains("The parser has encountered more than \"4,096\" entity expansions in this document;") ||
+				msg.contains("The parser has encountered more than \"4096\" entity expansions in this document;"))) {
             return;
         }
         
