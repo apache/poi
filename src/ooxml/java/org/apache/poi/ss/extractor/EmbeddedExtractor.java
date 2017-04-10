@@ -218,7 +218,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         @Override
         public boolean canExtract(Picture source) {
             PictureData pd = source.getPictureData();
-            return (pd.getPictureType() == Workbook.PICTURE_TYPE_EMF);
+            return (pd != null && pd.getPictureType() == Workbook.PICTURE_TYPE_EMF);
         }
 
         /**
@@ -232,7 +232,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             // check for emf+ embedded pdf (poor mans style :( )
             // Mac Excel 2011 embeds pdf files with this method.
             PictureData pd = source.getPictureData();
-            if (pd.getPictureType() != Workbook.PICTURE_TYPE_EMF) {
+            if (pd != null && pd.getPictureType() != Workbook.PICTURE_TYPE_EMF) {
                 return null;
             }
 
@@ -384,7 +384,9 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         int[] failure = computeFailure(pattern);
 
         int j = 0;
-        if (data.length == 0) return -1;
+        if (data.length == 0) {
+            return -1;
+        }
 
         for (int i = offset; i < data.length; i++) {
             while (j > 0 && pattern[j] != data[i]) {
