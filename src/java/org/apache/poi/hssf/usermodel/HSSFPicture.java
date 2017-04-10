@@ -103,6 +103,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * If the default font is changed the resized image can be streched vertically or horizontally.
      * </p>
      */
+    @Override
     public void resize(){
         resize(Double.MAX_VALUE);
     }
@@ -112,6 +113,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      *
      * @see #resize(double, double)
      */
+    @Override
     public void resize(double scale) {
         resize(scale,scale);
     }
@@ -133,6 +135,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @param scaleX the amount by which the image width is multiplied relative to the original width.
      * @param scaleY the amount by which the image height is multiplied relative to the original height.
      */
+    @Override
     public void resize(double scaleX, double scaleY) {
         HSSFClientAnchor anchor = getClientAnchor();
         anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
@@ -157,6 +160,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.0.2
      */
+    @Override
     public HSSFClientAnchor getPreferredSize(){
         return getPreferredSize(1.0);
     }
@@ -180,6 +184,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.11
      */
+    @Override
     public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
         ImageUtils.setPreferredSize(this, scaleX, scaleY);
         return getClientAnchor();
@@ -190,6 +195,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      *
      * @return image dimension in pixels
      */
+    @Override
     public Dimension getImageDimension(){
         InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
@@ -201,9 +207,15 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     /**
      * Return picture data for this shape
      *
-     * @return picture data for this shape
+     * @return picture data for this shape or {@code null} if picture wasn't embedded, i.e. external linked
      */
+    @Override
     public HSSFPictureData getPictureData(){
+        int picIdx = getPictureIndex();
+        if (picIdx == -1) {
+            return null;
+        }
+        
         HSSFPatriarch patriarch = getPatriarch();
         HSSFShape parent = getParent();
         while(patriarch == null && parent != null) {
@@ -215,7 +227,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
         }
 
         InternalWorkbook iwb = patriarch.getSheet().getWorkbook().getWorkbook();
-        EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
+        EscherBSERecord bse = iwb.getBSERecord(picIdx);
     	EscherBlipRecord blipRecord = bse.getBlipRecord();
     	return new HSSFPictureData(blipRecord);
     }
