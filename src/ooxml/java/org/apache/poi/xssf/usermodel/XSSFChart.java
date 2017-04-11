@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
 import org.apache.poi.ss.usermodel.charts.ChartData;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
@@ -49,6 +50,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
@@ -250,9 +252,27 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	}
 
 	/**
-	 * Returns the title, or null if none is set
+	 * Returns the title static text, or null if none is set.
+	 * Note that a title formula may be set instead.
+	 * @return static title text, if set
+	 * @deprecated POI 3.16, use {@link #getTitleText()} instead.
 	 */
+    @Deprecated
+    @Removal(version="4.0")
 	public XSSFRichTextString getTitle() {
+	    return getTitleText();
+	}
+	
+	/**
+     * Returns the title static text, or null if none is set.
+     * Note that a title formula may be set instead.
+     * Empty text result is for backward compatibility, and could mean the title text is empty or there is a formula instead.
+     * Check for a formula first, falling back on text for cleaner logic.
+     * @return static title text if set, 
+     *         null if there is no title, 
+     *         empty string if the title text is empty or the title uses a formula instead
+	 */
+	public XSSFRichTextString getTitleText() {
 		if(! chart.isSetTitle()) {
 			return null;
 		}
@@ -278,9 +298,21 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	}
 
 	/**
-	 * Sets the title text.
+	 * Sets the title text as a static string.
+	 * @param newTitle to use
+	 * @deprecated POI 3.16, use {@link #setTitleText(String)} instead.
 	 */
+    @Deprecated
+    @Removal(version="4.0")
 	public void setTitle(String newTitle) {
+	    
+	}
+	
+    /**
+     * Sets the title text as a static string.
+     * @param newTitle to use
+     */
+	public void setTitleText(String newTitle) {
 		CTTitle ctTitle;
 		if (chart.isSetTitle()) {
 			ctTitle = chart.getTitle();
@@ -324,6 +356,63 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 			CTRegularTextRun run = para.addNewR();
 			run.setT(newTitle);
 		}
+	}
+	
+	/**
+	 * Get the chart title formula expression if there is one
+	 * @return formula expression or null
+	 */
+	public String getTitleFormula() {
+	    if(! chart.isSetTitle()) {
+	        return null;
+	    }
+
+	    CTTitle title = chart.getTitle();
+	    
+	    if (! title.isSetTx()) {
+	        return null;
+	    }
+	    
+	    CTTx tx = title.getTx();
+	    
+	    if (! tx.isSetStrRef()) {
+	        return null;
+	    }
+	    
+	    return tx.getStrRef().getF();
+	}
+	
+	/**
+	 * Set the formula expression to use for the chart title
+	 * @param formula
+	 */
+	public void setTitleFormula(String formula) {
+	    CTTitle ctTitle;
+	    if (chart.isSetTitle()) {
+	        ctTitle = chart.getTitle();
+	    } else {
+	        ctTitle = chart.addNewTitle();
+	    }
+
+	    CTTx tx;
+	    if (ctTitle.isSetTx()) {
+	        tx = ctTitle.getTx();
+	    } else {
+	        tx = ctTitle.addNewTx();
+	    }
+
+	    if (tx.isSetRich()) {
+	        tx.unsetRich();
+	    }
+	    
+	    CTStrRef strRef;
+	    if (tx.isSetStrRef()) {
+	        strRef = tx.getStrRef();
+	    } else {
+	        strRef = tx.addNewStrRef();
+	    }
+	    
+	    strRef.setF(formula);
 	}
 
 	public XSSFChartLegend getOrCreateLegend() {

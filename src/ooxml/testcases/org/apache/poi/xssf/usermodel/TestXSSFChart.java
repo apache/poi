@@ -49,13 +49,13 @@ public final class TestXSSFChart extends TestCase {
        
        // Check the titles
        XSSFChart chart = s2.createDrawingPatriarch().getCharts().get(0);
-       assertEquals(null, chart.getTitle());
+       assertEquals(null, chart.getTitleText());
        
        chart = s2.createDrawingPatriarch().getCharts().get(1);
-       assertEquals("Pie Chart Title Thingy", chart.getTitle().getString());
+       assertEquals("Pie Chart Title Thingy", chart.getTitleText().getString());
        
        chart = s3.createDrawingPatriarch().getCharts().get(0);
-       assertEquals("Sheet 3 Chart with Title", chart.getTitle().getString());
+       assertEquals("Sheet 3 Chart with Title", chart.getTitleText().getString());
        
        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
