@@ -96,25 +96,17 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         } else {
             // TODO Discover if these older documents can ever hold Unicode Strings?
             //  (We think not, because they seem to lack a Piece table)
-            // TODO Build the Piece Descriptor properly
-            //  (We have to fake it, as they don't seem to have a proper Piece table)
-            PieceDescriptor pd = new PieceDescriptor(new byte[] {0,0, 0,0,0,127, 0,0}, 0, guessedCharset);
-            pd.setFilePosition(_fib.getFibBase().getFcMin());
-
-            // Generate a single Text Piece Table, with a single Text Piece
-            //  which covers all the (8 bit only) text in the file
-            tpt = new OldTextPieceTable();
-            byte[] textData = new byte[_fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin()];
-            System.arraycopy(_mainStream, _fib.getFibBase().getFcMin(), textData, 0, textData.length);
-
-            int numChars = textData.length;
-            if (CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(guessedCharset)) {
-                numChars /= 2;
+            //
+            //  What we have here is a wretched hack.  We need to figure out
+            //  how to get the correct charset for the doc.
+            TextPiece tp = null;
+            try {
+                tp = buildTextPiece(guessedCharset);
+            } catch (IllegalStateException e) {
+                //if there was a problem with the guessed charset and the length of the
+                //textpiece, back off to win1252. This is effectively what we used to do.
+                tp = buildTextPiece(StringUtil.WIN_1252);
             }
-
-            TextPiece tp = new TextPiece(
-                    0, numChars, textData, pd
-            );
             tpt.add(tp);
             
         }
@@ -154,6 +146,33 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             _cbt.rebuild( cft );
             _pbt.rebuild( _text, cft );
         }
+    }
+
+    /**
+     *
+     * @param guessedCharset charset that we think this is
+     * @return a new text piece
+     * @throws IllegalStateException if the length isn't correct
+     */
+    private TextPiece buildTextPiece(Charset guessedCharset) throws IllegalStateException {
+        PieceDescriptor pd = new PieceDescriptor(new byte[] {0,0, 0,0,0,127, 0,0}, 0, guessedCharset);
+        pd.setFilePosition(_fib.getFibBase().getFcMin());
+
+        // Generate a single Text Piece Table, with a single Text Piece
+        //  which covers all the (8 bit only) text in the file
+        tpt = new OldTextPieceTable();
+        byte[] textData = new byte[_fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin()];
+        System.arraycopy(_mainStream, _fib.getFibBase().getFcMin(), textData, 0, textData.length);
+
+        int numChars = textData.length;
+        if (CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(guessedCharset)) {
+            numChars /= 2;
+        }
+
+        return new TextPiece(
+                0, numChars, textData, pd
+        );
+
     }
 
 
