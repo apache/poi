@@ -19,8 +19,12 @@ package org.apache.poi.hwpf;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
+import org.apache.poi.hpsf.CustomProperties;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.Section;
 import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.FontTable;
@@ -188,7 +192,32 @@ public class HWPFOldDocument extends HWPFDocumentCore {
      * @return The detected Charset from the old font table
      */
     private Charset guessCodePage(OldFontTable fontTable) {
-
+        //try to get it out of the overall document summary information
+        DocumentSummaryInformation summaryInformation = getDocumentSummaryInformation();
+        if (summaryInformation != null) {
+            CustomProperties customProperties = summaryInformation.getCustomProperties();
+            if (customProperties != null) {
+                int codePage = customProperties.getCodepage();
+                try {
+                    return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
+                } catch (UnsupportedEncodingException e) {
+                    //swallow
+                }
+            }
+            //for now, try to get first valid code page in a valid section
+            for (Section section : summaryInformation.getSections()) {
+                if (section.getOffset() < 0) {
+                    continue;
+                }
+                int codePage = section.getCodepage();
+                try {
+                    return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
+                } catch (UnsupportedEncodingException e) {
+                    //swallow
+                }
+            }
+        }
+        //if that still doesn't work, pick the first non-default non symbol charset
         for (OldFfn oldFfn : fontTable.getFontNames()) {
             HwmfFont.WmfCharset wmfCharset = HwmfFont.WmfCharset.valueOf(oldFfn.getChs()& 0xff);
             if (wmfCharset != null &&
