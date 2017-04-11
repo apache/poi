@@ -78,6 +78,6 @@ public final class TestXSSFChartSheet {
        assertEquals(1, cs.createDrawingPatriarch().getCharts().size());
        
        XSSFChart chart = cs.createDrawingPatriarch().getCharts().get(0);
-       assertNull(chart.getTitle());
+       assertNull(chart.getTitleText());
     }
 }

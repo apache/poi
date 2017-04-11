@@ -120,12 +120,20 @@ public class TestXSSFChartTitle {
         Workbook wb = createWorkbookWithChart();
         XSSFChart chart = getChartFromWorkbook(wb, "linechart");
         assertNotNull(chart);
-        assertNull(chart.getTitle());
+        assertNull(chart.getTitleText());
         final String myTitle = "My chart title";
-        chart.setTitle(myTitle);
-        XSSFRichTextString queryTitle = chart.getTitle();
+        chart.setTitleText(myTitle);
+        XSSFRichTextString queryTitle = chart.getTitleText();
         assertNotNull(queryTitle);
         assertEquals(myTitle, queryTitle.toString());
+        
+        final String myTitleFormula = "1 & \" and \" & 2";
+        chart.setTitleFormula(myTitleFormula);
+        // setting formula should unset text, but since there is a formula, returns an empty string
+        assertEquals("", chart.getTitleText().toString());
+        String titleFormula = chart.getTitleFormula();
+        assertNotNull(titleFormula);
+        assertEquals(myTitleFormula, titleFormula);
         wb.close();
     }
 
@@ -134,12 +142,12 @@ public class TestXSSFChartTitle {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
-        XSSFRichTextString originalTitle = chart.getTitle();
+        XSSFRichTextString originalTitle = chart.getTitleText();
         assertNotNull(originalTitle);
         final String myTitle = "My chart title";
         assertFalse(myTitle.equals(originalTitle.toString()));
-        chart.setTitle(myTitle);
-        XSSFRichTextString queryTitle = chart.getTitle();
+        chart.setTitleText(myTitle);
+        XSSFRichTextString queryTitle = chart.getTitleText();
         assertNotNull(queryTitle);
         assertEquals(myTitle, queryTitle.toString());
         wb.close();
@@ -150,12 +158,27 @@ public class TestXSSFChartTitle {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_noTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
-        assertNull(chart.getTitle());
+        assertNull(chart.getTitleText());
         final String myTitle = "My chart title";
-        chart.setTitle(myTitle);
-        XSSFRichTextString queryTitle = chart.getTitle();
+        chart.setTitleText(myTitle);
+        XSSFRichTextString queryTitle = chart.getTitleText();
         assertNotNull(queryTitle);
         assertEquals(myTitle, queryTitle.toString());
         wb.close();
     }
+
+    @Test
+    public void testExistingChartWithFormulaTitle() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitleFormula.xlsx");
+        XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
+        assertNotNull(chart);
+        XSSFRichTextString originalTitle = chart.getTitleText();
+        assertNotNull(originalTitle);
+        assertEquals("", originalTitle.toString());
+        String formula = chart.getTitleFormula();
+        assertNotNull(formula);
+        assertEquals("Sheet1!$E$1", formula);
+        wb.close();
+    }
+
 }
