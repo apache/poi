@@ -44,6 +44,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -51,6 +53,9 @@ import org.apache.poi.util.StringUtil;
  *  files.
  */
 public class HWPFOldDocument extends HWPFDocumentCore {
+
+    private static final POILogger logger = POILogFactory
+            .getLogger( HWPFOldDocument.class );
 
     private final static Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
 
@@ -110,6 +115,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 //if there was a problem with the guessed charset and the length of the
                 //textpiece, back off to win1252. This is effectively what we used to do.
                 tp = buildTextPiece(StringUtil.WIN_1252);
+                logger.log(POILogger.WARN, "Error with "+guessedCharset +". Backing off to Windows-1252");
             }
             tpt.add(tp);
             
@@ -181,9 +187,9 @@ public class HWPFOldDocument extends HWPFDocumentCore {
 
 
     /**
-     * Take the first codepage that is not default, ansi or symbol.
-     * Ideally, we'd want to track fonts with runs, but we don't yet
-     * know how to do that.
+     * Try to get the code page from various areas of the document.
+     * Start with the DocumentSummaryInformation, back off to the section info,
+     * finally try the charset information from the font table.
      *
      * Consider throwing an exception if > 1 unique codepage that is not default, symbol or ansi
      * appears here.
@@ -198,26 +204,30 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             CustomProperties customProperties = summaryInformation.getCustomProperties();
             if (customProperties != null) {
                 int codePage = customProperties.getCodepage();
-                try {
-                    return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
-                } catch (UnsupportedEncodingException e) {
-                    //swallow
+                if (codePage > -1) {
+                    try {
+                        return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
+                    } catch (UnsupportedEncodingException e) {
+                        //swallow
+                    }
                 }
             }
-            //for now, try to get first valid code page in a valid section
+            //If that didn't work, for now, try to get first valid code page in a valid section
             for (Section section : summaryInformation.getSections()) {
                 if (section.getOffset() < 0) {
                     continue;
                 }
                 int codePage = section.getCodepage();
-                try {
-                    return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
-                } catch (UnsupportedEncodingException e) {
-                    //swallow
+                if (codePage > -1) {
+                    try {
+                        return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
+                    } catch (UnsupportedEncodingException e) {
+                        //swallow
+                    }
                 }
             }
         }
-        //if that still doesn't work, pick the first non-default non symbol charset
+        //if that still doesn't work, pick the first non-default, non-symbol charset
         for (OldFfn oldFfn : fontTable.getFontNames()) {
             HwmfFont.WmfCharset wmfCharset = HwmfFont.WmfCharset.valueOf(oldFfn.getChs()& 0xff);
             if (wmfCharset != null &&
@@ -227,6 +237,8 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 return wmfCharset.getCharset();
             }
         }
+        logger.log(POILogger.WARN, "Couldn't find a defined charset; backing off to cp1252");
+        //if all else fails
         return DEFAULT_CHARSET;
     }
 
@@ -282,8 +294,9 @@ public class HWPFOldDocument extends HWPFDocumentCore {
     }
 
     /**
-     * As a rough heuristic (total hack), read through the font table
-     * and take the first non-default, non-ansi, non-symbol
+     * As a rough heuristic (total hack), read through the HPSF,
+     * then read through the font table, and take the first
+     * non-default, non-ansi, non-symbol
      * font's charset and return that.
      *
      * Once we figure out how to link a font to a text piece, we should
