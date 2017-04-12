@@ -16,9 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xdgf.extractor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +27,6 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestXDGFVisioExtractor {
@@ -79,13 +77,13 @@ public class TestXDGFVisioExtractor {
     }
     
     /**
-     * Currently failing with:
+     * Some confusion on PolylineTo vs PolyLineTo, both should be handled.
+     * Previously failed with:
      * org.apache.poi.POIXMLException: Invalid 'Row_Type' name 'PolylineTo'
      *  at org.apache.poi.xdgf.util.ObjectFactory.load
      *  at org.apache.poi.xdgf.usermodel.section.geometry.GeometryRowFactory.load
      */
     @Test
-    @Ignore("TODO Fix bug #60973")
     public void testPolylineTo() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream("60973.vsdx");
         XmlVisioDocument document = new XmlVisioDocument(is);
