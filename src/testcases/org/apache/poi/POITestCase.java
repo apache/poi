@@ -22,8 +22,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.not;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -44,55 +50,23 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public final class POITestCase {
-    /*
-     * Returns the first {@code length} characters from the string {@code s}
-     */
-    private static String head(String s, int length) {
-        if (length <= 0) {
-            return "";
-        }
-        if (s.length() <= length) {
-            return s;
-        }
-        final StringBuilder sb = new StringBuilder(s.substring(0, length));
-        sb.append("... (length=").append(s.length()).append(")");
-        return sb.toString();
-    }
-
-    /*
-     * Returns the last {@code length} characters from the string {@code s}
-     */
-    private static String tail(String s, int length) {
-        if (length <= 0) {
-            return "";
-        }
-        if (s.length() <= length) {
-            return s;
-        }
-        final StringBuilder sb = new StringBuilder();
-        sb.append("(length=").append(s.length()).append(") ...");
-        sb.append(s.substring(s.length() - length));
-        return sb.toString();
-    }
 
     public static void assertStartsWith(String string, String prefix) {
         assertNotNull(string);
         assertNotNull(prefix);
-        assertEquals("string does not start with prefix", prefix, head(string, prefix.length()+5));
+        assertThat(string, startsWith(prefix));
     }
 
     public static void assertEndsWith(String string, String suffix) {
         assertNotNull(string);
         assertNotNull(suffix);
-        assertEquals("string does not end with suffix", suffix, tail(string, suffix.length()+5));
+        assertThat(string, endsWith(suffix));
     }
     
     public static void assertContains(String haystack, String needle) {
         assertNotNull(haystack);
-        assertTrue(
-              "Unable to find expected text '" + needle + "' in text:\n" + haystack,
-              haystack.contains(needle)
-        );
+        assertNotNull(needle);
+        assertThat(haystack, containsString(needle));
     }
 
     public static void assertContainsIgnoreCase(String haystack, String needle, Locale locale) {
@@ -110,10 +84,8 @@ public final class POITestCase {
     
     public static void assertNotContained(String haystack, String needle) {
         assertNotNull(haystack);
-        assertFalse(
-              "Unexpectedly found text '" + needle + "' in text:\n" + haystack,
-              haystack.contains(needle)
-        );
+        assertNotNull(needle);
+        assertThat(haystack, not(containsString(needle)));
     }
     
     /**
