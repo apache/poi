@@ -19,6 +19,8 @@ package org.apache.poi.xssf.extractor;
 
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContained;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -45,7 +47,6 @@ public class TestXSSFExcelExtractor extends TestCase {
 	public void testGetSimpleText() throws IOException {
 		// a very simple file
 		XSSFExcelExtractor extractor = getExtractor("sample.xlsx");
-		extractor.getText();
 		
 		String text = extractor.getText();
 		assertTrue(text.length() > 0);
@@ -105,7 +106,6 @@ public class TestXSSFExcelExtractor extends TestCase {
 	public void testGetComplexText() throws IOException {
 		// A fairly complex file
 		XSSFExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
-		extractor.getText();
 		
 		String text = extractor.getText();
 		assertTrue(text.length() > 0);
@@ -162,7 +162,7 @@ public class TestXSSFExcelExtractor extends TestCase {
 			String text = extractor.getText();
 			
 			assertTrue("Unable to find expected word in text from " + sampleName + "\n" + text, text.contains("testdoc"));
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+			assertContains(text, "test phrase");
 			
 			extractor.close();
 		}
@@ -177,14 +177,14 @@ public class TestXSSFExcelExtractor extends TestCase {
 		String text = extractor.getText();
 
 		// No comments there yet
-		assertFalse("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-		assertFalse("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertNotContained(text, "testdoc");
+		assertNotContained(text, "test phrase");
 
 		// Turn on comment extraction, will then be
 		extractor.setIncludeCellComments(true);
 		text = extractor.getText();
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertContains(text, "testdoc");
+		assertContains(text, "test phrase");
 		
 		extractor.close();
 	}
@@ -195,20 +195,20 @@ public class TestXSSFExcelExtractor extends TestCase {
       String text = extractor.getText();
 
       // Numbers
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("43"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("22"));
+      assertContains(text, "43");
+      assertContains(text, "22");
       
       // Strings
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("ABCDE"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("Long Text"));
+      assertContains(text, "ABCDE");
+      assertContains(text, "Long Text");
       
       // Inline Strings
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("1st Inline String"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("And More"));
+      assertContains(text, "1st Inline String");
+      assertContains(text, "And More");
       
       // Formulas
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("A2"));
-      assertTrue("Unable to find expected word in text\n" + text, text.contains("A5-A$2"));
+      assertContains(text, "A2");
+      assertContains(text, "A5-A$2");
       
       extractor.close();
 	}
@@ -233,10 +233,10 @@ public class TestXSSFExcelExtractor extends TestCase {
 		XSSFExcelExtractor extractor = getExtractor("51519.xlsx");
 		try {
 			String text = extractor.getText();
-			assertTrue(text.contains("\u8C4A\u7530"));
+			assertContains(text, "\u8C4A\u7530");
 			//this shows up only as a phonetic run and should not appear
 			//in the extracted text
-			assertFalse(text.contains("\u30CB\u30DB\u30F3"));
+			assertNotContained(text, "\u30CB\u30DB\u30F3");
 		} finally {
 			extractor.close();
 		}
