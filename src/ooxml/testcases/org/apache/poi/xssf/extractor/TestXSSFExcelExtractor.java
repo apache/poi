@@ -25,6 +25,9 @@ import static org.apache.poi.POITestCase.assertNotContained;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 import org.apache.poi.POITextExtractor;
@@ -133,15 +136,18 @@ public class TestXSSFExcelExtractor extends TestCase {
 		ExcelExtractor ole2Extractor =
 			new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
 		
-		POITextExtractor[] extractors =
-			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
+		Map<String, POITextExtractor> extractors = new HashMap<String, POITextExtractor>();
+		extractors.put("SampleSS.xlsx", ooxmlExtractor);
+		extractors.put("SampleSS.xls", ole2Extractor);
 		
-		for (POITextExtractor extractor : extractors) {
+		for (final Entry<String, POITextExtractor> e : extractors.entrySet()) {
+			String filename = e.getKey();
+			POITextExtractor extractor = e.getValue();
 			String text = extractor.getText().replaceAll("[\r\t]", "");
-			assertStartsWith(text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
+			assertStartsWith(filename, text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
 			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
 			Matcher m = pattern.matcher(text);
-			assertTrue(m.matches());			
+			assertTrue(filename, m.matches());
 		}
 
 		ole2Extractor.close();
@@ -161,8 +167,8 @@ public class TestXSSFExcelExtractor extends TestCase {
 			XSSFExcelExtractor extractor = getExtractor(sampleName);
 			String text = extractor.getText();
 			
-			assertTrue("Unable to find expected word in text from " + sampleName + "\n" + text, text.contains("testdoc"));
-			assertContains(text, "test phrase");
+			assertContains(sampleName, text, "testdoc");
+			assertContains(sampleName, text, "test phrase");
 			
 			extractor.close();
 		}
@@ -221,9 +227,9 @@ public class TestXSSFExcelExtractor extends TestCase {
 	    try {
     	    extractor.setFormulasNotResults(true);
     	    String text = extractor.getText();
-    	    assertTrue(text.indexOf("Line 1") > -1);
-    	    assertTrue(text.indexOf("Line 2") > -1);
-    	    assertTrue(text.indexOf("Line 3") > -1);
+    	    assertContains(text, "Line 1");
+    	    assertContains(text, "Line 2");
+    	    assertContains(text, "Line 3");
 	    } finally {
 	        extractor.close();
 	    }
