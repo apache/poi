@@ -20,6 +20,10 @@
 package org.apache.poi.sl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.awt.geom.Rectangle2D;
@@ -30,6 +34,7 @@ import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TableCell;
@@ -66,7 +71,7 @@ public class TestTable {
     }
     
     @Test
-    public void testColWidthRowHeight() throws IOException {
+    public void colWidthRowHeight() throws IOException {
         assumeFalse(xslfOnly);
 
         // Test of table dimensions of same slideshow saved as ppt/x
@@ -110,7 +115,7 @@ public class TestTable {
     }
 
     @Test
-    public void testTextDirectionHSLF() throws IOException {
+    public void textDirectionHSLF() throws IOException {
         assumeFalse(xslfOnly);
         SlideShow<?,?> ppt1 = new HSLFSlideShow();
         testTextDirection(ppt1);
@@ -118,7 +123,7 @@ public class TestTable {
     }
     
     @Test
-    public void testTextDirectionXSLF() throws IOException {
+    public void textDirectionXSLF() throws IOException {
         SlideShow<?,?> ppt1 = new XMLSlideShow();
         testTextDirection(ppt1);
         ppt1.close();
@@ -159,5 +164,54 @@ public class TestTable {
             assertEquals(td, c.getTextDirection());
         }
         ppt2.close();
+    }
+    
+    @Test
+    public void tableSpan() throws IOException {
+        String files[] = (xslfOnly) ? new String[]{ "bug60993.pptx" } : new String[]{ "bug60993.pptx", "bug60993.ppt" };
+        for (String f : files) {
+            SlideShow<?,?> ppt = openSampleSlideshow(f);
+            Slide<?,?> slide = ppt.getSlides().get(0);
+            TableShape<?,?> ts = (TableShape<?,?>)slide.getShapes().get(0);
+            int cols = ts.getNumberOfColumns();
+            int rows = ts.getNumberOfRows();
+            for (int r=0; r<rows; r++) {
+                for (int c=0; c<cols; c++) {
+                    TableCell<?,?> tc = ts.getCell(r, c);
+                    int rc = r*10+c;
+                    String msg = f+" (r"+r+",c"+c+")";
+                    switch (rc) {
+                        case 22:
+                        case 51:
+                            if (f.endsWith("ppt")) {
+                                assertNull(msg, tc);
+                            } else {
+                                assertNotNull(msg, tc);
+                                assertTrue(msg, tc.isMerged());
+                            }
+                            break;
+                        case 21:
+                            assertNotNull(msg, tc);
+                            assertEquals(msg, 1, tc.getRowSpan());
+                            assertEquals(msg, 2, tc.getGridSpan());
+                            assertFalse(msg, tc.isMerged());
+                            break;
+                        case 41:
+                            assertNotNull(msg, tc);
+                            assertEquals(msg, 2, tc.getRowSpan());
+                            assertEquals(msg, 1, tc.getGridSpan());
+                            assertFalse(msg, tc.isMerged());
+                            break;
+                        default:
+                            assertNotNull(msg, tc);
+                            assertEquals(msg, 1, tc.getRowSpan());
+                            assertEquals(msg, 1, tc.getGridSpan());
+                            assertFalse(msg, tc.isMerged());
+                            break;
+                    }
+                }
+            }
+            ppt.close();
+        }
     }
 }

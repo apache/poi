@@ -21,6 +21,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -218,15 +219,11 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
 
     private int calcSpan(List<Double> spaces, double totalSpace, int idx) {
-        if (idx == spaces.size()-1) {
-            return 1;
-        }
-        int span = 0;
-        double remainingSpace = totalSpace;
-        while (idx+1 < spaces.size() && remainingSpace > 0) {
-            remainingSpace -= spaces.get(idx+1)-spaces.get(idx);
+        int span = 1;
+        ListIterator<Double> li = spaces.listIterator(idx);
+        double start = li.next();
+        while (li.hasNext() && li.next()-start < totalSpace) {
             span++;
-            idx++;
         }
         return span;
     }
