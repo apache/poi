@@ -30,6 +30,10 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -57,6 +61,12 @@ public final class POITestCase {
         assertThat(string, startsWith(prefix));
     }
 
+    public static void assertStartsWith(String message, String string, String prefix) {
+        assertNotNull(message, string);
+        assertNotNull(message, prefix);
+        assertThat(message, string, startsWith(prefix));
+    }
+
     public static void assertEndsWith(String string, String suffix) {
         assertNotNull(string);
         assertNotNull(suffix);
@@ -67,6 +77,12 @@ public final class POITestCase {
         assertNotNull(haystack);
         assertNotNull(needle);
         assertThat(haystack, containsString(needle));
+    }
+
+    public static void assertContains(String message, String haystack, String needle) {
+        assertNotNull(message, haystack);
+        assertNotNull(message, needle);
+        assertThat(message, haystack, containsString(needle));
     }
 
     public static void assertContainsIgnoreCase(String haystack, String needle, Locale locale) {
@@ -250,15 +266,11 @@ public final class POITestCase {
     }
     
     public static void assertBetween(String message, int value, int min, int max) {
-        assertTrue(message + ": " + value + " is less than the minimum value of " + min,
-                min <= value);
-        assertTrue(message + ": " + value + " is greater than the maximum value of " + max,
-                value <= max);
+        assertThat(message, value, greaterThanOrEqualTo(min));
+        assertThat(message, value, lessThanOrEqualTo(max));
     }
     public static void assertStrictlyBetween(String message, int value, int min, int max) {
-        assertTrue(message + ": " + value + " is less than or equal to the minimum value of " + min,
-                min < value);
-        assertTrue(message + ": " + value + " is greater than or equal to the maximum value of " + max,
-                value < max);
+        assertThat(message, value, greaterThan(min));
+        assertThat(message, value, lessThan(max));
     }
 }
