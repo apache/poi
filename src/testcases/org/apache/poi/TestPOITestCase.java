@@ -39,6 +39,13 @@ public final class TestPOITestCase {
         POITestCase.assertStartsWith("Apache POI", "Apache");
         POITestCase.assertStartsWith("Apache POI", "Apache POI");
     }
+
+    @Test
+    public void assertEndsWith() {
+        POITestCase.assertEndsWith("Apache POI", "");
+        POITestCase.assertEndsWith("Apache POI", "POI");
+        POITestCase.assertEndsWith("Apache POI", "Apache POI");
+    }
     
     @Test
     public void assertContains() {

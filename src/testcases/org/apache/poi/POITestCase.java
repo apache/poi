@@ -44,12 +44,47 @@ import org.apache.poi.util.Internal;
  */
 @Internal
 public final class POITestCase {
+    /*
+     * Returns the first {@code length} characters from the string {@code s}
+     */
+    private static String head(String s, int length) {
+        if (length <= 0) {
+            return "";
+        }
+        if (s.length() <= length) {
+            return s;
+        }
+        final StringBuilder sb = new StringBuilder(s.substring(0, length));
+        sb.append("... (length=").append(s.length()).append(")");
+        return sb.toString();
+    }
+
+    /*
+     * Returns the last {@code length} characters from the string {@code s}
+     */
+    private static String tail(String s, int length) {
+        if (length <= 0) {
+            return "";
+        }
+        if (s.length() <= length) {
+            return s;
+        }
+        final StringBuilder sb = new StringBuilder();
+        sb.append("(length=").append(s.length()).append(") ...");
+        sb.append(s.substring(s.length() - length));
+        return sb.toString();
+    }
+
     public static void assertStartsWith(String string, String prefix) {
         assertNotNull(string);
         assertNotNull(prefix);
-        
-        final int len = Math.min(string.length(), prefix.length());
-        assertEquals("string does not start with prefix", prefix, string.substring(0, len));
+        assertEquals("string does not start with prefix", prefix, head(string, prefix.length()+5));
+    }
+
+    public static void assertEndsWith(String string, String suffix) {
+        assertNotNull(string);
+        assertNotNull(suffix);
+        assertEquals("string does not end with suffix", suffix, tail(string, suffix.length()+5));
     }
     
     public static void assertContains(String haystack, String needle) {
