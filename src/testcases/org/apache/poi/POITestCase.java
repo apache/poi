@@ -30,10 +30,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -266,11 +262,16 @@ public final class POITestCase {
     }
     
     public static void assertBetween(String message, int value, int min, int max) {
-        assertThat(message, value, greaterThanOrEqualTo(min));
-        assertThat(message, value, lessThanOrEqualTo(max));
+        assertTrue(message + ": " + value + " is less than the minimum value of " + min,
+                min <= value);
+        assertTrue(message + ": " + value + " is greater than the maximum value of " + max,
+                value <= max);
     }
     public static void assertStrictlyBetween(String message, int value, int min, int max) {
-        assertThat(message, value, greaterThan(min));
-        assertThat(message, value, lessThan(max));
+        assertTrue(message + ": " + value + " is less than or equal to the minimum value of " + min,
+                min < value);
+        assertTrue(message + ": " + value + " is greater than or equal to the maximum value of " + max,
+                value < max);
     }
+
 }
