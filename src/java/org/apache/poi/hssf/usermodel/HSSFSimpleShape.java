@@ -263,4 +263,9 @@ public class HSSFSimpleShape extends HSSFShape implements SimpleShape
         }
         return _textObjectRecord;
     }
+
+    @Override
+    public int getShapeId(){
+        return super.getShapeId();
+    }
 }

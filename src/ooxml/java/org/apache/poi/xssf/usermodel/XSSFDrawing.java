@@ -385,7 +385,24 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     public XSSFObjectData createObjectData(ClientAnchor anchor, int storageId, int pictureIndex) {
         XSSFSheet sh = getSheet();
         PackagePart sheetPart = sh.getPackagePart();
-        long shapeId = newShapeId();
+
+        /*
+         * The shape id of the ole object seems to be a legacy shape id.
+         * 
+         * see 5.3.2.1 legacyDrawing (Legacy Drawing Object):
+         * Legacy Shape ID that is unique throughout the entire document.
+         * Legacy shape IDs should be assigned based on which portion of the document the
+         * drawing resides on. The assignment of these ids is broken down into clusters of
+         * 1024 values. The first cluster is 1-1024, the second 1025-2048 and so on.
+         *
+         * Ole shapes seem to start with 1025 on the first sheet ...
+         * and not sure, if the ids need to be reindexed when sheets are removed
+         * or more than 1024 shapes are on a given sheet (see #51332 for a similar issue)
+         */
+        XSSFSheet sheet = getSheet();
+        XSSFWorkbook wb = sheet.getWorkbook();
+        int sheetIndex = wb.getSheetIndex(sheet);
+        long shapeId = (sheetIndex+1)*1024 + newShapeId();
 
         // add reference to OLE part
         PackagePartName olePN;
@@ -446,6 +463,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         
         CTNonVisualDrawingProps cNvPr = ctShape.getNvSpPr().getCNvPr();
         cNvPr.setId(shapeId);
+        cNvPr.setName("Object "+shapeId);
 
         XmlCursor extCur = cNvPr.getExtLst().getExtArray(0).newCursor();
         extCur.toFirstChild();
@@ -520,7 +538,10 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     }
 
     private long newShapeId(){
-        return drawing.sizeOfTwoCellAnchorArray() + 1;
+        return 1+
+            drawing.sizeOfAbsoluteAnchorArray()+
+            drawing.sizeOfOneCellAnchorArray()+
+            drawing.sizeOfTwoCellAnchorArray();
     }
 
     /**

@@ -210,7 +210,7 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
         try {
             if (cur.toChild(XSSFRelation.NS_SPREADSHEETML, "objectPr")) {
                 String blipId = cur.getAttributeText(new QName(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS, "id"));
-                return (XSSFPictureData)getDrawing().getRelationById(blipId);
+                return (XSSFPictureData)getSheet().getRelationById(blipId);
             }
             return null;
         } finally {

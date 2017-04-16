@@ -19,10 +19,14 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * A common interface for simple shapes.
- * (Currently the HSSF and XSSF classes don't share common method signatures ...)
  * 
  * @since POI 3.16-beta2
  */
 public interface SimpleShape extends Shape {
-
+    /**
+     * @return the shape id, which is unique within the sheet
+     * 
+     * @since POI 3.17-beta1
+     */
+    int getShapeId();
 }

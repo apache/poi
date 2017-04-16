@@ -869,4 +869,9 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public String getShapeName() {
         return ctShape.getNvSpPr().getCNvPr().getName();
     }
+
+    @Override
+    public int getShapeId() {
+        return (int)ctShape.getNvSpPr().getCNvPr().getId();
+    }
 }
