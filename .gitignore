@@ -1,21 +1,47 @@
 classes
 workbook.xls
 bak
-*.iws
 build.number
 *.el
-TEST-org.apache.poi*.xml
-build
-.settings
 scripts
-*.ipr
 untitled1.jpx
-*.iml
 log*.*
-dist
 *.log
-bin
-.ant-targets-build.xml
-out
+
+forrest.properties
+compile-lib/
+ooxml-lib/
+
+# Eclipse
+/bin
+.settings
+
+# Tests
+junit*.properties
+TEST-org.apache.poi*.xml
+
+# Sonar
+.sonar
+sonar/main/src/
+sonar/ooxml/src/
+sonar/scratchpad/src/
+sonar/ooxml-schema-security/src/
+sonar/examples/src/
+sonar/excelant/src/
+sonar/target
+sonar/*/target
+
+# IntelliJ
+/out/
 .idea
+*.iml
+*.iws
+*.ipr
+
+# Gradle
 .gradle
+
+# Ant
+.ant-targets-build.xml
+build
+dist
