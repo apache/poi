@@ -152,6 +152,8 @@ project('main') {
 		compile 'org.apache.commons:commons-collections4:4.1'
 		
 		testCompile 'junit:junit:4.12'
+		testCompile 'org.hamcrest:hamcrest-all:1.3'
+
 	}
 	
 	// Create a separate jar for test-code to depend on it in other projects
