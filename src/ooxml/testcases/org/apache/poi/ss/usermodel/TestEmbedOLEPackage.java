@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -84,7 +85,7 @@ public class TestEmbedOLEPackage {
     }
 
     static void validateEmbeddedObjects(Workbook wb) throws IOException {
-        boolean ooxml = wb.getClass().getName().toLowerCase().contains("xssf");
+        boolean ooxml = wb.getClass().getName().toLowerCase(Locale.ROOT).contains("xssf");
         byte data[] = (ooxml) ? samplePPTX : samplePPT;
         Iterator<Integer> shapeIds = Arrays.asList(1025,1026,2049).iterator();
         EmbeddedExtractor ee = new EmbeddedExtractor();
@@ -102,7 +103,7 @@ public class TestEmbedOLEPackage {
     }
     
     static void addEmbeddedObjects(Workbook wb) throws IOException {
-        boolean ooxml = wb.getClass().getName().toLowerCase().contains("xssf");
+        boolean ooxml = wb.getClass().getName().toLowerCase(Locale.ROOT).contains("xssf");
         int picIdx = wb.addPicture(samplePNG, Workbook.PICTURE_TYPE_PNG);
         byte data[] = (ooxml) ? samplePPTX : samplePPT;
         String ext = (ooxml) ? ".pptx" : ".ppt";
