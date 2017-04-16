@@ -2712,11 +2712,11 @@ under the License.
         to track progress.</p>
       <p>
         The POI source release as well as the pre-built binary deployment packages are listed below.
-        Pre-built versions of all <link href="index.html#components">POI components</link>
+        Pre-built versions of all <link href="overview.html#components">POI components</link>
         are available in the central Maven repository under Group ID "org.apache.poi" and Version
         "${version.id}".
       </p>
-      <section><title>Binary Distribution</title>
+      <section id="POI-${version.id}-bin"><title>Binary Distribution</title>
       <ul>
         <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</link>
           (${bin-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
@@ -2738,7 +2738,7 @@ under the License.
         </li>
       </ul>
       </section>
-      <section><title>Source Distribution</title>
+      <section id="POI-${version.id}-src"><title>Source Distribution</title>
       <ul>
         <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</link>
           (${src-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
