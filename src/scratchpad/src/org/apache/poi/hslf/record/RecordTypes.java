@@ -204,6 +204,7 @@ public enum RecordTypes {
     EscherDeletedPspl(0xf11d,null),
     EscherSplitMenuColors(0xf11e,null),
     EscherOleObject(0xf11f,null),
+    // same as EscherTertiaryOptRecord.RECORD_ID
     EscherUserDefined(0xf122,null);
 
     private static final Map<Short,RecordTypes> LOOKUP;
