@@ -37,6 +37,13 @@
     <category rdf:resource="https://projects.apache.org/category/library" />
     <release>
       <Version>
+        <name>Apache POI 3.16</name>
+        <created>2017-04-19</created>
+        <revision>3.16</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
         <name>Apache POI 3.15</name>
         <created>2016-09-21</created>
         <revision>3.15</revision>
