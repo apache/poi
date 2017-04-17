@@ -142,7 +142,7 @@ public class CopyCompare
         if (equal(oRoot, cRoot, messages)) {
             System.out.println("Equal");
         } else {
-            System.out.println("Not equal: " + messages.toString());
+            System.out.println("Not equal: " + messages);
         }
         cpfs.close();
         opfs.close();

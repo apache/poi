@@ -159,7 +159,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
                 b.append(' ');
                 System.arraycopy(value, ((byte[])value).length - 4, buf, 0, 4);
             } else if (value != null) {
-                b.append(value.toString());
+                b.append(value);
             } else {
                 b.append("null");
             }

@@ -316,7 +316,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    break;
 
                case ERROR:
-                   thisStr = "ERROR:" + value.toString();
+                   thisStr = "ERROR:" + value;
                    break;
 
                case FORMULA:

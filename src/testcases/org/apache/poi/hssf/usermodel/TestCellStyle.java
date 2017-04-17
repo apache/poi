@@ -439,7 +439,7 @@ public final class TestCellStyle extends TestCase {
                             if (cell.getCellTypeEnum() == CellType.NUMERIC) {
                                 boolean isDate = HSSFDateUtil.isCellDateFormatted(cell);
                                 if (idxCell > 0 && isDate) {
-                                    fail("cell " + idxCell + " is not a date: " + idxCell.toString());
+                                    fail("cell " + idxCell + " is not a date: " + idxCell);
                                 }
                             }
                         }

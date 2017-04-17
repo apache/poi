@@ -173,7 +173,7 @@ public class TestStringUtil {
         assertTrue("longer string", StringUtil.startsWithIgnoreCase("Apache POI project", "Apache POI"));
         assertTrue("different case", StringUtil.startsWithIgnoreCase("APACHE POI", "Apache POI"));
         assertFalse("leading whitespace should not be ignored", StringUtil.startsWithIgnoreCase(" Apache POI project", "Apache POI"));
-        assertFalse("shorter string", StringUtil.startsWithIgnoreCase("Apache", "Apache POI"));;
+        assertFalse("shorter string", StringUtil.startsWithIgnoreCase("Apache", "Apache POI"));
     }
     
     @Test

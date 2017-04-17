@@ -26,11 +26,11 @@ public class XDGFException {
      * Creates an error message to be thrown
      */
     public static POIXMLException error(String message, Object o) {
-        return new POIXMLException(o.toString() + ": " + message);
+        return new POIXMLException(o + ": " + message);
     }
 
     public static POIXMLException error(String message, Object o, Throwable t) {
-        return new POIXMLException(o.toString() + ": " + message, t);
+        return new POIXMLException(o + ": " + message, t);
     }
 
     //
@@ -41,7 +41,6 @@ public class XDGFException {
     public static POIXMLException wrap(POIXMLDocumentPart part,
             POIXMLException e) {
         return new POIXMLException(part.getPackagePart().getPartName()
-                .toString()
                 + ": " + e.getMessage(), e.getCause() == null ? e
                         : e.getCause());
     }

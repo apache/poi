@@ -132,7 +132,7 @@ public class FormulaViewer
             }
             buf.append(sep);
             buf.append(numArg);
-            System.out.println(buf.toString());
+            System.out.println(buf);
     }
 
     /**

@@ -134,7 +134,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
                 + ", propName: " + EscherProperties.getPropertyName( getPropertyNumber() )
                 + ", complex: " + isComplex()
                 + ", blipId: " + isBlipId()
-                + ", data: " + '\n' + results.toString();
+                + ", data: " + '\n' + results;
     }
 
     @Override

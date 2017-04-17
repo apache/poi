@@ -86,7 +86,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
             }
         }
         if (_master == null) {
-            throw new IllegalStateException("SlideMaster was not found for " + this.toString());
+            throw new IllegalStateException("SlideMaster was not found for " + this);
         }
         return _master;
     }

@@ -91,7 +91,7 @@ public abstract class AbstractEscherHolderRecord extends Record implements Clone
         if (escherRecords.size() == 0)
             buffer.append("No Escher Records Decoded" + nl);
         for (EscherRecord r : escherRecords) {
-            buffer.append(r.toString());
+            buffer.append(r);
         }
         buffer.append("[/" + getRecordName() + ']' + nl);
 

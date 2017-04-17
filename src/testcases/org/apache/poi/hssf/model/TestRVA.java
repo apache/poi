@@ -125,7 +125,7 @@ public final class TestRVA {
 			if (poiPtg.isBaseToken()) {
 				continue;
 			}
-			sb.append("  token[" + i + "] " + excelPtg.toString() + " "
+			sb.append("  token[" + i + "] " + excelPtg + " "
 					+ excelPtg.getRVAType());
 
 			if (excelPtg.getPtgClass() != poiPtg.getPtgClass()) {

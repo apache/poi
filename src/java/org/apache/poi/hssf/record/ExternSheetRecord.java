@@ -133,7 +133,7 @@ public class ExternSheetRecord extends StandardRecord {
 		sb.append("   numOfRefs     = ").append(nItems).append("\n");
 		for (int i=0; i < nItems; i++) {
 			sb.append("refrec         #").append(i).append(": ");
-			sb.append(getRef(i).toString());
+			sb.append(getRef(i));
 			sb.append('\n');
 		}
 		sb.append("[/EXTERNSHEET]\n");

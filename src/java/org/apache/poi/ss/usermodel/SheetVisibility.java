@@ -42,5 +42,5 @@ public enum SheetVisibility {
      * <code>ThisWorkbook.Sheets("MySheetName").Visible = xlSheetVeryHidden </code>
      * </p>
      */
-    VERY_HIDDEN;
+    VERY_HIDDEN
 }

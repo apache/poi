@@ -214,7 +214,7 @@ public final class PPTXMLDump {
                 } else {
                     StringWriter out = new StringWriter();
                     dump.dump(out);
-                    System.out.println(out.toString());
+                    System.out.println(out);
                 }
             }
 

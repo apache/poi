@@ -349,14 +349,14 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
 
         // create a XAdES time-stamp container
         XAdESTimeStampType xadesTimeStamp = XAdESTimeStampType.Factory.newInstance();
-        xadesTimeStamp.setId("time-stamp-" + UUID.randomUUID().toString());
+        xadesTimeStamp.setId("time-stamp-" + UUID.randomUUID());
         CanonicalizationMethodType c14nMethod = xadesTimeStamp.addNewCanonicalizationMethod();
         c14nMethod.setAlgorithm(signatureConfig.getXadesCanonicalizationMethod());
 
         // embed the time-stamp
         EncapsulatedPKIDataType encapsulatedTimeStamp = xadesTimeStamp.addNewEncapsulatedTimeStamp();
         encapsulatedTimeStamp.setByteArrayValue(timeStampToken);
-        encapsulatedTimeStamp.setId("time-stamp-token-" + UUID.randomUUID().toString());
+        encapsulatedTimeStamp.setId("time-stamp-token-" + UUID.randomUUID());
 
         return xadesTimeStamp;
     }

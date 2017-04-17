@@ -1892,7 +1892,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         PrintWriter w = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
         for (EscherRecord escherRecord : escherRecords) {
             if (fat) {
-                System.out.println(escherRecord.toString());
+                System.out.println(escherRecord);
             } else {
                 escherRecord.display(w, 0);
             }

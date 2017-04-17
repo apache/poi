@@ -130,7 +130,7 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
         buffer.append("\t.enclosingCellRange= ").append(getEnclosingCellRange()).append("\n");
         buffer.append("\t.cfranges=[");
         for( int i=0; i<field_4_cell_ranges.countRanges(); i++) {
-            buffer.append(i==0?"":",").append(field_4_cell_ranges.getCellRangeAddress(i).toString());
+            buffer.append(i==0?"":",").append(field_4_cell_ranges.getCellRangeAddress(i));
         }
         buffer.append("]\n");
         buffer.append("[/").append(getRecordName()).append("]\n");

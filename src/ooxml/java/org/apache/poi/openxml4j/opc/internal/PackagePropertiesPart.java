@@ -617,7 +617,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 			sb.append(", ").append(fStr);
 		}
 		throw new InvalidFormatException("Date " + dateStr + " not well formatted, "
-		        + "expected format in: "+sb.toString());
+		        + "expected format in: "+ sb);
 	}
 
 	/**

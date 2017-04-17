@@ -706,12 +706,12 @@ public class UnicodeString implements Comparable<UnicodeString> {
         if (field_4_format_runs != null) {
           for (int i = 0; i < field_4_format_runs.size();i++) {
             FormatRun r = field_4_format_runs.get(i);
-            buffer.append("      .format_run"+i+"          = ").append(r.toString()).append("\n");
+            buffer.append("      .format_run"+i+"          = ").append(r).append("\n");
           }
         }
         if (field_5_ext_rst != null) {
           buffer.append("    .field_5_ext_rst          = ").append("\n");
-          buffer.append( field_5_ext_rst.toString() ).append("\n");
+          buffer.append(field_5_ext_rst).append("\n");
         }
         buffer.append("[/UNICODESTRING]\n");
         return buffer.toString();

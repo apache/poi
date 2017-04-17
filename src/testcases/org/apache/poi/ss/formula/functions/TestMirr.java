@@ -154,7 +154,7 @@ public final class TestMirr extends TestCase {
         assertEquals(ErrorEval.DIV_ZERO.getErrorCode(), cv.getErrorValue());
 
         if (failures.length() > 0) {
-            throw new AssertionFailedError(failureCount + " IRR assertions failed:\n" + failures.toString());
+            throw new AssertionFailedError(failureCount + " IRR assertions failed:\n" + failures);
         }
 
     }
@@ -162,7 +162,7 @@ public final class TestMirr extends TestCase {
     private static void assertFormulaResult(CellValue cv, HSSFCell cell) {
         double actualValue = cv.getNumberValue();
         double expectedValue = cell.getNumericCellValue(); // cached formula result calculated by Excel
-        assertEquals("Invalid formula result: " + cv.toString(), CellType.NUMERIC, cv.getCellTypeEnum());
+        assertEquals("Invalid formula result: " + cv, CellType.NUMERIC, cv.getCellTypeEnum());
         assertEquals(expectedValue, actualValue, 1E-8);
     }
 }

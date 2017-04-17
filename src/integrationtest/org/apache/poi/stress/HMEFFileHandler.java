@@ -40,10 +40,10 @@ public class HMEFFileHandler extends AbstractFileHandler {
 		
 		// there are two test-files that have no body...
 		if(!msg.getSubject().equals("Testing TNEF Message") && !msg.getSubject().equals("TNEF test message with attachments")) {
-    		assertNotNull("Had: " + msg.getBody() + ", " + msg.getSubject() + ", " + msg.getAttachments() + ": " + props.toString(), 
+    		assertNotNull("Had: " + msg.getBody() + ", " + msg.getSubject() + ", " + msg.getAttachments() + ": " + props,
     				msg.getBody());
 		}
-		assertNotNull("Had: " + msg.getBody() + ", " + msg.getSubject() + ", " + msg.getAttachments() + ": " + props.toString(), 
+		assertNotNull("Had: " + msg.getBody() + ", " + msg.getSubject() + ", " + msg.getAttachments() + ": " + props,
 				msg.getSubject());
 	}
 	

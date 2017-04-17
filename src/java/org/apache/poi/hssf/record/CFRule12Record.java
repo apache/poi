@@ -425,13 +425,13 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         buffer.append("    .dxfn12_length =0x").append(Integer.toHexString(ext_formatting_length)).append("\n");
         buffer.append("    .option_flags  =0x").append(Integer.toHexString(getOptions())).append("\n");
         if (containsFontFormattingBlock()) {
-            buffer.append(_fontFormatting.toString()).append("\n");
+            buffer.append(_fontFormatting).append("\n");
         }
         if (containsBorderFormattingBlock()) {
-            buffer.append(_borderFormatting.toString()).append("\n");
+            buffer.append(_borderFormatting).append("\n");
         }
         if (containsPatternFormattingBlock()) {
-            buffer.append(_patternFormatting.toString()).append("\n");
+            buffer.append(_patternFormatting).append("\n");
         }
         buffer.append("    .dxfn12_ext=").append(HexDump.toHex(ext_formatting_data)).append("\n");
         buffer.append("    .formula_1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");

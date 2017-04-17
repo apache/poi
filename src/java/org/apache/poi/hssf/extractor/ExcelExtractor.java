@@ -342,7 +342,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 										case STRING:
 											HSSFRichTextString str = cell.getRichStringCellValue();
 											if(str != null && str.length() > 0) {
-												text.append(str.toString());
+												text.append(str);
 											}
 											break;
 										case NUMERIC:

@@ -376,7 +376,7 @@ public final class HWPFLister
                 while ( sprmIt.hasNext() )
                 {
                     SprmOperation sprm = sprmIt.next();
-                    System.out.println( "\t" + sprm.toString() );
+                    System.out.println( "\t" + sprm);
                 }
             }
 
@@ -624,7 +624,7 @@ public final class HWPFLister
         while ( sprmIt.hasNext() )
         {
             SprmOperation sprm = sprmIt.next();
-            System.out.println( linePrefix + sprm.toString() );
+            System.out.println( linePrefix + sprm);
         }
     }
 
@@ -634,7 +634,7 @@ public final class HWPFLister
         for ( int p = 0; p < range.numParagraphs(); p++ )
         {
             Paragraph paragraph = range.getParagraph( p );
-            System.out.println( p + ":\t" + paragraph.toString() );
+            System.out.println( p + ":\t" + paragraph);
 
             if ( withText )
                 System.out.println( paragraph.text() );
@@ -653,7 +653,7 @@ public final class HWPFLister
                 .getAllPictures();
         for ( Picture picture : allPictures )
         {
-            System.out.println( picture.toString() );
+            System.out.println(picture);
         }
     }
 

@@ -211,7 +211,7 @@ public final class POIFSChunkParser {
                 chunk.readValue(inp);
                 grouping.record(chunk);
              } catch(IOException e) {
-            	 logger.log(POILogger.ERROR, "Error reading from part " + entry.getName() + " - " + e.toString());
+            	 logger.log(POILogger.ERROR, "Error reading from part " + entry.getName() + " - " + e);
              } finally {
                  if (inp != null) inp.close();
              }

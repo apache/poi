@@ -82,7 +82,7 @@ public class CellGeneralFormatter extends CellFormatter {
         } else if (value instanceof Boolean) {
             toAppendTo.append(value.toString().toUpperCase(Locale.ROOT));
         } else {
-            toAppendTo.append(value.toString());
+            toAppendTo.append(value);
         }
     }
 

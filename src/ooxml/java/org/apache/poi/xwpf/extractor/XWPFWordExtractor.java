@@ -130,7 +130,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 
 
         for (IRunElement run : paragraph.getRuns()) {
-            text.append(run.toString());
+            text.append(run);
             if (run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
                 XWPFHyperlink link = ((XWPFHyperlinkRun) run).getHyperlink(document);
                 if (link != null)

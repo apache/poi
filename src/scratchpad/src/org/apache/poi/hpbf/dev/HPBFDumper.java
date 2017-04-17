@@ -119,7 +119,7 @@ public final class HPBFDumper {
 			er.fillFields(data, 0, erf);
 			left -= er.getRecordSize();
 
-			System.out.println(er.toString());
+			System.out.println(er);
 		}
 	}
 	protected void dumpEscherStm(DirectoryNode escherDir) throws IOException {

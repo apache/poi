@@ -43,7 +43,7 @@ public final class TestBin2Dec extends TestCase {
 
     private static void confirmValue(String msg, String number1, String expected) {
 		ValueEval result = invokeValue(number1);
-		assertEquals("Had: " + result.toString(), NumberEval.class, result.getClass());
+		assertEquals("Had: " + result, NumberEval.class, result.getClass());
 		assertEquals(msg, expected, ((NumberEval) result).getStringValue());
 	}
 

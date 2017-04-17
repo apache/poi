@@ -84,10 +84,10 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
                 XDGFShape to = _shapes.get(connect.getToSheet());
 
                 if (from == null)
-                    throw new POIXMLException(this.toString() + "; Connect; Invalid from id: " + connect.getFromSheet());
+                    throw new POIXMLException(this + "; Connect; Invalid from id: " + connect.getFromSheet());
 
                 if (to == null)
-                    throw new POIXMLException(this.toString() + "; Connect; Invalid to id: " + connect.getToSheet());
+                    throw new POIXMLException(this + "; Connect; Invalid to id: " + connect.getToSheet());
 
                 _connections.add(new XDGFConnection(connect, from, to));
             }

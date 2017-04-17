@@ -90,7 +90,7 @@ public final class TestNpv extends TestCase {
         }
 
         if(failures.length() > 0) {
-            throw new AssertionFailedError(failureCount + " IRR evaluations failed:\n" + failures.toString());
+            throw new AssertionFailedError(failureCount + " IRR evaluations failed:\n" + failures);
         }
     }
 

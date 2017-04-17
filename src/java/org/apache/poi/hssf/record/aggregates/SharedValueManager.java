@@ -59,7 +59,7 @@ public final class SharedValueManager {
 		public SharedFormulaGroup(SharedFormulaRecord sfr, CellReference firstCell) {
 			if (!sfr.isInRange(firstCell.getRow(), firstCell.getCol())) {
 				throw new IllegalArgumentException("First formula cell " + firstCell.formatAsString()
-						+ " is not shared formula range " + sfr.getRange().toString() + ".");
+						+ " is not shared formula range " + sfr.getRange() + ".");
 			}
 			_sfr = sfr;
 			_firstCell = firstCell;
@@ -94,7 +94,7 @@ public final class SharedValueManager {
 		public final String toString() {
 			StringBuffer sb = new StringBuffer(64);
 			sb.append(getClass().getName()).append(" [");
-			sb.append(_sfr.getRange().toString());
+			sb.append(_sfr.getRange());
 			sb.append("]");
 			return sb.toString();
 		}

@@ -142,7 +142,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 return ((CTShapeProperties)xo).addNewXfrm();
             } else {
                 // ... group shapes have their own getXfrm()
-                LOG.log(POILogger.WARN, getClass().toString()+" doesn't have xfrm element.");
+                LOG.log(POILogger.WARN, getClass() +" doesn't have xfrm element.");
                 return null;
             }
         }
@@ -1132,7 +1132,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     private static CTLineProperties getLn(XSLFShape shape, boolean create) {
         XmlObject pr = shape.getShapeProperties();
         if (!(pr instanceof CTShapeProperties)) {
-            LOG.log(POILogger.WARN, shape.getClass().toString()+" doesn't have line properties");
+            LOG.log(POILogger.WARN, shape.getClass() +" doesn't have line properties");
             return null;
         }
         

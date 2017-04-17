@@ -190,12 +190,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 XWPFRun xRun = (XWPFRun) run;
                 // don't include the text if reviewing is enabled and this is a deleted run
                 if (!xRun.getCTR().isSetRsidDel()) {
-                    out.append(xRun.toString());
+                    out.append(xRun);
                 }
             } else if (run instanceof XWPFSDT) {
                 out.append(((XWPFSDT) run).getContent().getText());
             } else {
-                out.append(run.toString());
+                out.append(run);
             }
         }
         out.append(footnoteText);
@@ -400,7 +400,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public String getParagraphText() {
         StringBuffer out = new StringBuffer();
         for (XWPFRun run : runs) {
-            out.append(run.toString());
+            out.append(run);
         }
         return out.toString();
     }

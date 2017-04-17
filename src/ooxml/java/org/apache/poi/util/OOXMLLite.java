@@ -291,7 +291,6 @@ public final class OOXMLLite {
         if (!(destDirectory.exists() || destDirectory.mkdirs())) {
             throw new RuntimeException("Can't create destination directory: "+destDirectory);
         }
-        ;
         OutputStream destStream = new FileOutputStream(destFile);
         try {
             IOUtils.copy(srcStream, destStream);

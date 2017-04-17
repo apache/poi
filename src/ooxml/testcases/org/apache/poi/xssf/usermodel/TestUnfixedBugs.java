@@ -387,7 +387,7 @@ public final class TestUnfixedBugs {
        Iterator<XSSFShape> it = shapes.iterator();
        while(it.hasNext()) {           
            XSSFShape shape = it.next();
-           str.append(", " + shape.toString());
+           str.append(", " + shape);
            str.append(", Col1:"+((XSSFClientAnchor)shape.getAnchor()).getCol1());
            str.append(", Col2:"+((XSSFClientAnchor)shape.getAnchor()).getCol2());
            str.append(", Row1:"+((XSSFClientAnchor)shape.getAnchor()).getRow1());

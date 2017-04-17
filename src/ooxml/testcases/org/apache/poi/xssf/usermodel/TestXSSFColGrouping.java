@@ -66,7 +66,7 @@ public class TestXSSFColGrouping {
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         logger.log(POILogger.DEBUG, "test52186/cols:" + cols);
         for (CTCol col : cols.getColArray()) {
-			assertTrue("Col width attribute is unset: " + col.toString(), col.isSetWidth());
+			assertTrue("Col width attribute is unset: " + col, col.isSetWidth());
 		}
         
         wb2.close();
@@ -100,7 +100,7 @@ public class TestXSSFColGrouping {
         }
         cols = sheet.getCTWorksheet().getColsArray(0);
         for (CTCol col : cols.getColArray()) {
-			assertTrue("Col width attribute is unset: " + col.toString(), col.isSetWidth());
+			assertTrue("Col width attribute is unset: " + col, col.isSetWidth());
 		}
         wb2.close();
         wb1.close();

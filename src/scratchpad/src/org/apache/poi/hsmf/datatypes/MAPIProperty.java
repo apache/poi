@@ -1057,7 +1057,7 @@ public class MAPIProperty {
                 throw new IllegalArgumentException(
                     "Duplicate MAPI Property with ID " + id + " : "
                     + toString() + " vs "
-                    + attributes.get(id).toString());
+                    + attributes.get(id));
             }
             attributes.put(id, this);
         }

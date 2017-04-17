@@ -46,7 +46,7 @@ public final class TNEFMAPIAttribute extends TNEFAttribute {
    }
    
    public String toString() {
-      return "Attribute " + getProperty().toString() + ", type=" + getType() + 
+      return "Attribute " + getProperty() + ", type=" + getType() +
              ", " + attributes.size() + " MAPI Attributes"; 
    }
 }

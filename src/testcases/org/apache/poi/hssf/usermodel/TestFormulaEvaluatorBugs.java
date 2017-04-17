@@ -91,7 +91,7 @@ public final class TestFormulaEvaluatorBugs {
             FileOutputStream out = new FileOutputStream(existing);
             wb.write(out);
             out.close();
-            System.err.println("Existing file for bug #44636 written to " + existing.toString());
+            System.err.println("Existing file for bug #44636 written to " + existing);
         }
         wb.close();
         
@@ -115,7 +115,7 @@ public final class TestFormulaEvaluatorBugs {
             FileOutputStream out = new FileOutputStream(scratch);
             wb.write(out);
             out.close();
-            System.err.println("New file for bug #44636 written to " + scratch.toString());
+            System.err.println("New file for bug #44636 written to " + scratch);
         }
         wb.close();
     }

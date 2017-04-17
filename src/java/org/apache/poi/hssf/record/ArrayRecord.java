@@ -81,14 +81,14 @@ public final class ArrayRecord extends SharedValueRecordBase implements Cloneabl
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append(" [ARRAY]\n");
-		sb.append(" range=").append(getRange().toString()).append("\n");
+		sb.append(" range=").append(getRange()).append("\n");
 		sb.append(" options=").append(HexDump.shortToHex(_options)).append("\n");
 		sb.append(" notUsed=").append(HexDump.intToHex(_field3notUsed)).append("\n");
 		sb.append(" formula:").append("\n");
 		Ptg[] ptgs = _formula.getTokens();
 		for (int i = 0; i < ptgs.length; i++) {
 			Ptg ptg = ptgs[i];
-			sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
+			sb.append(ptg).append(ptg.getRVAType()).append("\n");
 		}
 		sb.append("]");
 		return sb.toString();

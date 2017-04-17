@@ -41,7 +41,7 @@ public final class TestPmt {
 	private static NumberEval invokeNormal(ValueEval[] args) {
 		ValueEval ev = invoke(args);
 		if(ev instanceof ErrorEval) {
-			fail("Normal evaluation failed with error code: " + ev.toString());
+			fail("Normal evaluation failed with error code: " + ev);
 		}
 		return (NumberEval) ev;
 	}

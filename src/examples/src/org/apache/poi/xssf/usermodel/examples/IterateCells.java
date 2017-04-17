@@ -39,7 +39,7 @@ public class IterateCells {
             for (Row row : sheet) {
                 System.out.println("rownum: " + row.getRowNum());
                 for (Cell cell : row) {
-                    System.out.println(cell.toString());
+                    System.out.println(cell);
                 }
             }
         }

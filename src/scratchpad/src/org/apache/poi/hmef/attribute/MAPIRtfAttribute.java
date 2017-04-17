@@ -73,6 +73,6 @@ public final class MAPIRtfAttribute extends MAPIAttribute {
    }
    
    public String toString() {
-      return getProperty().toString() + " " + data;
+      return getProperty() + " " + data;
    }
 }

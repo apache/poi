@@ -83,7 +83,7 @@ public class TestFieldsTables extends HWPFTestCase {
     private String dumpPlexes(ArrayList<PlexOfField> fieldsPlexes) {
         StringBuilder dump = new StringBuilder();
         for (PlexOfField flds : fieldsPlexes) {
-            dump.append(flds.toString() + "\n");
+            dump.append(flds + "\n");
         }
         return dump.toString();
     }

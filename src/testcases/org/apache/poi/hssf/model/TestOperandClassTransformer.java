@@ -126,7 +126,7 @@ public final class TestOperandClassTransformer extends TestCase {
 		}
 		if (operandClass != ptg.getPtgClass()) {
 			throw new AssertionFailedError("Wrong operand class for ptg ("
-					+ ptg.toString() + "). Expected " + getOperandClassName(operandClass)
+					+ ptg + "). Expected " + getOperandClassName(operandClass)
 					+ " but got " + getOperandClassName(ptg.getPtgClass()));
 		}
 	}

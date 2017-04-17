@@ -199,10 +199,10 @@ public final class CFRecordsAggregate extends RecordAggregate {
 
         buffer.append("[").append(type).append("]\n");
         if( header != null ) {
-            buffer.append(header.toString());
+            buffer.append(header);
         }
         for (CFRuleBase cfRule : rules) {
-            buffer.append(cfRule.toString());
+            buffer.append(cfRule);
         }
         buffer.append("[/").append(type).append("]\n");
         return buffer.toString();

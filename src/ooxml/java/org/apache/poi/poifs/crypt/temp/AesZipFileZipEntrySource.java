@@ -89,7 +89,7 @@ public class AesZipFileZipEntrySource implements ZipEntrySource {
             zipFile.close();
             if (!tmpFile.delete()) {
                 LOG.log(POILogger.WARN, tmpFile.getAbsolutePath()+" can't be removed (or was already removed.");
-            };
+            }
         }
         closed = true;
     }

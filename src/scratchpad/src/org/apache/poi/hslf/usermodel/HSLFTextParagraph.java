@@ -946,7 +946,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         for (int i = 0; i < cr.length; i++) {
             Record r = cr[i];
             if (r == headerAtom) {
-                ; // headerIdx = i;
+                // headerIdx = i;
             } else if (r == oldRecord || r == newRecord) {
                 textIdx = i;
             } else if (r == styleAtom) {

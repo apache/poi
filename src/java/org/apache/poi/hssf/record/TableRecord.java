@@ -158,7 +158,7 @@ public final class TableRecord extends SharedValueRecordBase {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[TABLE]\n");
-		buffer.append("    .range    = ").append(getRange().toString()).append("\n");
+		buffer.append("    .range    = ").append(getRange()).append("\n");
 		buffer.append("    .flags    = ") .append(HexDump.byteToHex(field_5_flags)).append("\n");
 		buffer.append("    .alwaysClc= ").append(isAlwaysCalc()).append("\n");
 		buffer.append("    .reserved = ").append(HexDump.intToHex(field_6_res)).append("\n");

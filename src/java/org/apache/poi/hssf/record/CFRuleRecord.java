@@ -141,13 +141,13 @@ public final class CFRuleRecord extends CFRuleBase implements Cloneable {
         buffer.append("    .condition_type   =").append(getConditionType()).append("\n");
         buffer.append("    OPTION FLAGS=0x").append(Integer.toHexString(getOptions())).append("\n");
         if (containsFontFormattingBlock()) {
-            buffer.append(_fontFormatting.toString()).append("\n");
+            buffer.append(_fontFormatting).append("\n");
         }
         if (containsBorderFormattingBlock()) {
-            buffer.append(_borderFormatting.toString()).append("\n");
+            buffer.append(_borderFormatting).append("\n");
         }
         if (containsPatternFormattingBlock()) {
-            buffer.append(_patternFormatting.toString()).append("\n");
+            buffer.append(_patternFormatting).append("\n");
         }
         buffer.append("    Formula 1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");
         buffer.append("    Formula 2 =").append(Arrays.toString(getFormula2().getTokens())).append("\n");

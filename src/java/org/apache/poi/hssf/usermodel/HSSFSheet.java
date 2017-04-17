@@ -1980,7 +1980,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         List<EscherRecord> escherRecords = r.getEscherRecords();
         for (EscherRecord escherRecord : escherRecords) {
             if (fat) {
-                pw.println(escherRecord.toString());
+                pw.println(escherRecord);
             } else {
                 escherRecord.display(pw, 0);
             }

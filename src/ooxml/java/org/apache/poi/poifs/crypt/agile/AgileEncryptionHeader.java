@@ -65,7 +65,7 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
             setChainingMode(ChainingMode.cfb);
             break;
         default:
-            throw new EncryptedDocumentException("Unsupported chaining mode - "+keyData.getCipherChaining().toString());
+            throw new EncryptedDocumentException("Unsupported chaining mode - "+ keyData.getCipherChaining());
         }
     
         int hashSize = keyData.getHashSize();

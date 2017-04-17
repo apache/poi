@@ -89,8 +89,8 @@ public class CheckFunctionsSupported {
                 System.out.println(" All cells evaluated without error");
             } else {
                 for (CellReference cr : probs.unevaluatableCells.keySet()) {
-                    System.out.println(" " + cr.formatAsString() + " - " + 
-                                       probs.unevaluatableCells.get(cr).toString());
+                    System.out.println(" " + cr.formatAsString() + " - " +
+                            probs.unevaluatableCells.get(cr));
                 }
             }
         }

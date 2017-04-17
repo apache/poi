@@ -62,7 +62,7 @@ public final class PaletteRecord extends StandardRecord {
         for (int i = 0; i < _colors.size(); i++) {
             PColor c = _colors.get(i);
             buffer.append("* colornum      = ").append(i).append('\n');
-            buffer.append(c.toString());
+            buffer.append(c);
             buffer.append("/*colornum      = ").append(i).append('\n');
         }
         buffer.append("[/PALETTE]\n");

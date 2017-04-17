@@ -97,12 +97,12 @@ public final class FSPATable
                 .entrySet() )
         {
             Integer i = entry.getKey();
-            buf.append( "  " ).append( i.toString() ).append( " => \t" );
+            buf.append( "  " ).append(i).append( " => \t" );
 
             try
             {
                 FSPA fspa = getFspaFromCp( i.intValue() );
-                buf.append( fspa.toString() );
+                buf.append(fspa);
             }
             catch ( Exception exc )
             {
