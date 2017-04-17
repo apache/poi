@@ -336,7 +336,7 @@ public final class WorkbookEvaluator {
         if (isDebugLogEnabled()) {
             String sheetName = getSheetName(sheetIndex);
             CellReference cr = new CellReference(rowIndex, columnIndex);
-            logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result.toString());
+            logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result);
         }
         // Usually (result === cce.getValue())
         // But sometimes: (result==ErrorEval.CIRCULAR_REF_ERROR, cce.getValue()==null)

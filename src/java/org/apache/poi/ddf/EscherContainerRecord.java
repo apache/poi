@@ -294,7 +294,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
                 + "  instance: 0x" + HexDump.toHex( getInstance() ) + nl
                 + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl
                 + "  numchildren: " + _childRecords.size() + nl
-                + children.toString();
+                + children;
     }
 
     @Override

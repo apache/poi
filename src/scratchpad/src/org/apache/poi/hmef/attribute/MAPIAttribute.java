@@ -75,7 +75,7 @@ public class MAPIAttribute {
          hex = hex.substring(0, hex.length()-1) + ", ....]";
       }
       
-      return property.toString() + " " + hex;
+      return property + " " + hex;
    }
    
    /**

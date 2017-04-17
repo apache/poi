@@ -132,7 +132,7 @@ public class OOXMLLister implements Closeable {
 		File f = new File(args[0]);
 		if(! f.exists()) {
 			System.err.println("Error, file not found!");
-			System.err.println("\t" + f.toString());
+			System.err.println("\t" + f);
 			System.exit(2);
 		}
 		
@@ -141,7 +141,7 @@ public class OOXMLLister implements Closeable {
 		);
 
 		try {
-			lister.disp.println(f.toString() + "\n");
+			lister.disp.println(f + "\n");
 			lister.displayParts();
 			lister.disp.println();
 			lister.displayRelations();

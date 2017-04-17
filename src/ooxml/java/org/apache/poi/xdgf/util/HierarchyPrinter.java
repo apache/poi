@@ -62,7 +62,7 @@ public class HierarchyPrinter {
                     os.append("  ");
                 }
                 // TODO: write text?
-                os.println(shape.toString() + " [" + shape.getShapeType()
+                os.println(shape + " [" + shape.getShapeType()
                         + ", " + shape.getSymbolName() + "] "
                         + shape.getMasterShape() + " "
                         + shape.getTextAsString().trim());

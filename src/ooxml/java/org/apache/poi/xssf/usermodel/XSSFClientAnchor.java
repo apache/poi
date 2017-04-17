@@ -184,7 +184,7 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     @Override
     public String toString(){
-        return "from : " + cell1.toString()  + "; to: " + cell2.toString();
+        return "from : " + cell1 + "; to: " + cell2;
     }
 
     /**

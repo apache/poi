@@ -105,7 +105,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
                 setChainingMode(ChainingMode.cfb);
                 break;
             default:
-                throw new EncryptedDocumentException("Unsupported chaining mode - "+keyData.getCipherChaining().toString());
+                throw new EncryptedDocumentException("Unsupported chaining mode - "+ keyData.getCipherChaining());
         }
         
         if (!encList.hasNext()) {

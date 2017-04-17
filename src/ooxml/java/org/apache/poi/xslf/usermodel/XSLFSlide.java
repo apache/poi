@@ -139,7 +139,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
             }
         }
         if(_layout == null) {
-            throw new IllegalArgumentException("SlideLayout was not found for " + this.toString());
+            throw new IllegalArgumentException("SlideLayout was not found for " + this);
         }
         return _layout;
     }

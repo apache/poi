@@ -51,7 +51,7 @@ public final class TestDec2Bin extends TestCase {
 
     private static void confirmValue(String msg, String number1, String expected) {
 		ValueEval result = invokeValue(number1);
-		assertEquals("Had: " + result.toString(), StringEval.class, result.getClass());
+		assertEquals("Had: " + result, StringEval.class, result.getClass());
 		assertEquals(msg, expected, ((StringEval) result).getStringValue());
 	}
 
@@ -128,7 +128,7 @@ public final class TestDec2Bin extends TestCase {
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
         ValueEval result = new Dec2Bin().evaluate(args, -1, -1);
 
-        assertEquals("Had: " + result.toString(), StringEval.class, result.getClass());
+        assertEquals("Had: " + result, StringEval.class, result.getClass());
         assertEquals("1101", ((StringEval) result).getStringValue());
     }
 
@@ -138,7 +138,7 @@ public final class TestDec2Bin extends TestCase {
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Bin().evaluate(args, -1, -1);
 
-        assertEquals("Had: " + result.toString(), StringEval.class, result.getClass());
+        assertEquals("Had: " + result, StringEval.class, result.getClass());
         // TODO: documentation and behavior do not match here!
         assertEquals("1101", ((StringEval) result).getStringValue());
     }
@@ -149,7 +149,7 @@ public final class TestDec2Bin extends TestCase {
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Bin().evaluate(args, ctx);
 
-        assertEquals("Had: " + result.toString(), StringEval.class, result.getClass());
+        assertEquals("Had: " + result, StringEval.class, result.getClass());
         // TODO: documentation and behavior do not match here!
         assertEquals("1101", ((StringEval) result).getStringValue());
     }
@@ -227,11 +227,11 @@ public final class TestDec2Bin extends TestCase {
     public void testBackAndForth() {
         for (int i = -512; i < 512; i++) {
             ValueEval result = invokeValue(Integer.toString(i));
-            assertEquals("Had: " + result.toString(), StringEval.class,
+            assertEquals("Had: " + result, StringEval.class,
                     result.getClass());
 
             ValueEval back = invokeBack(((StringEval) result).getStringValue());
-            assertEquals("Had: " + back.toString(), NumberEval.class,
+            assertEquals("Had: " + back, NumberEval.class,
                     back.getClass());
 
             assertEquals(Integer.toString(i),

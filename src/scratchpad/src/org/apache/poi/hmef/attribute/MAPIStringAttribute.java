@@ -60,7 +60,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
    }
    
    public String toString() {
-      return getProperty().toString() + " " + data;
+      return getProperty() + " " + data;
    }
    
    /**
@@ -77,7 +77,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
          return ((MAPIRtfAttribute)attr).getDataString();
       }
       
-      logger.log(POILogger.WARN, "Warning, non string property found: " + attr.toString());
+      logger.log(POILogger.WARN, "Warning, non string property found: " + attr);
       return null;
   }
 }

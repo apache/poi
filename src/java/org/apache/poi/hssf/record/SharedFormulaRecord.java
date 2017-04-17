@@ -80,14 +80,14 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[SHARED FORMULA (").append(HexDump.intToHex(sid)).append("]\n");
-        buffer.append("    .range      = ").append(getRange().toString()).append("\n");
+        buffer.append("    .range      = ").append(getRange()).append("\n");
         buffer.append("    .reserved    = ").append(HexDump.shortToHex(field_5_reserved)).append("\n");
 
         Ptg[] ptgs = field_7_parsed_expr.getTokens();
         for (int k = 0; k < ptgs.length; k++ ) {
            buffer.append("Formula[").append(k).append("]");
            Ptg ptg = ptgs[k];
-           buffer.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
+           buffer.append(ptg).append(ptg.getRVAType()).append("\n");
         }
 
         buffer.append("[/SHARED FORMULA]\n");

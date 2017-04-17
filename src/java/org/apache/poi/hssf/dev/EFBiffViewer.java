@@ -53,7 +53,7 @@ public class EFBiffViewer
                 {
                     public void processRecord(Record rec)
                     {
-                        System.out.println(rec.toString());
+                        System.out.println(rec);
                     }
                 });
                 HSSFEventFactory factory = new HSSFEventFactory();

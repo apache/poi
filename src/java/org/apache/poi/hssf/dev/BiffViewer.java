@@ -256,7 +256,7 @@ public final class BiffViewer {
                 for (String header : recListener.getRecentHeaders()) {
                     ps.println(header);
                 }
-                ps.print(record.toString());
+                ps.print(record);
             } else {
                 recStream.readRemainder();
             }

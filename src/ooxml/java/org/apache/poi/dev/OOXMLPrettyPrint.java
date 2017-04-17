@@ -74,7 +74,7 @@ public class OOXMLPrettyPrint {
     		File f = new File(args[i]);
     		if(! f.exists()) {
     			System.err.println("Error, file not found!");
-    			System.err.println("\t" + f.toString());
+    			System.err.println("\t" + f);
     			System.exit(2);
     		}
 

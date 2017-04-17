@@ -63,7 +63,7 @@ public final class TNEFStringAttribute extends TNEFAttribute {
    }
    
    public String toString() {
-      return "Attribute " + getProperty().toString() + ", type=" + getType() + 
+      return "Attribute " + getProperty() + ", type=" + getType() +
              ", data=" + getString(); 
    }
    
@@ -78,7 +78,7 @@ public final class TNEFStringAttribute extends TNEFAttribute {
          return ((TNEFStringAttribute)attr).getString();
       }
       
-      logger.log(POILogger.WARN, "Warning, non string property found: " + attr.toString());
+      logger.log(POILogger.WARN, "Warning, non string property found: " + attr);
       return null;
   }
 }

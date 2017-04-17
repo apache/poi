@@ -289,7 +289,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
             @Override
             public String toString()
             {
-                return "OfficeDrawingImpl: " + fspa.toString();
+                return "OfficeDrawingImpl: " + fspa;
             }
         };
     }

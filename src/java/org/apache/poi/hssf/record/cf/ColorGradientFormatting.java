@@ -124,10 +124,10 @@ public final class ColorGradientFormatting implements Cloneable {
         buffer.append("          .clamp     = ").append(isClampToCurve()).append("\n");
         buffer.append("          .background= ").append(isAppliesToBackground()).append("\n");
         for (Threshold t : thresholds) {
-            buffer.append(t.toString());
+            buffer.append(t);
         }
         for (ExtendedColor c : colors) {
-            buffer.append(c.toString());
+            buffer.append(c);
         }
         buffer.append("    [/Color Gradient Formatting]\n");
         return buffer.toString();

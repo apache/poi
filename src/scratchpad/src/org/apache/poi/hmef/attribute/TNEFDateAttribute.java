@@ -80,7 +80,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.ROOT);
        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dfs);
        df.setTimeZone(LocaleUtil.TIMEZONE_UTC);       
-      return "Attribute " + getProperty().toString() + ", type=" + getType() + 
+      return "Attribute " + getProperty() + ", type=" + getType() +
              ", date=" + df.format(data); 
    }
    
@@ -95,7 +95,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
          return ((TNEFDateAttribute)attr).getDate();
       }
       
-      logger.log(POILogger.WARN, "Warning, non date property found: " + attr.toString());
+      logger.log(POILogger.WARN, "Warning, non date property found: " + attr);
       return null;
   }
 }

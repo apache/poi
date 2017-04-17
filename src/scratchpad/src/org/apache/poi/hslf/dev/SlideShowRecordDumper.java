@@ -173,7 +173,7 @@ public final class SlideShowRecordDumper {
 		    printEscherTextBox( (EscherTextboxRecord)er, indent );
 		} else {
 		    ps.print( tabs.substring(0, indent) );
-		    ps.println( er.toString() );
+		    ps.println(er);
 		}
     }
 
@@ -199,7 +199,7 @@ public final class SlideShowRecordDumper {
                 StyleTextPropAtom tsp = (StyleTextPropAtom)child;
                 tsp.setParentTextSize(text.length());
             }
-            ps.println(ind+child.toString());
+            ps.println(ind+ child);
             prevChild = child;
         }
  

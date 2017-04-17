@@ -71,7 +71,7 @@ public final class EscherRecordHolder {
 		Iterator<EscherRecord> iterator = escherRecords.iterator();
 		while (iterator.hasNext()) {
 			EscherRecord r = iterator.next();
-			buffer.append(r.toString());
+			buffer.append(r);
 		}
 		return buffer.toString();
 	}

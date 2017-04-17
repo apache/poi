@@ -95,7 +95,7 @@ public class XWPFSDTContent implements ISDTContent {
                 text.append(((XWPFSDT) o).getContent().getText());
                 addNewLine = true;
             } else if (o instanceof XWPFRun) {
-                text.append(((XWPFRun) o).toString());
+                text.append(((XWPFRun) o));
                 addNewLine = false;
             }
             if (addNewLine == true && i < bodyElements.size() - 1) {
@@ -126,7 +126,7 @@ public class XWPFSDTContent implements ISDTContent {
 
     private void appendParagraph(XWPFParagraph paragraph, StringBuilder text) {
         for (IRunElement run : paragraph.getRuns()) {
-            text.append(run.toString());
+            text.append(run);
         }
     }
 

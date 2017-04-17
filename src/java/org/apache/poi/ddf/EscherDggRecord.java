@@ -145,7 +145,7 @@ public final class EscherDggRecord extends EscherRecord {
                 "  NumIdClusters: " + getNumIdClusters() + '\n' +
                 "  NumShapesSaved: " + field_3_numShapesSaved + '\n' +
                 "  DrawingsSaved: " + field_4_drawingsSaved + '\n' +
-                "" + field_5_string.toString();
+                "" + field_5_string;
 
     }
 

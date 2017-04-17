@@ -109,7 +109,7 @@ public abstract class AbstractWordConverter
         public String toString()
         {
             return "Structure [" + start + "; " + end + "): "
-                    + structure.toString();
+                    + structure;
         }
     }
 

@@ -134,7 +134,7 @@ public final class TestExpandedDouble {
 
 		// but bigger errors are a concern
 		System.out.println("example[" + i + "] ("
-				+ formatDoubleAsHex(a) + ") frac mismatch: " + diff.toString());
+				+ formatDoubleAsHex(a) + ") frac mismatch: " + diff);
 
 		for (int j=-2; j<3; j++) {
 			System.out.println((j<0?"":"+") + j + ": " + getNearby(ed1, j));

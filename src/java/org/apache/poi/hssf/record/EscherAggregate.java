@@ -329,7 +329,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         StringBuilder result = new StringBuilder();
         result.append('[').append(getRecordName()).append(']').append(nl);
         for (EscherRecord escherRecord : getEscherRecords()) {
-            result.append(escherRecord.toString());
+            result.append(escherRecord);
         }
         result.append("[/").append(getRecordName()).append(']').append(nl);
 

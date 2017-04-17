@@ -283,7 +283,7 @@ public final class DVRecord extends StandardRecord implements Cloneable {
 		Ptg[] ptgs = f.getTokens();
 		sb.append('\n');
 		for (Ptg ptg : ptgs) {
-			sb.append('\t').append(ptg.toString()).append('\n');
+			sb.append('\t').append(ptg).append('\n');
 		}
 	}
 

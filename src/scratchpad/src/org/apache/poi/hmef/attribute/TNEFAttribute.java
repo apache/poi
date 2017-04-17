@@ -89,7 +89,7 @@ public class TNEFAttribute {
    }
    
    public String toString() {
-      return "Attribute " + property.toString() + ", type=" + type + 
+      return "Attribute " + property + ", type=" + type +
              ", data length=" + data.length; 
    }
 }

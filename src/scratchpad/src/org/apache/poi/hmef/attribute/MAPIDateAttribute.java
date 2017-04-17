@@ -66,7 +66,7 @@ public final class MAPIDateAttribute extends MAPIAttribute {
        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.ROOT);
        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dfs);
        df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-       return getProperty().toString() + " " + df.format(data);
+       return getProperty() + " " + df.format(data);
    }
    
    /**
@@ -80,7 +80,7 @@ public final class MAPIDateAttribute extends MAPIAttribute {
          return ((MAPIDateAttribute)attr).getDate();
       }
       
-      logger.log(POILogger.WARN, "Warning, non date property found: " + attr.toString());
+      logger.log(POILogger.WARN, "Warning, non date property found: " + attr);
       return null;
   }
 }

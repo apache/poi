@@ -274,7 +274,7 @@ public class SheetDataWriter {
                     XSSFRichTextString rt = new XSSFRichTextString(cell.getStringCellValue());
                     int sRef = _sharedStringSource.addEntry(rt.getCTRst());
 
-                    _out.write(" t=\"" + STCellType.S.toString() + "\">");
+                    _out.write(" t=\"" + STCellType.S + "\">");
                     _out.write("<v>");
                     _out.write(String.valueOf(sRef));
                     _out.write("</v>");

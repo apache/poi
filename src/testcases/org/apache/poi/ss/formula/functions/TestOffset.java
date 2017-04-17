@@ -35,7 +35,7 @@ public final class TestOffset extends TestCase {
 		try {
 			assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
 		} catch (EvaluationException e) {
-			throw new AssertionFailedError("Unexpected error '" + e.getErrorEval().toString() + "'.");
+			throw new AssertionFailedError("Unexpected error '" + e.getErrorEval() + "'.");
 		}
 	}
 	/**

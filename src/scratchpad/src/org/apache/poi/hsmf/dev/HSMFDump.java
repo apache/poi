@@ -60,7 +60,7 @@ public class HSMFDump {
                   );
                   for (PropertyValue v : props.getValues(prop)) {
                      out.println(
-                           "        = " + v.toString()
+                           "        = " + v
                      );
                   }
                }
@@ -74,7 +74,7 @@ public class HSMFDump {
                      "   " + idName + " - " + chunk.getType().getName()
                );
                out.println(
-                     "       " + chunk.toString()
+                     "       " + chunk
                );
             }
          }

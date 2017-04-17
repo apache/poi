@@ -53,7 +53,7 @@ public final class EscherDump {
         {
             EscherRecord r = recordFactory.createRecord(data, pos);
             int bytesRead = r.fillFields(data, pos, recordFactory );
-            out.println( r.toString() );
+            out.println(r);
             pos += bytesRead;
         }
     }
@@ -202,7 +202,7 @@ public final class EscherDump {
             stringBuf.append( HexDump.toHex( recordBytesRemaining ) );
             stringBuf.append( "]  instance: " );
             stringBuf.append( HexDump.toHex( ( (short) ( options >> 4 ) ) ) );
-            out.println( stringBuf.toString() );
+            out.println(stringBuf);
             stringBuf.setLength(0);
 
 
@@ -222,7 +222,7 @@ public final class EscherDump {
                 n8 = (byte) in.read();
                 stringBuf.append( HexDump.toHex( n8 ) );
                 stringBuf.append( getBlipType( n8 ) );
-                out.println( stringBuf.toString() );
+                out.println(stringBuf);
 
                 out.println( "    rgbUid:" );
                 HexDump.dump( in, out, 0, 16 );

@@ -213,7 +213,7 @@ public final class PackageRelationship {
 		StringBuilder sb = new StringBuilder();
 		sb.append(id == null ? "id=null" : "id=" + id);
 		sb.append(container == null ? " - container=null" : " - container="
-				+ container.toString());
+				+ container);
 		sb.append(relationshipType == null ? " - relationshipType=null"
 				: " - relationshipType=" + relationshipType);
 		sb.append(source == null ? " - source=null" : " - source="
@@ -221,7 +221,7 @@ public final class PackageRelationship {
 		sb.append(targetUri == null ? " - target=null" : " - target="
 				+ getTargetURI().toASCIIString());
 		sb.append(targetMode == null ? ",targetMode=null" : ",targetMode="
-				+ targetMode.toString());
+				+ targetMode);
 		return sb.toString();
 	}
 }

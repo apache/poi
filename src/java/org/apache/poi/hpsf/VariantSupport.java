@@ -331,9 +331,9 @@ public class VariantSupport extends Variant {
             case Variant.VT_I4:
                 if (!(value instanceof Integer)) {
                     throw new ClassCastException("Could not cast an object to "
-                            + Integer.class.toString() + ": "
-                            + value.getClass().toString() + ", "
-                            + value.toString());
+                            + Integer.class + ": "
+                            + value.getClass() + ", "
+                            + value);
                 }
                 length += TypeWriter.writeToStream(out, ((Integer) value).intValue());
                 break;

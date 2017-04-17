@@ -136,7 +136,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
         if (getChildRecords().size() > 0) {
             children.append( "  children: " + '\n' );
             for (EscherRecord record : _childRecords) {
-                children.append( record.toString() );
+                children.append(record);
                 children.append( '\n' );
             }
         }
@@ -150,7 +150,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
                 "  recordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
                 "  numchildren: " + getChildRecords().size() + '\n' +
                 theDumpHex +
-                children.toString();
+                children;
     }
 
     @Override

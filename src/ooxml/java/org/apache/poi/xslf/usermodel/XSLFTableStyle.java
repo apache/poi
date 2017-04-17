@@ -29,7 +29,7 @@ public class XSLFTableStyle {
     private CTTableStyle _tblStyle;
 
     public enum TablePartStyle {
-        wholeTbl, band1H, band2H, band1V, band2V, firstCol, lastCol, firstRow, lastRow, seCell, swCell, neCell, nwCell;
+        wholeTbl, band1H, band2H, band1V, band2V, firstCol, lastCol, firstRow, lastRow, seCell, swCell, neCell, nwCell
     }
     
     /*package*/ XSLFTableStyle(CTTableStyle style){

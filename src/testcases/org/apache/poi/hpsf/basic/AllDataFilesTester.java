@@ -64,7 +64,7 @@ public class AllDataFilesTester {
             }});
         for (final File doc : docs) {
             final Logger logger = Logger.getLogger(getClass().getName());
-            logger.info("Processing file \" " + doc.toString() + "\".");
+            logger.info("Processing file \" " + doc + "\".");
 
             /* Execute the test task. */
             task.runTest(doc);

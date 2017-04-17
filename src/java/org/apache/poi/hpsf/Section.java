@@ -982,7 +982,7 @@ public class Section {
         b.append(getSize());
         b.append(", properties: [\n");
         for (int i = 0; i < pa.length; i++) {
-            b.append(pa[i].toString());
+            b.append(pa[i]);
             b.append(",\n");
         }
         b.append(']');

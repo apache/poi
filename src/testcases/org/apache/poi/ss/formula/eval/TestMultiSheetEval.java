@@ -282,9 +282,9 @@ public final class TestMultiSheetEval extends TestCase {
 			e.printStackTrace(ps);
 		}
 		endIx -= 4; // skip 4 frames of reflection invocation
-		ps.println(e.toString());
+		ps.println(e);
 		for(int i=startIx; i<endIx; i++) {
-			ps.println("\tat " + stes[i].toString());
+			ps.println("\tat " + stes[i]);
 		}
 	}
 

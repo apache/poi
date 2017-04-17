@@ -778,10 +778,10 @@ public abstract class BaseTestWorkbook {
 		for(int i = 0;i < wb.getNumberOfSheets();i++) {
 			sheetNames.append(wb.getSheetAt(i).getSheetName()).append(",");
 		}
-		assertEquals("Had: " + sheetNames.toString(), 
+		assertEquals("Had: " + sheetNames,
 				sheets.length, wb.getNumberOfSheets());
 		for(int i = 0;i < wb.getNumberOfSheets();i++) {
-			assertEquals("Had: " + sheetNames.toString(), 
+			assertEquals("Had: " + sheetNames,
 					sheets[i], wb.getSheetAt(i).getSheetName());
 		}
 	}

@@ -1848,7 +1848,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
         } else if (props instanceof CTTextCharacterProperties) {
             obj = new TextCharDelegate((CTTextCharacterProperties)props);
         } else {
-            LOG.log(POILogger.ERROR, props.getClass().toString()+" is an unknown properties type");
+            LOG.log(POILogger.ERROR, props.getClass() +" is an unknown properties type");
             return null;
         }
 
@@ -1856,7 +1856,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
             return (T)obj;
         }
         
-        LOG.log(POILogger.WARN, obj.getClass().toString()+" doesn't implement "+clazz.toString());
+        LOG.log(POILogger.WARN, obj.getClass() +" doesn't implement "+ clazz);
         return null;
     }
 }

@@ -198,9 +198,9 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 				                                                precision);
 
 		//System.out.println(result);
-		assertTrue("Had:" + result.toString(), result.toString().contains("evaluationCompletedWithError=false"));
-		assertTrue("Had:" + result.toString(), result.toString().contains("returnValue=790.79"));
-		assertTrue("Had:" + result.toString(), result.toString().contains("cellName='MortgageCalculator'!B4"));
+		assertTrue("Had:" + result, result.toString().contains("evaluationCompletedWithError=false"));
+		assertTrue("Had:" + result, result.toString().contains("returnValue=790.79"));
+		assertTrue("Had:" + result, result.toString().contains("cellName='MortgageCalculator'!B4"));
         assertFalse(result.toString().contains("#N/A"));
 
 		assertFalse(result.evaluationCompleteWithError());
@@ -220,10 +220,10 @@ public class TestExcelAntWorkbookUtil extends TestCase {
                                                                 precision);
 
         //System.out.println(result);
-        assertTrue("Had:" + result.toString(), result.toString().contains("evaluationCompletedWithError=false"));
-        assertTrue("Had:" + result.toString(), result.toString().contains("returnValue=790.79"));
-        assertTrue("Had:" + result.toString(), result.toString().contains("cellName='MortgageCalculator'!B4"));
-        assertFalse("Should not see an error, but had:" + result.toString(), result.toString().contains("#"));
+        assertTrue("Had:" + result, result.toString().contains("evaluationCompletedWithError=false"));
+        assertTrue("Had:" + result, result.toString().contains("returnValue=790.79"));
+        assertTrue("Had:" + result, result.toString().contains("cellName='MortgageCalculator'!B4"));
+        assertFalse("Should not see an error, but had:" + result, result.toString().contains("#"));
 
         assertFalse(result.evaluationCompleteWithError());
         assertFalse(result.didTestPass());
@@ -242,10 +242,10 @@ public class TestExcelAntWorkbookUtil extends TestCase {
                                                                 precision);
 
         System.out.println(result);
-        assertTrue("Had:" + result.toString(), result.toString().contains("evaluationCompletedWithError=true"));
-        assertTrue("Had:" + result.toString(), result.toString().contains("returnValue=0.0"));
-        assertTrue("Had:" + result.toString(), result.toString().contains("cellName='ErrorCell'!A1"));
-        assertTrue("Had:" + result.toString(), result.toString().contains("#N/A"));
+        assertTrue("Had:" + result, result.toString().contains("evaluationCompletedWithError=true"));
+        assertTrue("Had:" + result, result.toString().contains("returnValue=0.0"));
+        assertTrue("Had:" + result, result.toString().contains("cellName='ErrorCell'!A1"));
+        assertTrue("Had:" + result, result.toString().contains("#N/A"));
 
         assertTrue(result.evaluationCompleteWithError());
         assertFalse(result.didTestPass());

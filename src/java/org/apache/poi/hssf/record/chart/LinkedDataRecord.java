@@ -78,7 +78,7 @@ public final class LinkedDataRecord extends StandardRecord implements Cloneable 
         Ptg[] ptgs = field_5_formulaOfLink.getTokens();
         for (int i = 0; i < ptgs.length; i++) {
             Ptg ptg = ptgs[i];
-            buffer.append(ptg.toString()).append(ptg.getRVAType()).append('\n');
+            buffer.append(ptg).append(ptg.getRVAType()).append('\n');
         }
 
         buffer.append("[/AI]\n");

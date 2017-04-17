@@ -415,7 +415,7 @@ public class Property {
         final Object value = getValue();
         b.append(", value: ");
         if (value instanceof String) {
-            b.append(value.toString());
+            b.append(value);
             final String s = (String) value;
             final int l = s.length();
             final byte[] bytes = new byte[l * 2];
@@ -439,7 +439,7 @@ public class Property {
                 b.append(hex);
             }
         } else {
-            b.append(value.toString());
+            b.append(value);
         }
         b.append(']');
         return b.toString();

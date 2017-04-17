@@ -316,7 +316,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord implements Clone
 		if (field_2_refPtg == null) {
 			sb.append("    .f3unknown     = ").append(HexDump.toHex(field_2_unknownFormulaData)).append("\n");
 		} else {
-			sb.append("    .formula       = ").append(field_2_refPtg.toString()).append("\n");
+			sb.append("    .formula       = ").append(field_2_refPtg).append("\n");
 		}
 		if (field_4_ole_classname != null) {
 			sb.append("    .unicodeFlag   = ").append(field_3_unicode_flag).append("\n");

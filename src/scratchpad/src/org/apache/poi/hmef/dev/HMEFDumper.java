@@ -108,7 +108,7 @@ public final class HMEFDumper {
          // Print the attribute into
          System.out.println(
                "Level " + level + " : Type " + attr.getType() +
-               " : ID " + attr.getProperty().toString()
+               " : ID " + attr.getProperty()
          );
          
          // Print the contents

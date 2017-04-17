@@ -553,7 +553,7 @@ public final class NameRecord extends ContinuableRecord {
 		Ptg[] ptgs = field_13_name_definition.getTokens();
 		sb.append("    .Formula (nTokens=").append(ptgs.length).append("):") .append("\n");
 		for (Ptg ptg : ptgs) {
-			sb.append("       " + ptg.toString()).append(ptg.getRVAType()).append("\n");
+			sb.append("       " + ptg).append(ptg.getRVAType()).append("\n");
 		}
 
 		sb.append("    .Menu text       = ").append(field_14_custom_menu_text).append("\n");

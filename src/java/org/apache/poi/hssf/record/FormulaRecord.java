@@ -380,7 +380,7 @@ public final class FormulaRecord extends CellRecord implements Cloneable {
 			}
 			sb.append("    Ptg[").append(k).append("]=");
 			Ptg ptg = ptgs[k];
-			sb.append(ptg.toString()).append(ptg.getRVAType());
+			sb.append(ptg).append(ptg.getRVAType());
 		}
 	}
 

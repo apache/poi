@@ -88,7 +88,7 @@ public final class TestProper {
             builder.append((char)(65 + (i % 26)));
             expected.append((char)(97 + (i % 26)));
         }
-        confirm("PROPER(\"" + builder.toString() + "\")", expected.toString());
+        confirm("PROPER(\"" + builder + "\")", expected.toString());
     }
 
     private void confirm(String formulaText, String expectedResult) {
