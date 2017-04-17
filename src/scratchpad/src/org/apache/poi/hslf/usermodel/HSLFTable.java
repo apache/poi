@@ -361,30 +361,38 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
     
     @Override
-    public void setRowHeight(int row, double height) {
+    public void setRowHeight(int row, final double height) {
         if (row < 0 || row >= cells.length) {
             throw new IllegalArgumentException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
         }
 
-        int pxHeight = Units.pointsToPixel(height);
-        double currentHeight = cells[row][0].getAnchor().getHeight();
-        double dy = pxHeight - currentHeight;
-
+        // update row height in the table properties
+        AbstractEscherOptRecord opt = getEscherChild(RecordTypes.EscherUserDefined.typeID);
+        EscherArrayProperty p = opt.lookup(EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES);
+        byte[] masterBytes = p.getElement(row);
+        double currentHeight = Units.masterToPoints(LittleEndian.getInt(masterBytes, 0));
+        LittleEndian.putInt(masterBytes, 0, Units.pointsToMaster(height));
+        p.setElement(row, masterBytes);
+        
+        // move the cells
+        double dy = height - currentHeight;
         for (int i = row; i < cells.length; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                Rectangle2D anchor = cells[i][j].getAnchor();
-                if(i == row) {
-                    anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), pxHeight);
-                } else {
-                    anchor.setRect(anchor.getX(), anchor.getY()+dy, anchor.getWidth(), pxHeight);
+            for (HSLFTableCell c : cells[i]) {
+                if (c == null) {
+                    continue;
                 }
-                cells[i][j].setAnchor(anchor);
+                Rectangle2D anchor = c.getAnchor();
+                if(i == row) {
+                    anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height);
+                } else {
+                    anchor.setRect(anchor.getX(), anchor.getY()+dy, anchor.getWidth(), anchor.getHeight());
+                }
+                c.setAnchor(anchor);
             }
         }
         Rectangle2D tblanchor = getAnchor();
         tblanchor.setRect(tblanchor.getX(), tblanchor.getY(), tblanchor.getWidth(), tblanchor.getHeight() + dy);
         setExteriorAnchor(tblanchor);
-
     }
 
     @Override
@@ -453,7 +461,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
 
     private void updateRowHeightsProperty() {
-        AbstractEscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherChild(RecordTypes.EscherUserDefined.typeID);
         EscherArrayProperty p = opt.lookup(EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES);
         byte[] val = new byte[4];
         for (int rowIdx = 0; rowIdx < cells.length; rowIdx++) {

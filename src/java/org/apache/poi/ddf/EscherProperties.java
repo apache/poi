@@ -624,7 +624,7 @@ public final class EscherProperties {
         addProp( m, GROUPSHAPE__BORDERBOTTOMCOLOR, "groupshape.borderBottomColor" ); // 0x039D;
         addProp( m, GROUPSHAPE__BORDERRIGHTCOLOR, "groupshape.borderRightColor" ); // 0x039E;
         addProp( m, GROUPSHAPE__TABLEPROPERTIES, "groupshape.tableProperties" ); // 0x039F;
-        addProp( m, GROUPSHAPE__TABLEROWPROPERTIES, "groupshape.tableRowProperties" ); // 0x03A0;
+        addProp( m, GROUPSHAPE__TABLEROWPROPERTIES, "groupshape.tableRowProperties", EscherPropertyMetaData.TYPE_ARRAY ); // 0x03A0;
         addProp( m, GROUPSHAPE__WEBBOT, "groupshape.wzWebBot" ); // 0x03A5;
         addProp( m, GROUPSHAPE__METROBLOB, "groupshape.metroBlob" ); // 0x03A9;
         addProp( m, GROUPSHAPE__ZORDER, "groupshape.dhgt" ); // 0x03AA;

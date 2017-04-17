@@ -88,7 +88,12 @@ public class TestTable {
         
         // assert ppt and pptx versions of the same table have the same shape
         confirmTableShapeEqual(ts, tsx);
-
+        
+        // change row height and validate again
+        tsx.setRowHeight(1, 50);
+        ts.setRowHeight(1, 50);
+        confirmTableShapeEqual(ts, tsx);
+        
         pptx.close();
         ppt.close();
     }
@@ -115,7 +120,7 @@ public class TestTable {
     }
 
     @Test
-    public void textDirectionHSLF() throws IOException {
+    public void directionHSLF() throws IOException {
         assumeFalse(xslfOnly);
         SlideShow<?,?> ppt1 = new HSLFSlideShow();
         testTextDirection(ppt1);
@@ -123,7 +128,7 @@ public class TestTable {
     }
     
     @Test
-    public void textDirectionXSLF() throws IOException {
+    public void directionXSLF() throws IOException {
         SlideShow<?,?> ppt1 = new XMLSlideShow();
         testTextDirection(ppt1);
         ppt1.close();
