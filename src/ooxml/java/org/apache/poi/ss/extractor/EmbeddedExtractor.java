@@ -232,7 +232,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             // check for emf+ embedded pdf (poor mans style :( )
             // Mac Excel 2011 embeds pdf files with this method.
             PictureData pd = source.getPictureData();
-            if (pd != null && pd.getPictureType() != Workbook.PICTURE_TYPE_EMF) {
+            if (pd == null || pd.getPictureType() != Workbook.PICTURE_TYPE_EMF) {
                 return null;
             }
 
