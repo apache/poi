@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -71,11 +72,11 @@ public class HemfCommentPublic  {
             //note that raw bytes includes the public comment identifier
             int currentOffset = 4 + 16;//4 public comment identifier, 16 for outputrect
             long countFormats = LittleEndian.getUInt(rawBytes, currentOffset);
-            currentOffset += LittleEndian.INT_SIZE;
+            currentOffset += LittleEndianConsts.INT_SIZE;
             List<EmrFormat> emrFormatList = new ArrayList<EmrFormat>();
             for (long i = 0; i < countFormats; i++) {
                 emrFormatList.add(new EmrFormat(rawBytes, currentOffset));
-                currentOffset += 4 * LittleEndian.INT_SIZE;
+                currentOffset += 4 * LittleEndianConsts.INT_SIZE;
             }
             List<HemfMultiFormatsData> list = new ArrayList<HemfMultiFormatsData>();
             for (EmrFormat emrFormat : emrFormatList) {
@@ -86,20 +87,20 @@ public class HemfCommentPublic  {
             return list;
         }
 
-        private class EmrFormat {
+        private static class EmrFormat {
             long signature;
             long version;
             int size;
             int offset;
 
             public EmrFormat(byte[] rawBytes, int currentOffset) {
-                signature = LittleEndian.getUInt(rawBytes, currentOffset); currentOffset += LittleEndian.INT_SIZE;
-                version = LittleEndian.getUInt(rawBytes, currentOffset); currentOffset += LittleEndian.INT_SIZE;
+                signature = LittleEndian.getUInt(rawBytes, currentOffset); currentOffset += LittleEndianConsts.INT_SIZE;
+                version = LittleEndian.getUInt(rawBytes, currentOffset); currentOffset += LittleEndianConsts.INT_SIZE;
                 //spec says this must be a 32bit "aligned" typo for "signed"?
                 //realistically, this has to be an int...
-                size = LittleEndian.getInt(rawBytes, currentOffset); currentOffset += LittleEndian.INT_SIZE;
+                size = LittleEndian.getInt(rawBytes, currentOffset); currentOffset += LittleEndianConsts.INT_SIZE;
                 //y, can be long, but realistically?
-                offset = LittleEndian.getInt(rawBytes, currentOffset); currentOffset += LittleEndian.INT_SIZE;
+                offset = LittleEndian.getInt(rawBytes, currentOffset); currentOffset += LittleEndianConsts.INT_SIZE;
                 if (size < 0) {
                     throw new RecordFormatException("size for emrformat must be > 0");
                 }
@@ -118,12 +119,12 @@ public class HemfCommentPublic  {
         private final byte[] wmfBytes;
         public WindowsMetafile(byte[] rawBytes) {
             super(rawBytes);
-            int offset = LittleEndian.INT_SIZE;//public comment identifier
-            int version = LittleEndian.getUShort(rawBytes, offset); offset += LittleEndian.SHORT_SIZE;
-            int reserved = LittleEndian.getUShort(rawBytes, offset); offset += LittleEndian.SHORT_SIZE;
-            offset += LittleEndian.INT_SIZE; //checksum
-            offset += LittleEndian.INT_SIZE; //flags
-            long winMetafileSizeLong = LittleEndian.getUInt(rawBytes, offset); offset += LittleEndian.INT_SIZE;
+            int offset = LittleEndianConsts.INT_SIZE;//public comment identifier
+            int version = LittleEndian.getUShort(rawBytes, offset); offset += LittleEndianConsts.SHORT_SIZE;
+            int reserved = LittleEndian.getUShort(rawBytes, offset); offset += LittleEndianConsts.SHORT_SIZE;
+            offset += LittleEndianConsts.INT_SIZE; //checksum
+            offset += LittleEndianConsts.INT_SIZE; //flags
+            long winMetafileSizeLong = LittleEndian.getUInt(rawBytes, offset); offset += LittleEndianConsts.INT_SIZE;
             if (winMetafileSizeLong == 0L) {
                 wmfBytes = new byte[0];
                 return;

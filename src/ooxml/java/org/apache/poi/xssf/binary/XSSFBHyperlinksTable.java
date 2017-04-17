@@ -19,6 +19,7 @@ package org.apache.poi.xssf.binary;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Comparator;
@@ -163,8 +164,9 @@ public class XSSFBHyperlinksTable {
         }
     }
 
-    private static class TopLeftCellAddressComparator implements Comparator<CellAddress> {
-
+    private static class TopLeftCellAddressComparator implements Comparator<CellAddress>, Serializable {
+        private static final long serialVersionUID = 1L;
+        
         @Override
         public int compare(CellAddress o1, CellAddress o2) {
             if (o1.getRow() < o2.getRow()) {

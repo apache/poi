@@ -109,7 +109,10 @@ public class ConditionalFormattingEvaluator {
     protected List<EvaluationConditionalFormatRule> getRules(Sheet sheet) {
         final String sheetName = sheet.getSheetName();
         List<EvaluationConditionalFormatRule> rules = formats.get(sheetName);
-        if (rules == null && ! formats.containsKey(sheetName)) {
+        if (rules == null) {
+            if (formats.containsKey(sheetName)) {
+                return Collections.emptyList();
+            }
             final SheetConditionalFormatting scf = sheet.getSheetConditionalFormatting();
             final int count = scf.getNumConditionalFormattings();
             rules = new ArrayList<EvaluationConditionalFormatRule>(count);
@@ -149,12 +152,17 @@ public class ConditionalFormattingEvaluator {
     public List<EvaluationConditionalFormatRule> getConditionalFormattingForCell(final CellReference cellRef) {
         String sheetName = cellRef.getSheetName();
         Sheet sheet = null;
-        if (sheetName == null) sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
-        else sheet = workbook.getSheet(sheetName);
+        if (sheetName == null) {
+            sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
+        } else {
+            sheet = workbook.getSheet(sheetName);
+        }
         
         final Cell cell = SheetUtil.getCell(sheet, cellRef.getRow(), cellRef.getCol());
         
-        if (cell == null) return Collections.emptyList();
+        if (cell == null) {
+            return Collections.emptyList();
+        }
         
         return getConditionalFormattingForCell(cell, cellRef);
     }
@@ -202,7 +210,9 @@ public class ConditionalFormattingEvaluator {
             boolean stopIfTrue = false;
             for (EvaluationConditionalFormatRule rule : getRules(cell.getSheet())) {
                 
-                if (stopIfTrue) continue; // a previous rule matched and wants no more evaluations
+                if (stopIfTrue) {
+                    continue; // a previous rule matched and wants no more evaluations
+                }
 
                 if (rule.matches(cell)) {
                     rules.add(rule);
@@ -268,13 +278,19 @@ public class ConditionalFormattingEvaluator {
         for (CellRangeAddress region : rule.getRegions()) {
             for (int r = region.getFirstRow(); r <= region.getLastRow(); r++) {
                 final Row row = sheet.getRow(r);
-                if (row == null) continue; // no cells to check
+                if (row == null) {
+                    continue; // no cells to check
+                }
                 for (int c = region.getFirstColumn(); c <= region.getLastColumn(); c++) {
                     final Cell cell = row.getCell(c);
-                    if (cell == null) continue;
+                    if (cell == null) {
+                        continue;
+                    }
                     
                     List<EvaluationConditionalFormatRule> cellRules = getConditionalFormattingForCell(cell);
-                    if (cellRules.contains(rule)) cells.add(cell);
+                    if (cellRules.contains(rule)) {
+                        cells.add(cell);
+                    }
                 }
             }
         }
