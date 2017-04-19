@@ -128,6 +128,9 @@ public class DataFormatter implements Observer {
 
     /** Pattern to find "AM/PM" marker */
     private static final Pattern amPmPattern = Pattern.compile("((A|P)[M/P]*)", Pattern.CASE_INSENSITIVE);
+    
+    /** Pattern to find formats with condition ranges e.g. [>=100] */
+    private static final Pattern rangeConditionalPattern = Pattern.compile(".*\\[\\s*(>|>=|<|<=|=)\\s*[0-9]*\\.*[0-9].*");
 
     /** 
      * A regex to find locale patterns like [$$-1009] and [$?-452].
@@ -318,7 +321,10 @@ public class DataFormatter implements Observer {
         //  handle these ourselves in a special way.
         // For now, if we detect 2+ parts, we call out to CellFormat to handle it
         // TODO Going forward, we should really merge the logic between the two classes
-        if (formatStr.contains(";") ) {
+        if (formatStr.contains(";") && 
+                (formatStr.indexOf(';') != formatStr.lastIndexOf(';')
+                 || rangeConditionalPattern.matcher(formatStr).matches()
+                ) ) {
             try {
                 // Ask CellFormat to get a formatter for it
                 CellFormat cfmt = CellFormat.getInstance(formatStr);

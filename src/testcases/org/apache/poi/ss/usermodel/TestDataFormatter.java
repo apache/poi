@@ -318,7 +318,7 @@ public class TestDataFormatter {
         //assertEquals("123",     dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
 
         //Bug54868 patch has a hit on the first string before the ";"
-        assertEquals("123", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+        assertEquals("-123 1/3", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
         assertEquals("123 1/3", dfUS.formatRawCellContents(123.321, -1, "0 ?/?;0"));
 
         //Bug53150 formatting a whole number with fractions should just give the number
