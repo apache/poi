@@ -17,7 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.apache.poi.POITestCase.assertContains;
+
+import org.junit.Test;
 
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -25,22 +28,27 @@ import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 
-public final class TestBug46610 extends TestCase {
+public final class TestBug46610 {
 
-	public void testUtf() {
-		runExtract("Bug46610_1.doc");
+	@Test
+	public void testUtf() throws Exception {
+		String text = runExtract("Bug46610_1.doc");
+		assertNotNull(text);
 	}
 
-	public void testUtf2() {
-		runExtract("Bug46610_2.doc");
+	@Test
+	public void testUtf2() throws Exception {
+		String text = runExtract("Bug46610_2.doc");
+		assertNotNull(text);
 	}
 
-	public void testExtraction() {
+	@Test
+	public void testExtraction() throws Exception {
 		String text = runExtract("Bug46610_3.doc");
-		assertTrue(text.contains("\u0421\u0412\u041e\u042e"));
+		assertContains(text, "\u0421\u0412\u041e\u042e");
 	}
 
-	private static String runExtract(String sampleName) {
+	private static String runExtract(String sampleName) throws Exception {
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile(sampleName);
 		StringBuffer out = new StringBuffer();
 
@@ -53,6 +61,7 @@ public final class TestBug46610 extends TestCase {
 				CharacterRun characterRun = p.getCharacterRun(j);
 				characterRun.text();
 			}
+		doc.close();
 		}
 		return out.toString();
 	}

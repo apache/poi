@@ -21,8 +21,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.apache.poi.POITestCase.assertContains;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -999,6 +1001,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Check that asking for the same font
         //  multiple times gives you the same thing.
         // Otherwise, our tests wouldn't work!
+        assertSame(wb.getFontAt((short)0), wb.getFontAt((short)0));
         assertEquals(
                 wb.getFontAt((short)0),
                 wb.getFontAt((short)0)
@@ -2354,10 +2357,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
           // Extract and check
           ExcelExtractor ex = new ExcelExtractor(wb);
           String text = ex.getText();
-          assertTrue(text.contains("Top Left Cell"));
-          assertTrue(text.contains("Top Right Cell"));
-          assertTrue(text.contains("Bottom Left Cell"));
-          assertTrue(text.contains("Bottom Right Cell"));
+          assertContains(text, "Top Left Cell");
+          assertContains(text, "Top Right Cell");
+          assertContains(text, "Bottom Left Cell");
+          assertContains(text, "Bottom Right Cell");
           ex.close();
        }
     }
@@ -2467,8 +2470,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 list.add(r.getSid());
             }
         });
-        assertTrue(list.get(list.size()-1).intValue() == UnknownRecord.BITMAP_00E9);
-        assertTrue(list.get(list.size()-2).intValue() == UnknownRecord.HEADER_FOOTER_089C);
+        assertEquals(UnknownRecord.BITMAP_00E9, list.get(list.size()-1).intValue());
+        assertEquals(UnknownRecord.HEADER_FOOTER_089C, list.get(list.size()-2).intValue());
         wb.close();
     }
 

@@ -20,6 +20,8 @@ package org.apache.poi.hssf.extractor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,8 +106,6 @@ public final class TestExcelExtractor {
 	public void testwithContinueRecords() throws IOException {
 
 		ExcelExtractor extractor = createExtractor("StringContinueRecords.xls");
-
-		extractor.getText();
 
 		// Has masses of text
 		// Until we fixed bug #41064, this would've
@@ -231,19 +231,19 @@ public final class TestExcelExtractor {
 		extractor.setIncludeBlankCells(true);
 		String padded = extractor.getText();
 
-		assertTrue(def.startsWith(
+		assertStartsWith(def,
 				"Sheet1\n" +
 				"&[TAB]\t\n" +
 				"Hello\n" +
 				"11\t23\n"
-		));
+		);
 
-		assertTrue(padded.startsWith(
+		assertStartsWith(padded,
 				"Sheet1\n" +
 				"&[TAB]\t\n" +
 				"Hello\n" +
 				"11\t\t\t23\n"
-		));
+		);
 		
 		extractor.close();
 	}
@@ -262,17 +262,14 @@ public final class TestExcelExtractor {
             //  actually quite match what they claim to
             //  be, as some are auto-local builtins...
             
-            assertTrue(text.startsWith(
-                  "Dates, all 24th November 2006\n"
-            ));
-            assertTrue(text.contains("yyyy/mm/dd\t2006/11/24\n"));
-            assertTrue(text.contains("yyyy-mm-dd\t2006-11-24\n"));
-            assertTrue(text.contains("dd-mm-yy\t24-11-06\n"));
+            assertStartsWith(text, "Dates, all 24th November 2006\n");
+            assertContains(text, "yyyy/mm/dd\t2006/11/24\n");
+            assertContains(text, "yyyy-mm-dd\t2006-11-24\n");
+            assertContains(text, "dd-mm-yy\t24-11-06\n");
             
-            assertTrue("Had: " + text + ", but should contain 'nn.nn\\t10.52\\n'",
-					text.contains("nn.nn\t10.52\n"));
-            assertTrue(text.contains("nn.nnn\t10.520\n"));
-            assertTrue(text.contains("\u00a3nn.nn\t\u00a310.52\n"));
+            assertContains(text, "nn.nn\t10.52\n");
+            assertContains(text, "nn.nnn\t10.520\n");
+            assertContains(text, "\u00a3nn.nn\t\u00a310.52\n");
             extractor.close();
 	    } finally {
 	        LocaleUtil.setUserLocale(userLocale);
@@ -367,8 +364,8 @@ public final class TestExcelExtractor {
 		for (String file : files) {
 			ExcelExtractor extractor = createExtractor(file);
 			String text = extractor.getText();
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+			assertContains(file, text, "testdoc");
+			assertContains(file, text, "test phrase");
 			extractor.close();
 		}
 	}
@@ -380,7 +377,7 @@ public final class TestExcelExtractor {
 		String text = extractor.getText();
 		Biff8EncryptionKey.setCurrentUserPassword(null);
 
-		assertTrue(text.contains("ZIP"));
+		assertContains(text, "ZIP");
 		extractor.close();
 	}
 

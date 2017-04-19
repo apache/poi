@@ -19,6 +19,7 @@ package org.apache.poi.hslf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertContainsIgnoreCase;
+import static org.apache.poi.POITestCase.assertNotContained;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -160,7 +161,7 @@ public final class TestExtractor {
         assertEquals(nText.length(), 0);
 
         // Slide records were fine
-        assertTrue(text.startsWith("Using Disease Surveillance and Response"));
+        assertContains(text, "Using Disease Surveillance and Response");
         
         ppe.close();
     }
@@ -347,10 +348,10 @@ public final class TestExtractor {
         // Enable, shows up
         ppe1.setMasterByDefault(true);
         text = ppe1.getText();
-        assertTrue(text.contains("Text that I added to the master slide"));
+        assertContains(text, "Text that I added to the master slide");
 
         // Make sure placeholder text does not come out
-        assertFalse(text.contains("Click to edit Master"));
+        assertNotContained(text, "Click to edit Master");
         ppe1.close();
 
         // Now with another file only containing master text
