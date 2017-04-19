@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.eventusermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
+
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -181,9 +183,9 @@ public final class TestXSSFReader extends TestCase {
         XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
 
         String text = getShapesString(it);
-        assertTrue(text.contains("Line 1"));
-        assertTrue(text.contains("Line 2"));
-        assertTrue(text.contains("Line 3"));
+        assertContains(text, "Line 1");
+        assertContains(text, "Line 2");
+        assertContains(text, "Line 3");
     }
 
     private String getShapesString(XSSFReader.SheetIterator it) {
@@ -213,16 +215,16 @@ public final class TestXSSFReader extends TestCase {
             r = new XSSFReader(pkg);
             fail("This will fail until bug 57699 is fixed");
         } catch (POIXMLException e) {
-            assertTrue("Had " + e, e.getMessage().contains("57699"));
+            assertContains(e.getMessage(), "57699");
             return;
         }
 
         XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
 
         String text = getShapesString(it);
-        assertTrue(text.contains("Line 1"));
-        assertTrue(text.contains("Line 2"));
-        assertTrue(text.contains("Line 3"));
+        assertContains(text, "Line 1");
+        assertContains(text, "Line 2");
+        assertContains(text, "Line 3");
     }
 
    /**

@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -265,18 +266,18 @@ public final class TestWordExtractor {
     }
     
     @Test
-	public void testWord95() throws Exception {
-		// Can work with the special one
+    public void testWord95() throws Exception {
+        // Can work with the special one
         InputStream is = docTests.openResourceAsStream("Word95.doc");
-	    Word6Extractor w6e = new Word6Extractor(is);
-	    is.close();
-	    
-		String text = w6e.getText();
-		
-		assertTrue(text.contains("The quick brown fox jumps over the lazy dog"));
-        assertTrue(text.contains("Paragraph 2"));
-        assertTrue(text.contains("Paragraph 3. Has some RED text and some BLUE BOLD text in it"));
-        assertTrue(text.contains("Last (4th) paragraph"));
+        Word6Extractor w6e = new Word6Extractor(is);
+        is.close();
+
+        String text = w6e.getText();
+
+        assertContains(text, "The quick brown fox jumps over the lazy dog");
+        assertContains(text, "Paragraph 2");
+        assertContains(text, "Paragraph 3. Has some RED text and some BLUE BOLD text in it");
+        assertContains(text, "Last (4th) paragraph");
         
         String[] tp = w6e.getParagraphText();
         assertEquals(7, tp.length);
@@ -288,8 +289,8 @@ public final class TestWordExtractor {
         assertEquals("\r\n", tp[5]);
         assertEquals("Last (4th) paragraph.\r\n", tp[6]);
         w6e.close();
-	}
-	
+    }
+
     @Test(expected=OldWordFileFormatException.class)
     public void testWord6_WordExtractor() throws IOException {
         // Too old for the default
@@ -297,27 +298,27 @@ public final class TestWordExtractor {
     }
     
     @Test
-	public void testWord6() throws Exception {
+    public void testWord6() throws Exception {
         InputStream is = docTests.openResourceAsStream("Word6.doc");
         Word6Extractor w6e = new Word6Extractor(is);
         is.close();
         String text = w6e.getText();
         
-        assertTrue(text.contains("The quick brown fox jumps over the lazy dog"));
+        assertContains(text, "The quick brown fox jumps over the lazy dog");
         
         String[] tp = w6e.getParagraphText();
         assertEquals(1, tp.length);
         assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
         w6e.close();
-	}
+    }
 
     @Test
     public void testFastSaved() throws Exception {
         WordExtractor extractor = openExtractor("rasp.doc");
 
         String text = extractor.getText();
-        assertTrue(text.contains("\u0425\u0425\u0425\u0425\u0425"));
-        assertTrue(text.contains("\u0423\u0423\u0423\u0423\u0423"));
+        assertContains(text, "\u0425\u0425\u0425\u0425\u0425");
+        assertContains(text, "\u0423\u0423\u0423\u0423\u0423");
         
         extractor.close();
     }
@@ -328,7 +329,7 @@ public final class TestWordExtractor {
 
         String text = extractor.getText();
 
-        assertTrue(text.startsWith("\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435"));
+        assertStartsWith(text, "\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435");
         extractor.close();
     }
     

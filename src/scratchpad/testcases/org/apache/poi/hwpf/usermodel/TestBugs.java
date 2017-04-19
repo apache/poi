@@ -17,9 +17,9 @@
 package org.apache.poi.hwpf.usermodel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContained;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -300,9 +300,9 @@ public class TestBugs{
     {
         String text = getText("Bug46817.doc").trim();
 
-        assertTrue(text.contains("Nazwa wykonawcy"));
-        assertTrue(text.contains("kujawsko-pomorskie"));
-        assertTrue(text.contains("ekomel@ekomel.com.pl"));
+        assertContains(text, "Nazwa wykonawcy");
+        assertContains(text, "kujawsko-pomorskie");
+        assertContains(text, "ekomel@ekomel.com.pl");
     }
 
     /**
@@ -421,11 +421,11 @@ public class TestBugs{
 
         String docText = r.text();
 
-        assertTrue(docText.contains("1-1"));
-        assertTrue(docText.contains("1-12"));
+        assertContains(docText, "1-1");
+        assertContains(docText, "1-12");
 
-        assertFalse(docText.contains("1-13"));
-        assertFalse(docText.contains("1-15"));
+        assertNotContained(docText, "1-13");
+        assertNotContained(docText, "1-15");
     }
 
     /**
@@ -437,8 +437,7 @@ public class TestBugs{
     {
         String foundText = getText("Bug47731.doc");
 
-        assertTrue(foundText
-                .contains("Soak the rice in water for three to four hours"));
+        assertContains(foundText, "Soak the rice in water for three to four hours");
     }
 
     /**
@@ -500,42 +499,24 @@ public class TestBugs{
     {
         String text = getTextOldFile("Bug49933.doc");
 
-        assertTrue( text.contains( "best.wine.jump.ru" ) );
+        assertContains(text, "best.wine.jump.ru");
     }
 
     /**
      * Bug 50936 - Exception parsing MS Word 8.0 file
      */
     @Test
-    public void test50936_1()
+    public void test50936() throws Exception
     {
-        HWPFDocument hwpfDocument = HWPFTestDataSamples
-                .openSampleFile("Bug50936_1.doc");
-        hwpfDocument.getPicturesTable().getAllPictures();
-    }
+        String[] filenames = {"Bug50936_1.doc", "Bug50936_2.doc", "Bug50936_3.doc"};
+        for (String filename : filenames) {
+            HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile(filename);
 
-    /**
-     * Bug 50936 - Exception parsing MS Word 8.0 file
-     */
-    @Test
-    public void test50936_2()
-    {
-        HWPFDocument hwpfDocument = HWPFTestDataSamples
-                .openSampleFile("Bug50936_2.doc");
-        hwpfDocument.getPicturesTable().getAllPictures();
+            assertNotNull(filename, hwpfDocument.getPicturesTable().getAllPictures());
+        
+            hwpfDocument.close();
+        }
     }
-
-    /**
-     * Bug 50936 - Exception parsing MS Word 8.0 file
-     */
-    @Test
-    public void test50936_3()
-    {
-        HWPFDocument hwpfDocument = HWPFTestDataSamples
-                .openSampleFile("Bug50936_3.doc");
-        hwpfDocument.getPicturesTable().getAllPictures();
-    }
-
 
     /**
      * [RESOLVED FIXED] Bug 51604 - replace text fails for doc (poi 3.8 beta
