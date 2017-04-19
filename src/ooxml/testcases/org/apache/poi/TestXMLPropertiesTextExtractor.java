@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi;
 
+import static org.apache.poi.POITestCase.assertContains;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -44,8 +46,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 		String text = textExt.getText();
 		String cText = textExt.getCorePropertiesText();
 
-		assertTrue(text.contains("LastModifiedBy = Yury Batrakov"));
-		assertTrue(cText.contains("LastModifiedBy = Yury Batrakov"));
+		assertContains(text, "LastModifiedBy = Yury Batrakov");
+		assertContains(cText, "LastModifiedBy = Yury Batrakov");
 		
 		textExt.close();
 		ext.close();
@@ -64,8 +66,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 		String text = ext.getText();
 		String cText = ext.getCorePropertiesText();
 
-		assertTrue(text.contains("LastModifiedBy = Yury Batrakov"));
-		assertTrue(cText.contains("LastModifiedBy = Yury Batrakov"));
+		assertContains(text, "LastModifiedBy = Yury Batrakov");
+		assertContains(cText, "LastModifiedBy = Yury Batrakov");
 		
 		ext.close();
 	}
@@ -83,10 +85,10 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 		String text = ext.getText();
 		String eText = ext.getExtendedPropertiesText();
 
-		assertTrue(text.contains("Application = Microsoft Excel"));
-		assertTrue(text.contains("Company = Mera"));
-		assertTrue(eText.contains("Application = Microsoft Excel"));
-		assertTrue(eText.contains("Company = Mera"));
+		assertContains(text, "Application = Microsoft Excel");
+		assertContains(text, "Company = Mera");
+		assertContains(eText, "Application = Microsoft Excel");
+		assertContains(eText, "Company = Mera");
 
 		ext.close();
 	}
@@ -104,8 +106,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
       String text = ext.getText();
       String cText = ext.getCustomPropertiesText();
       
-      assertTrue(text.contains("description = another value"));
-      assertTrue(cText.contains("description = another value"));
+      assertContains(text, "description = another value");
+      assertContains(cText, "description = another value");
 
       ext.close();
 	}
@@ -125,8 +127,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
       
       String text = ext.getText();
       assertFalse(text.contains("Created =")); // With date is null
-      assertTrue(text.contains("CreatedString = ")); // Via string is blank
-      assertTrue(text.contains("LastModifiedBy = IT Client Services"));
+      assertContains(text, "CreatedString = "); // Via string is blank
+      assertContains(text, "LastModifiedBy = IT Client Services");
 		
       ext.close();
 	}

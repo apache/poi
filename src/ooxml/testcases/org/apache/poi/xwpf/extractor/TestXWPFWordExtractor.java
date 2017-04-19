@@ -27,6 +27,9 @@ import junit.framework.TestCase;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertStartsWith;
 
 /**
  * Tests for HXFWordExtractor
@@ -46,12 +49,12 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(text.length() > 0);
 
         // Check contents
-        assertTrue(text.startsWith(
+        assertStartsWith(text,
                 "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc at risus vel erat tempus posuere. Aenean non ante. Suspendisse vehicula dolor sit amet odio."
-        ));
-        assertTrue(text.endsWith(
+        );
+        assertEndsWith(text,
                 "Phasellus ultricies mi nec leo. Sed tempus. In sit amet lorem at velit faucibus vestibulum.\n"
-        ));
+        );
 
         // Check number of paragraphs by counting number of newlines
         int numberOfParagraphs = StringUtil.countMatches(text, '\n');
@@ -76,15 +79,15 @@ public class TestXWPFWordExtractor extends TestCase {
 //		System.err.println("'"+text.substring(text.length() - 40) + "'");
 
         // Check contents
-        assertTrue(text.startsWith(
+        assertStartsWith(text,
                 "  \n(V) ILLUSTRATIVE CASES\n\n"
-        ));
-        assertTrue(text.contains(
+        );
+        assertContains(text,
                 "As well as gaining " + euro + "90 from child benefit increases, he will also receive the early childhood supplement of " + euro + "250 per quarter for Vincent for the full four quarters of the year.\n\n\n\n"// \n\n\n"
-        ));
-        assertTrue(text.endsWith(
+        );
+        assertEndsWith(text,
                 "11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\n\n \n\n\n"
-        ));
+        );
 
         // Check number of paragraphs by counting number of newlines
         int numberOfParagraphs = StringUtil.countMatches(text, '\n');
@@ -173,8 +176,8 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
         String text = extractor.getText();
-        assertTrue(text.contains("snoska"));
-        assertTrue(text.contains("Eto ochen prostoy[footnoteRef:1] text so snoskoy"));
+        assertContains(text,"snoska");
+        assertContains(text,"Eto ochen prostoy[footnoteRef:1] text so snoskoy");
 
         extractor.close();
     }
@@ -184,7 +187,7 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table_footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
-        assertTrue(extractor.getText().contains("snoska"));
+        assertContains(extractor.getText(),"snoska");
 
         extractor.close();
     }
@@ -194,8 +197,8 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         String text = extractor.getText();
-        assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-        assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+        assertContains(text,"testdoc");
+        assertContains(text,"test phrase");
 
         extractor.close();
     }
@@ -204,8 +207,8 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("endnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
         String text = extractor.getText();
-        assertTrue(text.contains("XXX"));
-        assertTrue(text.contains("tilaka [endnoteRef:2]or 'tika'"));
+        assertContains(text,"XXX");
+        assertContains(text,"tilaka [endnoteRef:2]or 'tika'");
 
         extractor.close();
     }
@@ -214,8 +217,8 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("delins.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
-        assertTrue(extractor.getText().contains("pendant worn"));
-        assertTrue(extractor.getText().contains("extremely well"));
+        assertContains(extractor.getText(),"pendant worn");
+        assertContains(extractor.getText(),"extremely well");
 
         extractor.close();
     }
@@ -224,9 +227,9 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Headers.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
-        assertTrue(extractor.getText().contains("Section 1"));
-        assertTrue(extractor.getText().contains("Section 2"));
-        assertTrue(extractor.getText().contains("Section 3"));
+        assertContains(extractor.getText(),"Section 1");
+        assertContains(extractor.getText(),"Section 2");
+        assertContains(extractor.getText(),"Section 3");
 
         extractor.close();
     }
@@ -241,9 +244,9 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("45690.docm");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
-        assertTrue(extractor.getText().contains("2004"));
-        assertTrue(extractor.getText().contains("2008"));
-        assertTrue(extractor.getText().contains("(120 "));
+        assertContains(extractor.getText(),"2004");
+        assertContains(extractor.getText(),"2008");
+        assertContains(extractor.getText(),"(120 ");
 
         extractor.close();
     }
@@ -260,12 +263,12 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         // Check bits
-        assertTrue(extractor.getText().contains("a"));
-        assertTrue(extractor.getText().contains("\t"));
-        assertTrue(extractor.getText().contains("b"));
+        assertContains(extractor.getText(),"a");
+        assertContains(extractor.getText(),"\t");
+        assertContains(extractor.getText(),"b");
 
         // Now check the first paragraph in total
-        assertTrue(extractor.getText().contains("a\tb\n"));
+        assertContains(extractor.getText(),"a\tb\n");
 
         extractor.close();
     }
@@ -298,7 +301,7 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
         String text = extractor.getText();
         assertTrue(text.length() > 0);
-        assertTrue(text.contains("FldSimple.docx"));
+        assertContains(text,"FldSimple.docx");
 
         extractor.close();
     }
