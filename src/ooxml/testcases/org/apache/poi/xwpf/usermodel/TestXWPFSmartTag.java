@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import static org.apache.poi.POITestCase.assertContains;
 
 /**
  * Tests for reading SmartTags from Word docx.
@@ -31,8 +32,8 @@ public final class TestXWPFSmartTag extends TestCase {
     public void testSmartTags() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("smarttag-snippet.docx");
         XWPFParagraph p = doc.getParagraphArray(0);
-        assertTrue(p.getText().contains("Carnegie Mellon University School of Computer Science"));
+        assertContains(p.getText(), "Carnegie Mellon University School of Computer Science");
         p = doc.getParagraphArray(2);
-        assertTrue(p.getText().contains("Alice's Adventures"));
+        assertContains(p.getText(), "Alice's Adventures");
     }
 }
