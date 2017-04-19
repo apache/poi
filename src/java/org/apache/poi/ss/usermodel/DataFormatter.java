@@ -312,14 +312,13 @@ public class DataFormatter implements Observer {
 
         String formatStr = formatStrIn;
         
-        // Excel supports 3+ part conditional data formats, eg positive/negative/zero,
+        // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
         //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
         //  of different formats for different ranges, just +ve/-ve, we need to 
         //  handle these ourselves in a special way.
-        // For now, if we detect 3+ parts, we call out to CellFormat to handle it
+        // For now, if we detect 2+ parts, we call out to CellFormat to handle it
         // TODO Going forward, we should really merge the logic between the two classes
-        if (formatStr.contains(";") &&
-                formatStr.indexOf(';') != formatStr.lastIndexOf(';')) {
+        if (formatStr.contains(";") ) {
             try {
                 // Ask CellFormat to get a formatter for it
                 CellFormat cfmt = CellFormat.getInstance(formatStr);

@@ -198,6 +198,15 @@ public class TestDataFormatter {
             );
         }
     }
+    
+    @Test
+    public void testConditionalRanges() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        String format = "[>=10]#,##0;[<10]0.0";
+        assertEquals("Wrong format for " + format, "17,876", dfUS.formatRawCellContents(17876.000, -1, format));
+        assertEquals("Wrong format for " + format, "9.7", dfUS.formatRawCellContents(9.71, -1, format));
+    }
 
     /**
      * Test how we handle negative and zeros.
@@ -309,7 +318,8 @@ public class TestDataFormatter {
         //assertEquals("123",     dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
 
         //Bug54868 patch has a hit on the first string before the ";"
-        assertEquals("-123 1/3", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+        assertEquals("123", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+        assertEquals("123 1/3", dfUS.formatRawCellContents(123.321, -1, "0 ?/?;0"));
 
         //Bug53150 formatting a whole number with fractions should just give the number
         assertEquals("1",   dfUS.formatRawCellContents(1.0, -1, "# #/#"));
