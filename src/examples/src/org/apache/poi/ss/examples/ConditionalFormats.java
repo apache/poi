@@ -21,9 +21,14 @@ package org.apache.poi.ss.examples;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.ss.formula.EvaluationConditionalFormatRule;
+import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ColorScaleFormatting;
 import org.apache.poi.ss.usermodel.ComparisonOperator;
@@ -41,6 +46,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -53,6 +59,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class ConditionalFormats {
 
+    /**
+     * generates a sample workbook with conditional formatting,
+     * and prints out a summary of applied formats for one sheet
+     * @param args pass "-xls" to generate an HSSF workbook, default is XSSF
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         Workbook wb;
 
@@ -76,6 +88,9 @@ public class ConditionalFormats {
         colourScales(wb.createSheet("Colour Scales"));
         dataBars(wb.createSheet("Data Bars"));
 
+        // print overlapping rule results
+        evaluateRules(wb, "Overlapping");
+        
         // Write the output to a file
         String file = "cf-poi.xls";
         if(wb instanceof XSSFWorkbook) {
@@ -636,5 +651,77 @@ public class ConditionalFormats {
         db3.getMinThreshold().setRangeType(RangeType.MIN);
         db3.getMaxThreshold().setRangeType(RangeType.MAX);
         sheetCF.addConditionalFormatting(regions, rule3);
+    }
+    
+    /**
+     * Print out a summary of the conditional formatting rules applied to cells on the given sheet.
+     * Only cells with a matching rule are printed, and for those, all matching rules are sumarized.
+     * @param wb
+     * @param sheetName
+     */
+    static void evaluateRules(Workbook wb, String sheetName) {
+        final WorkbookEvaluatorProvider wbEvalProv = (WorkbookEvaluatorProvider) wb.getCreationHelper().createFormulaEvaluator();
+        final ConditionalFormattingEvaluator cfEval = new ConditionalFormattingEvaluator(wb, wbEvalProv);
+        // if cell values have changed, clear cached format results
+        cfEval.clearAllCachedValues();
+        
+        final Sheet sheet = wb.getSheet(sheetName);
+        for (Row r : sheet) {
+            for (Cell c : r) {
+                final List<EvaluationConditionalFormatRule> rules = cfEval.getConditionalFormattingForCell(c);
+                // check rules list for null, although current implementation will return an empty list, not null, then do what you want with results
+                if (rules == null || rules.isEmpty()) continue;
+                final CellReference ref = ConditionalFormattingEvaluator.getRef(c);
+                if (rules.isEmpty()) continue;
+
+                System.out.println("\n"
+                  + ref.formatAsString()
+                  + " has conditional formatting.");
+
+                for (EvaluationConditionalFormatRule rule : rules) {
+                    ConditionalFormattingRule cf = rule.getRule();
+
+                    StringBuilder b = new StringBuilder();
+                    b.append("\tRule ")
+                     .append(rule.getFormattingIndex())
+                     .append(": ");
+                    
+                    // check for color scale
+                    if (cf.getColorScaleFormatting() != null) {
+                        b.append("\n\t\tcolor scale (caller must calculate bucket)");
+                    }
+                    // check for data bar
+                    if (cf.getDataBarFormatting() != null) {
+                        b.append("\n\t\tdata bar (caller must calculate bucket)");
+                    }
+                    // check for icon set
+                    if (cf.getMultiStateFormatting() != null) {
+                        b.append("\n\t\ticon set (caller must calculate icon bucket)");
+                    }
+                    // check for fill
+                    if (cf.getPatternFormatting() != null) {
+                        final PatternFormatting fill = cf.getPatternFormatting();
+                        b.append("\n\t\tfill pattern ")
+                         .append(fill.getFillPattern())
+                         .append(" color index ")
+                         .append(fill.getFillBackgroundColor());
+                    }
+                    // font stuff
+                    if (cf.getFontFormatting() != null) {
+                        final FontFormatting ff = cf.getFontFormatting();
+                        b.append("\n\t\tfont format ")
+                         .append("color index ")
+                         .append(ff.getFontColorIndex());
+                        if (ff.isBold()) b.append(" bold");
+                        if (ff.isItalic()) b.append(" italic");
+                        if (ff.isStruckout()) b.append(" strikeout");
+                        b.append(" underline index ")
+                         .append(ff.getUnderlineType());
+                    }
+                    
+                    System.out.println(b);
+                }
+            }
+        }
     }
 }
