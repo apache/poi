@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.apache.poi.POITestCase.assertContains;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,20 +97,20 @@ public final class TestXWPFSDT {
         List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
         String text = sdts.get(0).getContent().getText();
         assertEquals(2, sdts.size());
-        assertTrue(text.indexOf("Test") > -1);
+        assertContains(text, "Test");
 
         text = sdts.get(1).getContent().getText();
-        assertTrue(text.indexOf("Test Subtitle") > -1);
-        assertTrue(text.indexOf("Test User") > -1);
+        assertContains(text, "Test Subtitle");
+        assertContains(text, "Test User");
         assertTrue(text.indexOf("Test") < text.indexOf("Test Subtitle"));
 
         doc = XWPFTestDataSamples.openSampleDocument("Bug54771b.docx");
         sdts = extractAllSDTs(doc);
         assertEquals(3, sdts.size());
-        assertTrue(sdts.get(0).getContent().getText().indexOf("Test") > -1);
+        assertContains(sdts.get(0).getContent().getText(), "Test");
 
-        assertTrue(sdts.get(1).getContent().getText().indexOf("Test Subtitle") > -1);
-        assertTrue(sdts.get(2).getContent().getText().indexOf("Test User") > -1);
+        assertContains(sdts.get(1).getContent().getText(), "Test Subtitle");
+        assertContains(sdts.get(2).getContent().getText(), "Test User");
 
     }
 

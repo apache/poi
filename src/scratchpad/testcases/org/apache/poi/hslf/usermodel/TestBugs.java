@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -162,8 +163,8 @@ public final class TestBugs {
                 assertNotNull(notes);
                 String text = HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(0));
                 String startingPhrase = notesMap.get(slideNumber);
-                assertTrue("Notes for slide " + slideNumber + " must start with " +
-                        startingPhrase , text.startsWith(startingPhrase));
+                assertStartsWith("Notes for slide " + slideNumber + " must start with starting phrase",
+                        text, startingPhrase);
             }
         }
 
@@ -306,15 +307,15 @@ public final class TestBugs {
         List<List<HSLFTextParagraph>> paras = slide.get(0).getTextParagraphs();
         assertEquals(4, paras.size());
 
-        Set<String> txt = new HashSet<String>();
-        txt.add("\u201CHAPPY BIRTHDAY SCOTT\u201D");
-        txt.add("Have a HAPPY DAY");
-        txt.add("PS Nobody is allowed to hassle Scott TODAY\u2026");
-        txt.add("Drinks will be in the Boardroom at 5pm today to celebrate Scott\u2019s B\u2019Day\u2026  See you all there!");
+        Set<String> expected = new HashSet<String>();
+        expected.add("\u201CHAPPY BIRTHDAY SCOTT\u201D");
+        expected.add("Have a HAPPY DAY");
+        expected.add("PS Nobody is allowed to hassle Scott TODAY\u2026");
+        expected.add("Drinks will be in the Boardroom at 5pm today to celebrate Scott\u2019s B\u2019Day\u2026  See you all there!");
 
         for (List<HSLFTextParagraph> para : paras) {
             String text = HSLFTextParagraph.getRawText(para);
-            assertTrue(text, txt.contains(text));
+            assertTrue(text, expected.contains(text));
         }
 
         ppt.close();

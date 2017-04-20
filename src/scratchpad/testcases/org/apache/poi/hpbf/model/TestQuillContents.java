@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpbf.model;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -81,8 +83,8 @@ public final class TestQuillContents {
 
 		QCTextBit text = (QCTextBit)qc.getBits()[0];
 		String t = text.getText();
-		assertTrue(t.startsWith("This is some text on the first page"));
-		assertTrue(t.endsWith("Within doc to page 1\r"));
+		assertStartsWith(t, "This is some text on the first page");
+		assertEndsWith(t, "Within doc to page 1\r");
 		
       doc.close();
 	}

@@ -18,6 +18,8 @@
 package org.apache.poi.xssf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -55,8 +57,8 @@ public class TestXSSFEventBasedExcelExtractor {
 		assertTrue(text.length() > 0);
 		
 		// Check sheet names
-		assertTrue(text.startsWith("Sheet1"));
-		assertTrue(text.endsWith("Sheet3\n"));
+		assertStartsWith(text, "Sheet1");
+		assertEndsWith(text, "Sheet3\n");
 		
 		// Now without, will have text
 		extractor.setIncludeSheetNames(false);
@@ -116,10 +118,10 @@ public class TestXSSFEventBasedExcelExtractor {
 		assertTrue(text.length() > 0);
 		
 		// Might not have all formatting it should do!
-		assertTrue(text.startsWith(
+		assertStartsWith(text, 
 						"Avgtxfull\n" +
 						"(iii) AVERAGE TAX RATES ON ANNUAL"	
-		));
+		);
 		
 		extractor.close();
 	}
@@ -166,7 +168,7 @@ public class TestXSSFEventBasedExcelExtractor {
 			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
 		for (POITextExtractor extractor : extractors) {
             String text = extractor.getText().replaceAll("[\r\t]", "");
-			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
+			assertStartsWith(text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
 			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
 			Matcher m = pattern.matcher(text);
 			assertTrue(m.matches());			

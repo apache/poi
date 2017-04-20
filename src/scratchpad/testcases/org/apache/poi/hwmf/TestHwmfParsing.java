@@ -19,6 +19,7 @@ package org.apache.poi.hwmf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.apache.poi.POITestCase.assertContains;
 
 import javax.imageio.ImageIO;
 import java.awt.Dimension;
@@ -218,8 +219,8 @@ public class TestHwmfParsing {
             }
         }
         String txt = sb.toString();
-        assertTrue(txt.contains("\u041E\u0431\u0449\u043E"));
-        assertTrue(txt.contains("\u0411\u0430\u043B\u0430\u043D\u0441"));
+        assertContains(txt, "\u041E\u0431\u0449\u043E");
+        assertContains(txt, "\u0411\u0430\u043B\u0430\u043D\u0441");
     }
 
     @Test
@@ -246,6 +247,6 @@ public class TestHwmfParsing {
             }
         }
         String txt = sb.toString();
-        assertTrue(txt.contains("\u822A\u7A7A\u60C5\u5831\u696D\u52D9\u3078\u306E\uFF27\uFF29\uFF33"));
+        assertContains(txt, "\u822A\u7A7A\u60C5\u5831\u696D\u52D9\u3078\u306E\uFF27\uFF29\uFF33");
     }
 }
