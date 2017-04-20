@@ -18,6 +18,7 @@ package org.apache.poi.xslf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -64,7 +65,7 @@ public class TestXSLFPowerPointExtractor {
 		assertTrue(text.length() > 0);
 
 		// Check Basics
-		assertTrue(text.startsWith("Lorem ipsum dolor sit amet\n"));
+		assertStartsWith(text, "Lorem ipsum dolor sit amet\n");
 		assertContains(text, "amet\n\n");
 
 		// Our placeholder master text
@@ -221,7 +222,7 @@ public class TestXSLFPowerPointExtractor {
         assertTrue(text.length() > 0);
 
         // Check comments are there
-        assertTrue("Unable to find expected word in text\n" + text, text.contains("TEST"));
+        assertContains(text, "TEST");
 
 		extractor.close();
 		xml.close();
@@ -246,31 +247,16 @@ public class TestXSLFPowerPointExtractor {
             String text = extractor.getText();
             if (extension.equals("thmx")) {
                 // Theme file doesn't have any textual content
-                assertEquals(0, text.length());
+                assertEquals(filename, 0, text.length());
                 continue;
             }
 
-         assertTrue(text.length() > 0);
-         assertTrue(
-               "Text missing for " + filename + "\n" + text,
-               text.contains("Attachment Test")
-         );
-         assertTrue(
-               "Text missing for " + filename + "\n" + text,
-               text.contains("This is a test file data with the same content")
-         );
-         assertTrue(
-               "Text missing for " + filename + "\n" + text,
-               text.contains("content parsing")
-         );
-         assertTrue(
-               "Text missing for " + filename + "\n" + text,
-               text.contains("Different words to test against")
-         );
-         assertTrue(
-               "Text missing for " + filename + "\n" + text,
-               text.contains("Mystery")
-         );
+         assertTrue(filename, text.length() > 0);
+         assertContains(filename, text, "Attachment Test");
+         assertContains(filename, text, "This is a test file data with the same content");
+         assertContains(filename, text, "content parsing");
+         assertContains(filename, text, "Different words to test against");
+         assertContains(filename, text, "Mystery");
 
  		 extractor.close();
  		 xml.close();

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.model;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -100,8 +101,7 @@ public final class TestTextPieceTable {
         assertEquals(339, tp.getEnd());
         assertEquals(339, tp.characterLength());
         assertEquals(339, tp.bytesLength());
-        assertTrue(tp.getStringBuilder().toString()
-                .startsWith("This is a sample word document"));
+        assertStartsWith(tp.getStringBuilder().toString(), "This is a sample word document");
 
         // Save and re-load
         HWPFDocument docB = saveAndReload(doc);
@@ -114,8 +114,7 @@ public final class TestTextPieceTable {
         assertEquals(339, tp.getEnd());
         assertEquals(339, tp.characterLength());
         assertEquals(339, tp.bytesLength());
-        assertTrue(tp.getStringBuilder().toString()
-                .startsWith("This is a sample word document"));
+        assertStartsWith(tp.getStringBuilder().toString(), "This is a sample word document");
     }
 
     /**

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hpbf.extractor;
 
+import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -179,9 +179,9 @@ public final class TestPublisherTextExtractor {
         ext.close();
         sample.close();
 
-        assertTrue(text.endsWith("<http://poi.apache.org/>\n"
+        assertEndsWith(text, "<http://poi.apache.org/>\n"
                 + "<C:\\Documents and Settings\\Nick\\My Documents\\Booleans.xlsx>\n"
                 + "<>\n" + "<mailto:dev@poi.apache.org?subject=HPBF>\n"
-                + "<mailto:dev@poi.apache.org?subject=HPBF>\n"));
+                + "<mailto:dev@poi.apache.org?subject=HPBF>\n");
     }
 }

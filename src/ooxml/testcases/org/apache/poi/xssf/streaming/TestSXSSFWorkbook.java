@@ -19,6 +19,8 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -245,8 +247,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         SheetDataWriter wr = sh.getSheetDataWriter();
         assertTrue(wr.getClass() == SheetDataWriter.class);
         File tmp = wr.getTempFile();
-        assertTrue(tmp.getName().startsWith("poi-sxssf-sheet"));
-        assertTrue(tmp.getName().endsWith(".xml"));
+        assertStartsWith(tmp.getName(), "poi-sxssf-sheet");
+        assertEndsWith(tmp.getName(), ".xml");
         assertTrue(wb.dispose());
         wb.close();
 
@@ -256,8 +258,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wr = sh.getSheetDataWriter();
         assertTrue(wr.getClass() == GZIPSheetDataWriter.class);
         tmp = wr.getTempFile();
-        assertTrue(tmp.getName().startsWith("poi-sxssf-sheet-xml"));
-        assertTrue(tmp.getName().endsWith(".gz"));
+        assertStartsWith(tmp.getName(), "poi-sxssf-sheet-xml");
+        assertEndsWith(tmp.getName(), ".gz");
         assertTrue(wb.dispose());
         wb.close();
 

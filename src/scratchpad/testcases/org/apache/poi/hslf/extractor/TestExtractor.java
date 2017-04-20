@@ -432,7 +432,7 @@ public final class TestExtractor {
                          "Row 3, Cell 1\tRow 3, Cell 2\tRow 3, Cell 3\tRow 3, Cell 4\n"+
                          "Row 4, Cell 1\tRow 4, Cell 2\tRow 4, Cell 3\tRow 4, Cell 4\n"+ 
                          "Row 5, Cell 1\tRow 5, Cell 2\tRow 5, Cell 3\tRow 5, Cell 4\n";
-        assertTrue(text1.contains(target1));
+        assertContains(text1, target1);
         ppe1.close();
 
         PowerPointExtractor ppe2 = openExtractor("54722.ppt");
@@ -440,7 +440,7 @@ public final class TestExtractor {
 
         String target2 = "this\tText\tis\twithin\ta\n" +
                 "table\t1\t2\t3\t4";
-        assertTrue(text2.contains(target2));
+        assertContains(text2, target2);
         ppe2.close();
     }
 

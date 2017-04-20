@@ -18,6 +18,8 @@
 package org.apache.poi.xssf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -49,8 +51,8 @@ public class TestXSSFBEventBasedExcelExtractor {
         assertTrue(text.length() > 0);
 
         // Check sheet names
-        assertTrue(text.startsWith("Sheet1"));
-        assertTrue(text.endsWith("Sheet3\n"));
+        assertStartsWith(text, "Sheet1");
+        assertEndsWith(text, "Sheet3\n");
 
         // Now without, will have text
         extractor.setIncludeSheetNames(false);
