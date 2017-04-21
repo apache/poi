@@ -19,6 +19,7 @@ package org.apache.poi.xssf.eventusermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -60,6 +62,26 @@ public class XSSFBReader extends XSSFReader {
      */
     public XSSFBReader(OPCPackage pkg) throws IOException, OpenXML4JException {
         super(pkg);
+    }
+
+    /**
+     * In Excel 2013, the absolute path where the file was last saved may be stored in
+     * the {@link XSSFBRecordType#BrtAbsPath15} record.  The equivalent in ooxml is
+     * &lt;x15ac:absPath&gt;.
+     *
+     * @return absolute path or <code>null</code> if it could not be found.
+     * @throws IOException when there's a problem with the workbook part's stream
+     */
+    public String getAbsPathMetadata() throws IOException {
+        InputStream is = null;
+        try {
+            is = workbookPart.getInputStream();
+            PathExtractor p = new PathExtractor(workbookPart.getInputStream());
+            p.parse();
+            return p.getPath();
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 
     /**
@@ -135,6 +157,36 @@ public class XSSFBReader extends XSSFReader {
             return null;
         }
 
+    }
+
+
+    private static class PathExtractor extends XSSFBParser {
+        private static BitSet RECORDS = new BitSet();
+        static {
+            RECORDS.set(XSSFBRecordType.BrtAbsPath15.getId());
+        }
+        private String path = null;
+        public PathExtractor(InputStream is) {
+            super(is, RECORDS);
+        }
+
+        @Override
+        public void handleRecord(int recordType, byte[] data) throws XSSFBParseException {
+            if (recordType != XSSFBRecordType.BrtAbsPath15.getId()) {
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            XSSFBUtils.readXLWideString(data, 0, sb);
+            path = sb.toString();
+        }
+
+        /**
+         *
+         * @return the path if found, otherwise <code>null</code>
+         */
+        String getPath() {
+            return path;
+        }
     }
 
     private static class SheetRefLoader extends XSSFBParser {

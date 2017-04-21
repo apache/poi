@@ -47,7 +47,7 @@ public abstract class XSSFBParser {
      * @param is inputStream
      * @param bitSet call {@link #handleRecord(int, byte[])} only on those records in this bitSet
      */
-    XSSFBParser(InputStream is, BitSet bitSet) {
+    protected XSSFBParser(InputStream is, BitSet bitSet) {
         this.is = new LittleEndianInputStream(is);
         records = bitSet;
     }

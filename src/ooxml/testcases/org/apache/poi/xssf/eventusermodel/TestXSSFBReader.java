@@ -118,6 +118,13 @@ public class TestXSSFBReader {
 
     }
 
+    @Test
+    public void testAbsPath() throws Exception {
+        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("testVarious.xlsb"));
+        XSSFBReader r = new XSSFBReader(pkg);
+        assertEquals("C:\\Users\\tallison\\Desktop\\working\\xlsb\\", r.getAbsPathMetadata());
+    }
+
     private List<String> getSheets(String testFileName) throws Exception {
         OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream(testFileName));
         List<String> sheetTexts = new ArrayList<String>();

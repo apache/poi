@@ -74,6 +74,8 @@ public enum XSSFBRecordType {
 
     BrtBundleSh(156), //defines worksheet in wb part
 
+    BrtAbsPath15(2071), //Excel 2013 path where the file was stored in wbpart
+
     //TODO -- implement these as needed
     //BrtFileVersion(128), //file version
     //BrtWbProp(153), //Workbook prop contains 1904/1900-date based bit
