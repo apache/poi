@@ -20,13 +20,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -64,6 +67,13 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XSSFReader {
 
+    private static final Set<String> WORKSHEET_RELS =
+            Collections.unmodifiableSet(new HashSet<String>(
+                    Arrays.asList(new String[]{
+                            XSSFRelation.WORKSHEET.getRelation(),
+                            XSSFRelation.CHARTSHEET.getRelation(),
+                    })
+            ));
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFReader.class);
 
     protected OPCPackage pkg;
@@ -121,7 +131,6 @@ public class XSSFReader {
         }
         return styles;
     }
-
 
 
     /**
@@ -223,11 +232,10 @@ public class XSSFReader {
                 //step 1. Map sheet's relationship Id and the corresponding PackagePart
                 sheetMap = new HashMap<String, PackagePart>();
                 OPCPackage pkg = wb.getPackage();
-                String REL_WORKSHEET = XSSFRelation.WORKSHEET.getRelation();
-                String REL_CHARTSHEET = XSSFRelation.CHARTSHEET.getRelation();
+                Set<String> worksheetRels = getSheetRelationships();
                 for(PackageRelationship rel : wb.getRelationships()){
                     String relType = rel.getRelationshipType();
-                    if (relType.equals(REL_WORKSHEET) || relType.equals(REL_CHARTSHEET)) {
+                    if (worksheetRels.contains(relType)) {
                         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
                         sheetMap.put(rel.getId(), pkg.getPart(relName));
                     }
@@ -269,6 +277,17 @@ public class XSSFReader {
             return validSheets.iterator();
         }
 
+        /**
+         * Gets string representations of relationships
+         * that are sheet-like.  Added to allow subclassing
+         * by XSSFBReader.  This is used to decide what
+         * relationships to load into the sheetRefs
+         *
+         * @return
+         */
+        Set<String> getSheetRelationships() {
+            return WORKSHEET_RELS;
+        }
 
         /**
          * Returns <tt>true</tt> if the iteration has more elements.
