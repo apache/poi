@@ -19,10 +19,14 @@ package org.apache.poi.xssf.eventusermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -53,7 +57,17 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
  */
 public class XSSFBReader extends XSSFReader {
 
-    private final static POILogger log = POILogFactory.getLogger(XSSFBReader.class);
+    private static final POILogger log = POILogFactory.getLogger(XSSFBReader.class);
+    private static final Set<String> WORKSHEET_RELS =
+            Collections.unmodifiableSet(new HashSet<String>(
+                    Arrays.asList(new String[]{
+                            XSSFRelation.WORKSHEET.getRelation(),
+                            XSSFRelation.CHARTSHEET.getRelation(),
+                            XSSFRelation.MACRO_SHEET_BIN.getRelation(),
+                            XSSFRelation.INTL_MACRO_SHEET_BIN.getRelation(),
+                            XSSFRelation.DIALOG_SHEET_BIN.getRelation()
+                    })
+            ));
 
     /**
      * Creates a new XSSFReader, for the given package
@@ -105,7 +119,6 @@ public class XSSFBReader extends XSSFReader {
 
     }
 
-
     public static class SheetIterator extends XSSFReader.SheetIterator {
 
         /**
@@ -115,6 +128,11 @@ public class XSSFBReader extends XSSFReader {
          */
         private SheetIterator(PackagePart wb) throws IOException {
             super(wb);
+        }
+
+        @Override
+        Set<String> getSheetRelationships() {
+            return WORKSHEET_RELS;
         }
 
         Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
