@@ -426,6 +426,8 @@ public class XSSFReader {
 
         private final List<XSSFSheetRef> sheetRefs = new LinkedList();
 
+        // read <sheet name="Sheet6" sheetId="4" r:id="rId6"/>
+        // and add XSSFSheetRef(id="rId6", name="Sheet6") to sheetRefs
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
             if (localName.equalsIgnoreCase(SHEET)) {
@@ -438,9 +440,10 @@ public class XSSFReader {
                     } else if (attrName.equalsIgnoreCase(ID)) {
                         id = attrs.getValue(i);
                     }
-                }
-                if (name != null && id != null) {
-                    sheetRefs.add(new XSSFSheetRef(id, name));
+                    if (name != null && id != null) {
+                        sheetRefs.add(new XSSFSheetRef(id, name));
+                        break;
+                    }
                 }
             }
         }
