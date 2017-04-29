@@ -30,6 +30,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.hasItem;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.util.Internal;
@@ -109,6 +111,13 @@ public final class POITestCase {
             return;
         }
         fail("Unable to find " + key + " in " + map);
+    }
+
+    public static <T> void assertNotContained(Set<T> set, T element) {
+        assertThat(set, not(hasItem(element)));
+        /*if (set.contains(element)) {
+            fail("Set should not contain " + element);
+        }*/
     }
      
     /**

@@ -428,15 +428,18 @@ public class XSSFReader {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-            if (localName.toLowerCase(Locale.US).equals(SHEET)) {
+            if (localName.equalsIgnoreCase(SHEET)) {
                 String name = null;
                 String id = null;
                 for (int i = 0; i < attrs.getLength(); i++) {
-                    if (attrs.getLocalName(i).toLowerCase(Locale.US).equals(NAME)) {
+                    final String attrName = attrs.getLocalName(i);
+                    if (attrName.equalsIgnoreCase(NAME)) {
                         name = attrs.getValue(i);
-                    } else if (attrs.getLocalName(i).toLowerCase(Locale.US).equals(ID)) {
+                    } else if (attrName.equalsIgnoreCase(ID)) {
                         id = attrs.getValue(i);
                     }
+                }
+                if (name != null && id != null) {
                     sheetRefs.add(new XSSFSheetRef(id, name));
                 }
             }

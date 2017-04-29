@@ -18,10 +18,13 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContained;
 
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLException;
@@ -265,6 +268,33 @@ public final class TestXSSFReader extends TestCase {
         assertNotNull(iter.next());
         assertFalse(iter.hasNext());
 
+        pkg.close();
+    }
+
+    /**
+     * bug 61304: Call to XSSFReader.getSheetsData() returns duplicate sheets.
+     *
+     * The problem seems to be caused only by those xlsx files which have a specific
+     * order of the attributes inside the &lt;sheet&gt; tag of workbook.xml 
+     *
+     * Example (which causes the problems):
+     * &lt;sheet name="Sheet6" r:id="rId6" sheetId="4"/&gt;
+     *
+     * While this one works correctly:
+     * &lt;sheet name="Sheet6" sheetId="4" r:id="rId6"/&gt;
+     */
+    public void test61034() throws Exception {
+        OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("61034.xlsx");
+        XSSFReader reader = new XSSFReader(pkg);
+        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+        Set<String> seen = new HashSet<String>();
+        while (iter.hasNext()) {
+            InputStream stream = iter.next();
+            String sheetName = iter.getSheetName();
+            assertNotContained(seen, sheetName);
+            seen.add(sheetName);
+            stream.close();
+        }
         pkg.close();
     }
 }
