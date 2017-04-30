@@ -17,23 +17,6 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
@@ -50,6 +33,14 @@ import org.apache.poi.util.TempFile;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
 
 /**
  * Tests for the new NIO POIFSFileSystem implementation
@@ -98,9 +89,8 @@ public final class TestNPOIFSFileSystem {
    protected static HeaderBlock writeOutAndReadHeader(NPOIFSFileSystem fs) throws IOException {
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
        fs.writeFilesystem(baos);
-       
-       HeaderBlock header = new HeaderBlock(new ByteArrayInputStream(baos.toByteArray()));
-       return header;
+
+      return new HeaderBlock(new ByteArrayInputStream(baos.toByteArray()));
    }
 
     protected static NPOIFSFileSystem writeOutAndReadBack(NPOIFSFileSystem original) throws IOException {
@@ -158,7 +148,9 @@ public final class TestNPOIFSFileSystem {
          try {
             fs.getBATBlockAndIndex(140);
             fail("Should only be one BAT, but a 2nd was found");
-         } catch(IndexOutOfBoundsException e) {}
+         } catch(IndexOutOfBoundsException e) {
+            // expected here
+         }
          
          // Verify a few next offsets
          // 97 -> 98 -> END
@@ -202,7 +194,9 @@ public final class TestNPOIFSFileSystem {
          try {
             ministore.getBATBlockAndIndex(256);
             fail("Should only be two SBATs, but a 3rd was found");
-         } catch(IndexOutOfBoundsException e) {}
+         } catch(IndexOutOfBoundsException e) {
+            // expected here
+         }
          
          // Verify a few offsets: 0->50 is a stream
          for(int i=0; i<50; i++) {
@@ -224,7 +218,9 @@ public final class TestNPOIFSFileSystem {
          try {
             fs.getBATBlockAndIndex(1040);
             fail("Should only be one BAT, but a 2nd was found");
-         } catch(IndexOutOfBoundsException e) {}
+         } catch(IndexOutOfBoundsException e) {
+            // expected here
+         }
          
          // Verify a few next offsets
          // 0 -> 1 -> 2 -> END
@@ -270,7 +266,9 @@ public final class TestNPOIFSFileSystem {
          try {
             ministore.getBATBlockAndIndex(1024);
             fail("Should only be one SBAT, but a 2nd was found");
-         } catch(IndexOutOfBoundsException e) {}
+         } catch(IndexOutOfBoundsException e) {
+            // expected here
+         }
          
          // Verify a few offsets: 0->50 is a stream
          for(int i=0; i<50; i++) {
@@ -480,7 +478,9 @@ public final class TestNPOIFSFileSystem {
       try {
          assertEquals(false, fs1.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
          fail("Should only be one BAT");
-      } catch(IndexOutOfBoundsException e) {}
+      } catch(IndexOutOfBoundsException e) {
+         // expected here
+      }
       assertBATCount(fs1, 1, 0);
 
       
@@ -510,7 +510,9 @@ public final class TestNPOIFSFileSystem {
       try {
          assertEquals(false, fs1.getBATBlockAndIndex(109*128).getBlock().hasFreeSectors());
          fail("Should only be 109 BATs");
-      } catch(IndexOutOfBoundsException e) {}
+      } catch(IndexOutOfBoundsException e) {
+         // expected here
+      }
       
       // We now have 109 BATs, but no XBATs
       assertBATCount(fs1, 109, 0);
@@ -524,12 +526,16 @@ public final class TestNPOIFSFileSystem {
       
       // Ask for another, will get our first XBAT
       free = fs1.getFreeBlock();
+      assertTrue("Had: " + free, free > 0);
+
       assertEquals(false, fs1.getBATBlockAndIndex(109*128-1).getBlock().hasFreeSectors());
       assertEquals(true, fs1.getBATBlockAndIndex(110*128-1).getBlock().hasFreeSectors());
       try {
          assertEquals(false, fs1.getBATBlockAndIndex(110*128).getBlock().hasFreeSectors());
          fail("Should only be 110 BATs");
-      } catch(IndexOutOfBoundsException e) {}
+      } catch(IndexOutOfBoundsException e) {
+         // expected here
+      }
       assertBATCount(fs1, 110, 1);
       
       header = writeOutAndReadHeader(fs1);
@@ -553,18 +559,24 @@ public final class TestNPOIFSFileSystem {
       try {
          assertEquals(false, fs1.getBATBlockAndIndex(236*128).getBlock().hasFreeSectors());
          fail("Should only be 236 BATs");
-      } catch(IndexOutOfBoundsException e) {}
+      } catch(IndexOutOfBoundsException e) {
+         // expected here
+      }
       assertBATCount(fs1, 236, 1);
 
       
       // Ask for another, will get our 2nd XBAT
       free = fs1.getFreeBlock();
+      assertTrue("Had: " + free, free > 0);
+
       assertEquals(false, fs1.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
       assertEquals(true, fs1.getBATBlockAndIndex(237*128-1).getBlock().hasFreeSectors());
       try {
          assertEquals(false, fs1.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
          fail("Should only be 237 BATs");
-      } catch(IndexOutOfBoundsException e) {}
+      } catch(IndexOutOfBoundsException e) {
+         // expected here
+      }
       
       
       // Check the counts now
@@ -572,7 +584,7 @@ public final class TestNPOIFSFileSystem {
 
       // Check the header
       header = writeOutAndReadHeader(fs1);
-      
+      assertNotNull(header);
       
       // Now, write it out, and read it back in again fully
       NPOIFSFileSystem fs2 = writeOutAndReadBack(fs1);
@@ -586,7 +598,9 @@ public final class TestNPOIFSFileSystem {
       try {
          assertEquals(false, fs2.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
          fail("Should only be 237 BATs");
-      } catch(IndexOutOfBoundsException e) {}
+      } catch(IndexOutOfBoundsException e) {
+         // expected here
+      }
 
       
       // All done
@@ -684,9 +698,9 @@ public final class TestNPOIFSFileSystem {
     */
    @Test
    public void readWriteRead() throws Exception {
-       SummaryInformation sinf = null;
-       DocumentSummaryInformation dinf = null;
-       DirectoryEntry root = null, testDir = null;
+       SummaryInformation sinf;
+       DocumentSummaryInformation dinf;
+       DirectoryEntry root, testDir;
        
        for(NPOIFSFileSystem fs1 : get512and4kFileAndInput()) {
            // Check we can find the entries we expect
@@ -1586,7 +1600,7 @@ public final class TestNPOIFSFileSystem {
        
        int s100mb = 100*1024*1024;
        int s512mb = 512*1024*1024;
-       long s2gb = 2l*1024*1024*1024;
+       long s2gb = 2L *1024*1024*1024;
        DocumentEntry entry;
        NPOIFSFileSystem fs;
 
@@ -1623,7 +1637,7 @@ public final class TestNPOIFSFileSystem {
        
        // Tidy
        fs.close();
-       big.delete();
+       assertTrue(big.delete());
        
        
        // Create a >2gb file
@@ -1657,7 +1671,7 @@ public final class TestNPOIFSFileSystem {
        
        // Tidy
        fs.close();
-       big.delete();
+       assertTrue(big.delete());
        
        // Create a file with a 2gb entry
        fs = POIFSFileSystem.create(big);
@@ -1691,6 +1705,101 @@ public final class TestNPOIFSFileSystem {
           }
           size += sz;
           return sz;
+      }
+   }
+
+   @Ignore("Takes a long time to run")
+   @Test
+   public void testPerformance() throws Exception {
+      int iterations = 200;//1_000;
+
+      System.out.println("OPOI:");
+      long start = System.currentTimeMillis();
+
+      for (int i = 0; i < iterations; i++) {
+         InputStream inputStream = POIDataSamples.getHSMFInstance().openResourceAsStream("lots-of-recipients.msg");
+         try {
+            OPOIFSFileSystem srcFileSystem = new OPOIFSFileSystem(inputStream);
+            OPOIFSFileSystem destFileSystem = new OPOIFSFileSystem();
+
+            copyAllEntries(srcFileSystem.getRoot(), destFileSystem.getRoot());
+
+            File file = File.createTempFile("opoi", ".dat");
+            OutputStream outputStream = new FileOutputStream(file);
+            try {
+               destFileSystem.writeFilesystem(outputStream);
+            } finally {
+               outputStream.close();
+            }
+
+            assertTrue(file.delete());
+            if (i % 10 == 0) System.out.print(".");
+            if (i % 800 == 0 && i > 0) System.out.println();
+         } finally {
+            inputStream.close();
+         }
+      }
+
+      System.out.println();
+      System.out.println("OPOI took: " + (System.currentTimeMillis() - start));
+
+
+      System.out.println();
+      System.out.println("NPOI:");
+      start = System.currentTimeMillis();
+
+      for (int i = 0; i < iterations; i++) {
+
+         InputStream inputStream = POIDataSamples.getHSMFInstance().openResourceAsStream("lots-of-recipients.msg");
+         try {
+            NPOIFSFileSystem srcFileSystem = new NPOIFSFileSystem(inputStream);
+            NPOIFSFileSystem destFileSystem = new NPOIFSFileSystem();
+
+            copyAllEntries(srcFileSystem.getRoot(), destFileSystem.getRoot());
+
+            File file = File.createTempFile("npoi", ".dat");
+            OutputStream outputStream = new FileOutputStream(file);
+            try {
+               destFileSystem.writeFilesystem(outputStream);
+            } finally {
+               outputStream.close();
+            }
+
+            assertTrue(file.delete());
+            if (i % 10 == 0) System.out.print(".");
+            if (i % 800 == 0 && i > 0) System.out.println();
+         } finally {
+            inputStream.close();
+         }
+      }
+
+      System.out.println();
+      System.out.println("NPOI took: " + (System.currentTimeMillis() - start));
+
+      System.out.println();
+      System.out.println();
+   }
+
+   private static void copyAllEntries(DirectoryEntry srcDirectory, DirectoryEntry destDirectory) throws IOException {
+      Iterator<Entry> iterator = srcDirectory.getEntries();
+
+      while (iterator.hasNext()) {
+         Entry entry = iterator.next();
+
+         if (entry.isDirectoryEntry()) {
+            DirectoryEntry childDest = destDirectory.createDirectory(entry.getName());
+            copyAllEntries((DirectoryEntry) entry, childDest);
+
+         } else {
+            DocumentEntry srcEntry = (DocumentEntry) entry;
+
+            InputStream inputStream = new DocumentInputStream(srcEntry);
+            try {
+               destDirectory.createDocument(entry.getName(), inputStream);
+            } finally {
+               inputStream.close();
+            }
+         }
       }
    }
 }
