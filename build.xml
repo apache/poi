@@ -446,6 +446,7 @@ under the License.
     <patternset id="exclude-scratchpad-test">
         <exclude name="**/TestExtractorFactory.java"/>
         <exclude name="**/OutlookTextExtactor.java"/>
+        <exclude name="**/TestEmbedOLEPackage.java"/>
     </patternset>
 
     <!-- Prints POI's Ant usage help -->
