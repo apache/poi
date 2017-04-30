@@ -32,9 +32,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public class CellRangeAddress extends CellRangeAddressBase {
-	/*
-	 * TODO - replace  org.apache.poi.hssf.util.Region
-	 */
 	public static final int ENCODED_SIZE = 8;
 
 	/**
@@ -48,8 +45,10 @@ public class CellRangeAddress extends CellRangeAddressBase {
 	public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
 		super(firstRow, lastRow, firstCol, lastCol);
 		
-		if (lastRow < firstRow || lastCol < firstCol)
-		    throw new IllegalArgumentException("lastRow < firstRow || lastCol < firstCol");
+		if (lastRow < firstRow || lastCol < firstCol) {
+			throw new IllegalArgumentException("Invalid cell range, having lastRow < firstRow || lastCol < firstCol, " +
+					"had rows " + lastRow + " >= " + firstRow + " or cells " + lastCol + " >= " + firstCol);
+		}
 	}
 
 	public void serialize(LittleEndianOutput out) {
@@ -91,7 +90,7 @@ public class CellRangeAddress extends CellRangeAddressBase {
      * @return the text format of this range using specified sheet name.
      */
     public String formatAsString(String sheetName, boolean useAbsoluteAddress) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (sheetName != null) {
             sb.append(SheetNameFormatter.format(sheetName));
             sb.append("!");
