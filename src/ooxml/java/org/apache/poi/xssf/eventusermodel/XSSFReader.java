@@ -283,7 +283,7 @@ public class XSSFReader {
          * by XSSFBReader.  This is used to decide what
          * relationships to load into the sheetRefs
          *
-         * @return
+         * @return all relationships that are sheet-like
          */
         Set<String> getSheetRelationships() {
             return WORKSHEET_RELS;
