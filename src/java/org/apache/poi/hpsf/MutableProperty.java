@@ -17,6 +17,9 @@
 
 package org.apache.poi.hpsf;
 
+import java.io.UnsupportedEncodingException;
+
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.Removal;
 
 /**
@@ -27,6 +30,7 @@ import org.apache.poi.util.Removal;
  * 
  * @deprecated POI 3.16 - use Property as base class instead
  */
+@Deprecated
 @Removal(version="3.18")
 public class MutableProperty extends Property {
     public MutableProperty() {}
@@ -35,4 +39,17 @@ public class MutableProperty extends Property {
     	super(p);
     }
 
+    public MutableProperty(final long id, final long type, final Object value) {
+        super(id, type, value);
+    }
+    
+    public MutableProperty(final long id, final byte[] src, final long offset, final int length, final int codepage)
+    throws UnsupportedEncodingException {
+        super(id, src, offset, length, codepage);
+    }
+    
+    public MutableProperty(final long id, LittleEndianByteArrayInputStream leis, final int length, final int codepage)
+    throws UnsupportedEncodingException {
+        super(id, leis, length, codepage);
+    }
 }

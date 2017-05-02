@@ -17,13 +17,15 @@
 
 package org.apache.poi.hpsf;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
-import org.apache.poi.util.CodePageUtil;
 
 /**
  * Convenience class representing a DocumentSummary Information stream in a
@@ -70,6 +72,32 @@ public class DocumentSummaryInformation extends SpecialPropertySet {
         }
     }
 
+    /**
+     * Creates a {@link DocumentSummaryInformation} instance from an {@link
+     * InputStream} in the Horrible Property Set Format.<p>
+     *
+     * The constructor reads the first few bytes from the stream
+     * and determines whether it is really a property set stream. If
+     * it is, it parses the rest of the stream. If it is not, it
+     * resets the stream to its beginning in order to let other
+     * components mess around with the data and throws an
+     * exception.
+     *
+     * @param stream Holds the data making out the property set
+     * stream.
+     * @throws MarkUnsupportedException
+     *    if the stream does not support the {@link InputStream#markSupported} method.
+     * @throws IOException
+     *    if the {@link InputStream} cannot be accessed as needed.
+     * @exception NoPropertySetStreamException
+     *    if the input stream does not contain a property set.
+     * @exception UnsupportedEncodingException
+     *    if a character encoding is not supported.
+     */
+    public DocumentSummaryInformation(final InputStream stream)
+    throws NoPropertySetStreamException, MarkUnsupportedException, IOException, UnsupportedEncodingException {
+        super(stream);
+    }
     
     /**
      * Returns the category (or {@code null}).
@@ -732,13 +760,13 @@ public class DocumentSummaryInformation extends SpecialPropertySet {
             final Map<Long,String> dictionary = section.getDictionary();
             final Property[] properties = section.getProperties();
             int propertyCount = 0;
-            for (int i = 0; i < properties.length; i++) {
-                final Property p = properties[i];
+            for (Property p : properties) {
                 final long id = p.getID();
-                if (id != 0 && id != 1) {
+                if (id == PropertyIDMap.PID_CODEPAGE) {
+                    cps.setCodepage((Integer)p.getValue());
+                } else if (id > PropertyIDMap.PID_CODEPAGE) {
                     propertyCount++;
-                    final CustomProperty cp = new CustomProperty(p,
-                            dictionary.get(Long.valueOf(id)));
+                    final CustomProperty cp = new CustomProperty(p, dictionary.get(id));
                     cps.put(cp.getName(), cp);
                 }
             }
@@ -758,17 +786,17 @@ public class DocumentSummaryInformation extends SpecialPropertySet {
         ensureSection2();
         final Section section = getSections().get(1);
         final Map<Long,String> dictionary = customProperties.getDictionary();
-        section.clear();
+        // section.clear();
 
         /* Set the codepage. If both custom properties and section have a
          * codepage, the codepage from the custom properties wins, else take the
-         * one that is defined. If none is defined, take Unicode. */
+         * one that is defined. If none is defined, take ISO-8859-1. */
         int cpCodepage = customProperties.getCodepage();
         if (cpCodepage < 0) {
             cpCodepage = section.getCodepage();
         }
         if (cpCodepage < 0) {
-            cpCodepage = CodePageUtil.CP_UNICODE;
+            cpCodepage = Property.DEFAULT_CODEPAGE;
         }
         customProperties.setCodepage(cpCodepage);
         section.setCodepage(cpCodepage);

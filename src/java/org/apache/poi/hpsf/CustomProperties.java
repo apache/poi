@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,9 @@ import java.util.Set;
 
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Maintains the instances of {@link CustomProperty} that belong to a
@@ -55,6 +60,7 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  */
 @SuppressWarnings("serial")
 public class CustomProperties extends HashMap<Long,CustomProperty> {
+    private static final POILogger LOG = POILogFactory.getLogger(CustomProperties.class);
 
     /**
      * Maps property IDs to property names and vice versa.
@@ -66,6 +72,7 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      */
     private boolean isPure = true;
 
+    private int codepage = -1;
 
     /**
      * Puts a {@link CustomProperty} into this map. It is assumed that the
@@ -90,6 +97,8 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
                     ") do not match.");
         }
 
+        checkCodePage(name);
+        
         /* Register name and ID in the dictionary. Mapping in both directions is possible. If there is already a  */
         super.remove(dictionary.getKey(name));
         dictionary.put(cp.getID(), name);
@@ -124,7 +133,8 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
             customProperty.setID(oldId);
         } else {
             long lastKey = (dictionary.isEmpty()) ? 0 : dictionary.lastKey();
-            customProperty.setID(Math.max(lastKey,PropertyIDMap.PID_MAX) + 1);
+            long nextKey = Math.max(lastKey,PropertyIDMap.PID_MAX)+1;
+            customProperty.setID(nextKey);
         }
         return this.put(name, customProperty);
     }
@@ -152,7 +162,7 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      *         {@code null} if there was no such property before.
      */
     public Object put(final String name, final String value) {
-        final Property p = new Property(-1, Variant.VT_LPWSTR, value);
+        final Property p = new MutableProperty(-1, Variant.VT_LPSTR, value);
         return put(new CustomProperty(p, name));
     }
 
@@ -165,7 +175,7 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      *         {@code null} if there was no such property before.
      */
     public Object put(final String name, final Long value) {
-        final Property p = new Property(-1, Variant.VT_I8, value);
+        final Property p = new MutableProperty(-1, Variant.VT_I8, value);
         return put(new CustomProperty(p, name));
     }
 
@@ -178,7 +188,7 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      *         {@code null} if there was no such property before.
      */
     public Object put(final String name, final Double value) {
-        final Property p = new Property(-1, Variant.VT_R8, value);
+        final Property p = new MutableProperty(-1, Variant.VT_R8, value);
         return put(new CustomProperty(p, name));
     }
 
@@ -191,7 +201,7 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      *         {@code null} if there was no such property before.
      */
     public Object put(final String name, final Integer value) {
-        final Property p = new Property(-1, Variant.VT_I4, value);
+        final Property p = new MutableProperty(-1, Variant.VT_I4, value);
         return put(new CustomProperty(p, name));
     }
 
@@ -204,7 +214,7 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      *         {@code null} if there was no such property before.
      */
     public Object put(final String name, final Boolean value) {
-        final Property p = new Property(-1, Variant.VT_BOOL, value);
+        final Property p = new MutableProperty(-1, Variant.VT_BOOL, value);
         return put(new CustomProperty(p, name));
     }
 
@@ -233,7 +243,7 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      *         {@code null} if there was no such property before.
      */
     public Object put(final String name, final Date value) {
-        final Property p = new Property(-1, Variant.VT_FILETIME, value);
+        final Property p = new MutableProperty(-1, Variant.VT_FILETIME, value);
         return put(new CustomProperty(p, name));
     }
 
@@ -274,11 +284,17 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      * @param codepage the codepage
      */
     public void setCodepage(final int codepage) {
-        Property p = new Property(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2, codepage);
-        put(new CustomProperty(p));
+        this.codepage = codepage;
     }
 
-
+    /**
+     * Gets the codepage.
+     *
+     * @return the codepage or -1 if the codepage is undefined.
+     */
+    public int getCodepage() {
+        return codepage;
+    }
 
     /**
      * <p>Gets the dictionary which contains IDs and names of the named custom
@@ -318,16 +334,6 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
     }
 
     /**
-     * Gets the codepage.
-     *
-     * @return the codepage or -1 if the codepage is undefined.
-     */
-    public int getCodepage() {
-        CustomProperty cp = get(PropertyIDMap.PID_CODEPAGE);
-        return (cp == null) ? -1 : (Integer)cp.getValue();
-    }
-
-    /**
      * Tells whether this {@link CustomProperties} instance is pure or one or
      * more properties of the underlying low-level property set has been
      * dropped.
@@ -346,5 +352,26 @@ public class CustomProperties extends HashMap<Long,CustomProperty> {
      */
     public void setPure(final boolean isPure) {
         this.isPure = isPure;
+    }
+    
+    private void checkCodePage(String value) {
+        int cp = getCodepage();
+        if (cp == -1) {
+            cp = Property.DEFAULT_CODEPAGE;
+        }
+        if (cp == CodePageUtil.CP_UNICODE) {
+            return;
+        }
+        String cps = "";
+        try {
+            cps = CodePageUtil.codepageToEncoding(cp, false);
+        } catch (UnsupportedEncodingException e) {
+            LOG.log(POILogger.ERROR, "Codepage '"+cp+"' can't be found.");
+        }
+        if (!cps.isEmpty() && Charset.forName(cps).newEncoder().canEncode(value)) {
+            return;
+        }
+        LOG.log(POILogger.DEBUG, "Charset '"+cps+"' can't encode '"+value+"' - switching to unicode.");
+        setCodepage(CodePageUtil.CP_UNICODE);
     }
 }

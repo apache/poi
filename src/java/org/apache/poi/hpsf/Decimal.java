@@ -17,13 +17,10 @@
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
-class Decimal
-{
-    static final int SIZE = 16;
-
+class Decimal {
     /**
      * Findbugs: UNR_UNREAD_FIELD
      */
@@ -33,23 +30,13 @@ class Decimal
     private int field_4_hi32;
     private long field_5_lo64;
 
-    Decimal( final byte[] data, final int startOffset )
-    {
-        int offset = startOffset;
-
-        field_1_wReserved = LittleEndian.getShort( data, offset );
-        offset += LittleEndian.SHORT_SIZE;
-
-        field_2_scale = data[offset];
-        offset += LittleEndian.BYTE_SIZE;
-
-        field_3_sign = data[offset];
-        offset += LittleEndian.BYTE_SIZE;
-
-        field_4_hi32 = LittleEndian.getInt( data, offset );
-        offset += LittleEndian.INT_SIZE;
-
-        field_5_lo64 = LittleEndian.getLong( data, offset );
-        offset += LittleEndian.LONG_SIZE;
+    Decimal() {}
+    
+    void read( LittleEndianByteArrayInputStream lei ) {
+        field_1_wReserved = lei.readShort();
+        field_2_scale = lei.readByte();
+        field_3_sign = lei.readByte();
+        field_4_hi32 = lei.readInt();
+        field_5_lo64 = lei.readLong();
     }
 }

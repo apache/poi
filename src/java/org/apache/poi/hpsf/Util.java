@@ -95,38 +95,6 @@ public class Util
         return ms_since_16010101 * (1000 * 10);
     }
 
-
-
-    /**
-     * <p>Compares to object arrays with regarding the objects' order. For
-     * example, [1, 2, 3] and [2, 1, 3] are equal.</p>
-     *
-     * @param c1 The first object array.
-     * @param c2 The second object array.
-     * @return <code>true</code> if the object arrays are equal,
-     * <code>false</code> if they are not.
-     */
-    public static boolean equals(Object[] c1, Object[] c2)
-    {
-        for (int i1 = 0; i1 < c1.length; i1++)
-        {
-            final Object obj1 = c1[i1];
-            boolean matchFound = false;
-            for (int i2 = 0; !matchFound && i2 < c1.length; i2++)
-            {
-                final Object obj2 = c2[i2];
-                if (obj1.equals(obj2))
-                {
-                    matchFound = true;
-                    c2[i2] = null;
-                }
-            }
-            if (!matchFound)
-                return false;
-        }
-        return true;
-    }
-
     /**
      * <p>Pads a byte array with 0x00 bytes so that its length is a multiple of
      * 4.</p>

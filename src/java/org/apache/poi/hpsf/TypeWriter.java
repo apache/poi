@@ -21,10 +21,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.Removal;
 
 /**
- * <p>Class for writing little-endian data and more.</p>
+ * Class for writing little-endian data and more.
+ * @deprecated POI 3.16 beta 2 - use LittleEndian instead
  */
+@Deprecated
+@Removal(version="3.18")
 public class TypeWriter
 {
 
@@ -40,7 +45,7 @@ public class TypeWriter
             throws IOException
     {
         LittleEndian.putShort( out, n ); // FIXME: unsigned
-        return LittleEndian.SHORT_SIZE;
+        return LittleEndianConsts.SHORT_SIZE;
     }
 
     /**
@@ -55,7 +60,7 @@ public class TypeWriter
             throws IOException
     {
         LittleEndian.putInt( n, out );
-        return LittleEndian.INT_SIZE;
+        return LittleEndianConsts.INT_SIZE;
     }
 
     /**
@@ -70,7 +75,7 @@ public class TypeWriter
             throws IOException
     {
         LittleEndian.putLong( n, out );
-        return LittleEndian.LONG_SIZE;
+        return LittleEndianConsts.LONG_SIZE;
     }
 
     /**
@@ -84,9 +89,10 @@ public class TypeWriter
             throws IOException
     {
         int high = n & 0xFFFF0000;
-        if ( high != 0 )
+        if ( high != 0 ) {
             throw new IllegalPropertySetDataException( "Value " + n
                     + " cannot be represented by 2 bytes." );
+        }
         LittleEndian.putUShort( n, out );
     }
 
@@ -102,11 +108,12 @@ public class TypeWriter
             throws IOException
     {
         long high = n & 0xFFFFFFFF00000000L;
-        if ( high != 0 && high != 0xFFFFFFFF00000000L )
+        if ( high != 0 && high != 0xFFFFFFFF00000000L ) {
             throw new IllegalPropertySetDataException( "Value " + n
                     + " cannot be represented by 4 bytes." );
+        }
         LittleEndian.putUInt( n, out );
-        return LittleEndian.INT_SIZE;
+        return LittleEndianConsts.INT_SIZE;
     }
 
     /**
@@ -145,8 +152,9 @@ public class TypeWriter
         throws IOException, UnsupportedVariantTypeException
     {
         /* If there are no properties don't write anything. */
-        if (properties == null)
+        if (properties == null) {
             return;
+        }
 
         /* Write the property list. This is a list containing pairs of property
          * ID and offset into the stream. */
@@ -154,7 +162,7 @@ public class TypeWriter
         {
             final Property p = properties[i];
             writeUIntToStream(out, p.getID());
-            writeUIntToStream(out, p.getSize());
+            writeUIntToStream(out, p.getSize(codepage));
         }
 
         /* Write the properties themselves. */
@@ -181,7 +189,7 @@ public class TypeWriter
             throws IOException
     {
         LittleEndian.putDouble( n, out );
-        return LittleEndian.DOUBLE_SIZE;
+        return LittleEndianConsts.DOUBLE_SIZE;
     }
 
 }

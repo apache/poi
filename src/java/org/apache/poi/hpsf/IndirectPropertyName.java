@@ -19,17 +19,6 @@ package org.apache.poi.hpsf;
 import org.apache.poi.util.Internal;
 
 @Internal
-class IndirectPropertyName
-{
-    private CodePageString _value;
-
-    IndirectPropertyName( byte[] data, int offset ) //NOSONAR
-    {
-        _value = new CodePageString( data, offset );
-    }
-
-    int getSize()
-    {
-        return _value.getSize();
-    }
+class IndirectPropertyName extends CodePageString {
+    IndirectPropertyName() {}
 }
