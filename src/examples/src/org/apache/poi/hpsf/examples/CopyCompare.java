@@ -47,6 +47,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -66,7 +67,7 @@ import org.apache.poi.util.TempFile;
  * exactly identical. However, both POI file systems must contain the same
  * files, and most of these files must be bitwise identical. Property set
  * streams, however, are compared logically: they must have the same sections
- * with the same attributs, and the sections must contain the same properties.
+ * with the same attributes, and the sections must contain the same properties.
  * Details like the ordering of the properties do not matter.</p>
  */
 public class CopyCompare
@@ -124,6 +125,7 @@ public class CopyCompare
         final POIFSReader r = new POIFSReader();
         final CopyFile cf = new CopyFile(copyFileName);
         r.registerListener(cf);
+        r.setNotifyEmptyDirectories(true);
         FileInputStream fis = new FileInputStream(originalFileName);
         r.read(fis);
         fis.close();
@@ -133,19 +135,23 @@ public class CopyCompare
 
         /* Read all documents from the original POI file system and compare them
          * with the equivalent document from the copy. */
-        final POIFSFileSystem opfs = new POIFSFileSystem(new File(originalFileName));
-        final POIFSFileSystem cpfs = new POIFSFileSystem(new File(copyFileName));
-
-        final DirectoryEntry oRoot = opfs.getRoot();
-        final DirectoryEntry cRoot = cpfs.getRoot();
-        final StringBuffer messages = new StringBuffer();
-        if (equal(oRoot, cRoot, messages)) {
-            System.out.println("Equal");
-        } else {
+        POIFSFileSystem opfs = null, cpfs = null;
+        try {
+            opfs = new POIFSFileSystem(new File(originalFileName));
+            cpfs = new POIFSFileSystem(new File(copyFileName));
+            
+            final DirectoryEntry oRoot = opfs.getRoot();
+            final DirectoryEntry cRoot = cpfs.getRoot();
+            final StringBuffer messages = new StringBuffer();
+            if (equal(oRoot, cRoot, messages)) {
+                System.out.println("Equal");
+            } else {
             System.out.println("Not equal: " + messages);
+            }
+        } finally {
+            IOUtils.closeQuietly(cpfs);
+            IOUtils.closeQuietly(opfs);
         }
-        cpfs.close();
-        opfs.close();
     }
 
 
@@ -179,15 +185,12 @@ public class CopyCompare
         /* Iterate over d1 and compare each entry with its counterpart in d2. */
         for (final Entry e1 : d1) {
             final String n1 = e1.getName();
-            Entry e2 = null;
-            try {
-                e2 = d2.getEntry(n1);
-            } catch (FileNotFoundException ex) {
-                msg.append("Document \"" + e1 + "\" exists, document \"" +
-                           e2 + "\" does not.\n");
+            if (!d2.hasEntry(n1)) {
+                msg.append("Document \"" + n1 + "\" exists only in the source.\n");
                 equal = false;
                 break;
             }
+            Entry e2 = d2.getEntry(n1);
 
             if (e1.isDirectoryEntry() && e2.isDirectoryEntry()) {
                 equal = equal((DirectoryEntry) e1, (DirectoryEntry) e2, msg);
@@ -320,7 +323,7 @@ public class CopyCompare
             try {
                 /* Find out whether the current document is a property set
                  * stream or not. */
-                if (PropertySet.isPropertySetStream(stream)) {
+                if (stream != null && PropertySet.isPropertySetStream(stream)) {
                     /* Yes, the current document is a property set stream.
                      * Let's create a PropertySet instance from it. */
                     PropertySet ps = null;
@@ -337,7 +340,7 @@ public class CopyCompare
                 } else {
                     /* No, the current document is not a property set stream. We
                      * copy it unmodified to the destination POIFS. */
-                    copy(poiFs, event.getPath(), event.getName(), stream);
+                    copy(poiFs, path, name, stream);
                 }
             } catch (MarkUnsupportedException ex) {
                 t = ex;
@@ -399,6 +402,10 @@ public class CopyCompare
                          final DocumentInputStream stream)
         throws IOException {
             final DirectoryEntry de = getPath(poiFs, path);
+            if (stream == null && name == null) {
+                // Empty directory
+                return;
+            }
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             int c;
             while ((c = stream.read()) != -1) {

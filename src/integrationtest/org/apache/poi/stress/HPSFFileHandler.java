@@ -16,33 +16,113 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
+import org.apache.poi.hpsf.MarkUnsupportedException;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.examples.CopyCompare;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.TempFile;
+import org.junit.Assume;
 import org.junit.Test;
 
 public class HPSFFileHandler extends POIFSFileHandler {
-	@Override
-    public void handleFile(InputStream stream) throws Exception {
-		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(stream));
-		assertNotNull(hpsf.getDocumentSummaryInformation());
-		assertNotNull(hpsf.getSummaryInformation());
+    private static File copyOutput = null;
+    
+    static final Set<String> EXCLUDES_HANDLE_ADD = unmodifiableHashSet(
+        "spreadsheet/45290.xls",
+        "spreadsheet/46904.xls",
+        "spreadsheet/55982.xls",
+        "spreadsheet/testEXCEL_3.xls",
+        "spreadsheet/testEXCEL_4.xls",
+        "hpsf/Test_Humor-Generation.ppt"
+    );
+    
+    static final Set<String> EXCLUDES_HANDLE_FILE = unmodifiableHashSet(
+        "hpsf/Test_Humor-Generation.ppt"
+    );
+        
+    
+    private static final Set<String> unmodifiableHashSet(String... a) {
+        return Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(a)));
+    }
+
+    
+    @Override
+    public void handleFile(InputStream stream, String path) throws Exception {
+        Assume.assumeFalse(EXCLUDES_HANDLE_FILE.contains(path));
+	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
+		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(poifs);
+		DocumentSummaryInformation dsi = hpsf.getDocumentSummaryInformation();
+		SummaryInformation si = hpsf.getSummaryInformation();
+		boolean hasDSI = hasPropertyStream(poifs, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+		boolean hasSI = hasPropertyStream(poifs, SummaryInformation.DEFAULT_STREAM_NAME);
+		
+		assertEquals(hasDSI, dsi != null);
+        assertEquals(hasSI, si != null);
 		
 		handlePOIDocument(hpsf);
 	}
+
+	private static boolean hasPropertyStream(POIFSFileSystem poifs, String streamName) throws IOException, MarkUnsupportedException {
+        DirectoryNode root = poifs.getRoot();
+	    if (!root.hasEntry(streamName)) {
+	        return false;
+	    }
+	    DocumentInputStream dis = root.createDocumentInputStream(streamName);
+	    try {
+	        return PropertySet.isPropertySetStream(dis);
+	    } finally {
+	        dis.close();;
+	    }
+	}
+	
+    @Override
+    public void handleAdditional(File file) throws Exception {
+        Assume.assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
+        if (copyOutput == null) {
+            copyOutput = TempFile.createTempFile("hpsfCopy", "out");
+            copyOutput.deleteOnExit();
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PrintStream psNew = new PrintStream(bos);
+        PrintStream ps = System.out;
+        try {
+            System.setOut(psNew);
+            CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.getAbsolutePath()});
+            assertEquals("Equal\n", new String(bos.toByteArray(), Charset.forName("UTF-8")));
+        } finally {
+            System.setOut(ps);
+        }
+    }
+
 	
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/hpsf/Test0313rur.adm");
+	    String path = "test-data/hpsf/Test0313rur.adm";
+		InputStream stream = new FileInputStream(path);
 		try {
-			handleFile(stream);
+			handleFile(stream, path);
 		} finally {
 			stream.close();
 		}
