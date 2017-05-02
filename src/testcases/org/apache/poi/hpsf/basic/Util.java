@@ -19,13 +19,11 @@
 package org.apache.poi.hpsf.basic;
 
 import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -36,6 +34,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
+import org.apache.poi.util.IOUtils;
 
 
 
@@ -43,42 +42,6 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
  * <p>Static utility methods needed by the HPSF test cases.</p>
  */
 final class Util {
-
-    /**
-     * <p>Reads bytes from an input stream and writes them to an
-     * output stream until end of file is encountered.</p>
-     *
-     * @param in the input stream to read from
-     * 
-     * @param out the output stream to write to
-     * 
-     * @exception IOException if an I/O exception occurs
-     */
-    public static void copy(final InputStream in, final OutputStream out)
-        throws IOException
-    {
-        final int BUF_SIZE = 1000;
-        byte[] b = new byte[BUF_SIZE];
-        int read;
-        boolean eof = false;
-        while (!eof)
-        {
-            try
-            {
-                read = in.read(b, 0, BUF_SIZE);
-                if (read > 0)
-                    out.write(b, 0, read);
-                else
-                    eof = true;
-            }
-            catch (EOFException ex)
-            {
-                eof = true;
-            }
-        }
-    }
-
-
 
     /**
      * <p>Reads all files from a POI filesystem and returns them as an
@@ -143,7 +106,7 @@ final class Util {
                     final InputStream in = event.getStream();
                     final ByteArrayOutputStream out =
                         new ByteArrayOutputStream();
-                    Util.copy(in, out);
+                    IOUtils.copy(in, out);
                     out.close();
                     f.setBytes(out.toByteArray());
                     files.add(f);
@@ -192,34 +155,33 @@ final class Util {
      * 
      * @exception IOException if an I/O exception occurs
      */
-    public static POIFile[] readPropertySets(final File poiFs)
-        throws FileNotFoundException, IOException
-    {
+    public static List<POIFile> readPropertySets(final File poiFs)
+    throws FileNotFoundException, IOException {
+        FileInputStream stream = new FileInputStream(poiFs);
+        try {
+            return readPropertySets(stream);
+        } finally {
+            stream.close();
+        }
+    }
+            
+    public static List<POIFile> readPropertySets(final InputStream poiFs)
+    throws FileNotFoundException, IOException {
         final List<POIFile> files = new ArrayList<POIFile>(7);
         final POIFSReader r = new POIFSReader();
-        POIFSReaderListener pfl = new POIFSReaderListener()
-        {
+        POIFSReaderListener pfl = new POIFSReaderListener() {
             @Override
-            public void processPOIFSReaderEvent(final POIFSReaderEvent event)
-            {
-                try
-                {
+            public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
+                try {
                     final POIFile f = new POIFile();
                     f.setName(event.getName());
                     f.setPath(event.getPath());
                     final InputStream in = event.getStream();
-                    if (PropertySet.isPropertySetStream(in))
-                    {
-                        final ByteArrayOutputStream out =
-                            new ByteArrayOutputStream();
-                        Util.copy(in, out);
-                        out.close();
-                        f.setBytes(out.toByteArray());
+                    if (PropertySet.isPropertySetStream(in)) {
+                        f.setBytes(IOUtils.toByteArray(in));
                         files.add(f);
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -229,17 +191,9 @@ final class Util {
         r.registerListener(pfl);
 
         /* Read the POI filesystem. */
-        FileInputStream stream = new FileInputStream(poiFs);
-        try {
-            r.read(stream);
-        } finally {
-            stream.close();
-        }
+        r.read(poiFs);
 
-        POIFile[] result = new POIFile[files.size()];
-        for (int i = 0; i < result.length; i++)
-            result[i] = files.get(i);
-        return result;
+        return files;
     }
 
 

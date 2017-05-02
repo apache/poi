@@ -18,6 +18,7 @@
 package org.apache.poi.hpsf.basic;
 
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -27,7 +28,6 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -73,28 +74,29 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.TempFile;
-import org.junit.Before;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * <p>Tests HPSF's writing functionality.</p>
+ * Tests HPSF's writing functionality
  */
-public class TestWrite
-{
+public class TestWrite {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+    private static final int CODEPAGE_DEFAULT = -1;
 
-    static final String POI_FS = "TestHPSFWritingFunctionality.doc";
+    private static final String POI_FS = "TestHPSFWritingFunctionality.doc";
 
-    static final int BYTE_ORDER = 0xfffe;
-    static final int FORMAT     = 0x0000;
-    static final int OS_VERSION = 0x00020A04;
-    static final int[] SECTION_COUNT = {1, 2};
-    static final boolean[] IS_SUMMARY_INFORMATION = {true, false};
-    static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION = {false, true};
+    private static final int BYTE_ORDER = 0xfffe;
+    private static final int FORMAT     = 0x0000;
+    private static final int OS_VERSION = 0x00020A04;
+    private static final int[] SECTION_COUNT = {1, 2};
+    private static final boolean[] IS_SUMMARY_INFORMATION = {true, false};
+    private static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION = {false, true};
 
-    final String IMPROPER_DEFAULT_CHARSET_MESSAGE =
+    private static final String IMPROPER_DEFAULT_CHARSET_MESSAGE =
         "Your default character set is " + getDefaultCharsetName() +
         ". However, this testcase must be run in an environment " +
         "with a default character set supporting at least " +
@@ -104,12 +106,11 @@ public class TestWrite
 
     POIFile[] poiFiles;
 
-    @Before
-    public void setUp()
-    {
+    @BeforeClass
+    public static void setUp() {
         VariantSupport.setLogUnsupportedTypes(false);
     }
-
+    
     /**
      * <p>Writes an empty property set to a POIFS and reads it back
      * in.</p>
@@ -117,8 +118,7 @@ public class TestWrite
      * @exception IOException if an I/O exception occurs
      */
     @Test(expected=NoFormatIDException.class)
-    public void withoutAFormatID() throws Exception
-    {
+    public void withoutAFormatID() throws Exception {
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
         /* Create a mutable property set with a section that does not have the
@@ -144,8 +144,6 @@ public class TestWrite
         }
     }
 
-
-
     /**
      * <p>Writes an empty property set to a POIFS and reads it back
      * in.</p>
@@ -156,8 +154,7 @@ public class TestWrite
      */
     @Test
     public void writeEmptyPropertySet()
-        throws IOException, UnsupportedVariantTypeException
-    {
+    throws IOException, UnsupportedVariantTypeException {
         final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
@@ -203,8 +200,7 @@ public class TestWrite
      */
     @Test
     public void writeSimplePropertySet()
-        throws IOException, UnsupportedVariantTypeException
-    {
+    throws IOException, UnsupportedVariantTypeException {
         final String AUTHOR = "Rainer Klute";
         final String TITLE = "Test Document";
         final File dataDir = _samples.getFile("");
@@ -235,24 +231,17 @@ public class TestWrite
         /* Read the POIFS: */
         final PropertySet[] psa = new PropertySet[1];
         final POIFSReader r = new POIFSReader();
-        r.registerListener(new POIFSReaderListener()
-            {
-                @Override
-                public void processPOIFSReaderEvent
-                    (final POIFSReaderEvent event)
-                {
-                    try
-                    {
-                        psa[0] = PropertySetFactory.create(event.getStream());
-                    }
-                    catch (Exception ex)
-                    {
-                        fail(org.apache.poi.hpsf.Util.toString(ex));
-                    }
+        r.registerListener(new POIFSReaderListener() {
+            @Override
+            public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
+                try {
+                    psa[0] = PropertySetFactory.create(event.getStream());
+                } catch (Exception ex) {
+                    fail(org.apache.poi.hpsf.Util.toString(ex));
                 }
-
-            },
-            SummaryInformation.DEFAULT_STREAM_NAME);
+            }},
+            SummaryInformation.DEFAULT_STREAM_NAME
+        );
         
         InputStream stream = new FileInputStream(filename);
         try {
@@ -281,9 +270,7 @@ public class TestWrite
      * a variant type to be written
      */
     @Test
-    public void writeTwoSections()
-        throws WritingNotSupportedException, IOException
-    {
+    public void writeTwoSections() throws WritingNotSupportedException, IOException {
         final String STREAM_NAME = "PropertySetStream";
         final String SECTION1 = "Section 1";
         final String SECTION2 = "Section 2";
@@ -318,18 +305,12 @@ public class TestWrite
         /* Read the POIFS: */
         final PropertySet[] psa = new PropertySet[1];
         final POIFSReader r = new POIFSReader();
-        r.registerListener(new POIFSReaderListener()
-            {
+        r.registerListener(new POIFSReaderListener() {
                 @Override
-                public void processPOIFSReaderEvent
-                    (final POIFSReaderEvent event)
-                {
-                    try
-                    {
+                public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
+                    try {
                         psa[0] = PropertySetFactory.create(event.getStream());
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
                 }
@@ -353,17 +334,12 @@ public class TestWrite
 
 
 
-    static class MyPOIFSReaderListener implements POIFSReaderListener
-    {
+    static class MyPOIFSReaderListener implements POIFSReaderListener {
         @Override
-        public void processPOIFSReaderEvent(final POIFSReaderEvent event)
-        {
-            try
-            {
+        public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
+            try {
                 PropertySetFactory.create(event.getStream());
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 fail(org.apache.poi.hpsf.Util.toString(ex));
             }
         }
@@ -371,109 +347,52 @@ public class TestWrite
 
 
 
-    private static final int CODEPAGE_DEFAULT = -1;
-    private static final int CODEPAGE_1252 = 1252;
-    private static final int CODEPAGE_UTF8 = CodePageUtil.CP_UTF8;
-    private static final int CODEPAGE_UTF16 = CodePageUtil.CP_UTF16;
-
-
-
     /**
      * <p>Writes and reads back various variant types and checks whether the
      * stuff that has been read back equals the stuff that was written.</p>
+     * @throws IOException 
+     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedVariantTypeException 
+     * @throws ReadingNotSupportedException 
      */
     @Test
-    public void variantTypes()
-    {
-        Throwable t = null;
+    public void variantTypes() throws Exception {
         final int codepage = CODEPAGE_DEFAULT;
-        if (!hasProperDefaultCharset())
-        {
-            System.err.println(IMPROPER_DEFAULT_CHARSET_MESSAGE +
-                " This testcase is skipped.");
-            return;
-        }
+        Assume.assumeTrue(IMPROPER_DEFAULT_CHARSET_MESSAGE, hasProperDefaultCharset());
 
-        try
-        {
-            check(Variant.VT_EMPTY, null, codepage);
-            check(Variant.VT_BOOL, Boolean.TRUE, codepage);
-            check(Variant.VT_BOOL, Boolean.FALSE, codepage);
-            check( Variant.VT_CF, new byte[] { 8, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3,
-                    4 }, codepage );
-            check(Variant.VT_I4, Integer.valueOf(27), codepage);
-            check(Variant.VT_I8, Long.valueOf(28), codepage);
-            check(Variant.VT_R8, new Double(29.0), codepage);
-            check(Variant.VT_I4, Integer.valueOf(-27), codepage);
-            check(Variant.VT_I8, Long.valueOf(-28), codepage);
-            check(Variant.VT_R8, new Double(-29.0), codepage);
-            check(Variant.VT_FILETIME, new Date(), codepage);
-            check(Variant.VT_I4, new Integer(Integer.MAX_VALUE), codepage);
-            check(Variant.VT_I4, new Integer(Integer.MIN_VALUE), codepage);
-            check(Variant.VT_I8, new Long(Long.MAX_VALUE), codepage);
-            check(Variant.VT_I8, new Long(Long.MIN_VALUE), codepage);
-            check(Variant.VT_R8, new Double(Double.MAX_VALUE), codepage);
-            check(Variant.VT_R8, new Double(Double.MIN_VALUE), codepage);
-
-            check(Variant.VT_LPSTR,
-                  "", codepage);
-            check(Variant.VT_LPSTR,
-                  "\u00e4", codepage);
-            check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6", codepage);
-            check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc", codepage);
-            check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00df", codepage);
-            check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00df\u00c4", codepage);
-            check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6", codepage);
-            check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc", codepage);
-
-            check(Variant.VT_LPWSTR,
-                  "", codepage);
-            check(Variant.VT_LPWSTR,
-                  "\u00e4", codepage);
-            check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6", codepage);
-            check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc", codepage);
-            check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00df", codepage);
-            check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00df\u00c4", codepage);
-            check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6", codepage);
-            check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc", codepage);
-        }
-        catch (Exception ex)
-        {
-            t = ex;
-        }
-        catch (Error ex)
-        {
-            t = ex;
-        }
-        if (t != null)
-            fail(org.apache.poi.hpsf.Util.toString(t));
+        check(Variant.VT_EMPTY, null, codepage);
+        check(Variant.VT_BOOL, Boolean.TRUE, codepage);
+        check(Variant.VT_BOOL, Boolean.FALSE, codepage);
+        check( Variant.VT_CF, new byte[] { 8, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3, 4 }, codepage );
+        check(Variant.VT_I4, 27, codepage);
+        check(Variant.VT_I8, 28L, codepage);
+        check(Variant.VT_R8, 29.0d, codepage);
+        check(Variant.VT_I4, -27, codepage);
+        check(Variant.VT_I8, -28L, codepage);
+        check(Variant.VT_R8, -29.0d, codepage);
+        check(Variant.VT_FILETIME, new Date(), codepage);
+        check(Variant.VT_I4, Integer.MAX_VALUE, codepage);
+        check(Variant.VT_I4, Integer.MIN_VALUE, codepage);
+        check(Variant.VT_I8, Long.MAX_VALUE, codepage);
+        check(Variant.VT_I8, Long.MIN_VALUE, codepage);
+        check(Variant.VT_R8, Double.MAX_VALUE, codepage);
+        check(Variant.VT_R8, Double.MIN_VALUE, codepage);
+        checkString(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc", codepage);
+        checkString(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc", codepage);
     }
 
 
 
     /**
-     * <p>Writes and reads back strings using several different codepages and
+     * Writes and reads back strings using several different codepages and
      * checks whether the stuff that has been read back equals the stuff that
-     * was written.</p>
+     * was written.
      */
     @Test
-    public void codepages()
+    public void codepages() throws ReadingNotSupportedException, UnsupportedVariantTypeException, IOException
     {
         Throwable thr = null;
-        final int[] validCodepages = new int[]
-            {CODEPAGE_DEFAULT, CODEPAGE_UTF8, CODEPAGE_UTF16, CODEPAGE_1252};
+        final int[] validCodepages = {CODEPAGE_DEFAULT, CodePageUtil.CP_UTF8, CodePageUtil.CP_UNICODE, CodePageUtil.CP_WINDOWS_1252};
         for (final int cp : validCodepages) {
             if (cp == -1 && !hasProperDefaultCharset())
             {
@@ -482,65 +401,22 @@ public class TestWrite
                 continue;
             }
 
-            final long t = cp == CODEPAGE_UTF16 ? Variant.VT_LPWSTR
-                                                : Variant.VT_LPSTR;
-            try
-            {
-                check(t, "", cp);
-                check(t, "\u00e4", cp);
-                check(t, "\u00e4\u00f6", cp);
-                check(t, "\u00e4\u00f6\u00fc", cp);
-                check(t, "\u00e4\u00f6\u00fc\u00c4", cp);
-                check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6", cp);
-                check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", cp);
-                check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
-                if (cp == CodePageUtil.CP_UTF16 || cp == CodePageUtil.CP_UTF8)
-                    check(t, "\u79D1\u5B78", cp);
+            final long t = (cp == CodePageUtil.CP_UNICODE) ? Variant.VT_LPWSTR : Variant.VT_LPSTR;
+            checkString(t, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
+            if (cp == CodePageUtil.CP_UTF16 || cp == CodePageUtil.CP_UTF8) {
+                check(t, "\u79D1\u5B78", cp);
             }
-            catch (Exception ex)
-            {
-                thr = ex;
-            }
-            catch (Error ex)
-            {
-                thr = ex;
-            }
-            if (thr != null)
-                fail(org.apache.poi.hpsf.Util.toString(thr) +
-                     " with codepage " + cp);
         }
 
         final int[] invalidCodepages = new int[] {0, 1, 2, 4711, 815};
         for (int cp : invalidCodepages) {
-            final long type = cp == CODEPAGE_UTF16 ? Variant.VT_LPWSTR
-                                                   : Variant.VT_LPSTR;
-            try
-            {
-                check(type, "", cp);
-                check(type, "\u00e4", cp);
-                check(type, "\u00e4\u00f6", cp);
-                check(type, "\u00e4\u00f6\u00fc", cp);
-                check(type, "\u00e4\u00f6\u00fc\u00c4", cp);
-                check(type, "\u00e4\u00f6\u00fc\u00c4\u00d6", cp);
-                check(type, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", cp);
-                check(type, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
-                fail("UnsupportedEncodingException for codepage " + cp +
-                     " expected.");
-            }
-            catch (UnsupportedEncodingException ex)
-            {
+            final long type = (cp == CodePageUtil.CP_UNICODE) ? Variant.VT_LPWSTR : Variant.VT_LPSTR;
+            try {
+                checkString(type, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
+                fail("UnsupportedEncodingException for codepage " + cp + " expected.");
+            } catch (UnsupportedEncodingException ex) {
                 /* This is the expected behaviour. */
             }
-            catch (Exception ex)
-            {
-                thr = ex;
-            }
-            catch (Error ex)
-            {
-                thr = ex;
-            }
-            if (thr != null)
-                fail(org.apache.poi.hpsf.Util.toString(thr));
         }
 
     }
@@ -548,12 +424,10 @@ public class TestWrite
 
 
     /**
-     * <p>Tests whether writing 8-bit characters to a Unicode property
-     * succeeds.</p>
+     * Tests whether writing 8-bit characters to a Unicode property succeeds.
      */
     @Test
-    public void unicodeWrite8Bit()
-    {
+    public void unicodeWrite8Bit() throws WritingNotSupportedException, IOException, NoPropertySetStreamException {
         final String TITLE = "This is a sample title";
         final MutablePropertySet mps = new MutablePropertySet();
         final MutableSection ms = (MutableSection) mps.getSections().get(0);
@@ -564,209 +438,49 @@ public class TestWrite
         p.setValue(TITLE);
         ms.setProperty(p);
 
-        Throwable t = null;
-        try
-        {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            mps.write(out);
-            out.close();
-            byte[] bytes = out.toByteArray();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mps.write(out);
+        out.close();
+        byte[] bytes = out.toByteArray();
 
-            PropertySet psr = new PropertySet(bytes);
-            assertTrue(psr.isSummaryInformation());
-            Section sr = psr.getSections().get(0);
-            String title = (String) sr.getProperty(PropertyIDMap.PID_TITLE);
-            assertEquals(TITLE, title);
+        PropertySet psr = new PropertySet(bytes);
+        assertTrue(psr.isSummaryInformation());
+        Section sr = psr.getSections().get(0);
+        String title = (String) sr.getProperty(PropertyIDMap.PID_TITLE);
+        assertEquals(TITLE, title);
+    }
+    
+    private void checkString(final long variantType, final String value, final int codepage)
+    throws UnsupportedVariantTypeException, IOException, ReadingNotSupportedException, UnsupportedEncodingException {
+        for (int i=0; i<value.length(); i++) {
+            check(variantType, value.substring(0, i), codepage);
         }
-        catch (WritingNotSupportedException e)
-        {
-            t = e;
-        }
-        catch (IOException e)
-        {
-            t = e;
-        }
-        catch (NoPropertySetStreamException e)
-        {
-            t = e;
-        }
-        if (t != null)
-            fail(t.getMessage());
     }
 
-
-
     /**
-     * <p>Writes a property and reads it back in.</p>
+     * Writes a property and reads it back in.
      *
      * @param variantType The property's variant type.
      * @param value The property's value.
      * @param codepage The codepage to use for writing and reading.
      * @throws UnsupportedVariantTypeException if the variant is not supported.
      * @throws IOException if an I/O exception occurs.
-     * @throws ReadingNotSupportedException
-     * @throws UnsupportedEncodingException
      */
-    private void check(final long variantType, final Object value,
-                       final int codepage)
-        throws UnsupportedVariantTypeException, IOException,
-               ReadingNotSupportedException, UnsupportedEncodingException
+    private void check(final long variantType, final Object value, final int codepage)
+    throws UnsupportedVariantTypeException, IOException, ReadingNotSupportedException, UnsupportedEncodingException
     {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         VariantSupport.write(out, variantType, value, codepage);
         out.close();
         final byte[] b = out.toByteArray();
         final Object objRead =
-            VariantSupport.read(b, 0, b.length + LittleEndian.INT_SIZE,
-                                variantType, codepage);
-        if (objRead instanceof byte[])
-        {
-            byte[] valueB = (byte[])value;
-            byte[] readB = (byte[])objRead;
-            if (valueB.length != readB.length)
-               fail("Byte arrays are different length - expected " + valueB.length +
-                     " but found " + readB.length);
-
-            final int diff = diff(valueB, readB);
-            if (diff >= 0)
-                fail("Byte arrays are different. First different byte is at " +
-                     "index " + diff + ".");
-        }
-        else
-            if (value != null && !value.equals(objRead))
-            {
-                fail("Expected: \"" + value + "\" but was: \"" + objRead +
-                     "\". Codepage: " + codepage +
-                     (codepage == -1 ?
-                      " (" + System.getProperty("file.encoding") + ")." : "."));
-            }
-            else
-                assertEquals(value, objRead);
-    }
-
-
-
-    /**
-     * <p>Compares two byte arrays.</p>
-     *
-     * @param a The first byte array
-     * @param b The second byte array
-     * @return The index of the first byte that is different. If the byte arrays
-     * are equal, -1 is returned.
-     */
-    private int diff(final byte[] a, final byte[] b)
-    {
-        final int min = Math.min(a.length, b.length);
-        for (int i = 0; i < min; i++)
-            if (a[i] != b[i])
-                return i;
-        if (a.length != b.length)
-            return min;
-        return -1;
-    }
-
-
-
-    /**
-     * <p>This test method does a write and read back test with all POI
-     * filesystems in the "data" directory by performing the following
-     * actions for each file:</p>
-     *
-     * <ul>
-     *
-     * <li><p>Read its property set streams.</p></li>
-     *
-     * <li><p>Create a new POI filesystem containing the origin file's
-     * property set streams.</p></li>
-     *
-     * <li><p>Read the property set streams from the POI filesystem just
-     * created.</p></li>
-     *
-     * <li><p>Compare each property set stream with the corresponding one from
-     * the origin file and check whether they are equal.</p></li>
-     *
-     * </ul>
-     * @throws IOException 
-     */
-    @Test
-    public void recreate() throws IOException
-    {
-        final File dataDir = _samples.getFile("");
-        final File[] fileList = dataDir.listFiles(new FileFilter()
-            {
-                @Override
-                public boolean accept(final File f)
-                {
-                    return f.getName().startsWith("Test") && TestReadAllFiles.checkExclude(f);
-                }
-            });
-        for (final File file : fileList) {
-            try {
-                testRecreate(file);
-            } catch (Exception e) {
-                throw new IOException("While handling file " + file, e);
-            }
+            VariantSupport.read(b, 0, b.length + LittleEndianConsts.INT_SIZE, variantType, codepage);
+        if (objRead instanceof byte[]) {
+            assertArrayEquals((byte[])value, (byte[])objRead);
+        } else if (value != null && !value.equals(objRead)) {
+            assertEquals(value, objRead);
         }
     }
-
-
-
-    /**
-     * <p>Performs the check described in {@link #recreate()} for a single
-     * POI filesystem.</p>
-     *
-     * @param f the POI filesystem to check
-     * @throws IOException 
-     * @throws HPSFException
-     */
-    private void testRecreate(final File f) throws IOException, HPSFException
-    {
-        /* Read the POI filesystem's property set streams: */
-        final POIFile[] psf1 = Util.readPropertySets(f);
-
-        /* Create a new POI filesystem containing the origin file's
-         * property set streams: */
-        final File copy = TempFile.createTempFile(f.getName(), "");
-        copy.deleteOnExit();
-        final OutputStream out = new FileOutputStream(copy);
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
-        for (POIFile file : psf1) {
-            final InputStream in =
-                new ByteArrayInputStream(file.getBytes());
-            final PropertySet psIn = PropertySetFactory.create(in);
-            final MutablePropertySet psOut = new MutablePropertySet(psIn);
-            final ByteArrayOutputStream psStream =
-                new ByteArrayOutputStream();
-            psOut.write(psStream);
-            psStream.close();
-            final byte[] streamData = psStream.toByteArray();
-            poiFs.createDocument(new ByteArrayInputStream(streamData),
-                                 file.getName());
-            poiFs.writeFilesystem(out);
-        }
-        poiFs.close();
-        out.close();
-
-
-        /* Read the property set streams from the POI filesystem just
-         * created. */
-        final POIFile[] psf2 = Util.readPropertySets(copy);
-        for (int i = 0; i < psf2.length; i++)
-        {
-            final byte[] bytes1 = psf1[i].getBytes();
-            final byte[] bytes2 = psf2[i].getBytes();
-            final InputStream in1 = new ByteArrayInputStream(bytes1);
-            final InputStream in2 = new ByteArrayInputStream(bytes2);
-            final PropertySet ps1 = PropertySetFactory.create(in1);
-            final PropertySet ps2 = PropertySetFactory.create(in2);
-
-            /* Compare the property set stream with the corresponding one
-             * from the origin file and check whether they are equal. */
-            assertEquals("Equality for file " + f.getName(), ps1, ps2);
-        }
-    }
-
-
 
     /**
      * <p>Tests writing and reading back a proper dictionary.</p>
@@ -774,8 +488,7 @@ public class TestWrite
      * @throws HPSFException 
      */
     @Test
-    public void dictionary() throws IOException, HPSFException
-    {
+    public void dictionary() throws IOException, HPSFException {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
 
@@ -791,17 +504,16 @@ public class TestWrite
         s.setDictionary(m);
         s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
         int codepage = CodePageUtil.CP_UNICODE;
-        s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                      Integer.valueOf(codepage));
+        s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2, codepage);
         poiFs.createDocument(ps1.toInputStream(), "Test");
         poiFs.writeFilesystem(out);
         poiFs.close();
         out.close();
 
         /* Read back: */
-        final POIFile[] psf = Util.readPropertySets(copy);
-        assertEquals(1, psf.length);
-        final byte[] bytes = psf[0].getBytes();
+        final List<POIFile> psf = Util.readPropertySets(copy);
+        assertEquals(1, psf.size());
+        final byte[] bytes = psf.get(0).getBytes();
         final InputStream in = new ByteArrayInputStream(bytes);
         final PropertySet ps2 = PropertySetFactory.create(in);
 
@@ -1039,8 +751,7 @@ public class TestWrite
      * @throws HPSFException 
      */
     @Test(expected=IllegalPropertySetDataException.class)
-    public void dictionaryWithInvalidCodepage() throws IOException, HPSFException
-    {
+    public void dictionaryWithInvalidCodepage() throws IOException, HPSFException {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
         
@@ -1069,21 +780,16 @@ public class TestWrite
         }
     }
 
-
-
     /**
      * <p>Returns the display name of the default character set.</p>
      *
      * @return the display name of the default character set.
      */
-    private String getDefaultCharsetName()
-    {
+    private static String getDefaultCharsetName() {
         final String charSetName = System.getProperty("file.encoding");
         final Charset charSet = Charset.forName(charSetName);
         return charSet.displayName(Locale.ROOT);
     }
-
-
 
     /**
      * <p>In order to execute tests with characters beyond US-ASCII, this
@@ -1093,8 +799,7 @@ public class TestWrite
      * @return <code>true</code> if the default character set is 16-bit-capable,
      * else <code>false</code>.
      */
-    private boolean hasProperDefaultCharset()
-    {
+    private boolean hasProperDefaultCharset() {
         final String charSetName = System.getProperty("file.encoding");
         final Charset charSet = Charset.forName(charSetName);
         return charSet.newEncoder().canEncode('\u00e4');

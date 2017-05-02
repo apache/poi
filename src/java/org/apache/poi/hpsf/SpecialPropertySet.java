@@ -17,6 +17,10 @@
 
 package org.apache.poi.hpsf;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
 import org.apache.poi.util.Removal;
 
 /**
@@ -36,5 +40,10 @@ public class SpecialPropertySet extends MutablePropertySet {
 
     public SpecialPropertySet(final PropertySet ps) throws UnexpectedPropertySetTypeException {
         super(ps);
+    }
+
+    /* package */ SpecialPropertySet(final InputStream stream)
+    throws NoPropertySetStreamException, MarkUnsupportedException, IOException, UnsupportedEncodingException {
+        super(stream);
     }
 }

@@ -192,7 +192,7 @@ public final class TestBasic {
                 (poiFiles[0].getBytes()));
         final List<Section> sections = si.getSections();
         final Section s = sections.get(0);
-        assertArrayEquals(s.getFormatID().getBytes(), SectionIDMap.SUMMARY_INFORMATION_ID);
+        assertEquals(s.getFormatID(), SectionIDMap.SUMMARY_INFORMATION_ID);
         assertNotNull(s.getProperties());
         assertEquals(17, s.getPropertyCount());
         assertEquals("Titel", s.getProperty(2));

@@ -17,135 +17,62 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Random;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hpsf.*;
+import org.apache.poi.hpsf.CustomProperties;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.HPSFException;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 /**
  * Basing on: src/examples/src/org/apache/poi/hpsf/examples/ModifyDocumentSummaryInformation.java
  * This class tests reading and writing of meta data. No actual document is created. All information
  * is stored in a virtual document in a ByteArrayOutputStream
- * @author Matthias G\u00fcnter
  */
-public final class TestMetaDataIPI extends TestCase{
+public final class TestMetaDataIPI {
 
-	private ByteArrayOutputStream bout; //our store
-	private POIFSFileSystem poifs;
-	private DirectoryEntry dir;
+	private POIFSFileSystem poifs ;
 	private DocumentSummaryInformation dsi;
 	private SummaryInformation si;
 
-
-
+	@After
+	public void tearDown() throws Exception {
+	    poifs.close();
+	}
+	
 	/**
 	 * Setup is used to get the document ready. Gets the DocumentSummaryInformation and the
 	 * SummaryInformation to reasonable values
 	 */
-	@Override
+	@Before
     public void setUp() throws Exception {
-		bout = new ByteArrayOutputStream();
-		poifs = new POIFSFileSystem();
-		dir = poifs.getRoot();
-		dsi = null;
-		try {
-			DocumentEntry dsiEntry = (DocumentEntry) dir
-					.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-			DocumentInputStream dis = new DocumentInputStream(dsiEntry);
-			PropertySet ps = new PropertySet(dis);
-			dis.close();
-			dsi = new DocumentSummaryInformation(ps);
-
-		} catch (FileNotFoundException ex) {
-			/*
-			 * There is no document summary information yet. We have to create a
-			 * new one.
-			 */
-			dsi = PropertySetFactory.newDocumentSummaryInformation();
-			assertNotNull(dsi);
-		}
-		assertNotNull(dsi);
-		try {
-			DocumentEntry dsiEntry = (DocumentEntry) dir
-					.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-			DocumentInputStream dis = new DocumentInputStream(dsiEntry);
-			PropertySet ps = new PropertySet(dis);
-			dis.close();
-			si = new SummaryInformation(ps);
-
-		} catch (FileNotFoundException ex) {
-			/*
-			 * There is no document summary information yet. We have to create a
-			 * new one.
-			 */
-			si = PropertySetFactory.newSummaryInformation();
-			assertNotNull(si);
-		}
-		assertNotNull(dsi);
-	}
-
-	/**
-	 * Closes the ByteArrayOutputStream and reads it into a ByteArrayInputStream.
-	 * When finished writing information this method is used in the tests to
-	 * start reading from the created document and then the see if the results match.
-	 */
-	public void closeAndReOpen() throws IOException, HPSFException {
-
-		dsi.write(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-		si.write(dir, SummaryInformation.DEFAULT_STREAM_NAME);
-
-		si = null;
-		dsi = null;
-        poifs.writeFilesystem(bout);
-        bout.flush();
-
-		InputStream is = new ByteArrayInputStream(bout.toByteArray());
-		assertNotNull(is);
-		POIFSFileSystem poifs = new POIFSFileSystem(is);
-		is.close();
-
-		assertNotNull(poifs);
-		/* Read the document summary information. */
-		DirectoryEntry dir = poifs.getRoot();
-
-		DocumentEntry dsiEntry = (DocumentEntry) dir
-				.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-		DocumentInputStream dis = new DocumentInputStream(dsiEntry);
-		PropertySet ps = new PropertySet(dis);
-		dis.close();
-		dsi = new DocumentSummaryInformation(ps);
-
-		try {
-			dsiEntry = (DocumentEntry) dir
-					.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-			dis = new DocumentInputStream(dsiEntry);
-			ps = new PropertySet(dis);
-			dis.close();
-			si = new SummaryInformation(ps);
-
-		} catch (FileNotFoundException ex) {
-			/*
-			 * There is no document summary information yet. We have to create a
-			 * new one.
-			 */
-			si = PropertySetFactory.newSummaryInformation();
-			assertNotNull(si);
-		}
+        poifs = new POIFSFileSystem();
+        dsi = PropertySetFactory.newDocumentSummaryInformation();
+        si = PropertySetFactory.newSummaryInformation();
+        dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        si.write(poifs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
 	}
 
 	/**
 	 * Sets the most important information in DocumentSummaryInformation and Summary Information and rereads it
 	 */
+	@Test
 	public void testOne() throws Exception {
 
 		// DocumentSummaryInformation
@@ -201,9 +128,7 @@ public final class TestMetaDataIPI extends TestCase{
 		 * serve as a container for custom properties.
 		 */
 		customProperties = dsi.getCustomProperties();
-		if (customProperties == null) {
-			fail();
-		}
+		assertNotNull(customProperties);
 
 		/* Insert some custom properties into the container. */
 		String a1 = (String) customProperties.get("Key1");
@@ -225,22 +150,9 @@ public final class TestMetaDataIPI extends TestCase{
 	}
 
 	/**
-	 * multiplies a string
-	 * @param s Input String
-	 * @return the multiplied String
-	 */
-	private static String elongate(String s) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 10000; i++) {
-			sb.append(s);
-			sb.append(" ");
-		}
-		return sb.toString();
-	}
-
-	/**
 	 * Test very long input in each of the fields (approx 30-60KB each)
 	 */
+    @Test
 	public void testTwo() throws Exception {
 
 		String company = elongate("company");
@@ -324,20 +236,9 @@ public final class TestMetaDataIPI extends TestCase{
 
 
 	/**
-	 * adds strange characters to the string
-	 * @param s Input String
-	 * @return  the multiplied String
-	 */
-	private static String strangize(String s) {
-        StringBuilder sb = strangizeInit(s);
-
-		return sb.toString();
-	}
-
-
-	/**
 	 * Tests with strange characters in keys and data (Umlaute etc.)
 	 */
+    @Test
 	public void testThree() throws Exception {
 
 		String company = strangize("company");
@@ -423,50 +324,18 @@ public final class TestMetaDataIPI extends TestCase{
 	/**
 	 * Iterative testing: writing, reading etc.
 	 */
+    @Test
 	public void testFour() throws Exception {
 		for (int i = 1; i < 100; i++) {
-			setUp();
-			testThree();
+            testThree();
+			closeAndReOpen();
 		}
 	}
-
-
-
-	/**
-	 * adds strange characters to the string with the adding of unicode characters
-	 * @param s Input String
-	 * @return  the multiplied String
-    */
-	private static String strangizeU(String s) {
-
-        StringBuilder sb = strangizeInit(s);
-		sb.append("\u00e4\u00f6\u00fc\uD840\uDC00");
-		return sb.toString();
-	}
-
-    private static StringBuilder strangizeInit(String s) {
-        StringBuilder sb = new StringBuilder();
-        String[] umlaute = { "\u00e4", "\u00fc", "\u00f6", "\u00dc", "$", "\u00d6", "\u00dc",
-                "\u00c9", "\u00d6", "@", "\u00e7", "&" };
-        Random rand = new Random(0); // TODO - no Random - tests should be completely deterministic
-        for (int i = 0; i < 5; i++) {
-            sb.append(s);
-            sb.append(" ");
-            char j = (char) rand.nextInt(220);
-            j += 33;
-            // System.out.println(j);
-            sb.append(">");
-            sb.append(Character.valueOf(j));
-            sb.append("=");
-            sb.append(umlaute[rand.nextInt(umlaute.length)]);
-            sb.append("<");
-        }
-        return sb;
-    }
 
     /**
 	 * Unicode test
 	 */
+    @Test
 	public void testUnicode() throws Exception {
 		String company = strangizeU("company");
 		String manager = strangizeU("manager");
@@ -490,11 +359,8 @@ public final class TestMetaDataIPI extends TestCase{
 		si.setComments(comments);
 		si.setKeywords(keywords);
 		si.setSubject(subject);
-		CustomProperties customProperties = dsi.getCustomProperties();
-		if (customProperties == null) {
-			customProperties = new CustomProperties();
-		}
-
+		
+		CustomProperties customProperties = new CustomProperties();
 		/* Insert some custom properties into the container. */
 		customProperties.put(k1, p1);
 		customProperties.put(k2, p2);
@@ -529,9 +395,7 @@ public final class TestMetaDataIPI extends TestCase{
 		 * serve as a container for custom properties.
 		 */
 		customProperties = dsi.getCustomProperties();
-		if (customProperties == null) {
-			fail();
-		}
+		assertNotNull(customProperties);
 
 		/* Insert some custom properties into the container. */
 		// System.out.println(k1);
@@ -552,10 +416,11 @@ public final class TestMetaDataIPI extends TestCase{
 	 * Iterative testing of the unicode test
 	 *
 	 */
+    @Test
 	public void testSix() throws Exception {
 		for (int i = 1; i < 100; i++) {
-			setUp();
-			testUnicode();
+            testUnicode();
+			closeAndReOpen();
 		}
 	}
 
@@ -563,6 +428,7 @@ public final class TestMetaDataIPI extends TestCase{
 	/**
 	 * Tests conversion in custom fields and errors
 	 */
+    @Test
 	public void testConvAndExistence() throws Exception {
 
 		CustomProperties customProperties = dsi.getCustomProperties();
@@ -656,4 +522,86 @@ public final class TestMetaDataIPI extends TestCase{
 		assertTrue(customProperties.get("negdouble") instanceof Double);
 		assertTrue(customProperties.get("date") instanceof Date);
 	}
+
+
+    /**
+     * Closes the ByteArrayOutputStream and reads it into a ByteArrayInputStream.
+     * When finished writing information this method is used in the tests to
+     * start reading from the created document and then the see if the results match.
+     */
+    private void closeAndReOpen() throws IOException, HPSFException {
+        dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        si.write(poifs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
+
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        poifs.writeFilesystem(bout);
+        poifs.close();
+
+        InputStream is = new ByteArrayInputStream(bout.toByteArray());
+        poifs = new POIFSFileSystem(is);
+        is.close();
+
+        /* Read the document summary information. */
+        DirectoryEntry dir = poifs.getRoot();
+        
+        dsi = (DocumentSummaryInformation)PropertySetFactory.create(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);;
+        si = (SummaryInformation)PropertySetFactory.create(dir, SummaryInformation.DEFAULT_STREAM_NAME);;
+    }
+
+    /**
+     * multiplies a string
+     * @param s Input String
+     * @return the multiplied String
+     */
+    private static String elongate(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10000; i++) {
+            sb.append(s);
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * adds strange characters to the string
+     * @param s Input String
+     * @return  the multiplied String
+     */
+    private static String strangize(String s) {
+        StringBuilder sb = strangizeInit(s);
+
+        return sb.toString();
+    }
+
+    /**
+     * adds strange characters to the string with the adding of unicode characters
+     * @param s Input String
+     * @return  the multiplied String
+    */
+    private static String strangizeU(String s) {
+
+        StringBuilder sb = strangizeInit(s);
+        sb.append("\u00e4\u00f6\u00fc\uD840\uDC00");
+        return sb.toString();
+    }
+
+    private static StringBuilder strangizeInit(String s) {
+        StringBuilder sb = new StringBuilder();
+        String[] umlaute = { "\u00e4", "\u00fc", "\u00f6", "\u00dc", "$", "\u00d6", "\u00dc",
+                "\u00c9", "\u00d6", "@", "\u00e7", "&" };
+        Random rand = new Random(0); // TODO - no Random - tests should be completely deterministic
+        for (int i = 0; i < 5; i++) {
+            sb.append(s);
+            sb.append(" ");
+            char j = (char) rand.nextInt(220);
+            j += 33;
+            // System.out.println(j);
+            sb.append(">");
+            sb.append(Character.valueOf(j));
+            sb.append("=");
+            sb.append(umlaute[rand.nextInt(umlaute.length)]);
+            sb.append("<");
+        }
+        return sb;
+    }
 }
