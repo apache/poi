@@ -17,17 +17,17 @@
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
-class Currency
-{
-    static final int SIZE = 8;
+class Currency {
+    private static final int SIZE = 8;
 
-    private byte[] _value;
+    private final byte[] _value = new byte[SIZE];
+    
+    Currency() {}
 
-    Currency( byte[] data, int offset )
-    {
-        _value = LittleEndian.getByteArray( data, offset, SIZE );
+    void read( LittleEndianByteArrayInputStream lei ) {
+        lei.readFully(_value);
     }
 }

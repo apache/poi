@@ -19,21 +19,18 @@
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
 class VersionedStream
 {
-    private GUID _versionGuid;
-    private IndirectPropertyName _streamName;
+    private final GUID _versionGuid = new GUID();
+    private final IndirectPropertyName _streamName = new IndirectPropertyName();
+    
+    VersionedStream() {}
 
-    VersionedStream( byte[] data, int offset )
-    {
-        _versionGuid = new GUID( data, offset );
-        _streamName = new IndirectPropertyName( data, offset + GUID.SIZE );
-    }
-
-    int getSize()
-    {
-        return GUID.SIZE + _streamName.getSize();
+    void read( LittleEndianByteArrayInputStream lei ) {
+        _versionGuid.read(lei);
+        _streamName.read(lei);
     }
 }

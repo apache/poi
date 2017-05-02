@@ -23,10 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.EmptyFileException;
@@ -34,6 +32,7 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -90,17 +89,17 @@ public class PropertySet {
     /**
      * The "byteOrder" field must equal this value.
      */
-    private static final int BYTE_ORDER_ASSERTION = 0xFFFE;
+    /* package */ static final int BYTE_ORDER_ASSERTION = 0xFFFE;
 
     /**
      * The "format" field must equal this value.
      */
-    private static final int FORMAT_ASSERTION = 0x0000;
+    /* package */ static final int FORMAT_ASSERTION = 0x0000;
 
     /**
      * The length of the property set stream header.
      */
-    private static final int OFFSET_HEADER =
+    /* package */ static final int OFFSET_HEADER =
         LittleEndianConsts.SHORT_SIZE + /* Byte order    */
         LittleEndianConsts.SHORT_SIZE + /* Format        */
         LittleEndianConsts.INT_SIZE +   /* OS version    */
@@ -135,7 +134,7 @@ public class PropertySet {
     /**
      * The sections in this {@link PropertySet}.
      */
-    private final List<Section> sections = new LinkedList<Section>();
+    private final List<Section> sections = new ArrayList<Section>();
 
     
     /**
@@ -513,11 +512,11 @@ public class PropertySet {
         final int nrSections = getSectionCount();
 
         /* Write the property set's header. */
-        TypeWriter.writeToStream(out, (short) getByteOrder());
-        TypeWriter.writeToStream(out, (short) getFormat());
-        TypeWriter.writeToStream(out, getOSVersion());
-        TypeWriter.writeToStream(out, getClassID());
-        TypeWriter.writeToStream(out, nrSections);
+        LittleEndian.putShort(out, (short) getByteOrder());
+        LittleEndian.putShort(out, (short) getFormat());
+        LittleEndian.putInt(getOSVersion(), out);
+        putClassId(out, getClassID());
+        LittleEndian.putInt(nrSections, out);
         int offset = OFFSET_HEADER;
 
         /* Write the section list, i.e. the references to the sections. Each
@@ -530,8 +529,8 @@ public class PropertySet {
             if (formatID == null) {
                 throw new NoFormatIDException();
             }
-            TypeWriter.writeToStream(out, section.getFormatID());
-            TypeWriter.writeUIntToStream(out, offset);
+            putClassId(out, formatID);
+            LittleEndian.putUInt(offset, out);
             try {
                 offset += section.getSize();
             } catch (HPSFRuntimeException ex) {
@@ -643,7 +642,12 @@ public class PropertySet {
                     return Long.toString( LittleEndian.getUInt(b) );
                 default:
                     // Maybe it's a string? who knows!
-                    return new String(b, Charset.forName("ASCII"));
+                    try {
+                        return CodePageUtil.getStringFromCodePage(b, Property.DEFAULT_CODEPAGE);
+                    } catch (UnsupportedEncodingException e) {
+                        // doesn't happen ...
+                        return "";
+                    }
             }
         }
         return propertyValue.toString();
@@ -656,7 +660,7 @@ public class PropertySet {
      * represents a Summary Information, else {@code false}.
      */
     public boolean isSummaryInformation() {
-        return matchesSummary(SectionIDMap.SUMMARY_INFORMATION_ID); 
+        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), SectionIDMap.SUMMARY_INFORMATION_ID); 
     }
 
     /**
@@ -666,15 +670,17 @@ public class PropertySet {
      * represents a Document Summary Information, else {@code false}.
      */
     public boolean isDocumentSummaryInformation() {
-        return matchesSummary(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]); 
-    }
-
-    private boolean matchesSummary(byte[] summaryBytes) {
-        return !sections.isEmpty() &&
-            Arrays.equals(getFirstSection().getFormatID().getBytes(), summaryBytes); 
+        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID); 
     }
     
-    
+    /* package */ static boolean matchesSummary(ClassID actual, ClassID... expected) {
+        for (ClassID sum : expected) {
+            if (sum.equals(actual) || sum.equalsInverted(actual)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Convenience method returning the {@link Property} array contained in this
@@ -891,5 +897,11 @@ public class PropertySet {
     
     protected void set1stProperty(long id, byte[] value) {
         getFirstSection().setProperty((int)id, value);
+    }
+    
+    private static void putClassId(final OutputStream out, final ClassID n) throws IOException {
+        byte[] b = new byte[16];
+        n.write(b, 0);
+        out.write(b, 0, b.length);
     }
 }

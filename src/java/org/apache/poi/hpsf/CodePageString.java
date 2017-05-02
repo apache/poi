@@ -23,89 +23,83 @@ import java.io.UnsupportedEncodingException;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
 
 @Internal
-class CodePageString
-{
-    private final static POILogger logger = POILogFactory
-            .getLogger( CodePageString.class );
+class CodePageString {
+    private final static POILogger LOG = POILogFactory.getLogger( CodePageString.class );
 
     private byte[] _value;
+    
+    
+    CodePageString() {}
 
-    CodePageString( final byte[] data, final int startOffset )
-    {
-        int offset = startOffset;
-
-        int size = LittleEndian.getInt( data, offset );
-        offset += LittleEndian.INT_SIZE;
-
-        _value = LittleEndian.getByteArray( data, offset, size );
-        if ( size != 0 && _value[size - 1] != 0 ) {
-            // TODO Some files, such as TestVisioWithCodepage.vsd, are currently
-            //  triggering this for values that don't look like codepages
-            // See Bug #52258 for details
-            logger.log(POILogger.WARN, "CodePageString started at offset #" + offset
-                        + " is not NULL-terminated" );
-//            throw new IllegalPropertySetDataException(
-//                    "CodePageString started at offset #" + offset
-//                            + " is not NULL-terminated" );
+    void read( LittleEndianByteArrayInputStream lei ) {
+        int offset = lei.getReadIndex();
+        int size = lei.readInt();
+        _value = new byte[size];
+        if (size == 0) {
+            return;
         }
+
+        // If Size is zero, this field MUST be zero bytes in length. If Size is
+        // nonzero and the CodePage property set's CodePage property has the value CP_WINUNICODE
+        // (0x04B0), then the value MUST be a null-terminated array of 16-bit Unicode characters,
+        // followed by zero padding to a multiple of 4 bytes. If Size is nonzero and the property set's
+        // CodePage property has any other value, it MUST be a null-terminated array of 8-bit characters
+        // from the code page identified by the CodePage property, followed by zero padding to a
+        // multiple of 4 bytes. The string represented by this field MAY contain embedded or additional
+        // trailing null characters and an OLEPS implementation MUST be able to handle such strings.        
+        
+        lei.readFully(_value);
+        if (_value[size - 1] != 0 ) {
+            // TODO Some files, such as TestVisioWithCodepage.vsd, are currently
+            // triggering this for values that don't look like codepages
+            // See Bug #52258 for details
+            String msg = "CodePageString started at offset #" + offset + " is not NULL-terminated";
+            LOG.log(POILogger.WARN, msg);
+        }
+
+        TypedPropertyValue.skipPadding(lei);
     }
 
-    CodePageString( String string, int codepage )
-            throws UnsupportedEncodingException
-    {
-        setJavaValue( string, codepage );
-    }
+    String getJavaValue( int codepage ) throws UnsupportedEncodingException {
+        int cp = ( codepage == -1 ) ? Property.DEFAULT_CODEPAGE : codepage;
+        String result = CodePageUtil.getStringFromCodePage(_value, cp);
 
-    String getJavaValue( int codepage ) throws UnsupportedEncodingException
-    {
-        String result;
-        if ( codepage == -1 )
-            result = new String( _value, StringUtil.UTF8 );
-        else
-            result = CodePageUtil.getStringFromCodePage(_value, codepage);
+        
         final int terminator = result.indexOf( '\0' );
-        if ( terminator == -1 )
-        {
-            logger.log(
-                    POILogger.WARN,
-                    "String terminator (\\0) for CodePageString property value not found."
-                            + "Continue without trimming and hope for the best." );
+        if ( terminator == -1 ) {
+            String msg = 
+                "String terminator (\\0) for CodePageString property value not found." +
+                "Continue without trimming and hope for the best.";
+            LOG.log(POILogger.WARN, msg);
             return result;
         }
-        if ( terminator != result.length() - 1 )
-        {
-            logger.log(
-                    POILogger.WARN,
-                    "String terminator (\\0) for CodePageString property value occured before the end of string. "
-                            + "Trimming and hope for the best." );
+        if ( terminator != result.length() - 1 ) {
+            String msg = 
+                "String terminator (\\0) for CodePageString property value occured before the end of string. "+
+                "Trimming and hope for the best.";
+            LOG.log(POILogger.WARN, msg );
         }
         return result.substring( 0, terminator );
     }
 
-    int getSize()
-    {
-        return LittleEndian.INT_SIZE + _value.length;
+    int getSize() {
+        return LittleEndianConsts.INT_SIZE + _value.length;
     }
 
-    void setJavaValue( String string, int codepage )
-            throws UnsupportedEncodingException
-    {
-        String stringNT = string + "\0";
-        if ( codepage == -1 )
-            _value = stringNT.getBytes(StringUtil.UTF8);
-        else
-            _value = CodePageUtil.getBytesInCodePage(stringNT, codepage);
+    void setJavaValue( String string, int codepage ) throws UnsupportedEncodingException {
+        int cp = ( codepage == -1 ) ? Property.DEFAULT_CODEPAGE : codepage;
+        _value = CodePageUtil.getBytesInCodePage(string + "\0", cp);
     }
 
-    int write( OutputStream out ) throws IOException
-    {
-        LittleEndian.putInt( _value.length, out );
+    int write( OutputStream out ) throws IOException {
+        LittleEndian.putUInt( _value.length, out );
         out.write( _value );
-        return LittleEndian.INT_SIZE + _value.length;
+        return LittleEndianConsts.INT_SIZE + _value.length;
     }
 }

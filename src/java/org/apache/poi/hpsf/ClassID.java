@@ -20,16 +20,16 @@ package org.apache.poi.hpsf;
 import java.util.Arrays;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.StringUtil;
 
 /**
- *  <p>Represents a class ID (16 bytes). Unlike other little-endian
- *  type the {@link ClassID} is not just 16 bytes stored in the wrong
- *  order. Instead, it is a double word (4 bytes) followed by two
- *  words (2 bytes each) followed by 8 bytes.</p>
+ * Represents a class ID (16 bytes). Unlike other little-endian
+ * type the {@link ClassID} is not just 16 bytes stored in the wrong
+ * order. Instead, it is a double word (4 bytes) followed by two
+ * words (2 bytes each) followed by 8 bytes.<p>
+ *  
+ * The ClassID (or CLSID) is a UUID - see RFC 4122 
  */
-public class ClassID
-{
+public class ClassID {
     public static final ClassID OLE10_PACKAGE  = new ClassID("{0003000C-0000-0000-C000-000000000046}");
     public static final ClassID PPT_SHOW       = new ClassID("{64818D10-4F9B-11CF-86EA-00AA00B929E8}");
     public static final ClassID XLS_WORKBOOK   = new ClassID("{00020841-0000-0000-C000-000000000046}");
@@ -68,21 +68,16 @@ public class ClassID
     
     public static final ClassID EQUATION30     = new ClassID("{0002CE02-0000-0000-C000-000000000046}");
 	
-    /** <p>The number of bytes occupied by this object in the byte
-     * stream.</p> */
+    /** The number of bytes occupied by this object in the byte stream. */
     public static final int LENGTH = 16;
 	
     /**
-     * <p>The bytes making out the class ID in correct order,
-     * i.e. big-endian.</p>
+     * The bytes making out the class ID in correct order, i.e. big-endian.
      */
     private final byte[] bytes = new byte[LENGTH];
 
-
-
     /**
-     *  <p>Creates a {@link ClassID} and reads its value from a byte
-     *  array.</p>
+     * Creates a {@link ClassID} and reads its value from a byte array.
      *
      * @param src The byte array to read from.
      * @param offset The offset of the first byte to read.
@@ -93,8 +88,7 @@ public class ClassID
 
 
     /**
-     *  <p>Creates a {@link ClassID} and initializes its value with
-     *  0x00 bytes.</p>
+     * Creates a {@link ClassID} and initializes its value with 0x00 bytes.
      */
     public ClassID() {
         Arrays.fill(bytes, (byte)0);
@@ -102,8 +96,8 @@ public class ClassID
 
 
     /**
-     * <p>Creates a {@link ClassID} from a human-readable representation of the Class ID in standard 
-     * format <code>"{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"</code>.</p>
+     * Creates a {@link ClassID} from a human-readable representation of the Class ID in standard 
+     * format {@code "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"}.
      * 
      * @param externalForm representation of the Class ID represented by this object.
      */
@@ -116,8 +110,7 @@ public class ClassID
     
 
     /**
-     * @return The number of bytes occupied by this object in the byte
-     * stream.
+     * @return The number of bytes occupied by this object in the byte stream.
      */
     public int length() {
         return LENGTH;
@@ -126,8 +119,7 @@ public class ClassID
 
 
     /**
-     * <p>Gets the bytes making out the class ID. They are returned in
-     * correct order, i.e. big-endian.</p>
+     * Gets the bytes making out the class ID. They are returned in correct order, i.e. big-endian.
      *
      * @return the bytes making out the class ID.
      */
@@ -138,7 +130,7 @@ public class ClassID
 
 
     /**
-     * <p>Sets the bytes making out the class ID.</p>
+     * Sets the bytes making out the class ID.
      *
      * @param bytes The bytes making out the class ID in big-endian format. They
      * are copied without their order being changed.
@@ -150,13 +142,10 @@ public class ClassID
 
 
     /**
-     * <p>Reads the class ID's value from a byte array by turning
-     * little-endian into big-endian.</p>
+     * Reads the class ID's value from a byte array by turning little-endian into big-endian.
      *
      * @param src The byte array to read from
-     *
-     * @param offset The offset within the <var>src</var> byte array
-     *
+     * @param offset The offset within the {@code src} byte array
      * @return A byte array containing the class ID.
      */
     public byte[] read(final byte[] src, final int offset) {
@@ -180,18 +169,15 @@ public class ClassID
         return bytes;
     }
 
-
-
     /**
-     * <p>Writes the class ID to a byte array in the
-     * little-endian format.</p>
+     * Writes the class ID to a byte array in the little-endian format.
      *
      * @param dst The byte array to write to.
      *
-     * @param offset The offset within the <var>dst</var> byte array.
+     * @param offset The offset within the {@code dst} byte array.
      *
      * @exception ArrayStoreException if there is not enough room for the class
-     * ID 16 bytes in the byte array after the <var>offset</var> position.
+     * ID 16 bytes in the byte array after the {@code offset} position.
      */
     public void write(final byte[] dst, final int offset)
     throws ArrayStoreException {
@@ -223,30 +209,44 @@ public class ClassID
 
 
     /**
-     * <p>Checks whether this <code>ClassID</code> is equal to another
-     * object.</p>
+     * Checks whether this {@code ClassID} is equal to another object.
      *
-     * @param o the object to compare this <code>PropertySet</code> with
-     * @return <code>true</code> if the objects are equal, else
-     * <code>false</code>.
+     * @param o the object to compare this {@code ClassID} with
+     * @return {@code true} if the objects are equal, else {@code false}.
      */
     @Override
     public boolean equals(final Object o) {
-        if (o == null || !(o instanceof ClassID)) {
-            return false;
-        }
-        final ClassID cid = (ClassID) o;
-        if (bytes.length != cid.bytes.length) {
-            return false;
-        }
-        for (int i = 0; i < bytes.length; i++) {
-            if (bytes[i] != cid.bytes[i]) {
-                return false;
-            }
-        }
-        return true;
+        return (o instanceof ClassID) && Arrays.equals(bytes, ((ClassID)o).bytes);
     }
 
+    /**
+     * Checks whether this {@code ClassID} is equal to another ClassID with inverted endianess,
+     * because there are apparently not only version 1 GUIDs (aka "network" with big-endian encoding),
+     * but also version 2 GUIDs (aka "native" with little-endian encoding) out there.
+     *
+     * @param o the object to compare this {@code ClassID} with
+     * @return {@code true} if the objects are equal, else {@code false}.
+     */
+    public boolean equalsInverted(ClassID o) {
+        return
+            o.bytes[0] == bytes[3] &&
+            o.bytes[1] == bytes[2] &&
+            o.bytes[2] == bytes[1] &&
+            o.bytes[3] == bytes[0] &&
+            o.bytes[4] == bytes[5] &&
+            o.bytes[5] == bytes[4] &&
+            o.bytes[6] == bytes[7] &&
+            o.bytes[7] == bytes[6] &&
+            o.bytes[8] == bytes[8] &&
+            o.bytes[9] == bytes[9] &&
+            o.bytes[10] == bytes[10] &&
+            o.bytes[11] == bytes[11] &&
+            o.bytes[12] == bytes[12] &&
+            o.bytes[13] == bytes[13] &&
+            o.bytes[14] == bytes[14] &&
+            o.bytes[15] == bytes[15]
+        ;
+    }
 
 
     /**
@@ -254,12 +254,12 @@ public class ClassID
      */
     @Override
     public int hashCode() {
-        return new String(bytes, StringUtil.UTF8).hashCode();
+        return toString().hashCode();
     }
 
     /**
-     * <p>Returns a human-readable representation of the Class ID in standard 
-     * format <code>"{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"</code>.</p>
+     * Returns a human-readable representation of the Class ID in standard 
+     * format {@code "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"}.
      * 
      * @return String representation of the Class ID represented by this object.
      */
