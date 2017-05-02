@@ -16,6 +16,26 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
@@ -31,20 +51,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.*;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Set;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
 public class XSSFFileHandler extends SpreadsheetHandler {
     @Override
-    public void handleFile(InputStream stream) throws Exception {
+    public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
@@ -52,13 +61,13 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 
         // make sure the potentially large byte-array is freed up quickly again
         {
-	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        IOUtils.copy(stream, out);
-	        final byte[] bytes = out.toByteArray();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            IOUtils.copy(stream, out);
+            final byte[] bytes = out.toByteArray();
 
-	        checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(bytes)));
+            checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(bytes)));
 
-	        wb = new XSSFWorkbook(new ByteArrayInputStream(bytes));
+            wb = new XSSFWorkbook(new ByteArrayInputStream(bytes));
         }
 
         // use the combined handler for HSSF/XSSF
@@ -76,6 +85,8 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 
         // this allows to trigger a heap-dump at this point to see which memory is still allocated
         //HeapDump.dumpHeap("/tmp/poi.hprof", false);
+        
+        wb.close();
     }
 
 
@@ -185,7 +196,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
         try {
-            handleFile(stream);
+            handleFile(stream, file.getPath());
         } finally {
             stream.close();
         }

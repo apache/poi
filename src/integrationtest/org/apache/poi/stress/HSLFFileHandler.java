@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class HSLFFileHandler extends SlideShowHandler {
 	@Override
-	public void handleFile(InputStream stream) throws Exception {
+	public void handleFile(InputStream stream, String path) throws Exception {
 		HSLFSlideShowImpl slide = new HSLFSlideShowImpl(stream);
 		assertNotNull(slide.getCurrentUserAtom());
 		assertNotNull(slide.getEmbeddedObjects());
@@ -40,13 +40,13 @@ public class HSLFFileHandler extends SlideShowHandler {
 		    assertNotNull("Found a record which was null", record);
 			assertTrue(record.getRecordType() >= 0);
 		}
-
+		
 		handlePOIDocument(slide);
-
+		
 		HSLFSlideShow ss = new HSLFSlideShow(slide);
 		handleSlideShow(ss);
 	}
-
+	
 	@Test
 	public void testOne() throws Exception {
 		testOneFile(new File("test-data/slideshow/54880_chinese.ppt"));
@@ -81,10 +81,10 @@ public class HSLFFileHandler extends SlideShowHandler {
 		//System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
 		InputStream stream = new FileInputStream(file);
 		try {
-            handleFile(stream);
-        } finally {
-            stream.close();
-        }
+            handleFile(stream, file.getPath());
+		} finally {
+			stream.close();
+		}
 
 		handleExtracting(file);
 	}
@@ -93,7 +93,7 @@ public class HSLFFileHandler extends SlideShowHandler {
 	   System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
 	   InputStream stream = new FileInputStream(args[0]);
 	   try {
-		   new HSLFFileHandler().handleFile(stream);
+		   new HSLFFileHandler().handleFile(stream, args[0]);
 	   } finally {
 		   stream.close();
 	   }

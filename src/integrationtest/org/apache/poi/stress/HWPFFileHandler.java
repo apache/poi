@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class HWPFFileHandler extends POIFSFileHandler {
 	@Override
-	public void handleFile(InputStream stream) throws Exception {
+	public void handleFile(InputStream stream, String path) throws Exception {
 		HWPFDocument doc = new HWPFDocument(stream);
 		assertNotNull(doc.getBookmarks());
 		assertNotNull(doc.getCharacterTable());
@@ -41,11 +41,11 @@ public class HWPFFileHandler extends POIFSFileHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-		File file = new File("test-data/document/52117.doc");
+        File file = new File("test-data/document/52117.doc");
 
-		InputStream stream = new FileInputStream(file);
+        InputStream stream = new FileInputStream(file);
 		try {
-			handleFile(stream);
+			handleFile(stream, file.getPath());
 		} finally {
 			stream.close();
 		}

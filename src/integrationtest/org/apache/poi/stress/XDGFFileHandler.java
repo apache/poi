@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class XDGFFileHandler extends AbstractFileHandler {
     @Override
-    public void handleFile(InputStream stream) throws Exception {
+    public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 

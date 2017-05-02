@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class HSMFFileHandler extends POIFSFileHandler {
 	@Override
-	public void handleFile(InputStream stream) throws Exception {
+	public void handleFile(InputStream stream, String path) throws Exception {
 		MAPIMessage mapi = new MAPIMessage(stream);
 		assertNotNull(mapi.getAttachmentFiles());
 		assertNotNull(mapi.getDisplayBCC());
@@ -60,6 +60,8 @@ public class HSMFFileHandler extends POIFSFileHandler {
 		*/
 		
 		// writing is not yet supported... handlePOIDocument(mapi);
+		
+		mapi.close();
 	}
 	
 //	private void writeToFile(MAPIMessage mapi, File file)
@@ -76,10 +78,10 @@ public class HSMFFileHandler extends POIFSFileHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-		File file = new File("test-data/hsmf/logsat.com_signatures_valid.msg");
+        File file = new File("test-data/hsmf/logsat.com_signatures_valid.msg");
         InputStream stream = new FileInputStream(file);
 		try {
-			handleFile(stream);
+			handleFile(stream, file.getPath());
 		} finally {
 			stream.close();
 		}

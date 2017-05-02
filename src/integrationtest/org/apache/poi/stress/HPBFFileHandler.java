@@ -29,24 +29,25 @@ import org.junit.Test;
 
 public class HPBFFileHandler extends POIFSFileHandler {
 	@Override
-	public void handleFile(InputStream stream) throws Exception {
+	public void handleFile(InputStream stream, String path) throws Exception {
 		HPBFDocument pub = new HPBFDocument(new POIFSFileSystem(stream));
 		assertNotNull(pub.getEscherDelayStm());
 		assertNotNull(pub.getMainContents());
 		assertNotNull(pub.getQuillContents());
 		
 		// writing is not yet implemented... handlePOIDocument(pub);
+		pub.close();
 	}
 	
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
 	public void test() throws Exception {
-		File file = new File("test-data/publisher/SampleBrochure.pub");
+        File file = new File("test-data/publisher/SampleBrochure.pub");
 
-		InputStream stream = new FileInputStream(file);
+        InputStream stream = new FileInputStream(file);
 		try {
-			handleFile(stream);
+			handleFile(stream, file.getPath());
 		} finally {
 			stream.close();
 		}

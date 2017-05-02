@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class HDGFFileHandler extends POIFSFileHandler {
 	@Override
-	public void handleFile(InputStream stream) throws IOException {
+	public void handleFile(InputStream stream, String path) throws IOException {
 	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
 		HDGFDiagram diagram = new HDGFDiagram(poifs);
 		Stream[] topLevelStreams = diagram.getTopLevelStreams();
@@ -55,11 +55,11 @@ public class HDGFFileHandler extends POIFSFileHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-		File file = new File("test-data/diagram/44501.vsd");
+        File file = new File("test-data/diagram/44501.vsd");
 
-		InputStream stream = new FileInputStream(file);
+        InputStream stream = new FileInputStream(file);
 		try {
-			handleFile(stream);
+			handleFile(stream, file.getPath());
 		} finally {
 			stream.close();
 		}

@@ -33,7 +33,7 @@ import org.junit.Test;
 public class POIFSFileHandler extends AbstractFileHandler {
 
 	@Override
-    public void handleFile(InputStream stream) throws Exception {
+    public void handleFile(InputStream stream, String path) throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(stream);
 		try {
 		    handlePOIFSFileSystem(fs);
@@ -80,7 +80,7 @@ public class POIFSFileHandler extends AbstractFileHandler {
 
         InputStream stream = new FileInputStream(file);
         try {
-            handleFile(stream);
+            handleFile(stream, file.getPath());
         } finally {
             stream.close();
         }
