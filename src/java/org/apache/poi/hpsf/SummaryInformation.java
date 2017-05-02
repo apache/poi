@@ -17,6 +17,9 @@
 
 package org.apache.poi.hpsf;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -62,8 +65,34 @@ public final class SummaryInformation extends SpecialPropertySet {
         }
     }
 
+    /**
+     * Creates a {@link SummaryInformation} instance from an {@link
+     * InputStream} in the Horrible Property Set Format.<p>
+     *
+     * The constructor reads the first few bytes from the stream
+     * and determines whether it is really a property set stream. If
+     * it is, it parses the rest of the stream. If it is not, it
+     * resets the stream to its beginning in order to let other
+     * components mess around with the data and throws an
+     * exception.
+     *
+     * @param stream Holds the data making out the property set
+     * stream.
+     * @throws MarkUnsupportedException
+     *    if the stream does not support the {@link InputStream#markSupported} method.
+     * @throws IOException
+     *    if the {@link InputStream} cannot be accessed as needed.
+     * @exception NoPropertySetStreamException
+     *    if the input stream does not contain a property set.
+     * @exception UnsupportedEncodingException
+     *    if a character encoding is not supported.
+     */
+    public SummaryInformation(final InputStream stream)
+    throws NoPropertySetStreamException, MarkUnsupportedException, IOException, UnsupportedEncodingException {
+        super(stream);
+    }
 
-
+    
     /**
      * @return The title or {@code null}
      */

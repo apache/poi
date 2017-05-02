@@ -22,20 +22,20 @@ import java.io.ByteArrayInputStream;
 /**
  * Adapts a plain byte array to {@link LittleEndianInput}
  */
-public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream implements LittleEndianInput {
+public class LittleEndianByteArrayInputStream extends ByteArrayInputStream implements LittleEndianInput {
 	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset, int maxReadLen) { // NOSONAR
 	    super(buf, startOffset, maxReadLen);
 	}
 	
 	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset) {
-	    super(buf, startOffset, buf.length - startOffset);
+	    this(buf, startOffset, buf.length - startOffset);
 	}
 	
 	public LittleEndianByteArrayInputStream(byte[] buf) {
-	    super(buf);
+	    this(buf, 0);
 	}
 
-	private void checkPosition(int i) {
+	protected void checkPosition(int i) {
 		if (i > count - pos) {
 			throw new RuntimeException("Buffer overrun");
 		}
@@ -45,6 +45,14 @@ public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream
 		return pos;
 	}
 
+	public void setReadIndex(int pos) {
+	   if (pos < 0 || pos >= count) {
+	        throw new IndexOutOfBoundsException();
+	   }
+	   this.pos = pos;
+	}
+	
+	
 	@Override
     public byte readByte() {
 		checkPosition(1);
@@ -73,23 +81,27 @@ public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream
 
 	@Override
     public short readShort() {
-		return (short)readUShort();
-	}
-
-	@Override
-    public int readUByte() {
-	    return readByte() & 0xFF;
-	}
-
-	@Override
-    public int readUShort() {
         final int size = LittleEndianConsts.SHORT_SIZE;
         checkPosition(size);
-        int le = LittleEndian.getUShort(buf, pos);
+        short le = LittleEndian.getShort(buf, pos);
         long skipped = super.skip(size);
         assert skipped == size : "Buffer overrun";
         return le;
 	}
+
+	@Override
+    public int readUByte() {
+	    return readByte() & 0x00FF;
+	}
+
+	@Override
+    public int readUShort() {
+        return readShort() & 0x00FFFF;
+	}
+
+	public long readUInt() {
+	    return readInt() & 0x00FFFFFFFFL; 
+    }
 
     @Override
     public double readDouble() {

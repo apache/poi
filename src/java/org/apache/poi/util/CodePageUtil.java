@@ -284,7 +284,7 @@ public class CodePageUtil
         
         switch (codepage) {
             case CP_UTF16:
-                return "UTF-16";
+                return "UTF-16LE";
             case CP_UTF16_BE:
                 return "UTF-16BE";
             case CP_UTF8:
@@ -466,6 +466,7 @@ public class CodePageUtil
             sb.append((char)c);
             c = reader.read();
         }
+        reader.close();
         return sb.toString();
     }
 }

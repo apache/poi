@@ -18,8 +18,10 @@
 package org.apache.poi.hpsf.wellknown;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.poi.util.StringUtil;
+import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.util.Internal;
 
 /**
  * <p>Maps section format IDs to {@link PropertyIDMap}s. It is
@@ -36,51 +38,37 @@ import org.apache.poi.util.StringUtil;
  * as keys. A key maps to a {@link PropertyIDMap} describing the
  * property IDs in sections with the specified section format ID.</p>
  */
-@SuppressWarnings({"rawtypes","unchecked"}) // Java Generics have issues on this style of class...
-public class SectionIDMap extends HashMap {
+@Internal
+public class SectionIDMap {
+
+    /**
+     * The default section ID map. It maps section format IDs to {@link PropertyIDMap PropertyIDMaps}
+     */
+    private static ThreadLocal<Map<ClassID,PropertyIDMap>> defaultMap =
+        new ThreadLocal<Map<ClassID,PropertyIDMap>>();
+    
     /**
      * <p>The SummaryInformation's section's format ID.</p>
      */
-    public static final byte[] SUMMARY_INFORMATION_ID = new byte[]
-    {
-        (byte) 0xF2, (byte) 0x9F, (byte) 0x85, (byte) 0xE0,
-        (byte) 0x4F, (byte) 0xF9, (byte) 0x10, (byte) 0x68,
-        (byte) 0xAB, (byte) 0x91, (byte) 0x08, (byte) 0x00,
-        (byte) 0x2B, (byte) 0x27, (byte) 0xB3, (byte) 0xD9
-    };
+    public static final ClassID SUMMARY_INFORMATION_ID =
+        new ClassID("{F29F85E0-4FF9-1068-AB91-08002B27B3D9}");
 
     /**
-     * <p>The DocumentSummaryInformation's first and second sections' format
-     * ID.</p>
+     * The DocumentSummaryInformation's first and second sections' format ID.
      */
-    public static final byte[][] DOCUMENT_SUMMARY_INFORMATION_ID = new byte[][]
-    {
-        {
-            (byte) 0xD5, (byte) 0xCD, (byte) 0xD5, (byte) 0x02,
-            (byte) 0x2E, (byte) 0x9C, (byte) 0x10, (byte) 0x1B,
-            (byte) 0x93, (byte) 0x97, (byte) 0x08, (byte) 0x00,
-            (byte) 0x2B, (byte) 0x2C, (byte) 0xF9, (byte) 0xAE
-        },
-        {
-            (byte) 0xD5, (byte) 0xCD, (byte) 0xD5, (byte) 0x05,
-            (byte) 0x2E, (byte) 0x9C, (byte) 0x10, (byte) 0x1B,
-            (byte) 0x93, (byte) 0x97, (byte) 0x08, (byte) 0x00,
-            (byte) 0x2B, (byte) 0x2C, (byte) 0xF9, (byte) 0xAE
-        }
+    private static final ClassID DOC_SUMMARY_INFORMATION =
+        new ClassID("{D5CDD502-2E9C-101B-9397-08002B2CF9AE}");    
+    private static final ClassID USER_DEFINED_PROPERTIES =
+        new ClassID("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}");
+    
+    public static final ClassID[] DOCUMENT_SUMMARY_INFORMATION_ID = {
+        DOC_SUMMARY_INFORMATION, USER_DEFINED_PROPERTIES
     };
 
     /**
-     * <p>A property without a known name is described by this string.</p>
+     * A property without a known name is described by this string.
      */
     public static final String UNDEFINED = "[undefined]";
-
-    /**
-     * <p>The default section ID map. It maps section format IDs to
-     * {@link PropertyIDMap}s.</p>
-     */
-    private static SectionIDMap defaultMap;
-
-
 
     /**
      * <p>Returns the singleton instance of the default {@link
@@ -88,18 +76,15 @@ public class SectionIDMap extends HashMap {
      *
      * @return The instance value
      */
-    public static SectionIDMap getInstance()
-    {
-        if (defaultMap == null)
-        {
-            final SectionIDMap m = new SectionIDMap();
-            m.put(SUMMARY_INFORMATION_ID,
-                  PropertyIDMap.getSummaryInformationProperties());
-            m.put(DOCUMENT_SUMMARY_INFORMATION_ID[0],
-                  PropertyIDMap.getDocumentSummaryInformationProperties());
-            defaultMap = m;
+    public static SectionIDMap getInstance() {
+        Map<ClassID,PropertyIDMap> m = defaultMap.get();
+        if (m == null) {
+            m = new HashMap<ClassID,PropertyIDMap>();
+            m.put(SUMMARY_INFORMATION_ID, PropertyIDMap.getSummaryInformationProperties());
+            m.put(DOCUMENT_SUMMARY_INFORMATION_ID[0], PropertyIDMap.getDocumentSummaryInformationProperties());
+            defaultMap.set(m);
         }
-        return defaultMap;
+        return new SectionIDMap();
     }
 
 
@@ -117,16 +102,15 @@ public class SectionIDMap extends HashMap {
      * /<var>sectionFormatID </var> combination is not well-known, the
      * string "[undefined]" is returned.
      */
-    public static String getPIDString(final byte[] sectionFormatID,
-                                      final long pid)
-    {
+    public static String getPIDString(ClassID sectionFormatID, long pid) {
         final PropertyIDMap m = getInstance().get(sectionFormatID);
         if (m == null) {
             return UNDEFINED;
         }
         final String s = (String) m.get(pid);
-        if (s == null)
+        if (s == null) {
             return UNDEFINED;
+        }
         return s;
     }
 
@@ -139,28 +123,23 @@ public class SectionIDMap extends HashMap {
      * @param sectionFormatID the section format ID
      * @return the property ID map
      */
-    public PropertyIDMap get(final byte[] sectionFormatID)
-    {
-        return (PropertyIDMap)super.get(new String(sectionFormatID, StringUtil.UTF8));
+    public PropertyIDMap get(final ClassID sectionFormatID) {
+        return getInstance().get(sectionFormatID);
     }
 
     /**
-     * <p>Associates a section format ID with a {@link
-     * PropertyIDMap}.</p>
+     * Associates a section format ID with a {@link PropertyIDMap}.
      *
      * @param sectionFormatID the section format ID
      * @param propertyIDMap the property ID map
      * @return as defined by {@link java.util.Map#put}
      */
-    public PropertyIDMap put(final byte[] sectionFormatID,
-                             final PropertyIDMap propertyIDMap)
-    {
-        return (PropertyIDMap)super.put(new String(sectionFormatID, StringUtil.UTF8), propertyIDMap);
+    public PropertyIDMap put(ClassID sectionFormatID, PropertyIDMap propertyIDMap) {
+        return getInstance().put(sectionFormatID, propertyIDMap);
     }
 
     /**
-     * Associates the string representation of a section
-     *  format ID with a {@link PropertyIDMap}
+     * Associates the string representation of a section format ID with a {@link PropertyIDMap}
      * 
      * @param key the key of the PropertyIDMap
      * @param value the PropertyIDMap itself
@@ -168,6 +147,6 @@ public class SectionIDMap extends HashMap {
      * @return the previous PropertyIDMap stored under this key, or {@code null} if there wasn't one
      */
     protected PropertyIDMap put(String key, PropertyIDMap value) {
-        return (PropertyIDMap)super.put(key, value);
+        return put(new ClassID(key), value);
     }
 }

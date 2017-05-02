@@ -22,9 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.util.LittleEndianInputStream;
 
 /**
  * Factory class to create instances of {@link SummaryInformation},
@@ -87,19 +89,33 @@ public class PropertySetFactory {
      */
     public static PropertySet create(final InputStream stream)
     throws NoPropertySetStreamException, MarkUnsupportedException, UnsupportedEncodingException, IOException {
-        final PropertySet ps = new PropertySet(stream);
-        try {
-            if (ps.isSummaryInformation()) {
-                return new SummaryInformation(ps);
-            } else if (ps.isDocumentSummaryInformation()) {
-                return new DocumentSummaryInformation(ps);
-            } else {
-                return ps;
-            }
-        } catch (UnexpectedPropertySetTypeException ex) {
-            /* This exception will never be throws because we already checked
-             * explicitly for this case above. */
-            throw new IllegalStateException(ex);
+        stream.mark(PropertySet.OFFSET_HEADER+ClassID.LENGTH+1);
+        LittleEndianInputStream leis = new LittleEndianInputStream(stream);
+        int byteOrder =  leis.readUShort();
+        int format = leis.readUShort();
+        int osVersion = (int)leis.readUInt();
+        byte[] clsIdBuf = new byte[ClassID.LENGTH];
+        leis.readFully(clsIdBuf);
+        int sectionCount = (int)leis.readUInt();
+        
+        if (byteOrder != PropertySet.BYTE_ORDER_ASSERTION ||
+            format != PropertySet.FORMAT_ASSERTION ||
+            sectionCount < 0) {
+            throw new NoPropertySetStreamException();
+        }
+        
+        if (sectionCount > 0) {
+            leis.readFully(clsIdBuf);
+        }
+        stream.reset();
+        
+        ClassID clsId = new ClassID(clsIdBuf, 0);
+        if (sectionCount > 0 && PropertySet.matchesSummary(clsId, SectionIDMap.SUMMARY_INFORMATION_ID)) {
+            return new SummaryInformation(stream);
+        } else if (sectionCount > 0 && PropertySet.matchesSummary(clsId, SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID)) {
+            return new DocumentSummaryInformation(stream);
+        } else {
+            return new PropertySet(stream);
         }
     }
 

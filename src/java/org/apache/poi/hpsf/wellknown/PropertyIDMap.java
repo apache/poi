@@ -22,14 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>This is a dictionary which maps property ID values to property
- * ID strings.</p>
+ * This is a dictionary which maps property ID values to property
+ * ID strings.
  *
- * <p>The methods {@link #getSummaryInformationProperties} and {@link
+ * The methods {@link #getSummaryInformationProperties} and {@link
  * #getDocumentSummaryInformationProperties} return singleton {@link
  * PropertyIDMap}s. An application that wants to extend these maps
  * should treat them as unmodifiable, copy them and modifiy the
- * copies.</p>
+ * copies.
  */
 public class PropertyIDMap extends HashMap<Long,String> {
 
@@ -38,85 +38,85 @@ public class PropertyIDMap extends HashMap<Long,String> {
      * (and only) section of the Summary Information property set.
      */
 
-    /** <p>ID of the property that denotes the document's title</p> */
+    /** ID of the property that denotes the document's title */
     public static final int PID_TITLE = 2;
 
-    /** <p>ID of the property that denotes the document's subject</p> */
+    /** ID of the property that denotes the document's subject */
     public static final int PID_SUBJECT = 3;
 
-    /** <p>ID of the property that denotes the document's author</p> */
+    /** ID of the property that denotes the document's author */
     public static final int PID_AUTHOR = 4;
 
-    /** <p>ID of the property that denotes the document's keywords</p> */
+    /** ID of the property that denotes the document's keywords */
     public static final int PID_KEYWORDS = 5;
 
-    /** <p>ID of the property that denotes the document's comments</p> */
+    /** ID of the property that denotes the document's comments */
     public static final int PID_COMMENTS = 6;
 
-    /** <p>ID of the property that denotes the document's template</p> */
+    /** ID of the property that denotes the document's template */
     public static final int PID_TEMPLATE = 7;
 
-    /** <p>ID of the property that denotes the document's last author</p> */
+    /** ID of the property that denotes the document's last author */
     public static final int PID_LASTAUTHOR = 8;
 
-    /** <p>ID of the property that denotes the document's revision number</p> */
+    /** ID of the property that denotes the document's revision number */
     public static final int PID_REVNUMBER = 9;
 
-    /** <p>ID of the property that denotes the document's edit time</p> */
+    /** ID of the property that denotes the document's edit time */
     public static final int PID_EDITTIME = 10;
 
-    /** <p>ID of the property that denotes the date and time the document was
-     * last printed</p> */
+    /** ID of the property that denotes the date and time the document was
+     * last printed */
     public static final int PID_LASTPRINTED = 11;
 
-    /** <p>ID of the property that denotes the date and time the document was
-     * created.</p> */
+    /** ID of the property that denotes the date and time the document was
+     * created. */
     public static final int PID_CREATE_DTM = 12;
 
-    /** <p>ID of the property that denotes the date and time the document was
-     * saved</p> */
+    /** ID of the property that denotes the date and time the document was
+     * saved */
     public static final int PID_LASTSAVE_DTM = 13;
 
-    /** <p>ID of the property that denotes the number of pages in the
-     * document</p> */
+    /** ID of the property that denotes the number of pages in the
+     * document */
     public static final int PID_PAGECOUNT = 14;
 
-    /** <p>ID of the property that denotes the number of words in the
-     * document</p> */
+    /** ID of the property that denotes the number of words in the
+     * document */
     public static final int PID_WORDCOUNT = 15;
 
-    /** <p>ID of the property that denotes the number of characters in the
-     * document</p> */
+    /** ID of the property that denotes the number of characters in the
+     * document */
     public static final int PID_CHARCOUNT = 16;
 
-    /** <p>ID of the property that denotes the document's thumbnail</p> */
+    /** ID of the property that denotes the document's thumbnail */
     public static final int PID_THUMBNAIL = 17;
 
-    /** <p>ID of the property that denotes the application that created the
-     * document</p> */
+    /** ID of the property that denotes the application that created the
+     * document */
     public static final int PID_APPNAME = 18;
 
-    /** <p>ID of the property that denotes whether read/write access to the
+    /** ID of the property that denotes whether read/write access to the
      * document is allowed or whether is should be opened as read-only. It can
-     * have the following values:</p>
+     * have the following values:
      *
      * <table summary="">
      *  <tbody>
      *   <tr>
-     *    <th><p>Value</p></th>
-     *    <th><p>Description</p></th>
+     *    <th>Value</th>
+     *    <th>Description</th>
      *   </tr>
      *   <tr>
-     *    <th><p>0</p></th>
-     *    <th><p>No restriction</p></th>
+     *    <th>0</th>
+     *    <th>No restriction</th>
      *   </tr>
      *   <tr>
-     *    <th><p>2</p></th>
-     *    <th><p>Read-only recommended</p></th>
+     *    <th>2</th>
+     *    <th>Read-only recommended</th>
      *   </tr>
      *   <tr>
-     *    <th><p>4</p></th>
-     *    <th><p>Read-only enforced</p></th>
+     *    <th>4</th>
+     *    <th>Read-only enforced</th>
      *   </tr>
      *  </tbody>
      * </table>
@@ -131,103 +131,103 @@ public class PropertyIDMap extends HashMap<Long,String> {
      */
 
     /**
-     * <p>The entry is a dictionary.</p>
+     * The entry is a dictionary.
      */
     public static final int PID_DICTIONARY = 0;
 
     /**
-     * <p>The entry denotes a code page.</p>
+     * The entry denotes a code page.
      */
     public static final int PID_CODEPAGE = 1;
 
     /**
-     * <p>The entry is a string denoting the category the file belongs
+     * The entry is a string denoting the category the file belongs
      * to, e.g. review, memo, etc. This is useful to find documents of
-     * same type.</p>
+     * same type.
      */
     public static final int PID_CATEGORY = 2;
 
     /**
-     * <p>Target format for power point presentation, e.g. 35mm,
-     * printer, video etc.</p>
+     * Target format for power point presentation, e.g. 35mm,
+     * printer, video etc.
      */
     public static final int PID_PRESFORMAT = 3;
 
     /**
-     * <p>Number of bytes.</p>
+     * Number of bytes.
      */
     public static final int PID_BYTECOUNT = 4;
 
     /**
-     * <p>Number of lines.</p>
+     * Number of lines.
      */
     public static final int PID_LINECOUNT = 5;
 
     /**
-     * <p>Number of paragraphs.</p>
+     * Number of paragraphs.
      */
     public static final int PID_PARCOUNT = 6;
 
     /**
-     * <p>Number of slides in a power point presentation.</p>
+     * Number of slides in a power point presentation.
      */
     public static final int PID_SLIDECOUNT = 7;
 
     /**
-     * <p>Number of slides with notes.</p>
+     * Number of slides with notes.
      */
     public static final int PID_NOTECOUNT = 8;
 
     /**
-     * <p>Number of hidden slides.</p>
+     * Number of hidden slides.
      */
     public static final int PID_HIDDENCOUNT = 9;
 
     /**
-     * <p>Number of multimedia clips, e.g. sound or video.</p>
+     * Number of multimedia clips, e.g. sound or video.
      */
     public static final int PID_MMCLIPCOUNT = 10;
 
     /**
-     * <p>This entry is set to -1 when scaling of the thumbnail is
-     * desired. Otherwise the thumbnail should be cropped.</p>
+     * This entry is set to -1 when scaling of the thumbnail is
+     * desired. Otherwise the thumbnail should be cropped.
      */
     public static final int PID_SCALE = 11;
 
     /**
-     * <p>This entry denotes an internally used property. It is a
+     * This entry denotes an internally used property. It is a
      * vector of variants consisting of pairs of a string (VT_LPSTR)
      * and a number (VT_I4). The string is a heading name, and the
      * number tells how many document parts are under that
-     * heading.</p>
+     * heading.
      */
     public static final int PID_HEADINGPAIR = 12;
 
     /**
-     * <p>This entry contains the names of document parts (word: names
+     * This entry contains the names of document parts (word: names
      * of the documents in the master document, excel: sheet names,
-     * power point: slide titles, binder: document names).</p>
+     * power point: slide titles, binder: document names).
      */
     public static final int PID_DOCPARTS = 13;
 
     /**
-     * <p>This entry contains the name of the project manager.</p>
+     * This entry contains the name of the project manager.
      */
     public static final int PID_MANAGER = 14;
 
     /**
-     * <p>This entry contains the company name.</p>
+     * This entry contains the company name.
      */
     public static final int PID_COMPANY = 15;
 
     /**
-     * <p>If this entry is -1 the links are dirty and should be
-     * re-evaluated.</p>
+     * If this entry is -1 the links are dirty and should be
+     * re-evaluated.
      */
     public static final int PID_LINKSDIRTY = 0x10;
     
     /**
-     * <p>The entry specifies an estimate of the number of characters 
+     * The entry specifies an estimate of the number of characters 
      *  in the document, including whitespace, as an integer
      */
     public static final int PID_CCHWITHSPACES = 0x11;
@@ -238,21 +238,21 @@ public class PropertyIDMap extends HashMap<Long,String> {
     // 0x15 GKPIDDSI_HLINKS - Must not be written
 
     /**
-     * <p>This entry contains a boolean which marks if the User Defined
+     * This entry contains a boolean which marks if the User Defined
      *  Property Set has been updated outside of the Application, if so the
      *  hyperlinks should be updated on document load.
      */
     public static final int PID_HYPERLINKSCHANGED = 0x16;
     
     /**
-     * <p>This entry contains the version of the Application which wrote the
+     * This entry contains the version of the Application which wrote the
      *  Property set, stored with the two high order bytes having the major
      *  version number, and the two low order bytes the minor version number.
      */
     public static final int PID_VERSION = 0x17;
     
     /**
-     * <p>This entry contains the VBA digital signature for the VBA project 
+     * This entry contains the VBA digital signature for the VBA project 
      *  embedded in the document.
      */
     public static final int PID_DIGSIG = 0x18;
@@ -260,54 +260,75 @@ public class PropertyIDMap extends HashMap<Long,String> {
     // 0x19 Unused
     
     /**
-     * <p>This entry contains a string of the content type of the file.
+     * This entry contains a string of the content type of the file.
      */
     public static final int PID_CONTENTTYPE = 0x1A;
     
     /**
-     * <p>This entry contains a string of the document status.
+     * This entry contains a string of the document status.
      */
     public static final int PID_CONTENTSTATUS = 0x1B;
     
     /**
-     * <p>This entry contains a string of the document language, but
+     * This entry contains a string of the document language, but
      *  normally should be empty.
      */
     public static final int PID_LANGUAGE = 0x1C;
     
     /**
-     * <p>This entry contains a string of the document version, but
+     * This entry contains a string of the document version, but
      *  normally should be empty
      */
     public static final int PID_DOCVERSION = 0x1D;
     
     /**
-     * <p>The highest well-known property ID. Applications are free to use 
+     * The highest well-known property ID. Applications are free to use 
      *  higher values for custom purposes. (This value is based on Office 12,
-     *  earlier versions of Office had lower values)</p>
+     *  earlier versions of Office had lower values)
      */
     public static final int PID_MAX = 0x1F;
 
+    /**
+     * The Locale property, if present, MUST have the property identifier 0x80000000,
+     * MUST NOT have a property name, and MUST have type VT_UI4 (0x0013).
+     * If present, its value MUST be a valid language code identifier as specified in [MS-LCID].
+     * Its value is selected in an implementation-specific manner.
+     */
+    public static final int PID_LOCALE = 0x80000000;
 
 
     /**
-     * <p>Contains the summary information property ID values and
+     * The Behavior property, if present, MUST have the property identifier 0x80000003,
+     * MUST NOT have a property name, and MUST have type VT_UI4 (0x0013).
+     * A version 0 property set, indicated by the value 0x0000 for the Version field of
+     * the PropertySetStream packet, MUST NOT have a Behavior property.
+     * If the Behavior property is present, it MUST have one of the following values.
+     * 
+     * <ul>
+     * <li>0x00000000 = Property names are case-insensitive (default)
+     * <li>0x00000001 = Property names are case-sensitive.
+     * </ul>
+     */
+    public static final int PID_BEHAVIOUR = 0x80000003;
+    
+    /**
+     * Contains the summary information property ID values and
      * associated strings. See the overall HPSF documentation for
-     * details!</p>
+     * details!
      */
     private static PropertyIDMap summaryInformationProperties;
 
     /**
-     * <p>Contains the summary information property ID values and
+     * Contains the summary information property ID values and
      * associated strings. See the overall HPSF documentation for
-     * details!</p>
+     * details!
      */
     private static PropertyIDMap documentSummaryInformationProperties;
 
 
 
     /**
-     * <p>Creates a {@link PropertyIDMap}.</p>
+     * Creates a {@link PropertyIDMap}.
      *
      * @param initialCapacity The initial capacity as defined for
      * {@link HashMap}
@@ -321,7 +342,7 @@ public class PropertyIDMap extends HashMap<Long,String> {
 
 
     /**
-     * <p>Creates a {@link PropertyIDMap} backed by another map.</p>
+     * Creates a {@link PropertyIDMap} backed by another map.
      *
      * @param map The instance to be created is backed by this map.
      */
@@ -333,8 +354,8 @@ public class PropertyIDMap extends HashMap<Long,String> {
 
 
     /**
-     * <p>Puts a ID string for an ID into the {@link
-     * PropertyIDMap}.</p>
+     * Puts a ID string for an ID into the {@link
+     * PropertyIDMap}.
      *
      * @param id The ID.
      * @param idString The ID string.
@@ -351,8 +372,8 @@ public class PropertyIDMap extends HashMap<Long,String> {
 
 
     /**
-     * <p>Gets the ID string for an ID from the {@link
-     * PropertyIDMap}.</p>
+     * Gets the ID string for an ID from the {@link
+     * PropertyIDMap}.
      *
      * @param id The ID.
      * @return The ID string associated with <var>id</var>.
@@ -367,7 +388,7 @@ public class PropertyIDMap extends HashMap<Long,String> {
     /**
      * @return the Summary Information properties singleton
      */
-    public static PropertyIDMap getSummaryInformationProperties()
+    public static synchronized PropertyIDMap getSummaryInformationProperties()
     {
         if (summaryInformationProperties == null)
         {
@@ -399,12 +420,12 @@ public class PropertyIDMap extends HashMap<Long,String> {
 
 
     /**
-     * <p>Returns the Document Summary Information properties
-     * singleton.</p>
+     * Returns the Document Summary Information properties
+     * singleton.
      *
      * @return The Document Summary Information properties singleton.
      */
-    public static PropertyIDMap getDocumentSummaryInformationProperties()
+    public static synchronized PropertyIDMap getDocumentSummaryInformationProperties()
     {
         if (documentSummaryInformationProperties == null)
         {
@@ -435,7 +456,7 @@ public class PropertyIDMap extends HashMap<Long,String> {
 
 
     /**
-     * <p>For the most basic testing.</p>
+     * For the most basic testing.
      *
      * @param args The command-line arguments
      */

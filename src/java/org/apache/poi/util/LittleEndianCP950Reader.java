@@ -32,7 +32,7 @@ public class LittleEndianCP950Reader extends Reader {
     private static final POILogger LOGGER = POILogFactory.getLogger(LittleEndianCP950Reader.class);
 
 
-    private static final char UNMAPPABLE = (char) '?';
+    private static final char UNMAPPABLE = '?';
     private final ByteBuffer doubleByteBuffer = ByteBuffer.allocate(2);
     private final CharBuffer charBuffer = CharBuffer.allocate(2);
     private final CharsetDecoder decoder = StringUtil.BIG5.newDecoder();
@@ -131,8 +131,7 @@ public class LittleEndianCP950Reader extends Reader {
     }
 
     @Override
-    public void close() throws IOException {
-
+    public void close() {
     }
 
     private int handleRange1(int leading, int trailing) {

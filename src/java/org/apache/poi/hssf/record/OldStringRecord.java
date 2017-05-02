@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.poi.hpsf.Property;
 import org.apache.poi.util.CodePageUtil;
 
 
@@ -73,7 +74,7 @@ public final class OldStringRecord {
     }
     
     protected static String getString(byte[] data, CodepageRecord codepage) {
-        int cp = CodePageUtil.CP_ISO_8859_1;
+        int cp = Property.DEFAULT_CODEPAGE;
         if (codepage != null) {
             cp = codepage.getCodepage() & 0xffff;
         }
