@@ -51,6 +51,7 @@ public class POIFSReader
 {
     private final POIFSReaderRegistry registry;
     private boolean registryClosed;
+    private boolean notifyEmptyDirectories = false;
 
     /**
      * Create a POIFSReader
@@ -181,6 +182,18 @@ public class POIFSReader
     }
 
     /**
+     * Activates the notification of empty directories.<p>
+     * If this flag is activated, the {@link POIFSReaderListener listener} receives
+     * {@link POIFSReaderEvent POIFSReaderEvents} with nulled {@code name} and {@code stream} 
+     *
+     * @param notifyEmptyDirectories
+     */
+    public void setNotifyEmptyDirectories(boolean notifyEmptyDirectories) {
+        this.notifyEmptyDirectories = notifyEmptyDirectories;
+    }
+    
+    
+    /**
      * read in files
      *
      * @param args names of the files
@@ -216,27 +229,27 @@ public class POIFSReader
                                    final BlockList big_blocks,
                                    final Iterator<Property> properties,
                                    final POIFSDocumentPath path)
-        throws IOException
-    {
+    throws IOException {
+        if (!properties.hasNext() && notifyEmptyDirectories) {
+            Iterator<POIFSReaderListener> listeners  = registry.getListeners(path, ".");
+            while (listeners.hasNext()) {
+                POIFSReaderListener pl = listeners.next();
+                POIFSReaderEvent pe = new POIFSReaderEvent(null, path, null);
+                pl.processPOIFSReaderEvent(pe);
+            }
+            return;
+        }
+        
         while (properties.hasNext())
         {
             Property property = properties.next();
             String   name     = property.getName();
 
-            if (property.isDirectory())
-            {
-                POIFSDocumentPath new_path = new POIFSDocumentPath(path,
-                                                 new String[]
-                {
-                    name
-                });
-
-                processProperties(
-                    small_blocks, big_blocks,
-                    (( DirectoryProperty ) property).getChildren(), new_path);
-            }
-            else
-            {
+            if (property.isDirectory()) {
+                POIFSDocumentPath new_path = new POIFSDocumentPath(path,new String[]{name});
+                DirectoryProperty dp = (DirectoryProperty) property;
+                processProperties(small_blocks, big_blocks, dp.getChildren(), new_path);
+            } else {
                 int startBlock = property.getStartBlock();
                 Iterator<POIFSReaderListener> listeners  = registry.getListeners(path, name);
 
