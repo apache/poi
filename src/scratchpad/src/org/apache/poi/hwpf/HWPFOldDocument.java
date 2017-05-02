@@ -198,36 +198,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
      * @return The detected Charset from the old font table
      */
     private Charset guessCodePage(OldFontTable fontTable) {
-        //try to get it out of the overall document summary information
-        DocumentSummaryInformation summaryInformation = getDocumentSummaryInformation();
-        if (summaryInformation != null) {
-            CustomProperties customProperties = summaryInformation.getCustomProperties();
-            if (customProperties != null) {
-                int codePage = customProperties.getCodepage();
-                if (codePage > -1) {
-                    try {
-                        return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
-                    } catch (UnsupportedEncodingException e) {
-                        //swallow
-                    }
-                }
-            }
-            //If that didn't work, for now, try to get first valid code page in a valid section
-            for (Section section : summaryInformation.getSections()) {
-                if (section.getOffset() < 0) {
-                    continue;
-                }
-                int codePage = section.getCodepage();
-                if (codePage > -1) {
-                    try {
-                        return Charset.forName(CodePageUtil.codepageToEncoding(codePage));
-                    } catch (UnsupportedEncodingException e) {
-                        //swallow
-                    }
-                }
-            }
-        }
-        //if that still doesn't work, pick the first non-default, non-symbol charset
+        // pick the first non-default, non-symbol charset
         for (OldFfn oldFfn : fontTable.getFontNames()) {
             HwmfFont.WmfCharset wmfCharset = HwmfFont.WmfCharset.valueOf(oldFfn.getChs()& 0xff);
             if (wmfCharset != null &&
