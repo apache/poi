@@ -37,7 +37,7 @@ public class XSSFBFileHandler extends AbstractFileHandler {
     }
 
     @Override
-    public void handleFile(InputStream stream) throws Exception {
+    public void handleFile(InputStream stream, String path) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         IOUtils.copy(stream, out);
 
@@ -54,7 +54,7 @@ public class XSSFBFileHandler extends AbstractFileHandler {
 
     private void testNotHandledByWorkbookException(OPCPackage pkg) throws IOException {
         try {
-            new XSSFWorkbook(pkg);
+            new XSSFWorkbook(pkg).close();
         } catch (XLSBUnsupportedException e) {
             //this is what we'd expect
             //swallow

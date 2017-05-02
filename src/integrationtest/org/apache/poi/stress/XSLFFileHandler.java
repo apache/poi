@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class XSLFFileHandler extends SlideShowHandler {
 	@Override
-    public void handleFile(InputStream stream) throws Exception {
+    public void handleFile(InputStream stream, String path) throws Exception {
 	    XMLSlideShow slide = new XMLSlideShow(stream);
 	    XSLFSlideShow slideInner = new XSLFSlideShow(slide.getPackage());
 		assertNotNull(slideInner.getPresentation());
@@ -69,14 +69,14 @@ public class XSLFFileHandler extends SlideShowHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-		File file = new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
-		InputStream stream = new FileInputStream(file);
+        File file = new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
+        InputStream stream = new FileInputStream(file);
 		try {
-			handleFile(stream);
+			handleFile(stream, file.getPath());
 		} finally {
 			stream.close();
 		}
 
-        handleExtracting(file);
-   }
+		handleExtracting(file);
+	}
 }

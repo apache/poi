@@ -32,7 +32,7 @@ import static org.junit.Assert.assertFalse;
 public class HSSFFileHandler extends SpreadsheetHandler {
 	private final POIFSFileHandler delegate = new POIFSFileHandler();
 	@Override
-    public void handleFile(InputStream stream) throws Exception {
+    public void handleFile(InputStream stream, String path) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook(stream);
 		handleWorkbook(wb);
 		
@@ -100,14 +100,19 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-	    File file = new File("test-data/spreadsheet/49219.xls");
-		
+        File file = new File("test-data/spreadsheet/49219.xls");
+        
 		InputStream stream = new FileInputStream(file);
 		try {
-			handleFile(stream);
+			handleFile(stream, file.getPath());
 		} finally {
 			stream.close();
 		}
-        handleExtracting(file);
 	}
+
+	// a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void testExtractor() throws Exception {
+        handleExtracting(new File("test-data/spreadsheet/BOOK_in_capitals.xls"));
+    }
 }

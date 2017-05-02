@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class OPCFileHandler extends AbstractFileHandler {
 	@Override
-    public void handleFile(InputStream stream) throws Exception {
+    public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
@@ -63,11 +63,11 @@ public class OPCFileHandler extends AbstractFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		File file = new File("test-data/diagram/test.vsdx");
+        File file = new File("test-data/diagram/test.vsdx");
 
-		InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000);
+        InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000);
 		try {
-			handleFile(stream);
+			handleFile(stream, file.getPath());
 		} finally {
 			stream.close();
 		}

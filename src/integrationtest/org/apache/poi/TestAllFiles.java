@@ -52,6 +52,7 @@ import org.apache.poi.stress.XSSFBFileHandler;
 import org.apache.poi.stress.XSSFFileHandler;
 import org.apache.poi.stress.XWPFFileHandler;
 import org.apache.tools.ant.DirectoryScanner;
+import org.junit.AssumptionViolatedException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -84,7 +85,6 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class TestAllFiles {
-
     private static final File ROOT_DIR = new File("test-data");
 
     static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
@@ -202,15 +202,15 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
     }
 
-    private static Set<String> unmodifiableHashSet(String... a) {
+    private static final Set<String> unmodifiableHashSet(String... a) {
         return Collections.unmodifiableSet(hashSet(a));
     }
-    private static Set<String> hashSet(String... a) {
+    private static final Set<String> hashSet(String... a) {
         return new HashSet<String>(Arrays.asList(a));
     }
 
     // Old Word Documents where we can at least extract some text
-    private static final Set<String> OLD_FILES = unmodifiableHashSet(
+    private static final Set<String> OLD_FILES_HWPF = unmodifiableHashSet(
         "document/Bug49933.doc",
         "document/Bug51944.doc",
         "document/Word6.doc",
@@ -222,7 +222,9 @@ public class TestAllFiles {
         "document/Bug60942.doc",
         "document/Bug60942b.doc",
         "hpsf/TestMickey.doc",
-        "document/52117.doc"
+        "document/52117.doc",
+        "hpsf/TestInvertedClassID.doc",
+        "hpsf/TestBug52117.doc"
     );
 
     private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
@@ -320,7 +322,7 @@ public class TestAllFiles {
         // OPC handler works / XSSF handler fails
         "spreadsheet/57181.xlsm"
     );
-    
+
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
         DirectoryScanner scanner = new DirectoryScanner();
@@ -346,7 +348,14 @@ public class TestAllFiles {
                 handler instanceof XWPFFileHandler ||
                 handler instanceof XSLFFileHandler ||
                 handler instanceof XDGFFileHandler) {
-                files.add(new Object[] { file, HANDLERS.get(".ooxml") });
+                files.add(new Object[] { file, new OPCFileHandler() });
+            }
+            
+            if (handler instanceof HSSFFileHandler ||
+                handler instanceof HSLFFileHandler ||
+                handler instanceof HWPFFileHandler ||
+                handler instanceof HDGFFileHandler) {
+                files.add(new Object[] { file, new HPSFFileHandler() });
             }
         }
 
@@ -359,36 +368,37 @@ public class TestAllFiles {
 
     @Parameter(value=1)
     public FileHandler handler;
-
+    
     @Test
     public void testAllFiles() throws Exception {
         System.out.println("Reading " + file + " with " + handler.getClass());
         assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
         File inputFile = new File(ROOT_DIR, file);
 
+        // special cases where docx-handling breaks, but OPCPackage handling works
+        boolean ignoredOPC = (file.endsWith(".docx") || file.endsWith(".xlsx") ||
+                    file.endsWith(".xlsb") || file.endsWith(".pptx")) &&
+                handler instanceof OPCFileHandler;
+        boolean ignoreHPSF = (handler instanceof HPSFFileHandler);
+        
+        
         try {
             InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64*1024);
             try {
-                handler.handleFile(stream);
-
+                handler.handleFile(stream, file);
                 assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-                        OLD_FILES.contains(file));
+                    OLD_FILES_HWPF.contains(file) && !ignoreHPSF);
             } finally {
                 stream.close();
             }
 
             handler.handleExtracting(inputFile);
 
-            // special cases where docx-handling breaks, but OPCPackage handling works
-            boolean ignoredOPC = (file.endsWith(".docx") || file.endsWith(".xlsx") ||
-                        file.endsWith(".xlsb") || file.endsWith(".pptx")) &&
-                    handler instanceof OPCFileHandler;
-
             assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-                EXPECTED_FAILURES.contains(file) && !ignoredOPC);
+                EXPECTED_FAILURES.contains(file) && !ignoredOPC && !ignoreHPSF);
         } catch (OldFileFormatException e) {
             // for old word files we should still support extracting text
-            if(OLD_FILES.contains(file)) {
+            if(OLD_FILES_HWPF.contains(file)) {
                 handler.handleExtracting(inputFile);
             } else {
                 // check if we expect failure for this file
@@ -397,6 +407,8 @@ public class TestAllFiles {
                     throw new Exception("While handling " + file, e);
                 }
             }
+        } catch (AssumptionViolatedException e) {
+            // file handler ignored this file
         } catch (Exception e) {
             // check if we expect failure for this file
             if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
@@ -420,7 +432,7 @@ public class TestAllFiles {
 
     private static class NullFileHandler implements FileHandler {
         @Override
-        public void handleFile(InputStream stream) throws Exception {
+        public void handleFile(InputStream stream, String path) throws Exception {
         }
 
         @Override
