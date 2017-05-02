@@ -18,71 +18,107 @@
  */
 package org.apache.poi.hpsf;
 
-import junit.framework.TestCase;
-import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.util.HexRead;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 
-/**
- * @author Yegor Kozlov
- */
-public class TestVariantSupport extends TestCase {
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.storage.RawDataUtil;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.junit.Test;
 
+public class TestVariantSupport {
+    @Test
     public void test52337() throws Exception {
         // document summary stream   from test1-excel.doc attached to Bugzilla 52337
-        String hex =
-                "FE FF 00 00 05 01 02 00 00 00 00 00 00 00 00 00 00 00 00 00" +
-                "00 00 00 00 02 00 00 00 02 D5 CD D5 9C 2E 1B 10 93 97 08 00" +
-                "2B 2C F9 AE 44 00 00 00 05 D5 CD D5 9C 2E 1B 10 93 97 08 00" +
-                "2B 2C F9 AE 58 01 00 00 14 01 00 00 0C 00 00 00 01 00 00 00" +
-                "68 00 00 00 0F 00 00 00 70 00 00 00 05 00 00 00 98 00 00 00" +
-                "06 00 00 00 A0 00 00 00 11 00 00 00 A8 00 00 00 17 00 00 00" +
-                "B0 00 00 00 0B 00 00 00 B8 00 00 00 10 00 00 00 C0 00 00 00" +
-                "13 00 00 00 C8 00 00 00 16 00 00 00 D0 00 00 00 0D 00 00 00" +
-                "D8 00 00 00 0C 00 00 00 F3 00 00 00 02 00 00 00 E4 04 00 00" +
-                "1E 00 00 00 20 00 00 00 44 65 70 61 72 74 6D 65 6E 74 20 6F" +
-                "66 20 49 6E 74 65 72 6E 61 6C 20 41 66 66 61 69 72 73 00 00" +
-                "03 00 00 00 05 00 00 00 03 00 00 00 01 00 00 00 03 00 00 00" +
-                "47 03 00 00 03 00 00 00 0F 27 0B 00 0B 00 00 00 00 00 00 00" +
-                "0B 00 00 00 00 00 00 00 0B 00 00 00 00 00 00 00 0B 00 00 00" +
-                "00 00 00 00 1E 10 00 00 01 00 00 00 0F 00 00 00 54 68 69 73" +
-                "20 69 73 20 61 20 74 65 73 74 00 0C 10 00 00 02 00 00 00 1E" +
-                "00 00 00 06 00 00 00 54 69 74 6C 65 00 03 00 00 00 01 00 00" +
-                "00 00 00 00 A8 00 00 00 03 00 00 00 00 00 00 00 20 00 00 00" +
-                "01 00 00 00 38 00 00 00 02 00 00 00 40 00 00 00 01 00 00 00" +
-                "02 00 00 00 0C 00 00 00 5F 50 49 44 5F 48 4C 49 4E 4B 53 00" +
-                "02 00 00 00 E4 04 00 00 41 00 00 00 60 00 00 00 06 00 00 00" +
-                "03 00 00 00 74 00 74 00 03 00 00 00 09 00 00 00 03 00 00 00" +
-                "00 00 00 00 03 00 00 00 05 00 00 00 1F 00 00 00 0C 00 00 00" +
-                "4E 00 6F 00 72 00 6D 00 61 00 6C 00 32 00 2E 00 78 00 6C 00" +
-                "73 00 00 00 1F 00 00 00 0A 00 00 00 53 00 68 00 65 00 65 00" +
-                "74 00 31 00 21 00 44 00 32 00 00 00 ";
-        byte[] bytes = HexRead.readFromString(hex);
+        String documentSummaryEnc =
+            "H4sIAAAAAAAAAG2RsUvDQBjFXxsraiuNKDoI8ZwclIJOjhYCGpQitINbzXChgTQtyQ3+Hw52cHB0E"+
+            "kdHRxfBpeAf4H/g5KK+M59Firn8eNx3d+++x31+AZVSGdOfrZTHz+Prxrp7eTWH7Z2PO5+1ylTtrA"+
+            "SskBrXKOiROhnavWREZskNWSK3ZI3ckyp5IC55JMvkiaySF7JIXlF4v0tPbzOAR1XE18MwM32dGjW"+
+            "IVJAanaVhoppRFMZZDjjSgyO9WT10Cq1vVX/uh/Txn3pucc7m6fTiXPEPldG5Qc0t2vEkXic2iZ5c"+
+            "JDkd8VFS3pcMBzIvS7buaeB3j06C1nF7krFJPRdz62M4rM7/8f3NtyE+LQyQoY8QCfbQwAU1l/UF0"+
+            "ubraA6DXWzC5x7gG6xzLtsAAgAA";
+        byte[] bytes = RawDataUtil.decompress(documentSummaryEnc);
 
         PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(bytes));
         DocumentSummaryInformation dsi = (DocumentSummaryInformation) ps;
         Section s = dsi.getSections().get(0);
 
         Object hdrs =  s.getProperty(PropertyIDMap.PID_HEADINGPAIR);
-
-        assertNotNull("PID_HEADINGPAIR was not found", hdrs);
+        assertNotNull(hdrs);
+        assertEquals(byte[].class, hdrs.getClass());
         
-        assertTrue("PID_HEADINGPAIR: expected byte[] but was "+ hdrs.getClass(), hdrs instanceof byte[]);
         // parse the value
         Vector v = new Vector((short)Variant.VT_VARIANT);
-        v.read((byte[])hdrs, 0);
+        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream((byte[])hdrs, 0); 
+        v.read(lei);
 
         TypedPropertyValue[] items = v.getValues();
         assertEquals(2, items.length);
 
-        assertNotNull(items[0].getValue());
-        assertTrue("first item must be CodePageString but was "+ items[0].getValue().getClass(),
-                items[0].getValue() instanceof CodePageString);
-        assertNotNull(items[1].getValue());
-        assertTrue("second item must be Integer but was "+ items[1].getValue().getClass(),
-                items[1].getValue() instanceof Integer);
-        assertEquals(1, (int)(Integer)items[1].getValue());
+        Object cp = items[0].getValue();
+        assertNotNull(cp);
+        assertEquals(CodePageString.class, cp.getClass());
+        Object i = items[1].getValue();
+        assertNotNull(i);
+        assertEquals(Integer.class, i.getClass());
+        assertEquals(1, i);
 
+    }
+    
+    @Test
+    public void newNumberTypes() throws Exception {
+        ClipboardData cd = new ClipboardData();
+        cd.setValue(new byte[10]);
+        
+        Object exp[][] = {
+            { Variant.VT_CF, cd.toByteArray() },
+            { Variant.VT_BOOL, true },
+            { Variant.VT_LPSTR, "codepagestring" },
+            { Variant.VT_LPWSTR, "widestring" },
+            { Variant.VT_I2, -1 }, // int, not short ... :(
+            { Variant.VT_UI2, 0xFFFF },
+            { Variant.VT_I4, -1 },
+            { Variant.VT_UI4, 0xFFFFFFFFL },
+            { Variant.VT_I8, -1L },
+            { Variant.VT_UI8, BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TEN) },
+            { Variant.VT_R4, -999.99f },
+            { Variant.VT_R8, -999.99d },
+        };
+        
+        HSSFWorkbook wb = new HSSFWorkbook();
+        POIFSFileSystem poifs = new POIFSFileSystem();
+        DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
+        CustomProperties cpList = new CustomProperties();
+        for (Object o[] : exp) {
+            int type = (Integer)o[0];
+            Property p = new Property(PropertyIDMap.PID_MAX+type, type, o[1]);
+            cpList.put("testprop"+type, new CustomProperty(p, "testprop"+type));
+            
+        }
+        dsi.setCustomProperties(cpList);
+        dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        poifs.writeFilesystem(bos);
+        poifs.close();
+        poifs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+        dsi = (DocumentSummaryInformation)PropertySetFactory.create(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        cpList = dsi.getCustomProperties();
+        int i=0;
+        for (Object o[] : exp) {
+            Object obj = cpList.get("testprop"+o[0]);
+            if (o[1] instanceof byte[]) {
+                assertArrayEquals("property "+i, (byte[])o[1], (byte[])obj);
+            } else {
+                assertEquals("property "+i, o[1], obj);
+            }
+            i++;
+        }
+        poifs.close();
     }
 }
