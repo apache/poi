@@ -565,7 +565,7 @@ public final class LocaleUtil {
         case 0x4001: return "ar-QA";
         case 0x4009: return "en-IN";
         case 0x400a: return "es-BO";
-        case 0x4401: return "ar-Ploc-SA"; // reseærved
+        case 0x4401: return "ar-Ploc-SA"; // reserved
         case 0x4409: return "en-MY";
         case 0x440a: return "es-SV";
         case 0x4801: return "ar-145"; // reserved
