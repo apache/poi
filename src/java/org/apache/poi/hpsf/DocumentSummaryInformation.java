@@ -801,7 +801,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet {
         customProperties.setCodepage(cpCodepage);
         section.setCodepage(cpCodepage);
         section.setDictionary(dictionary);
-        for (CustomProperty p : customProperties.values()) {
+        for (CustomProperty p : customProperties.properties()) {
             section.setProperty(p);
         }
     }

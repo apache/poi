@@ -218,9 +218,9 @@ public class TestReadAllFiles {
                 return;
             }
 
-            for (CustomProperty cp : cps.values()) {
-                cp.getName();
-                cp.getValue();
+            for (CustomProperty cp : cps.properties()) {
+                assertNotNull(cp.getName());
+                assertNotNull(cp.getValue());
             }
         } finally {
             poifs.close();
