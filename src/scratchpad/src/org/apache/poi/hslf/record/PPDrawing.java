@@ -360,13 +360,16 @@ public final class PPDrawing extends RecordAtom {
 	 * @return EscherDgRecord
 	 */
 	public EscherDgRecord getEscherDgRecord(){
-		if(dg == null){
-			for(EscherRecord r : getDgContainer().getChildRecords()){
-				if(r instanceof EscherDgRecord){
-					dg = (EscherDgRecord)r;
-					break;
-				}
-			}
+		if (dg == null) {
+		    EscherContainerRecord dgr = getDgContainer();
+		    if (dgr != null) {
+    			for(EscherRecord r : dgr.getChildRecords()){
+    				if(r instanceof EscherDgRecord){
+    					dg = (EscherDgRecord)r;
+    					break;
+    				}
+    			}
+		    }
 		}
 		return dg;
 	}

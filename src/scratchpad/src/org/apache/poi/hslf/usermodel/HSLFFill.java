@@ -372,7 +372,9 @@ public final class HSLFFill {
         if(p != null) {
             int idx = p.getPropertyValue();
             EscherBSERecord bse = getEscherBSERecord(idx);
-            bse.setRef(bse.getRef() + 1);
+            if (bse != null) {
+                bse.setRef(bse.getRef() + 1);
+            }
         }
     }
 
@@ -521,7 +523,9 @@ public final class HSLFFill {
         HSLFShape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), (data == null ? 0 : data.getIndex()));
         if(data != null && shape.getSheet() != null) {
             EscherBSERecord bse = getEscherBSERecord(data.getIndex());
-            bse.setRef(bse.getRef() + 1);
+            if (bse != null) {
+                bse.setRef(bse.getRef() + 1);
+            }
         }
     }
 

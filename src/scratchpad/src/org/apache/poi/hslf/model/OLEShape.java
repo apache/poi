@@ -185,7 +185,8 @@ public final class OLEShape extends HSLFPictureShape {
      * @return the instance name of the embedded object
      */
     public String getInstanceName(){
-        return getExEmbed().getMenuName();
+        ExEmbed ee = getExEmbed();
+        return (ee == null) ? null : ee.getMenuName();
     }
 
     /**
@@ -195,7 +196,8 @@ public final class OLEShape extends HSLFPictureShape {
      * @return the full name of the embedded object
      */
     public String getFullName(){
-        return getExEmbed().getClipboardName();
+        ExEmbed ee = getExEmbed();
+        return (ee == null) ? null : ee.getClipboardName();
     }
 
     /**
@@ -206,6 +208,7 @@ public final class OLEShape extends HSLFPictureShape {
      * @return the ProgID
      */
     public String getProgID(){
-        return getExEmbed().getProgId();
+        ExEmbed ee = getExEmbed();
+        return (ee == null) ? null : ee.getProgId();
     }
 }
