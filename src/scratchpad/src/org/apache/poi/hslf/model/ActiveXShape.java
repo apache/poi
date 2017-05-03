@@ -128,27 +128,29 @@ public final class ActiveXShape extends HSLFPictureShape {
      */
     public ExControl getExControl(){
         int idx = getControlIndex();
-        ExControl ctrl = null;
         Document doc = getSheet().getSlideShow().getDocumentRecord();
         ExObjList lst = (ExObjList)doc.findFirstOfType(RecordTypes.ExObjList.typeID);
-        if(lst != null){
-            Record[] ch = lst.getChildRecords();
-            for (int i = 0; i < ch.length; i++) {
-                if(ch[i] instanceof ExControl){
-                    ExControl c = (ExControl)ch[i];
-                    if(c.getExOleObjAtom().getObjID() == idx){
-                        ctrl = c;
-                        break;
-                    }
+        if (lst == null) {
+            return null;
+        }
+        
+        for (Record ch : lst.getChildRecords()) {
+            if(ch instanceof ExControl){
+                ExControl c = (ExControl)ch;
+                if(c.getExOleObjAtom().getObjID() == idx){
+                    return c;
                 }
             }
         }
-        return ctrl;
+        return null;
     }
 
     @Override
     protected void afterInsert(HSLFSheet sheet){
         ExControl ctrl = getExControl();
+        if (ctrl == null) {
+            throw new NullPointerException("ExControl is not defined");
+        }
         ctrl.getExControlAtom().setSlideId(sheet._getSheetNumber());
 
         String name = ctrl.getProgId() + "-" + getControlIndex() + '\u0000';

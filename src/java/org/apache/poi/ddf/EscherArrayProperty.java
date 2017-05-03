@@ -47,7 +47,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     public EscherArrayProperty(short id, byte[] complexData) {
         super(id, checkComplexData(complexData));
-        emptyComplexPart = complexData.length == 0;
+        emptyComplexPart = (complexData == null || complexData.length == 0);
     }
 
     public EscherArrayProperty(short propertyNumber, boolean isBlipId, byte[] complexData) {
