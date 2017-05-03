@@ -150,8 +150,8 @@ public final class LocaleUtil {
     /**
      * Decode the language ID from LCID value
      *
-     * @param lcid
-     * @return
+     * @param lcid the LCID value
+     * @return the locale/language ID
      */
     public static String getLocaleFromLCID(int lcid) {
         int languageId = lcid & 0xFFFF;
