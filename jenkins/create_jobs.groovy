@@ -1,5 +1,5 @@
 // This script is used as input to the Jenkins Job DSL plugin to create all the build-jobs that
-// Apache POI uses on the public Jenkins instance at https://builds.apache.org/view/POI/
+// Apache POI uses on the public Jenkins instance at https://builds.apache.org/view/P/view/POI/
 //
 // See https://github.com/jenkinsci/job-dsl-plugin/wiki for information about the DSL, you can
 // use http://job-dsl.herokuapp.com/ to validate the code before checkin
