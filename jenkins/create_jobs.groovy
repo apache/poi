@@ -337,3 +337,45 @@ for more details about the DSL.</b>
         }
     }
 }
+
+dashboardView("P/POI-new") {
+    columns {
+        status()
+        weather()
+        configureProject()
+        buildButton()
+        cronTrigger()
+        lastBuildConsole()
+        name()
+        lastSuccess()
+        lastFailure()
+        lastDuration()
+        //lastSuccessDescription()
+        jacoco()
+    }
+    description("Jobs related to building/testing Apache POI")
+    filterBuildQueue(true)
+    filterExecutors(false)
+
+    // Job selection
+    jobs {
+        regex(/.*POI.*/)
+    }
+
+    // Layout
+    topPortlets {
+        jenkinsJobsList {
+            displayName('POI jobs')
+        }
+    }
+    leftPortlets {
+        testStatisticsChart()
+    }
+    rightPortlets {
+        testTrendChart()
+    }
+    bottomPortlets {
+        testStatisticsGrid()
+        buildStatistics()
+    }
+}
