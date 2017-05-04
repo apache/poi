@@ -338,6 +338,8 @@ for more details about the DSL.</b>
     }
 }
 
+/* I tried to put the view into a sub-folder/sub-view, but failed, there are multiple related
+ plugins so this is all a bit confusing :(, see also https://issues.apache.org/jira/browse/INFRA-14002
 dashboardView("P/POI-new") {
     columns {
         status()
@@ -354,13 +356,13 @@ dashboardView("P/POI-new") {
         jacoco()
     }
     description("Jobs related to building/testing Apache POI")
-    filterBuildQueue(true)
+    filterBuildQueue(false)
     filterExecutors(false)
 
     // Job selection
-    jobs {
-        regex(/.*POI.*/)
-    }
+    jobs {*/
+        //regex(/.*POI.*/)
+    /*}
 
     // Layout
     topPortlets {
@@ -378,4 +380,4 @@ dashboardView("P/POI-new") {
         testStatisticsGrid()
         buildStatistics()
     }
-}
+}*/
