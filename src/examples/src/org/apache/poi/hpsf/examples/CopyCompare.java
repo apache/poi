@@ -401,11 +401,13 @@ public class CopyCompare
                          final String name,
                          final DocumentInputStream stream)
         throws IOException {
+            // create the directories to the document
+            final DirectoryEntry de = getPath(poiFs, path);
+            // check the parameters after the directories have been created
             if (stream == null || name == null) {
                 // Empty directory
                 return;
             }
-            final DirectoryEntry de = getPath(poiFs, path);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             int c;
             while ((c = stream.read()) != -1) {
