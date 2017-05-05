@@ -598,7 +598,7 @@ public class XSSFFont implements Font {
      * @see org.apache.poi.ss.usermodel.FontFamily
      */
     public int getFamily() {
-        CTIntProperty family = _ctFont.sizeOfFamilyArray() == 0 ? _ctFont.addNewFamily() : _ctFont.getFamilyArray(0);
+        CTIntProperty family = _ctFont.sizeOfFamilyArray() == 0 ? null : _ctFont.getFamilyArray(0);
         return family == null ? FontFamily.NOT_APPLICABLE.getValue() : FontFamily.valueOf(family.getVal()).getValue();
     }
 
