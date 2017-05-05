@@ -41,6 +41,7 @@ import org.apache.poi.ss.usermodel.ConditionFilterType;
 import org.apache.poi.ss.usermodel.ConditionType;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.ExcelNumberFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -59,6 +60,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * The assumption is that consuming applications will read the display properties once and
  * create whatever style objects they need, caching those at the application level.
  * Thus this class only caches values needed for evaluation, not display.
+ */
+/**
+ *
  */
 public class EvaluationConditionalFormatRule implements Comparable<EvaluationConditionalFormatRule> {
 
@@ -82,6 +86,8 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     private final String formula2;
     private final OperatorEnum operator;
     private final ConditionType type;
+    // cached for performance, to avoid reading the XMLBean every time a conditinally formatted cell is rendered
+    private final ExcelNumberFormat numberFormat;
     
     /**
      *
@@ -108,11 +114,15 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         this.regions = regions;
         formula1 = rule.getFormula1();
         formula2 = rule.getFormula2();
+        numberFormat = rule.getNumberFormat();
         
         operator = OperatorEnum.values()[rule.getComparisonOperation()];
         type = rule.getConditionType();
     }
 
+    /**
+     * @return sheet
+     */
     public Sheet getSheet() {
         return sheet;
     }
@@ -124,8 +134,18 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         return formatting;
     }
     
+    /**
+     * @return conditional formatting index
+     */
     public int getFormattingIndex() {
         return formattingIndex;
+    }
+    
+    /**
+     * @return Excel number format string to apply to matching cells, or null to keep the cell default
+     */
+    public ExcelNumberFormat getNumberFormat() {
+        return numberFormat;
     }
     
     /**
@@ -135,6 +155,9 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         return rule;
     }
     
+    /**
+     * @return rule index
+     */
     public int getRuleIndex() {
         return ruleIndex;
     }

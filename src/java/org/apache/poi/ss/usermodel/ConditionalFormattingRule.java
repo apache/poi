@@ -78,6 +78,12 @@ public interface ConditionalFormattingRule {
     ColorScaleFormatting getColorScaleFormatting();
     
     /**
+     *
+     * @return number format defined for this rule, or null if the cell default should be used
+     */
+    ExcelNumberFormat getNumberFormat();
+    
+    /**
      * Type of conditional formatting rule.
      *
      * @return the type of condition
