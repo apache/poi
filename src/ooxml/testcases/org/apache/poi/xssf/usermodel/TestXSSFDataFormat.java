@@ -21,11 +21,19 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.usermodel.BaseTestDataFormat;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
@@ -107,5 +115,38 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
         // Verified with LibreOffice 4.2.8.2 on 2015-12-28
         wb2.close();
         wb1.close();
+    }
+
+    @Test
+    public void testConditionalFormattingEvaluation() throws IOException {
+        final Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61060-conditional-number-formatting.xlsx");
+
+        final DataFormatter formatter = new DataFormatter();
+        final FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        final ConditionalFormattingEvaluator cfEvaluator = new ConditionalFormattingEvaluator(wb, (WorkbookEvaluatorProvider) evaluator);
+
+        CellReference ref = new CellReference("A1");
+        Cell cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
+        assertEquals("0.10", formatter.formatCellValue(cell, evaluator, cfEvaluator));
+        // verify cell format without the conditional rule applied
+        assertEquals("0.1", formatter.formatCellValue(cell, evaluator));
+
+        ref = new CellReference("A3");
+        cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
+        assertEquals("-2.00E+03", formatter.formatCellValue(cell, evaluator, cfEvaluator));
+        // verify cell format without the conditional rule applied
+        assertEquals("-2000", formatter.formatCellValue(cell, evaluator));
+        
+        ref = new CellReference("A4");
+        cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
+        assertEquals("100", formatter.formatCellValue(cell, evaluator, cfEvaluator));
+        
+        ref = new CellReference("A5");
+        cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
+        assertEquals("$1,000", formatter.formatCellValue(cell, evaluator, cfEvaluator));
+        // verify cell format without the conditional rule applied
+        assertEquals("1000", formatter.formatCellValue(cell, evaluator));
+        
+        wb.close();
     }
 }

@@ -326,6 +326,18 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     }
 
     /**
+     * Return the number format from the dxf style record if present, null if not
+     * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getNumberFormat()
+     */
+    public ExcelNumberFormat getNumberFormat() {
+        CTDxf dxf = getDxf(false);
+        if(dxf == null || !dxf.isSetNumFmt()) return null;
+        
+        CTNumFmt numFmt = dxf.getNumFmt();
+        return new ExcelNumberFormat((int) numFmt.getNumFmtId(), numFmt.getFormatCode());
+    }
+    
+    /**
      * Type of conditional formatting rule.
      */
     @Override
