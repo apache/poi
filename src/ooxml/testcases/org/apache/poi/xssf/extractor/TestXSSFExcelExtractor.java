@@ -45,7 +45,6 @@ public class TestXSSFExcelExtractor extends TestCase {
 
 	/**
 	 * Get text out of the simple file
-	 * @throws IOException 
 	 */
 	public void testGetSimpleText() throws IOException {
 		// a very simple file
@@ -105,7 +104,7 @@ public class TestXSSFExcelExtractor extends TestCase {
 		
 		extractor.close();
 	}
-	
+
 	public void testGetComplexText() throws IOException {
 		// A fairly complex file
 		XSSFExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
@@ -114,10 +113,9 @@ public class TestXSSFExcelExtractor extends TestCase {
 		assertTrue(text.length() > 0);
 		
 		// Might not have all formatting it should do!
-		// TODO decide if we should really have the "null" in there
-		assertStartsWith(text, 
+		assertStartsWith(text,
 						"Avgtxfull\n" +
-						"null\t(iii) AVERAGE TAX RATES ON ANNUAL"	
+						"\t(iii) AVERAGE TAX RATES ON ANNUAL"
 		);
 		
 		extractor.close();
@@ -127,7 +125,6 @@ public class TestXSSFExcelExtractor extends TestCase {
 	 * Test that we return pretty much the same as
 	 *  ExcelExtractor does, when we're both passed
 	 *  the same file, just saved as xls and xlsx
-	 * @throws IOException 
 	 */
 	public void testComparedToOLE2() throws IOException {
 		// A fairly simple file - ooxml
@@ -156,7 +153,6 @@ public class TestXSSFExcelExtractor extends TestCase {
 	
 	/**
 	 * From bug #45540
-	 * @throws IOException 
 	 */
 	public void testHeaderFooter() throws IOException {
 		String[] files = new String[] {
@@ -176,7 +172,6 @@ public class TestXSSFExcelExtractor extends TestCase {
 
 	/**
 	 * From bug #45544
-	 * @throws IOException 
 	 */
 	public void testComments() throws IOException {
 		XSSFExcelExtractor extractor = getExtractor("45544.xlsx");
@@ -220,7 +215,6 @@ public class TestXSSFExcelExtractor extends TestCase {
 	}
 	/**
 	 * Simple test for text box text
-	 * @throws IOException
 	 */
 	public void testTextBoxes() throws IOException {
 	    XSSFExcelExtractor extractor = getExtractor("WithTextBox.xlsx");

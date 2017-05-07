@@ -55,8 +55,8 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
     private Locale locale;
     private XSSFWorkbook workbook;
     private boolean includeSheetNames = true;
-    private boolean formulasNotResults = false;
-    private boolean includeCellComments = false;
+    private boolean formulasNotResults;
+    private boolean includeCellComments;
     private boolean includeHeadersFooters = true;
     private boolean includeTextBoxes = true;
 
@@ -110,7 +110,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
     }
     /**
      * Should text within textboxes be included? Default is true
-     * @param includeTextBoxes
+     * @param includeTextBoxes True if textboxes should be included, false if not.
      */
     public void setIncludeTextBoxes(boolean includeTextBoxes){
         this.includeTextBoxes = includeTextBoxes;
@@ -255,8 +255,10 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
 
         // No supported styling applies to this cell
         String contents = ((XSSFCell)cell).getRawValue();
-        checkMaxTextSize(text, contents);
-        text.append( contents );
+        if (contents != null) {
+            checkMaxTextSize(text, contents);
+            text.append(contents);
+        }
     }
 
     private String extractHeaderFooter(HeaderFooter hf) {
