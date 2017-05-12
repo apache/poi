@@ -31,6 +31,7 @@ import java.util.Locale;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Table;
+import org.apache.poi.ss.usermodel.TableStyleInfo;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
@@ -443,5 +444,14 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     public int getEndRowIndex() {
         return getEndCellReference().getRow();
+    }
+    
+    /**
+     * 
+     * @since 3.17 beta 1
+     */
+    public TableStyleInfo getStyle() {
+        if (! ctTable.isSetTableStyleInfo()) return null;
+        return new XSSFTableStyleInfo(((XSSFSheet) getParent()).getWorkbook().getStylesSource(), ctTable.getTableStyleInfo());
     }
 }

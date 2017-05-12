@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,11 +38,14 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
+import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.usermodel.XSSFBuiltinTableStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFTableStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -59,6 +63,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyles;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
@@ -75,6 +81,7 @@ public class StylesTable extends POIXMLDocumentPart {
     private final List<CTXf> xfs = new ArrayList<CTXf>();
 
     private final List<CTDxf> dxfs = new ArrayList<CTDxf>();
+    private final Map<String, TableStyle> tableStyles = new HashMap<String, TableStyle>();
 
     /**
      * The first style id available for use as a custom style
@@ -189,7 +196,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
-    protected void readFrom(InputStream is) throws IOException {
+    public void readFrom(InputStream is) throws IOException {
         try {
             doc = StyleSheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
 
@@ -237,6 +244,13 @@ public class StylesTable extends POIXMLDocumentPart {
             CTDxfs styleDxfs = styleSheet.getDxfs();
             if(styleDxfs != null) dxfs.addAll(Arrays.asList(styleDxfs.getDxfArray()));
 
+            CTTableStyles ctTableStyles = styleSheet.getTableStyles();
+            if (ctTableStyles != null) {
+                for (CTTableStyle style : Arrays.asList(ctTableStyles.getTableStyleArray())) {
+                    tableStyles.put(style.getName(), new XSSFTableStyle(styleDxfs, style));
+                }
+            }
+            
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
@@ -766,7 +780,33 @@ public class StylesTable extends POIXMLDocumentPart {
         this.dxfs.add(dxf);
         return this.dxfs.size();
     }
-
+    
+    /**
+     * NOTE: this only returns explicitly defined styles
+     * @param name of the table style
+     * @return defined style, or null if not explicitly defined
+     * 
+     * @since 3.17 beta 1
+     */
+    public TableStyle getExplicitTableStyle(String name) {
+        return tableStyles.get(name);
+    }
+    
+    /**
+     * @param name of the table style
+     * @return defined style, either explicit or built-in, or null if not found
+     * 
+     * @since 3.17 beta 1
+     */
+    public TableStyle getTableStyle(String name) {
+        if (name == null) return null;
+        try {
+            return XSSFBuiltinTableStyle.valueOf(name).getStyle();
+        } catch (IllegalArgumentException e) {
+            return getExplicitTableStyle(name);
+        }
+    }
+    
     /**
      * Create a cell style in this style table.
      * Note - End users probably want to call {@link XSSFWorkbook#createCellStyle()}

@@ -22,7 +22,7 @@ package org.apache.poi.ss.usermodel;
 /**
  * Represents a description of a conditional formatting rule
  */
-public interface ConditionalFormattingRule {
+public interface ConditionalFormattingRule extends DifferentialStyleProvider {
     /**
      * Create a new border formatting structure if it does not exist,
      * otherwise just return existing object.
