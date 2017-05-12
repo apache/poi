@@ -821,7 +821,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr
                 .getPageBreakBefore() : null;
         if (ctPageBreak != null
-                && ctPageBreak.getVal().intValue() == STOnOff.INT_TRUE) {
+                && ctPageBreak.getVal() != null && ctPageBreak.getVal().intValue() == STOnOff.INT_TRUE) {
             return true;
         }
         return false;
