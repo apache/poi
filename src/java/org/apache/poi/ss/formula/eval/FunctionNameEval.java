@@ -37,10 +37,8 @@ public final class FunctionNameEval implements ValueEval {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(_functionName);
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + " [" +
+				_functionName +
+				"]";
 	}
 }

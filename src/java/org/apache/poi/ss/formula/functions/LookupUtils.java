@@ -184,7 +184,7 @@ final class LookupUtils {
 		public static final CompareResult EQUAL = new CompareResult(false, 0);
 		public static final CompareResult GREATER_THAN = new CompareResult(false, +1);
 
-		public static final CompareResult valueOf(int simpleCompareResult) {
+		public static CompareResult valueOf(int simpleCompareResult) {
 			if(simpleCompareResult < 0) {
 				return LESS_THAN;
 			}
@@ -194,7 +194,7 @@ final class LookupUtils {
 			return EQUAL;
 		}
 
-        public static final CompareResult valueOf(boolean matches) {
+        public static CompareResult valueOf(boolean matches) {
             if(matches) {
                 return EQUAL ;
             }
@@ -215,11 +215,9 @@ final class LookupUtils {
 			return _isGreaterThan;
 		}
 		public String toString() {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append(getClass().getName()).append(" [");
-			sb.append(formatAsString());
-			sb.append("]");
-			return sb.toString();
+			return getClass().getName() + " [" +
+					formatAsString() +
+					"]";
 		}
 
 		private String formatAsString() {
@@ -267,11 +265,9 @@ final class LookupUtils {
 			return compareSameType(other);
 		}
 		public String toString() {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append(getClass().getName()).append(" [");
-			sb.append(getValueAsString());
-			sb.append("]");
-			return sb.toString();
+			return getClass().getName() + " [" +
+					getValueAsString() +
+					"]";
 		}
 		protected abstract CompareResult compareSameType(ValueEval other);
 		/** used only for debug purposes */
@@ -475,7 +471,7 @@ final class LookupUtils {
 			// zero is FALSE, everything else is TRUE
 			return 0.0 != nve.getNumberValue();
 		}
-		throw new RuntimeException("Unexpected eval type (" + valEval.getClass().getName() + ")");
+		throw new RuntimeException("Unexpected eval type (" + valEval + ")");
 	}
 
 	public static int lookupIndexOfValue(ValueEval lookupValue, ValueVector vector, boolean isRangeLookup) throws EvaluationException {

@@ -153,7 +153,7 @@ public final class Match extends Var2or3ArgFunction {
 			// else looks like a number
 			throw new EvaluationException(ErrorEval.NA);
 		}
-		throw new RuntimeException("Unexpected eval type (" + eval.getClass().getName() + ")");
+		throw new RuntimeException("Unexpected eval type (" + eval + ")");
 	}
 
 
