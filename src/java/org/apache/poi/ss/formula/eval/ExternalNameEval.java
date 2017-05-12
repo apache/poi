@@ -34,10 +34,8 @@ public final class ExternalNameEval implements ValueEval {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(_name.getNameText());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + " [" +
+				_name.getNameText() +
+				"]";
 	}
 }

@@ -51,7 +51,8 @@ public final class ErrorEval implements ValueEval {
 
     /**
      * Translates an Excel internal error code into the corresponding POI ErrorEval instance
-     * @param errorCode
+     * @param errorCode An error code listed in {@link FormulaError}
+     * @throws RuntimeException If an unknown errorCode is specified
      */
     public static ErrorEval valueOf(int errorCode) {
         FormulaError error = FormulaError.forInt(errorCode);
@@ -89,10 +90,8 @@ public final class ErrorEval implements ValueEval {
         return _error.getString();
     }
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
-        sb.append(getClass().getName()).append(" [");
-        sb.append(_error.getString());
-        sb.append("]");
-        return sb.toString();
+        return getClass().getName() + " [" +
+                _error.getString() +
+                "]";
     }
 }

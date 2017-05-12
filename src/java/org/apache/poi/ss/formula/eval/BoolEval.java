@@ -34,7 +34,7 @@ public final class BoolEval implements NumericValueEval, StringValueEval {
 	 *
 	 * @return the <tt>BoolEval</tt> instance representing <tt>b</tt>.
 	 */
-	public static final BoolEval valueOf(boolean b) {
+	public static BoolEval valueOf(boolean b) {
 		return b ? TRUE : FALSE;
 	}
 
@@ -55,10 +55,8 @@ public final class BoolEval implements NumericValueEval, StringValueEval {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(getStringValue());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + " [" +
+				getStringValue() +
+				"]";
 	}
 }
