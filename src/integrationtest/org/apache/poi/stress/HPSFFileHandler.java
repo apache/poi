@@ -44,6 +44,8 @@ import org.junit.Assume;
 import org.junit.Test;
 
 public class HPSFFileHandler extends POIFSFileHandler {
+    private static final String NL = System.getProperty("line.separator");
+    
     private static File copyOutput = null;
     
     static final Set<String> EXCLUDES_HANDLE_ADD = unmodifiableHashSet(
@@ -108,7 +110,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
         try {
             System.setOut(psNew);
             CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.getAbsolutePath()});
-            assertEquals("Equal\n", new String(bos.toByteArray(), Charset.forName("UTF-8")));
+            assertEquals("Equal" + NL, new String(bos.toByteArray(), Charset.forName("UTF-8")));
         } finally {
             System.setOut(ps);
         }
