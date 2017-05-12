@@ -77,5 +77,9 @@ public interface Table {
      */
     boolean isHasTotalsRow();
     
-    
+    /**
+     * @return TableStyleInfo for this instance
+     * @since 3.17 beta 1
+     */
+    TableStyleInfo getStyle();
 }
