@@ -17,12 +17,13 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -32,30 +33,30 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.util.CodePageUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * <p>Tests whether Unicode string can be read from a
- * DocumentSummaryInformation.</p>
+ * Tests whether Unicode string can be read from a DocumentSummaryInformation.
  */
-public class TestUnicode extends TestCase {
+public class TestUnicode {
 
     static final String POI_FS = "TestUnicode.xls";
-    static final String[] POI_FILES = new String[]
-        {
-            "\005DocumentSummaryInformation",
-        };
+    static final String[] POI_FILES =  {
+        "\005DocumentSummaryInformation",
+    };
     File data;
     POIFile[] poiFiles;
 
 
     /**
-     * <p>Read a the test file from the "data" directory.</p>
+     * Read a the test file from the "data" directory.
      *
      * @exception FileNotFoundException if the file to be read does not exist.
      * @exception IOException if any other I/O exception occurs
      */
-    @Override
-    protected void setUp() {
+    @Before
+    public void setUp() {
         POIDataSamples samples = POIDataSamples.getHPSFInstance();
         data = samples.getFile(POI_FS);
     }
@@ -63,31 +64,25 @@ public class TestUnicode extends TestCase {
 
 
     /**
-     * <p>Tests the {@link PropertySet} methods. The test file has two
+     * Tests the {@link PropertySet} methods. The test file has two
      * property set: the first one is a {@link SummaryInformation},
-     * the second one is a {@link DocumentSummaryInformation}.</p>
+     * the second one is a {@link DocumentSummaryInformation}.
      *
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if an HPSF exception occurs
      */
-    public void testPropertySetMethods() throws IOException, HPSFException
-    {
-        POIFile poiFile = Util.readPOIFiles(data, POI_FILES)[0];
+    @Test
+    public void testPropertySetMethods() throws IOException, HPSFException {
+        POIFile poiFile = Util.readPOIFiles(data, POI_FILES).get(0);
         byte[] b = poiFile.getBytes();
-        PropertySet ps =
-            PropertySetFactory.create(new ByteArrayInputStream(b));
+        PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(b));
         assertTrue(ps.isDocumentSummaryInformation());
         assertEquals(ps.getSectionCount(), 2);
         Section s = ps.getSections().get(1);
-        assertEquals(s.getProperty(1),
-                            Integer.valueOf(CodePageUtil.CP_UTF16));
-        assertEquals(s.getProperty(2),
-                            Integer.valueOf(-96070278));
-        assertEquals(s.getProperty(3),
-                            "MCon_Info zu Office bei Schreiner");
-        assertEquals(s.getProperty(4),
-                            "petrovitsch@schreiner-online.de");
-        assertEquals(s.getProperty(5),
-                            "Petrovitsch, Wilhelm");
+        assertEquals(s.getProperty(1), CodePageUtil.CP_UTF16);
+        assertEquals(s.getProperty(2), -96070278);
+        assertEquals(s.getProperty(3), "MCon_Info zu Office bei Schreiner");
+        assertEquals(s.getProperty(4), "petrovitsch@schreiner-online.de");
+        assertEquals(s.getProperty(5), "Petrovitsch, Wilhelm");
     }
 }

@@ -18,17 +18,13 @@
 
 package org.apache.poi.hpsf.basic;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
@@ -42,31 +38,6 @@ import org.apache.poi.util.IOUtils;
  * <p>Static utility methods needed by the HPSF test cases.</p>
  */
 final class Util {
-
-    /**
-     * <p>Reads all files from a POI filesystem and returns them as an
-     * array of {@link POIFile} instances. This method loads all files
-     * into memory and thus does not cope well with large POI
-     * filessystems.</p>
-     * 
-     * @param poiFs The name of the POI filesystem as seen by the
-     * operating system. (This is the "filename".)
-     *
-     * @return The POI files. The elements are ordered in the same way
-     * as the files in the POI filesystem.
-     * 
-     * @exception FileNotFoundException if the file containing the POI 
-     * filesystem does not exist
-     * 
-     * @exception IOException if an I/O exception occurs
-     */
-    public static POIFile[] readPOIFiles(final File poiFs)
-        throws FileNotFoundException, IOException
-    {
-        return readPOIFiles(poiFs, null);
-    }
-
-
 
     /**
      * <p>Reads a set of files from a POI filesystem and returns them
@@ -87,42 +58,34 @@ final class Util {
      * 
      * @exception IOException if an I/O exception occurs
      */
-    public static POIFile[] readPOIFiles(final File poiFs,
-                                         final String[] poiFiles)
-        throws FileNotFoundException, IOException
-    {
+    public static List<POIFile> readPOIFiles(final File poiFs, final String... poiFiles)
+    throws FileNotFoundException, IOException {
         final List<POIFile> files = new ArrayList<POIFile>();
         POIFSReader r = new POIFSReader();
-        POIFSReaderListener pfl = new POIFSReaderListener()
-        {
+        POIFSReaderListener pfl = new POIFSReaderListener() {
             @Override
-            public void processPOIFSReaderEvent(final POIFSReaderEvent event)
-            {
-                try
-                {
+            public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
+                try {
                     final POIFile f = new POIFile();
                     f.setName(event.getName());
                     f.setPath(event.getPath());
                     final InputStream in = event.getStream();
-                    final ByteArrayOutputStream out =
-                        new ByteArrayOutputStream();
-                    IOUtils.copy(in, out);
-                    out.close();
-                    f.setBytes(out.toByteArray());
+                    f.setBytes(IOUtils.toByteArray(in));
+                    in.close();
                     files.add(f);
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         };
-        if (poiFiles == null)
+        if (poiFiles.length == 0) {
             /* Register the listener for all POI files. */
             r.registerListener(pfl);
-        else
-            for (String poiFile : poiFiles)
+        } else {
+            for (String poiFile : poiFiles) {
                 r.registerListener(pfl, poiFile);
+            }
+        }
 
         /* Read the POI filesystem. */
         FileInputStream stream = new FileInputStream(poiFs);
@@ -131,10 +94,7 @@ final class Util {
         } finally {
             stream.close();
         }
-        POIFile[] result = new POIFile[files.size()];
-        for (int i = 0; i < result.length; i++)
-            result[i] = files.get(i);
-        return result;
+        return files;
     }
 
 
@@ -155,18 +115,7 @@ final class Util {
      * 
      * @exception IOException if an I/O exception occurs
      */
-    public static List<POIFile> readPropertySets(final File poiFs)
-    throws FileNotFoundException, IOException {
-        FileInputStream stream = new FileInputStream(poiFs);
-        try {
-            return readPropertySets(stream);
-        } finally {
-            stream.close();
-        }
-    }
-            
-    public static List<POIFile> readPropertySets(final InputStream poiFs)
-    throws FileNotFoundException, IOException {
+    public static List<POIFile> readPropertySets(final File poiFs) throws IOException {
         final List<POIFile> files = new ArrayList<POIFile>(7);
         final POIFSReader r = new POIFSReader();
         POIFSReaderListener pfl = new POIFSReaderListener() {
@@ -191,28 +140,13 @@ final class Util {
         r.registerListener(pfl);
 
         /* Read the POI filesystem. */
-        r.read(poiFs);
+        InputStream is = new FileInputStream(poiFs);
+        try {
+            r.read(is);
+        } finally {
+            is.close();
+        }
 
         return files;
-    }
-
-
-
-    /**
-     * <p>Prints the system properties to System.out.</p>
-     */
-    public static void printSystemProperties()
-    {
-        final Properties p = System.getProperties();
-        final List<String> names = new LinkedList<String>();
-        for (String name : p.stringPropertyNames())
-            names.add(name);
-        Collections.sort(names);
-        for (String name : names) {
-            String value = p.getProperty(name);
-            System.out.println(name + ": " + value);
-        }
-        System.out.println("Current directory: " +
-                           System.getProperty("user.dir"));
     }
 }

@@ -36,7 +36,6 @@ import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.Util;
 import org.apache.poi.hpsf.Variant;
 import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -211,9 +210,7 @@ public class WriteAuthorAndTitle
              * unchecked exception. The message of that exception is that of
              * the underlying checked exception. */
             if (t != null) {
-                throw new HPSFRuntimeException
-                    ("Could not read file \"" + path + "/" + name +
-                     "\". Reason: " + Util.toString(t));
+                throw new HPSFRuntimeException("Could not read file \"" + path + "/" + name, t);
             }
         }
 

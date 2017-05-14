@@ -871,7 +871,7 @@ public class PropertySet {
         b.append(sectionCount);
         b.append(", sections: [\n");
         for (Section section: getSections()) {
-            b.append(section);
+            b.append(section.toString(getPropertySetIDMap()));
         }
         b.append(']');
         b.append(']');

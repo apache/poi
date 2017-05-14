@@ -36,7 +36,6 @@ import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.Util;
 import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
@@ -352,13 +351,11 @@ public class CopyCompare
 
             /* According to the definition of the processPOIFSReaderEvent method
              * we cannot pass checked exceptions to the caller. The following
-             * lines check whether a checked exception occured and throws an
+             * lines check whether a checked exception occurred and throws an
              * unchecked exception. The message of that exception is that of
              * the underlying checked exception. */
             if (t != null) {
-                throw new HPSFRuntimeException
-                    ("Could not read file \"" + path + "/" + name +
-                     "\". Reason: " + Util.toString(t));
+                throw new HPSFRuntimeException("Could not read file \"" + path + "/" + name, t);
             }
         }
 

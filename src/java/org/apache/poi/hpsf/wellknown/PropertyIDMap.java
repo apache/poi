@@ -17,9 +17,14 @@
 
 package org.apache.poi.hpsf.wellknown;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.SummaryInformation;
 
 /**
  * This is a dictionary which maps property ID values to property
@@ -31,7 +36,7 @@ import java.util.Map;
  * should treat them as unmodifiable, copy them and modifiy the
  * copies.
  */
-public class PropertyIDMap extends HashMap<Long,String> {
+public class PropertyIDMap implements Map<Long,String> {
 
     /*
      * The following definitions are for property IDs in the first
@@ -317,6 +322,26 @@ public class PropertyIDMap extends HashMap<Long,String> {
      * details!
      */
     private static PropertyIDMap summaryInformationProperties;
+    private static final Object[][] summaryInformationIdValues = {
+        { (long)PID_TITLE, "PID_TITLE" },
+        { (long)PID_SUBJECT, "PID_SUBJECT" },
+        { (long)PID_AUTHOR, "PID_AUTHOR" },
+        { (long)PID_KEYWORDS, "PID_KEYWORDS" },
+        { (long)PID_COMMENTS, "PID_COMMENTS" },
+        { (long)PID_TEMPLATE, "PID_TEMPLATE" },
+        { (long)PID_LASTAUTHOR, "PID_LASTAUTHOR" },
+        { (long)PID_REVNUMBER, "PID_REVNUMBER" },
+        { (long)PID_EDITTIME, "PID_EDITTIME" },
+        { (long)PID_LASTPRINTED, "PID_LASTPRINTED" },
+        { (long)PID_CREATE_DTM, "PID_CREATE_DTM" },
+        { (long)PID_LASTSAVE_DTM, "PID_LASTSAVE_DTM" },
+        { (long)PID_PAGECOUNT, "PID_PAGECOUNT" },
+        { (long)PID_WORDCOUNT, "PID_WORDCOUNT" },
+        { (long)PID_CHARCOUNT, "PID_CHARCOUNT" },
+        { (long)PID_THUMBNAIL, "PID_THUMBNAIL" },
+        { (long)PID_APPNAME, "PID_APPNAME" },
+        { (long)PID_SECURITY, "PID_SECURITY" },
+    };
 
     /**
      * Contains the summary information property ID values and
@@ -324,144 +349,181 @@ public class PropertyIDMap extends HashMap<Long,String> {
      * details!
      */
     private static PropertyIDMap documentSummaryInformationProperties;
-
-
-
+    private static final Object[][] documentSummaryInformationIdValues = {
+        { (long)PID_DICTIONARY, "PID_DICTIONARY" },
+        { (long)PID_CODEPAGE, "PID_CODEPAGE" },
+        { (long)PID_CATEGORY, "PID_CATEGORY" },
+        { (long)PID_PRESFORMAT, "PID_PRESFORMAT" },
+        { (long)PID_BYTECOUNT, "PID_BYTECOUNT" },
+        { (long)PID_LINECOUNT, "PID_LINECOUNT" },
+        { (long)PID_PARCOUNT, "PID_PARCOUNT" },
+        { (long)PID_SLIDECOUNT, "PID_SLIDECOUNT" },
+        { (long)PID_NOTECOUNT, "PID_NOTECOUNT" },
+        { (long)PID_HIDDENCOUNT, "PID_HIDDENCOUNT" },
+        { (long)PID_MMCLIPCOUNT, "PID_MMCLIPCOUNT" },
+        { (long)PID_SCALE, "PID_SCALE" },
+        { (long)PID_HEADINGPAIR, "PID_HEADINGPAIR" },
+        { (long)PID_DOCPARTS, "PID_DOCPARTS" },
+        { (long)PID_MANAGER, "PID_MANAGER" },
+        { (long)PID_COMPANY, "PID_COMPANY" },
+        { (long)PID_LINKSDIRTY, "PID_LINKSDIRTY" },
+    };
+    
+    
     /**
-     * Creates a {@link PropertyIDMap}.
-     *
-     * @param initialCapacity The initial capacity as defined for
-     * {@link HashMap}
-     * @param loadFactor The load factor as defined for {@link HashMap}
+     * Contains the fallback property ID values and associated strings.
+     * This is only used for lookups and not for initializing a property set
      */
-    public PropertyIDMap(final int initialCapacity, final float loadFactor)
-    {
-        super(initialCapacity, loadFactor);
-    }
+    private static PropertyIDMap fallbackProperties;
+    private static final Object[][] fallbackIdValues = {
+        { (long)PID_DICTIONARY, "PID_DICTIONARY" },
+        { (long)PID_CODEPAGE, "PID_CODEPAGE" },
+        { (long)PID_CATEGORY, "PID_CATEGORY" },
+        { (long)PID_PRESFORMAT, "PID_PRESFORMAT" },
+        { (long)PID_BYTECOUNT, "PID_BYTECOUNT" },
+        { (long)PID_LINECOUNT, "PID_LINECOUNT" },
+        { (long)PID_PARCOUNT, "PID_PARCOUNT" },
+        { (long)PID_SLIDECOUNT, "PID_SLIDECOUNT" },
+        { (long)PID_NOTECOUNT, "PID_NOTECOUNT" },
+        { (long)PID_HIDDENCOUNT, "PID_HIDDENCOUNT" },
+        { (long)PID_MMCLIPCOUNT, "PID_MMCLIPCOUNT" },
+        { (long)PID_SCALE, "PID_SCALE" },
+        { (long)PID_HEADINGPAIR, "PID_HEADINGPAIR" },
+        { (long)PID_DOCPARTS, "PID_DOCPARTS" },
+        { (long)PID_MANAGER, "PID_MANAGER" },
+        { (long)PID_COMPANY, "PID_COMPANY" },
+        { (long)PID_LINKSDIRTY, "PID_LINKSDIRTY" },
+        { (long)PID_CCHWITHSPACES, "PID_CCHWITHSPACES" },
+  // 0x12 Unused
+  // 0x13 GKPIDDSI_SHAREDDOC - Must be False
+  // 0x14 GKPIDDSI_LINKBASE - Must not be written
+  // 0x15 GKPIDDSI_HLINKS - Must not be written
+        { (long)PID_HYPERLINKSCHANGED, "PID_HYPERLINKSCHANGED" },
+        { (long)PID_VERSION, "PID_VERSION" },
+        { (long)PID_DIGSIG, "PID_DIGSIG" },
+  // 0x19 Unused
+        { (long)PID_CONTENTTYPE, "PID_CONTENTTYPE" },
+        { (long)PID_CONTENTSTATUS, "PID_CONTENTSTATUS" },
+        { (long)PID_LANGUAGE, "PID_LANGUAGE" },
+        { (long)PID_DOCVERSION, "PID_DOCVERSION" },
+        { (long)PID_MAX, "PID_MAX" },
+        { (long)PID_LOCALE, "PID_LOCALE" },
+        { (long)PID_BEHAVIOUR, "PID_BEHAVIOUR" },
+    };
 
-
+    private final Map<Long,String> idMap;
+    
 
     /**
      * Creates a {@link PropertyIDMap} backed by another map.
      *
      * @param map The instance to be created is backed by this map.
      */
-    public PropertyIDMap(final Map<Long,String> map)
-    {
-        super(map);
+    private PropertyIDMap(Object[][] idValues) {
+        Map<Long,String> m = new HashMap<Long,String>(idValues.length);
+        for (Object[] idValue : idValues) {
+            m.put((Long)idValue[0], (String)idValue[1]);
+        }
+        idMap = Collections.unmodifiableMap(m);
     }
-
-
-
-    /**
-     * Puts a ID string for an ID into the {@link
-     * PropertyIDMap}.
-     *
-     * @param id The ID.
-     * @param idString The ID string.
-     * @return As specified by the {@link java.util.Map} interface, this method
-     * returns the previous value associated with the specified
-     * <var>id</var>, or <code>null</code> if there was no mapping for
-     * key.
-     */
-    public Object put(final long id, final String idString)
-    {
-        return put(Long.valueOf(id), idString);
-    }
-
-
-
-    /**
-     * Gets the ID string for an ID from the {@link
-     * PropertyIDMap}.
-     *
-     * @param id The ID.
-     * @return The ID string associated with <var>id</var>.
-     */
-    public Object get(final long id)
-    {
-        return get(Long.valueOf(id));
-    }
-
-
 
     /**
      * @return the Summary Information properties singleton
      */
-    public static synchronized PropertyIDMap getSummaryInformationProperties()
-    {
-        if (summaryInformationProperties == null)
-        {
-            PropertyIDMap m = new PropertyIDMap(18, (float) 1.0);
-            m.put(PID_TITLE, "PID_TITLE");
-            m.put(PID_SUBJECT, "PID_SUBJECT");
-            m.put(PID_AUTHOR, "PID_AUTHOR");
-            m.put(PID_KEYWORDS, "PID_KEYWORDS");
-            m.put(PID_COMMENTS, "PID_COMMENTS");
-            m.put(PID_TEMPLATE, "PID_TEMPLATE");
-            m.put(PID_LASTAUTHOR, "PID_LASTAUTHOR");
-            m.put(PID_REVNUMBER, "PID_REVNUMBER");
-            m.put(PID_EDITTIME, "PID_EDITTIME");
-            m.put(PID_LASTPRINTED, "PID_LASTPRINTED");
-            m.put(PID_CREATE_DTM, "PID_CREATE_DTM");
-            m.put(PID_LASTSAVE_DTM, "PID_LASTSAVE_DTM");
-            m.put(PID_PAGECOUNT, "PID_PAGECOUNT");
-            m.put(PID_WORDCOUNT, "PID_WORDCOUNT");
-            m.put(PID_CHARCOUNT, "PID_CHARCOUNT");
-            m.put(PID_THUMBNAIL, "PID_THUMBNAIL");
-            m.put(PID_APPNAME, "PID_APPNAME");
-            m.put(PID_SECURITY, "PID_SECURITY");
-            summaryInformationProperties =
-                new PropertyIDMap(Collections.unmodifiableMap(m));
+    public static synchronized PropertyIDMap getSummaryInformationProperties() {
+        if (summaryInformationProperties == null) {
+            summaryInformationProperties = new PropertyIDMap(summaryInformationIdValues);
         }
         return summaryInformationProperties;
     }
 
-
-
     /**
-     * Returns the Document Summary Information properties
-     * singleton.
-     *
      * @return The Document Summary Information properties singleton.
      */
-    public static synchronized PropertyIDMap getDocumentSummaryInformationProperties()
-    {
-        if (documentSummaryInformationProperties == null)
-        {
-            PropertyIDMap m = new PropertyIDMap(17, (float) 1.0);
-            m.put(PID_DICTIONARY, "PID_DICTIONARY");
-            m.put(PID_CODEPAGE, "PID_CODEPAGE");
-            m.put(PID_CATEGORY, "PID_CATEGORY");
-            m.put(PID_PRESFORMAT, "PID_PRESFORMAT");
-            m.put(PID_BYTECOUNT, "PID_BYTECOUNT");
-            m.put(PID_LINECOUNT, "PID_LINECOUNT");
-            m.put(PID_PARCOUNT, "PID_PARCOUNT");
-            m.put(PID_SLIDECOUNT, "PID_SLIDECOUNT");
-            m.put(PID_NOTECOUNT, "PID_NOTECOUNT");
-            m.put(PID_HIDDENCOUNT, "PID_HIDDENCOUNT");
-            m.put(PID_MMCLIPCOUNT, "PID_MMCLIPCOUNT");
-            m.put(PID_SCALE, "PID_SCALE");
-            m.put(PID_HEADINGPAIR, "PID_HEADINGPAIR");
-            m.put(PID_DOCPARTS, "PID_DOCPARTS");
-            m.put(PID_MANAGER, "PID_MANAGER");
-            m.put(PID_COMPANY, "PID_COMPANY");
-            m.put(PID_LINKSDIRTY, "PID_LINKSDIRTY");
-            documentSummaryInformationProperties =
-                new PropertyIDMap(Collections.unmodifiableMap(m));
+    public static synchronized PropertyIDMap getDocumentSummaryInformationProperties() {
+        if (documentSummaryInformationProperties == null) {
+            documentSummaryInformationProperties = new PropertyIDMap(documentSummaryInformationIdValues);
         }
         return documentSummaryInformationProperties;
     }
 
+    /**
+     * Returns a property map, which is only used as a fallback, i.e. if available, the correct map
+     * for {@link DocumentSummaryInformation} or {@link SummaryInformation} should be used.
+     */
+    public static synchronized PropertyIDMap getFallbackProperties() {
+        if (fallbackProperties == null) {
+            fallbackProperties = new PropertyIDMap(fallbackIdValues);
+        }
+        return fallbackProperties;
+    }
+    
+    @Override
+    public int size() {
+        return idMap.size();
+    }
 
+    @Override
+    public boolean isEmpty() {
+        return idMap.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return idMap.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return idMap.containsValue(value);
+    }
+
+    @Override
+    public String get(Object key) {
+        return idMap.get(key);
+    }
+
+    @Override
+    public String put(Long key, String value) {
+        return idMap.put(key, value);
+    }
+
+    @Override
+    public String remove(Object key) {
+        return idMap.remove(key);
+    }
+
+    @Override
+    public void putAll(Map<? extends Long, ? extends String> m) {
+        idMap.putAll(m);
+    }
+
+    @Override
+    public void clear() {
+        idMap.clear();
+    }
+
+    @Override
+    public Set<Long> keySet() {
+        return idMap.keySet();
+    }
+
+    @Override
+    public Collection<String> values() {
+        return idMap.values();
+    }
+
+    @Override
+    public Set<Entry<Long, String>> entrySet() {
+        return idMap.entrySet();
+    }
 
     /**
      * For the most basic testing.
      *
      * @param args The command-line arguments
      */
-    public static void main(final String[] args)
-    {
+    public static void main(final String[] args) {
         PropertyIDMap s1 = getSummaryInformationProperties();
         PropertyIDMap s2 = getDocumentSummaryInformationProperties();
         System.out.println("s1: " + s1);

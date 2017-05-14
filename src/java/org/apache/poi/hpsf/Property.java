@@ -22,7 +22,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
@@ -377,15 +381,18 @@ public class Property {
      */
     @Override
     public String toString() {
-        return toString(Property.DEFAULT_CODEPAGE);
+        return toString(Property.DEFAULT_CODEPAGE, null);
     }
     
-    public String toString(int codepage) {
-        final StringBuffer b = new StringBuffer();
+    public String toString(int codepage, PropertyIDMap idMap) {
+        final StringBuilder b = new StringBuilder();
         b.append("Property[");
         b.append("id: ");
-        b.append(getID());
-        String idName = getNameFromID();
+        b.append(id);
+        String idName = (idMap == null) ? null : idMap.get(id);
+        if (idName == null) {
+            idName = PropertyIDMap.getFallbackProperties().get(id);
+        }
         if (idName != null) {
             b.append(" (");
             b.append(idName);
@@ -399,6 +406,7 @@ public class Property {
         final Object value = getValue();
         b.append(", value: ");
         if (value instanceof String) {
+            b.append((String)value);
             b.append("\n");
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             try {
@@ -407,13 +415,11 @@ public class Property {
                 LOG.log(POILogger.WARN, "can't serialize string", e);
             }
             
-            b.append(" [");
             // skip length field
             if(bos.size() > 2*LittleEndianConsts.INT_SIZE) {
                 final String hex = HexDump.dump(bos.toByteArray(), -2*LittleEndianConsts.INT_SIZE, 2*LittleEndianConsts.INT_SIZE);
                 b.append(hex);
             }
-            b.append("]");
         } else if (value instanceof byte[]) {
             b.append("\n");
             byte[] bytes = (byte[])value;
@@ -421,7 +427,32 @@ public class Property {
                 String hex = HexDump.dump(bytes, 0L, 0);
                 b.append(hex);
             }
-        } else if (type == Variant.VT_EMPTY || type == Variant.VT_NULL) {
+        } else if (value instanceof java.util.Date) {
+            java.util.Date d = (java.util.Date)value;
+            long filetime = Filetime.dateToFileTime(d);
+            if (Filetime.isUndefined(d)) {
+                b.append("<undefined>");
+            } else if ((filetime >>> 32) == 0) {
+                // if the upper dword isn't set, we deal with time intervals
+                long l = filetime*100;
+                TimeUnit tu = TimeUnit.NANOSECONDS;
+                final long hr  = tu.toHours(l);
+                l -= TimeUnit.HOURS.toNanos(hr);
+                final long min = tu.toMinutes(l);
+                l -= TimeUnit.MINUTES.toNanos(min);
+                final long sec = tu.toSeconds(l);
+                l -= TimeUnit.SECONDS.toNanos(sec);
+                final long ms  = tu.toMillis(l);
+                
+                String str = String.format(Locale.ROOT, "%02d:%02d:%02d.%03d",hr,min,sec,ms);
+                b.append(str);
+            } else {
+                Calendar cal = Calendar.getInstance(LocaleUtil.TIMEZONE_UTC, Locale.ROOT);
+                cal.setTime(d);
+                // use ISO-8601 timestamp format
+                b.append(DatatypeConverter.printDateTime(cal));
+            }
+        } else if (type == Variant.VT_EMPTY || type == Variant.VT_NULL || value == null) {
             b.append("null");
         } else {
             b.append(value.toString());
@@ -458,45 +489,6 @@ public class Property {
         return null;
     }
     
-    private String getNameFromID() {
-        switch ((int)getID()) {
-        case PropertyIDMap.PID_DICTIONARY: return "PID_DICTIONARY";
-        case PropertyIDMap.PID_CODEPAGE: return "PID_CODEPAGE";
-        case PropertyIDMap.PID_CATEGORY: return "PID_CATEGORY";
-        case PropertyIDMap.PID_PRESFORMAT: return "PID_PRESFORMAT";
-        case PropertyIDMap.PID_BYTECOUNT: return "PID_BYTECOUNT";
-        case PropertyIDMap.PID_LINECOUNT: return "PID_LINECOUNT";
-        case PropertyIDMap.PID_PARCOUNT: return "PID_PARCOUNT";
-        case PropertyIDMap.PID_SLIDECOUNT: return "PID_SLIDECOUNT";
-        case PropertyIDMap.PID_NOTECOUNT: return "PID_NOTECOUNT";
-        case PropertyIDMap.PID_HIDDENCOUNT: return "PID_HIDDENCOUNT";
-        case PropertyIDMap.PID_MMCLIPCOUNT: return "PID_MMCLIPCOUNT";
-        case PropertyIDMap.PID_SCALE: return "PID_SCALE";
-        case PropertyIDMap.PID_HEADINGPAIR: return "PID_HEADINGPAIR";
-        case PropertyIDMap.PID_DOCPARTS: return "PID_DOCPARTS";
-        case PropertyIDMap.PID_MANAGER: return "PID_MANAGER";
-        case PropertyIDMap.PID_COMPANY: return "PID_COMPANY";
-        case PropertyIDMap.PID_LINKSDIRTY: return "PID_LINKSDIRTY";
-        case PropertyIDMap.PID_CCHWITHSPACES: return "PID_CCHWITHSPACES";
-        // 0x12 Unused
-        // 0x13 GKPIDDSI_SHAREDDOC - Must be False
-        // 0x14 GKPIDDSI_LINKBASE - Must not be written
-        // 0x15 GKPIDDSI_HLINKS - Must not be written
-        case PropertyIDMap.PID_HYPERLINKSCHANGED: return "PID_HYPERLINKSCHANGED";
-        case PropertyIDMap.PID_VERSION: return "PID_VERSION";
-        case PropertyIDMap.PID_DIGSIG: return "PID_DIGSIG";
-        // 0x19 Unused
-        case PropertyIDMap.PID_CONTENTTYPE: return "PID_CONTENTTYPE";
-        case PropertyIDMap.PID_CONTENTSTATUS: return "PID_CONTENTSTATUS";
-        case PropertyIDMap.PID_LANGUAGE: return "PID_LANGUAGE";
-        case PropertyIDMap.PID_DOCVERSION: return "PID_DOCVERSION";
-        case PropertyIDMap.PID_MAX: return "PID_MAX";
-        case PropertyIDMap.PID_LOCALE: return "PID_LOCALE";
-        case PropertyIDMap.PID_BEHAVIOUR: return "PID_BEHAVIOUR";
-        default: return null;
-        }
-    }
-
     /**
      * Writes the property to an output stream.
      *

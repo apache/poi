@@ -237,7 +237,7 @@ public class TestWrite {
                 try {
                     psa[0] = PropertySetFactory.create(event.getStream());
                 } catch (Exception ex) {
-                    fail(org.apache.poi.hpsf.Util.toString(ex));
+                    fail(ex.getMessage());
                 }
             }},
             SummaryInformation.DEFAULT_STREAM_NAME
@@ -340,7 +340,7 @@ public class TestWrite {
             try {
                 PropertySetFactory.create(event.getStream());
             } catch (Exception ex) {
-                fail(org.apache.poi.hpsf.Util.toString(ex));
+                fail(ex.getMessage());
             }
         }
     }
