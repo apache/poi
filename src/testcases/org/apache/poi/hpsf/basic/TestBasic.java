@@ -17,7 +17,6 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -28,10 +27,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.Filetime;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
@@ -48,33 +50,24 @@ import org.junit.Test;
  */
 public final class TestBasic {
 
-    private static final String POI_FS = "TestGermanWord90.doc";
-    private static final String[] POI_FILES = new String[]
-        {
-            "\005SummaryInformation",
-            "\005DocumentSummaryInformation",
-            "WordDocument",
-            "\001CompObj",
-            "1Table"
-        };
-    private static final int BYTE_ORDER = 0xfffe;
-    private static final int FORMAT     = 0x0000;
-    private static final int OS_VERSION = 0x00020A04;
-    private static final byte[] CLASS_ID =
-        {
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-        };
-    private static final int[] SECTION_COUNT =
-        {1, 2};
-    private static final boolean[] IS_SUMMARY_INFORMATION =
-        {true, false};
-    private static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION =
-        {false, true};
+    private static final POIDataSamples samples = POIDataSamples.getHPSFInstance();
 
-    private POIFile[] poiFiles;
+    private static final String[] POI_FILES = {
+        "\005SummaryInformation",
+        "\005DocumentSummaryInformation",
+        "WordDocument",
+        "\001CompObj",
+        "1Table"
+    };
+    private static final int BYTE_ORDER   = 0xfffe;
+    private static final int FORMAT       = 0x0000;
+    private static final int OS_VERSION   = 0x00020A04;
+    private static final ClassID CLASS_ID = new ClassID("{00000000-0000-0000-0000-000000000000}");
+    private static final int[] SECTION_COUNT = {1, 2};
+    private static final boolean[] IS_SUMMARY_INFORMATION = {true, false};
+    private static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION = {false, true};
+
+    private List<POIFile> poiFiles;
 
 
     /**
@@ -84,10 +77,8 @@ public final class TestBasic {
      * @exception IOException if any other I/O exception occurs.
      */
     @Before
-    public void setUp() throws IOException
-    {
-        POIDataSamples samples = POIDataSamples.getHPSFInstance();
-        final File data = samples.getFile(POI_FS);
+    public void setUp() throws IOException {
+        final File data = samples.getFile("TestGermanWord90.doc");
         poiFiles = Util.readPOIFiles(data);
     }
 
@@ -96,11 +87,11 @@ public final class TestBasic {
      * are expected to be in a certain order.</p>
      */
     @Test
-    public void testReadFiles()
-    {
+    public void testReadFiles() {
         String[] expected = POI_FILES;
-        for (int i = 0; i < expected.length; i++)
-            assertEquals(poiFiles[i].getName(), expected[i]);
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(poiFiles.get(i).getName(), expected[i]);
+        }
     }
 
     /**
@@ -119,30 +110,22 @@ public final class TestBasic {
      */
     @Test
     public void testCreatePropertySets()
-    throws UnsupportedEncodingException, IOException
-    {
-        Class<?>[] expected = new Class[]
-            {
-                SummaryInformation.class,
-                DocumentSummaryInformation.class,
-                NoPropertySetStreamException.class,
-                NoPropertySetStreamException.class,
-                NoPropertySetStreamException.class
-            };
-        for (int i = 0; i < expected.length; i++)
-        {
-            InputStream in = new ByteArrayInputStream(poiFiles[i].getBytes());
+    throws UnsupportedEncodingException, IOException {
+        Class<?>[] expected = {
+            SummaryInformation.class,
+            DocumentSummaryInformation.class,
+            NoPropertySetStreamException.class,
+            NoPropertySetStreamException.class,
+            NoPropertySetStreamException.class
+        };
+        for (int i = 0; i < expected.length; i++) {
+            InputStream in = new ByteArrayInputStream(poiFiles.get(i).getBytes());
             Object o;
-            try
-            {
+            try {
                 o = PropertySetFactory.create(in);
-            }
-            catch (NoPropertySetStreamException ex)
-            {
+            } catch (NoPropertySetStreamException ex) {
                 o = ex;
-            }
-            catch (MarkUnsupportedException ex)
-            {
+            } catch (MarkUnsupportedException ex) {
                 o = ex;
             }
             in.close();
@@ -159,17 +142,15 @@ public final class TestBasic {
      * @exception HPSFException if any HPSF exception occurs
      */
     @Test
-    public void testPropertySetMethods() throws IOException, HPSFException
-    {
+    public void testPropertySetMethods() throws IOException, HPSFException {
         /* Loop over the two property sets. */
-        for (int i = 0; i < 2; i++)
-        {
-            byte[] b = poiFiles[i].getBytes();
+        for (int i = 0; i < 2; i++) {
+            byte[] b = poiFiles.get(i).getBytes();
             PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(b));
             assertEquals(BYTE_ORDER, ps.getByteOrder());
             assertEquals(FORMAT, ps.getFormat());
             assertEquals(OS_VERSION, ps.getOSVersion());
-            assertArrayEquals(CLASS_ID, ps.getClassID().getBytes());
+            assertEquals(CLASS_ID, ps.getClassID());
             assertEquals(SECTION_COUNT[i], ps.getSectionCount());
             assertEquals(IS_SUMMARY_INFORMATION[i], ps.isSummaryInformation());
             assertEquals(IS_DOCUMENT_SUMMARY_INFORMATION[i], ps.isDocumentSummaryInformation());
@@ -185,11 +166,9 @@ public final class TestBasic {
      * @exception HPSFException if any HPSF exception occurs
      */
     @Test
-    public void testSectionMethods() throws IOException, HPSFException
-    {
-        final SummaryInformation si = (SummaryInformation)
-            PropertySetFactory.create(new ByteArrayInputStream
-                (poiFiles[0].getBytes()));
+    public void testSectionMethods() throws IOException, HPSFException {
+        InputStream is = new ByteArrayInputStream(poiFiles.get(0).getBytes());
+        final SummaryInformation si = (SummaryInformation)PropertySetFactory.create(is);
         final List<Section> sections = si.getSections();
         final Section s = sections.get(0);
         assertEquals(s.getFormatID(), SectionIDMap.SUMMARY_INFORMATION_ID);
@@ -197,5 +176,17 @@ public final class TestBasic {
         assertEquals(17, s.getPropertyCount());
         assertEquals("Titel", s.getProperty(2));
         assertEquals(1764, s.getSize());
+    }
+    
+    @Test
+    public void bug52117LastPrinted() throws IOException, HPSFException {
+        File f = samples.getFile("TestBug52117.doc");
+        POIFile poiFile = Util.readPOIFiles(f, new String[]{POI_FILES[0]}).get(0);
+        InputStream in = new ByteArrayInputStream(poiFile.getBytes());
+        SummaryInformation si = (SummaryInformation)PropertySetFactory.create(in);
+        Date lastPrinted = si.getLastPrinted();
+        long editTime = si.getEditTime();
+        assertTrue(Filetime.isUndefined(lastPrinted));
+        assertEquals(1800000000L, editTime);
     }
 }

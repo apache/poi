@@ -351,7 +351,7 @@ public final class SummaryInformation extends SpecialPropertySet {
         if (d == null) {
             return 0;
         }
-        return Util.dateToFileTime(d);
+        return Filetime.dateToFileTime(d);
     }
 
 
@@ -362,7 +362,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      * @param time The time to set.
      */
     public void setEditTime(final long time) {
-        final Date d = Util.filetimeToDate(time);
+        final Date d = Filetime.filetimeToDate(time);
         getFirstSection().setProperty(PropertyIDMap.PID_EDITTIME, Variant.VT_FILETIME, d);
     }
 

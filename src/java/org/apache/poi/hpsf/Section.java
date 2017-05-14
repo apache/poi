@@ -55,28 +55,18 @@ public class Section {
      * The section's format ID, {@link #getFormatID}.
      */
     private ClassID formatID;
-    /**
-     * If the "dirty" flag is true, the section's size must be
-     * (re-)calculated before the section is written.
-     */
-    private boolean dirty = true;
 
     /**
      * Contains the bytes making out the section. This byte array is
      * established when the section's size is calculated and can be reused
-     * later. It is valid only if the "dirty" flag is false.
+     * later. If the array is empty, the section was modified and the bytes need to be regenerated.
      */
-    private byte[] sectionBytes;
+    private final ByteArrayOutputStream sectionBytes = new ByteArrayOutputStream();
 
     /**
      * The offset of the section in the stream.
      */
     private final long _offset;
-
-    /**
-     * The section's size in bytes.
-     */
-    private int size;
 
     /**
      * This section's properties.
@@ -126,7 +116,6 @@ public class Section {
      * @exception UnsupportedEncodingException if the section's codepage is not
      * supported.
      */
-    @SuppressWarnings("unchecked")
     public Section(final byte[] src, final int offset) throws UnsupportedEncodingException {
         /*
          * Read the format ID.
@@ -154,7 +143,7 @@ public class Section {
         /*
          * Read the section length.
          */
-        size = (int)leis.readUInt();
+        int size = (int)Math.min(leis.readUInt(), src.length-_offset);
 
         /*
          * Read the number of properties.
@@ -213,6 +202,7 @@ public class Section {
 
             /* Read the codepage number. */
             codepage =  leis.readUShort();
+            setCodepage(codepage);
         }
 
 
@@ -222,6 +212,10 @@ public class Section {
             long off = me.getKey();
             long id = me.getValue();
 
+            if (id == PropertyIDMap.PID_CODEPAGE) {
+                continue;
+            }
+            
             int pLen = propLen(offset2Id, off, size);
             leis.setReadIndex((int)(this._offset + off));
 
@@ -239,12 +233,13 @@ public class Section {
                         LOG.log(POILogger.INFO, "Dictionary fallback failed - ignoring property");
                     }
                 };
-            } else if (id == PropertyIDMap.PID_CODEPAGE) {
-                setCodepage(codepage);
             } else {
                 setProperty(new MutableProperty(id, leis, pLen, codepage));
             }
         }
+        
+        sectionBytes.write(src, (int)_offset, size);
+        padSectionBytes();
     }
 
     /**
@@ -338,9 +333,8 @@ public class Section {
     public void setProperties(final Property[] properties) {
         this.properties.clear();
         for (Property p : properties) {
-            this.properties.put(p.getID(), p);
+            setProperty(p);
         }
-        dirty = true;
     }
 
     /**
@@ -448,7 +442,7 @@ public class Section {
         Property old = properties.get(p.getID());
         if (old == null || !old.equals(p)) {
             properties.put(p.getID(), p);
-            dirty = true;
+            sectionBytes.reset();
         }
     }
 
@@ -543,17 +537,17 @@ public class Section {
      * @return the section's size in bytes.
      */
     public int getSize() {
-        if (dirty) {
-            try {
-                size = calcSize();
-                dirty = false;
-            } catch (HPSFRuntimeException ex) {
-                throw ex;
-            } catch (Exception ex) {
-                throw new HPSFRuntimeException(ex);
-            }
+        int size = sectionBytes.size();
+        if (size > 0) {
+            return size;
         }
-        return size;
+        try {
+            return calcSize();
+        } catch (HPSFRuntimeException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new HPSFRuntimeException(ex);
+        }
     }
 
     /**
@@ -566,16 +560,19 @@ public class Section {
      * @throws IOException
      */
     private int calcSize() throws WritingNotSupportedException, IOException {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        write(out);
-        out.close();
-        /* Pad to multiple of 4 bytes so that even the Windows shell (explorer)
-         * shows custom properties. */
-        sectionBytes = Util.pad4(out.toByteArray());
-        return sectionBytes.length;
+        sectionBytes.reset();
+        write(sectionBytes);
+        padSectionBytes();
+        return sectionBytes.size();
     }
 
-
+    private void padSectionBytes() {
+        byte[] padArray = { 0, 0, 0 };
+        /* Pad to multiple of 4 bytes so that even the Windows shell (explorer)
+         * shows custom properties. */
+        int pad = (4 - (sectionBytes.size() & 0x3)) & 0x3;
+        sectionBytes.write(padArray, 0, pad);
+    }
 
 
     /**
@@ -623,12 +620,8 @@ public class Section {
      * Removes all properties from the section including 0 (dictionary) and
      * 1 (codepage).
      */
-    public void clear()
-    {
-        final Property[] properties = getProperties();
-        for (int i = 0; i < properties.length; i++)
-        {
-            final Property p = properties[i];
+    public void clear() {
+        for (Property p : getProperties()) {
             removeProperty(p.getID());
         }
     }
@@ -639,17 +632,17 @@ public class Section {
      *
      * <ul>
      *
-     * <li>The other object is not a {@link Section}.</li>
+     * <li>The other object is not a {@link Section}.
      *
-     * <li>The format IDs of the two sections are not equal.</li>
+     * <li>The format IDs of the two sections are not equal.
      *
      * <li>The sections have a different number of properties. However,
-     * properties with ID 1 (codepage) are not counted.</li>
+     * properties with ID 1 (codepage) are not counted.
      *
-     * <li>The other object is not a {@link Section}.</li>
+     * <li>The other object is not a {@link Section}.
      *
      * <li>The properties have different values. The order of the properties
-     * is irrelevant.</li>
+     * is irrelevant.
      *
      * </ul>
      *
@@ -695,7 +688,9 @@ public class Section {
      * @param id The ID of the property to be removed
      */
     public void removeProperty(final long id) {
-        dirty |= (properties.remove(id) != null);
+        if (properties.remove(id) != null) {
+            sectionBytes.reset();
+        }
     }
 
     /**
@@ -716,9 +711,9 @@ public class Section {
     public int write(final OutputStream out) throws WritingNotSupportedException, IOException {
         /* Check whether we have already generated the bytes making out the
          * section. */
-        if (!dirty && sectionBytes != null) {
-            out.write(sectionBytes);
-            return sectionBytes.length;
+        if (sectionBytes.size() > 0) {
+            sectionBytes.writeTo(out);
+            return sectionBytes.size();
         }
 
         /* Writing the section's dictionary it tricky. If there is a dictionary
@@ -971,6 +966,10 @@ public class Section {
      */
     @Override
     public String toString() {
+        return toString(null);
+    }
+    
+    public String toString(PropertyIDMap idMap) {
         final StringBuffer b = new StringBuffer();
         final Property[] pa = getProperties();
         b.append("\n\n\n");
@@ -990,7 +989,7 @@ public class Section {
             codepage = Property.DEFAULT_CODEPAGE;
         }
         for (Property p : pa) {
-            b.append(p.toString(codepage));
+            b.append(p.toString(codepage, idMap));
             b.append(",\n");
         }
         b.append(']');

@@ -28,7 +28,7 @@ import java.util.Locale;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
-import org.apache.poi.hpsf.Util;
+import org.apache.poi.hpsf.Filetime;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
@@ -52,7 +52,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
       byte[] binData = getData();
       if(binData.length == 8) {
          // The value is a 64 bit Windows Filetime
-         this.data = Util.filetimeToDate(
+         this.data = Filetime.filetimeToDate(
                LittleEndian.getLong(getData(), 0)
          );
       } else if(binData.length == 14) {

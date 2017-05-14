@@ -207,7 +207,7 @@ public class VariantSupport extends Variant {
 
             case Variant.VT_FILETIME:
                 Filetime filetime = (Filetime) typedPropertyValue.getValue();
-                return Util.filetimeToDate( (int) filetime.getHigh(), (int) filetime.getLow() );
+                return filetime.getJavaValue();
 
             case Variant.VT_LPSTR:
                 CodePageString cpString = (CodePageString) typedPropertyValue.getValue();
@@ -413,13 +413,8 @@ public class VariantSupport extends Variant {
                 break;
 
             case Variant.VT_FILETIME:
-                if (value instanceof Date) {
-                    long filetime = Util.dateToFileTime((Date) value);
-                    int high = (int) ((filetime >> 32) & 0x00000000FFFFFFFFL);
-                    int low = (int) (filetime & 0x00000000FFFFFFFFL);
-                    Filetime filetimeValue = new Filetime( low, high);
-                    length = filetimeValue.write( out );
-                }
+                Filetime filetimeValue = (value instanceof Date) ? new Filetime((Date)value) : new Filetime();
+                length = filetimeValue.write( out );
                 break;
 
             default:

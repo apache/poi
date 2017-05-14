@@ -17,14 +17,17 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -35,27 +38,29 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.Variant;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * <p>Test case for OLE2 files with empty properties. An empty property's type
- * is {@link Variant#VT_EMPTY}.</p>
+ * Test case for OLE2 files with empty properties.
+ * An empty property's type is {@link Variant#VT_EMPTY}.
  */
-public final class TestEmptyProperties extends TestCase {
+public final class TestEmptyProperties {
+
+    private static final POIDataSamples samples = POIDataSamples.getHPSFInstance();
 
     /**
-     * <p>This test file's summary information stream contains some empty
-     * properties.</p>
+     * This test file's summary information stream contains some empty properties.
      */
 	private static final String POI_FS = "TestCorel.shw";
 
-	private static final String[] POI_FILES = new String[]
-        {
-            "PerfectOffice_MAIN",
-            "\005SummaryInformation",
-            "Main"
-        };
+	private static final String[] POI_FILES = {
+        "PerfectOffice_MAIN",
+        "\005SummaryInformation",
+        "Main"
+    };
 
-	private POIFile[] poiFiles;
+	private List<POIFile> poiFiles;
 
     /**
      * <p>Read a the test file from the "data" directory.</p>
@@ -64,24 +69,21 @@ public final class TestEmptyProperties extends TestCase {
      * does not exist
      * @exception IOException if an I/O exception occurs
      */
-    @Override
-    public void setUp() throws FileNotFoundException, IOException
-    {
-        POIDataSamples samples = POIDataSamples.getHPSFInstance();
+    @Before
+    public void setUp() throws IOException {
         final File data = samples.getFile(POI_FS);
-
         poiFiles = Util.readPOIFiles(data);
     }
 
     /**
-     * <p>Checks the names of the files in the POI filesystem. They
-     * are expected to be in a certain order.</p>
+     * Checks the names of the files in the POI filesystem. They
+     * are expected to be in a certain order.
      */
-    public void testReadFiles()
-    {
+    @Test
+    public void testReadFiles() {
         String[] expected = POI_FILES;
         for (int i = 0; i < expected.length; i++)
-            assertEquals(poiFiles[i].getName(), expected[i]);
+            assertEquals(poiFiles.get(i).getName(), expected[i]);
     }
 
     /**
@@ -98,29 +100,22 @@ public final class TestEmptyProperties extends TestCase {
      * @exception UnsupportedEncodingException if a character encoding is not
      * supported.
      */
+    @Test
     public void testCreatePropertySets()
-    throws UnsupportedEncodingException, IOException
-    {
-        Class<?>[] expected = new Class[]
-            {
-                NoPropertySetStreamException.class,
-                SummaryInformation.class,
-                NoPropertySetStreamException.class
-            };
-        for (int i = 0; i < expected.length; i++)
-        {
-            InputStream in = new ByteArrayInputStream(poiFiles[i].getBytes());
+    throws UnsupportedEncodingException, IOException {
+        Class<?>[] expected =  {
+            NoPropertySetStreamException.class,
+            SummaryInformation.class,
+            NoPropertySetStreamException.class
+        };
+        for (int i = 0; i < expected.length; i++) {
+            InputStream in = new ByteArrayInputStream(poiFiles.get(i).getBytes());
             Object o;
-            try
-            {
+            try {
                 o = PropertySetFactory.create(in);
-            }
-            catch (NoPropertySetStreamException ex)
-            {
+            } catch (NoPropertySetStreamException ex) {
                 o = ex;
-            }
-            catch (MarkUnsupportedException ex)
-            {
+            } catch (MarkUnsupportedException ex) {
                 o = ex;
             }
             in.close();
@@ -136,11 +131,10 @@ public final class TestEmptyProperties extends TestCase {
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if an HPSF operation fails
      */
-    public void testPropertySetMethods() throws IOException, HPSFException
-    {
-        byte[] b = poiFiles[1].getBytes();
-        PropertySet ps =
-            PropertySetFactory.create(new ByteArrayInputStream(b));
+    @Test
+    public void testPropertySetMethods() throws IOException, HPSFException {
+        byte[] b = poiFiles.get(1).getBytes();
+        PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(b));
         SummaryInformation s = (SummaryInformation) ps;
         assertNull(s.getTitle());
         assertNull(s.getSubject());
