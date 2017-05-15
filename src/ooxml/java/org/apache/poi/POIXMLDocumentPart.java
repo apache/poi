@@ -268,7 +268,7 @@ public class POIXMLDocumentPart {
      * @since 3.14-Beta1
      */
     public final RelationPart addRelation(String relId, POIXMLRelation relationshipType, POIXMLDocumentPart part) {
-        PackageRelationship pr = findExistingRelation(part);
+        PackageRelationship pr = this.packagePart.findExistingRelation(part.getPackagePart());
         if (pr == null) {
             PackagePartName ppn = part.getPackagePart().getPartName();
             String relType = relationshipType.getRelation();
@@ -288,30 +288,6 @@ public class POIXMLDocumentPart {
         relations.put(pr.getId(), new RelationPart(pr,part));
         part.incrementRelationCounter();
 
-    }
-
-    /**
-     * Check if the new part was already added before via PackagePart.addRelationship()
-     *
-     * @param part to find the relationship for
-     * @return The existing relationship, or null if there isn't yet one
-     */
-    private PackageRelationship findExistingRelation(POIXMLDocumentPart part) {
-        String ppn = part.getPackagePart().getPartName().getName();
-        try {
-            for (PackageRelationship pr : packagePart.getRelationships()) {
-                if (pr.getTargetMode() == TargetMode.EXTERNAL) {
-                    continue;
-                }
-                PackagePart pp = packagePart.getRelatedPart(pr);
-                if (ppn.equals(pp.getPartName().getName())) {
-                    return pr;
-                }
-            }
-        } catch (InvalidFormatException e) {
-            throw new POIXMLException("invalid package relationships", e);
-        }
-        return null;
     }
 
     /**

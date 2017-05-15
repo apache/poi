@@ -18,10 +18,7 @@ package org.apache.poi.openxml4j.opc;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -56,6 +53,12 @@ public final class PackageRelationshipCollection implements
     private TreeMap<String, PackageRelationship> relationshipsByType;
 
     /**
+     * A lookup of internal relationships to avoid
+     */
+    private HashMap<String, PackageRelationship> internalRelationshipsByTargetName = new HashMap<String, PackageRelationship>();
+
+
+    /**
      * This relationshipPart.
      */
     private PackagePart relationshipPart;
@@ -74,7 +77,7 @@ public final class PackageRelationshipCollection implements
      * Reference to the package.
      */
     private OPCPackage container;
-    
+
     /**
      * The ID number of the next rID# to generate, or -1
      *  if that is still to be determined.
@@ -230,6 +233,9 @@ public final class PackageRelationshipCollection implements
                 sourcePart, targetUri, targetMode, relationshipType, id);
         relationshipsByID.put(rel.getId(), rel);
         relationshipsByType.put(rel.getRelationshipType(), rel);
+        if (targetMode == TargetMode.INTERNAL){
+            internalRelationshipsByTargetName.put(targetUri.toASCIIString(), rel);
+        }
         return rel;
     }
 
@@ -245,22 +251,9 @@ public final class PackageRelationshipCollection implements
             if (rel != null) {
                 relationshipsByID.remove(rel.getId());
                 relationshipsByType.values().remove(rel);
+                internalRelationshipsByTargetName.values().remove(rel);
             }
         }
-    }
-
-    /**
-     * Remove a relationship by its reference.
-     *
-     * @param rel
-     *            The relationship to delete.
-     */
-    public void removeRelationship(PackageRelationship rel) {
-        if (rel == null)
-            throw new IllegalArgumentException("rel");
-
-        relationshipsByID.values().remove(rel);
-        relationshipsByType.values().remove(rel);
     }
 
     /**
@@ -413,6 +406,11 @@ public final class PackageRelationshipCollection implements
     public void clear() {
         relationshipsByID.clear();
         relationshipsByType.clear();
+        internalRelationshipsByTargetName.clear();
+    }
+
+    public PackageRelationship findExistingInternalRelation(PackagePart packagePart) {
+        return internalRelationshipsByTargetName.get(packagePart.getPartName().getName());
     }
 
     @Override
