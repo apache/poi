@@ -17,8 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.io.Serializable;
+import java.util.*;
 
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 
@@ -28,21 +28,19 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
  * @author Julien Chable
  * @version 0.1
  */
-public final class PackagePartCollection extends
-		TreeMap<PackagePartName, PackagePart> {
+public final class PackagePartCollection implements Serializable {
 
-	private static final long serialVersionUID = 2515031135957635515L;
+	private static final long serialVersionUID = 2515031135957635517L;
 
 	/**
-	 * Arraylist use to store this collection part names as string for rule
+	 * HashSet use to store this collection part names as string for rule
 	 * M1.11 optimized checking.
 	 */
-	private ArrayList<String> registerPartNameStr = new ArrayList<String>();
+	private HashSet<String> registerPartNameStr = new HashSet<String>();
 
-	@Override
-	public Object clone() {
-		return super.clone();
-	}
+
+	private final HashMap<PackagePartName, PackagePart> packagePartLookup = new HashMap<PackagePartName, PackagePart>();
+
 
 	/**
 	 * Check rule [M1.11]: a package implementer shall neither create nor
@@ -53,11 +51,10 @@ public final class PackagePartCollection extends
 	 *                Throws if you try to add a part with a name derived from
 	 *                another part name.
 	 */
-	@Override
 	public PackagePart put(PackagePartName partName, PackagePart part) {
 		String[] segments = partName.getURI().toASCIIString().split(
 				PackagingURIHelper.FORWARD_SLASH_STRING);
-		StringBuffer concatSeg = new StringBuffer();
+		StringBuilder concatSeg = new StringBuilder();
 		for (String seg : segments) {
 			if (!seg.equals(""))
 				concatSeg.append(PackagingURIHelper.FORWARD_SLASH_CHAR);
@@ -68,14 +65,35 @@ public final class PackagePartCollection extends
 			}
 		}
 		this.registerPartNameStr.add(partName.getName());
-		return super.put(partName, part);
+		return packagePartLookup.put(partName, part);
 	}
 
-	@Override
-	public PackagePart remove(Object key) {
-		if (key instanceof PackagePartName) {
-			this.registerPartNameStr.remove(((PackagePartName) key).getName());
-		}
-		return super.remove(key);
+	public PackagePart remove(PackagePartName key) {
+		this.registerPartNameStr.remove(key.getName());
+		return packagePartLookup.remove(key);
+	}
+
+
+	/**
+	 * The values themselves should be returned in sorted order. Doing it here
+	 * avoids paying the high cost of Natural Ordering per insertion.
+	 */
+	public Collection<PackagePart> sortedValues() {
+		ArrayList<PackagePart> packageParts = new ArrayList<PackagePart>(packagePartLookup.values());
+		Collections.sort(packageParts);
+		return packageParts;
+
+	}
+
+	public boolean containsKey(PackagePartName partName) {
+		return packagePartLookup.containsKey(partName);
+	}
+
+	public PackagePart get(PackagePartName partName) {
+		return packagePartLookup.get(partName);
+	}
+
+	public int size() {
+		return packagePartLookup.size();
 	}
 }

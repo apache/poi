@@ -18,10 +18,12 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.ShapeTypes;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
@@ -31,7 +33,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -755,7 +757,71 @@ public class TestXSSFDrawing {
         shapes = drawing.getShapes();
         assertEquals(4, shapes.size());
         wb2.close();
+        }
 
+    @Test
+    public void testXSSFSAddPicture() throws Exception {
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
+        //multiple calls of createDrawingPatriarch should return the same instance of XSSFDrawing
+        XSSFDrawing dr1 = sheet.createDrawingPatriarch();
+        XSSFDrawing dr2 = sheet.createDrawingPatriarch();
+        assertSame(dr1, dr2);
+
+        List<RelationPart> rels = sheet.getRelationParts();
+        assertEquals(1, rels.size());
+        RelationPart rp = rels.get(0);
+        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
+
+        assertEquals(0, rp.getDocumentPart().getRelations().size());
+
+        XSSFDrawing drawing = rp.getDocumentPart();
+        String drawingId = rp.getRelationship().getId();
+
+        //there should be a relation to this drawing in the worksheet
+        assertTrue(sheet.getCTWorksheet().isSetDrawing());
+        assertEquals(drawingId, sheet.getCTWorksheet().getDrawing().getId());
+
+        byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("45829.png");
+
+        ClientAnchor anchor = wb1.getCreationHelper().createClientAnchor();
+        anchor.setCol1(1);
+        anchor.setRow1(1);
+
+        drawing.createPicture(anchor, wb1.addPicture(pictureData, Workbook.PICTURE_TYPE_JPEG));
+        final int pictureIndex = wb1.addPicture(pictureData, Workbook.PICTURE_TYPE_JPEG);
+        drawing.createPicture(anchor, pictureIndex);
+        drawing.createPicture(anchor, pictureIndex);
+
+        // repeated additions of same share package relationship
+        assertEquals(2, rp.getDocumentPart().getPackagePart().getRelationships().size());
+
+        List<XSSFShape> shapes = drawing.getShapes();
+        assertEquals(3, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFPicture);
+        assertTrue(shapes.get(1) instanceof XSSFPicture);
+
+        // Save and re-load it
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
+
+        // Check
+        dr1 = sheet.createDrawingPatriarch();
+        CTDrawing ctDrawing = dr1.getCTDrawing();
+
+        // Connector, shapes and text boxes are all two cell anchors
+        assertEquals(0, ctDrawing.sizeOfAbsoluteAnchorArray());
+        assertEquals(0, ctDrawing.sizeOfOneCellAnchorArray());
+        assertEquals(3, ctDrawing.sizeOfTwoCellAnchorArray());
+
+        shapes = dr1.getShapes();
+        assertEquals(3, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFPicture);
+        assertTrue(shapes.get(1) instanceof XSSFPicture);
+
+        checkRewrite(wb2);
+        wb2.close();
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -806,7 +872,7 @@ public class TestXSSFDrawing {
             (int)(xfrmG1.getChExt().getCy()*0.8)
         ));
         CTGroupTransform2D xfrmG2 = g2.getCTGroupShape().getGrpSpPr().getXfrm();
-        
+
         XSSFSimpleShape s2 = g2.createSimpleShape(new XSSFChildAnchor(
             (int)(xfrmG2.getChExt().getCx()*0.1),
             (int)(xfrmG2.getChExt().getCy()*0.1),
@@ -818,7 +884,7 @@ public class TestXSSFDrawing {
 
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
-        
+
         XSSFDrawing draw = wb2.getSheetAt(0).getDrawingPatriarch();
         List<XSSFShape> shapes = draw.getShapes();
         assertEquals(2, shapes.size());
