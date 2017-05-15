@@ -2143,6 +2143,7 @@ under the License.
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
               <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
+           	  <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
               <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
               <exclude name="**/*.iml" />
