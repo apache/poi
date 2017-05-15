@@ -240,7 +240,7 @@ public final class ZipPackage extends OPCPackage {
 
         if (this.zipArchive == null) {
             return this.partList.sortedValues().toArray(
-                    new PackagePart[this.partList.sortedValues().size()]);
+                    new PackagePart[this.partList.size()]);
         }
 
         // First we need to parse the content type part
