@@ -649,12 +649,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 */
 	public ArrayList<PackagePart> getPartsByContentType(String contentType) {
 		ArrayList<PackagePart> retArr = new ArrayList<PackagePart>();
-		for (PackagePart part : partList.values()) {
+		for (PackagePart part : partList.sortedValues()) {
 			if (part.getContentType().equals(contentType)) {
 				retArr.add(part);
 			}
 		}
-		Collections.sort(retArr);
 		return retArr;
 	}
 
@@ -697,13 +696,12 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	    }
 	    Matcher matcher = namePattern.matcher("");
 	    ArrayList<PackagePart> result = new ArrayList<PackagePart>();
-	    for (PackagePart part : partList.values()) {
+	    for (PackagePart part : partList.sortedValues()) {
 	        PackagePartName partName = part.getPartName();
 	        if (matcher.reset(partName.getName()).matches()) {
 	            result.add(part);
 	        }
 	    }
-	    Collections.sort(result);
 	    return result;
 	}
 
@@ -813,9 +811,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				}
 			}
 		}
-		ArrayList<PackagePart> result = new ArrayList<PackagePart>(partList.values());
-		java.util.Collections.sort(result);
-		return result;
+		return new ArrayList<PackagePart>(partList.sortedValues());
 	}
 
 	/**
