@@ -89,21 +89,25 @@ public final class Irr implements Function {
      *     http://en.wikipedia.org/wiki/Newton%27s_method</a>
      */
     public static double irr(double[] values, double guess) {
-        int maxIterationCount = 20;
-        double absoluteAccuracy = 1E-7;
+        final int maxIterationCount = 20;
+        final double absoluteAccuracy = 1E-7;
 
         double x0 = guess;
         double x1;
 
         int i = 0;
         while (i < maxIterationCount) {
+            final double factor = 1.0 + x0;
 
             // the value of the function (NPV) and its derivate can be calculated in the same loop
-            double fValue = 0;
+            int k = 0;
+            double fValue = values[k];
             double fDerivative = 0;
-            for (int k = 0; k < values.length; k++) {
-                fValue += values[k] / Math.pow(1.0 + x0, k);
-                fDerivative += -k * values[k] / Math.pow(1.0 + x0, k + 1);
+            for (double denominator = factor; ++k < values.length; ) {
+                final double value = values[k];
+                fValue += value / denominator;
+                denominator *= factor;
+                fDerivative -= k * value / denominator;
             }
 
             // the essense of the Newton-Raphson Method
