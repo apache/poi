@@ -64,7 +64,7 @@ public final class TestEscherGraphics {
     @Test
     public void testGetFont() {
         Font f = graphics.getFont();
-        if (f.toString().indexOf("dialog") == -1 && f.toString().indexOf("Dialog") == -1) {
+        if (! f.toString().contains("dialog") && ! f.toString().contains("Dialog")) {
             assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", f.toString());
         }
     }
@@ -72,7 +72,7 @@ public final class TestEscherGraphics {
     @Test
     public void testGetFontMetrics() {
         Font f = graphics.getFont();
-        if (f.toString().indexOf("dialog") != -1 || f.toString().indexOf("Dialog") != -1) {
+        if (f.toString().contains("dialog") || f.toString().contains("Dialog")) {
             return;
         }
         FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());

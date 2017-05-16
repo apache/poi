@@ -40,6 +40,7 @@ public abstract class HeaderFooter implements org.apache.poi.ss.usermodel.Header
 		String _center = "";
 		String _right = "";
 
+// FIXME: replace outer goto. just eww.
 outer:
 		while (text.length() > 1) {
 			if (text.charAt(0) != '&') {
@@ -50,30 +51,30 @@ outer:
 			int pos = text.length();
 			switch (text.charAt(1)) {
 			case 'L':
-				if (text.indexOf("&C") >= 0) {
+				if (text.contains("&C")) {
 					pos = Math.min(pos, text.indexOf("&C"));
 				}
-				if (text.indexOf("&R") >= 0) {
+				if (text.contains("&R")) {
 					pos = Math.min(pos, text.indexOf("&R"));
 				}
 				_left = text.substring(2, pos);
 				text = text.substring(pos);
 				break;
 			case 'C':
-				if (text.indexOf("&L") >= 0) {
+				if (text.contains("&L")) {
 					pos = Math.min(pos, text.indexOf("&L"));
 				}
-				if (text.indexOf("&R") >= 0) {
+				if (text.contains("&R")) {
 					pos = Math.min(pos, text.indexOf("&R"));
 				}
 				_center = text.substring(2, pos);
 				text = text.substring(pos);
 				break;
 			case 'R':
-				if (text.indexOf("&C") >= 0) {
+				if (text.contains("&C")) {
 					pos = Math.min(pos, text.indexOf("&C"));
 				}
-				if (text.indexOf("&L") >= 0) {
+				if (text.contains("&L")) {
 					pos = Math.min(pos, text.indexOf("&L"));
 				}
 				_right = text.substring(2, pos);
@@ -288,7 +289,7 @@ outer:
 		// Firstly, do the easy ones which are static
 		for (MarkupTag mt : MarkupTag.values()) {
 			String seq = mt.getRepresentation();
-			while ((pos = text.indexOf(seq)) > -1) {
+			while ((pos = text.indexOf(seq)) >= 0) {
 				text = text.substring(0, pos) + text.substring(pos + seq.length());
 			}
 		}

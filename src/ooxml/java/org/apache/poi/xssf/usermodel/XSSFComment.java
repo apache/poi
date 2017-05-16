@@ -111,7 +111,7 @@ public class XSSFComment implements Comment {
         boolean visible = false;
         if(_vmlShape != null){
             String style = _vmlShape.getStyle();
-            visible = style != null && style.indexOf("visibility:visible") != -1;
+            visible = style != null && style.contains("visibility:visible");
         }
         return visible;
     }

@@ -162,7 +162,7 @@ public final class TestProblems extends HWPFTestCase {
             String text = para.text();
 
             totalLength += text.length();
-            if (text.indexOf("{delete me}") > -1) {
+            if (text.contains("{delete me}")) {
                 para.delete();
                 deletedLength = text.length();
             }

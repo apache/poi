@@ -140,7 +140,7 @@ public final class POIFSChunkParser {
             // Name in the wrong format
             return;
          }
-         if(entryName.indexOf('_') == -1) {
+         if(! entryName.contains("_")) {
             // Name in the wrong format
             return;
          }

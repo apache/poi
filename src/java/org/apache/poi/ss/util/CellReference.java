@@ -408,7 +408,7 @@ public class CellReference {
         boolean isQuoted = reference.charAt(0) == SPECIAL_NAME_DELIMITER;
         if(!isQuoted) {
             // sheet names with spaces must be quoted
-            if (reference.indexOf(' ') == -1) {
+            if (! reference.contains(" ")) {
                 return reference.substring(0, indexOfSheetNameDelimiter);
             } else {
                 throw new IllegalArgumentException("Sheet names containing spaces must be quoted: (" + reference + ")");
