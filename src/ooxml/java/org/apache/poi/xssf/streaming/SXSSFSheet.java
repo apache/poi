@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -53,7 +54,10 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
@@ -1965,5 +1969,182 @@ public class SXSSFSheet implements Sheet
 
     public void setTabColor(XSSFColor color) {
         _sh.setTabColor(color);
+    }
+    
+    /**
+     * Enable sheet protection
+     */
+    public void enableLocking() {
+        safeGetProtectionField().setSheet(true);
+    }
+    
+    /**
+     * Disable sheet protection
+     */
+    public void disableLocking() {
+        safeGetProtectionField().setSheet(false);
+    }
+    
+    /**
+     * Enable or disable Autofilters locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockAutoFilter(boolean enabled) {
+        safeGetProtectionField().setAutoFilter(enabled);
+    }
+    
+    /**
+     * Enable or disable Deleting columns locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockDeleteColumns(boolean enabled) {
+        safeGetProtectionField().setDeleteColumns(enabled);
+    }
+    
+    /**
+     * Enable or disable Deleting rows locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockDeleteRows(boolean enabled) {
+        safeGetProtectionField().setDeleteRows(enabled);
+    }
+    
+    /**
+     * Enable or disable Formatting cells locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockFormatCells(boolean enabled) {
+        safeGetProtectionField().setFormatCells(enabled);
+    }
+    
+    /**
+     * Enable or disable Formatting columns locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockFormatColumns(boolean enabled) {
+        safeGetProtectionField().setFormatColumns(enabled);
+    }
+    
+    /**
+     * Enable or disable Formatting rows locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockFormatRows(boolean enabled) {
+        safeGetProtectionField().setFormatRows(enabled);
+    }
+    
+    /**
+     * Enable or disable Inserting columns locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockInsertColumns(boolean enabled) {
+        safeGetProtectionField().setInsertColumns(enabled);
+    }
+    
+    /**
+     * Enable or disable Inserting hyperlinks locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockInsertHyperlinks(boolean enabled) {
+        safeGetProtectionField().setInsertHyperlinks(enabled);
+    }
+    
+    /**
+     * Enable or disable Inserting rows locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockInsertRows(boolean enabled) {
+        safeGetProtectionField().setInsertRows(enabled);
+    }
+    
+    /**
+     * Enable or disable Pivot Tables locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockPivotTables(boolean enabled) {
+        safeGetProtectionField().setPivotTables(enabled);
+    }
+    
+    /**
+     * Enable or disable Sort locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockSort(boolean enabled) {
+        safeGetProtectionField().setSort(enabled);
+    }
+    
+    /**
+     * Enable or disable Objects locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockObjects(boolean enabled) {
+        safeGetProtectionField().setObjects(enabled);
+    }
+    
+    /**
+     * Enable or disable Scenarios locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockScenarios(boolean enabled) {
+        safeGetProtectionField().setScenarios(enabled);
+    }
+    
+    /**
+     * Enable or disable Selection of locked cells locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockSelectLockedCells(boolean enabled) {
+        safeGetProtectionField().setSelectLockedCells(enabled);
+    }
+    
+    /**
+     * Enable or disable Selection of unlocked cells locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockSelectUnlockedCells(boolean enabled) {
+        safeGetProtectionField().setSelectUnlockedCells(enabled);
+    }
+
+    
+    private CTSheetProtection safeGetProtectionField() {
+        CTWorksheet ct = _sh.getCTWorksheet();
+        if (!isSheetProtectionEnabled()) {
+            return ct.addNewSheetProtection();
+        }
+        return ct.getSheetProtection();
+    }
+    
+    /* package */ boolean isSheetProtectionEnabled() {
+        CTWorksheet ct = _sh.getCTWorksheet();
+        return (ct.isSetSheetProtection());
+    }
+    
+    /**
+     * Set background color of the sheet tab
+     *
+     * @param colorIndex  the indexed color to set, must be a constant from {@link IndexedColors}
+     */
+    public void setTabColor(int colorIndex){
+        CTWorksheet ct = _sh.getCTWorksheet();
+        CTSheetPr pr = ct.getSheetPr();
+        if(pr == null) pr = ct.addNewSheetPr();
+        CTColor color = CTColor.Factory.newInstance();
+        color.setIndexed(colorIndex);
+        pr.setTabColor(color);
     }
 }
