@@ -762,9 +762,9 @@ public class DataFormatter implements Observer {
      * If no rules contain a number format, or no rules apply, the cell's style format is used.
      * If the style does not have a format, the default date format is applied.
      *
-     * @param cell
+     * @param cell to format
      * @param cfEvaluator ConditionalFormattingEvaluator (if available)
-     * @return
+     * @return Formatted value
      */
     private String getFormattedDateString(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
         Format dateFormat = getFormat(cell, cfEvaluator);
