@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.eval.*;
  *
  * @author Marcel May
  * @author Yegor Kozlov
+ * @author Daniel Kuan
  *
  * @see <a href="http://en.wikipedia.org/wiki/Internal_rate_of_return#Numerical_solution">Wikipedia on IRR</a>
  * @see <a href="http://office.microsoft.com/en-us/excel-help/irr-HP005209146.aspx">Excel IRR</a>
@@ -89,8 +90,8 @@ public final class Irr implements Function {
      *     http://en.wikipedia.org/wiki/Newton%27s_method</a>
      */
     public static double irr(double[] values, double guess) {
-        int maxIterationCount = 20;
-        double absoluteAccuracy = 1E-7;
+        final int maxIterationCount = 20;
+        final double absoluteAccuracy = 1E-7;
 
         double x0 = guess;
         double x1;
@@ -99,11 +100,15 @@ public final class Irr implements Function {
         while (i < maxIterationCount) {
 
             // the value of the function (NPV) and its derivate can be calculated in the same loop
-            double fValue = 0;
+            final double factor = 1.0 + x0;
+            int k = 0;
+            double fValue = values[k];
             double fDerivative = 0;
-            for (int k = 0; k < values.length; k++) {
-                fValue += values[k] / Math.pow(1.0 + x0, k);
-                fDerivative += -k * values[k] / Math.pow(1.0 + x0, k + 1);
+            for (double denominator = factor; ++k < values.length; ) {
+                final double value = values[k];
+                fValue += value / denominator;
+                denominator *= factor;
+                fDerivative -= k * value / denominator;
             }
 
             // the essense of the Newton-Raphson Method
