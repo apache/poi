@@ -18,6 +18,7 @@ package org.apache.poi.hssf.converter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
      * Converts Excel file (97-2007) into HTML file.
      * 
      * @param xlsFile
-     *            file to process
+     *            workbook file to process
      * @return DOM representation of result HTML
      * @throws IOException 
      * @throws ParserConfigurationException 
@@ -114,12 +115,48 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     public static Document process( File xlsFile ) throws IOException, ParserConfigurationException
     {
         final HSSFWorkbook workbook = ExcelToHtmlUtils.loadXls( xlsFile );
+        try {
+            return ExcelToHtmlConverter.process( workbook );
+        } finally {
+            workbook.close();
+        }
+    }
+
+    /**
+     * Converts Excel file (97-2007) into HTML file.
+     * 
+     * @param xlsFile
+     *            workbook stream to process
+     * @return DOM representation of result HTML
+     * @throws IOException 
+     * @throws ParserConfigurationException 
+     */
+    public static Document process( InputStream xlsStream ) throws IOException, ParserConfigurationException
+    {
+        final HSSFWorkbook workbook = new HSSFWorkbook( xlsStream );
+        try {
+            return ExcelToHtmlConverter.process( workbook );
+        } finally {
+            workbook.close();
+        }
+    }
+
+    /**
+     * Converts Excel file (97-2007) into HTML file.
+     * 
+     * @param xlsFile
+     *            workbook instance to process
+     * @return DOM representation of result HTML
+     * @throws IOException 
+     * @throws ParserConfigurationException 
+     */
+    public static Document process( HSSFWorkbook workbook ) throws IOException, ParserConfigurationException
+    {
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
                 XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
         Document doc = excelToHtmlConverter.getDocument();
-        workbook.close();
         return doc;
     }
 
