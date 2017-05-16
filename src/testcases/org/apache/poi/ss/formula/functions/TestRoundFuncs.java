@@ -17,7 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.junit.Ignore;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -29,22 +32,58 @@ import org.apache.poi.ss.formula.eval.StringEval;
  *
  * @author Josh Micich
  */
-public final class TestRoundFuncs extends TestCase {
-	private static final NumericFunction F = null;
-	public void testRounddownWithStringArg() {
+public final class TestRoundFuncs {
+	// github-43
+	// https://github.com/apache/poi/pull/43
+    @Ignore("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
+	@Test
+	public void testRoundUp() {
+		assertRoundUpEquals(797.40, 3987*0.2, 2, 1e-10);
+	}
 
+	@Test
+	public void testRoundDown() {
+		assertRoundDownEquals(797.40, 3987*0.2, 2, 1e-10);
+	}
+
+	@Test
+	public void testRound() {
+		assertRoundEquals(797.40, 3987*0.2, 2, 1e-10);
+	}
+
+	@Test
+	public void testRoundDownWithStringArg() {
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2), };
 		ValueEval result = NumericFunction.ROUNDDOWN.evaluate(args, -1, (short)-1);
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
 
-	public void testRoundupWithStringArg() {
-
+	@Test
+	public void testRoundUpWithStringArg() {
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2), };
 		ValueEval result = NumericFunction.ROUNDUP.evaluate(args, -1, (short)-1);
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
 
+
+
+    private static void assertRoundFuncEquals(Function func, double expected, double number, double places, double tolerance) {
+		ValueEval[] args = { new NumberEval( number ), new NumberEval(places), };
+		NumberEval result = (NumberEval) func.evaluate(args, -1, (short)-1);
+		assertEquals(expected, result.getNumberValue(), tolerance);
+    }
+
+    private static void assertRoundEquals(double expected, double number, double places, double tolerance) {
+		TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUND, expected, number, places, tolerance);
+    }
+
+    private static void assertRoundUpEquals(double expected, double number, double places, double tolerance) {
+		TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUNDUP, expected, number, places, tolerance);
+    }
+
+    private static void assertRoundDownEquals(double expected, double number, double places, double tolerance) {
+		TestRoundFuncs.assertRoundFuncEquals(NumericFunction.ROUNDDOWN, expected, number, places, tolerance);
+    }
 }

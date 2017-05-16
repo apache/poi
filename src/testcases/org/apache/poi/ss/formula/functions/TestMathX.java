@@ -751,25 +751,28 @@ public class TestMathX extends AbstractNumericTestCase {
         assertEquals("roundDown ", 100, MathX.roundDown(d, p));
         
         d = 0.049999999999999975d; p = 2;
-        assertEquals("round ", 0.04d, MathX.roundDown(d, p));
+        assertEquals("roundDown ", 0.04d, MathX.roundDown(d, p));
 
         d = 0.049999999999999975d; p = 1;
-        assertEquals("round ", 0.0d, MathX.roundDown(d, p));
+        assertEquals("roundDown ", 0.0d, MathX.roundDown(d, p));
         
         d = Double.NaN; p = 1;
-        assertEquals("round ", Double.NaN, MathX.roundDown(d, p));
+        assertEquals("roundDown ", Double.NaN, MathX.roundDown(d, p));
 
         d = Double.POSITIVE_INFINITY; p = 1;
-        assertEquals("round ", Double.NaN, MathX.roundDown(d, p));
+        assertEquals("roundDown ", Double.NaN, MathX.roundDown(d, p));
 
         d = Double.NEGATIVE_INFINITY; p = 1;
-        assertEquals("round ", Double.NaN, MathX.roundDown(d, p));
+        assertEquals("roundDown ", Double.NaN, MathX.roundDown(d, p));
 
         d = Double.MAX_VALUE; p = 1;
-        assertEquals("round ", Double.MAX_VALUE, MathX.roundDown(d, p));
+        assertEquals("roundDown ", Double.MAX_VALUE, MathX.roundDown(d, p));
 
         d = Double.MIN_VALUE; p = 1;
-        assertEquals("round ", 0.0d, MathX.roundDown(d, p));
+        assertEquals("roundDown ", 0.0d, MathX.roundDown(d, p));
+
+        d = 3987 * 0.2; p = 2;
+        assertEquals("roundDown ", 797.40, MathX.round(d, p));
     }
 
     public void testRoundUp() {
@@ -819,25 +822,30 @@ public class TestMathX extends AbstractNumericTestCase {
         assertEquals("roundUp ", 200, MathX.roundUp(d, p));
         
         d = 0.049999999999999975d; p = 2;
-        assertEquals("round ", 0.05d, MathX.roundUp(d, p));
+        assertEquals("roundUp ", 0.05d, MathX.roundUp(d, p));
 
         d = 0.049999999999999975d; p = 1;
-        assertEquals("round ", 0.1d, MathX.roundUp(d, p));
+        assertEquals("roundUp ", 0.1d, MathX.roundUp(d, p));
         
         d = Double.NaN; p = 1;
-        assertEquals("round ", Double.NaN, MathX.roundUp(d, p));
+        assertEquals("roundUp ", Double.NaN, MathX.roundUp(d, p));
 
         d = Double.POSITIVE_INFINITY; p = 1;
-        assertEquals("round ", Double.NaN, MathX.roundUp(d, p));
+        assertEquals("roundUp ", Double.NaN, MathX.roundUp(d, p));
 
         d = Double.NEGATIVE_INFINITY; p = 1;
-        assertEquals("round ", Double.NaN, MathX.roundUp(d, p));
+        assertEquals("roundUp ", Double.NaN, MathX.roundUp(d, p));
 
         d = Double.MAX_VALUE; p = 1;
-        assertEquals("round ", Double.MAX_VALUE, MathX.roundUp(d, p));
+        assertEquals("roundUp ", Double.MAX_VALUE, MathX.roundUp(d, p));
 
         d = Double.MIN_VALUE; p = 1;
-        assertEquals("round ", 0.1d, MathX.roundUp(d, p));
+        assertEquals("roundUp ", 0.1d, MathX.roundUp(d, p));
+
+        //github-43: https://github.com/apache/poi/pull/43
+        //@Ignore("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
+        //d = 3987 * 0.2; p = 2;
+        //assertEquals("roundUp ", 797.40, MathX.roundUp(d, p));
     }
 
     public void testCeiling() {
