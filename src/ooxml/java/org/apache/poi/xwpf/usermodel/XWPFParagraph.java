@@ -817,14 +817,30 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return boolean - if page break is set
      */
     public boolean isPageBreak() {
-        CTPPr ppr = getCTPPr();
-        CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr
-                .getPageBreakBefore() : null;
-        if (ctPageBreak != null
-                && ctPageBreak.getVal().intValue() == STOnOff.INT_TRUE) {
-            return true;
+        final CTPPr ppr = getCTPPr();
+        final CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr.getPageBreakBefore() : null;
+        if (ctPageBreak == null) {
+            return false;
         }
-        return false;
+        return isTruelike(ctPageBreak.getVal(), false);
+    }
+
+    private static boolean isTruelike(final STOnOff.Enum value, boolean defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        switch (value.intValue()) {
+            case STOnOff.INT_TRUE:
+            case STOnOff.INT_X_1:
+            case STOnOff.INT_ON:
+                return true;
+            case STOnOff.INT_FALSE:
+            case STOnOff.INT_X_0:
+            case STOnOff.INT_OFF:
+                return false;
+            default:
+                return defaultValue;
+        }
     }
 
     /**
