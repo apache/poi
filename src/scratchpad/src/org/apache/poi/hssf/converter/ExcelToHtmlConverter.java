@@ -125,8 +125,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     /**
      * Converts Excel file (97-2007) into HTML file.
      * 
-     * @param xlsFile
-     *            workbook stream to process
+     * @param xlsStream workbook stream to process
      * @return DOM representation of result HTML
      * @throws IOException 
      * @throws ParserConfigurationException 
@@ -144,8 +143,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     /**
      * Converts Excel file (97-2007) into HTML file.
      * 
-     * @param xlsFile
-     *            workbook instance to process
+     * @param workbook workbook instance to process
      * @return DOM representation of result HTML
      * @throws IOException 
      * @throws ParserConfigurationException 
