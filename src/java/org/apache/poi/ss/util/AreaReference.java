@@ -176,10 +176,7 @@ public class AreaReference {
        }
 
        // Check for the , as a sign of non-coniguous
-       if(reference.indexOf(',') == -1) {
-          return true;
-       }
-       return false;
+       return !reference.contains(",");
     }
 
     public static AreaReference getWholeRow(SpreadsheetVersion version, String start, String end) {
@@ -387,7 +384,8 @@ public class AreaReference {
 
         String partA = reference.substring(0, delimiterPos);
         String partB = reference.substring(delimiterPos+1);
-        if(partB.indexOf(SHEET_NAME_DELIMITER) >=0) {
+        if(partB.indexOf(SHEET_NAME_DELIMITER) >= 0) {
+            // partB contains SHEET_NAME_DELIMITER
             // TODO - are references like "Sheet1!A1:Sheet1:B2" ever valid?  
             // FormulaParser has code to handle that.
             

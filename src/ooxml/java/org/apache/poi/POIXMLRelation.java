@@ -119,7 +119,7 @@ public abstract class POIXMLRelation {
      * @return the filename including the suffix
      */
     public String getFileName(int index) {
-        if(_defaultName.indexOf("#") == -1) {
+        if(! _defaultName.contains("#")) {
             // Generic filename in all cases
             return getDefaultFileName();
         }

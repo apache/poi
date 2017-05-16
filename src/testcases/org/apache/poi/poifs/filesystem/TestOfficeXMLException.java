@@ -17,6 +17,8 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.POITestCase.assertContains;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,8 +47,8 @@ public class TestOfficeXMLException extends TestCase {
 			fail("expected exception was not thrown");
 		} catch(OfficeXmlFileException e) {
 			// expected during successful test
-			assertTrue(e.getMessage().indexOf("The supplied data appears to be in the Office 2007+ XML") > -1);
-			assertTrue(e.getMessage().indexOf("You are calling the part of POI that deals with OLE2 Office Documents") > -1);
+			assertContains(e.getMessage(), "The supplied data appears to be in the Office 2007+ XML");
+			assertContains(e.getMessage(), "You are calling the part of POI that deals with OLE2 Office Documents");
 		}
 	}
     public void test2003XMLException() throws IOException
@@ -58,8 +60,8 @@ public class TestOfficeXMLException extends TestCase {
             fail("expected exception was not thrown");
         } catch(NotOLE2FileException e) {
             // expected during successful test
-            assertTrue(e.getMessage().indexOf("The supplied data appears to be a raw XML file") > -1);
-            assertTrue(e.getMessage().indexOf("Formats such as Office 2003 XML") > -1);
+            assertContains(e.getMessage(), "The supplied data appears to be a raw XML file");
+            assertContains(e.getMessage(), "Formats such as Office 2003 XML");
         }
     }
 	

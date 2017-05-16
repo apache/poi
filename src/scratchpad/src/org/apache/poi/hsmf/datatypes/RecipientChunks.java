@@ -124,7 +124,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
         if (recipientEmailChunk != null) {
             String email = recipientEmailChunk.getValue();
             int cne = email.indexOf("/CN=");
-            if (cne == -1) {
+            if (cne < 0) {
                 // Normal smtp address
                 return email;
             } else {
@@ -136,7 +136,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
         // Might be in the name field, check there
         if (recipientNameChunk != null) {
             String name = recipientNameChunk.getValue();
-            if (name.indexOf('@') > -1) {
+            if (name.contains("@")) {
                 // Strip leading and trailing quotes if needed
                 if (name.startsWith("'") && name.endsWith("'")) {
                     return name.substring(1, name.length() - 1);
@@ -149,8 +149,9 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
         // encoded as a SMTP destination in there.
         if (recipientSearchChunk != null) {
             String search = recipientSearchChunk.getAs7bitString();
-            if (search.indexOf("SMTP:") != -1) {
-                return search.substring(search.indexOf("SMTP:") + 5);
+            int idx = search.indexOf("SMTP:");
+            if (idx >= 0) {
+                return search.substring(idx + 5);
             }
         }
 

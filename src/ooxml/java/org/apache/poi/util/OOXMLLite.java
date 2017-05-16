@@ -278,7 +278,9 @@ public final class OOXMLLite {
                 if (loc == null) continue;
                 
                 String jar = loc.toString();
-                if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
+                if (jar.contains(ptrn)) {
+                    map.put(cls.getName(), cls);
+                }
             }
             return map;
         } catch (IllegalAccessException e) {

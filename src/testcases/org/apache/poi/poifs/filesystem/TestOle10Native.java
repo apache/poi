@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.apache.poi.POITestCase.assertContains;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -118,7 +119,7 @@ public class TestOle10Native {
             Ole10Native.createFromEmbeddedOleObject(fs);
             fail("Should have thrown exception because OLENative lacks a length parameter");
         } catch (Ole10NativeException e) {
-            assertTrue(e.getMessage().indexOf("declared data length") > -1);
+            assertContains(e.getMessage(), "declared data length");
         }
     }
 
