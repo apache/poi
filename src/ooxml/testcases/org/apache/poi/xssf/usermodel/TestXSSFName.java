@@ -26,6 +26,8 @@ import static org.junit.Assert.*;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.io.IOException;
+
 /**
  * @author Yegor Kozlov
  */
@@ -127,6 +129,24 @@ public final class TestXSSFName extends BaseTestNamedRange {
         assertEquals(2, wb.getNames("name2").size());
         assertTrue(wb.getNames("name2").contains(nameGlobal));
         assertTrue(wb.getNames("name2").contains(nameSheet1));
+
+        wb.close();
+    }
+
+    @Test
+    public void testSetNameNameLongName() throws IOException {
+        // Test that renaming named ranges doesn't break our new named range map
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.createSheet("First Sheet");
+
+        //Name with very long name. Looks like a cell reference but this is not a reference.
+        XSSFName nameSheet1 = wb.createName();
+        nameSheet1.setNameName("F04030020010");
+        nameSheet1.setRefersToFormula("'First Sheet'!$A$1");
+        nameSheet1.setSheetIndex(0);
+
+        assertEquals(1, wb.getNames("F04030020010").size());
+        assertEquals(nameSheet1, wb.getName("F04030020010"));
 
         wb.close();
     }
