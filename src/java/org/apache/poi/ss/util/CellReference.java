@@ -19,6 +19,7 @@ package org.apache.poi.ss.util;
 
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -359,7 +360,7 @@ public class CellReference {
     }
 
     public static boolean isRowWithinRange(String rowStr, SpreadsheetVersion ssVersion) {
-        int rowNum = Integer.parseInt(rowStr) - 1;
+        int rowNum = new BigDecimal(rowStr).intValue() - 1;
         return 0 <= rowNum && rowNum <= ssVersion.getLastRowIndex();
     }
 
