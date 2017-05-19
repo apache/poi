@@ -402,8 +402,14 @@ public final class XSSFName implements Name {
         if (name.matches("[A-Za-z]+\\d+")) {
             String col = name.replaceAll("\\d", "");
             String row = name.replaceAll("[A-Za-z]", "");
-            if (CellReference.cellReferenceIsWithinRange(col, row, SpreadsheetVersion.EXCEL97)) {
-                throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be $A$1-style cell reference");
+            
+            try {
+                if (CellReference.cellReferenceIsWithinRange(col, row, SpreadsheetVersion.EXCEL2007)) {
+                    throw new IllegalArgumentException("Invalid name: '"+name+"': cannot be $A$1-style cell reference");
+                }
+            } catch (final NumberFormatException e) {
+                // row was not parseable as an Integer, such as a BigInt
+                // therefore name passes the not-a-cell-reference criteria
             }
         }
         
