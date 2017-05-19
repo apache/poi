@@ -17,14 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
-import org.apache.poi.xssf.XSSFITestDataProvider;
-
 import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.Arrays;
+import org.junit.Test;
 
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
  * @author Yegor Kozlov
@@ -129,5 +131,28 @@ public final class TestXSSFName extends BaseTestNamedRange {
         assertTrue(wb.getNames("name2").contains(nameSheet1));
 
         wb.close();
+    }
+
+    //github-55
+    @Test
+    public void testSetNameNameCellAddress() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.createSheet("First Sheet");
+        XSSFName name = wb.createName();
+
+        // Cell addresses/references are not allowed
+        for (String ref : Arrays.asList("A1", "$A$1", "A1:B2")) {
+            try {
+                name.setNameName(ref);
+                fail("cell addresses are not allowed: " + ref);
+            } catch (final IllegalArgumentException e) {
+                // expected
+            }
+        }
+
+        // Name that looks similar to a cell reference but is outside the cell reference row and column limits
+        name.setNameName("A0");
+        name.setNameName("F04030020010");
+        name.setNameName("XFDXFD10");
     }
 }
