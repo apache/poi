@@ -24,6 +24,8 @@
 	<classpathentry kind="lib" path="ooxml-lib/curvesapi-1.04.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-schemas-1.3.jar" sourcepath="ooxml-lib/ooxml-schemas-1.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-security-1.1.jar" sourcepath="ooxml-lib/ooxml-security-1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jmh-core-1.15.jar"/>
+	<classpathentry kind="lib" path="lib/jmh-generator-annprocess-1.15.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry exported="true" kind="lib" path="compile-lib/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="lib" path="compile-lib/bcpkix-jdk15on-1.54.jar"/>
