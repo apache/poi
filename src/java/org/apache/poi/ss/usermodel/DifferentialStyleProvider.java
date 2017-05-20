@@ -46,4 +46,11 @@ public interface DifferentialStyleProvider {
      */
     PatternFormatting getPatternFormatting();
 
+    /**
+     * This is the number of rows or columns in a band or stripe.
+     * For styles that represent stripes, it must be > 1, for all others it is 0.
+     * Not the greatest overloading by the OOXML spec.
+     * @return number of rows/columns in a stripe for stripe styles, 0 for all others 
+     */
+    int getStripeSize();
 }

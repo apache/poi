@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -246,8 +247,10 @@ public class StylesTable extends POIXMLDocumentPart {
 
             CTTableStyles ctTableStyles = styleSheet.getTableStyles();
             if (ctTableStyles != null) {
+                int idx = 0;
                 for (CTTableStyle style : Arrays.asList(ctTableStyles.getTableStyleArray())) {
-                    tableStyles.put(style.getName(), new XSSFTableStyle(styleDxfs, style));
+                    tableStyles.put(style.getName(), new XSSFTableStyle(idx, styleDxfs, style));
+                    idx++;
                 }
             }
             
@@ -790,6 +793,14 @@ public class StylesTable extends POIXMLDocumentPart {
      */
     public TableStyle getExplicitTableStyle(String name) {
         return tableStyles.get(name);
+    }
+    
+    /**
+     * @return names of all explicitly defined table styles in the workbook
+     * @since 3.17 beta 1
+     */
+    public Set<String> getExplicitTableStyleNames() {
+        return tableStyles.keySet();
     }
     
     /**

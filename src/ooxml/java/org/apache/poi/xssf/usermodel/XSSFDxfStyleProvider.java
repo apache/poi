@@ -34,11 +34,14 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
     private final FontFormatting font;
     private final ExcelNumberFormat number;
     private final PatternFormatting fill;
+    private final int stripeSize;
     
     /**
      * @param dxf
+     * @param stripeSize 0 for non-stripe styles, > 1 for stripes
      */
-    public XSSFDxfStyleProvider(CTDxf dxf) {
+    public XSSFDxfStyleProvider(CTDxf dxf, int stripeSize) {
+        this.stripeSize = stripeSize;
         if (dxf == null) {
             border = null;
             font = null;
@@ -71,6 +74,10 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
 
     public PatternFormatting getPatternFormatting() {
         return fill;
+    }
+    
+    public int getStripeSize() {
+        return stripeSize;
     }
 
 }

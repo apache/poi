@@ -314,4 +314,12 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         }
         return HSSFFormulaParser.toFormulaString(workbook, parsedExpression);
     }
+    
+    /**
+     * Conditional format rules don't define stripes, so always 0
+     * @see org.apache.poi.ss.usermodel.DifferentialStyleProvider#getStripeSize()
+     */
+    public int getStripeSize() {
+        return 0;
+    }
 }

@@ -35,26 +35,32 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleElement;
 public class XSSFTableStyle implements TableStyle {
 
     private final String name;
+    private final int index;
     private final Map<TableStyleType, DifferentialStyleProvider> elementMap = new EnumMap<TableStyleType, DifferentialStyleProvider>(TableStyleType.class);
 
     /**
+     * @param index style definition index or built-in ordinal depending on use
      * @param dxfs
      * @param tableStyle
+     * @see TableStyle#getIndex()
      */
-    public XSSFTableStyle(CTDxfs dxfs, CTTableStyle tableStyle) {
+    public XSSFTableStyle(int index, CTDxfs dxfs, CTTableStyle tableStyle) {
         this.name = tableStyle.getName();
+        this.index = index;
         for (CTTableStyleElement element : tableStyle.getTableStyleElementList()) {
             TableStyleType type = TableStyleType.valueOf(element.getType().toString());
             DifferentialStyleProvider dstyle = null;
             if (element.isSetDxfId()) {
-                int idx = (int) element.getDxfId() -1;
+                int idx = (int) element.getDxfId();
                 CTDxf dxf;
                 if (idx >= 0 && idx < dxfs.getCount()) {
                     dxf = dxfs.getDxfArray(idx);
                 } else {
                     dxf = null;
                 }
-                if (dxf != null) dstyle = new XSSFDxfStyleProvider(dxf);
+                int stripeSize = 0;
+                if (element.isSetSize()) stripeSize = (int) element.getSize();
+                if (dxf != null) dstyle = new XSSFDxfStyleProvider(dxf, stripeSize);
             }
             elementMap.put(type, dstyle);
         }
@@ -64,6 +70,17 @@ public class XSSFTableStyle implements TableStyle {
         return name;
     }
 
+    public int getIndex() {
+        return index;
+    }
+    
+    /**
+     * Always false for these, these are user defined styles
+     */
+    public boolean isBuiltin() {
+        return false;
+    }
+    
     public DifferentialStyleProvider getStyle(TableStyleType type) {
         return elementMap.get(type);
     }

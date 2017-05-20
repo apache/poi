@@ -27,9 +27,24 @@ package org.apache.poi.ss.usermodel;
 public interface TableStyle {
 
     /**
-     * @return name (may be a builtin name)
+     * @return name (may be a built-in name)
      */
     String getName();
+    
+    /**
+     * Some clients may care where in the table style list this definition came from, so we'll track it.
+     * The spec only references these by name, unlike Dxf records, which these definitions reference by index 
+     * (XML definition order).  Nice of MS to be consistent when defining the ECMA standard.
+     * Use org.apache.poi.xssf.usermodel.XSSFBuiltinTableStyle.isBuiltinStyle(TableStyle) to determine whether the index is for a built-in style or explicit user style
+     * @return index from org.apache.poi.xssf.model.StylesTable.getExplicitTableStyle(String) or org.apache.poi.xssf.usermodel.XSSFBuiltinTableStyle.ordinal()
+     */
+    int getIndex();
+    
+    /**
+     *
+     * @return true if this is a built-in style defined in the OOXML specification, false if it is a user style
+     */
+    boolean isBuiltin();
     
     /**
      *
