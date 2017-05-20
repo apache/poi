@@ -353,8 +353,26 @@ public final class TestCellReference {
         assertTrue("first row", CellReference.isRowWithinRange("1", ss));
         assertTrue("last row", CellReference.isRowWithinRange("1048576", ss));
         assertFalse("1 beyond last row", CellReference.isRowWithinRange("1048577", ss));
+
+        // int versions of above, using 0-based indices
+        assertFalse("1 before first row", CellReference.isRowWithinRange(-1, ss));
+        assertTrue("first row", CellReference.isRowWithinRange(0, ss));
+        assertTrue("last row", CellReference.isRowWithinRange(1048575, ss));
+        assertFalse("1 beyond last row", CellReference.isRowWithinRange(1048576, ss));
+    }
+
+    @Test(expected=NumberFormatException.class)
+    public void isRowWithinRangeNonInteger_BigNumber() {
+        String rowNum = "4000000000";
+        CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007);
     }
     
+    @Test(expected=NumberFormatException.class)
+    public void isRowWithinRangeNonInteger_Alpha() {
+        String rowNum = "NotANumber";
+        CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007);
+    }
+
     @Test
     public void isColWithinRange() {
         SpreadsheetVersion ss = SpreadsheetVersion.EXCEL2007;

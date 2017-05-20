@@ -132,6 +132,7 @@ public class CellReference {
         if (rowRef.length() == 0) {
             _rowIndex = -1;
         } else {
+            // throws NumberFormatException if rowRef is not convertable to an int
             _rowIndex = Integer.parseInt(rowRef)-1; // -1 to convert 1-based to zero-based
         }
     }
@@ -342,8 +343,24 @@ public class CellReference {
         return true;
     }
 
+    /**
+     * Determines whether {@code rowStr} is a valid row number for a given SpreadsheetVersion.
+     * @param rowStr  the numeric portion of an A1-style cell reference (1-based index)
+     * @param ssVersion  the spreadsheet version
+     * @throws NumberFormatException if rowStr is not parseable as an integer
+     */
     public static boolean isRowWithinRange(String rowStr, SpreadsheetVersion ssVersion) {
-        int rowNum = Integer.parseInt(rowStr) - 1;
+        final int rowNum = Integer.parseInt(rowStr) - 1;
+        return isRowWithinRange(rowNum, ssVersion);
+    }
+
+    /**
+     * Determines whether {@code row} is a valid row number for a given SpreadsheetVersion.
+     * @param rowNum  the row number (0-based index)
+     * @param ssVersion  the spreadsheet version
+     * @since 3.17 beta 1
+     */
+    public static boolean isRowWithinRange(int rowNum, SpreadsheetVersion ssVersion) {
         return 0 <= rowNum && rowNum <= ssVersion.getLastRowIndex();
     }
 
