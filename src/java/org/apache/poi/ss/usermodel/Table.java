@@ -60,6 +60,12 @@ public interface Table {
     String getName();
     
     /**
+     * @return name of the table style, if there is one.  May be a built-in name or user-defined.
+     * @since 3.17 beta 1
+     */
+    String getStyleName();
+    
+    /**
      * Returns the index of a given named column in the table (names are case insensitive in XSSF).
      * Note this list is lazily loaded and cached for performance. 
      * Changes to the underlying table structure are not reflected in later calls
@@ -70,16 +76,46 @@ public interface Table {
     int findColumnIndex(String columnHeader);
     /**
      * Returns the sheet name that the table belongs to.
+     * @return sheet name
      */
     String getSheetName();
+
     /**
-     * Returns true iff the table has a 'Totals' row
+     * Note: This is misleading.  The OOXML spec indicates this is true if the totals row
+     * has <b><i>ever</i></b> been shown, not whether or not it is currently displayed.
+     * Use {@link #getTotalsRowCount()} > 0 to decide whether or not the totals row is visible.
+     * @return true if a totals row has ever been shown for this table
+     * @since 3.15 beta 2
+     * @see #getTotalsRowCount()
      */
     boolean isHasTotalsRow();
+    
+    /**
+     * @return 0 for no totals rows, 1 for totals row shown.
+     * Values > 1 are not currently used by Excel up through 2016, and the OOXML spec
+     * doesn't define how they would be implemented.
+     * @since 3.17 beta 1
+     */
+    int getTotalsRowCount();
+    
+    /**
+     * @return 0 for no header rows, 1 for table headers shown.
+     * Values > 1 might be used by Excel for pivot tables?
+     * @since 3.17 beta 1
+     */
+    int getHeaderRowCount();
     
     /**
      * @return TableStyleInfo for this instance
      * @since 3.17 beta 1
      */
     TableStyleInfo getStyle();
+    
+    /**
+     * checks if the given cell is part of the table.  Includes checking that they are on the same sheet.
+     * @param cell
+     * @return true if the table and cell are on the same sheet and the cell is within the table range.
+     * @since 3.17 beta 1
+     */
+    boolean contains(Cell cell);
 }

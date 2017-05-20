@@ -17,6 +17,11 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.EnumSet;
+
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressBase;
+
 /**
  * Ordered list of table style elements, for both data tables and pivot tables.
  * Some elements only apply to pivot tables, but any style definition can omit any number,
@@ -33,34 +38,243 @@ package org.apache.poi.ss.usermodel;
  * @since 3.17 beta 1
  */
 public enum TableStyleType {
+    /***/
+    wholeTable {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), table.getStartColIndex(), table.getEndColIndex());
+        }
+    },
+    /***/
+    pageFieldLabels, // pivot only
+    /***/
+    pageFieldValues, // pivot only
+    /***/
+    firstColumnStripe{
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            TableStyleInfo info = table.getStyle();
+            if (! info.isShowColumnStripes()) return null;
+            DifferentialStyleProvider c1Style = info.getStyle().getStyle(firstColumnStripe);
+            DifferentialStyleProvider c2Style = info.getStyle().getStyle(secondColumnStripe);
+            int c1Stripe = c1Style == null ? 1 : Math.max(1, c1Style.getStripeSize());
+            int c2Stripe = c2Style == null ? 1 : Math.max(1, c2Style.getStripeSize());
+            
+            int firstStart = table.getStartColIndex();
+            int secondStart = firstStart + c1Stripe;
+            int c = cell.getColumnIndex();
+            
+            // look for the stripe containing c, accounting for the style element stripe size
+            // could do fancy math, but tables can't be that wide, a simple loop is fine
+            // if not in this type of stripe, return null
+            while (true) {
+                if (firstStart > c) break;
+                if (c >= firstStart && c <= secondStart -1) return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), firstStart, secondStart - 1);
+                firstStart = secondStart + c2Stripe;
+                secondStart = firstStart + c1Stripe;
+            }
+            return null;
+        }
+    },
+    /***/
+    secondColumnStripe{
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            TableStyleInfo info = table.getStyle();
+            if (! info.isShowColumnStripes()) return null;
+            
+            DifferentialStyleProvider c1Style = info.getStyle().getStyle(firstColumnStripe);
+            DifferentialStyleProvider c2Style = info.getStyle().getStyle(secondColumnStripe);
+            int c1Stripe = c1Style == null ? 1 : Math.max(1, c1Style.getStripeSize());
+            int c2Stripe = c2Style == null ? 1 : Math.max(1, c2Style.getStripeSize());
 
-    wholeTable,
-    headerRow,
-    totalRow,
-    firstColumn,
-    lastColumn,
-    firstRowStripe,
-    secondRowStripe,
-    firstColumnStripe,
-    secondColumnStripe,
-    firstHeaderCell,
-    lastHeaderCell,
-    firstTotalCell,
-    lastTotalCell,
+            int firstStart = table.getStartColIndex();
+            int secondStart = firstStart + c1Stripe;
+            int c = cell.getColumnIndex();
+            
+            // look for the stripe containing c, accounting for the style element stripe size
+            // could do fancy math, but tables can't be that wide, a simple loop is fine
+            // if not in this type of stripe, return null
+            while (true) {
+                if (firstStart > c) break;
+                if (c >= secondStart && c <= secondStart + c2Stripe -1) return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), secondStart, secondStart + c2Stripe - 1);
+                firstStart = secondStart + c2Stripe;
+                secondStart = firstStart + c1Stripe;
+            }
+            return null;
+        }
+    },
+    /***/
+    firstRowStripe {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            TableStyleInfo info = table.getStyle();
+            if (! info.isShowRowStripes()) return null;
+            
+            DifferentialStyleProvider c1Style = info.getStyle().getStyle(firstRowStripe);
+            DifferentialStyleProvider c2Style = info.getStyle().getStyle(secondRowStripe);
+            int c1Stripe = c1Style == null ? 1 : Math.max(1, c1Style.getStripeSize());
+            int c2Stripe = c2Style == null ? 1 : Math.max(1, c2Style.getStripeSize());
+
+            int firstStart = table.getStartRowIndex() + table.getHeaderRowCount();
+            int secondStart = firstStart + c1Stripe;
+            int c = cell.getRowIndex();
+            
+            // look for the stripe containing c, accounting for the style element stripe size
+            // could do fancy math, but tables can't be that wide, a simple loop is fine
+            // if not in this type of stripe, return null
+            while (true) {
+                if (firstStart > c) break;
+                if (c >= firstStart && c <= secondStart -1) return new CellRangeAddress(firstStart, secondStart - 1, table.getStartColIndex(), table.getEndColIndex());
+                firstStart = secondStart + c2Stripe;
+                secondStart = firstStart + c1Stripe;
+            }
+            return null;
+        }
+    },
+    /***/
+    secondRowStripe{
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            TableStyleInfo info = table.getStyle();
+            if (! info.isShowRowStripes()) return null;
+            
+            DifferentialStyleProvider c1Style = info.getStyle().getStyle(firstRowStripe);
+            DifferentialStyleProvider c2Style = info.getStyle().getStyle(secondRowStripe);
+            int c1Stripe = c1Style == null ? 1 : Math.max(1, c1Style.getStripeSize());
+            int c2Stripe = c2Style == null ? 1 : Math.max(1, c2Style.getStripeSize());
+
+            int firstStart = table.getStartRowIndex() + table.getHeaderRowCount();
+            int secondStart = firstStart + c1Stripe;
+            int c = cell.getRowIndex();
+            
+            // look for the stripe containing c, accounting for the style element stripe size
+            // could do fancy math, but tables can't be that wide, a simple loop is fine
+            // if not in this type of stripe, return null
+            while (true) {
+                if (firstStart > c) break;
+                if (c >= secondStart && c <= secondStart +c2Stripe -1) return new CellRangeAddress(secondStart, secondStart + c2Stripe - 1, table.getStartColIndex(), table.getEndColIndex());
+                firstStart = secondStart + c2Stripe;
+                secondStart = firstStart + c1Stripe;
+            }
+            return null;
+        }
+    },
+    /***/
+    lastColumn {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (! table.getStyle().isShowLastColumn()) return null;
+            return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), table.getEndColIndex(), table.getEndColIndex());
+        }
+    },
+    /***/
+    firstColumn {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (! table.getStyle().isShowFirstColumn()) return null;
+            return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), table.getStartColIndex(), table.getStartColIndex());
+        }
+    },
+    /***/
+    headerRow {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (table.getHeaderRowCount() < 1) return null;
+            return new CellRangeAddress(table.getStartRowIndex(), table.getStartRowIndex() + table.getHeaderRowCount() -1, table.getStartColIndex(), table.getEndColIndex());
+        }
+    },
+    /***/
+    totalRow {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (table.getTotalsRowCount() < 1) return null;
+            return new CellRangeAddress(table.getEndRowIndex() - table.getTotalsRowCount() +1, table.getEndRowIndex(), table.getStartColIndex(), table.getEndColIndex());
+        }
+    },
+    /***/
+    firstHeaderCell {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (table.getHeaderRowCount() < 1) return null;
+            return new CellRangeAddress(table.getStartRowIndex(), table.getStartRowIndex(), table.getStartColIndex(), table.getStartColIndex());
+        }
+    },
+    /***/
+    lastHeaderCell {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (table.getHeaderRowCount() < 1) return null;
+            return new CellRangeAddress(table.getStartRowIndex(), table.getStartRowIndex(), table.getEndColIndex(), table.getEndColIndex());
+        }
+    },
+    /***/
+    firstTotalCell {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (table.getTotalsRowCount() < 1) return null;
+            return new CellRangeAddress(table.getEndRowIndex() - table.getTotalsRowCount() +1, table.getEndRowIndex(), table.getStartColIndex(), table.getStartColIndex());
+        }
+    },
+    /***/
+    lastTotalCell {
+        CellRangeAddressBase getRange(Table table, Cell cell) {
+            if (table.getTotalsRowCount() < 1) return null;
+            return new CellRangeAddress(table.getEndRowIndex() - table.getTotalsRowCount() +1, table.getEndRowIndex(), table.getEndColIndex(), table.getEndColIndex());
+        }
+    },
+    /* these are for pivot tables only */
+    /***/
     firstSubtotalColumn,
+    /***/
     secondSubtotalColumn,
+    /***/
     thirdSubtotalColumn,
-    firstSubtotalRow,
-    secondSubtotalRow,
-    thirdSubtotalRow,
+    /***/
     blankRow,
+    /***/
+    firstSubtotalRow,
+    /***/
+    secondSubtotalRow,
+    /***/
+    thirdSubtotalRow,
+    /***/
     firstColumnSubheading,
+    /***/
     secondColumnSubheading,
+    /***/
     thirdColumnSubheading,
+    /***/
     firstRowSubheading,
+    /***/
     secondRowSubheading,
+    /***/
     thirdRowSubheading,
-    pageFieldLabels,
-    pageFieldValues,
     ;
+    
+    /**
+     * A range is returned only for the part of the table matching this enum instance and containing the given cell.
+     * Null is returned for all other cases, such as:
+     * <ul>
+     * <li>Cell on a different sheet than the table
+     * <li>Cell outside the table
+     * <li>this Enum part is not included in the table (i.e. no header/totals row)
+     * <li>this Enum is for a table part not yet implemented in POI, such as pivot table elements
+     * </ul>
+     * The returned range can be used to determine how style options may or may not apply to this cell.
+     * For example, {@link #wholeTable} borders only apply to the outer boundary of a table, while the
+     * rest of the styling, such as font and color, could apply to all the interior cells as well.
+     * 
+     * @param table table to evaluate
+     * @param cell to evaluate 
+     * @return range in the table representing this class of cells, if it contains the given cell, or null if not applicable.
+     * Stripe style types return only the stripe range containing the given cell, or null.
+     */
+    public CellRangeAddressBase appliesTo(Table table, Cell cell) {
+        if (table == null || cell == null) return null;
+        if ( ! cell.getSheet().getSheetName().equals(table.getSheetName())) return null;
+        if ( ! table.contains(cell)) return null;
+        
+        final CellRangeAddressBase range = getRange(table, cell);
+        if (range != null && range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) return range;
+        // else
+        return null;
+    }
+
+    /**
+     * @param table
+     * @param cell
+     * @return default is unimplemented/null
+     */
+    CellRangeAddressBase getRange(Table table, Cell cell) {
+        return null;
+    }
 }

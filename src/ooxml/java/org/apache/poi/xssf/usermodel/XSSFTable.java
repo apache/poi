@@ -30,6 +30,7 @@ import java.util.Locale;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.usermodel.TableStyleInfo;
 import org.apache.poi.ss.util.CellReference;
@@ -62,14 +63,20 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     private transient CellReference startCellReference;
     private transient CellReference endCellReference;    
     private transient String commonXPath; 
+    private transient String name;
+    private transient String styleName;
 
-
+    /**
+     * empty implementation, not attached to a workbook/worksheet yet
+     */
     public XSSFTable() {
         super();
         ctTable = CTTable.Factory.newInstance();
     }
 
     /** 
+     * @param part 
+     * @throws IOException 
      * @since POI 3.14-Beta1
      */
     public XSSFTable(PackagePart part) throws IOException {
@@ -77,6 +84,11 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         readFrom(part.getInputStream());
     }
     
+    /**
+     * read table XML
+     * @param is
+     * @throws IOException
+     */
     public void readFrom(InputStream is) throws IOException {
         try {
             TableDocument doc = TableDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -86,10 +98,18 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
     }
     
+    /**
+     * @return owning sheet
+     */
     public XSSFSheet getXSSFSheet(){
         return (XSSFSheet) getParent();
     }
 
+    /**
+     * write table XML to stream
+     * @param out
+     * @throws IOException
+     */
     public void writeTo(OutputStream out) throws IOException {
         updateHeaders();
 
@@ -108,6 +128,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     
     /**
       * get the underlying CTTable XML bean
+     * @return underlying OOXML object
       */
     @Internal(since="POI 3.15 beta 3")
     public CTTable getCTTable() {
@@ -209,20 +230,57 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return the name of the Table, if set
      */
     public String getName() {
-        return ctTable.getName();
+        if (name == null) {
+            setName(ctTable.getName());
+        }
+        return name;
     }
     
     /**
      * Changes the name of the Table
+     * @param newName 
      */
-    public void setName(String name) {
-        if (name == null) {
+    public void setName(String newName) {
+        if (newName == null) {
             ctTable.unsetName();
+            name = null;
             return;
         }
-        ctTable.setName(name);
+        ctTable.setName(newName);
+        name = newName;
     }
 
+    /**
+     * @return the table style name, if set
+     * @since 3.17 beta 1
+     */
+    public String getStyleName() {
+        if (styleName == null && ctTable.isSetTableStyleInfo()) {
+            setStyleName(ctTable.getTableStyleInfo().getName());
+        }
+        return styleName;
+    }
+    
+    /**
+     * Changes the name of the Table
+     * @param newStyleName 
+     * @since 3.17 beta 1
+     */
+    public void setStyleName(String newStyleName) {
+        if (newStyleName == null) {
+            if (ctTable.isSetTableStyleInfo()) {
+                ctTable.getTableStyleInfo().unsetName();
+            }
+            styleName = null;
+            return;
+        }
+        if (! ctTable.isSetTableStyleInfo()) {
+            ctTable.addNewTableStyleInfo();
+        }
+        ctTable.getTableStyleInfo().setName(newStyleName);
+        styleName = newStyleName;
+    }
+    
     /**
      * @return the display name of the Table, if set
      */
@@ -232,6 +290,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     /**
      * Changes the display name of the Table
+     * @param name to use
      */
     public void setDisplayName(String name) {
         ctTable.setDisplayName(name);
@@ -412,12 +471,35 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
 
     /**
+     * Note: This is misleading.  The Spec indicates this is true if the totals row
+     * has <b><i>ever</i></b> been shown, not whether or not it is currently displayed.
+     * Use {@link #getTotalsRowCount()} > 0 to decide whether or not the totals row is visible.
      * @since 3.15 beta 2
+     * @see #getTotalsRowCount()
      */
     public boolean isHasTotalsRow() {
         return ctTable.getTotalsRowShown();
     }
+    
+    /**
+     * @return 0 for no totals rows, 1 for totals row shown.
+     * Values > 1 are not currently used by Excel up through 2016, and the OOXML spec
+     * doesn't define how they would be implemented.
+     * @since 3.17 beta 1
+     */
+    public int getTotalsRowCount() {
+        return (int) ctTable.getTotalsRowCount();
+    }
 
+    /**
+     * @return 0 for no header rows, 1 for table headers shown.
+     * Values > 1 might be used by Excel for pivot tables?
+     * @since 3.17 beta 1
+     */
+    public int getHeaderRowCount() {
+        return (int) ctTable.getHeaderRowCount();
+    }
+    
     /**
      * @since 3.15 beta 2
      */
@@ -447,11 +529,27 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
     
     /**
-     * 
      * @since 3.17 beta 1
      */
     public TableStyleInfo getStyle() {
         if (! ctTable.isSetTableStyleInfo()) return null;
         return new XSSFTableStyleInfo(((XSSFSheet) getParent()).getWorkbook().getStylesSource(), ctTable.getTableStyleInfo());
     }
-}
+
+    /**
+     * @see org.apache.poi.ss.usermodel.Table#contains(org.apache.poi.ss.usermodel.Cell)
+     * @since 3.17 beta 1
+     */
+    public boolean contains(Cell cell) {
+        if (cell == null) return false;
+        // check if cell is on the same sheet as the table
+        if ( ! getSheetName().equals(cell.getSheet().getSheetName())) return false;
+        // check if the cell is inside the table
+        if (cell.getRowIndex() >= getStartRowIndex()
+            && cell.getRowIndex() <= getEndRowIndex()
+            && cell.getColumnIndex() >= getStartColIndex()
+            && cell.getColumnIndex() <= getEndColIndex()) {
+            return true;
+        }
+        return false;
+    }}

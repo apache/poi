@@ -20,16 +20,15 @@ package org.apache.poi.xssf.usermodel;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
+import org.apache.poi.ss.usermodel.TableStyleType;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -332,7 +331,10 @@ public enum XSSFBuiltinTableStyle {
     PivotStyleDark28,
    ;
     
-    private static final Map<XSSFBuiltinTableStyle, TableStyle> styleMap = new HashMap<XSSFBuiltinTableStyle, TableStyle>(60);
+    /**
+     * Interestingly, this is initialized after the enum instances, so using an {@link EnumMap} works.
+     */
+    private static final Map<XSSFBuiltinTableStyle, TableStyle> styleMap = new EnumMap<XSSFBuiltinTableStyle, TableStyle>(XSSFBuiltinTableStyle.class);
     
     private XSSFBuiltinTableStyle() {
     }
@@ -399,7 +401,8 @@ public enum XSSFBuiltinTableStyle {
                     // - build a fake styles.xml file with just this built-in
                     StylesTable styles = new StylesTable();
                     styles.readFrom(new ByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(Charset.forName("UTF-8"))));
-                    styleMap.put(XSSFBuiltinTableStyle.valueOf(styleName), styles.getExplicitTableStyle(styleName));
+                    XSSFBuiltinTableStyle builtIn = XSSFBuiltinTableStyle.valueOf(styleName);
+                    styleMap.put(builtIn, new XSSFBuiltinTypeStyleStyle(builtIn, styles.getExplicitTableStyle(styleName)));
                 }
             } finally {
                 IOUtils.closeQuietly(is);
@@ -410,6 +413,10 @@ public enum XSSFBuiltinTableStyle {
     }
     
     private static String styleXML(Node dxfsNode, Node tableStyleNode) {
+        // built-ins doc uses 1-based dxf indexing, Excel uses 0 based.
+        // add a dummy node to adjust properly.
+        dxfsNode.insertBefore(dxfsNode.getOwnerDocument().createElement("dxf"), dxfsNode.getFirstChild());
+
         DOMImplementationLS lsImpl = (DOMImplementationLS)dxfsNode.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
         LSSerializer lsSerializer = lsImpl.createLSSerializer();
         lsSerializer.getDomConfig().setParameter("xml-declaration", false);
@@ -424,5 +431,40 @@ public enum XSSFBuiltinTableStyle {
        sb.append(lsSerializer.writeToString(tableStyleNode));
        sb.append("</styleSheet>");
         return sb.toString(); 
+    }
+    
+    /**
+     * implementation for built-in styles
+     */
+    protected static class XSSFBuiltinTypeStyleStyle implements TableStyle {
+
+        private final XSSFBuiltinTableStyle builtIn;
+        private final TableStyle style;
+
+        /**
+         * @param builtIn
+         * @param style
+         */
+        protected XSSFBuiltinTypeStyleStyle(XSSFBuiltinTableStyle builtIn, TableStyle style) {
+            this.builtIn = builtIn;
+            this.style = style;
+        }
+        
+        public String getName() {
+            return style.getName();
+        }
+
+        public int getIndex() {
+            return builtIn.ordinal();
+        }
+
+        public boolean isBuiltin() {
+            return true;
+        }
+        
+        public DifferentialStyleProvider getStyle(TableStyleType type) {
+            return style.getStyle(type);
+        }
+        
     }
 }

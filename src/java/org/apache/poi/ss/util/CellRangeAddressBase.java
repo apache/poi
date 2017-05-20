@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 
@@ -28,6 +31,23 @@ import org.apache.poi.ss.usermodel.Cell;
  */
 public abstract class CellRangeAddressBase {
 
+    /**
+     * Indicates a cell or range is in the given relative position in a range.
+     * More than one of these may apply at once.
+     */
+    public static enum CellPosition {
+        /** range starting rows are equal */
+        TOP,
+        /** range ending rows are equal */
+        BOTTOM,
+        /** range starting columns are equal */
+        LEFT,
+        /** range ending columns are equal */
+        RIGHT,
+        /** a cell or range is completely inside another range, without touching any edges (a cell in this position can't be in any others) */
+        INSIDE,
+        ;
+    }
 	private int _firstRow;
 	private int _firstCol;
 	private int _lastRow;
@@ -186,6 +206,28 @@ public abstract class CellRangeAddressBase {
 				this._firstCol <= other._lastCol &&
 				other._firstRow <= this._lastRow &&
 				other._firstCol <= this._lastCol;
+	}
+	
+	/**
+	 * Useful for logic like table/range styling, where some elements apply based on relative position in a range.
+	 * @param rowInd
+	 * @param colInd
+	 * @return set of {@link CellPosition}s occupied by the given coordinates.  Empty if the coordinates are not in the range, never null.
+	 * @since 3.17 beta 1
+	 */
+	public Set<CellPosition> getPosition(int rowInd, int colInd) {
+	    Set<CellPosition> positions = EnumSet.noneOf(CellPosition.class);
+	    if (rowInd > getFirstRow() && rowInd < getLastRow() && colInd > getFirstColumn() && colInd < getLastColumn()) {
+	        positions.add(CellPosition.INSIDE);
+	        return positions; // entirely inside, matches no boundaries
+	    }
+	    // check edges
+	    if (rowInd == getFirstRow()) positions.add(CellPosition.TOP);
+	    if (rowInd == getLastRow()) positions.add(CellPosition.BOTTOM);
+	    if (colInd == getFirstColumn()) positions.add(CellPosition.LEFT);
+	    if (colInd == getLastColumn()) positions.add(CellPosition.RIGHT);
+	    
+	    return positions;
 	}
 	
 	/**
