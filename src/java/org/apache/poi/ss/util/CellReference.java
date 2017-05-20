@@ -320,14 +320,6 @@ public class CellReference {
         return isRowWithinRange(rowStr, ssVersion);
     }
 
-    /**
-     * @deprecated 3.15 beta 2. Use {@link #isColumnWithinRange}.
-     */
-    @Deprecated
-    public static boolean isColumnWithnRange(String colStr, SpreadsheetVersion ssVersion) {
-        return isColumnWithinRange(colStr, ssVersion);
-    }
-
     public static boolean isColumnWithinRange(String colStr, SpreadsheetVersion ssVersion) {
         // Equivalent to 0 <= CellReference.convertColStringToIndex(colStr) <= ssVersion.getLastColumnIndex()
 
@@ -348,14 +340,6 @@ public class CellReference {
             // no need to check range
         }
         return true;
-    }
-
-    /**
-     * @deprecated 3.15 beta 2. Use {@link #isRowWithinRange}
-     */
-    @Deprecated
-    public static boolean isRowWithnRange(String rowStr, SpreadsheetVersion ssVersion) {
-        return isRowWithinRange(rowStr, ssVersion);
     }
 
     public static boolean isRowWithinRange(String rowStr, SpreadsheetVersion ssVersion) {
