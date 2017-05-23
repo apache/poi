@@ -3188,4 +3188,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         wb.close();
     }
+
+    @Test
+    public void bug61063() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61063.xlsx");
+
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        Sheet s = wb.getSheetAt(0);
+
+        Row r = s.getRow(3);
+        Cell c = r.getCell(0);
+        assertEquals(CellType.FORMULA, c.getCellTypeEnum());
+        System.out.println(c.getCellFormula());
+        eval.setDebugEvaluationOutputForNextEval(true);
+        CellValue cv = eval.evaluate(c);
+        assertNotNull(cv);
+        assertEquals("Had: " + cv, 2.0, cv.getNumberValue(), 0.00001);
+
+        wb.close();
+    }
 }

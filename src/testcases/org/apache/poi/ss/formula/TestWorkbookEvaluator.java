@@ -36,13 +36,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.ptg.AreaErrPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
-import org.apache.poi.ss.formula.ptg.DeletedRef3DPtg;
-import org.apache.poi.ss.formula.ptg.IntPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RefErrorPtg;
+import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -112,7 +106,6 @@ public class TestWorkbookEvaluator {
      */
     @Test
     public void testMemFunc() {
-
         Ptg[] ptgs = {
             new IntPtg(42),
             AttrPtg.SUM,
@@ -121,7 +114,6 @@ public class TestWorkbookEvaluator {
         ValueEval result = evaluateFormula(ptgs);
         assertEquals(42, ((NumberEval)result).getNumberValue(), 0.0);
     }
-
 
     @Test
     public void testEvaluateMultipleWorkbooks() {
@@ -227,7 +219,6 @@ public class TestWorkbookEvaluator {
     /**
      * Functions like IF, INDIRECT, INDEX, OFFSET etc can return AreaEvals which
      * should be dereferenced by the evaluator
-     * @throws IOException 
      */
     @Test
     public void testResultOutsideRange() throws IOException {
@@ -262,7 +253,6 @@ public class TestWorkbookEvaluator {
 
     /**
      * formulas with defined names.
-     * @throws IOException 
      */
     @Test
     public void testNamesInFormulas() throws IOException {
@@ -406,7 +396,7 @@ public class TestWorkbookEvaluator {
             final String formula, final CellType cellType, final String expectedFormula, final double expectedValue) {
         testIFEqualsFormulaEvaluation_evaluate(formula, cellType, expectedFormula, expectedValue);
         testIFEqualsFormulaEvaluation_evaluateFormulaCell(formula, cellType, expectedFormula, expectedValue);
-        testIFEqualsFormulaEvaluation_evaluateInCell(formula, cellType, expectedFormula, expectedValue);
+        testIFEqualsFormulaEvaluation_evaluateInCell(formula, cellType, expectedValue);
         testIFEqualsFormulaEvaluation_evaluateAll(formula, cellType, expectedFormula, expectedValue);
         testIFEqualsFormulaEvaluation_evaluateAllFormulaCells(formula, cellType, expectedFormula, expectedValue);
     }
@@ -552,7 +542,7 @@ public class TestWorkbookEvaluator {
     }
     
     private void testIFEqualsFormulaEvaluation_evaluateInCell(
-            String formula, CellType cellType, String expectedFormula, double expectedResult) {
+            String formula, CellType cellType, double expectedResult) {
         Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
         
@@ -564,7 +554,9 @@ public class TestWorkbookEvaluator {
         try {
             D1.getCellFormula();
             fail("cell formula should be overwritten with formula result");
-        } catch (final IllegalStateException expected) { }
+        } catch (final IllegalStateException expected) {
+            // expected here
+        }
         assertEquals(CellType.NUMERIC, D1.getCellTypeEnum());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
         
