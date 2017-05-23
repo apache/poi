@@ -17,16 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.AreaEval;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 
 /**
  * Implementation of the various ISxxx Logical Functions, which
@@ -131,7 +122,7 @@ public abstract class LogicalFunction extends Fixed1ArgFunction {
 	public static final Function ISREF = new Fixed1ArgFunction() {
 
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-			if (arg0 instanceof RefEval || arg0 instanceof AreaEval) {
+			if (arg0 instanceof RefEval || arg0 instanceof AreaEval || arg0 instanceof RefListEval) {
 				return BoolEval.TRUE;
 			}
 			return BoolEval.FALSE;

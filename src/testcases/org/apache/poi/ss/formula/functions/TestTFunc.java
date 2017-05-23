@@ -19,13 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.formula.eval.AreaEval;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 
 /**
  * Test cases for Excel function T()
@@ -43,6 +37,7 @@ public final class TestTFunc extends TestCase {
 		assertNotNull("result may never be null", result);
 		return result;
 	}
+
 	/**
 	 * Simulates call: T(A1)
 	 * where cell A1 has the specified innerValue
@@ -60,7 +55,6 @@ public final class TestTFunc extends TestCase {
 	}
 
 	public void testTextValues() {
-
 		confirmText("abc");
 		confirmText("");
 		confirmText(" ");
@@ -121,8 +115,7 @@ public final class TestTFunc extends TestCase {
 		};
 		AreaEval ae = EvalFactory.createAreaEval("C10:D11", areaValues);
 
-		ValueEval ve;
-		ve = invokeT(ae);
+		ValueEval ve = invokeT(ae);
 		confirmString(ve, "abc");
 
 		areaValues[0] = new NumberEval(5.0);

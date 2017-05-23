@@ -28,19 +28,7 @@ import java.util.TreeSet;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.ExternalNameEval;
-import org.apache.poi.ss.formula.eval.FunctionEval;
-import org.apache.poi.ss.formula.eval.FunctionNameEval;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.Choose;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
@@ -84,12 +72,12 @@ public final class WorkbookEvaluator {
     private final IStabilityClassifier _stabilityClassifier;
     private final AggregatingUDFFinder _udfFinder;
 
-    private boolean _ignoreMissingWorkbooks = false;
+    private boolean _ignoreMissingWorkbooks;
 
     /**
      * whether print detailed messages about the next formula evaluation
      */
-    private boolean dbgEvaluationOutputForNextEval = false;
+    private boolean dbgEvaluationOutputForNextEval;
 
     // special logger for formula evaluation output (because of possibly very large output)
     private final POILogger EVAL_LOG = POILogFactory.getLogger("POI.FormulaEval");
@@ -415,11 +403,10 @@ public final class WorkbookEvaluator {
 
         Stack<ValueEval> stack = new Stack<ValueEval>();
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
-
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
             if (dbgEvaluationOutputIndent > 0) {
-                EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "  * ptg " + i + ": " + ptg);
+                EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "  * ptg " + i + ": " + ptg + ", stack: " + stack);
             }
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = (AttrPtg) ptg;
@@ -504,12 +491,16 @@ public final class WorkbookEvaluator {
                 continue;
             }
 
+            if (ptg instanceof UnionPtg) {
+                ValueEval v2 = stack.pop();
+                ValueEval v1 = stack.pop();
+                stack.push(new RefListEval(v1, v2));
+                continue;
+            }
+
             ValueEval opResult;
             if (ptg instanceof OperationPtg) {
                 OperationPtg optg = (OperationPtg) ptg;
-
-                if (optg instanceof UnionPtg) { continue; }
-
 
                 int numops = optg.getNumberOfOperands();
                 ValueEval[] ops = new ValueEval[numops];
