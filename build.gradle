@@ -210,6 +210,7 @@ project('ooxml') {
 		
 		testCompile 'junit:junit:4.12'
 		testCompile project(path: ':main', configuration: 'tests')
+		// Keep using 1.15 until we switch to Java 7
 		testCompile 'org.openjdk.jmh:jmh-core:1.15'
 		testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.15'
 	}
