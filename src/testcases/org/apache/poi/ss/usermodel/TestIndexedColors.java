@@ -29,7 +29,7 @@ public final class TestIndexedColors {
 
     @Test
     public void fromInt() {
-        int[] illegalIndices = { -1, 0, 27, 65 };
+        int[] illegalIndices = { -1, 65 };
         for (int index : illegalIndices) {
             try {
                 IndexedColors.fromInt(index);
