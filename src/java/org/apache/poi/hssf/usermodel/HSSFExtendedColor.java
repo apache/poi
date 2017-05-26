@@ -22,6 +22,7 @@ import static org.apache.poi.hssf.record.common.ExtendedColor.TYPE_INDEXED;
 import static org.apache.poi.hssf.record.common.ExtendedColor.TYPE_RGB;
 import static org.apache.poi.hssf.record.common.ExtendedColor.TYPE_THEMED;
 
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.ExtendedColor;
 
 /**
@@ -105,5 +106,20 @@ public class HSSFExtendedColor extends ExtendedColor {
     }
     public void setTint(double tint) {
         color.setTint(tint);
+    }
+    
+    protected byte[] getIndexedRGB() {
+        if (isIndexed() && getIndex() > 0) {
+            int indexNum = getIndex();
+            HSSFColor indexed = HSSFColor.getIndexHash().get(indexNum);
+            if (indexed != null) {
+                byte[] rgb = new byte[3];
+                rgb[0] = (byte) indexed.getTriplet()[0];
+                rgb[1] = (byte) indexed.getTriplet()[1];
+                rgb[2] = (byte) indexed.getTriplet()[2];
+                return rgb;
+            }
+        } // else
+        return null;
     }
 }

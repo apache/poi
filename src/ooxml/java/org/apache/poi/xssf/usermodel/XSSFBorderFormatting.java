@@ -20,19 +20,21 @@ import org.apache.poi.ss.usermodel.BorderFormatting;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Color;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 
 /**
  * XSSF high level representation for Border Formatting component
  * of Conditional Formatting settings
  */
 public class XSSFBorderFormatting implements BorderFormatting  {
+    IndexedColorMap _colorMap;
     CTBorder _border;
 
-    /*package*/ XSSFBorderFormatting(CTBorder border) {
+    /*package*/ XSSFBorderFormatting(CTBorder border, IndexedColorMap colorMap) {
         _border = border;
+        _colorMap = colorMap;
     }
 
     /**
@@ -125,7 +127,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         if(!_border.isSetBottom()) return null;
 
         CTBorderPr pr = _border.getBottom();
-        return new XSSFColor(pr.getColor());
+        return new XSSFColor(pr.getColor(), _colorMap);
     }
     @Override
     public short getBottomBorderColor() {
@@ -139,7 +141,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         if(!_border.isSetDiagonal()) return null;
 
         CTBorderPr pr = _border.getDiagonal();
-        return new XSSFColor(pr.getColor());
+        return new XSSFColor(pr.getColor(), _colorMap);
     }
     @Override
     public short getDiagonalBorderColor() {
@@ -153,7 +155,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         if(!_border.isSetLeft()) return null;
 
         CTBorderPr pr = _border.getLeft();
-        return new XSSFColor(pr.getColor());
+        return new XSSFColor(pr.getColor(), _colorMap);
     }
     @Override
     public short getLeftBorderColor() {
@@ -167,7 +169,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         if(!_border.isSetRight()) return null;
 
         CTBorderPr pr = _border.getRight();
-        return new XSSFColor(pr.getColor());
+        return new XSSFColor(pr.getColor(), _colorMap);
     }
     @Override
     public short getRightBorderColor() {
@@ -181,7 +183,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         if(!_border.isSetTop()) return null;
 
         CTBorderPr pr = _border.getTop();
-        return new XSSFColor(pr.getColor());
+        return new XSSFColor(pr.getColor(), _colorMap);
     }
     @Override
     public short getTopBorderColor() {

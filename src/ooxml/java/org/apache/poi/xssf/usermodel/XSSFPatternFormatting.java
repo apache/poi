@@ -29,20 +29,22 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
  * @author Yegor Kozlov
  */
 public class XSSFPatternFormatting implements PatternFormatting {
+    IndexedColorMap _colorMap;
     CTFill _fill;
 
-    XSSFPatternFormatting(CTFill fill){
+    XSSFPatternFormatting(CTFill fill, IndexedColorMap colorMap) {
         _fill = fill;
+        _colorMap = colorMap;
     }
 
     public XSSFColor getFillBackgroundColorColor() {
         if(!_fill.isSetPatternFill()) return null;
-        return new XSSFColor(_fill.getPatternFill().getBgColor());
+        return new XSSFColor(_fill.getPatternFill().getBgColor(), _colorMap);
     }
     public XSSFColor getFillForegroundColorColor() {
         if(!_fill.isSetPatternFill() || ! _fill.getPatternFill().isSetFgColor())
             return null;
-        return new XSSFColor(_fill.getPatternFill().getFgColor());
+        return new XSSFColor(_fill.getPatternFill().getFgColor(), _colorMap);
     }
 
     public short getFillPattern() {

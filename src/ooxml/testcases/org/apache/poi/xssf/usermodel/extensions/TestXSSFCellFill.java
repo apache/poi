@@ -40,7 +40,7 @@ public class TestXSSFCellFill {
     @Test
     public void testGetFillBackgroundColor() {
         CTFill ctFill = CTFill.Factory.newInstance();
-        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         CTColor bgColor = ctPatternFill.addNewBgColor();
         assertNotNull(cellFill.getFillBackgroundColor());
@@ -51,7 +51,7 @@ public class TestXSSFCellFill {
     @Test
     public void testGetFillForegroundColor() {
         CTFill ctFill = CTFill.Factory.newInstance();
-        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         CTColor fgColor = ctPatternFill.addNewFgColor();
         assertNotNull(cellFill.getFillForegroundColor());
@@ -62,7 +62,7 @@ public class TestXSSFCellFill {
     @Test
     public void testGetSetPatternType() {
         CTFill ctFill = CTFill.Factory.newInstance();
-        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         ctPatternFill.setPatternType(STPatternType.SOLID);
         assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), cellFill.getPatternType().intValue()-1);
@@ -71,7 +71,7 @@ public class TestXSSFCellFill {
     @Test
     public void testGetNotModifies() {
         CTFill ctFill = CTFill.Factory.newInstance();
-        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
         assertEquals(8, cellFill.getPatternType().intValue());

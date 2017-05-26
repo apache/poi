@@ -30,10 +30,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColorScale;
  *  component of Conditional Formatting settings
  */
 public class XSSFColorScaleFormatting implements ColorScaleFormatting {
-    CTColorScale _scale;
+    private CTColorScale _scale;
+    private IndexedColorMap _indexedColorMap;
 
-    /*package*/ XSSFColorScaleFormatting(CTColorScale scale){
+    /*package*/ XSSFColorScaleFormatting(CTColorScale scale, IndexedColorMap colorMap){
         _scale = scale;
+        _indexedColorMap = colorMap;
     }
     
     public int getNumControlPoints() {
@@ -54,7 +56,7 @@ public class XSSFColorScaleFormatting implements ColorScaleFormatting {
         CTColor[] ctcols = _scale.getColorArray();
         XSSFColor[] c = new XSSFColor[ctcols.length];
         for (int i=0; i<ctcols.length; i++) {
-            c[i] = new XSSFColor(ctcols[i]);
+            c[i] = new XSSFColor(ctcols[i], _indexedColorMap);
         }
         return c;
     }
@@ -83,8 +85,11 @@ public class XSSFColorScaleFormatting implements ColorScaleFormatting {
         _scale.setCfvoArray(cfvos);
     }
     
+    /**
+     * @return color from scale
+     */
     public XSSFColor createColor() {
-        return new XSSFColor(_scale.addNewColor());
+        return new XSSFColor(_scale.addNewColor(), _indexedColorMap);
     }
     public XSSFConditionalFormattingThreshold createThreshold() {
         return new XSSFConditionalFormattingThreshold(_scale.addNewCfvo());

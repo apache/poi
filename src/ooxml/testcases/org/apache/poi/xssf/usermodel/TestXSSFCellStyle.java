@@ -73,7 +73,7 @@ public class TestXSSFCellStyle {
 		assertEquals(1, stylesTable.putBorder(borderB));
 
 		ctFill = CTFill.Factory.newInstance();
-		XSSFCellFill fill = new XSSFCellFill(ctFill);
+		XSSFCellFill fill = new XSSFCellFill(ctFill, null);
 		long fillId = stylesTable.putFill(fill);
 		assertEquals(2, fillId);
 

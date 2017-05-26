@@ -30,6 +30,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
  */
 public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
     
+    private final IndexedColorMap colorMap;
     private final BorderFormatting border;
     private final FontFormatting font;
     private final ExcelNumberFormat number;
@@ -39,24 +40,26 @@ public class XSSFDxfStyleProvider implements DifferentialStyleProvider {
     /**
      * @param dxf
      * @param stripeSize 0 for non-stripe styles, > 1 for stripes
+     * @param colorMap 
      */
-    public XSSFDxfStyleProvider(CTDxf dxf, int stripeSize) {
+    public XSSFDxfStyleProvider(CTDxf dxf, int stripeSize, IndexedColorMap colorMap) {
         this.stripeSize = stripeSize;
+        this.colorMap = colorMap;
         if (dxf == null) {
             border = null;
             font = null;
             number = null;
             fill = null;
         } else {
-            border = dxf.isSetBorder() ? new XSSFBorderFormatting(dxf.getBorder()) : null; 
-            font = dxf.isSetFont() ? new XSSFFontFormatting(dxf.getFont()) : null; 
+            border = dxf.isSetBorder() ? new XSSFBorderFormatting(dxf.getBorder(), colorMap) : null; 
+            font = dxf.isSetFont() ? new XSSFFontFormatting(dxf.getFont(), colorMap) : null; 
             if (dxf.isSetNumFmt()) {
                 CTNumFmt numFmt = dxf.getNumFmt();
                 number = new ExcelNumberFormat((int) numFmt.getNumFmtId(), numFmt.getFormatCode());
             } else {
                 number = null;
             }
-            fill = dxf.isSetFill() ? new XSSFPatternFormatting(dxf.getFill()) : null; 
+            fill = dxf.isSetFill() ? new XSSFPatternFormatting(dxf.getFill(), colorMap) : null; 
         }
     }
 

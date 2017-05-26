@@ -41,6 +41,9 @@ import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.usermodel.CustomIndexedColorMap;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFBuiltinTableStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFactory;
@@ -51,24 +54,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorders;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFills;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyle;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyles;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * Table of styles shared across all sheets in a workbook.
@@ -83,7 +69,9 @@ public class StylesTable extends POIXMLDocumentPart {
 
     private final List<CTDxf> dxfs = new ArrayList<CTDxf>();
     private final Map<String, TableStyle> tableStyles = new HashMap<String, TableStyle>();
-
+    
+    private IndexedColorMap indexedColors = new DefaultIndexedColorMap();
+    
     /**
      * The first style id available for use as a custom style
      */
@@ -170,6 +158,8 @@ public class StylesTable extends POIXMLDocumentPart {
     public void setTheme(ThemesTable theme) {
         this.theme = theme;
 
+        if (theme != null) theme.setColorMap(getIndexedColors());
+        
         // Pass the themes table along to things which need to 
         //  know about it, but have already been created by now
         for(XSSFFont font : fonts) {
@@ -188,7 +178,7 @@ public class StylesTable extends POIXMLDocumentPart {
     public void ensureThemesTable() {
         if (theme != null) return;
 
-        theme = (ThemesTable)workbook.createRelationship(XSSFRelation.THEME, XSSFFactory.getInstance());
+        setTheme((ThemesTable)workbook.createRelationship(XSSFRelation.THEME, XSSFFactory.getInstance()));
     }
 
     /**
@@ -204,6 +194,11 @@ public class StylesTable extends POIXMLDocumentPart {
             CTStylesheet styleSheet = doc.getStyleSheet();
 
             // Grab all the different bits we care about
+            
+            // keep this first, as some constructors below want it
+            IndexedColorMap customColors = CustomIndexedColorMap.fromColors(styleSheet.getColors());
+            if (customColors != null) indexedColors = customColors;
+            
             CTNumFmts ctfmts = styleSheet.getNumFmts();
             if( ctfmts != null){
                 for (CTNumFmt nfmt : ctfmts.getNumFmtArray()) {
@@ -217,7 +212,7 @@ public class StylesTable extends POIXMLDocumentPart {
                 int idx = 0;
                 for (CTFont font : ctfonts.getFontArray()) {
                     // Create the font and save it. Themes Table supplied later
-                    XSSFFont f = new XSSFFont(font, idx);
+                    XSSFFont f = new XSSFFont(font, idx, indexedColors);
                     fonts.add(f);
                     idx++;
                 }
@@ -225,14 +220,14 @@ public class StylesTable extends POIXMLDocumentPart {
             CTFills ctfills = styleSheet.getFills();
             if(ctfills != null){
                 for (CTFill fill : ctfills.getFillArray()) {
-                    fills.add(new XSSFCellFill(fill));
+                    fills.add(new XSSFCellFill(fill, indexedColors));
                 }
             }
 
             CTBorders ctborders = styleSheet.getBorders();
             if(ctborders != null) {
                 for (CTBorder border : ctborders.getBorderArray()) {
-                    borders.add(new XSSFCellBorder(border));
+                    borders.add(new XSSFCellBorder(border, indexedColors));
                 }
             }
 
@@ -249,7 +244,7 @@ public class StylesTable extends POIXMLDocumentPart {
             if (ctTableStyles != null) {
                 int idx = 0;
                 for (CTTableStyle style : Arrays.asList(ctTableStyles.getTableStyleArray())) {
-                    tableStyles.put(style.getName(), new XSSFTableStyle(idx, styleDxfs, style));
+                    tableStyles.put(style.getName(), new XSSFTableStyle(idx, styleDxfs, style, indexedColors));
                     idx++;
                 }
             }
@@ -716,8 +711,8 @@ public class StylesTable extends POIXMLDocumentPart {
         fonts.add(xssfFont);
 
         CTFill[] ctFill = createDefaultFills();
-        fills.add(new XSSFCellFill(ctFill[0]));
-        fills.add(new XSSFCellFill(ctFill[1]));
+        fills.add(new XSSFCellFill(ctFill[0], indexedColors));
+        fills.add(new XSSFCellFill(ctFill[1], indexedColors));
 
         CTBorder ctBorder = createDefaultBorder();
         borders.add(new XSSFCellBorder(ctBorder));
@@ -757,7 +752,7 @@ public class StylesTable extends POIXMLDocumentPart {
 
     private static XSSFFont createDefaultFont() {
         CTFont ctFont = CTFont.Factory.newInstance();
-        XSSFFont xssfFont=new XSSFFont(ctFont, 0);
+        XSSFFont xssfFont=new XSSFFont(ctFont, 0, null);
         xssfFont.setFontHeightInPoints(XSSFFont.DEFAULT_FONT_SIZE);
         xssfFont.setColor(XSSFFont.DEFAULT_FONT_COLOR);//setTheme
         xssfFont.setFontName(XSSFFont.DEFAULT_FONT_NAME);
@@ -880,5 +875,12 @@ public class StylesTable extends POIXMLDocumentPart {
             }
         }
         return null;
+    }
+    
+    /**
+     * @return default or custom indexed color to RGB mapping
+     */
+    public IndexedColorMap getIndexedColors() {
+        return indexedColors;
     }
 }

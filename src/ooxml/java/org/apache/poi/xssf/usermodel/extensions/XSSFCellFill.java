@@ -20,6 +20,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.util.Internal;
 
@@ -29,6 +30,7 @@ import org.apache.poi.util.Internal;
  */
 public final class XSSFCellFill {
 
+    private IndexedColorMap _indexedColorMap;
     private CTFill _fill;
 
     /**
@@ -36,8 +38,9 @@ public final class XSSFCellFill {
      *
      * @param fill - fill
      */
-    public XSSFCellFill(CTFill fill) {
+    public XSSFCellFill(CTFill fill, IndexedColorMap colorMap) {
         _fill = fill;
+        _indexedColorMap = colorMap;
     }
 
     /**
@@ -57,7 +60,7 @@ public final class XSSFCellFill {
         if (ptrn == null) return null;
 
         CTColor ctColor = ptrn.getBgColor();
-        return ctColor == null ? null : new XSSFColor(ctColor);
+        return ctColor == null ? null : new XSSFColor(ctColor, _indexedColorMap);
     }
 
     /**
@@ -91,7 +94,7 @@ public final class XSSFCellFill {
         if (ptrn == null) return null;
 
         CTColor ctColor = ptrn.getFgColor();
-        return ctColor == null ? null : new XSSFColor(ctColor);
+        return ctColor == null ? null : new XSSFColor(ctColor, _indexedColorMap);
     }
 
     /**

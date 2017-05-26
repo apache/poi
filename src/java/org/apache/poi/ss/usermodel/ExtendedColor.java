@@ -18,77 +18,80 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Locale;
 
-import org.apache.poi.hssf.util.HSSFColor;
-
 /**
  * Represents a XSSF-style color (based on either a
  *  {@link org.apache.poi.xssf.usermodel.XSSFColor} or a
  *  {@link org.apache.poi.hssf.record.common.ExtendedColor} 
  */
 public abstract class ExtendedColor implements Color {
+
+    /**
+     *
+     * @param clr awt Color to set
+     */
     protected void setColor(java.awt.Color clr) {
         setRGB(new byte[]{(byte)clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()});
     }
 
     /**
-     * A boolean value indicating the color is automatic
+     * @return true if the color is automatic
      */
     public abstract boolean isAuto();
 
     /**
-     * A boolean value indicating the color is indexed
+     * @return true if the color is indexed
      */
     public abstract boolean isIndexed();
 
     /**
-     * A boolean value indicating the color is RGB / ARGB
+     * @return true if the color is RGB / ARGB
      */
     public abstract boolean isRGB();
     
     /**
-     * A boolean value indicating the color is from a Theme
+     * @return true if the color is from a Theme
      */
     public abstract boolean isThemed();
     
     /**
-     * Indexed Color value, if {@link #isIndexed()} is true
+     * @return Indexed Color index value, if {@link #isIndexed()} is true
      */
     public abstract short getIndex();
     
     /**
-     * Index of Theme color, if {@link #isThemed()} is true
+     * @return Index of Theme color, if {@link #isThemed()} is true
      */
     public abstract int getTheme();
 
     /**
-     * Standard Red Green Blue ctColor value (RGB).
+     * @return Standard Red Green Blue ctColor value (RGB) bytes.
      * If there was an A (Alpha) value, it will be stripped.
      */
     public abstract byte[] getRGB();
+
     /**
-     * Standard Alpha Red Green Blue ctColor value (ARGB).
+     * @return Standard Alpha Red Green Blue ctColor value (ARGB) bytes.
      */
     public abstract byte[] getARGB();
 
     /**
-     * RGB or ARGB or null
+     * @return RGB or ARGB bytes or null
      */
     protected abstract byte[] getStoredRBG();
     
     /**
      * Sets the Red Green Blue or Alpha Red Green Blue
+     * @param rgb bytes
      */
     public abstract void setRGB(byte[] rgb);
 
+    /**
+     * @return RGB or ARGB bytes, either stored or by index
+     */
     protected byte[] getRGBOrARGB() {
         if (isIndexed() && getIndex() > 0) {
-            int indexNum = getIndex();
-            HSSFColor indexed = HSSFColor.getIndexHash().get(indexNum);
-            if (indexed != null) {
-                byte[] rgb = new byte[3];
-                rgb[0] = (byte) indexed.getTriplet()[0];
-                rgb[1] = (byte) indexed.getTriplet()[1];
-                rgb[2] = (byte) indexed.getTriplet()[2];
+            byte[] rgb = getIndexedRGB();
+            if (rgb != null) {
                 return rgb;
             }
         }
@@ -96,9 +99,14 @@ public abstract class ExtendedColor implements Color {
         // Grab the colour
         return getStoredRBG();
     }
+    
+    /**
+     * @return index color RGB bytes, if {@link #isIndexed()} == true, null if not indexed or index is invalid
+     */
+    protected abstract byte[] getIndexedRGB();
 
     /**
-     * Standard Red Green Blue ctColor value (RGB) with applied tint.
+     * @return Standard Red Green Blue ctColor value (RGB) bytes with applied tint.
      * Alpha values are ignored.
      */
     public byte[] getRGBWithTint() {
@@ -118,7 +126,7 @@ public abstract class ExtendedColor implements Color {
     }
 
     /**
-     * Return the ARGB value in hex format, eg FF00FF00.
+     * @return the ARGB value in hex string format, eg FF00FF00.
      * Works for both regular and indexed colours.
      */
     public String getARGBHex() {
@@ -142,6 +150,7 @@ public abstract class ExtendedColor implements Color {
     /**
      * Sets the ARGB value from hex format, eg FF0077FF.
      * Only works for regular (non-indexed) colours
+     * @param argb color ARGB hex string
      */
     public void setARGBHex(String argb) {
         if (argb.length() == 6 || argb.length() == 8) {

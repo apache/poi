@@ -204,14 +204,14 @@ public class XSSFCellStyle implements CellStyle {
     }
 
     private void addFill(CTFill fill) {
-        int idx = _stylesSource.putFill(new XSSFCellFill(fill));
+        int idx = _stylesSource.putFill(new XSSFCellFill(fill,_stylesSource.getIndexedColors()));
 
         _cellXf.setFillId(idx);
         _cellXf.setApplyFill(true);
     }
     
     private void addBorder(CTBorder border) {
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(border, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(border, _theme,_stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -834,7 +834,7 @@ public class XSSFCellStyle implements CellStyle {
         if(border == BorderStyle.NONE) ct.unsetBottom();
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme, _stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -864,7 +864,7 @@ public class XSSFCellStyle implements CellStyle {
         if(border == BorderStyle.NONE) ct.unsetLeft();
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme, _stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -895,7 +895,7 @@ public class XSSFCellStyle implements CellStyle {
         if(border == BorderStyle.NONE) ct.unsetRight();
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme,_stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -926,7 +926,7 @@ public class XSSFCellStyle implements CellStyle {
         if(border == BorderStyle.NONE) ct.unsetTop();
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme,_stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -957,7 +957,7 @@ public class XSSFCellStyle implements CellStyle {
         if(color != null)  pr.setColor(color.getCTColor());
         else pr.unsetColor();
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme,_stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -1244,7 +1244,7 @@ public class XSSFCellStyle implements CellStyle {
         if(color != null)  pr.setColor(color.getCTColor());
         else pr.unsetColor();
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme,_stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -1299,7 +1299,7 @@ public class XSSFCellStyle implements CellStyle {
         if(color != null)  pr.setColor(color.getCTColor());
         else pr.unsetColor();
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme,_stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
@@ -1356,7 +1356,7 @@ public class XSSFCellStyle implements CellStyle {
         if(color != null)  pr.setColor(color.getCTColor());
         else pr.unsetColor();
 
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme,_stylesSource.getIndexedColors()));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);

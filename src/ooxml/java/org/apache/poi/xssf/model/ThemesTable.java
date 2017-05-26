@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
@@ -60,6 +61,7 @@ public class ThemesTable extends POIXMLDocumentPart {
        public final String name;
    }
 
+    private IndexedColorMap colorMap;
     private ThemeDocument theme;
 
     /**
@@ -95,6 +97,14 @@ public class ThemesTable extends POIXMLDocumentPart {
         this.theme = theme;
     }
 
+    /**
+     * called from {@link StylesTable} when setting theme, used to adjust colors if a custom indexed mapping is defined
+     * @param colorMap
+     */
+    protected void setColorMap(IndexedColorMap colorMap) {
+        this.colorMap = colorMap;
+    }
+    
     /**
      * Convert a theme "index" (as used by fonts etc) into a color.
      * @param idx A theme "index"
@@ -132,7 +142,7 @@ public class ThemesTable extends POIXMLDocumentPart {
         } else {
             return null;
         }
-        return new XSSFColor(rgb);        
+        return new XSSFColor(rgb, colorMap);        
     }
     
     /**

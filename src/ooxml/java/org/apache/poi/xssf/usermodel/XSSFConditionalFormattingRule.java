@@ -134,7 +134,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             border = dxf.getBorder();
         }
 
-        return new XSSFBorderFormatting(border);
+        return new XSSFBorderFormatting(border, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
 
     /**
@@ -144,7 +144,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetBorder()) return null;
 
-        return new XSSFBorderFormatting(dxf.getBorder());
+        return new XSSFBorderFormatting(dxf.getBorder(), _sh.getWorkbook().getStylesSource().getIndexedColors());
      }
 
     /**
@@ -162,7 +162,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             font = dxf.getFont();
         }
 
-        return new XSSFFontFormatting(font);
+        return new XSSFFontFormatting(font, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
 
     /**
@@ -172,7 +172,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetFont()) return null;
 
-        return new XSSFFontFormatting(dxf.getFont());
+        return new XSSFFontFormatting(dxf.getFont(), _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
 
     /**
@@ -190,7 +190,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             fill = dxf.getFill();
         }
 
-        return new XSSFPatternFormatting(fill);
+        return new XSSFPatternFormatting(fill, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
 
     /**
@@ -200,9 +200,14 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetFill()) return null;
 
-        return new XSSFPatternFormatting(dxf.getFill());
+        return new XSSFPatternFormatting(dxf.getFill(), _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
     
+    /**
+     *
+     * @param color
+     * @return data bar formatting
+     */
     public XSSFDataBarFormatting createDataBarFormatting(XSSFColor color) {
         // Is it already there?
         if (_cfRule.isSetDataBar() && _cfRule.getType() == STCfType.DATA_BAR)
@@ -228,12 +233,12 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         max.setType(STCfvoType.Enum.forString(RangeType.MAX.name));
         
         // Wrap and return
-        return new XSSFDataBarFormatting(bar);
+        return new XSSFDataBarFormatting(bar, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
     public XSSFDataBarFormatting getDataBarFormatting() {
         if (_cfRule.isSetDataBar()) {
             CTDataBar bar = _cfRule.getDataBar();
-            return new XSSFDataBarFormatting(bar);
+            return new XSSFDataBarFormatting(bar, _sh.getWorkbook().getStylesSource().getIndexedColors());
         } else {
             return null;
         }
@@ -314,12 +319,12 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         }
         
         // Wrap and return
-        return new XSSFColorScaleFormatting(scale);
+        return new XSSFColorScaleFormatting(scale, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
     public XSSFColorScaleFormatting getColorScaleFormatting() {
         if (_cfRule.isSetColorScale()) {
             CTColorScale scale = _cfRule.getColorScale();
-            return new XSSFColorScaleFormatting(scale);
+            return new XSSFColorScaleFormatting(scale, _sh.getWorkbook().getStylesSource().getIndexedColors());
         } else {
             return null;
         }

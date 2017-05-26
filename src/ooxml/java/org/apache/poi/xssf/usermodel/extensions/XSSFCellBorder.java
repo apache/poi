@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.xssf.model.ThemesTable;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
@@ -31,22 +32,37 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
  * Color is optional.
  */
 public class XSSFCellBorder {
+    private IndexedColorMap _indexedColorMap;
     private ThemesTable _theme;
     private CTBorder border;
 
     /**
      * Creates a Cell Border from the supplied XML definition
+     * @param border 
+     * @param theme 
+     * @param colorMap 
      */
-    public XSSFCellBorder(CTBorder border, ThemesTable theme) {
-        this(border);
+    public XSSFCellBorder(CTBorder border, ThemesTable theme, IndexedColorMap colorMap) {
+        this(border, colorMap);
         this._theme = theme;
     }
 
     /**
      * Creates a Cell Border from the supplied XML definition
+     * @param border 
      */
     public XSSFCellBorder(CTBorder border) {
+        this(border, null);
+    }
+    
+    /**
+     *
+     * @param border
+     * @param colorMap
+     */
+    public XSSFCellBorder(CTBorder border, IndexedColorMap colorMap) {
         this.border = border;
+        this._indexedColorMap = colorMap;
     }
 
     /**
@@ -117,7 +133,7 @@ public class XSSFCellBorder {
         CTBorderPr borderPr = getBorder(side);
         
         if(borderPr != null && borderPr.isSetColor()) { 
-            XSSFColor clr = new XSSFColor(borderPr.getColor());
+            XSSFColor clr = new XSSFColor(borderPr.getColor(), _indexedColorMap);
             if(_theme != null) {
                _theme.inheritFromThemeAsRequired(clr);
             }

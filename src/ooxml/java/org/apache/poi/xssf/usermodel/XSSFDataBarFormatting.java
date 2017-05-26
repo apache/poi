@@ -27,10 +27,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataBar;
  *  component of Conditional Formatting settings
  */
 public class XSSFDataBarFormatting implements DataBarFormatting {
+    IndexedColorMap _colorMap;
     CTDataBar _databar;
 
-    /*package*/ XSSFDataBarFormatting(CTDataBar databar){
+    /*package*/ XSSFDataBarFormatting(CTDataBar databar, IndexedColorMap colorMap){
         _databar = databar;
+        _colorMap = colorMap;
     }
 
     public boolean isIconOnly() {
@@ -64,7 +66,7 @@ public class XSSFDataBarFormatting implements DataBarFormatting {
     }
 
     public XSSFColor getColor() {
-        return new XSSFColor(_databar.getColor());
+        return new XSSFColor(_databar.getColor(), _colorMap);
     }
     public void setColor(Color color) {
         _databar.setColor( ((XSSFColor)color).getCTColor() );

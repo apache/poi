@@ -42,9 +42,10 @@ public class XSSFTableStyle implements TableStyle {
      * @param index style definition index or built-in ordinal depending on use
      * @param dxfs
      * @param tableStyle
+     * @param colorMap indexed color map - default or custom
      * @see TableStyle#getIndex()
      */
-    public XSSFTableStyle(int index, CTDxfs dxfs, CTTableStyle tableStyle) {
+    public XSSFTableStyle(int index, CTDxfs dxfs, CTTableStyle tableStyle, IndexedColorMap colorMap) {
         this.name = tableStyle.getName();
         this.index = index;
         for (CTTableStyleElement element : tableStyle.getTableStyleElementList()) {
@@ -60,7 +61,7 @@ public class XSSFTableStyle implements TableStyle {
                 }
                 int stripeSize = 0;
                 if (element.isSetSize()) stripeSize = (int) element.getSize();
-                if (dxf != null) dstyle = new XSSFDxfStyleProvider(dxf, stripeSize);
+                if (dxf != null) dstyle = new XSSFDxfStyleProvider(dxf, stripeSize, colorMap);
             }
             elementMap.put(type, dstyle);
         }

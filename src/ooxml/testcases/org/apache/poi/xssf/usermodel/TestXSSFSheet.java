@@ -1892,7 +1892,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         try {
             XSSFSheet sh = wb.createSheet();
             assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
-            sh.setTabColor(new XSSFColor(IndexedColors.RED));
+            sh.setTabColor(new XSSFColor(IndexedColors.RED, null));
             assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
             assertEquals(IndexedColors.RED.index,
                     sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
@@ -1908,8 +1908,8 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             XSSFSheet sh = wb.createSheet();
             assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
             assertNull(sh.getTabColor());
-            sh.setTabColor(new XSSFColor(IndexedColors.RED));
-            XSSFColor expected = new XSSFColor(IndexedColors.RED);
+            sh.setTabColor(new XSSFColor(IndexedColors.RED, null));
+            XSSFColor expected = new XSSFColor(IndexedColors.RED, null);
             assertEquals(expected, sh.getTabColor());
         } finally {
             wb.close();
@@ -1925,7 +1925,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertNull(wb.getSheet("default").getTabColor());
             
             // test indexed-colored sheet
-            XSSFColor expected = new XSSFColor(IndexedColors.RED);
+            XSSFColor expected = new XSSFColor(IndexedColors.RED, null);
             assertEquals(expected, wb.getSheet("indexedRed").getTabColor());
             
             // test regular-colored (non-indexed, ARGB) sheet
