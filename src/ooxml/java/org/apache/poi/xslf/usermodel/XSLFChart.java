@@ -23,6 +23,8 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -30,6 +32,8 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xslf.usermodel.charts.XSLFCategoryAxis;
+import org.apache.poi.xslf.usermodel.charts.XSLFValueAxis;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -115,6 +119,26 @@ public final class XSLFChart extends POIXMLDocumentPart {
         }
 	}
 
+	public List<XSLFCategoryAxis> getCategoryAxes() {
+		CTPlotArea plotArea = getCTPlotArea();
+		int sizeOfArray = plotArea.sizeOfCatAxArray();
+		List<XSLFCategoryAxis> axes = new ArrayList<XSLFCategoryAxis>(sizeOfArray);
+		for (int i = 0; i < sizeOfArray; i++) {
+			axes.add(new XSLFCategoryAxis(plotArea.getCatAxArray(i)));
+		}
+		return axes;
+	}
+	
+	public List<XSLFValueAxis> getValueAxes() {
+		CTPlotArea plotArea = getCTPlotArea();
+		int sizeOfArray = plotArea.sizeOfValAxArray();
+		List<XSLFValueAxis> axes = new ArrayList<XSLFValueAxis>(sizeOfArray);
+		for (int i = 0; i < sizeOfArray; i++) {
+			axes.add(new XSLFValueAxis(plotArea.getValAxArray(i)));
+		}
+		return axes;
+	}
+
 	@Override
 	protected void commit() throws IOException {
 		XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
@@ -125,6 +149,4 @@ public final class XSLFChart extends POIXMLDocumentPart {
 		chartSpace.save(out, xmlOptions);
 		out.close();
 	}
-
-
 }
