@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 /**
@@ -29,33 +30,62 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
  */
 public class XSSFColor extends ExtendedColor {
     private final CTColor ctColor;
+    private final IndexedColorMap indexedColorMap;
 
     /**
-     * Create an instance of XSSFColor from the supplied XML bean
+     * Create an instance of XSSFColor from the supplied XML bean, with default color indexes
+     * @param color 
+     * @deprecated 3.17 beta 1 - pass the workbook styles indexed color map, if any
      */
+    @Deprecated
+    @Removal(version="3.19")
     public XSSFColor(CTColor color) {
+        this(color, new DefaultIndexedColorMap());
+    }
+    
+    /**
+     * Create an instance of XSSFColor from the supplied XML bean, with the given color indexes
+     * @param color
+     * @param map
+     */
+    public XSSFColor(CTColor color, IndexedColorMap map) {
         this.ctColor = color;
+        this.indexedColorMap = map;
     }
 
     /**
-     * Create an new instance of XSSFColor
+     * Create an new instance of XSSFColor, without knowledge of any custom indexed colors.
+     * This is OK for just transiently setting indexes, etc. but is discouraged in read/get uses
      */
     public XSSFColor() {
-        this.ctColor = CTColor.Factory.newInstance();
+        this(CTColor.Factory.newInstance(), null);
     }
 
+    /**
+     * TEST ONLY - does not know about custom indexed colors
+     * @param clr awt Color
+     */
     public XSSFColor(java.awt.Color clr) {
         this();
         setColor(clr);
     }
 
-    public XSSFColor(byte[] rgb) {
-        this();
+    /**
+     *
+     * @param rgb bytes
+     * @param colorMap 
+     */
+    public XSSFColor(byte[] rgb, IndexedColorMap colorMap) {
+        this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setRgb(rgb);
     }
     
-    public XSSFColor(IndexedColors indexedColor) {
-        this();
+    /**
+     * @param indexedColor color index (Enum named for default colors)
+     * @param colorMap 
+     */
+    public XSSFColor(IndexedColors indexedColor, IndexedColorMap colorMap) {
+        this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setIndexed(indexedColor.index);
     }
 
@@ -67,7 +97,7 @@ public class XSSFColor extends ExtendedColor {
         return ctColor.getAuto();
     }
     /**
-     * A boolean value indicating the ctColor is automatic and system ctColor dependent.
+     * @param auto true if the ctColor is automatic and system ctColor dependent.
      */
     public void setAuto(boolean auto) {
         ctColor.setAuto(auto);
@@ -82,7 +112,7 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     * A boolean value indicating the ctColor is RGB or ARGB based
+     * @return true if the ctColor is RGB or ARGB based
      */
     @Override
     public boolean isRGB() {
@@ -90,7 +120,7 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     * A boolean value indicating the ctColor is Theme based
+     * @return true if the ctColor is Theme based
      */
     @Override
     public boolean isThemed() {
@@ -98,7 +128,7 @@ public class XSSFColor extends ExtendedColor {
     }
     
     /**
-     * A boolean value indicating if the ctColor has a alpha or not
+     * @return true if the ctColor has a alpha
      */
     public boolean hasAlpha() {
         if (! ctColor.isSetRgb()) {
@@ -108,7 +138,7 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     * A boolean value indicating if the ctColor has a tint or not
+     * @return true if the ctColor has a tint
      */
     public boolean hasTint() {
         if (!ctColor.isSetTint()) {
@@ -125,7 +155,7 @@ public class XSSFColor extends ExtendedColor {
         return (short)ctColor.getIndexed();
     }
     /**
-     * Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
+     * @return Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
      */
     public short getIndexed() {
         return getIndex();
@@ -133,6 +163,7 @@ public class XSSFColor extends ExtendedColor {
 
     /**
      * Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
+     * @param indexed color index
      */
     public void setIndexed(int indexed) {
         ctColor.setIndexed(indexed);
@@ -185,6 +216,14 @@ public class XSSFColor extends ExtendedColor {
        return ctColor.getRgb();
    }
 
+   protected byte[] getIndexedRGB() {
+       if (isIndexed()) {
+           if (indexedColorMap != null) return indexedColorMap.getRGB(getIndex());
+           return DefaultIndexedColorMap.getDefaultRGB(getIndex());
+       }
+       return null;
+   }
+   
     /**
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
@@ -205,6 +244,7 @@ public class XSSFColor extends ExtendedColor {
     /**
      * Index into the <clrScheme> collection, referencing a particular <sysClr> or
      *  <srgbClr> value expressed in the Theme part.
+     * @param theme index
      */
     public void setTheme(int theme) {
         ctColor.setTheme(theme);

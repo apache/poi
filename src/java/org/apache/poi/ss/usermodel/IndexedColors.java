@@ -31,7 +31,15 @@ package org.apache.poi.ss.usermodel;
  */
 public enum IndexedColors {
 
-    // 0-7?
+    // 0-7 duplicates of 8-15 for compatibility (OOXML spec pt.1 sec. 18.8.27)
+    BLACK1(0),
+    WHITE1(1),
+    RED1(2),
+    BRIGHT_GREEN1(3),
+    BLUE1(4),
+    YELLOW1(5),
+    PINK1(6),
+    TURQUOISE1(7),
     BLACK(8),
     WHITE(9),
     RED(10),
@@ -51,7 +59,7 @@ public enum IndexedColors {
     CORNFLOWER_BLUE(24),
     MAROON(25),
     LEMON_CHIFFON(26),
-    // 27?
+    LIGHT_TURQUOISE1(27),
     ORCHID(28),
     CORAL(29),
     ROYAL_BLUE(30),

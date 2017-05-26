@@ -33,10 +33,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
  * @author Yegor Kozlov
  */
 public class XSSFFontFormatting implements FontFormatting {
-    CTFont _font;
+    private IndexedColorMap _colorMap;
+    private CTFont _font;
 
-    /*package*/ XSSFFontFormatting(CTFont font){
+    /*package*/ XSSFFontFormatting(CTFont font, IndexedColorMap colorMap) {
         _font = font;
+        _colorMap = colorMap;
     }
 
     /**
@@ -111,7 +113,7 @@ public class XSSFFontFormatting implements FontFormatting {
     public XSSFColor getFontColor() {
         if(_font.sizeOfColorArray() == 0) return null;
 
-        return new XSSFColor(_font.getColorArray(0));
+        return new XSSFColor(_font.getColorArray(0), _colorMap);
     }
 
     @Override

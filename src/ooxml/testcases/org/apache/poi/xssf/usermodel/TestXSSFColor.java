@@ -17,12 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColors;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRgbColor;
 
 public final class TestXSSFColor {
     
@@ -179,5 +183,22 @@ public final class TestXSSFColor {
       assertEquals(102,  rgb4.getRGBWithTint()[2]);
       
       wb.close();
+   }
+   
+   @Test
+   public void testCustomIndexedColour() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("customIndexedColors.xlsx");
+       XSSFCell cell = wb.getSheetAt(1).getRow(0).getCell(0);
+       XSSFColor color = cell.getCellStyle().getFillForegroundColorColor();
+       CTColors ctColors = wb.getStylesSource().getCTStylesheet().getColors();
+
+       CTRgbColor ctRgbColor = ctColors.getIndexedColors()
+               .getRgbColorList()
+               .get(color.getIndex());
+
+       String hexRgb = ctRgbColor.getDomNode().getAttributes().getNamedItem("rgb").getNodeValue();
+
+       assertEquals(hexRgb, color.getARGBHex());
+      
    }
 }

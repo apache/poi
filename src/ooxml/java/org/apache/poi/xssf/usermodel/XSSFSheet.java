@@ -4007,7 +4007,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (!pr.isSetTabColor()) {
             return null;
         }
-        return new XSSFColor(pr.getTabColor());
+        return new XSSFColor(pr.getTabColor(), getWorkbook().getStylesSource().getIndexedColors());
     }
 
     /**
@@ -4020,7 +4020,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Removal(version="3.17")
     public void setTabColor(int colorIndex) {
         IndexedColors indexedColor = IndexedColors.fromInt(colorIndex);
-        XSSFColor color = new XSSFColor(indexedColor);
+        XSSFColor color = new XSSFColor(indexedColor, getWorkbook().getStylesSource().getIndexedColors());
         setTabColor(color);
     }
     

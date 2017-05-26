@@ -60,6 +60,7 @@ public class XSSFFont implements Font {
      */
     public static final short DEFAULT_FONT_COLOR = IndexedColors.BLACK.getIndex();
 
+    private IndexedColorMap _indexedColorMap;
     private ThemesTable _themes;
     private CTFont _ctFont;
     private short _index;
@@ -74,9 +75,16 @@ public class XSSFFont implements Font {
         _index = 0;
     }
 
-    public XSSFFont(CTFont font, int index) {
+    /**
+     * Called from parsing styles.xml
+     * @param font CTFont
+     * @param index font index
+     * @param colorMap for default or custom indexed colors
+     */
+    public XSSFFont(CTFont font, int index, IndexedColorMap colorMap) {
         _ctFont = font;
         _index = (short)index;
+        _indexedColorMap = colorMap;
     }
 
     /**
@@ -150,7 +158,7 @@ public class XSSFFont implements Font {
     public XSSFColor getXSSFColor() {
         CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? null : _ctFont.getColorArray(0);
         if(ctColor != null) {
-           XSSFColor color = new XSSFColor(ctColor);
+           XSSFColor color = new XSSFColor(ctColor, _indexedColorMap);
            if(_themes != null) {
               _themes.inheritFromThemeAsRequired(color);
            }
