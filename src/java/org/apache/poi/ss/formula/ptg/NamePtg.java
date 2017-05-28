@@ -43,7 +43,7 @@ public final class NamePtg extends OperandPtg implements WorkbookDependentFormul
 
 	/** Creates new NamePtg */
 	public NamePtg(LittleEndianInput in)  {
-		field_1_label_index = in.readShort();
+		field_1_label_index = in.readUShort();
 		field_2_zero = in.readShort();
 	}
 
