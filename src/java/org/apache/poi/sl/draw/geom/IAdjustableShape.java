@@ -21,11 +21,9 @@ package org.apache.poi.sl.draw.geom;
 
 
 /**
- * A bridge to the consumer application.
+ * A bridge to the consumer application.<p>
  *
  * To get a shape geometry one needs to pass shape bounds and adjust values.
- *
- * @author Yegor Kozlov
  */
 public interface IAdjustableShape {
     /**

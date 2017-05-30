@@ -57,7 +57,7 @@ import org.apache.poi.util.Units;
 
 
 public class DrawSimpleShape extends DrawShape {
-    
+
     private static final double DECO_SIZE_POW = 1.5d;
 
     public DrawSimpleShape(SimpleShape<?,?> shape) {
@@ -79,12 +79,15 @@ public class DrawSimpleShape extends DrawShape {
 
         // then fill the shape interior
         if (fill != null) {
-            graphics.setPaint(fill);
             for (Outline o : elems) {
                 if (o.getPath().isFilled()){
-                    java.awt.Shape s = o.getOutline();
-                    graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
-                    graphics.fill(s);
+                    Paint fillMod = drawPaint.getPaint(graphics, getShape().getFillStyle().getPaint(), o.getPath().getFill());
+                    if (fillMod != null) {
+                        graphics.setPaint(fillMod);
+                        java.awt.Shape s = o.getOutline();
+                        graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
+                        graphics.fill(s);
+                    }
                 }
             }
         }
@@ -105,7 +108,7 @@ public class DrawSimpleShape extends DrawShape {
             }
         }
 
-        // draw line decorations
+		// draw line decorations
         drawDecoration(graphics, line, stroke);
     }
 
@@ -378,7 +381,7 @@ public class DrawSimpleShape extends DrawShape {
 
                     presets.put(cusName, new CustomGeometry(cusGeom));
                 }
-                
+
                 staxFiltRd.close();
                 staxReader.close();
             } catch (Exception e) {
@@ -392,43 +395,40 @@ public class DrawSimpleShape extends DrawShape {
     }
 
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
+        final SimpleShape<?,?> sh = getShape();
 
         List<Outline> lst = new ArrayList<Outline>();
-        CustomGeometry geom = getShape().getGeometry();
+        CustomGeometry geom = sh.getGeometry();
         if(geom == null) {
             return lst;
         }
 
-        Rectangle2D anchor = getAnchor(graphics, getShape());
+        Rectangle2D anchor = getAnchor(graphics, sh);
         for (Path p : geom) {
 
-            double w = p.getW() == -1 ? anchor.getWidth() * Units.EMU_PER_POINT : p.getW();
-            double h = p.getH() == -1 ? anchor.getHeight() * Units.EMU_PER_POINT : p.getH();
+            double w = p.getW(), h = p.getH(), scaleX = Units.toPoints(1), scaleY = scaleX;
+            if (w == -1) {
+                w = Units.toEMU(anchor.getWidth());
+            } else {
+                scaleX = anchor.getWidth() / w;
+            }
+            if (h == -1) {
+                h = Units.toEMU(anchor.getHeight());
+            } else {
+                scaleY = anchor.getHeight() / h;
+            }
 
             // the guides in the shape definitions are all defined relative to each other,
             // so we build the path starting from (0,0).
             final Rectangle2D pathAnchor = new Rectangle2D.Double(0,0,w,h);
 
-            Context ctx = new Context(geom, pathAnchor, getShape());
+            Context ctx = new Context(geom, pathAnchor, sh);
 
             java.awt.Shape gp = p.getPath(ctx);
 
             // translate the result to the canvas coordinates in points
             AffineTransform at = new AffineTransform();
             at.translate(anchor.getX(), anchor.getY());
-
-            double scaleX, scaleY;
-            if (p.getW() != -1) {
-                scaleX = anchor.getWidth() / p.getW();
-            } else {
-                scaleX = 1.0 / Units.EMU_PER_POINT;
-            }
-            if (p.getH() != -1) {
-                scaleY = anchor.getHeight() / p.getH();
-            } else {
-                scaleY = 1.0 / Units.EMU_PER_POINT;
-            }
-
             at.scale(scaleX, scaleY);
 
             java.awt.Shape canvasShape = at.createTransformedShape(gp);

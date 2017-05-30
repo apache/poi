@@ -23,8 +23,6 @@ import org.apache.poi.sl.draw.binding.CTGeomGuide;
 
 /**
  * Represents a shape adjust values (see section 20.1.9.5 in the spec)
- *
- * @author Yegor Kozlov
  */
 public class AdjustValue extends Guide {
 
@@ -36,10 +34,6 @@ public class AdjustValue extends Guide {
     public double evaluate(Context ctx){
         String name = getName();
         Guide adj = ctx.getAdjustValue(name);
-        if(adj != null) {
-            return adj.evaluate(ctx);
-        }
-        return super.evaluate(ctx);
+        return (adj != null) ? adj.evaluate(ctx) : super.evaluate(ctx);
     }
-
 }

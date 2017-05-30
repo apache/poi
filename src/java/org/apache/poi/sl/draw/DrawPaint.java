@@ -33,6 +33,7 @@ import java.io.InputStream;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
@@ -113,8 +114,15 @@ public class DrawPaint {
     }
 
     public Paint getPaint(Graphics2D graphics, PaintStyle paint) {
+        return getPaint(graphics, paint, PaintModifier.NORM);
+    }
+
+    public Paint getPaint(Graphics2D graphics, PaintStyle paint, PaintModifier modifier) {
+        if (modifier == PaintModifier.NONE) {
+            return null;
+        }
         if (paint instanceof SolidPaint) {
-            return getSolidPaint((SolidPaint)paint, graphics);
+            return getSolidPaint((SolidPaint)paint, graphics, modifier);
         } else if (paint instanceof GradientPaint) {
             return getGradientPaint((GradientPaint)paint, graphics);
         } else if (paint instanceof TexturePaint) {
@@ -123,8 +131,77 @@ public class DrawPaint {
         return null;
     }
 
-    protected Paint getSolidPaint(SolidPaint fill, Graphics2D graphics) {
-        return applyColorTransform(fill.getSolidColor());
+    protected Paint getSolidPaint(SolidPaint fill, Graphics2D graphics, final PaintModifier modifier) {
+        final ColorStyle orig = fill.getSolidColor();
+        ColorStyle cs = new ColorStyle() {
+            @Override
+            public Color getColor() {
+                return orig.getColor();
+            }
+
+            @Override
+            public int getAlpha() {
+                return orig.getAlpha();
+            }
+
+            @Override
+            public int getHueOff() {
+                return orig.getHueOff();
+            }
+
+            @Override
+            public int getHueMod() {
+                return orig.getHueMod();
+            }
+
+            @Override
+            public int getSatOff() {
+                return orig.getSatOff();
+            }
+
+            @Override
+            public int getSatMod() {
+                return orig.getSatMod();
+            }
+
+            @Override
+            public int getLumOff() {
+                return orig.getLumOff();
+            }
+
+            @Override
+            public int getLumMod() {
+                return orig.getLumMod();
+            }
+
+            @Override
+            public int getShade() {
+                int shade = orig.getShade();
+                switch (modifier) {
+                    case DARKEN:
+                        return Math.min(100000, Math.max(0,shade)+40000);
+                    case DARKEN_LESS:
+                        return Math.min(100000, Math.max(0,shade)+20000);
+                    default:
+                        return shade;
+                }
+            }
+
+            @Override
+            public int getTint() {
+                int tint = orig.getTint();
+                switch (modifier) {
+                    case LIGHTEN:
+                        return Math.min(100000, Math.max(0,tint)+40000);
+                    case LIGHTEN_LESS:
+                        return Math.min(100000, Math.max(0,tint)+20000);
+                    default:
+                        return tint;
+                }
+            }
+        };
+
+        return applyColorTransform(cs);
     }
 
     protected Paint getGradientPaint(GradientPaint fill, Graphics2D graphics) {
@@ -272,9 +349,9 @@ public class DrawPaint {
             return;
         }
 
-        double fshade = shade / 100000.d;
+        double shadePct = shade / 100000.;
 
-        hsl[2] *= fshade;
+        hsl[2] *= 1. - shadePct;
     }
 
     /**
@@ -289,16 +366,16 @@ public class DrawPaint {
             return;
         }
 
-        double ftint = tint / 100000.f;
-
-        hsl[2] = hsl[2] * ftint + (100 - ftint*100.);
+        // see 18.8.19 fgColor (Foreground Color)
+        double tintPct = tint / 100000.;
+        hsl[2] = hsl[2]*(1.-tintPct) + (100.-100.*(1.-tintPct));
     }
 
     protected Paint createLinearGradientPaint(GradientPaint fill, Graphics2D graphics) {
         // TODO: we need to find the two points for gradient - the problem is, which point at the outline
         // do you take? My solution would be to apply the gradient rotation to the shape in reverse
         // and then scan the shape for the largest possible horizontal distance
-        
+
         double angle = fill.getGradientAngle();
         if (!fill.isRotatedWithShape()) {
             angle -= shape.getRotation();

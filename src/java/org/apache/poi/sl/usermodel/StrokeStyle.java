@@ -17,6 +17,9 @@
 
 package org.apache.poi.sl.usermodel;
 
+/**
+ * This interface specifies the line style of a shape
+ */
 public interface StrokeStyle {
     enum LineCap {
         /** Rounded ends */

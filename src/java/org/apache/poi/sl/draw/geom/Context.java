@@ -23,11 +23,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Date: 10/24/11
- *
- * @author Yegor Kozlov
- */
 public class Context {
     final Map<String, Double> _ctx = new HashMap<String, Double>();
     final IAdjustableShape _props;
@@ -36,8 +31,12 @@ public class Context {
     public Context(CustomGeometry geom, Rectangle2D anchor, IAdjustableShape props){
         _props = props;
         _anchor = anchor;
-        for(Guide gd : geom.adjusts) evaluate(gd);
-        for(Guide gd : geom.guides) evaluate(gd);
+        for(Guide gd : geom.adjusts) {
+            evaluate(gd);
+        }
+        for(Guide gd : geom.guides) {
+            evaluate(gd);
+        }
     }
 
     public Rectangle2D getShapeAnchor(){
@@ -53,22 +52,19 @@ public class Context {
             return Double.parseDouble(key);
         }
 
-        Formula builtIn = Formula.builtInFormulas.get(key);
-        if(builtIn != null){
-            return builtIn.evaluate(this);
-        }
-
-        if(!_ctx.containsKey(key)) {
-            throw new RuntimeException("undefined variable: " + key);
-        }
-
-        return _ctx.get(key);
+        Double val = _ctx.get(key);
+        // BuiltInGuide throws IllegalArgumentException if key is not defined
+        return (val != null) ? val : evaluate(BuiltInGuide.valueOf("_"+key));
     }
 
     public double evaluate(Formula fmla){
         double result = fmla.evaluate(this);
-        String key = fmla.getName();
-        if(key != null) _ctx.put(key, result);
+        if (fmla instanceof Guide) {
+            String key = ((Guide)fmla).getName();
+            if (key != null) {
+                _ctx.put(key, result);
+            }
+        }
         return result;
     }
 }
