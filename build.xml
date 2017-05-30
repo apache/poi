@@ -843,6 +843,8 @@ under the License.
                     <include name="org/apache/poi/util/Internal.java"/>
                 </fileset>
             </copy>
+        	
+        	<echo>Forking javac with max heap size ${ooxml.memory}</echo>
 
             <javac target="${jdk.version.class}"
                    source="${jdk.version.source}"
