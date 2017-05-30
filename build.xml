@@ -778,7 +778,7 @@ under the License.
             <!-- We need a fair amount of memory to compile the xml schema, -->
             <!-- but limit it in case it goes wrong! -->
             <!-- Pick the right amount based on 32 vs 64 bit jvm -->
-            <condition property="ooxml.memory" value="1024m" else="768m">
+            <condition property="ooxml.memory" value="1536m" else="1024m">
                <equals arg1="${sun.arch.data.model}" arg2="64" />
             </condition>
 
