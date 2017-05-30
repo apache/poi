@@ -23,23 +23,19 @@ import java.awt.geom.Path2D;
 
 import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
 
-/**
- * Date: 10/25/11
- *
- * @author Yegor Kozlov
- */
 public class CurveToCommand implements PathCommand {
     private String arg1, arg2, arg3, arg4, arg5, arg6;
 
     CurveToCommand(CTAdjPoint2D pt1, CTAdjPoint2D pt2, CTAdjPoint2D pt3){
-        arg1 = pt1.getX().toString();
-        arg2 = pt1.getY().toString();
-        arg3 = pt2.getX().toString();
-        arg4 = pt2.getY().toString();
-        arg5 = pt3.getX().toString();
-        arg6 = pt3.getY().toString();
+        arg1 = pt1.getX();
+        arg2 = pt1.getY();
+        arg3 = pt2.getX();
+        arg4 = pt2.getY();
+        arg5 = pt3.getX();
+        arg6 = pt3.getY();
     }
 
+    @Override
     public void execute(Path2D.Double path, Context ctx){
         double x1 = ctx.getValue(arg1);
         double y1 = ctx.getValue(arg2);

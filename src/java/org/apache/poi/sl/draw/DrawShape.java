@@ -48,7 +48,7 @@ public class DrawShape implements Drawable {
     protected static boolean isHSLF(Shape<?,?> shape) {
         return shape.getClass().getCanonicalName().toLowerCase(Locale.ROOT).contains("hslf");
     }
-    
+
     /**
      * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
      *
@@ -184,16 +184,16 @@ public class DrawShape implements Drawable {
         }
 
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
-        if(tx != null) {
+        if(tx != null && !tx.isIdentity()) {
             anchor = tx.createTransformedShape(anchor).getBounds2D();
         }
         return anchor;
     }
-    
+
     protected Shape<?,?> getShape() {
         return shape;
     }
-    
+
     protected static BasicStroke getStroke(StrokeStyle strokeStyle) {
         float lineWidth = (float) strokeStyle.getLineWidth();
         if (lineWidth == 0.0f) {

@@ -632,8 +632,8 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.CENTER, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(12.0, r1.getFontSize(), 0);
-        // TODO calculation of tint is incorrect
-        assertTrue(sameColor(new Color(64,64,64), r1.getFontColor()));
+        // TODO calculation of tint might be incorrect
+        assertTrue(sameColor(new Color(191,191,191), r1.getFontColor()));
 
         XSLFTextShape dt = (XSLFTextShape)slide.getPlaceholderByType(STPlaceholderType.INT_DT);
         assertEquals("Friday, October 21, 2011", dt.getText());

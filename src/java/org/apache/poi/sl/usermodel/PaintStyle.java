@@ -22,12 +22,30 @@ import java.io.InputStream;
 
 
 public interface PaintStyle {
+    /**
+     * The PaintStyle can be modified by secondary sources, e.g. the attributes in the preset shapes.
+     * These modifications need to be taken into account when the final color is determined.
+     */
+    enum PaintModifier {
+        /** don't use any paint/fill */
+        NONE,
+        /** use the paint/filling as-is */
+        NORM,
+        /** lighten the paint/filling */
+        LIGHTEN,
+        /** lighten (... a bit less) the paint/filling */
+        LIGHTEN_LESS,
+        /** darken the paint/filling */
+        DARKEN,
+        /** darken (... a bit less) the paint/filling */
+        DARKEN_LESS;
+    }
 
-    public interface SolidPaint extends PaintStyle {
+    interface SolidPaint extends PaintStyle {
         ColorStyle getSolidColor();
     }
 
-    public interface GradientPaint extends PaintStyle {
+    interface GradientPaint extends PaintStyle {
         enum GradientType { linear, circular, shape }
         
         /**
@@ -40,7 +58,7 @@ public interface PaintStyle {
         GradientType getGradientType();
     }    
     
-    public interface TexturePaint extends PaintStyle {
+    interface TexturePaint extends PaintStyle {
         /**
          * @return the raw image stream
          */

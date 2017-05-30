@@ -21,11 +21,6 @@ package org.apache.poi.sl.draw.geom;
 
 import java.awt.Shape;
 
-/**
-* Date: 11/6/11
-*
-* @author Yegor Kozlov
-*/
 public class Outline {
     private Shape shape;
     private Path path;

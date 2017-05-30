@@ -19,19 +19,24 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.poi.sl.draw.binding.*;
+import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
+import org.apache.poi.sl.draw.binding.CTGeomGuide;
+import org.apache.poi.sl.draw.binding.CTGeomGuideList;
+import org.apache.poi.sl.draw.binding.CTGeomRect;
+import org.apache.poi.sl.draw.binding.CTPath2D;
+import org.apache.poi.sl.draw.binding.CTPath2DList;
 
 /**
  * Definition of a custom geometric shape
- *
- * @author Yegor Kozlov
  */
 public class CustomGeometry implements Iterable<Path>{
-    List<Guide> adjusts = new ArrayList<Guide>();
-    List<Guide> guides = new ArrayList<Guide>();
-    List<Path> paths = new ArrayList<Path>();
+    final List<Guide> adjusts = new ArrayList<Guide>();
+    final List<Guide> guides = new ArrayList<Guide>();
+    final List<Path> paths = new ArrayList<Path>();
     Path textBounds;
 
     public CustomGeometry(CTCustomGeometry2D geom) {
@@ -59,24 +64,20 @@ public class CustomGeometry implements Iterable<Path>{
         CTGeomRect rect = geom.getRect();
         if(rect != null) {
             textBounds = new Path();
-            textBounds.addCommand(
-                    new MoveToCommand(rect.getL().toString(), rect.getT().toString()));
-            textBounds.addCommand(
-                    new LineToCommand(rect.getR().toString(), rect.getT().toString()));
-            textBounds.addCommand(
-                    new LineToCommand(rect.getR().toString(), rect.getB().toString()));
-            textBounds.addCommand(
-                    new LineToCommand(rect.getL().toString(), rect.getB().toString()));
-            textBounds.addCommand(
-                    new ClosePathCommand());
+            textBounds.addCommand(new MoveToCommand(rect.getL(), rect.getT()));
+            textBounds.addCommand(new LineToCommand(rect.getR(), rect.getT()));
+            textBounds.addCommand(new LineToCommand(rect.getR(), rect.getB()));
+            textBounds.addCommand(new LineToCommand(rect.getL(), rect.getB()));
+            textBounds.addCommand(new ClosePathCommand());
         }
     }
-    
+
+    @Override
     public Iterator<Path> iterator() {
         return paths.iterator();
     }
 
     public Path getTextBounds(){
-        return textBounds;        
+        return textBounds;
     }
 }
