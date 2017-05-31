@@ -41,6 +41,7 @@ public class UserDefinedFunctionExample {
     public static void main( String[] args ) throws Exception {
         
         if(  args.length != 2 ) {
+            // e.g. src/examples/src/org/apache/poi/ss/examples/formula/mortgage-calculation.xls Sheet1!B4
             System.out.println( "usage: UserDefinedFunctionExample fileName cellId" ) ;
             return;
         }
@@ -50,32 +51,32 @@ public class UserDefinedFunctionExample {
         
         File workbookFile = new File( args[0] ) ;
         
-        FileInputStream fis = new FileInputStream(workbookFile);
-        Workbook workbook = WorkbookFactory.create(fis);
-        fis.close();
+        Workbook workbook = WorkbookFactory.create(workbookFile, null, true);
 
-        String[] functionNames = { "calculatePayment" } ;
-        FreeRefFunction[] functionImpls = { new CalculateMortgage() } ;
-        
-        UDFFinder udfToolpack = new DefaultUDFFinder( functionNames, functionImpls ) ;
-
-        // register the user-defined function in the workbook
-        workbook.addToolPack(udfToolpack);
-
-        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-
-        CellReference cr = new CellReference( args[1] ) ;
-        String sheetName = cr.getSheetName() ;
-        Sheet sheet = workbook.getSheet( sheetName ) ;
-        int rowIdx = cr.getRow() ;
-        int colIdx = cr.getCol() ;
-        Row row = sheet.getRow( rowIdx ) ;
-        Cell cell = row.getCell( colIdx ) ;
-        
-        CellValue value = evaluator.evaluate( cell ) ;
-        
-        System.out.println("returns value: " +  value ) ;
-        
-        workbook.close();
+        try {
+            String[] functionNames = { "calculatePayment" } ;
+            FreeRefFunction[] functionImpls = { new CalculateMortgage() } ;
+            
+            UDFFinder udfToolpack = new DefaultUDFFinder( functionNames, functionImpls ) ;
+    
+            // register the user-defined function in the workbook
+            workbook.addToolPack(udfToolpack);
+    
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+    
+            CellReference cr = new CellReference( args[1] ) ;
+            String sheetName = cr.getSheetName() ;
+            Sheet sheet = workbook.getSheet( sheetName ) ;
+            int rowIdx = cr.getRow() ;
+            int colIdx = cr.getCol() ;
+            Row row = sheet.getRow( rowIdx ) ;
+            Cell cell = row.getCell( colIdx ) ;
+            
+            CellValue value = evaluator.evaluate( cell ) ;
+            
+            System.out.println("returns value: " +  value ) ;
+        } finally {
+            workbook.close();
+        }
     }
 }

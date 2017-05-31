@@ -731,13 +731,16 @@ public class AddDimensionedImage {
             outputFile = args[1];
 
             HSSFWorkbook workbook = new HSSFWorkbook();
-            sheet = workbook.createSheet("Picture Test");
-            new AddDimensionedImage().addImageToSheet("A1", sheet,
-                    imageFile, 125, 125,
-                    AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
-            fos = new FileOutputStream(outputFile);
-            workbook.write(fos);
-            workbook.close();
+            try  {
+                sheet = workbook.createSheet("Picture Test");
+                new AddDimensionedImage().addImageToSheet("A1", sheet,
+                        imageFile, 125, 125,
+                        AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
+                fos = new FileOutputStream(outputFile);
+                workbook.write(fos);
+            } finally {
+                workbook.close();
+            }
         }
         catch(FileNotFoundException fnfEx) {
             System.out.println("Caught an: " + fnfEx.getClass().getName());
