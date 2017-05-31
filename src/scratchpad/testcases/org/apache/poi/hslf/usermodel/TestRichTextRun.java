@@ -397,7 +397,7 @@ public final class TestRichTextRun {
 	private static void assertMatchesFileC(HSLFSlideShow s) throws IOException {
 		// Grab the bytes of the file
 	    NPOIFSFileSystem fs = new NPOIFSFileSystem(HSLFTestDataSamples.openSampleFileStream(filenameC));
-	    InputStream is = fs.createDocumentInputStream("PowerPoint Document");
+	    InputStream is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 	    byte[] raw_file = IOUtils.toByteArray(is);
 	    is.close();
 	    fs.close();
@@ -406,7 +406,7 @@ public final class TestRichTextRun {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		s.write(baos);
 		fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
-		is = fs.createDocumentInputStream("PowerPoint Document");
+		is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		byte[] raw_ss = IOUtils.toByteArray(is);
         is.close();
         fs.close();		

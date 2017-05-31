@@ -23,6 +23,7 @@ import static org.junit.Assume.assumeTrue;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
@@ -31,6 +32,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,7 +53,7 @@ public class TestFontRendering {
 
     // @Ignore2("This fails on some systems because fonts are rendered slightly different")
     @Test
-    public void bug55902mixedFontWithChineseCharacters() throws Exception {
+    public void bug55902mixedFontWithChineseCharacters() throws IOException, FontFormatException {
         // font files need to be downloaded first via
         // ant test-scratchpad-download-resources
         String fontFiles[][] = {
@@ -117,5 +119,6 @@ public class TestFontRendering {
         }
         
         assertArrayEquals("Expected to have matching raster-arrays, but found differences", expectedData, actualData);
+        ss.close();
     }
 }

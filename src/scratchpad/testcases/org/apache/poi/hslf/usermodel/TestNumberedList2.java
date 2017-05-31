@@ -19,14 +19,19 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.junit.Test;
 
@@ -36,14 +41,12 @@ import org.junit.Test;
  * if a paragraph has autonumber ()
  * @see <a href="http://social.msdn.microsoft.com/Forums/mr-IN/os_binaryfile/thread/650888db-fabd-4b95-88dc-f0455f6e2d28">
  *     PPT: Missing TextAutoNumberScheme structure providing the style of the number bullets</a>
- * 
- * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
 public final class TestNumberedList2 {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-	public void testNumberedList() throws Exception {
+	public void testNumberedList() throws IOException {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers2.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
@@ -51,8 +54,11 @@ public final class TestNumberedList2 {
 		assertEquals(2, slides.size());
 		checkSlide0(slides.get(0));
 		checkSlide1(slides.get(1));
-	}
-	private void checkSlide0(final HSLFSlide s) {
+
+		ppt.close();
+    }
+
+    private void checkSlide0(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
 		assertEquals(2, numberedListArray.length);
@@ -89,6 +95,7 @@ public final class TestNumberedList2 {
 		checkSingleRunWrapper(44, styleAtoms[0]);
 		checkSingleRunWrapper(130, styleAtoms[1]);
 	}
+    
 	private void checkSlide1(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
@@ -119,6 +126,7 @@ public final class TestNumberedList2 {
 		checkSingleRunWrapper(67, styleAtoms[1]);
 		checkSingleRunWrapper(70, styleAtoms[2]);
 	}
+	
 	private void checkSingleRunWrapper(final int exceptedLength, final EscherTextboxWrapper wrapper) {
 		final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
 		final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();

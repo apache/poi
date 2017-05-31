@@ -28,6 +28,7 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -102,7 +103,7 @@ public final class QuickButCruddyTextExtractor {
 		fs = poifs;
 
 		// Find the PowerPoint bit, and get out the bytes
-		InputStream pptIs = fs.createDocumentInputStream("PowerPoint Document");
+		InputStream pptIs = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		pptContents = IOUtils.toByteArray(pptIs);
 		pptIs.close();
 	}

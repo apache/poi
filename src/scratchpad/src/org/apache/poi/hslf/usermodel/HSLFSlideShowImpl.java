@@ -209,11 +209,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void readPowerPointStream() throws IOException {
         // Get the main document stream
         DocumentEntry docProps =
-                (DocumentEntry) getDirectory().getEntry("PowerPoint Document");
+                (DocumentEntry) getDirectory().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
 
         // Grab the document stream
         int len = docProps.getSize();
-        InputStream is = getDirectory().createDocumentInputStream("PowerPoint Document");
+        InputStream is = getDirectory().createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
         try {
             _docstream = IOUtils.toByteArray(is, len);
         } finally {
@@ -701,8 +701,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // Write the PPT stream into the POIFS layer
         ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
-        outFS.createOrUpdateDocument(bais, "PowerPoint Document");
-        writtenEntries.add("PowerPoint Document");
+        outFS.createOrUpdateDocument(bais, HSLFSlideShow.POWERPOINT_DOCUMENT);
+        writtenEntries.add(HSLFSlideShow.POWERPOINT_DOCUMENT);
 
         currentUser.setEncrypted(encryptedSS.getDocumentEncryptionAtom() != null);
         currentUser.writeToFS(outFS);

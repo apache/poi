@@ -18,32 +18,31 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 
 import org.junit.Test;
 
 /**
  * test common operations on containers of shapes (sheets and groups of shapes)
- *
- * @author Yegor Kozlov
  */
 public class TestXSLFShapeContainer {
 
-    @SuppressWarnings("unused")
     public void verifyContainer(XSLFShapeContainer container) {
         container.clear();
         assertEquals(0, container.getShapes().size());
 
-        XSLFGroupShape shape1 = container.createGroup();
+        container.createGroup();
         assertEquals(1, container.getShapes().size());
 
-        XSLFTextBox shape2 = container.createTextBox();
+        container.createTextBox();
         assertEquals(2, container.getShapes().size());
 
-        XSLFAutoShape shape3 = container.createAutoShape();
+        container.createAutoShape();
         assertEquals(3, container.getShapes().size());
 
-        XSLFConnectorShape shape4 = container.createConnector();
+        container.createConnector();
         assertEquals(4, container.getShapes().size());
 
         container.clear();
@@ -51,7 +50,7 @@ public class TestXSLFShapeContainer {
     }
 
     @Test
-    public void testSheet() {
+    public void testSheet() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSheet sheet = ppt.createSlide();
         verifyContainer(sheet);
@@ -60,5 +59,6 @@ public class TestXSLFShapeContainer {
         XSLFGroupShape group = sheet.createGroup();
         verifyContainer(group);
 
+        ppt.close();
     }
 }

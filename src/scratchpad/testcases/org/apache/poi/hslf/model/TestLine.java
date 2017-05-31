@@ -18,23 +18,22 @@
 package org.apache.poi.hslf.model;
 
 import java.awt.Color;
+import java.io.IOException;
 
+import org.apache.poi.hslf.usermodel.HSLFLine;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFLine;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.junit.Test;
 
 /**
  * Test Line shape.
- *
- * @author Yegor Kozlov
  */
 public final class TestLine {
 
     @Test
-    public void testCreateLines() {
+    public void testCreateLines() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slide = ppt.createSlide();
@@ -127,5 +126,7 @@ public final class TestLine {
         line.setLineCompound(LineCompound.DOUBLE);
         line.setLineWidth(8.0);
         slide.addShape(line);
+        
+        ppt.close();
     }
 }

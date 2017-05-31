@@ -18,11 +18,10 @@
  */
 package org.apache.poi.xslf.usermodel;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -31,17 +30,26 @@ import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 
-/**
- * @author Yegor Kozlov
- */
-public class TestXSLFChart extends TestCase {
+public class TestXSLFChart {
 
     /**
      * a modified version from POI-examples
      */
-    public void testFillChartTemplate() throws Exception {
+    @Test
+    public void testFillChartTemplate() throws IOException {
 
         String chartTitle = "Apache POI";  // first line is chart title
 
@@ -126,7 +134,7 @@ public class TestXSLFChart extends TestCase {
         OutputStream xlsOut = xlsPart.getPackagePart().getOutputStream();
         wb.write(xlsOut);
         xlsOut.close();
-
+        wb.close();
     }
 
 }

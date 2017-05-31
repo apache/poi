@@ -29,6 +29,7 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.record.HSLFEscherRecordFactory;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
@@ -96,7 +97,7 @@ public final class SlideShowDumper {
    */
   public SlideShowDumper(NPOIFSFileSystem filesystem, PrintStream out) throws IOException {
 	// Grab the document stream
-	InputStream is = filesystem.createDocumentInputStream("PowerPoint Document");
+	InputStream is = filesystem.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 	docstream = IOUtils.toByteArray(is);
 	is.close();
 	this.out = out;

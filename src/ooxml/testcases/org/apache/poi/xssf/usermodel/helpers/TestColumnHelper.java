@@ -23,12 +23,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
+import java.io.IOException;
 
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -329,7 +330,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testGetOrCreateColumn() {
+    public void testGetOrCreateColumn() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet 1");
         ColumnHelper columnHelper = sheet.getColumnHelper();
@@ -348,10 +349,12 @@ public final class TestColumnHelper {
         assertNotNull(columnHelper.getColumn(29, false));
         assertNotNull(columnHelper.getColumn1Based(30, false));
         assertNull(columnHelper.getColumn(30, false));
+
+        workbook.close();
     }
 
     @Test
-    public void testGetSetColDefaultStyle() {
+    public void testGetSetColDefaultStyle() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
@@ -382,6 +385,8 @@ public final class TestColumnHelper {
         columnHelper.setColDefaultStyle(11, cellStyle);
         assertEquals(0, col_2.getStyle());
         assertEquals(1, columnHelper.getColDefaultStyle(10));
+        
+        workbook.close();
     }
 
     private static int countColumns(CTWorksheet worksheet) {

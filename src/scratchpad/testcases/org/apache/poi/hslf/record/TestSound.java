@@ -18,20 +18,22 @@
 package org.apache.poi.hslf.record;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.junit.Test;
 
 /**
  * Tests Sound-related records: SoundCollection(2020), Sound(2022) and
  * SoundData(2023)).
- *
- * @author Yegor Kozlov
  */
-public final class TestSound extends TestCase {
-	public void testRealFile() throws Exception {
+public final class TestSound {
+    @Test
+	public void testRealFile() throws IOException {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 		HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));
@@ -46,9 +48,7 @@ public final class TestSound extends TestCase {
 				break;
 			}
 		}
-		if (soundCollection == null) {
-			throw new AssertionFailedError("soundCollection must not be null");
-		}
+		assertNotNull(soundCollection);
 
 		Sound sound = null;
 		Record[] sound_ch = soundCollection.getChildRecords();
@@ -59,9 +59,8 @@ public final class TestSound extends TestCase {
 				k++;
 			}
 		}
-		if (sound == null) {
-			throw new AssertionFailedError("sound must not be null");
-		}
+		
+		assertNotNull(sound);
 		assertEquals(1, k);
 
 		assertEquals("ringin.wav", sound.getSoundName());
@@ -70,5 +69,7 @@ public final class TestSound extends TestCase {
 
 		byte[] ref_data = slTests.readFile("ringin.wav");
 		assertArrayEquals(ref_data, sound.getSoundData());
-	}
+
+		ppt.close();
+    }
 }

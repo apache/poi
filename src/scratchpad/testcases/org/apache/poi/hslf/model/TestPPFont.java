@@ -19,19 +19,19 @@ package org.apache.poi.hslf.model;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.junit.Test;
 
 
 /**
  * Test adding fonts to the presenataion resources
- *
- * @author Yegor Kozlov
  */
 public final class TestPPFont {
 
     @Test
-    public void testCreate() {
+    public void testCreate() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         assertEquals(1, ppt.getNumberOfFonts());
         assertEquals("Arial", ppt.getFont(0).getFontName());
@@ -53,5 +53,7 @@ public final class TestPPFont {
         assertEquals(PPFont.WINGDINGS.getFontName(), font3.getFontName());
         assertEquals(PPFont.SYMBOL_CHARSET, font3.getCharSet());
         assertEquals(PPFont.VARIABLE_PITCH, font3.getPitchAndFamily());
+        
+        ppt.close();
     }
 }
