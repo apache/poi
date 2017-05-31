@@ -50,8 +50,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
      */
     @Override
     public BorderStyle getBorderBottomEnum() {
-        STBorderStyle.Enum ptrn = _border.isSetBottom() ? _border.getBottom().getStyle() : null;
-        return ptrn == null ? BorderStyle.NONE : BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorderStyle(_border.getBottom());
     }
 
     /**
@@ -67,8 +66,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
      */
     @Override
     public BorderStyle getBorderDiagonalEnum() {
-        STBorderStyle.Enum ptrn = _border.isSetDiagonal() ? _border.getDiagonal().getStyle() : null;
-        return ptrn == null ? BorderStyle.NONE : BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorderStyle(_border.getDiagonal());
     }
 
     /**
@@ -84,8 +82,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
      */
     @Override
     public BorderStyle getBorderLeftEnum() {
-        STBorderStyle.Enum ptrn = _border.isSetLeft() ? _border.getLeft().getStyle() : null;
-        return ptrn == null ? BorderStyle.NONE : BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorderStyle(_border.getLeft());
     }
 
     /**
@@ -101,8 +98,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
      */
     @Override
     public BorderStyle getBorderRightEnum() {
-        STBorderStyle.Enum ptrn = _border.isSetRight() ? _border.getRight().getStyle() : null;
-        return ptrn == null ? BorderStyle.NONE : BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorderStyle(_border.getRight());
     }
 
     /**
@@ -118,78 +114,52 @@ public class XSSFBorderFormatting implements BorderFormatting  {
      */
     @Override
     public BorderStyle getBorderTopEnum() {
-        STBorderStyle.Enum ptrn = _border.isSetTop() ? _border.getTop().getStyle() : null;
-        return ptrn == null ? BorderStyle.NONE : BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorderStyle(_border.getTop());
     }
 
     @Override
     public XSSFColor getBottomBorderColorColor() {
-        if(!_border.isSetBottom()) return null;
-
-        CTBorderPr pr = _border.getBottom();
-        return new XSSFColor(pr.getColor(), _colorMap);
+        return getColor(_border.getBottom());
     }
     @Override
     public short getBottomBorderColor() {
-        XSSFColor color = getBottomBorderColorColor();
-        if (color == null) return 0;
-        return color.getIndexed();
+        return getIndexedColor(getBottomBorderColorColor());
     }
 
     @Override
     public XSSFColor getDiagonalBorderColorColor() {
-        if(!_border.isSetDiagonal()) return null;
-
-        CTBorderPr pr = _border.getDiagonal();
-        return new XSSFColor(pr.getColor(), _colorMap);
+        return getColor(_border.getDiagonal());
     }
     @Override
     public short getDiagonalBorderColor() {
-        XSSFColor color = getDiagonalBorderColorColor();
-        if (color == null) return 0;
-        return color.getIndexed();
+        return getIndexedColor(getDiagonalBorderColorColor());
     }
 
     @Override
     public XSSFColor getLeftBorderColorColor() {
-        if(!_border.isSetLeft()) return null;
-
-        CTBorderPr pr = _border.getLeft();
-        return new XSSFColor(pr.getColor(), _colorMap);
+        return getColor(_border.getLeft());
     }
     @Override
     public short getLeftBorderColor() {
-        XSSFColor color = getLeftBorderColorColor();
-        if (color == null) return 0;
-        return color.getIndexed();
+        return getIndexedColor(getLeftBorderColorColor());
     }
 
     @Override
     public XSSFColor getRightBorderColorColor() {
-        if(!_border.isSetRight()) return null;
-
-        CTBorderPr pr = _border.getRight();
-        return new XSSFColor(pr.getColor(), _colorMap);
+        return getColor(_border.getRight());
     }
     @Override
     public short getRightBorderColor() {
-        XSSFColor color = getRightBorderColorColor();
-        if (color == null) return 0;
-        return color.getIndexed();
+        return getIndexedColor(getRightBorderColorColor());
     }
 
     @Override
     public XSSFColor getTopBorderColorColor() {
-        if(!_border.isSetTop()) return null;
-
-        CTBorderPr pr = _border.getTop();
-        return new XSSFColor(pr.getColor(), _colorMap);
+        return getColor(_border.getTop());
     }
     @Override
     public short getTopBorderColor() {
-        XSSFColor color = getRightBorderColorColor();
-        if (color == null) return 0;
-        return color.getIndexed();
+        return getIndexedColor(getRightBorderColorColor());
     }
 
     /**
@@ -365,5 +335,101 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         } else {
             pr.setColor(color);
         }
+    }
+
+    public BorderStyle getBorderVerticalEnum() {
+        return getBorderStyle(_border.getVertical());
+    }
+
+    public BorderStyle getBorderHorizontalEnum() {
+        return getBorderStyle(_border.getHorizontal());
+    }
+
+    public short getVerticalBorderColor() {
+        return getIndexedColor(getVerticalBorderColorColor());
+    }
+
+    public XSSFColor getVerticalBorderColorColor() {
+        return getColor(_border.getVertical());
+    }
+
+    public short getHorizontalBorderColor() {
+        return getIndexedColor(getHorizontalBorderColorColor());
+    }
+
+    public XSSFColor getHorizontalBorderColorColor() {
+        return getColor(_border.getHorizontal());
+    }
+
+    public void setBorderHorizontal(BorderStyle border) {
+        CTBorderPr pr = _border.isSetHorizontal() ? _border.getHorizontal() : _border.addNewHorizontal();
+        if(border == BorderStyle.NONE) _border.unsetHorizontal();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
+    }
+
+    public void setBorderVertical(BorderStyle border) {
+        CTBorderPr pr = _border.isSetVertical() ? _border.getVertical() : _border.addNewVertical();
+        if(border == BorderStyle.NONE) _border.unsetVertical();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
+    }
+
+    public void setHorizontalBorderColor(short color) {
+        CTColor ctColor = CTColor.Factory.newInstance();
+        ctColor.setIndexed(color);
+        setHorizontalBorderColor(ctColor);
+    }
+
+    public void setHorizontalBorderColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) setBottomBorderColor((CTColor)null);
+        else setHorizontalBorderColor(xcolor.getCTColor());
+    }
+    
+    public void setHorizontalBorderColor(CTColor color) {
+        CTBorderPr pr = _border.isSetHorizontal() ? _border.getHorizontal() : _border.addNewHorizontal();
+        if (color == null) {
+            pr.unsetColor();
+        } else {
+            pr.setColor(color);
+        }
+    }
+
+    public void setVerticalBorderColor(short color) {
+        CTColor ctColor = CTColor.Factory.newInstance();
+        ctColor.setIndexed(color);
+        setVerticalBorderColor(ctColor);
+    }
+
+    public void setVerticalBorderColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) setBottomBorderColor((CTColor)null);
+        else setVerticalBorderColor(xcolor.getCTColor());
+    }
+    
+    public void setVerticalBorderColor(CTColor color) {
+        CTBorderPr pr = _border.isSetVertical() ? _border.getVertical() : _border.addNewVertical();
+        if (color == null) {
+            pr.unsetColor();
+        } else {
+            pr.setColor(color);
+        }
+    }
+    
+    /**
+     * @param borderPr
+     * @return BorderStyle from the given element's style, or NONE if border is null
+     */
+    private BorderStyle getBorderStyle(CTBorderPr borderPr) {
+        if (borderPr == null) return BorderStyle.NONE;
+        STBorderStyle.Enum ptrn = borderPr.getStyle();
+        return ptrn == null ? BorderStyle.NONE : BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+    }
+    
+    private short getIndexedColor(XSSFColor color) {
+        return color == null ? 0 : color.getIndexed();
+    }
+    
+    private XSSFColor getColor(CTBorderPr pr) {
+        return pr == null ? null : new XSSFColor(pr.getColor(), _colorMap);
     }
 }

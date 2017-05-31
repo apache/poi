@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Color;
 
@@ -363,5 +364,101 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         } else {
             setTopBorderColor(hcolor.getIndex());
         }
+    }
+
+    /**
+     * HSSF doesn't support table borders, so always {@link BorderStyle#NONE}
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#getBorderVerticalEnum()
+     */
+    public BorderStyle getBorderVerticalEnum() {
+        return BorderStyle.NONE;
+    }
+
+    /**
+     * HSSF doesn't support table borders, so always {@link BorderStyle#NONE}
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#getBorderHorizontalEnum()
+     */
+    public BorderStyle getBorderHorizontalEnum() {
+        return BorderStyle.NONE;
+    }
+
+    /**
+     * HSSF Doesn't support table borders, so always {@link HSSFColorPredefined#AUTOMATIC}
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#getVerticalBorderColor()
+     */
+    public short getVerticalBorderColor() {
+        return HSSFColorPredefined.AUTOMATIC.getIndex();
+    }
+
+    /**
+     * HSSF Doesn't support table borders, so always {@link HSSFColorPredefined#AUTOMATIC}
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#getVerticalBorderColorColor()
+     */
+    public Color getVerticalBorderColorColor() {
+        return HSSFColorPredefined.AUTOMATIC.getColor();
+    }
+
+    /**
+     * HSSF Doesn't support table borders, so always {@link HSSFColorPredefined#AUTOMATIC}
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#getHorizontalBorderColor()
+     */
+    public short getHorizontalBorderColor() {
+        return HSSFColorPredefined.AUTOMATIC.getIndex();
+    }
+
+    /**
+     * HSSF Doesn't support table borders, so always {@link HSSFColorPredefined#AUTOMATIC}
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#getHorizontalBorderColorColor()
+     */
+    public Color getHorizontalBorderColorColor() {
+        return HSSFColorPredefined.AUTOMATIC.getColor();
+    }
+
+    /**
+     * Not available for HSSF.
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#setBorderHorizontal(org.apache.poi.ss.usermodel.BorderStyle)
+     */
+    public void setBorderHorizontal(BorderStyle border) {
+        // nothing
+    }
+
+    /**
+     * Not available for HSSF.
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#setBorderVertical(org.apache.poi.ss.usermodel.BorderStyle)
+     */
+    public void setBorderVertical(BorderStyle border) {
+        // nothing
+    }
+
+    /**
+     * Not available for HSSF.
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#setHorizontalBorderColor(short)
+     */
+    public void setHorizontalBorderColor(short color) {
+        // nothing
+    }
+
+    /**
+     * Not available for HSSF.
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#setHorizontalBorderColor(org.apache.poi.ss.usermodel.Color)
+     */
+    public void setHorizontalBorderColor(Color color) {
+        // nothing
+    }
+
+    /**
+     * Not available for HSSF.
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#setVerticalBorderColor(short)
+     */
+    public void setVerticalBorderColor(short color) {
+        // nothing
+    }
+
+    /**
+     * Not available for HSSF.
+     * @see org.apache.poi.ss.usermodel.BorderFormatting#setVerticalBorderColor(org.apache.poi.ss.usermodel.Color)
+     */
+    public void setVerticalBorderColor(Color color) {
+        // nothing
     }
 }
