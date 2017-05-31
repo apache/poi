@@ -150,6 +150,18 @@ public interface BorderFormatting {
     /** @since POI 3.15 */
     BorderStyle getBorderTopEnum();
 
+    /**
+     * Only valid for range borders, such as table styles
+     * @since 3.17 beta 1
+     * @return border style
+     */
+    BorderStyle getBorderVerticalEnum();
+    /**
+     * Only valid for range borders, such as table styles
+     * @since 3.17 beta 1
+     * @return border style
+     */
+    BorderStyle getBorderHorizontalEnum();
     
     short getBottomBorderColor();
     Color getBottomBorderColorColor();
@@ -166,6 +178,32 @@ public interface BorderFormatting {
     short getTopBorderColor();
     Color getTopBorderColorColor();
 
+    /**
+     * Range internal borders. Only relevant for range styles, such as table formatting
+     * @since  3.17 beta 1
+     * @return color index
+     */
+    short getVerticalBorderColor();
+    /**
+     * Range internal borders. Only relevant for range styles, such as table formatting
+     * @since  3.17 beta 1
+     * @return color
+     */
+    Color getVerticalBorderColorColor();
+    
+    /**
+     * Range internal borders. Only relevant for range styles, such as table formatting
+     * @since  3.17 beta 1
+     * @return color index
+     */
+    short getHorizontalBorderColor();
+    /**
+     * Range internal borders. Only relevant for range styles, such as table formatting
+     * @since  3.17 beta 1
+     * @return color
+     */
+    Color getHorizontalBorderColorColor();
+    
     /**
      * Set bottom border.
      *
@@ -240,6 +278,22 @@ public interface BorderFormatting {
      * @param border
      */
     void setBorderTop(BorderStyle border);
+    
+    /**
+     * Set range internal horizontal borders.
+     *
+     * @since 3.17 beta 1
+     * @param border
+     */
+    void setBorderHorizontal(BorderStyle border);
+    
+    /**
+     * Set range internal vertical borders.
+     *
+     * @since 3.17 beta 1
+     * @param border
+     */
+    void setBorderVertical(BorderStyle border);
 
     void setBottomBorderColor(short color);
     void setBottomBorderColor(Color color);
@@ -255,4 +309,30 @@ public interface BorderFormatting {
 
     void setTopBorderColor(short color);
     void setTopBorderColor(Color color);
+    
+    /**
+     * Range internal border color, such as table styles
+     * @since 3.17 beta 1
+     * @param color index
+     */
+    void setHorizontalBorderColor(short color);
+    /**
+     * Range internal border color, such as table styles
+     * @since 3.17 beta 1
+     * @param color index
+     */
+    void setHorizontalBorderColor(Color color);
+    
+    /**
+     * Range internal border color, such as table styles
+     * @since 3.17 beta 1
+     * @param color index
+     */
+    void setVerticalBorderColor(short color);
+    /**
+     * Range internal border color, such as table styles
+     * @since 3.17 beta 1
+     * @param color index
+     */
+    void setVerticalBorderColor(Color color);
 }
