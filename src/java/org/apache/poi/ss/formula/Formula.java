@@ -168,7 +168,7 @@ public class Formula {
 	 * returned by this method will  match the top left corner of the range of that grouping.
 	 * The return value is usually not the same as the location of the cell containing this formula.
 	 *
-	 * @return the firstRow & firstColumn of an array formula or shared formula that this formula
+	 * @return the firstRow &amp; firstColumn of an array formula or shared formula that this formula
 	 * belongs to.  <code>null</code> if this formula is not part of an array or shared formula.
 	 */
 	public CellReference getExpReference() {
