@@ -31,27 +31,45 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 
 /**
  * Demonstrates how to create tables
- *
- * @author Yegor Kozlov
  */
 public final class TableDemo {
 
+    //test data for the first table
+    static final String[][] txt1 = {
+        {"INPUT FILE", "NUMBER OF RECORDS"},
+        {"Item File", "11,559"},
+        {"Vendor File", "502"},
+        {"Purchase History File - # of PO\u2019s\r(12/01/04 - 05/31/06)", "12,852"},
+        {"Purchase History File - # of PO Lines\r(12/01/04 - 05/31/06)", "53,523" },
+        {"Total PO History Spend", "$10,172,038"}
+    };
+
+    //test data for the second taable
+    static final String[][] txt2 = {
+        {"Data Source"},
+        {"CAS Internal Metrics - Item Master Summary\r" +
+         "CAS Internal Metrics - Vendor Summary\r" +
+         "CAS Internal Metrics - PO History Summary"}
+    };
+
+
     public static void main(String[] args) throws Exception {
-
-        //test data for the first taable
-        String[][] txt1 = {
-            {"INPUT FILE", "NUMBER OF RECORDS"},
-            {"Item File", "11,559"},
-            {"Vendor File", "502"},
-            {"Purchase History File - # of PO\u2019s\r(12/01/04 - 05/31/06)", "12,852"},
-            {"Purchase History File - # of PO Lines\r(12/01/04 - 05/31/06)", "53,523" },
-            {"Total PO History Spend", "$10,172,038"}
-        };
-
         HSLFSlideShow ppt = new HSLFSlideShow();
 
-        HSLFSlide slide = ppt.createSlide();
-
+        try {
+            HSLFSlide slide = ppt.createSlide();
+            create1stTable(slide);
+            create2ndTable(slide);
+    
+            FileOutputStream out = new FileOutputStream("hslf-table.ppt");
+            ppt.write(out);
+            out.close();
+        } finally {
+            ppt.close();
+        }
+    }
+    
+    static void create1stTable(HSLFSlide slide) {
         //six rows, two columns
         HSLFTable table1 = slide.createTable(6, 2);
         for (int i = 0; i < txt1.length; i++) {
@@ -77,17 +95,11 @@ public final class TableDemo {
         table1.setColumnWidth(0, 300);
         table1.setColumnWidth(1, 150);
 
-        int pgWidth = ppt.getPageSize().width;
+        int pgWidth = slide.getSlideShow().getPageSize().width;
         table1.moveTo((pgWidth - table1.getAnchor().getWidth())/2., 100.);
+    }
 
-        //test data for the second taable
-        String[][] txt2 = {
-            {"Data Source"},
-            {"CAS Internal Metrics - Item Master Summary\r" +
-             "CAS Internal Metrics - Vendor Summary\r" +
-             "CAS Internal Metrics - PO History Summary"}
-        };
-
+    static void create2ndTable(HSLFSlide slide) {
         //two rows, one column
         HSLFTable table2 = slide.createTable(2, 1);
         for (int i = 0; i < txt2.length; i++) {
@@ -120,11 +132,5 @@ public final class TableDemo {
         dts2.setOutsideBorders(Color.black, 1.0);
 
         table2.moveTo(200, 400);
-
-        FileOutputStream out = new FileOutputStream("hslf-table.ppt");
-        ppt.write(out);
-        out.close();
-
-        ppt.close();
     }
 }

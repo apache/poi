@@ -24,31 +24,30 @@ import java.io.FileOutputStream;
 
 /**
  * Merge multiple pptx presentations together
- *
- * @author Yegor Kozlov
  */
 public final class MergePresentations {
 
     public static void main(String args[]) throws Exception {
         XMLSlideShow ppt = new XMLSlideShow();
 
-        for(String arg : args){
-            FileInputStream is = new FileInputStream(arg);
-            XMLSlideShow src = new XMLSlideShow(is);
-            is.close();
-
-            for(XSLFSlide srcSlide : src.getSlides()){
-                ppt.createSlide().importContent(srcSlide);
+        try {
+            for (String arg : args){
+                FileInputStream is = new FileInputStream(arg);
+                XMLSlideShow src = new XMLSlideShow(is);
+                is.close();
+    
+                for(XSLFSlide srcSlide : src.getSlides()){
+                    ppt.createSlide().importContent(srcSlide);
+                }
+                
+                src.close();
             }
-            
-            src.close();
+    
+            FileOutputStream out = new FileOutputStream("merged.pptx");
+            ppt.write(out);
+            out.close();
+        } finally {
+            ppt.close();
         }
-
-        FileOutputStream out = new FileOutputStream("merged.pptx");
-        ppt.write(out);
-        out.close();
-        
-        ppt.close();
     }
-
 }

@@ -34,32 +34,34 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 public class Borders {
     public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("new sheet");
+        try {
+            HSSFSheet sheet = wb.createSheet("new sheet");
 
-        // Create a row and put some cells in it. Rows are 0 based.
-        HSSFRow row = sheet.createRow(1);
+            // Create a row and put some cells in it. Rows are 0 based.
+            HSSFRow row = sheet.createRow(1);
 
-        // Create a cell and put a value in it.
-        HSSFCell cell = row.createCell(1);
-        cell.setCellValue(4);
+            // Create a cell and put a value in it.
+            HSSFCell cell = row.createCell(1);
+            cell.setCellValue(4);
 
-        // Style the cell with borders all around.
-        HSSFCellStyle style = wb.createCellStyle();
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(HSSFColorPredefined.BLACK.getIndex());
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setLeftBorderColor(HSSFColorPredefined.GREEN.getIndex());
-        style.setBorderRight(BorderStyle.THIN);
-        style.setRightBorderColor(HSSFColorPredefined.BLUE.getIndex());
-        style.setBorderTop(BorderStyle.MEDIUM_DASHED);
-        style.setTopBorderColor(HSSFColorPredefined.ORANGE.getIndex());
-        cell.setCellStyle(style);
+            // Style the cell with borders all around.
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBottomBorderColor(HSSFColorPredefined.BLACK.getIndex());
+            style.setBorderLeft(BorderStyle.THIN);
+            style.setLeftBorderColor(HSSFColorPredefined.GREEN.getIndex());
+            style.setBorderRight(BorderStyle.THIN);
+            style.setRightBorderColor(HSSFColorPredefined.BLUE.getIndex());
+            style.setBorderTop(BorderStyle.MEDIUM_DASHED);
+            style.setTopBorderColor(HSSFColorPredefined.ORANGE.getIndex());
+            cell.setCellStyle(style);
 
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
-        
-        wb.close();
+            // Write the output to a file
+            FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+            wb.write(fileOut);
+            fileOut.close();
+        } finally {
+            wb.close();
+        }
     }
 }

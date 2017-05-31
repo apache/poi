@@ -164,12 +164,15 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
     protected EmbeddedData extract(DirectoryNode dn) throws IOException {
         assert(canExtract(dn));
-        POIFSFileSystem dest = new POIFSFileSystem();
-        copyNodes(dn, dest.getRoot());
-        // start with a reasonable big size
         ByteArrayOutputStream bos = new ByteArrayOutputStream(20000);
-        dest.writeFilesystem(bos);
-        dest.close();
+        POIFSFileSystem dest = new POIFSFileSystem();
+        try {
+            copyNodes(dn, dest.getRoot());
+            // start with a reasonable big size
+            dest.writeFilesystem(bos);
+        } finally {
+            dest.close();
+        }
 
         return new EmbeddedData(dn.getName(), bos.toByteArray(), CONTENT_TYPE_BYTES);
     }

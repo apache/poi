@@ -110,13 +110,15 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     public static Document process( File xlsFile ) throws Exception
     {
         final HSSFWorkbook workbook = ExcelToFoUtils.loadXls( xlsFile );
-        ExcelToFoConverter excelToHtmlConverter = new ExcelToFoConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
-                        .newDocument() );
-        excelToHtmlConverter.processWorkbook( workbook );
-        Document doc = excelToHtmlConverter.getDocument();
-        workbook.close();
-        return doc;
+        try {
+            ExcelToFoConverter excelToHtmlConverter = new ExcelToFoConverter(
+                    XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
+                            .newDocument() );
+            excelToHtmlConverter.processWorkbook( workbook );
+            return excelToHtmlConverter.getDocument();
+        } finally {
+            workbook.close();
+        }
     }
 
     private final FoDocumentFacade foDocumentFacade;

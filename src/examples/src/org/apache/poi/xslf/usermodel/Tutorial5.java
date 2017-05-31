@@ -27,25 +27,25 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 /**
  * Images
- *
- * @author Yegor Kozlov
  */
 public class Tutorial5 {
 
     public static void main(String[] args) throws IOException{
         XMLSlideShow ppt = new XMLSlideShow();
 
-        XSLFSlide slide = ppt.createSlide();
-
-        File img = new File(System.getProperty("POI.testdata.path", "test-data"), "slideshow/clock.jpg");
-        XSLFPictureData pictureData = ppt.addPicture(img, PictureType.PNG);
-
-        /*XSLFPictureShape shape =*/ slide.createPicture(pictureData);
-
-        FileOutputStream out = new FileOutputStream("images.pptx");
-        ppt.write(out);
-        out.close();
-        
-        ppt.close();
+        try {
+            XSLFSlide slide = ppt.createSlide();
+    
+            File img = new File(System.getProperty("POI.testdata.path", "test-data"), "slideshow/clock.jpg");
+            XSLFPictureData pictureData = ppt.addPicture(img, PictureType.PNG);
+    
+            /*XSLFPictureShape shape =*/ slide.createPicture(pictureData);
+    
+            FileOutputStream out = new FileOutputStream("images.pptx");
+            ppt.write(out);
+            out.close();
+        } finally {
+            ppt.close();
+        }
     }
 }
