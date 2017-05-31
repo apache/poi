@@ -101,15 +101,15 @@ public final class TestReWrite {
         // Check all of them in turn
         for (POIFSFileSystem npf : new POIFSFileSystem[] { npfS, npfF, npfRF }) {
             // Check that the "PowerPoint Document" sections have the same size
-            DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
-            DocumentEntry nProps = (DocumentEntry)npf.getRoot().getEntry("PowerPoint Document");
+            DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
+            DocumentEntry nProps = (DocumentEntry)npf.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
             assertEquals(oProps.getSize(),nProps.getSize());
     
             // Check that they contain the same data
             byte[] _oData = new byte[oProps.getSize()];
             byte[] _nData = new byte[nProps.getSize()];
-            pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
-            npf.createDocumentInputStream("PowerPoint Document").read(_nData);
+            pfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
+            npf.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
             for(int i=0; i<_oData.length; i++) {
                 //System.out.println(i + "\t" + Integer.toHexString(i));
                 assertEquals(_oData[i], _nData[i]);
@@ -174,15 +174,15 @@ public final class TestReWrite {
         POIFSFileSystem npfs = new POIFSFileSystem(bais);
 
         // Check that the "PowerPoint Document" sections have the same size
-        DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
-        DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry("PowerPoint Document");
+        DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
+        DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
         assertEquals(oProps.getSize(),nProps.getSize());
 
         // Check that they contain the same data
         byte[] _oData = new byte[oProps.getSize()];
         byte[] _nData = new byte[nProps.getSize()];
-        pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
-        npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
+        pfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
+        npfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
         for(int i=0; i<_oData.length; i++) {
             if(_oData[i] != _nData[i])
                 System.out.println(i + "\t" + Integer.toHexString(i));

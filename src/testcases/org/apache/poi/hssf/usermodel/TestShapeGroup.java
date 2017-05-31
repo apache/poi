@@ -17,23 +17,25 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+
 import org.apache.poi.POITestCase;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.EscherAggregate;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class TestShapeGroup {
 
-/**
- * @author Evgeniy Berlog
- * @date 29.06.12
- */
-public class TestShapeGroup extends TestCase{
-
-    public void testSetGetCoordinates(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
+    @Test
+    public void testSetGetCoordinates() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFShapeGroup group = patriarch.createGroup(new HSSFClientAnchor());
         assertEquals(group.getX1(), 0);
@@ -48,8 +50,9 @@ public class TestShapeGroup extends TestCase{
         assertEquals(group.getX2(), 3);
         assertEquals(group.getY2(), 4);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sh = wb2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         group = (HSSFShapeGroup) patriarch.getChildren().get(0);
@@ -57,11 +60,13 @@ public class TestShapeGroup extends TestCase{
         assertEquals(group.getY1(), 2);
         assertEquals(group.getX2(), 3);
         assertEquals(group.getY2(), 4);
+        wb2.close();
     }
 
-    public void testAddToExistingFile(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
+    @Test
+    public void testAddToExistingFile() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFShapeGroup group1 = patriarch.createGroup(new HSSFClientAnchor());
         HSSFShapeGroup group2 = patriarch.createGroup(new HSSFClientAnchor());
@@ -69,8 +74,9 @@ public class TestShapeGroup extends TestCase{
         group1.setCoordinates(1,2,3,4);
         group2.setCoordinates(5,6,7,8);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sh = wb2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         assertEquals(patriarch.getChildren().size(), 2);
@@ -78,18 +84,21 @@ public class TestShapeGroup extends TestCase{
         HSSFShapeGroup group3 = patriarch.createGroup(new HSSFClientAnchor());
         group3.setCoordinates(9,10,11,12);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sh = wb3.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         assertEquals(patriarch.getChildren().size(), 3);
+        wb3.close();
     }
 
-    public void testModify() throws Exception {
-        HSSFWorkbook wb = new HSSFWorkbook();
+    @Test
+    public void testModify() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
 
         // create a sheet with a text box
-        HSSFSheet sheet = wb.createSheet();
+        HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
         HSSFShapeGroup group1 = patriarch.createGroup(new
@@ -103,8 +112,9 @@ public class TestShapeGroup extends TestCase{
         textbox1.setString(rt1);
 
         // write, read back and check that our text box is there
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         patriarch = sheet.getDrawingPatriarch();
         assertEquals(1, patriarch.getChildren().size());
 
@@ -128,8 +138,9 @@ public class TestShapeGroup extends TestCase{
         textbox2.setString(rt2);
         assertEquals(2, group1.getChildren().size());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sheet = wb3.getSheetAt(0);
         patriarch = sheet.getDrawingPatriarch();
         assertEquals(1, patriarch.getChildren().size());
 
@@ -146,8 +157,9 @@ public class TestShapeGroup extends TestCase{
         assertEquals(new HSSFChildAnchor(400, 400, 600, 600),
                 textbox2.getAnchor());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3);
+        wb3.close();
+        sheet = wb4.getSheetAt(0);
         patriarch = sheet.getDrawingPatriarch();
         group1 = (HSSFShapeGroup)patriarch.getChildren().get(0);
         textbox1 = (HSSFTextbox)group1.getChildren().get(0);
@@ -156,25 +168,28 @@ public class TestShapeGroup extends TestCase{
                 HSSFChildAnchor(400,200, 600, 400));
         HSSFRichTextString rt3 = new HSSFRichTextString("Hello, World-3");
         textbox3.setString(rt3);
+        wb4.close();
     }
 
-    public void testAddShapesToGroup(){
-        HSSFWorkbook wb = new HSSFWorkbook();
+    @Test
+    public void testAddShapesToGroup() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
 
         // create a sheet with a text box
-        HSSFSheet sheet = wb.createSheet();
+        HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
         HSSFShapeGroup group = patriarch.createGroup(new HSSFClientAnchor());
-        int index = wb.addPicture(new byte[]{1,2,3}, HSSFWorkbook.PICTURE_TYPE_JPEG);
+        int index = wb1.addPicture(new byte[]{1,2,3}, HSSFWorkbook.PICTURE_TYPE_JPEG);
         group.createPicture(new HSSFChildAnchor(), index);
         HSSFPolygon polygon = group.createPolygon(new HSSFChildAnchor());
         polygon.setPoints(new int[]{1,100, 1}, new int[]{1, 50, 100});
         group.createTextbox(new HSSFChildAnchor());
         group.createShape(new HSSFChildAnchor());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         patriarch = sheet.getDrawingPatriarch();
         assertEquals(1, patriarch.getChildren().size());
 
@@ -190,7 +205,7 @@ public class TestShapeGroup extends TestCase{
 
         HSSFShapeGroup group2 = patriarch.createGroup(new HSSFClientAnchor());
 
-        index = wb.addPicture(new byte[]{2,2,2}, HSSFWorkbook.PICTURE_TYPE_JPEG);
+        index = wb2.addPicture(new byte[]{2,2,2}, HSSFWorkbook.PICTURE_TYPE_JPEG);
         group2.createPicture(new HSSFChildAnchor(), index);
         polygon = group2.createPolygon(new HSSFChildAnchor());
         polygon.setPoints(new int[]{1,100, 1}, new int[]{1, 50, 100});
@@ -198,8 +213,9 @@ public class TestShapeGroup extends TestCase{
         group2.createShape(new HSSFChildAnchor());
         group2.createShape(new HSSFChildAnchor());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sheet = wb3.getSheetAt(0);
         patriarch = sheet.getDrawingPatriarch();
         assertEquals(2, patriarch.getChildren().size());
 
@@ -214,9 +230,11 @@ public class TestShapeGroup extends TestCase{
         assertTrue(group.getChildren().get(4) instanceof HSSFSimpleShape);
 
         group.getShapeId();
+        wb3.close();
     }
 
-    public void testSpgrRecord(){
+    @Test
+    public void testSpgrRecord() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         // create a sheet with a text box
@@ -225,15 +243,17 @@ public class TestShapeGroup extends TestCase{
 
         HSSFShapeGroup group = patriarch.createGroup(new HSSFClientAnchor());
         assertSame(((EscherContainerRecord)group.getEscherContainer().getChild(0)).getChildById(EscherSpgrRecord.RECORD_ID), getSpgrRecord(group));
+        wb.close();
     }
 
     private static EscherSpgrRecord getSpgrRecord(HSSFShapeGroup group) {
         return POITestCase.getFieldValue(HSSFShapeGroup.class, group, EscherSpgrRecord.class, "_spgrRecord");
     }
 
-    public void testClearShapes(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
+    @Test
+    public void testClearShapes() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sheet = wb1.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
         HSSFShapeGroup group = patriarch.createGroup(new HSSFClientAnchor());
 
@@ -252,8 +272,9 @@ public class TestShapeGroup extends TestCase{
         assertEquals(agg.getTailRecords().size(), 0);
         assertEquals(group.getChildren().size(), 0);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         patriarch = sheet.getDrawingPatriarch();
 
         group = (HSSFShapeGroup) patriarch.getChildren().get(0);
@@ -261,5 +282,6 @@ public class TestShapeGroup extends TestCase{
         assertEquals(agg.getShapeToObjMapping().size(), 1);
         assertEquals(agg.getTailRecords().size(), 0);
         assertEquals(group.getChildren().size(), 0);
+        wb2.close();
     }
 }

@@ -191,7 +191,7 @@ public final class TestExtractor {
     private PowerPointExtractor assertExtractFromEmbedded(DirectoryNode root, String entryName, String expected)
     throws IOException {
         DirectoryNode dir = (DirectoryNode)root.getEntry(entryName);
-        assertTrue(dir.hasEntry("PowerPoint Document"));
+        assertTrue(dir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT));
 
         // Check the first file
         HSLFSlideShowImpl ppt = new HSLFSlideShowImpl(dir);

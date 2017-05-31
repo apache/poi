@@ -28,6 +28,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -40,7 +41,6 @@ import org.apache.poi.util.LittleEndian;
 public final class PPTXMLDump {
     private static final int HEADER_SIZE = 8; //size of the record header
     private static final int PICT_HEADER_SIZE = 25; //size of the picture header
-    private static final String PPDOC_ENTRY = "PowerPoint Document";
     private static final String PICTURES_ENTRY = "Pictures";
     private static final String CR = System.getProperty("line.separator");
 
@@ -52,7 +52,7 @@ public final class PPTXMLDump {
     public PPTXMLDump(File ppt) throws IOException {
         NPOIFSFileSystem fs = new NPOIFSFileSystem(ppt, true);
         try {
-            docstream = readEntry(fs, PPDOC_ENTRY);
+            docstream = readEntry(fs, HSLFSlideShow.POWERPOINT_DOCUMENT);
             pictstream = readEntry(fs, PICTURES_ENTRY);
         } finally {
             fs.close();

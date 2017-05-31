@@ -28,6 +28,7 @@ import org.apache.poi.POITextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
@@ -63,7 +64,7 @@ public class OLE2ScratchpadExtractorFactory {
             }
         }
 
-        if (poifsDir.hasEntry("PowerPoint Document")) {
+        if (poifsDir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
             return new PowerPointExtractor(poifsDir);
         }
 

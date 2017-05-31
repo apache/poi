@@ -18,22 +18,21 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.junit.Test;
 
 /**
  * Tests that ExObjList works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestExObjList extends TestCase {
-	public void testRealFile() throws Exception {
+public class TestExObjList {
+    @Test
+    public void testRealFile() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("WithLinks.ppt"));
-		HSLFSlideShow ss = new HSLFSlideShow(hss);
+		HSLFSlideShow ss = new HSLFSlideShow(slTests.openResourceAsStream("WithLinks.ppt"));
 
 		// Get the document
 		Document doc = ss.getDocumentRecord();
@@ -65,5 +64,6 @@ public class TestExObjList extends TestCase {
 		assertEquals(4, links[3].getExHyperlinkAtom().getNumber());
 		assertEquals("http://jakarta.apache.org/hslf/", links[3].getLinkURL());
 
+	    ss.close();
 	}
 }

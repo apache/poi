@@ -22,19 +22,25 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.record.Environment;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideMaster;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.HSLFTitleMaster;
 import org.junit.Test;
 
 /**
  * Tests for SlideMaster
- *
- * @author Yegor Kozlov
  */
 public final class TestSlideMaster {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
@@ -44,7 +50,7 @@ public final class TestSlideMaster {
      * Check we can read their attributes.
      */
     @Test
-    public void testSlideMaster() throws Exception {
+    public void testSlideMaster() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
 
         Environment env = ppt.getDocumentRecord().getEnvironment();
@@ -79,13 +85,15 @@ public final class TestSlideMaster {
         int b2 = master.get(1).getStyleAttribute(TextHeaderAtom.BODY_TYPE, 0, "bullet.font", false).getValue();
         assertEquals("Arial", env.getFontCollection().getFontWithId(b1));
         assertEquals("Georgia", env.getFontCollection().getFontWithId(b2));
+
+        ppt.close();
     }
 
     /**
      * Test we can read default text attributes for a title master sheet
      */
     @Test
-    public void testTitleMasterTextAttributes() throws Exception {
+    public void testTitleMasterTextAttributes() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         List<HSLFTitleMaster> master = ppt.getTitleMasters();
         assertEquals(1, master.size());
@@ -101,13 +109,15 @@ public final class TestSlideMaster {
         assertEquals(true, prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
         assertEquals(false, prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
         assertEquals(false, prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+
+        ppt.close();
     }
 
     /**
      * Slide 3 has title layout and follows the TitleMaster. Verify that.
      */
     @Test
-    public void testTitleMaster() throws Exception {
+    public void testTitleMaster() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         HSLFSlide slide = ppt.getSlides().get(2);
         HSLFMasterSheet masterSheet = slide.getMasterSheet();
@@ -131,7 +141,9 @@ public final class TestSlideMaster {
             }
 
         }
+        ppt.close();
     }
+
     /**
      * If a style attribute is not set ensure it is read from the master
      */
@@ -178,13 +190,14 @@ public final class TestSlideMaster {
             }
         }
 
+        ppt.close();
     }
 
     /**
      * Check we can dynamically assign a slide master to a slide.
      */
     @Test
-    public void testChangeSlideMaster() throws Exception {
+    public void testChangeSlideMaster() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         List<HSLFSlideMaster> master = ppt.getSlideMasters();
         List<HSLFSlide> slide = ppt.getSlides();
@@ -212,6 +225,8 @@ public final class TestSlideMaster {
         for (HSLFSlide s : slide) {
             assertEquals(sheetNo, s.getMasterSheet()._getSheetNumber());
         }
+
+        ppt.close();
     }
 
     /**
@@ -219,10 +234,10 @@ public final class TestSlideMaster {
      * (typical for the "bullted body" placeholder)
      */
     @Test
-    public void testIndentation() throws Exception {
+    public void testIndentation() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         HSLFSlide slide = ppt.getSlides().get(0);
-        
+
         for (List<HSLFTextParagraph> tparas : slide.getTextParagraphs()) {
             HSLFTextParagraph tpara = tparas.get(0);
             if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){
@@ -238,7 +253,6 @@ public final class TestSlideMaster {
                 }
             }
         }
-
+        ppt.close();
     }
-
 }

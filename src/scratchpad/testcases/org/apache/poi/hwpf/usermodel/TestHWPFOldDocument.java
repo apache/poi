@@ -158,6 +158,8 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         assertContains(txt, "APPLICOLOR");
         assertContains(txt, "les meilleurs");
         assertContains(txt, "GUY LECOLE");
+        ex.close();
+        doc.close();
     }
 
 
@@ -172,6 +174,8 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
             sb.append(p);
         }
         assertContains(sb.toString(), "\u043F\u0440\u0438\u0432\u0435\u0442");//Greetings!
+        ex.close();
+        doc.close();
     }
 
     @Test
@@ -187,6 +191,8 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
             sb.append(p);
         }
         assertContains(sb.toString(), "4 sk\u00f3re a p\u0159ed 7 lety");//Greetings!
+        ex.close();
+        doc.close();
     }
 
     @Test
@@ -249,6 +255,8 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         //TODO: figure out why these two aren't passing
         //assertContains(txt, "\u2019\u0078 block2");//make sure smart quote is extracted correctly
         //assertContains(txt, "We are able to");//not sure if we can get this easily?
+        ex.close();
+        doc.close();
     }
 
 }

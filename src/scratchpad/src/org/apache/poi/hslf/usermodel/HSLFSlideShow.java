@@ -64,6 +64,9 @@ import org.apache.poi.util.Units;
  * understanding DocSlideList and DocNotesList) - handle Slide creation cleaner
  */
 public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable {
+    /** Powerpoint document entry/stream name */
+    public static final String POWERPOINT_DOCUMENT = "PowerPoint Document";
+    
     enum LoadSavePhase {
         INIT, LOADED
 	}
@@ -1078,7 +1081,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
     protected static Map<String,ClassID> getOleMap() {
     	Map<String,ClassID> olemap = new HashMap<String,ClassID>();
-    	olemap.put("PowerPoint Document", ClassID.PPT_SHOW);
+    	olemap.put(POWERPOINT_DOCUMENT, ClassID.PPT_SHOW);
     	olemap.put("Workbook", ClassID.EXCEL97); // as per BIFF8 spec
     	olemap.put("WORKBOOK", ClassID.EXCEL97); // Typically from third party programs
     	olemap.put("BOOK", ClassID.EXCEL97); // Typically odd Crystal Reports exports
