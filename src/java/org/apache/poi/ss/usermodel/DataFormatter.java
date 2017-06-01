@@ -1055,6 +1055,7 @@ public class DataFormatter implements Observer {
      *  Decimal Format given.
      */
     public static void setExcelStyleRoundingMode(DecimalFormat format) {
+        setExcelStyleRoundingMode(format, RoundingMode.HALF_UP);
     }
 
     /**
