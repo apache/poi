@@ -26,7 +26,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
@@ -82,13 +81,11 @@ public class PieChartDemo {
             if(chart == null) throw new IllegalStateException("chart not found in the template");
     
             // embedded Excel workbook that holds the chart data
-            POIXMLDocumentPart xlsPart = chart.getRelations().get(0);
-            XSSFWorkbook wb = new XSSFWorkbook();
+	        XSSFWorkbook wb = chart.getWorkbook();
             try {
                 XSSFSheet sheet = wb.createSheet();
         
-                CTChart ctChart = chart.getCTChart();
-                CTPlotArea plotArea = ctChart.getPlotArea();
+                CTPlotArea plotArea = chart.getCTPlotArea();
         
                 CTPieChart pieChart = plotArea.getPieChartArray(0);
                 //Pie Chart Series
@@ -139,13 +136,8 @@ public class PieChartDemo {
                 String axisDataRange = new CellRangeAddress(1, rownum-1, 0, 0).formatAsString(sheet.getSheetName(), true);
                 cat.getStrRef().setF(axisDataRange);
         
-                // updated the embedded workbook with the data
-                OutputStream xlsOut = xlsPart.getPackagePart().getOutputStream();
-                try {
-                    wb.write(xlsOut);
-                } finally {
-                    xlsOut.close();
-                }
+                // save the embedded workbook with the updated data
+                chart.saveWorkbook(wb);
         
                 // save the result
                 OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx");

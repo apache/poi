@@ -30,11 +30,15 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
 /**
  * Represents a Chart in a .pptx presentation
@@ -49,10 +53,6 @@ public final class XSLFChart extends POIXMLDocumentPart {
 	 */
 	private CTChartSpace chartSpace;
 
-    /**
-	 * The Chart within that
-	 */
-	private CTChart chart;
 
     /**
      * Construct a chart from a package part.
@@ -66,27 +66,53 @@ public final class XSLFChart extends POIXMLDocumentPart {
         super(part);
 
         chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
-        chart = chartSpace.getChart();
     }
 
 	/**
-	 * Return the underlying CTChartSpace bean, the root element of the Chart part.
+	 * Return the underlying CTPlotArea bean, within the Chart Space
 	 *
-	 * @return the underlying CTChartSpace bean
+	 * @return the underlying CTPlotArea bean
 	 */
 	@Internal
-	public CTChartSpace getCTChartSpace(){
-		return chartSpace;
+	public CTPlotArea getCTPlotArea(){
+		return chartSpace.getChart().getPlotArea();
 	}
 
-	/**
-	 * Return the underlying CTChart bean, within the Chart Space
-	 *
-	 * @return the underlying CTChart bean
-	 */
-	@Internal
-	public CTChart getCTChart(){
-		return chart;
+	public XSLFTextShape getTitle() {
+		final CTTitle title = chartSpace.getChart().getTitle();
+		if (title.getTx() != null && title.getTx().isSetRich()) {
+			return new XSLFTextShape(title, null) {
+				@Override
+				protected CTTextBody getTextBody(boolean create) {
+					return title.getTx().getRich();
+				}
+			};
+		} else {
+			return new XSLFTextShape(title, null) {
+				@Override
+				protected CTTextBody getTextBody(boolean create) {
+					return title.getTxPr();
+				}
+			};
+		}
+	}
+
+	private POIXMLDocumentPart getXslxPart() {
+		// cannot cache this while in the constructor
+		return getRelationById(chartSpace.getExternalData().getId());
+	}
+	
+	public XSSFWorkbook getWorkbook() throws IOException {
+		return new XSSFWorkbook(getXslxPart().getPackagePart().getInputStream());
+	}
+
+	public void saveWorkbook(XSSFWorkbook workbook) throws IOException {
+        OutputStream xlsOut = getXslxPart().getPackagePart().getOutputStream();
+        try {
+            workbook.write(xlsOut);
+        } finally {
+            xlsOut.close();
+        }
 	}
 
 	@Override

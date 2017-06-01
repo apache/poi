@@ -18,6 +18,7 @@
  */
 package org.apache.poi.xslf.usermodel;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
@@ -32,7 +33,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
@@ -68,73 +68,82 @@ public class TestXSLFChart {
         if(chart == null) throw new IllegalStateException("chart not found in the template");
 
         // embedded Excel workbook that holds the chart data
-        POIXMLDocumentPart xlsPart = chart.getRelations().get(0);
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+        XSSFWorkbook wb = chart.getWorkbook();
+        try {
+	        XSSFSheet sheet = wb.getSheetAt(0);
 
-        CTChart ctChart = chart.getCTChart();
-        CTPlotArea plotArea = ctChart.getPlotArea();
+	        CTPlotArea plotArea = chart.getCTPlotArea();
 
-        CTPieChart pieChart = plotArea.getPieChartArray(0);
-        //Pie Chart Series
-        CTPieSer ser = pieChart.getSerArray(0);
+	        CTPieChart pieChart = plotArea.getPieChartArray(0);
+	        //Pie Chart Series
+	        CTPieSer ser = pieChart.getSerArray(0);
 
-        // Series Text
-        CTSerTx tx = ser.getTx();
-        tx.getStrRef().getStrCache().getPtArray(0).setV(chartTitle);
-        sheet.createRow(0).createCell(1).setCellValue(chartTitle);
-        String titleRef = new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
-        tx.getStrRef().setF(titleRef);
+	        // Series Text
+	        CTSerTx tx = ser.getTx();
+	        tx.getStrRef().getStrCache().getPtArray(0).setV(chartTitle);
+	        sheet.createRow(0).createCell(1).setCellValue(chartTitle);
+	        String titleRef = new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
+	        tx.getStrRef().setF(titleRef);
 
 
-        // Category Axis Data
-        CTAxDataSource cat = ser.getCat();
-        CTStrData strData = cat.getStrRef().getStrCache();
+	        // Category Axis Data
+	        CTAxDataSource cat = ser.getCat();
+	        CTStrData strData = cat.getStrRef().getStrCache();
 
-        // Values
-        CTNumDataSource valSrc = ser.getVal();
-        CTNumData numData = valSrc.getNumRef().getNumCache();
+	        // Values
+	        CTNumDataSource valSrc = ser.getVal();
+	        CTNumData numData = valSrc.getNumRef().getNumCache();
 
-        strData.setPtArray(null);  // unset old axis text
-        numData.setPtArray(null);  // unset old values
+	        strData.setPtArray(null);  // unset old axis text
+	        numData.setPtArray(null);  // unset old values
 
-        Map<String, Double> pieModel = new LinkedHashMap<String, Double>();
-        pieModel.put("First", 1.0);
-        pieModel.put("Second", 3.0);
-        pieModel.put("Third", 4.0);
+	        Map<String, Double> pieModel = new LinkedHashMap<String, Double>();
+	        pieModel.put("First", 1.0);
+	        pieModel.put("Second", 3.0);
+	        pieModel.put("Third", 4.0);
 
-        // set model
-        int idx = 0;
-        int rownum = 1;
-        for(String key : pieModel.keySet()){
-            double val = pieModel.get(key);
+	        // set model
+	        int idx = 0;
+	        int rownum = 1;
+	        for(String key : pieModel.keySet()){
+	            double val = pieModel.get(key);
 
-            CTNumVal numVal = numData.addNewPt();
-            numVal.setIdx(idx);
-            numVal.setV("" + val);
+	            CTNumVal numVal = numData.addNewPt();
+	            numVal.setIdx(idx);
+	            numVal.setV("" + val);
 
-            CTStrVal sVal = strData.addNewPt();
-            sVal.setIdx(idx);
-            sVal.setV(key);
+	            CTStrVal sVal = strData.addNewPt();
+	            sVal.setIdx(idx);
+	            sVal.setV(key);
 
-            idx++;
-            XSSFRow row = sheet.createRow(rownum++);
-            row.createCell(0).setCellValue(key);
-            row.createCell(1).setCellValue(val);
-        }
-        numData.getPtCount().setVal(idx);
-        strData.getPtCount().setVal(idx);
+	            idx++;
+	            XSSFRow row = sheet.createRow(rownum++);
+	            row.createCell(0).setCellValue(key);
+	            row.createCell(1).setCellValue(val);
+	        }
+	        numData.getPtCount().setVal(idx);
+	        strData.getPtCount().setVal(idx);
 
-        String numDataRange = new CellRangeAddress(1, rownum-1, 1, 1).formatAsString(sheet.getSheetName(), true);
-        valSrc.getNumRef().setF(numDataRange);
-        String axisDataRange = new CellRangeAddress(1, rownum-1, 0, 0).formatAsString(sheet.getSheetName(), true);
-        cat.getStrRef().setF(axisDataRange);
+	        String numDataRange = new CellRangeAddress(1, rownum-1, 1, 1).formatAsString(sheet.getSheetName(), true);
+	        valSrc.getNumRef().setF(numDataRange);
+	        String axisDataRange = new CellRangeAddress(1, rownum-1, 0, 0).formatAsString(sheet.getSheetName(), true);
+	        cat.getStrRef().setF(axisDataRange);
 
-        // updated the embedded workbook with the data
-        OutputStream xlsOut = xlsPart.getPackagePart().getOutputStream();
-        wb.write(xlsOut);
-        xlsOut.close();
-        wb.close();
+	        // updated the embedded workbook with the data
+	        chart.saveWorkbook(wb);
+
+	        // save the result
+	        OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx");
+	        try {
+	            pptx.write(out);
+	        } finally {
+	            out.close();
+	        }
+	    } finally {
+	        wb.close();
+	    }
+
+        pptx.close();
     }
 
 }
