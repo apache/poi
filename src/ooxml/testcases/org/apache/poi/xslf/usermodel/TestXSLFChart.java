@@ -18,30 +18,21 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xslf.usermodel.charts.AxisOrientation;
+import org.apache.poi.xslf.usermodel.charts.AxisPosition;
+import org.apache.poi.xslf.usermodel.charts.BarDirection;
+import org.apache.poi.xslf.usermodel.charts.XSLFBarChartSeries;
+import org.apache.poi.xslf.usermodel.charts.XSLFCategoryDataSource;
+import org.apache.poi.xslf.usermodel.charts.XSLFChartSeries;
+import org.apache.poi.xslf.usermodel.charts.XSLFNumericalDataSource;
+import org.apache.poi.xslf.usermodel.charts.XSLFPieChartSeries;
 import org.junit.Test;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 
 public class TestXSLFChart {
 
@@ -49,7 +40,7 @@ public class TestXSLFChart {
      * a modified version from POI-examples
      */
     @Test
-    public void testFillChartTemplate() throws IOException {
+    public void testFillPieChartTemplate() throws IOException {
 
         String chartTitle = "Apache POI";  // first line is chart title
 
@@ -67,81 +58,75 @@ public class TestXSLFChart {
 
         if(chart == null) throw new IllegalStateException("chart not found in the template");
 
-        // embedded Excel workbook that holds the chart data
-        XSSFWorkbook wb = chart.getWorkbook();
-        try {
-	        XSSFSheet sheet = wb.getSheetAt(0);
+        // Series Text
+        List<XSLFChartSeries> series = chart.getChartSeries();
+        XSLFPieChartSeries pie = (XSLFPieChartSeries) series.get(0);
+        pie.setTitle(chartTitle);
+        pie.setExplosion(25);
 
-	        CTPlotArea plotArea = chart.getCTPlotArea();
+        // Category Axis Data
+        List<String> categories = new ArrayList<String>(3);
+        categories.add("First");
+        categories.add("Second");
+        categories.add("Third");
 
-	        CTPieChart pieChart = plotArea.getPieChartArray(0);
-	        //Pie Chart Series
-	        CTPieSer ser = pieChart.getSerArray(0);
+        // Values
+        List<Integer> values = new ArrayList<Integer>(3);
+        values.add(1);
+        values.add(3);
+        values.add(4);
 
-	        // Series Text
-	        CTSerTx tx = ser.getTx();
-	        tx.getStrRef().getStrCache().getPtArray(0).setV(chartTitle);
-	        sheet.createRow(0).createCell(1).setCellValue(chartTitle);
-	        String titleRef = new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
-	        tx.getStrRef().setF(titleRef);
+        pie.setCategoryData(new XSLFCategoryDataSource(categories));
+        pie.setFirstValues(new XSLFNumericalDataSource<Integer>(values));
+        pie.fillChartData();
 
+        pptx.close();
+    }
 
-	        // Category Axis Data
-	        CTAxDataSource cat = ser.getCat();
-	        CTStrData strData = cat.getStrRef().getStrCache();
+    @Test
+    public void testFillBarChartTemplate() throws IOException {
 
-	        // Values
-	        CTNumDataSource valSrc = ser.getVal();
-	        CTNumData numData = valSrc.getNumRef().getNumCache();
+        String chartTitle = "Apache POI";  // first line is chart title
 
-	        strData.setPtArray(null);  // unset old axis text
-	        numData.setPtArray(null);  // unset old values
+        XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("bar-chart.pptx");
+        XSLFSlide slide = pptx.getSlides().get(0);
 
-	        Map<String, Double> pieModel = new LinkedHashMap<String, Double>();
-	        pieModel.put("First", 1.0);
-	        pieModel.put("Second", 3.0);
-	        pieModel.put("Third", 4.0);
+        // find chart in the slide
+        XSLFChart chart = null;
+        for(POIXMLDocumentPart part : slide.getRelations()){
+            if(part instanceof XSLFChart){
+                chart = (XSLFChart) part;
+                break;
+            }
+        }
 
-	        // set model
-	        int idx = 0;
-	        int rownum = 1;
-	        for(String key : pieModel.keySet()){
-	            double val = pieModel.get(key);
+        if(chart == null) throw new IllegalStateException("chart not found in the template");
 
-	            CTNumVal numVal = numData.addNewPt();
-	            numVal.setIdx(idx);
-	            numVal.setV("" + val);
+        // Series Text
+        List<XSLFChartSeries> series = chart.getChartSeries();
+        XSLFBarChartSeries bar = (XSLFBarChartSeries) series.get(0);
+        bar.setTitle(chartTitle);
+        bar.setBarDirection(BarDirection.COL);
 
-	            CTStrVal sVal = strData.addNewPt();
-	            sVal.setIdx(idx);
-	            sVal.setV(key);
+        // additionally, you can adjust the axes
+		bar.getCategoryAxis().setOrientation(AxisOrientation.MIN_MAX);
+		bar.getValueAxes().get(0).setPosition(AxisPosition.BOTTOM);
 
-	            idx++;
-	            XSSFRow row = sheet.createRow(rownum++);
-	            row.createCell(0).setCellValue(key);
-	            row.createCell(1).setCellValue(val);
-	        }
-	        numData.getPtCount().setVal(idx);
-	        strData.getPtCount().setVal(idx);
+        // Category Axis Data
+        List<String> categories = new ArrayList<String>(3);
+        categories.add("First");
+        categories.add("Second");
+        categories.add("Third");
 
-	        String numDataRange = new CellRangeAddress(1, rownum-1, 1, 1).formatAsString(sheet.getSheetName(), true);
-	        valSrc.getNumRef().setF(numDataRange);
-	        String axisDataRange = new CellRangeAddress(1, rownum-1, 0, 0).formatAsString(sheet.getSheetName(), true);
-	        cat.getStrRef().setF(axisDataRange);
+        // Values
+        List<Integer> values = new ArrayList<Integer>(3);
+        values.add(1);
+        values.add(3);
+        values.add(4);
 
-	        // updated the embedded workbook with the data
-	        chart.saveWorkbook(wb);
-
-	        // save the result
-	        OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx");
-	        try {
-	            pptx.write(out);
-	        } finally {
-	            out.close();
-	        }
-	    } finally {
-	        wb.close();
-	    }
+        bar.setCategoryData(new XSLFCategoryDataSource(categories));
+        bar.setFirstValues(new XSLFNumericalDataSource<Integer>(values));
+        bar.fillChartData();
 
         pptx.close();
     }

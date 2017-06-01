@@ -17,7 +17,6 @@
 
 package org.apache.poi.xslf.usermodel.charts;
 
-import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
@@ -32,9 +31,9 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 public class XSLFValueAxis extends XSLFChartAxis {
 
 	private CTValAx ctValAx;
-	
-	public XSLFValueAxis(XSLFChart chart, AxisPosition position) {
-		initializeAxis(chart.getCTPlotArea(), position);
+
+	public XSLFValueAxis(CTPlotArea plotArea, AxisPosition position) {
+		initializeAxis(plotArea, position);
 	}
 
 	public XSLFValueAxis(CTValAx ctValAx) {

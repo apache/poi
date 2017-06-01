@@ -1,6 +1,5 @@
 package org.apache.poi.xslf.usermodel.charts;
 
-import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
@@ -16,8 +15,8 @@ public class XSLFCategoryAxis extends XSLFChartAxis {
 
 	private CTCatAx ctCatAx;
 
-	public XSLFCategoryAxis(XSLFChart chart, AxisPosition position) {
-		initializeAxis(chart.getCTPlotArea(), position);
+	public XSLFCategoryAxis(CTPlotArea plotArea, AxisPosition position) {
+		initializeAxis(plotArea, position);
 	}
 
 	public XSLFCategoryAxis(CTCatAx ctCatAx) {
