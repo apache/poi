@@ -20,27 +20,6 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.FieldPosition;
-import java.text.Format;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatResult;
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
@@ -49,6 +28,13 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -691,6 +677,57 @@ public class DataFormatter implements Observer {
         return sb.toString();
     }
 
+    private static class InternalDecimalFormatWithScale extends Format {
+
+        private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
+        private BigDecimal divider;
+        private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
+        private final DecimalFormat df;
+        private static final String trimTrailingCommas(String s) {
+            return s.replaceAll(",+$", "");
+        }
+
+        public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols) {
+            df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
+            setExcelStyleRoundingMode(df);
+            Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
+            if (endsWithCommasMatcher.find()) {
+                String commas = (endsWithCommasMatcher.group(1));
+                BigDecimal temp = BigDecimal.ONE;
+                for (int i = 0; i < commas.length(); ++i) {
+                    temp = temp.multiply(ONE_THOUSAND);
+                }
+                divider = temp;
+            } else {
+                divider = null;
+            }
+        }
+
+        private Object scaleInput(Object obj) {
+            if (divider != null) {
+                if (obj instanceof BigDecimal) {
+                    obj = ((BigDecimal) obj).divide(divider, RoundingMode.HALF_UP);
+                } else if (obj instanceof Double) {
+                    obj = (Double) obj / divider.doubleValue();
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            }
+            return obj;
+        }
+
+        @Override
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            obj = scaleInput(obj);
+            return df.format(obj, toAppendTo, pos);
+        }
+
+        @Override
+        public Object parseObject(String source, ParsePosition pos) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private Format createNumberFormat(String formatStr, double cellValue) {
         String format = cleanFormatForNumber(formatStr);
         DecimalFormatSymbols symbols = decimalSymbols;
@@ -714,11 +751,8 @@ public class DataFormatter implements Observer {
         }
         
         try {
-            DecimalFormat df = new DecimalFormat(format, symbols);
-            setExcelStyleRoundingMode(df);
-            return df;
+            return new InternalDecimalFormatWithScale(format, symbols);
         } catch(IllegalArgumentException iae) {
-
             // the pattern could not be parsed correctly,
             // so fall back to the default number format
             return getDefaultFormat(cellValue);
@@ -1021,7 +1055,6 @@ public class DataFormatter implements Observer {
      *  Decimal Format given.
      */
     public static void setExcelStyleRoundingMode(DecimalFormat format) {
-        setExcelStyleRoundingMode(format, RoundingMode.HALF_UP);
     }
 
     /**

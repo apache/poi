@@ -21,17 +21,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
@@ -44,6 +33,14 @@ import org.apache.poi.util.SuppressForbidden;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests of {@link DataFormatter}
@@ -198,7 +195,7 @@ public class TestDataFormatter {
             );
         }
     }
-    
+
     @Test
     public void testConditionalRanges() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
@@ -826,7 +823,37 @@ public class TestDataFormatter {
 
         wb.close();
     }
-    
+
+    @Test
+    public void testFormatWithTrailingDotsUS() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1,000,000", dfUS.formatRawCellContents(1000000, -1, "#,##0"));
+        assertEquals("1,000", dfUS.formatRawCellContents(1000000, -1, "#,##0,"));
+        assertEquals("1", dfUS.formatRawCellContents(1000000, -1, "#,##0,,"));
+        assertEquals("1,000,000.0", dfUS.formatRawCellContents(1000000, -1, "#,##0.0"));
+        assertEquals("1,000.0", dfUS.formatRawCellContents(1000000, -1, "#,##0.0,"));
+        assertEquals("1.0", dfUS.formatRawCellContents(1000000, -1, "#,##0.0,,"));
+        assertEquals("1,000,000.00", dfUS.formatRawCellContents(1000000, -1, "#,##0.00"));
+        assertEquals("1,000.00", dfUS.formatRawCellContents(1000000, -1, "#,##0.00,"));
+        assertEquals("1.00", dfUS.formatRawCellContents(1000000, -1, "#,##0.00,,"));
+        assertEquals("1,000,000", dfUS.formatRawCellContents(1e24, -1, "#,##0,,,,,,"));
+    }
+
+    @Test
+    public void testFormatWithTrailingDotsOtherLocale() throws Exception {
+        DataFormatter dfIT = new DataFormatter(Locale.ITALY);
+        assertEquals("1.000.000", dfIT.formatRawCellContents(1000000, -1, "#,##0"));
+        assertEquals("1.000", dfIT.formatRawCellContents(1000000, -1, "#,##0,"));
+        assertEquals("1", dfIT.formatRawCellContents(1000000, -1, "#,##0,,"));
+        assertEquals("1.000.000,0", dfIT.formatRawCellContents(1000000, -1, "#,##0.0"));
+        assertEquals("1.000,0", dfIT.formatRawCellContents(1000000, -1, "#,##0.0,"));
+        assertEquals("1,0", dfIT.formatRawCellContents(1000000, -1, "#,##0.0,,"));
+        assertEquals("1.000.000,00", dfIT.formatRawCellContents(1000000, -1, "#,##0.00"));
+        assertEquals("1.000,00", dfIT.formatRawCellContents(1000000, -1, "#,##0.00,"));
+        assertEquals("1,00", dfIT.formatRawCellContents(1000000, -1, "#,##0.00,,"));
+        assertEquals("1.000.000", dfIT.formatRawCellContents(1e24, -1, "#,##0,,,,,,"));
+    }
+
     /**
      * bug 60031: DataFormatter parses months incorrectly when put at the end of date segment
      */
