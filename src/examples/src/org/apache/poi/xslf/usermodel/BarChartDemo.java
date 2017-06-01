@@ -28,21 +28,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xslf.usermodel.charts.XSLFBarChartSeries;
 import org.apache.poi.xslf.usermodel.charts.XSLFCategoryDataSource;
 import org.apache.poi.xslf.usermodel.charts.XSLFChartSeries;
 import org.apache.poi.xslf.usermodel.charts.XSLFNumericalDataSource;
-import org.apache.poi.xslf.usermodel.charts.XSLFPieChartSeries;
 
 /**
- * Build a pie chart from a template pptx
+ * Build a bar chart from a template pptx
  *
  * @author Yegor Kozlov
  */
-public class PieChartDemo {
+public class BarChartDemo {
     private static void usage(){
-        System.out.println("Usage: PieChartDemo <pie-chart-template.pptx> <pie-chart-data.txt>");
-        System.out.println("    pie-chart-template.pptx     template with a pie chart");
-        System.out.println("    pie-chart-data.txt          the model to set. First line is chart title, " +
+        System.out.println("Usage: BarChartDemo <bar-chart-template.pptx> <bar-chart-data.txt>");
+        System.out.println("    bar-chart-template.pptx     template with a bar chart");
+        System.out.println("    bar-chart-data.txt          the model to set. First line is chart title, " +
                 "then go pairs {axis-label value}");
     }
 
@@ -73,9 +73,14 @@ public class PieChartDemo {
 
             // Series Text
             List<XSLFChartSeries> series = chart.getChartSeries();
-            XSLFPieChartSeries pie = (XSLFPieChartSeries) series.get(0);
-            pie.setTitle(chartTitle);
-            pie.setExplosion(25);
+            XSLFBarChartSeries bar = (XSLFBarChartSeries) series.get(0);
+            bar.setTitle(chartTitle);
+            // in order to transform a bar chart into a column chart, you just need to change the bar direction
+            // bar.setBarDirection(BarDirection.COL);
+
+            // additionally, you can adjust the axes
+            // chart.getCategoryAxes().get(0).setOrientation(AxisOrientation.MIN_MAX);
+            // chart.getValueAxes().get(0).setPosition(AxisPosition.BOTTOM);
 
             // Category Axis Data
             List<String> categories = new ArrayList<String>(3);
@@ -91,12 +96,12 @@ public class PieChartDemo {
                 values.add(Double.valueOf(vals[1]));
             }
 
-            pie.setCategoryData(new XSLFCategoryDataSource(categories));
-            pie.setFirstValues(new XSLFNumericalDataSource<Double>(values));
-            pie.fillChartData();
+            bar.setCategory(new XSLFCategoryDataSource(categories));
+            bar.setFirstValues(new XSLFNumericalDataSource<Double>(values));
+            bar.fillChartData();
 
             // save the result
-            OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx");
+            OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx");
             try {
                 pptx.write(out);
             } finally {
