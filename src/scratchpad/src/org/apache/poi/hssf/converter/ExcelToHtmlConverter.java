@@ -158,6 +158,18 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         return doc;
     }
 
+    public static Document process( InputStream xlsFile ) throws IOException, ParserConfigurationException
+    {
+        final HSSFWorkbook workbook = new HSSFWorkbook( xlsFile );
+        ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
+                        .newDocument() );
+        excelToHtmlConverter.processWorkbook( workbook );
+        Document doc = excelToHtmlConverter.getDocument();
+        workbook.close();
+        return doc;
+    }
+
     private String cssClassContainerCell = null;
 
     private String cssClassContainerDiv = null;
