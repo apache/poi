@@ -439,6 +439,9 @@ public class DateUtil {
                         case '\\':
                             // skip current '\' and continue to the next char
                             continue;
+                        case 'T':
+                            i++;
+                            continue;
                     }
                 } else if (c == ';' && nc == '@') {
                     i++;
