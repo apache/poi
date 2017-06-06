@@ -17,19 +17,23 @@
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.io.*;
+import static org.junit.Assert.assertTrue;
 
-public final class TestFontTable
-  extends TestCase
-{
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public final class TestFontTable {
   private FontTable _fontTable = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public void testReadWrite()
-    throws Exception
-  {
+  @Test
+  public void testReadWrite() throws IOException {
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] tableStream = _hWPFDocFixture._tableStream;
 
@@ -41,7 +45,7 @@ public final class TestFontTable
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
     _fontTable.writeTo(fileSys);
-    HWPFOutputStream  tableOut = fileSys.getStream("1Table");
+    ByteArrayOutputStream  tableOut = fileSys.getStream("1Table");
 
 
     byte[] newTableStream = tableOut.toByteArray();
@@ -53,25 +57,15 @@ public final class TestFontTable
 
   }
 
-  @Override
-protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
+  @Before
+  public void setUp() throws IOException {
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
-
     _hWPFDocFixture.setUp();
   }
 
-  @Override
-protected void tearDown()
-    throws Exception
-  {
+  @After
+  public void tearDown() throws IOException  {
     _hWPFDocFixture.tearDown();
-
-    _hWPFDocFixture = null;
-    super.tearDown();
   }
 
 }

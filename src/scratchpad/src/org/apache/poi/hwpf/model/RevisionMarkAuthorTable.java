@@ -17,12 +17,12 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 
 /**
@@ -88,7 +88,7 @@ public final class RevisionMarkAuthorTable {
 	 * @param tableStream  the table stream to write to.
 	 * @throws IOException  if an error occurs while writing.
 	 */
-    public void writeTo( HWPFOutputStream tableStream ) throws IOException
+    public void writeTo( ByteArrayOutputStream tableStream ) throws IOException
     {
         SttbUtils.writeSttbfRMark( entries, tableStream );
     }

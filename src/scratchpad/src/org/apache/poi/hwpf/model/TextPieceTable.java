@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +25,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -413,14 +413,14 @@ public class TextPieceTable implements CharIndexTranslator {
         return _textPiecesFCOrder.get(low + 1).getPieceDescriptor().getFilePosition();
     }
 
-    public byte[] writeTo(HWPFOutputStream docStream) throws IOException {
+    public byte[] writeTo(ByteArrayOutputStream docStream) throws IOException {
         PlexOfCps textPlex = new PlexOfCps(PieceDescriptor.getSizeInBytes());
         // int fcMin = docStream.getOffset();
 
         for (TextPiece next : _textPieces) {
             PieceDescriptor pd = next.getPieceDescriptor();
 
-            int offset = docStream.getOffset();
+            int offset = docStream.size();
             int mod = (offset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
             if (mod != 0) {
                 mod = POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod;
@@ -429,7 +429,7 @@ public class TextPieceTable implements CharIndexTranslator {
             }
 
             // set the text piece position to the current docStream offset.
-            pd.setFilePosition(docStream.getOffset());
+            pd.setFilePosition(docStream.size());
 
             // write the text to the docstream and save the piece descriptor to
             // the

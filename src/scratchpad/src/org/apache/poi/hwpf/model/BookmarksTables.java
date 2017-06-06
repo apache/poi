@@ -16,12 +16,12 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -148,7 +148,7 @@ public class BookmarksTables
     }
 
     public void writePlcfBkmkf( FileInformationBlock fib,
-            HWPFOutputStream tableStream ) throws IOException
+            ByteArrayOutputStream tableStream ) throws IOException
     {
         if ( descriptorsFirst == null || descriptorsFirst.length() == 0 )
         {
@@ -157,16 +157,16 @@ public class BookmarksTables
             return;
         }
 
-        int start = tableStream.getOffset();
+        int start = tableStream.size();
         tableStream.write( descriptorsFirst.toByteArray() );
-        int end = tableStream.getOffset();
+        int end = tableStream.size();
 
         fib.setFcPlcfbkf( start );
         fib.setLcbPlcfbkf( end - start );
     }
 
     public void writePlcfBkmkl( FileInformationBlock fib,
-            HWPFOutputStream tableStream ) throws IOException
+            ByteArrayOutputStream tableStream ) throws IOException
     {
         if ( descriptorsLim == null || descriptorsLim.length() == 0 )
         {
@@ -175,16 +175,16 @@ public class BookmarksTables
             return;
         }
 
-        int start = tableStream.getOffset();
+        int start = tableStream.size();
         tableStream.write( descriptorsLim.toByteArray() );
-        int end = tableStream.getOffset();
+        int end = tableStream.size();
 
         fib.setFcPlcfbkl( start );
         fib.setLcbPlcfbkl( end - start );
     }
 
     public void writeSttbfBkmk( FileInformationBlock fib,
-            HWPFOutputStream tableStream ) throws IOException
+            ByteArrayOutputStream tableStream ) throws IOException
     {
         if ( names == null || names.isEmpty() )
         {
@@ -193,10 +193,10 @@ public class BookmarksTables
             return;
         }
 
-        int start = tableStream.getOffset();
+        int start = tableStream.size();
         SttbUtils.writeSttbfBkmk( names.toArray( new String[names.size()] ),
                 tableStream );
-        int end = tableStream.getOffset();
+        int end = tableStream.size();
 
         fib.setFcSttbfbkmk( start );
         fib.setLcbSttbfbkmk( end - start );

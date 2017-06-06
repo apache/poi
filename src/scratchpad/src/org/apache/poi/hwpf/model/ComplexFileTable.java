@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -82,14 +82,14 @@ public class ComplexFileTable {
 
     @Deprecated
     public void writeTo(HWPFFileSystem sys) throws IOException {
-        HWPFOutputStream docStream = sys.getStream("WordDocument");
-        HWPFOutputStream tableStream = sys.getStream("1Table");
+        ByteArrayOutputStream docStream = sys.getStream("WordDocument");
+        ByteArrayOutputStream tableStream = sys.getStream("1Table");
 
         writeTo(docStream, tableStream);
     }
 
-    public void writeTo(HWPFOutputStream wordDocumentStream,
-                        HWPFOutputStream tableStream) throws IOException {
+    public void writeTo(ByteArrayOutputStream wordDocumentStream,
+                        ByteArrayOutputStream tableStream) throws IOException {
         tableStream.write(TEXT_PIECE_TABLE_TYPE);
 
         byte[] table = _tpt.writeTo(wordDocumentStream);

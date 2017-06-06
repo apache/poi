@@ -18,10 +18,10 @@
  */
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -80,7 +80,7 @@ public class LFOData
         return result;
     }
 
-    void writeTo( HWPFOutputStream tableStream ) throws IOException
+    void writeTo( ByteArrayOutputStream tableStream ) throws IOException
     {
         LittleEndian.putInt( _cp, tableStream );
         for ( ListFormatOverrideLevel lfolvl : _rgLfoLvl )

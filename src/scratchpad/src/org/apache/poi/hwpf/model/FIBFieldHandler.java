@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -223,7 +223,7 @@ public final class FIBFieldHandler
       return _fields.length / 2;
   }
   
-  void writeTo(byte[] mainStream, int offset, HWPFOutputStream tableStream)
+  void writeTo(byte[] mainStream, int offset, ByteArrayOutputStream tableStream)
     throws IOException
   {
     for (int x = 0; x < _fields.length/2; x++)
@@ -231,8 +231,8 @@ public final class FIBFieldHandler
       UnhandledDataStructure ds = _unknownMap.get(Integer.valueOf(x));
       if (ds != null)
       {
-        _fields[x * 2] = tableStream.getOffset();
-        LittleEndian.putInt(mainStream, offset, tableStream.getOffset());
+        _fields[x * 2] = tableStream.size();
+        LittleEndian.putInt(mainStream, offset, tableStream.size());
         offset += LittleEndian.INT_SIZE;
 
         byte[] buf = ds.getBuf();

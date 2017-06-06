@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -168,18 +168,18 @@ public class SectionTable
     @Deprecated
     public void writeTo( HWPFFileSystem sys, int fcMin ) throws IOException
     {
-        HWPFOutputStream docStream = sys.getStream( "WordDocument" );
-        HWPFOutputStream tableStream = sys.getStream( "1Table" );
+        ByteArrayOutputStream docStream = sys.getStream( "WordDocument" );
+        ByteArrayOutputStream tableStream = sys.getStream( "1Table" );
 
         writeTo( docStream, tableStream );
     }
 
     public void writeTo(
-            HWPFOutputStream wordDocumentStream,
-            HWPFOutputStream tableStream ) throws IOException
+            ByteArrayOutputStream wordDocumentStream,
+            ByteArrayOutputStream tableStream ) throws IOException
     {
 
-        int offset = wordDocumentStream.getOffset();
+        int offset = wordDocumentStream.size();
         int len = _sections.size();
         PlexOfCps plex = new PlexOfCps(SED_SIZE);
 
@@ -220,7 +220,7 @@ public class SectionTable
 
             plex.addProperty(property);
 
-            offset = wordDocumentStream.getOffset();
+            offset = wordDocumentStream.size();
         }
         tableStream.write(plex.toByteArray());
     }
