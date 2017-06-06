@@ -122,8 +122,11 @@ public class EncryptionInfo implements Cloneable {
         } else if (
                2 <= versionMajor && versionMajor <= 4
             && versionMinor == 2) {
-            encryptionMode = (preferredEncryptionMode == cryptoAPI) ? cryptoAPI : standard;
             encryptionFlags = dis.readInt();
+            encryptionMode = (
+                preferredEncryptionMode == cryptoAPI
+                || !flagAES.isSet(encryptionFlags))
+                ? cryptoAPI : standard;
         } else if (
                versionMajor == agile.versionMajor
             && versionMinor == agile.versionMinor){
@@ -266,6 +269,14 @@ public class EncryptionInfo implements Cloneable {
 
     public EncryptionMode getEncryptionMode() {
         return encryptionMode;
+    }
+    
+    /**
+     * @return true, if Document Summary / Summary are encrypted and stored in the {@code EncryptedStream} stream,
+     * otherwise the Summaries aren't encrypted and located in their usual streams
+     */
+    public boolean isDocPropsEncrypted() {
+        return !flagDocProps.isSet(getEncryptionFlags());
     }
     
     @Override

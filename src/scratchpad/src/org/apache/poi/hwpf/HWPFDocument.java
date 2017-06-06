@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +26,29 @@ import java.io.OutputStream;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hwpf.model.*;
+import org.apache.poi.hwpf.model.BookmarksTables;
+import org.apache.poi.hwpf.model.CHPBinTable;
+import org.apache.poi.hwpf.model.ComplexFileTable;
+import org.apache.poi.hwpf.model.DocumentProperties;
+import org.apache.poi.hwpf.model.EscherRecordHolder;
+import org.apache.poi.hwpf.model.FSPADocumentPart;
+import org.apache.poi.hwpf.model.FSPATable;
+import org.apache.poi.hwpf.model.FieldsTables;
+import org.apache.poi.hwpf.model.FontTable;
+import org.apache.poi.hwpf.model.ListTables;
+import org.apache.poi.hwpf.model.NoteType;
+import org.apache.poi.hwpf.model.NotesTables;
+import org.apache.poi.hwpf.model.PAPBinTable;
+import org.apache.poi.hwpf.model.PicturesTable;
+import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
+import org.apache.poi.hwpf.model.SavedByTable;
+import org.apache.poi.hwpf.model.SectionTable;
+import org.apache.poi.hwpf.model.SinglentonTextPiece;
+import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.model.SubdocumentType;
+import org.apache.poi.hwpf.model.TextPiece;
+import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.usermodel.Bookmarks;
 import org.apache.poi.hwpf.usermodel.BookmarksImpl;
 import org.apache.poi.hwpf.usermodel.Field;
@@ -40,13 +61,12 @@ import org.apache.poi.hwpf.usermodel.OfficeDrawings;
 import org.apache.poi.hwpf.usermodel.OfficeDrawingsImpl;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
 /**
@@ -59,8 +79,6 @@ public final class HWPFDocument extends HWPFDocumentCore {
     private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
 
     private static final String STREAM_DATA = "Data";
-    private static final String STREAM_TABLE_0 = "0Table";
-    private static final String STREAM_TABLE_1 = "1Table";
 
     /** table stream buffer*/
     protected byte[] _tableStream;
@@ -178,11 +196,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         }
 
         // use the fib to determine the name of the table stream.
-        String name = STREAM_TABLE_0;
-        if (_fib.getFibBase().isFWhichTblStm())
-        {
-            name = STREAM_TABLE_1;
-        }
+        String name = (_fib.getFibBase().isFWhichTblStm()) ? STREAM_TABLE_1 : STREAM_TABLE_0;
 
         // Grab the table stream.
         if (!directory.hasEntry(name)) {
@@ -190,25 +204,12 @@ public final class HWPFDocument extends HWPFDocumentCore {
         }
 
         // read in the table stream.
-        InputStream is = directory.createDocumentInputStream(name);
-        _tableStream = IOUtils.toByteArray(is);
-        is.close();
+        _tableStream = getDocumentEntryBytes(name, _fib.getFibBase().getLKey(), Integer.MAX_VALUE);
 
         _fib.fillVariableFields(_mainStream, _tableStream);
 
         // read in the data stream.
-        InputStream dis = null;
-        try {
-            DocumentEntry dataProps = (DocumentEntry)directory.getEntry(STREAM_DATA);
-            dis = directory.createDocumentInputStream(STREAM_DATA);
-            _dataStream = IOUtils.toByteArray(dis, dataProps.getSize());
-        } catch(IOException e) {
-            _dataStream = new byte[0];
-        } finally {
-            if (dis != null) {
-                dis.close();
-            }
-        }
+        _dataStream = directory.hasEntry(STREAM_DATA) ? getDocumentEntryBytes(STREAM_DATA, 0, Integer.MAX_VALUE) : new byte[0];
 
         // Get the cp of the start of text in the main stream
         // The latest spec doc says this is always zero!
@@ -233,8 +234,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
          */
         boolean preserveBinTables = false;
         try {
-            preserveBinTables = Boolean.parseBoolean( System
-                    .getProperty( PROPERTY_PRESERVE_BIN_TABLES ) );
+            preserveBinTables = Boolean.parseBoolean( System.getProperty( PROPERTY_PRESERVE_BIN_TABLES ) );
         } catch ( Exception exc ) {
             // ignore;
         }
@@ -250,8 +250,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
          */
         boolean preserveTextTable = false;
         try {
-            preserveTextTable = Boolean.parseBoolean( System
-                    .getProperty( PROPERTY_PRESERVE_TEXT_TABLE ) );
+            preserveTextTable = Boolean.parseBoolean( System.getProperty( PROPERTY_PRESERVE_TEXT_TABLE ) );
         } catch ( Exception exc ) {
             // ignore;
         }
@@ -612,8 +611,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
     private void write(NPOIFSFileSystem pfs, boolean copyOtherEntries) throws IOException {
         // initialize our streams for writing.
         HWPFFileSystem docSys = new HWPFFileSystem();
-        HWPFOutputStream wordDocumentStream = docSys.getStream(STREAM_WORD_DOCUMENT);
-        HWPFOutputStream tableStream = docSys.getStream(STREAM_TABLE_1);
+        ByteArrayOutputStream wordDocumentStream = docSys.getStream(STREAM_WORD_DOCUMENT);
+        ByteArrayOutputStream tableStream = docSys.getStream(STREAM_TABLE_1);
         //HWPFOutputStream dataStream = docSys.getStream("Data");
         int tableOffset = 0;
 
@@ -630,13 +629,13 @@ public final class HWPFDocument extends HWPFDocumentCore {
         // it after we write everything else.
         byte[] placeHolder = new byte[fibSize];
         wordDocumentStream.write(placeHolder);
-        int mainOffset = wordDocumentStream.getOffset();
+        int mainOffset = wordDocumentStream.size();
 
         // write out the StyleSheet.
         _fib.setFcStshf(tableOffset);
         _ss.writeTo(tableStream);
-        _fib.setLcbStshf(tableStream.getOffset() - tableOffset);
-        tableOffset = tableStream.getOffset();
+        _fib.setLcbStshf(tableStream.size() - tableOffset);
+        tableOffset = tableStream.size();
 
         // get fcMin and fcMac because we will be writing the actual text with the
         // complex table.
@@ -654,9 +653,9 @@ public final class HWPFDocument extends HWPFDocumentCore {
         // write out the Complex table, includes text.
         _fib.setFcClx(tableOffset);
         _cft.writeTo(wordDocumentStream, tableStream);
-        _fib.setLcbClx(tableStream.getOffset() - tableOffset);
-        tableOffset = tableStream.getOffset();
-        int fcMac = wordDocumentStream.getOffset();
+        _fib.setLcbClx(tableStream.size() - tableOffset);
+        tableOffset = tableStream.size();
+        int fcMac = wordDocumentStream.size();
 
         /*
          * dop (document properties record) Written immediately after the end of
@@ -670,8 +669,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
         // write out the DocumentProperties.
         _fib.setFcDop(tableOffset);
         _dop.writeTo(tableStream);
-        _fib.setLcbDop(tableStream.getOffset() - tableOffset);
-        tableOffset = tableStream.getOffset();
+        _fib.setLcbDop(tableStream.size() - tableOffset);
+        tableOffset = tableStream.size();
 
         /*
          * plcfBkmkf (table recording beginning CPs of bookmarks) Written
@@ -683,7 +682,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         if ( _bookmarksTables != null )
         {
             _bookmarksTables.writePlcfBkmkf( _fib, tableStream );
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
         }
 
         /*
@@ -696,7 +695,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         if ( _bookmarksTables != null )
         {
             _bookmarksTables.writePlcfBkmkl( _fib, tableStream );
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
         }
 
         /*
@@ -710,8 +709,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
         // write out the CHPBinTable.
         _fib.setFcPlcfbteChpx(tableOffset);
         _cbt.writeTo(wordDocumentStream, tableStream, fcMin, _cft.getTextPieceTable());
-        _fib.setLcbPlcfbteChpx(tableStream.getOffset() - tableOffset);
-        tableOffset = tableStream.getOffset();
+        _fib.setLcbPlcfbteChpx(tableStream.size() - tableOffset);
+        tableOffset = tableStream.size();
 
         /*
          * plcfbtePapx (bin table for PAP FKPs) Written immediately after the
@@ -724,8 +723,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
         // write out the PAPBinTable.
         _fib.setFcPlcfbtePapx(tableOffset);
         _pbt.writeTo(wordDocumentStream, tableStream, _cft.getTextPieceTable());
-        _fib.setLcbPlcfbtePapx(tableStream.getOffset() - tableOffset);
-        tableOffset = tableStream.getOffset();
+        _fib.setLcbPlcfbtePapx(tableStream.size() - tableOffset);
+        tableOffset = tableStream.size();
 
         /*
          * plcfendRef (endnote reference position table) Written immediately
@@ -739,7 +738,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
          */
         _endnotesTables.writeRef( _fib, tableStream );
         _endnotesTables.writeTxt( _fib, tableStream );
-        tableOffset = tableStream.getOffset();
+        tableOffset = tableStream.size();
 
         /*
          * plcffld*** (table of field positions and statuses for annotation
@@ -753,7 +752,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         if ( _fieldsTables != null )
         {
             _fieldsTables.write( _fib, tableStream );
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
         }
 
         /*
@@ -768,7 +767,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
          */
         _footnotesTables.writeRef( _fib, tableStream );
         _footnotesTables.writeTxt( _fib, tableStream );
-        tableOffset = tableStream.getOffset();
+        tableOffset = tableStream.size();
 
         /*
          * plcfsed (section table) Written immediately after the previously
@@ -781,8 +780,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
         // write out the SectionTable.
         _fib.setFcPlcfsed(tableOffset);
         _st.writeTo(wordDocumentStream, tableStream);
-        _fib.setLcbPlcfsed(tableStream.getOffset() - tableOffset);
-        tableOffset = tableStream.getOffset();
+        _fib.setLcbPlcfsed(tableStream.size() - tableOffset);
+        tableOffset = tableStream.size();
 
         // write out the list tables
         if ( _lt != null )
@@ -800,7 +799,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
              * Specification; Page 25 of 210
              */
             _lt.writeListDataTo( _fib, tableStream );
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
 
             /*
              * plflfo (more list formats) Written immediately after the end of
@@ -814,7 +813,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
              * Specification; Page 26 of 210
              */
             _lt.writeListOverridesTo( _fib, tableStream );
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
         }
 
         /*
@@ -827,7 +826,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         if ( _bookmarksTables != null )
         {
             _bookmarksTables.writeSttbfBkmk( _fib, tableStream );
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
         }
 
         /*
@@ -843,9 +842,9 @@ public final class HWPFDocument extends HWPFDocumentCore {
         {
             _fib.setFcSttbSavedBy(tableOffset);
             _sbt.writeTo(tableStream);
-            _fib.setLcbSttbSavedBy(tableStream.getOffset() - tableOffset);
+            _fib.setLcbSttbSavedBy(tableStream.size() - tableOffset);
 
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
         }
 
         // write out the revision mark authors table.
@@ -853,21 +852,21 @@ public final class HWPFDocument extends HWPFDocumentCore {
         {
             _fib.setFcSttbfRMark(tableOffset);
             _rmat.writeTo(tableStream);
-            _fib.setLcbSttbfRMark(tableStream.getOffset() - tableOffset);
+            _fib.setLcbSttbfRMark(tableStream.size() - tableOffset);
 
-            tableOffset = tableStream.getOffset();
+            tableOffset = tableStream.size();
         }
 
         // write out the FontTable.
         _fib.setFcSttbfffn(tableOffset);
         _ft.writeTo(tableStream);
-        _fib.setLcbSttbfffn(tableStream.getOffset() - tableOffset);
-        tableOffset = tableStream.getOffset();
+        _fib.setLcbSttbfffn(tableStream.size() - tableOffset);
+        tableOffset = tableStream.size();
 
         // set some variables in the FileInformationBlock.
         _fib.getFibBase().setFcMin(fcMin);
         _fib.getFibBase().setFcMac(fcMac);
-        _fib.setCbMac(wordDocumentStream.getOffset());
+        _fib.setCbMac(wordDocumentStream.size());
 
         // make sure that the table, doc and data streams use big blocks.
         byte[] mainBuf = wordDocumentStream.toByteArray();

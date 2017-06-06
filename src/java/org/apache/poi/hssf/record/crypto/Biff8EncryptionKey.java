@@ -32,7 +32,11 @@ public final class Biff8EncryptionKey {
 	 * @param password pass <code>null</code> to clear user password (and use default)
 	 */
 	public static void setCurrentUserPassword(String password) {
-		_userPasswordTLS.set(password);
+	    if (password == null) {
+	        _userPasswordTLS.remove();
+	    } else {
+	        _userPasswordTLS.set(password);
+	    }
 	}
 
 	/**

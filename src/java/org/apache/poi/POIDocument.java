@@ -195,7 +195,7 @@ public abstract class POIDocument implements Closeable {
         NPOIFSFileSystem encPoifs = null;
         String step = "getting";
         try {
-            if (encryptionInfo != null) {
+            if (encryptionInfo != null && encryptionInfo.isDocPropsEncrypted()) {
                 step = "getting encrypted";
                 String encryptedStream = null;
                 for (String s : encryptedStreamNames) {
