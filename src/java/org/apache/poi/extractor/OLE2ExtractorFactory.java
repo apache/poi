@@ -26,17 +26,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -167,9 +172,7 @@ public class OLE2ExtractorFactory {
      * Note that this won't check for embedded OOXML resources either, use
      *  {@link org.apache.poi.extractor.ExtractorFactory} for that.
      */
-    public static POITextExtractor createExtractor(DirectoryNode poifsDir)
-            throws IOException
-    {
+    public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException {
         // Look for certain entries in the stream, to figure it
         // out from
         for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES) {
@@ -266,5 +269,30 @@ public class OLE2ExtractorFactory {
             }
         }
         return e.toArray(new POITextExtractor[e.size()]);
+    }
+
+    private static POITextExtractor createEncyptedOOXMLExtractor(DirectoryNode poifsDir)
+    throws IOException {
+        String pass = Biff8EncryptionKey.getCurrentUserPassword();
+        if (pass == null) {
+            pass = Decryptor.DEFAULT_PASSWORD;
+        }
+        
+        EncryptionInfo ei = new EncryptionInfo(poifsDir);
+        Decryptor dec = ei.getDecryptor();
+        InputStream is = null;
+        try {
+            if (!dec.verifyPassword(pass)) {
+                throw new EncryptedDocumentException("Invalid password specified - use Biff8EncryptionKey.setCurrentUserPassword() before calling extractor");
+            }
+            is = dec.getDataStream(poifsDir);
+            return createExtractor(is);
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 }
