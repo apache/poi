@@ -37,12 +37,8 @@ import org.apache.xmlbeans.XmlException;
 public abstract class AbstractFileHandler implements FileHandler {
     public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<String>();
     static {
-        // password protected files
-        EXPECTED_EXTRACTOR_FAILURES.add("document/bug53475-password-is-pass.docx");
-        EXPECTED_EXTRACTOR_FAILURES.add("poifs/extenxls_pwd123.xlsx");
-        EXPECTED_EXTRACTOR_FAILURES.add("poifs/protect.xlsx");
-        EXPECTED_EXTRACTOR_FAILURES.add("poifs/protected_agile.docx");
-        EXPECTED_EXTRACTOR_FAILURES.add("poifs/protected_sha512.xlsx");
+        // password protected files without password
+    	// ... currently none ...
         
         // unsupported file-types, no supported OLE2 parts
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/quick-winmail.dat");

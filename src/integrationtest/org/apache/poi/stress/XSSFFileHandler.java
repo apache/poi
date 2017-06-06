@@ -16,8 +16,9 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -37,10 +38,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
@@ -54,8 +59,9 @@ import org.xml.sax.SAXException;
 public class XSSFFileHandler extends SpreadsheetHandler {
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-        // ignore password protected files
-        if (POIXMLDocumentHandler.isEncrypted(stream)) return;
+        // ignore password protected files if password is unknown
+        String pass = Biff8EncryptionKey.getCurrentUserPassword();
+        assumeFalse(pass == null && POIXMLDocumentHandler.isEncrypted(stream));
 
         final XSSFWorkbook wb;
 
@@ -63,11 +69,24 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             IOUtils.copy(stream, out);
-            final byte[] bytes = out.toByteArray();
+            ByteArrayInputStream bytes = new ByteArrayInputStream(out.toByteArray());
 
-            checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(bytes)));
-
-            wb = new XSSFWorkbook(new ByteArrayInputStream(bytes));
+            if (pass != null) {
+                POIFSFileSystem poifs = new POIFSFileSystem(bytes);
+                EncryptionInfo ei = new EncryptionInfo(poifs);
+                Decryptor dec = ei.getDecryptor();
+                boolean b = dec.verifyPassword(pass);
+                assertTrue("password mismatch", b);
+                InputStream is = dec.getDataStream(poifs);
+                out.reset();
+                IOUtils.copy(is, out);
+                is.close();
+                poifs.close();
+                bytes = new ByteArrayInputStream(out.toByteArray());
+            }
+            checkXSSFReader(OPCPackage.open(bytes));
+            bytes.reset();
+            wb = new XSSFWorkbook(bytes);
         }
 
         // use the combined handler for HSSF/XSSF

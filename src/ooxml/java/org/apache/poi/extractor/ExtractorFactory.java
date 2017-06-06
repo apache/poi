@@ -25,6 +25,7 @@ import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLTextExtractor;
@@ -32,6 +33,7 @@ import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -39,6 +41,8 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
@@ -127,6 +131,9 @@ public class ExtractorFactory {
         NPOIFSFileSystem fs = null;
         try {
             fs = new NPOIFSFileSystem(f);
+            if (fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
+                return createEncyptedOOXMLExtractor(fs);
+            }
             POIOLE2TextExtractor extractor = createExtractor(fs);
             extractor.setFilesystem(fs);
             return extractor;
@@ -171,7 +178,9 @@ public class ExtractorFactory {
         }
 
         if (NPOIFSFileSystem.hasPOIFSHeader(inp)) {
-            return createExtractor(new NPOIFSFileSystem(inp));
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
+            boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY); 
+            return isEncrypted ? createEncyptedOOXMLExtractor(fs) : createExtractor(fs);
         }
         if (DocumentFactoryHelper.hasOOXMLHeader(inp)) {
             return createExtractor(OPCPackage.open(inp));
@@ -396,5 +405,30 @@ public class ExtractorFactory {
     @SuppressWarnings("UnusedParameters")
     public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
         throw new IllegalStateException("Not yet supported");
+    }
+    
+    private static POIXMLTextExtractor createEncyptedOOXMLExtractor(NPOIFSFileSystem fs)
+    throws IOException {
+        String pass = Biff8EncryptionKey.getCurrentUserPassword();
+        if (pass == null) {
+            pass = Decryptor.DEFAULT_PASSWORD;
+        }
+        
+        EncryptionInfo ei = new EncryptionInfo(fs);
+        Decryptor dec = ei.getDecryptor();
+        InputStream is = null;
+        try {
+            if (!dec.verifyPassword(pass)) {
+                throw new EncryptedDocumentException("Invalid password specified - use Biff8EncryptionKey.setCurrentUserPassword() before calling extractor");
+            }
+            is = dec.getDataStream(fs);
+            return createExtractor(OPCPackage.open(is));
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new EncryptedDocumentException(e);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 }

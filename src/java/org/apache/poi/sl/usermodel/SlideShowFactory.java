@@ -76,13 +76,17 @@ public class SlideShowFactory {
 
         // If we get here, it isn't an encrypted PPTX file
         // So, treat it as a regular HSLF PPT one
+        boolean passwordSet = false;
         if (password != null) {
             Biff8EncryptionKey.setCurrentUserPassword(password);
+            passwordSet = true;
         }
         try {
             return createHSLFSlideShow(fs);
         } finally {
-            Biff8EncryptionKey.setCurrentUserPassword(null);
+            if (passwordSet) {
+                Biff8EncryptionKey.setCurrentUserPassword(null);
+            }
         }
     }
 
