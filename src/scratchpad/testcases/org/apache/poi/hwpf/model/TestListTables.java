@@ -19,11 +19,11 @@ package org.apache.poi.hwpf.model;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.junit.Test;
 
 public final class TestListTables extends HWPFTestCase {
@@ -43,7 +43,7 @@ public final class TestListTables extends HWPFTestCase {
             ListTables listTables = new ListTables(tableStream, listOffset, lfoOffset, bLfoOffset);
             HWPFFileSystem fileSys = new HWPFFileSystem();
     
-            HWPFOutputStream tableOut = fileSys.getStream("1Table");
+            ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
     
             listTables.writeListDataTo(fib, tableOut);
             listTables.writeListOverridesTo(fib, tableOut);

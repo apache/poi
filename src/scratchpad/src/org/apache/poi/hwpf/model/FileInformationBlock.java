@@ -17,14 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Locale;
 
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -66,12 +65,6 @@ public final class FileInformationBlock
         _fibBase = new FibBase( mainDocument, offset );
         offset = FibBase.getSize();
         assert offset == 32;
-
-        if ( _fibBase.isFEncrypted() )
-        {
-            throw new EncryptedDocumentException(
-                    "Cannot process encrypted word file" );
-        }
 
         _csw = LittleEndian.getUShort( mainDocument, offset );
         offset += LittleEndian.SHORT_SIZE;
@@ -1074,7 +1067,7 @@ public final class FileInformationBlock
                 offset );
     }
 
-    public void writeTo( byte[] mainStream, HWPFOutputStream tableStream )
+    public void writeTo( byte[] mainStream, ByteArrayOutputStream tableStream )
             throws IOException
     {
         _cbRgFcLcb = _fieldHandler.getFieldsCount();

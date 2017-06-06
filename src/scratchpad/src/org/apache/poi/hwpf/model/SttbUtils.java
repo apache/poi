@@ -17,8 +17,8 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 
 /**
@@ -53,24 +53,22 @@ class SttbUtils
                 .getData();
     }
 
-    static void writeSttbfBkmk( String[] data, HWPFOutputStream tableStream )
+    static void writeSttbfBkmk( String[] data, OutputStream tableStream )
             throws IOException
     {
         tableStream.write( new Sttb( CDATA_SIZE_STTBF_BKMK, data ).serialize() );
     }
 
-    static void writeSttbfRMark( String[] data, HWPFOutputStream tableStream )
+    static void writeSttbfRMark( String[] data, OutputStream tableStream )
             throws IOException
     {
-        tableStream.write( new Sttb( CDATA_SIZE_STTBF_R_MARK, data )
-                .serialize() );
+        tableStream.write( new Sttb( CDATA_SIZE_STTBF_R_MARK, data ).serialize() );
     }
 
-    static void writeSttbSavedBy( String[] data, HWPFOutputStream tableStream )
+    static void writeSttbSavedBy( String[] data, OutputStream tableStream )
             throws IOException
     {
-        tableStream.write( new Sttb( CDATA_SIZE_STTB_SAVED_BY, data )
-                .serialize() );
+        tableStream.write( new Sttb( CDATA_SIZE_STTB_SAVED_BY, data ).serialize() );
     }
 
 }

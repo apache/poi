@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 
 /**
@@ -82,37 +82,37 @@ public class NotesTables
                     textPositionsStart, textPositionsLength, 0 );
     }
 
-    public void writeRef( FileInformationBlock fib, HWPFOutputStream tableStream )
+    public void writeRef( FileInformationBlock fib, ByteArrayOutputStream tableStream )
             throws IOException
     {
         if ( descriptors == null || descriptors.length() == 0 )
         {
-            fib.setNotesDescriptorsOffset( noteType, tableStream.getOffset() );
+            fib.setNotesDescriptorsOffset( noteType, tableStream.size() );
             fib.setNotesDescriptorsSize( noteType, 0 );
             return;
         }
 
-        int start = tableStream.getOffset();
+        int start = tableStream.size();
         tableStream.write( descriptors.toByteArray() );
-        int end = tableStream.getOffset();
+        int end = tableStream.size();
 
         fib.setNotesDescriptorsOffset( noteType, start );
         fib.setNotesDescriptorsSize( noteType, end - start );
     }
 
-    public void writeTxt( FileInformationBlock fib, HWPFOutputStream tableStream )
+    public void writeTxt( FileInformationBlock fib, ByteArrayOutputStream tableStream )
             throws IOException
     {
         if ( textPositions == null || textPositions.length() == 0 )
         {
-            fib.setNotesTextPositionsOffset( noteType, tableStream.getOffset() );
+            fib.setNotesTextPositionsOffset( noteType, tableStream.size() );
             fib.setNotesTextPositionsSize( noteType, 0 );
             return;
         }
 
-        int start = tableStream.getOffset();
+        int start = tableStream.size();
         tableStream.write( textPositions.toByteArray() );
-        int end = tableStream.getOffset();
+        int end = tableStream.size();
 
         fib.setNotesTextPositionsOffset( noteType, start );
         fib.setNotesTextPositionsSize( noteType, end - start );

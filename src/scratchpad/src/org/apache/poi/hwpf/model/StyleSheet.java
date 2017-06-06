@@ -18,8 +18,8 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
@@ -123,7 +123,7 @@ public final class StyleSheet implements HDFType {
       }
   }
 
-  public void writeTo(HWPFOutputStream out)
+  public void writeTo(OutputStream out)
     throws IOException
   {
 
