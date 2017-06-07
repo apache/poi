@@ -38,6 +38,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
 
 public final class TestXSSFTable {
@@ -286,5 +287,82 @@ public final class TestXSSFTable {
         // update cell references to clear the cache
         table.updateReferences();
         assertEquals(11, table.getRowCount());
+    }
+
+    @Test
+    public void testDifferentHeaderTypes() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TablesWithDifferentHeaders.xlsx");
+        assertEquals(3, wb.getNumberOfSheets());
+        XSSFSheet s;
+        XSSFTable t;
+
+        // TODO Nicer column fetching
+        
+        s = wb.getSheet("IntHeaders");
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1:B2", t.getReferences().formatAsString());
+        assertEquals("12", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+        assertEquals("34", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+        
+        s = wb.getSheet("FloatHeaders");
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1:B2", t.getReferences().formatAsString());
+        assertEquals("12.34", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+        assertEquals("34.56", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+        
+        s = wb.getSheet("NoExplicitHeaders");
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1:B3", t.getReferences().formatAsString());
+        assertEquals("Column1", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+        assertEquals("Column2", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+    }
+    
+    /**
+     * See https://stackoverflow.com/questions/44407111/apache-poi-cant-format-filled-cells-as-numeric
+     */
+    @Test
+    public void testNumericCellsInTable() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet s = wb.createSheet();
+
+        //Setting up the CTTable
+        XSSFTable t = s.createTable();
+        CTTable ctt = t.getCTTable();
+        ctt.setId(1);
+        ctt.setName("CT Table Test");
+        ctt.setRef("A1:B2");
+        CTTableColumns cttcs = ctt.addNewTableColumns();
+        CTTableColumn cttc1 = cttcs.addNewTableColumn();
+        cttc1.setId(1);
+        CTTableColumn cttc2 = cttcs.addNewTableColumn();
+        cttc2.setId(2);
+
+        //Creating the cells
+        Cell c1 = s.createRow(0).createCell(0);
+        XSSFCell c2 = s.getRow(0).createCell(1);
+        XSSFCell c3 = s.createRow(1).createCell(0);
+        XSSFCell c4 = s.getRow(1).createCell(1);
+
+        // Inserting values; some numeric strings, some alphabetical strings
+        c1.setCellValue(12);
+        c2.setCellValue(34); 
+        c3.setCellValue("AB");
+        c4.setCellValue("CD");
+
+        // Save and re-load
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        
+        // Check
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1", t.getStartCellReference().formatAsString());
+        assertEquals("B2", t.getEndCellReference().formatAsString());
+        
+        // Done
+        wb.close();
     }
 }

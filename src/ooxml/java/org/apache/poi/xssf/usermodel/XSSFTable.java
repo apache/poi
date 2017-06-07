@@ -31,8 +31,10 @@ import java.util.Locale;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.usermodel.TableStyleInfo;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
@@ -311,7 +313,20 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         return getNumberOfMappedColumns();
     }
 
-    
+    /**
+     * @return The reference for the cells of the table
+     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
+     *
+     * Does not track updates to underlying changes to CTTable
+     * To synchronize with changes to the underlying CTTable,
+     * call {@link #updateReferences()}.
+     */
+    public AreaReference getReferences() {
+        return new AreaReference(
+                getStartCellReference(),
+                getEndCellReference()
+        );
+    }
     
     /**
      * @return The reference for the cell in the top-left part of the table
@@ -401,6 +416,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * If calling both {@link #updateReferences()} and
      * {@link #updateHeaders()}, {@link #updateReferences()}
      * should be called first.
+     * 
+     * Note that a Table <em>must</em> have a header. To reproduce
+     *  the equivalent of inserting a table in Excel without Headers,
+     *  manually add cells with values of "Column1", "Column2" etc first. 
      */
     public void updateHeaders() {
         XSSFSheet sheet = (XSSFSheet)getParent();
@@ -410,13 +429,14 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         int headerRow = ref.getRow();
         int firstHeaderColumn = ref.getCol();
         XSSFRow row = sheet.getRow(headerRow);
+        DataFormatter formatter = new DataFormatter();
 
         if (row != null && row.getCTRow().validate()) {
             int cellnum = firstHeaderColumn;
             for (CTTableColumn col : getCTTable().getTableColumns().getTableColumnArray()) {
                 XSSFCell cell = row.getCell(cellnum);
                 if (cell != null) {
-                    col.setName(cell.getStringCellValue());
+                    col.setName(formatter.formatCellValue(cell));
                 }
                 cellnum++;
             }
