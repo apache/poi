@@ -343,6 +343,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Does not track updates to underlying changes to CTTable
      * To synchronize with changes to the underlying CTTable,
      * call {@link #updateReferences()}.
+     * 
+     * @since 3.17 beta 1
      */
     public AreaReference getCellReferences() {
         return new AreaReference(
@@ -354,6 +356,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Updates the reference for the cells of the table
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
      * and synchronizes any changes
+     * 
+     * @since 3.17 beta 1
      */
     public void setCellReferences(AreaReference refs) {
         // Strip the Sheet name
