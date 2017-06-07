@@ -19,6 +19,7 @@ package org.apache.poi.stress;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,11 +28,13 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
 
 public abstract class AbstractFileHandler implements FileHandler {
@@ -75,8 +78,9 @@ public abstract class AbstractFileHandler implements FileHandler {
         long length = file.length();
         long modified = file.lastModified();
         
-        POITextExtractor extractor = ExtractorFactory.createExtractor(file);
+        POITextExtractor extractor = null;
         try  {
+            extractor = ExtractorFactory.createExtractor(file);
             assertNotNull("Should get a POITextExtractor but had none for file " + file, extractor);
 
             assertNotNull("Should get some text but had none for file " + file, extractor.getText());
@@ -110,8 +114,12 @@ public abstract class AbstractFileHandler implements FileHandler {
             if(!EXPECTED_EXTRACTOR_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
                 throw e;
             }
+        } catch (EncryptedDocumentException e) {
+            String msg = "org.apache.poi.EncryptedDocumentException: Export Restrictions in place - please install JCE Unlimited Strength Jurisdiction Policy files";
+            assumeFalse(msg.equals(e.getMessage()));
+            throw e;
         } finally {
-            extractor.close();
+            IOUtils.closeQuietly(extractor);
         }
     }
 

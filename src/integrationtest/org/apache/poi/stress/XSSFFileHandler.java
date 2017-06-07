@@ -16,8 +16,9 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.io.BufferedInputStream;
@@ -37,6 +38,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -75,8 +77,14 @@ public class XSSFFileHandler extends SpreadsheetHandler {
                 POIFSFileSystem poifs = new POIFSFileSystem(bytes);
                 EncryptionInfo ei = new EncryptionInfo(poifs);
                 Decryptor dec = ei.getDecryptor();
-                boolean b = dec.verifyPassword(pass);
-                assertTrue("password mismatch", b);
+                try {
+                    boolean b = dec.verifyPassword(pass);
+                    assertTrue("password mismatch", b);
+                } catch (EncryptedDocumentException e) {
+                    String msg = "Export Restrictions in place - please install JCE Unlimited Strength Jurisdiction Policy files";
+                    assumeFalse(msg.equals(e.getMessage()));
+                    throw e;
+                }
                 InputStream is = dec.getDataStream(poifs);
                 out.reset();
                 IOUtils.copy(is, out);
