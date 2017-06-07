@@ -346,7 +346,7 @@ public final class TestXSSFTable {
         // Setting up the CTTable
         XSSFTable t = s.createTable();
         t.setName("TableTest");
-        t.setDisplayName("CT Table Test");
+        t.setDisplayName("CT_Table_Test");
         t.addColumn();
         t.addColumn();
         t.addColumn();

@@ -3975,6 +3975,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
        RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
        XSSFTable table = rp.getDocumentPart();
        tbl.setId(rp.getRelationship().getId());
+       table.getCTTable().setId(tableNumber);
 
        tables.put(tbl.getId(), table);
 
