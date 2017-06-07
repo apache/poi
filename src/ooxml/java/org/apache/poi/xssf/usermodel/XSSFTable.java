@@ -42,6 +42,7 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
 
 /**
@@ -215,7 +216,6 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return List of XSSFXmlColumnPr
      */
     public List<XSSFXmlColumnPr> getXmlColumnPrs() {
-        
         if (xmlColumnPr==null) {
             xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
             for (CTTableColumn column: getTableColumns()) {
@@ -226,6 +226,29 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             }
         }
         return xmlColumnPr;
+    }
+    
+    /**
+     * Adds another column to the table.
+     * 
+     * Warning - Return type likely to change!
+     */
+    @Internal("Return type likely to change")
+    public void addColumn() {
+        // Ensure we have Table Columns
+        CTTableColumns columns = ctTable.getTableColumns();
+        if (columns == null) {
+            columns = ctTable.addNewTableColumns();
+        }
+        
+        // Add another Column, and give it a sensible ID
+        CTTableColumn column = columns.addNewTableColumn();
+        int num = columns.sizeOfTableColumnArray();
+        columns.setCount(num);
+        column.setId(num);
+        
+        // Have the Headers updated if possible
+        updateHeaders();
     }
     
     /**
@@ -321,11 +344,33 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * To synchronize with changes to the underlying CTTable,
      * call {@link #updateReferences()}.
      */
-    public AreaReference getReferences() {
+    public AreaReference getCellReferences() {
         return new AreaReference(
                 getStartCellReference(),
                 getEndCellReference()
         );
+    }
+    /**
+     * Updates the reference for the cells of the table
+     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
+     * and synchronizes any changes
+     */
+    public void setCellReferences(AreaReference refs) {
+        // Strip the Sheet name
+        String ref = refs.formatAsString();
+        if (ref.indexOf('!') != -1) {
+            ref = ref.substring(ref.indexOf('!')+1);
+        }
+        
+        // Update
+        ctTable.setRef(ref);
+        if (ctTable.isSetAutoFilter()) {
+            ctTable.getAutoFilter().setRef(ref);
+        }
+        
+        // Have everything recomputed
+        updateReferences();
+        updateHeaders();
     }
     
     /**
