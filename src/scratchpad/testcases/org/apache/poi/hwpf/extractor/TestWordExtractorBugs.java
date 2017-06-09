@@ -17,11 +17,16 @@
 
 package org.apache.poi.hwpf.extractor;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.OLE2ExtractorFactory;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.POIDataSamples;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests for bugs with the WordExtractor
@@ -50,6 +55,17 @@ public final class TestWordExtractorBugs {
 
         // Check it gives text without error
         extractor.getText();
+        extractor.close();
+    }
+
+    @Test
+    public void testBug60374() throws Exception {
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(SAMPLES.openResourceAsStream("cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC"));
+        final POITextExtractor extractor = OLE2ExtractorFactory.createExtractor(fs);
+
+        // Check it gives text without error
+        assertNotNull(extractor.getText());
+
         extractor.close();
     }
 }

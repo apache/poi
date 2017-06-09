@@ -230,10 +230,10 @@ public class TestAllFiles {
         FILE_PASSWORD = Collections.unmodifiableMap(passmap);
     }
 
-    private static final Set<String> unmodifiableHashSet(String... a) {
+    private static Set<String> unmodifiableHashSet(String... a) {
         return Collections.unmodifiableSet(hashSet(a));
     }
-    private static final Set<String> hashSet(String... a) {
+    private static Set<String> hashSet(String... a) {
         return new HashSet<String>(Arrays.asList(a));
     }
 
@@ -249,6 +249,7 @@ public class TestAllFiles {
         "document/Bug60936.doc",
         "document/Bug60942.doc",
         "document/Bug60942b.doc",
+        "document/cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC",
         "hpsf/TestMickey.doc",
         "document/52117.doc",
         "hpsf/TestInvertedClassID.doc",
