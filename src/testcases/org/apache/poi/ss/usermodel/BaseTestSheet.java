@@ -37,8 +37,8 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- * Common superclass for testing {@link org.apache.poi.xssf.usermodel.XSSFCell}  and
- * {@link org.apache.poi.hssf.usermodel.HSSFCell}
+ * Common superclass for testing {@link HSSFCell}, org.apache.poi.xssf.usermodel.XSSFCell and
+ * org.apache.poi.xssf.streaming.SXSSFCell
  */
 public abstract class BaseTestSheet {
     private static final int ROW_COUNT = 40000;
@@ -417,7 +417,7 @@ public abstract class BaseTestSheet {
         //should exist now!
         assertTrue("there isn't more than one merged region in there", 1 <= sheet.getNumMergedRegions());
         region = sheet.getMergedRegion(0);
-        assertEquals("the merged row to doesnt match the one we put in ", 4, region.getLastRow());
+        assertEquals("the merged row to doesn't match the one we put in ", 4, region.getLastRow());
         
         wb.close();
     }

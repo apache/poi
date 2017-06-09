@@ -19,8 +19,6 @@
 
 package org.apache.poi.xwpf.usermodel.examples;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -77,7 +75,7 @@ public class UpdateEmbeddedDoc {
         this.docFile = new File(filename);
         FileInputStream fis = null;
         if (!this.docFile.exists()) {
-            throw new FileNotFoundException("The Word dcoument " + filename + " does not exist.");
+            throw new FileNotFoundException("The Word document " + filename + " does not exist.");
         }
         try {
             // Open the Word document file and instantiate the XWPFDocument
@@ -90,7 +88,7 @@ public class UpdateEmbeddedDoc {
     }
 
     /**
-     * Called to update the embedded Excel workbook. As the format and structire
+     * Called to update the embedded Excel workbook. As the format and structure
      * of the workbook are known in advance, all this code attempts to do is
      * write a new value into the first cell on the first row of the first
      * worksheet. Prior to executing this method, that cell will contain the
@@ -99,7 +97,7 @@ public class UpdateEmbeddedDoc {
      * @throws org.apache.poi.openxml4j.exceptions.OpenXML4JException
      *                             Rather
      *                             than use the specific classes (HSSF/XSSF) to handle the embedded
-     *                             workbook this method uses those defeined in the SS stream. As
+     *                             workbook this method uses those defined in the SS stream. As
      *                             a result, it might be the case that a SpreadsheetML file is
      *                             opened for processing, throwing this exception if that file is
      *                             invalid.
@@ -160,7 +158,7 @@ public class UpdateEmbeddedDoc {
      * @throws org.apache.poi.openxml4j.exceptions.OpenXML4JException
      *                             Rather
      *                             than use the specific classes (HSSF/XSSF) to handle the embedded
-     *                             workbook this method uses those defeined in the SS stream. As
+     *                             workbook this method uses those defined in the SS stream. As
      *                             a result, it might be the case that a SpreadsheetML file is
      *                             opened for processing, throwing this exception if that file is
      *                             invalid.
@@ -178,7 +176,9 @@ public class UpdateEmbeddedDoc {
                     Sheet sheet = workbook.getSheetAt(SHEET_NUM);
                     Row row = sheet.getRow(ROW_NUM);
                     Cell cell = row.getCell(CELL_NUM);
-                    assertEquals(cell.getNumericCellValue(), NEW_VALUE, 0.0001);
+                    if(cell.getNumericCellValue() != NEW_VALUE) {
+                        throw new IllegalStateException("Failed to validate document content.");
+                    }
                 } finally {
                     IOUtils.closeQuietly(workbook);
                     IOUtils.closeQuietly(is);
@@ -189,9 +189,6 @@ public class UpdateEmbeddedDoc {
 
     /**
      * Code to test updating of the embedded Excel workbook.
-     *
-     * @param args
-     * @throws OpenXML4JException 
      */
     public static void main(String[] args) throws IOException, OpenXML4JException {
         UpdateEmbeddedDoc ued = new UpdateEmbeddedDoc(args[0]);

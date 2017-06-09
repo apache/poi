@@ -948,15 +948,16 @@ public final class TestPackage {
     
     // bug 60128
     @Test
-    public void testCorruptFile() throws IOException {
+    public void testCorruptFile() throws IOException, InvalidFormatException {
         OPCPackage pkg = null;
         File file = OpenXML4JTestDataSamples.getSampleFile("invalid.xlsx");
         try {
             pkg = OPCPackage.open(file, PackageAccess.READ);
-        } catch (Exception e) {
-            System.out.println(e.getClass().getName());
+        } catch (NotOfficeXmlFileException e) {
+            /*System.out.println(e.getClass().getName());
             System.out.println(e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace();*/
+            // ignore exception
         } finally {
             if (pkg != null) {
                 pkg.close();
