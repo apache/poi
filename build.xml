@@ -443,6 +443,7 @@ under the License.
 
     <path id="forbiddenapis.classpath">
         <path refid="main.classpath"/>
+        <path refid="test.jar.classpath"/>
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
