@@ -143,9 +143,7 @@ public final class OOXMLLite {
             copyFile(cls.getResourceAsStream('/' + classRef), destFile);
 
             if(cls.isInterface()){
-                /**
-                 * Copy classes and interfaces declared as members of this class
-                 */
+                /// Copy classes and interfaces declared as members of this class
                 for(Class<?> fc : cls.getDeclaredClasses()){
                     className = fc.getName();
                     classRef = className.replace('.', '/') + ".class";
@@ -235,7 +233,6 @@ public final class OOXMLLite {
                 }
             } catch (Throwable e) { // NOSONAR
                 System.out.println("Class " + cls + " is not in classpath");
-                return;
             }
         }
     }

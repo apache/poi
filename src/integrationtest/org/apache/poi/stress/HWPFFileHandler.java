@@ -27,47 +27,47 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.junit.Test;
 
 public class HWPFFileHandler extends POIFSFileHandler {
-	@Override
-	public void handleFile(InputStream stream, String path) throws Exception {
-		HWPFDocument doc = new HWPFDocument(stream);
-		assertNotNull(doc.getBookmarks());
-		assertNotNull(doc.getCharacterTable());
-		assertNotNull(doc.getEndnotes());
-		
-		handlePOIDocument(doc);
-	}
+    @Override
+    public void handleFile(InputStream stream, String path) throws Exception {
+        HWPFDocument doc = new HWPFDocument(stream);
+        assertNotNull(doc.getBookmarks());
+        assertNotNull(doc.getCharacterTable());
+        assertNotNull(doc.getEndnotes());
+        
+        handlePOIDocument(doc);
+    }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Override
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Override
     @Test
-	public void test() throws Exception {
+    public void test() throws Exception {
         File file = new File("test-data/document/52117.doc");
 
         InputStream stream = new FileInputStream(file);
-		try {
-			handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
-		}
-		
-		handleExtracting(file);
-		
-		stream = new FileInputStream(file);
-		try {
-			WordExtractor extractor = new WordExtractor(stream);
-			try {
-				assertNotNull(extractor.getText());
-			} finally {
-				extractor.close();
-			}
-		} finally {
-			stream.close();
-		}
-	}
+        try {
+            handleFile(stream, file.getPath());
+        } finally {
+            stream.close();
+        }
+        
+        handleExtracting(file);
+        
+        stream = new FileInputStream(file);
+        try {
+            WordExtractor extractor = new WordExtractor(stream);
+            try {
+                assertNotNull(extractor.getText());
+            } finally {
+                extractor.close();
+            }
+        } finally {
+            stream.close();
+        }
+    }
 
-	@Test
-	public void testExtractingOld() throws Exception {
-		File file = new File("test-data/document/52117.doc");
-		handleExtracting(file);
-	}
+    @Test
+    public void testExtractingOld() throws Exception {
+        File file = new File("test-data/document/52117.doc");
+        handleExtracting(file);
+    }
 }
