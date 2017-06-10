@@ -438,6 +438,7 @@ under the License.
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
+        <path refid="test.jar.classpath"/>
         <path path="${env.CLASSPATH}"/>
     </path>
 
