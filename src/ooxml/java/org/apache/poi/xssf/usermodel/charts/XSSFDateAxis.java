@@ -17,145 +17,118 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.AxisCrossBetween;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
 import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STCrossBetween;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 
 /**
- * Value axis type.
- *
- * @author Roman Kashitsyn
+ * Date axis type.  Currently only implements the same values as {@link XSSFCategoryAxis}, since the two are nearly identical.
  */
 @Beta
-public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
+public class XSSFDateAxis extends XSSFChartAxis {
 
-	private CTValAx ctValAx;
+	private CTDateAx ctDateAx;
 
-	public XSSFValueAxis(XSSFChart chart, long id, AxisPosition pos) {
+	/**
+	 * @param chart
+	 * @param id
+	 * @param pos
+	 */
+	public XSSFDateAxis(XSSFChart chart, long id, AxisPosition pos) {
 		super(chart);
 		createAxis(id, pos);
 	}
 
-	public XSSFValueAxis(XSSFChart chart, CTValAx ctValAx) {
+	/**
+	 * @param chart
+	 * @param ctDateAx
+	 */
+	public XSSFDateAxis(XSSFChart chart, CTDateAx ctDateAx) {
 		super(chart);
-		this.ctValAx = ctValAx;
+		this.ctDateAx = ctDateAx;
 	}
 
 	public long getId() {
-		return ctValAx.getAxId().getVal();
+		return ctDateAx.getAxId().getVal();
 	}
 
-	public void setCrossBetween(AxisCrossBetween crossBetween) {
-		ctValAx.getCrossBetween().setVal(fromCrossBetween(crossBetween));
-	}
-
-	public AxisCrossBetween getCrossBetween() {
-		return toCrossBetween(ctValAx.getCrossBetween().getVal());
-	}
-
-	@Override
 	protected CTAxPos getCTAxPos() {
-		return ctValAx.getAxPos();
+		return ctDateAx.getAxPos();
 	}
 
-	@Override
 	protected CTNumFmt getCTNumFmt() {
-		if (ctValAx.isSetNumFmt()) {
-			return ctValAx.getNumFmt();
+		if (ctDateAx.isSetNumFmt()) {
+			return ctDateAx.getNumFmt();
 		}
-		return ctValAx.addNewNumFmt();
+		return ctDateAx.addNewNumFmt();
 	}
 
-	@Override
 	protected CTScaling getCTScaling() {
-		return ctValAx.getScaling();
+		return ctDateAx.getScaling();
 	}
 
-	@Override
 	protected CTCrosses getCTCrosses() {
-		return ctValAx.getCrosses();
+		return ctDateAx.getCrosses();
 	}
 
 	@Override
 	protected CTBoolean getDelete() {
-		return ctValAx.getDelete();
+		return ctDateAx.getDelete();
 	}
 
 	@Override
 	protected CTTickMark getMajorCTTickMark() {
-		return ctValAx.getMajorTickMark();
+		return ctDateAx.getMajorTickMark();
 	}
 
 	@Override
 	protected CTTickMark getMinorCTTickMark() {
-		return ctValAx.getMinorTickMark();
+		return ctDateAx.getMinorTickMark();
 	}
 
-    public CTChartLines getMajorGridLines() {
-        return ctValAx.getMajorGridlines();
-    }
-
+	public CTChartLines getMajorGridLines() {
+	    return ctDateAx.getMajorGridlines();
+	}
+	
 	public void crossAxis(ChartAxis axis) {
-		ctValAx.getCrossAx().setVal(axis.getId());
+		ctDateAx.getCrossAx().setVal(axis.getId());
 	}
 
 	private void createAxis(long id, AxisPosition pos) {
-		ctValAx = chart.getCTChart().getPlotArea().addNewValAx();
-		ctValAx.addNewAxId().setVal(id);
-		ctValAx.addNewAxPos();
-		ctValAx.addNewScaling();
-		ctValAx.addNewCrossBetween();
-		ctValAx.addNewCrosses();
-		ctValAx.addNewCrossAx();
-		ctValAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
-		ctValAx.addNewDelete();
-		ctValAx.addNewMajorTickMark();
-		ctValAx.addNewMinorTickMark();
+		ctDateAx = chart.getCTChart().getPlotArea().addNewDateAx();
+		ctDateAx.addNewAxId().setVal(id);
+		ctDateAx.addNewAxPos();
+		ctDateAx.addNewScaling();
+		ctDateAx.addNewCrosses();
+		ctDateAx.addNewCrossAx();
+		ctDateAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+		ctDateAx.addNewDelete();
+		ctDateAx.addNewMajorTickMark();
+		ctDateAx.addNewMinorTickMark();
 
 		setPosition(pos);
 		setOrientation(AxisOrientation.MIN_MAX);
-		setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
 		setCrosses(AxisCrosses.AUTO_ZERO);
 		setVisible(true);
 		setMajorTickMark(AxisTickMark.CROSS);
 		setMinorTickMark(AxisTickMark.NONE);
 	}
 
-	private static STCrossBetween.Enum fromCrossBetween(AxisCrossBetween crossBetween) {
-		switch (crossBetween) {
-			case BETWEEN: return STCrossBetween.BETWEEN;
-			case MIDPOINT_CATEGORY: return STCrossBetween.MID_CAT;
-			default:
-				throw new IllegalArgumentException();
-		}
-	}
-
-	private static AxisCrossBetween toCrossBetween(STCrossBetween.Enum ctCrossBetween) {
-		switch (ctCrossBetween.intValue()) {
-			case STCrossBetween.INT_BETWEEN: return AxisCrossBetween.BETWEEN;
-			case STCrossBetween.INT_MID_CAT: return AxisCrossBetween.MIDPOINT_CATEGORY;
-			default:
-				throw new IllegalArgumentException();
-		}
-	}
-
     public boolean hasNumberFormat() {
-        return ctValAx.isSetNumFmt();
+        return ctDateAx.isSetNumFmt();
     }
 }
