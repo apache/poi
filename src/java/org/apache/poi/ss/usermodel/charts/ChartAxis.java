@@ -153,4 +153,10 @@ public interface ChartAxis {
      * @param tickMark minor tick mark type.
      */
     void setMinorTickMark(AxisTickMark tickMark);
+    
+    /**
+     * Use this to check before retrieving a number format, as calling {@link #getNumberFormat()} may create a default one if none exists.
+     * @return true if a number format element is defined, false if not
+     */
+    boolean hasNumberFormat();
 }

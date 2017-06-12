@@ -39,6 +39,7 @@ import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
+import org.apache.poi.xssf.usermodel.charts.XSSFDateAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFManualLayout;
 import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
 import org.apache.xmlbeans.XmlException;
@@ -47,6 +48,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
@@ -224,6 +226,18 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return categoryAxis;
 	}
 
+	public XSSFDateAxis createDateAxis(AxisPosition pos) {
+	    long id = axis.size() + 1;
+	    XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
+	    if (axis.size() == 1) {
+	        ChartAxis ax = axis.get(0);
+	        ax.crossAxis(dateAxis);
+	        dateAxis.crossAxis(ax);
+	    }
+	    axis.add(dateAxis);
+	    return dateAxis;
+	}
+	
     public List<? extends XSSFChartAxis> getAxis() {
         if (axis.isEmpty() && hasAxis()) {
             parseAxis();
@@ -438,6 +452,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	private void parseAxis() {
 		// TODO: add other axis types
 		parseCategoryAxis();
+		parseDateAxis();
 		parseValueAxis();
 	}
 
@@ -447,6 +462,12 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		}
 	}
 
+	private void parseDateAxis() {
+	    for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
+	        axis.add(new XSSFDateAxis(this, dateAx));
+	    }
+	}
+	
 	private void parseValueAxis() {
 		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
 			axis.add(new XSSFValueAxis(this, valAx));

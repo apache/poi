@@ -17,24 +17,25 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisOrientation;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickMark;
 
 /**
@@ -193,7 +194,8 @@ public abstract class XSSFChartAxis implements ChartAxis {
 	protected abstract CTBoolean getDelete();
 	protected abstract CTTickMark getMajorCTTickMark();
 	protected abstract CTTickMark getMinorCTTickMark();
-
+	public abstract CTChartLines getMajorGridLines();
+	
 	private static STOrientation.Enum fromAxisOrientation(AxisOrientation orientation) {
 		switch (orientation) {
 			case MIN_MAX: return STOrientation.MIN_MAX;
