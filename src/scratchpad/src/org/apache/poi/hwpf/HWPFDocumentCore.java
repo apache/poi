@@ -18,7 +18,6 @@
 package org.apache.poi.hwpf;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -26,7 +25,6 @@ import java.security.GeneralSecurityException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDocument;
-import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.FibBase;
@@ -44,6 +42,7 @@ import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -67,7 +66,17 @@ public abstract class HWPFDocumentCore extends POIDocument {
     protected static final String STREAM_TABLE_0 = "0Table";
     protected static final String STREAM_TABLE_1 = "1Table";
 
-    private static final int FIB_BASE_LEN = 68;
+    /**
+     * Size of the not encrypted part of the FIB
+     */
+    protected static final int FIB_BASE_LEN = 68;
+    
+    /**
+     * [MS-DOC] 2.2.6.2/3 Office Binary Document ... Encryption:
+     * "... The block number MUST be set to zero at the beginning of the stream and
+     * MUST be incremented at each 512 byte boundary. ..."
+     */
+    protected static final int RC4_REKEYING_INTERVAL = 512;
 
     /** Holds OLE2 objects */
     protected ObjectPoolImpl _objectPool;
@@ -171,110 +180,6 @@ public abstract class HWPFDocumentCore extends POIDocument {
         }
         _objectPool = new ObjectPoolImpl(objectPoolEntry);
     }
-
-    /**
-     * For a given named property entry, either return it or null if
-     * if it wasn't found
-     *
-     * @param setName The property to read
-     * @return The value of the given property or null if it wasn't found.
-     */
-    @Override
-    protected PropertySet getPropertySet(String setName) {
-        EncryptionInfo ei;
-        try {
-            ei = getEncryptionInfo();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return (ei == null)
-            ? super.getPropertySet(setName)
-            : super.getPropertySet(setName, ei);
-    }
-
-    protected EncryptionInfo getEncryptionInfo() throws IOException {
-        if (_encryptionInfo != null) {
-            return _encryptionInfo;
-        }
-
-        // Create our FIB, and check for the doc being encrypted
-        byte[] fibBaseBytes = (_mainStream != null) ? _mainStream : getDocumentEntryBytes(STREAM_WORD_DOCUMENT, -1, FIB_BASE_LEN);
-        FibBase fibBase = new FibBase( fibBaseBytes, 0 );
-        if (!fibBase.isFEncrypted()) {
-            return null;
-        }
-
-        String tableStrmName = fibBase.isFWhichTblStm() ? STREAM_TABLE_1 : STREAM_TABLE_0;
-        byte[] tableStream = getDocumentEntryBytes(tableStrmName, -1, fibBase.getLKey());
-        LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(tableStream);
-        EncryptionMode em = fibBase.isFObfuscated() ? EncryptionMode.xor : null;
-        EncryptionInfo ei = new EncryptionInfo(leis, em);
-        Decryptor dec = ei.getDecryptor();
-        dec.setChunkSize(512);
-        try {
-            String pass = Biff8EncryptionKey.getCurrentUserPassword();
-            if (pass == null) {
-                pass = Decryptor.DEFAULT_PASSWORD;
-            }
-            if (!dec.verifyPassword(pass)) {
-                throw new EncryptedDocumentException("document is encrypted, password is invalid - use Biff8EncryptionKey.setCurrentUserPasswort() to set password before opening");
-            }
-        } catch (GeneralSecurityException e) {
-            throw new IOException(e.getMessage(), e);
-        }
-        _encryptionInfo = ei;
-        return ei;
-    }
-
-    /**
-     * Reads OLE Stream into byte array - if an {@link EncryptionInfo} is available,
-     * decrypt the bytes starting at encryptionOffset. If encryptionOffset = -1, then do not try
-     * to decrypt the bytes
-     *
-     * @param name the name of the stream
-     * @param encryptionOffset the offset from which to start decrypting, use {@code -1} for no decryption
-     * @param len length of the bytes to be read, use {@link Integer#MAX_VALUE} for all bytes
-     * @return the read bytes
-     * @throws IOException if the stream can't be found
-     */
-    protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, int len) throws IOException {
-        DirectoryNode dir = getDirectory();
-        DocumentEntry documentProps = (DocumentEntry)dir.getEntry(name);
-        DocumentInputStream dis = dir.createDocumentInputStream(documentProps);
-        EncryptionInfo ei = (encryptionOffset > -1) ? getEncryptionInfo() : null;
-        int streamSize = documentProps.getSize();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(Math.min(streamSize,len));
-
-        InputStream is = dis;
-        try {
-            if (ei != null) {
-                try {
-                    Decryptor dec = ei.getDecryptor();
-                    is = dec.getDataStream(dis, streamSize, 0);
-                    if (encryptionOffset > 0) {
-                        ChunkedCipherInputStream cis = (ChunkedCipherInputStream)is;
-                        byte plain[] = new byte[encryptionOffset];
-                        cis.readPlain(plain, 0, encryptionOffset);
-                        bos.write(plain);
-                    }
-                } catch (GeneralSecurityException e) {
-                    throw new IOException(e.getMessage(), e);
-                }
-            }
-            // This simplifies a few combinations, so we actually always try to copy len bytes
-            // regardless if encryptionOffset is greater than 0
-            if (len < Integer.MAX_VALUE) {
-                is = new BoundedInputStream(is, len);
-            }
-            IOUtils.copy(is, bos);
-            return bos.toByteArray();
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(dis);
-        }
-    }
-
-
     /**
      * Returns the range which covers the whole of the document, but excludes
      * any headers and footers.
@@ -338,5 +243,122 @@ public abstract class HWPFDocumentCore extends POIDocument {
     @Internal
     public byte[] getMainStream() {
         return _mainStream;
+    }
+
+    @Override
+    public EncryptionInfo getEncryptionInfo() throws IOException {
+        if (_encryptionInfo != null) {
+            return _encryptionInfo;
+        }
+
+        // Create our FIB, and check for the doc being encrypted
+        FibBase fibBase;
+        if (_fib != null && _fib.getFibBase() != null) {
+            fibBase = _fib.getFibBase();
+        } else {
+            byte[] fibBaseBytes = (_mainStream != null) ? _mainStream : getDocumentEntryBytes(STREAM_WORD_DOCUMENT, -1, FIB_BASE_LEN);
+            fibBase = new FibBase( fibBaseBytes, 0 );
+        }
+        if (!fibBase.isFEncrypted()) {
+            return null;
+        }
+
+        String tableStrmName = fibBase.isFWhichTblStm() ? STREAM_TABLE_1 : STREAM_TABLE_0;
+        byte[] tableStream = getDocumentEntryBytes(tableStrmName, -1, fibBase.getLKey());
+        LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(tableStream);
+        EncryptionMode em = fibBase.isFObfuscated() ? EncryptionMode.xor : null;
+        EncryptionInfo ei = new EncryptionInfo(leis, em);
+        Decryptor dec = ei.getDecryptor();
+        dec.setChunkSize(RC4_REKEYING_INTERVAL);
+        try {
+            String pass = Biff8EncryptionKey.getCurrentUserPassword();
+            if (pass == null) {
+                pass = Decryptor.DEFAULT_PASSWORD;
+            }
+            if (!dec.verifyPassword(pass)) {
+                throw new EncryptedDocumentException("document is encrypted, password is invalid - use Biff8EncryptionKey.setCurrentUserPasswort() to set password before opening");
+            }
+        } catch (GeneralSecurityException e) {
+            throw new IOException(e.getMessage(), e);
+        }
+        _encryptionInfo = ei;
+        return ei;
+    }
+
+    protected void updateEncryptionInfo() {
+        // make sure, that we've read all the streams ...
+        readProperties();
+        // now check for the password
+        String password = Biff8EncryptionKey.getCurrentUserPassword();
+        FibBase fBase = _fib.getFibBase();
+        if (password == null) {
+            fBase.setLKey(0);
+            fBase.setFEncrypted(false);
+            fBase.setFObfuscated(false);
+            _encryptionInfo = null;
+        } else {
+            // create password record
+            if (_encryptionInfo == null) {
+                _encryptionInfo = new EncryptionInfo(EncryptionMode.cryptoAPI);
+                fBase.setFEncrypted(true);
+                fBase.setFObfuscated(false);
+            }
+            Encryptor enc = _encryptionInfo.getEncryptor();
+            byte salt[] = _encryptionInfo.getVerifier().getSalt();
+            if (salt == null) {
+                enc.confirmPassword(password);
+            } else {
+                byte verifier[] = _encryptionInfo.getDecryptor().getVerifier();
+                enc.confirmPassword(password, null, null, verifier, salt, null);
+            }
+        }
+    }
+
+    /**
+     * Reads OLE Stream into byte array - if an {@link EncryptionInfo} is available,
+     * decrypt the bytes starting at encryptionOffset. If encryptionOffset = -1, then do not try
+     * to decrypt the bytes
+     *
+     * @param name the name of the stream
+     * @param encryptionOffset the offset from which to start decrypting, use {@code -1} for no decryption
+     * @param len length of the bytes to be read, use {@link Integer#MAX_VALUE} for all bytes
+     * @return the read bytes
+     * @throws IOException if the stream can't be found
+     */
+    protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, int len) throws IOException {
+        DirectoryNode dir = getDirectory();
+        DocumentEntry documentProps = (DocumentEntry)dir.getEntry(name);
+        DocumentInputStream dis = dir.createDocumentInputStream(documentProps);
+        EncryptionInfo ei = (encryptionOffset > -1) ? getEncryptionInfo() : null;
+        int streamSize = documentProps.getSize();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(Math.min(streamSize,len));
+
+        InputStream is = dis;
+        try {
+            if (ei != null) {
+                try {
+                    Decryptor dec = ei.getDecryptor();
+                    is = dec.getDataStream(dis, streamSize, 0);
+                    if (encryptionOffset > 0) {
+                        ChunkedCipherInputStream cis = (ChunkedCipherInputStream)is;
+                        byte plain[] = new byte[encryptionOffset];
+                        cis.readPlain(plain, 0, encryptionOffset);
+                        bos.write(plain);
+                    }
+                } catch (GeneralSecurityException e) {
+                    throw new IOException(e.getMessage(), e);
+                }
+            }
+            // This simplifies a few combinations, so we actually always try to copy len bytes
+            // regardless if encryptionOffset is greater than 0
+            if (len < Integer.MAX_VALUE) {
+                is = new BoundedInputStream(is, len);
+            }
+            IOUtils.copy(is, bos);
+            return bos.toByteArray();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(dis);
+        }
     }
 }

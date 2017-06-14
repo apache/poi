@@ -153,14 +153,19 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
     /**
      * Decrypt the Document-/SummaryInformation and other optionally streams.
      * Opposed to other crypto modes, cryptoapi is record based and can't be used
-     * to stream-decrypt a whole file
+     * to stream-decrypt a whole file.<p>
+     * 
+     * Summary entries are only encrypted within cryptoapi encrypted files.
+     * Binary RC4 encrypted files use non-encrypted/default property sets
+     * 
+     * @param root root directory node of the OLE file containing the encrypted properties
+     * @param encryptedStream name of the encrypted stream -
+     *      "encryption" for HSSF/HWPF, "encryptedStream" (or encryptedSummary?) for HSLF 
      *
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
     public POIFSFileSystem getSummaryEntries(DirectoryNode root, String encryptedStream)
     throws IOException, GeneralSecurityException {
-        // HSLF: encryptedStream
-        // HSSF: encryption
         DocumentNode es = (DocumentNode) root.getEntry(encryptedStream);
         DocumentInputStream dis = root.createDocumentInputStream(es);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

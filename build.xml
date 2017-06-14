@@ -463,6 +463,7 @@ under the License.
         <exclude name="**/TestExtractorFactory.java"/>
         <exclude name="**/OutlookTextExtactor.java"/>
         <exclude name="**/TestEmbedOLEPackage.java"/>
+    	<exclude name="**/TestHxxFEncryption.java"/>
     </patternset>
 
     <!-- Prints POI's Ant usage help -->

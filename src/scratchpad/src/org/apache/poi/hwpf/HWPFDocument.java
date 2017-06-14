@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -61,13 +62,18 @@ import org.apache.poi.hwpf.usermodel.OfficeDrawings;
 import org.apache.poi.hwpf.usermodel.OfficeDrawingsImpl;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
+import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
 /**
  *
@@ -322,6 +328,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         _fields = new FieldsImpl(_fieldsTables);
     }
 
+    @Override
     @Internal
     public TextPieceTable getTextTable()
     {
@@ -340,6 +347,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         return _dop;
     }
 
+    @Override
     public Range getOverallRange() {
         return new Range(0, _text.length(), this);
     }
@@ -348,6 +356,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * Returns the range which covers the whole of the document, but excludes
      * any headers and footers.
      */
+    @Override
     public Range getRange()
     {
         // // First up, trigger a full-recalculate
@@ -394,8 +403,9 @@ public final class HWPFDocument extends HWPFDocumentCore {
         {
             int length = getFileInformationBlock()
                     .getSubdocumentTextStreamLength( previos );
-            if ( subdocument == previos )
+            if ( subdocument == previos ) {
                 return new Range( startCp, startCp + length, this );
+            }
             startCp += length;
         }
         throw new UnsupportedOperationException(
@@ -603,34 +613,52 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @throws IOException If there is an unexpected IOException from the passed
      *         in OutputStream.
      */
+    @Override
     public void write(OutputStream out) throws IOException {
         NPOIFSFileSystem pfs = new NPOIFSFileSystem();
         write(pfs, true);
         pfs.writeFilesystem( out );
     }
-    private void write(NPOIFSFileSystem pfs, boolean copyOtherEntries) throws IOException {
-        // initialize our streams for writing.
-        HWPFFileSystem docSys = new HWPFFileSystem();
-        ByteArrayOutputStream wordDocumentStream = docSys.getStream(STREAM_WORD_DOCUMENT);
-        ByteArrayOutputStream tableStream = docSys.getStream(STREAM_TABLE_1);
-        //HWPFOutputStream dataStream = docSys.getStream("Data");
-        int tableOffset = 0;
 
-        // FileInformationBlock fib = (FileInformationBlock)_fib.clone();
+    private void write(NPOIFSFileSystem pfs, boolean copyOtherEntries) throws IOException {
         // clear the offsets and sizes in our FileInformationBlock.
         _fib.clearOffsetsSizes();
 
         // determine the FileInformationBLock size
         int fibSize = _fib.getSize();
-        fibSize  += POIFSConstants.SMALLER_BIG_BLOCK_SIZE -
-                (fibSize % POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
+        fibSize += POIFSConstants.SMALLER_BIG_BLOCK_SIZE - (fibSize % POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
+
+        // initialize our streams for writing.
+        HWPFFileSystem docSys = new HWPFFileSystem();
+        ByteArrayOutputStream wordDocumentStream = docSys.getStream(STREAM_WORD_DOCUMENT);
+        ByteArrayOutputStream tableStream = docSys.getStream(STREAM_TABLE_1);
 
         // preserve space for the FileInformationBlock because we will be writing
         // it after we write everything else.
         byte[] placeHolder = new byte[fibSize];
         wordDocumentStream.write(placeHolder);
         int mainOffset = wordDocumentStream.size();
+        int tableOffset = 0;
 
+        // write out EncryptionInfo
+        updateEncryptionInfo();
+        EncryptionInfo ei = getEncryptionInfo();
+        if (ei != null) {
+            byte buf[] = new byte[1000];
+            LittleEndianByteArrayOutputStream leos = new LittleEndianByteArrayOutputStream(buf, 0);
+            leos.writeShort(ei.getVersionMajor());
+            leos.writeShort(ei.getVersionMinor());
+            if (ei.getEncryptionMode() == EncryptionMode.cryptoAPI) {
+                leos.writeInt(ei.getEncryptionFlags());
+            }
+            
+            ((EncryptionRecord)ei.getHeader()).write(leos);
+            ((EncryptionRecord)ei.getVerifier()).write(leos);
+            tableStream.write(buf, 0, leos.getWriteIndex());
+            tableOffset += leos.getWriteIndex();
+            _fib.getFibBase().setLKey(tableOffset);
+        }
+        
         // write out the StyleSheet.
         _fib.setFcStshf(tableOffset);
         _ss.writeTo(tableStream);
@@ -869,13 +897,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         _fib.setCbMac(wordDocumentStream.size());
 
         // make sure that the table, doc and data streams use big blocks.
-        byte[] mainBuf = wordDocumentStream.toByteArray();
-        if (mainBuf.length < 4096)
-        {
-            byte[] tempBuf = new byte[4096];
-            System.arraycopy(mainBuf, 0, tempBuf, 0, mainBuf.length);
-            mainBuf = tempBuf;
-        }
+        byte[] mainBuf = fillUp4096(wordDocumentStream);
 
         // Table1 stream will be used
         _fib.getFibBase().setFWhichTblStm( true );
@@ -884,97 +906,51 @@ public final class HWPFDocument extends HWPFDocumentCore {
         //_fib.serialize(mainBuf, 0);
         _fib.writeTo(mainBuf, tableStream);
 
-        byte[] tableBuf = tableStream.toByteArray();
-        if (tableBuf.length < 4096)
-        {
-            byte[] tempBuf = new byte[4096];
-            System.arraycopy(tableBuf, 0, tempBuf, 0, tableBuf.length);
-            tableBuf = tempBuf;
-        }
-
-        byte[] dataBuf = _dataStream;
-        if (dataBuf == null)
-        {
-            dataBuf = new byte[4096];
-        }
-        if (dataBuf.length < 4096)
-        {
-            byte[] tempBuf = new byte[4096];
-            System.arraycopy(dataBuf, 0, tempBuf, 0, dataBuf.length);
-            dataBuf = tempBuf;
-        }
-
-        // Create a new document preserving order of entries / Update existing
-        boolean docWritten = false;
-        boolean dataWritten = false;
-        boolean objectPoolWritten = false;
-        boolean tableWritten = false;
-        boolean propertiesWritten = false;
-        for (Entry entry : getDirectory()) {
-            if ( entry.getName().equals( STREAM_WORD_DOCUMENT ) )
-            {
-                if ( !docWritten )
-                {
-                    write(pfs, mainBuf, STREAM_WORD_DOCUMENT);
-                    docWritten = true;
-                }
-            }
-            else if ( entry.getName().equals( STREAM_OBJECT_POOL ) )
-            {
-                if ( !objectPoolWritten )
-                {
-                    if ( copyOtherEntries ) {
-                        _objectPool.writeTo( pfs.getRoot() );
-                    } else {
-                        // Object pool is already there, no need to change/copy
-                    }
-                    objectPoolWritten = true;
-                }
-            }
-            else if ( entry.getName().equals( STREAM_TABLE_0 )
-                    || entry.getName().equals( STREAM_TABLE_1 ) )
-            {
-                if ( !tableWritten )
-                {
-                    write(pfs, tableBuf, STREAM_TABLE_1);
-                    tableWritten = true;
-                }
-            }
-            else if ( entry.getName().equals(
-                    SummaryInformation.DEFAULT_STREAM_NAME )
-                    || entry.getName().equals(
-                            DocumentSummaryInformation.DEFAULT_STREAM_NAME ) )
-            {
-                if ( !propertiesWritten )
-                {
-                    writeProperties( pfs );
-                    propertiesWritten = true;
-                }
-            }
-            else if ( entry.getName().equals( STREAM_DATA ) )
-            {
-                if ( !dataWritten )
-                {
-                    write(pfs, dataBuf, STREAM_DATA);
-                    dataWritten = true;
-                }
-            }
-            else if ( copyOtherEntries )
-            {
-                EntryUtils.copyNodeRecursively( entry, pfs.getRoot() );
-            }
-        }
-
-        if ( !docWritten )
+        byte[] tableBuf = fillUp4096(tableStream);
+        byte[] dataBuf = fillUp4096(_dataStream);
+        
+        // Create a new document - ignoring the order of the old entries
+        if (ei == null) {
             write(pfs, mainBuf, STREAM_WORD_DOCUMENT);
-        if ( !tableWritten )
             write(pfs, tableBuf, STREAM_TABLE_1);
-        if ( !propertiesWritten )
-            writeProperties( pfs );
-        if ( !dataWritten )
             write(pfs, dataBuf, STREAM_DATA);
-        if ( !objectPoolWritten && copyOtherEntries )
-            _objectPool.writeTo( pfs.getRoot() );
+        } else {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
+            encryptBytes(mainBuf, FIB_BASE_LEN, bos);
+            write(pfs, bos.toByteArray(), STREAM_WORD_DOCUMENT);
+            bos.reset();
+            encryptBytes(tableBuf, _fib.getFibBase().getLKey(), bos);
+            write(pfs, bos.toByteArray(), STREAM_TABLE_1);
+            bos.reset();
+            encryptBytes(dataBuf, 0, bos);
+            write(pfs, bos.toByteArray(), STREAM_DATA);
+            bos.reset();
+        }
+
+        writeProperties( pfs );
+        
+        if ( copyOtherEntries && ei == null ) {
+            // For encrypted files:
+            // The ObjectPool storage MUST NOT be present and if the file contains OLE objects, the storage
+            // objects for the OLE objects MUST be stored in the Data stream as specified in sprmCPicLocation.
+            DirectoryNode newRoot = pfs.getRoot();
+            _objectPool.writeTo( newRoot );
+        
+            for (Entry entry : getDirectory()) {
+                String entryName = entry.getName(); 
+                if ( !(
+                    STREAM_WORD_DOCUMENT.equals(entryName) ||
+                    STREAM_TABLE_0.equals(entryName) ||
+                    STREAM_TABLE_1.equals(entryName) ||
+                    STREAM_DATA.equals(entryName) ||
+                    STREAM_OBJECT_POOL.equals(entryName) ||
+                    SummaryInformation.DEFAULT_STREAM_NAME.equals(entryName) ||
+                    DocumentSummaryInformation.DEFAULT_STREAM_NAME.equals(entryName)
+                ) ) {
+                    EntryUtils.copyNodeRecursively( entry, newRoot );
+                }
+            }
+        }
 
         /*
          * since we updated all references in FIB and etc, using new arrays to
@@ -984,6 +960,43 @@ public final class HWPFDocument extends HWPFDocumentCore {
         this._tableStream = tableStream.toByteArray();
         this._dataStream = dataBuf;
     }
+        
+    private void encryptBytes(byte[] plain, int encryptOffset, OutputStream bos) throws IOException {
+        try {
+            EncryptionInfo ei = getEncryptionInfo();
+            Encryptor enc = ei.getEncryptor();
+            enc.setChunkSize(RC4_REKEYING_INTERVAL);
+            ChunkedCipherOutputStream os = enc.getDataStream(bos, 0);
+            if (encryptOffset > 0) {
+                os.writePlain(plain, 0, encryptOffset);
+            }
+            os.write(plain, encryptOffset, plain.length-encryptOffset);
+            os.close();
+        } catch (GeneralSecurityException e) {
+            throw new IOException(e);
+        }
+    }
+    
+    private static byte[] fillUp4096(byte[] buf) {
+        if (buf == null) {
+            return new byte[4096];
+        } else if (buf.length < 4096) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
+            bos.write(buf, 0, buf.length);
+            return fillUp4096(bos);
+        } else {
+            return buf;
+        }
+    }
+    
+    private static byte[] fillUp4096(ByteArrayOutputStream bos) {
+        int fillSize = 4096 - bos.size();
+        if (fillSize > 0) {
+            bos.write(new byte[fillSize], 0, fillSize);
+        }
+        return bos.toByteArray();
+    }
+    
     private static void write(NPOIFSFileSystem pfs, byte[] data, String name) throws IOException {
         pfs.createOrUpdateDocument(new ByteArrayInputStream(data), name);
     }
@@ -1009,9 +1022,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
                 list.getLFOData() );
     }
 
-  public void delete(int start, int length)
-  {
-    Range r = new Range(start, start + length, this);
-    r.delete();
-  }
+    public void delete(int start, int length) {
+        Range r = new Range(start, start + length, this);
+        r.delete();
+    }
 }
