@@ -156,10 +156,12 @@ public final class XSLFChart extends POIXMLDocumentPart {
 				return getTargetPart(part.getRelationship());
 			}
 		}
-		throw new InvalidFormatException("Missing worksheet relationship for chart " + this);
+        Integer chartIdx = XSLFRelation.CHART.getFileNameIndex(this);
+        POIXMLDocumentPart worksheet = getParent().createRelationship(XSLFChart.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx);
+        return getTargetPart(this.addRelation(null, XSLFChart.WORKBOOK_RELATIONSHIP, worksheet).getRelationship());
 	}
 
-	private XSSFWorkbook getWorkbook() throws IOException, InvalidFormatException {
+	protected XSSFWorkbook getWorkbook() throws IOException, InvalidFormatException {
 		if (workbook == null) {
 			try {
 				workbook = new XSSFWorkbook(getWorksheetPart().getInputStream());
@@ -171,7 +173,7 @@ public final class XSLFChart extends POIXMLDocumentPart {
 		return workbook;
 	}
 
-	private void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
+	protected void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
         OutputStream xlsOut = getWorksheetPart().getOutputStream();
         try {
             workbook.write(xlsOut);
@@ -216,22 +218,22 @@ public final class XSLFChart extends POIXMLDocumentPart {
 	}
 
 	public List<XSLFChartSeries> getChartSeries() {
+		List<XSLFChartSeries> series = new LinkedList<XSLFChartSeries>();
+	    CTPlotArea plotArea = getCTPlotArea();
 		Map<Long, XSLFCategoryAxis> categories = getCategoryAxes();
 		Map<Long, XSLFValueAxis> values = getValueAxes();
-		List<XSLFChartSeries> series = new LinkedList<XSLFChartSeries>();
 		try {
 	        XSSFSheet sheet = getWorkbook().getSheetAt(0);
-	        CTPlotArea plotArea = getCTPlotArea();
 
 	        for (int i = 0; i < plotArea.sizeOfBarChartArray(); i++) {
 		        CTBarChart barChart = plotArea.getBarChartArray(i);
-		        // TODO fill in the data sources from the sheet
+		        // TODO fill in the data sources from the sheet or from the cache
 	            series.add(new XSLFBarChartSeries(sheet, barChart, categories, values));
 	        }
 
 	        for (int i = 0; i < plotArea.sizeOfPieChartArray(); i++) {
 		        CTPieChart pieChart = plotArea.getPieChartArray(i);
-		        // TODO fill in the data sources from the sheet
+		        // TODO fill in the data sources from the sheet or from the cache
 	            series.add(new XSLFPieChartSeries(sheet, pieChart));
 	        }
 
@@ -242,6 +244,10 @@ public final class XSLFChart extends POIXMLDocumentPart {
 		} finally {
 		}
 		return series;
+	}
+
+	public void importContent(XSLFChart other) {
+		this.chart.set(other.chart);
 	}
 
 	private Map<Long, XSLFCategoryAxis> getCategoryAxes() {

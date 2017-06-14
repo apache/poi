@@ -20,6 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
@@ -102,6 +103,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
      *
      * @param theta the rotation angle in degrees.
      */
+    @Override
     public void setRotation(double theta){
     	throw new IllegalArgumentException("Operation not supported");
     }
@@ -115,15 +117,18 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
      *
      * @return rotation angle in degrees
      */
-    public double getRotation(){
+    @Override
+	public double getRotation(){
     	return 0;
     }
 
-    public void setFlipHorizontal(boolean flip){
+    @Override
+	public void setFlipHorizontal(boolean flip){
     	throw new IllegalArgumentException("Operation not supported");
     }
 
-    public void setFlipVertical(boolean flip){
+    @Override
+	public void setFlipVertical(boolean flip){
     	throw new IllegalArgumentException("Operation not supported");
     }
 
@@ -132,11 +137,13 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
      *
      * @return whether the shape is horizontally flipped
      */
-    public boolean getFlipHorizontal(){
+    @Override
+	public boolean getFlipHorizontal(){
     	return false;
     }
 
-    public boolean getFlipVertical(){
+    @Override
+	public boolean getFlipVertical(){
     	return false;
     }
 
@@ -148,9 +155,36 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
         String uri = data.getUri();
         if(uri.equals("http://schemas.openxmlformats.org/drawingml/2006/diagram")){
             copyDiagram(data, (XSLFGraphicFrame)sh);
+        } if(uri.equals("http://schemas.openxmlformats.org/drawingml/2006/chart")){
+        	copyChart(data, (XSLFGraphicFrame)sh);
         } else {
             // TODO  support other types of objects
 
+        }
+    }
+
+    private void copyChart(CTGraphicalObjectData objData, XSLFGraphicFrame srcShape) {
+        XSLFSlide slide = (XSLFSlide) getSheet();
+        XSLFSheet src = srcShape.getSheet();
+        String xpath = "declare namespace c='http://schemas.openxmlformats.org/drawingml/2006/chart' c:chart";
+        XmlObject[] obj = objData.selectPath(xpath);
+        if (obj != null && obj.length == 1) {
+            XmlCursor c = obj[0].newCursor();
+            try {
+                // duplicate chart with embedded workbook
+                QName idQualifiedName = new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
+                String id = c.getAttributeText(idQualifiedName);
+                XSLFChart srcChart = (XSLFChart) src.getRelationById(id);
+                XSLFChart chartCopy = slide.getSlideShow().createChart(slide);
+                chartCopy.importContent(srcChart);
+                chartCopy.saveWorkbook(srcChart.getWorkbook());
+                c.setAttributeText(idQualifiedName, slide.getRelationId(chartCopy));
+            } catch (InvalidFormatException e) {
+                throw new POIXMLException(e);
+            } catch (IOException e) {
+                throw new POIXMLException(e);
+            }
+            c.dispose();
         }
     }
 
