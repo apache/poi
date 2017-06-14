@@ -40,8 +40,7 @@ import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
-import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -55,8 +54,7 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 @Internal
 public class HSLFSlideShowEncrypted implements Closeable {
     DocumentEncryptionAtom dea;
-    CryptoAPIEncryptor enc = null;
-    CryptoAPIDecryptor dec = null;
+    EncryptionInfo _encryptionInfo;
 //    Cipher cipher = null;
     ChunkedCipherOutputStream cyos = null;
 
@@ -120,11 +118,15 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
         assert(r instanceof DocumentEncryptionAtom);
         this.dea = (DocumentEncryptionAtom)r;
-        decryptInit();
 
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
-        if(!dec.verifyPassword(pass != null ? pass : Decryptor.DEFAULT_PASSWORD)) {
-            throw new EncryptedPowerPointFileException("PowerPoint file is encrypted. The correct password needs to be set via Biff8EncryptionKey.setCurrentUserPassword()");
+        EncryptionInfo ei = getEncryptionInfo();
+        try {
+            if(!ei.getDecryptor().verifyPassword(pass != null ? pass : Decryptor.DEFAULT_PASSWORD)) {
+                throw new EncryptedPowerPointFileException("PowerPoint file is encrypted. The correct password needs to be set via Biff8EncryptionKey.setCurrentUserPassword()");
+            }
+        } catch (GeneralSecurityException e) {
+            throw new EncryptedPowerPointFileException(e);
         }
      }
 
@@ -132,23 +134,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
         return dea;
     }
 
-    protected void decryptInit() {
-        if (dec != null) {
-            return;
-        }
-        EncryptionInfo ei = dea.getEncryptionInfo();
-        dec = (CryptoAPIDecryptor)ei.getDecryptor();
+    protected EncryptionInfo getEncryptionInfo() {
+        return (dea != null) ? dea.getEncryptionInfo() : null;
     }
-
-    protected void encryptInit() {
-        if (enc != null) {
-            return;
-        }
-        EncryptionInfo ei = dea.getEncryptionInfo();
-        enc = (CryptoAPIEncryptor)ei.getEncryptor();
-    }
-
-
 
     protected OutputStream encryptRecord(OutputStream plainStream, int persistId, Record record) {
         boolean isPlain = (dea == null
@@ -166,9 +154,8 @@ public class HSLFSlideShowEncrypted implements Closeable {
                 return plainStream;
             }
 
-            encryptInit();
-
             if (cyos == null) {
+                Encryptor enc = getEncryptionInfo().getEncryptor();
                 enc.setChunkSize(-1);
                 cyos = enc.getDataStream(plainStream, 0);
             }
@@ -190,12 +177,12 @@ public class HSLFSlideShowEncrypted implements Closeable {
             return;
         }
 
-        decryptInit();
+        Decryptor dec = getEncryptionInfo().getDecryptor();
         dec.setChunkSize(-1);
         LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(docstream, offset); // NOSONAR
         ChunkedCipherInputStream ccis = null;
         try {
-            ccis = dec.getDataStream(lei, docstream.length-offset, 0);
+            ccis = (ChunkedCipherInputStream)dec.getDataStream(lei, docstream.length-offset, 0);
             ccis.initCipherForBlock(persistId);
 
             // decrypt header and read length to be decrypted
@@ -217,7 +204,8 @@ public class HSLFSlideShowEncrypted implements Closeable {
         // when reading the picture elements, each time a segment is read, the cipher needs
         // to be reset (usually done when calling Cipher.doFinal)
         LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(pictstream, offset);
-        ChunkedCipherInputStream ccis = dec.getDataStream(lei, len, 0);
+        Decryptor dec = getEncryptionInfo().getDecryptor();
+        ChunkedCipherInputStream ccis = (ChunkedCipherInputStream)dec.getDataStream(lei, len, 0);
         readFully(ccis, pictstream, offset, len);
         ccis.close();
         lei.close();
@@ -227,8 +215,6 @@ public class HSLFSlideShowEncrypted implements Closeable {
         if (dea == null) {
             return;
         }
-
-        decryptInit();
 
         try {
             // decrypt header and read length to be decrypted
@@ -302,12 +288,11 @@ public class HSLFSlideShowEncrypted implements Closeable {
             return;
         }
 
-        encryptInit();
-
         LittleEndianByteArrayOutputStream los = new LittleEndianByteArrayOutputStream(pictstream, offset); // NOSONAR
         ChunkedCipherOutputStream ccos = null;
 
         try {
+            Encryptor enc = getEncryptionInfo().getEncryptor();
             enc.setChunkSize(-1);
             ccos = enc.getDataStream(los, 0);
             int recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
@@ -396,11 +381,10 @@ public class HSLFSlideShowEncrypted implements Closeable {
             // create password record
             if (dea == null) {
                 dea = new DocumentEncryptionAtom();
-                enc = null;
             }
-            encryptInit();
             EncryptionInfo ei = dea.getEncryptionInfo();
             byte salt[] = ei.getVerifier().getSalt();
+            Encryptor enc = getEncryptionInfo().getEncryptor();
             if (salt == null) {
                 enc.confirmPassword(password);
             } else {

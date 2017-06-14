@@ -20,16 +20,12 @@ package org.apache.poi.hssf.model;
 import static org.apache.poi.util.POILogger.DEBUG;
 
 import java.security.AccessControlException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.crypto.SecretKey;
-
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -57,7 +53,6 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtSSTRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.ExternSheetRecord;
-import org.apache.poi.hssf.record.FilePassRecord;
 import org.apache.poi.hssf.record.FileSharingRecord;
 import org.apache.poi.hssf.record.FnGroupCountRecord;
 import org.apache.poi.hssf.record.FontRecord;
@@ -88,13 +83,8 @@ import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
-import org.apache.poi.poifs.crypt.Decryptor;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.poifs.crypt.EncryptionMode;
-import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
@@ -1048,7 +1038,7 @@ public final class InternalWorkbook {
         SSTRecord lSST = null;
         int sstPos = 0;
         boolean wroteBoundSheets = false;
-        for ( Record record : records ) {
+        for ( Record record : records.getRecords() ) {
             int len = 0;
             if (record instanceof SSTRecord) {
                 lSST = (SSTRecord)record;
@@ -1080,8 +1070,6 @@ public final class InternalWorkbook {
      * Include in it ant code that modifies the workbook record stream and affects its size.
      */
     public void preSerialize(){
-        updateEncryptionRecord();
-
         // Ensure we have enough tab IDs
         // Can be a few short if new sheets were added
         if(records.getTabpos() > 0) {
@@ -1092,45 +1080,11 @@ public final class InternalWorkbook {
         }
     }
 
-    private void updateEncryptionRecord() {
-        FilePassRecord fpr = (FilePassRecord)findFirstRecordBySid(FilePassRecord.sid);
-
-        String password = Biff8EncryptionKey.getCurrentUserPassword();
-        if (password == null) {
-            if (fpr != null) {
-                // need to remove password data
-                records.remove(fpr);
-            }
-        } else {
-            // create password record
-            if (fpr == null) {
-                fpr = new FilePassRecord(EncryptionMode.binaryRC4);
-                records.add(1, fpr);
-            }
-
-            // check if the password has been changed
-            EncryptionInfo ei = fpr.getEncryptionInfo();
-            byte encVer[] = ei.getVerifier().getEncryptedVerifier();
-            try {
-                Decryptor dec = ei.getDecryptor();
-                Encryptor enc = ei.getEncryptor();
-                if (encVer == null || !dec.verifyPassword(password)) {
-                    enc.confirmPassword(password);
-                } else {
-                    SecretKey sk = dec.getSecretKey();
-                    ei.getEncryptor().setSecretKey(sk);
-                }
-            } catch (GeneralSecurityException e) {
-                throw new EncryptedDocumentException("can't validate/update encryption setting", e);
-            }
-        }
-    }
-
     public int getSize() {
         int retval = 0;
 
         SSTRecord lSST = null;
-        for ( Record record : records ) {
+        for ( Record record : records.getRecords() ) {
             if (record instanceof SSTRecord) {
                 lSST = (SSTRecord)record;
             }
@@ -1803,7 +1757,7 @@ public final class InternalWorkbook {
      * @return the matching record or {@code null} if it wasn't found
      */
     public Record findFirstRecordBySid(short sid) {
-        for (Record record : records) {
+        for (Record record : records.getRecords() ) {
             if (record.getSid() == sid) {
                 return record;
             }
@@ -1818,7 +1772,7 @@ public final class InternalWorkbook {
      */
     public int findFirstRecordLocBySid(short sid) {
         int index = 0;
-        for (Record record : records) {
+        for (Record record : records.getRecords() ) {
             if (record.getSid() == sid) {
                 return index;
             }
@@ -1837,7 +1791,7 @@ public final class InternalWorkbook {
      */
     public Record findNextRecordBySid(short sid, int pos) {
         int matches = 0;
-        for (Record record : records) {
+        for (Record record : records.getRecords() ) {
             if (record.getSid() == sid && matches++ == pos) {
                 return record;
             }
@@ -1901,7 +1855,7 @@ public final class InternalWorkbook {
         }
 
         // Need to find a DrawingGroupRecord that contains a EscherDggRecord
-        for(Record r : records) {
+        for(Record r : records.getRecords() ) {
             if (!(r instanceof DrawingGroupRecord)) {
                 continue;
             }
@@ -2300,5 +2254,13 @@ public final class InternalWorkbook {
 	 */
     public boolean changeExternalReference(String oldUrl, String newUrl) {
     	return linkTable.changeExternalReference(oldUrl, newUrl);
+    }
+
+    /**
+     * Only for internal calls - code based on this is not supported ...
+     */
+    @Internal
+    public WorkbookRecordList getWorkbookRecordList() {
+        return records;
     }
 }

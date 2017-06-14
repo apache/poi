@@ -31,9 +31,9 @@ public final class HWPFFileSystem
 
   public HWPFFileSystem()
   {
-    _streams.put("WordDocument", new ByteArrayOutputStream());
-    _streams.put("1Table", new ByteArrayOutputStream());
-    _streams.put("Data", new ByteArrayOutputStream());
+    _streams.put("WordDocument", new ByteArrayOutputStream(100000));
+    _streams.put("1Table", new ByteArrayOutputStream(100000));
+    _streams.put("Data", new ByteArrayOutputStream(100000));
   }
 
   public ByteArrayOutputStream getStream(String name)

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -31,12 +32,15 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
+import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -60,8 +64,6 @@ public abstract class POIDocument implements Closeable {
     /* Have the property streams been read yet? (Only done on-demand) */
     private boolean initialized;
 
-    private static final String[] encryptedStreamNames = { "EncryptedSummary" };
-    
     /**
      * Constructs a POIDocument with the given directory node.
      *
@@ -103,7 +105,9 @@ public abstract class POIDocument implements Closeable {
      *      if it could not be read for this document.
      */
     public DocumentSummaryInformation getDocumentSummaryInformation() {
-        if(!initialized) readProperties();
+        if(!initialized) {
+            readProperties();
+        }
         return dsInf;
     }
 
@@ -114,7 +118,9 @@ public abstract class POIDocument implements Closeable {
      *      if it could not be read for this document.
      */
     public SummaryInformation getSummaryInformation() {
-        if(!initialized) readProperties();
+        if(!initialized) {
+            readProperties();
+        }
         return sInf;
     }
 	
@@ -128,7 +134,9 @@ public abstract class POIDocument implements Closeable {
      *  then nothing will happen.
      */
     public void createInformationProperties() {
-        if (!initialized) readProperties();
+        if (!initialized) {
+            readProperties();
+        }
         if (sInf == null) {
             sInf = PropertySetFactory.newSummaryInformation();
         }
@@ -144,32 +152,40 @@ public abstract class POIDocument implements Closeable {
      *  it will remain null;
      */
     protected void readProperties() {
-        PropertySet ps;
-
-        // DocumentSummaryInformation
-        ps = getPropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        if (ps instanceof DocumentSummaryInformation) {
-            dsInf = (DocumentSummaryInformation)ps;
-        } else if (ps != null) {
-            logger.log(POILogger.WARN, "DocumentSummaryInformation property set came back with wrong class - ", ps.getClass());
-        } else {
-            logger.log(POILogger.WARN, "DocumentSummaryInformation property set came back as null");
+        if (initialized) {
+            return;
         }
-
-        // SummaryInformation
-        ps = getPropertySet(SummaryInformation.DEFAULT_STREAM_NAME);
-        if (ps instanceof SummaryInformation) {
-            sInf = (SummaryInformation)ps;
-        } else if (ps != null) {
-            logger.log(POILogger.WARN, "SummaryInformation property set came back with wrong class - ", ps.getClass());
-        } else {
-            logger.log(POILogger.WARN, "SummaryInformation property set came back as null");
+        DocumentSummaryInformation dsi = readPropertySet(DocumentSummaryInformation.class, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        if (dsi != null) {
+            dsInf = dsi;
+        }
+        SummaryInformation si = readPropertySet(SummaryInformation.class, SummaryInformation.DEFAULT_STREAM_NAME);
+        if (si != null) {
+            sInf = si;
         }
 
         // Mark the fact that we've now loaded up the properties
         initialized = true;
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> T readPropertySet(Class<T> clazz, String name) {
+        String localName = clazz.getName().substring(clazz.getName().lastIndexOf('.')+1);
+        try {
+            PropertySet ps = getPropertySet(name);
+            if (clazz.isInstance(ps)) {
+                return (T)ps;
+            } else if (ps != null) {
+                logger.log(POILogger.WARN, localName+" property set came back with wrong class - "+ps.getClass().getName());
+            } else {
+                logger.log(POILogger.WARN, localName+" property set came back as null");
+            }
+        } catch (IOException e) {
+            logger.log(POILogger.ERROR, "can't retrieve property set", e);
+        }
+        return null;
+    }
+    
     /** 
      * For a given named property entry, either return it or null if
      *  if it wasn't found
@@ -177,8 +193,8 @@ public abstract class POIDocument implements Closeable {
      *  @param setName The property to read
      *  @return The value of the given property or null if it wasn't found.
      */
-    protected PropertySet getPropertySet(String setName) {
-        return getPropertySet(setName, null);
+    protected PropertySet getPropertySet(String setName) throws IOException {
+        return getPropertySet(setName, getEncryptionInfo());
     }
     
     /** 
@@ -189,7 +205,7 @@ public abstract class POIDocument implements Closeable {
      *  @param encryptionInfo the encryption descriptor in case of cryptoAPI encryption
      *  @return The value of the given property or null if it wasn't found.
      */
-    protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) {
+    protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) throws IOException {
         DirectoryNode dirNode = directory;
         
         NPOIFSFileSystem encPoifs = null;
@@ -197,14 +213,9 @@ public abstract class POIDocument implements Closeable {
         try {
             if (encryptionInfo != null && encryptionInfo.isDocPropsEncrypted()) {
                 step = "getting encrypted";
-                String encryptedStream = null;
-                for (String s : encryptedStreamNames) {
-                    if (dirNode.hasEntry(s)) {
-                        encryptedStream = s;
-                    }
-                }
-                if (encryptedStream == null) {
-                    throw new EncryptedDocumentException("can't find matching encrypted property stream");
+                String encryptedStream = getEncryptedPropertyStreamName();
+                if (!dirNode.hasEntry(encryptedStream)) {
+                    throw new EncryptedDocumentException("can't find encrypted property stream '"+encryptedStream+"'");
                 }
                 CryptoAPIDecryptor dec = (CryptoAPIDecryptor)encryptionInfo.getDecryptor();
                 encPoifs = dec.getSummaryEntries(dirNode, encryptedStream);
@@ -226,17 +237,12 @@ public abstract class POIDocument implements Closeable {
             } finally {
                 dis.close();
             }
+        } catch (IOException e) {
+            throw e;
         } catch (Exception e) {
-            logger.log(POILogger.WARN, "Error "+step+" property set with name " + setName, e);
-            return null;
+            throw new IOException("Error "+step+" property set with name " + setName, e);
         } finally {
-            if (encPoifs != null) {
-                try {
-                    encPoifs.close();
-                } catch(IOException e) {
-                    logger.log(POILogger.WARN, "Error closing encrypted property poifs", e);
-                }
-            }
+            IOUtils.closeQuietly(encPoifs);
         }
     }
     
@@ -271,19 +277,47 @@ public abstract class POIDocument implements Closeable {
      *      {@link NPOIFSFileSystem} occurs
      */
     protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+        EncryptionInfo ei = getEncryptionInfo();
+        final boolean encryptProps = (ei != null && ei.isDocPropsEncrypted());
+        NPOIFSFileSystem fs = (encryptProps) ? new NPOIFSFileSystem() : outFS;
+        
         SummaryInformation si = getSummaryInformation();
         if (si != null) {
-            writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, outFS);
+            writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, fs);
             if(writtenEntries != null) {
                 writtenEntries.add(SummaryInformation.DEFAULT_STREAM_NAME);
             }
         }
         DocumentSummaryInformation dsi = getDocumentSummaryInformation();
         if (dsi != null) {
-            writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, dsi, outFS);
+            writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, dsi, fs);
             if(writtenEntries != null) {
                 writtenEntries.add(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
             }
+        }
+
+        if (!encryptProps) {
+            return;
+        }
+
+        // create empty document summary
+        dsi = PropertySetFactory.newDocumentSummaryInformation();
+        writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, dsi, outFS);
+        // remove summary, if previously available
+        if (outFS.getRoot().hasEntry(SummaryInformation.DEFAULT_STREAM_NAME)) {
+            outFS.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
+        }
+        Encryptor encGen = ei.getEncryptor();
+        if (!(encGen instanceof CryptoAPIEncryptor)) {
+            throw new EncryptedDocumentException("Using "+ei.getEncryptionMode()+" encryption. Only CryptoAPI encryption supports encrypted property sets!");
+        }
+        CryptoAPIEncryptor enc = (CryptoAPIEncryptor)encGen;
+        try {
+            enc.setSummaryEntries(outFS.getRoot(), getEncryptedPropertyStreamName(), fs);
+        } catch (GeneralSecurityException e) {
+            throw new IOException(e);
+        } finally {
+            fs.close();
         }
     }
 	
@@ -442,5 +476,19 @@ public abstract class POIDocument implements Closeable {
         DirectoryNode dn = directory;
         directory = newDirectory;
         return dn;
+    }
+
+    /**
+     * @return the stream name of the property set collection, if the document is encrypted
+     */
+    protected String getEncryptedPropertyStreamName() {
+        return "encryption";
+    }
+
+    /**
+     * @return the encryption info if the document is encrypted, otherwise {@code null}
+     */
+    public EncryptionInfo getEncryptionInfo() throws IOException {
+        return null;
     }
 }

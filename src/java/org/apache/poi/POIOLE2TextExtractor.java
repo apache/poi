@@ -27,7 +27,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
  * You will typically find the implementation of
  *  a given format's text extractor under
  *  org.apache.poi.[format].extractor .
- *  
+ *
  * @see org.apache.poi.hssf.extractor.ExcelExtractor
  * @see org.apache.poi.hslf.extractor.PowerPointExtractor
  * @see org.apache.poi.hdgf.extractor.VisioTextExtractor
@@ -39,12 +39,12 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 
 	/**
 	 * Creates a new text extractor for the given document
-	 * 
+	 *
 	 * @param document The POIDocument to use in this extractor.
 	 */
 	public POIOLE2TextExtractor(POIDocument document) {
 		this.document = document;
-		
+
 		// Ensure any underlying resources, such as open files,
 		//  will get cleaned up if the user calls #close()
 		setFilesystem(document);
@@ -54,17 +54,17 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 * Creates a new text extractor, using the same
 	 *  document as another text extractor. Normally
 	 *  only used by properties extractors.
-	 * 
+	 *
 	 * @param otherExtractor the extractor which document to be used
 	 */
 	protected POIOLE2TextExtractor(POIOLE2TextExtractor otherExtractor) {
 		this.document = otherExtractor.document;
 	}
-	
+
 	/**
 	 * Returns the document information metadata for the document
-	 * 
-     * @return The Document Summary Information or null 
+	 *
+     * @return The Document Summary Information or null
      *      if it could not be read for this document.
 	 */
 	public DocumentSummaryInformation getDocSummaryInformation() {
@@ -72,7 +72,7 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	}
 	/**
 	 * Returns the summary information metadata for the document.
-	 * 
+	 *
      * @return The Summary information for the document or null
      *      if it could not be read for this document.
 	 */
@@ -83,7 +83,7 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	/**
 	 * Returns an HPSF powered text extractor for the
 	 *  document properties metadata, such as title and author.
-	 *  
+	 *
 	 * @return an instance of POIExtractor that can extract meta-data.
 	 */
 	@Override
@@ -96,8 +96,16 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 *
 	 * @return the DirectoryEntry that is associated with the POIDocument of this extractor.
 	 */
-    public DirectoryEntry getRoot()
-    {
+    public DirectoryEntry getRoot() {
         return document.getDirectory();
+    }
+
+    /**
+     * Return the underlying POIDocument
+     *
+     * @return the underlying POIDocument
+     */
+    public POIDocument getDocument() {
+        return document;
     }
 }
