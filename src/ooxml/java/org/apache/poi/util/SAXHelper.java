@@ -62,9 +62,20 @@ public final class SAXHelper {
     
     private static final SAXParserFactory saxFactory;
     static {
-        saxFactory = SAXParserFactory.newInstance();
-        saxFactory.setValidating(false);
-        saxFactory.setNamespaceAware(true);
+        try {
+            saxFactory = SAXParserFactory.newInstance();
+            saxFactory.setValidating(false);
+            saxFactory.setNamespaceAware(true);
+        } catch (RuntimeException re) {
+            logger.log(POILogger.WARN, "Failed to create SAXParserFactory", re);
+            throw re;
+        } catch (Exception e) {
+            logger.log(POILogger.WARN, "Failed to create SAXParserFactory", e);
+            throw new RuntimeException("Failed to create SAXParserFactory", e);
+        } catch (Error e) {
+            logger.log(POILogger.WARN, "Failed to create SAXParserFactory", e);
+            throw e;
+        }
     }
             
     private static void trySetSAXFeature(XMLReader xmlReader, String feature) {
