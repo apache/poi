@@ -73,6 +73,10 @@ public final class SAXHelper {
             logger.log(POILogger.WARN, "Failed to create SAXParserFactory", e);
             throw new RuntimeException("Failed to create SAXParserFactory", e);
         } catch (Error e) {
+            // catches NoClassDefFoundError, which may be due to a local class path issue
+            // This may occur if the code is run inside a web container
+            // or a restricted JVM
+            // See bug 61170: https://bz.apache.org/bugzilla/show_bug.cgi?id=61170
             logger.log(POILogger.WARN, "Failed to create SAXParserFactory", e);
             throw e;
         }
