@@ -57,6 +57,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -382,7 +383,8 @@ public class SXSSFWorkbook implements Workbook {
                     zos.putNextEntry(new ZipEntry(ze.getName()));
                     InputStream is = zipEntrySource.getInputStream(ze);
                     XSSFSheet xSheet=getSheetFromZipEntryName(ze.getName());
-                    if(xSheet!=null) {
+                    // See bug 56557, we should not inject data into the special ChartSheets
+                    if(xSheet!=null && !(xSheet instanceof XSSFChartSheet)) {
                         SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
                         InputStream xis = sxSheet.getWorksheetXMLInputStream();
                         try {
