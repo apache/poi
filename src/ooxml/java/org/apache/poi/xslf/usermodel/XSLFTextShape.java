@@ -67,6 +67,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         }
     }
 
+    @Override
     public Iterator<XSLFTextParagraph> iterator(){
         return getTextParagraphs().iterator();
     }
@@ -75,7 +76,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public String getText() {
         StringBuilder out = new StringBuilder();
         for (XSLFTextParagraph p : _paragraphs) {
-            if (out.length() > 0) out.append('\n');
+            if (out.length() > 0) {
+                out.append('\n');
+            }
             out.append(p.getText());
         }
         return out.toString();
@@ -109,7 +112,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     @Override
     public XSLFTextRun appendText(String text, boolean newParagraph) {
-        if (text == null) return null;
+        if (text == null) {
+            return null;
+        }
 
         // copy properties from last paragraph / textrun or paragraph end marker
         CTTextParagraphProperties otherPPr = null;
@@ -202,7 +207,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
              if(anchor == null) {
-                if(bodyPr.isSetAnchor()) bodyPr.unsetAnchor();
+                if(bodyPr.isSetAnchor()) {
+                    bodyPr.unsetAnchor();
+                }
             } else {
                 bodyPr.setAnchor(STTextAnchoringType.Enum.forInt(anchor.ordinal() + 1));
             }
@@ -212,6 +219,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     @Override
     public VerticalAlignment getVerticalAlignment(){
         PropertyFetcher<VerticalAlignment> fetcher = new TextBodyPropertyFetcher<VerticalAlignment>(){
+            @Override
             public boolean fetch(CTTextBodyProperties props){
                 if(props.isSetAnchor()){
                     int val = props.getAnchor().intValue();
@@ -230,7 +238,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
              if (isCentered == null) {
-                if (bodyPr.isSetAnchorCtr()) bodyPr.unsetAnchorCtr();
+                if (bodyPr.isSetAnchorCtr()) {
+                    bodyPr.unsetAnchorCtr();
+                }
             } else {
                 bodyPr.setAnchorCtr(isCentered);
             }
@@ -240,6 +250,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     @Override
     public boolean isHorizontalCentered(){
         PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
+            @Override
             public boolean fetch(CTTextBodyProperties props){
                 if(props.isSetAnchorCtr()){
                     setValue(props.getAnchorCtr());
@@ -257,7 +268,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
             if(orientation == null) {
-                if(bodyPr.isSetVert()) bodyPr.unsetVert();
+                if(bodyPr.isSetVert()) {
+                    bodyPr.unsetVert();
+                }
             } else {
                 bodyPr.setVert(STTextVerticalType.Enum.forInt(orientation.ordinal() + 1));
             }
@@ -315,6 +328,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      */
     public double getBottomInset(){
         PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            @Override
             public boolean fetch(CTTextBodyProperties props){
                 if(props.isSetBIns()){
                     double val = Units.toPoints(props.getBIns());
@@ -338,6 +352,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      */
     public double getLeftInset(){
         PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            @Override
             public boolean fetch(CTTextBodyProperties props){
                 if(props.isSetLIns()){
                     double val = Units.toPoints(props.getLIns());
@@ -361,6 +376,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      */
     public double getRightInset(){
         PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            @Override
             public boolean fetch(CTTextBodyProperties props){
                 if(props.isSetRIns()){
                     double val = Units.toPoints(props.getRIns());
@@ -383,6 +399,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      */
     public double getTopInset(){
         PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+            @Override
             public boolean fetch(CTTextBodyProperties props){
                 if(props.isSetTIns()){
                     double val = Units.toPoints(props.getTIns());
@@ -406,8 +423,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setBottomInset(double margin){
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetBIns();
-            else bodyPr.setBIns(Units.toEMU(margin));
+            if(margin == -1) {
+                bodyPr.unsetBIns();
+            } else {
+                bodyPr.setBIns(Units.toEMU(margin));
+            }
         }
     }
 
@@ -420,8 +440,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setLeftInset(double margin){
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetLIns();
-            else bodyPr.setLIns(Units.toEMU(margin));
+            if(margin == -1) {
+                bodyPr.unsetLIns();
+            } else {
+                bodyPr.setLIns(Units.toEMU(margin));
+            }
         }
     }
 
@@ -434,8 +457,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setRightInset(double margin){
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetRIns();
-            else bodyPr.setRIns(Units.toEMU(margin));
+            if(margin == -1) {
+                bodyPr.unsetRIns();
+            } else {
+                bodyPr.setRIns(Units.toEMU(margin));
+            }
         }
     }
 
@@ -448,8 +474,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setTopInset(double margin){
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetTIns();
-            else bodyPr.setTIns(Units.toEMU(margin));
+            if(margin == -1) {
+                bodyPr.unsetTIns();
+            } else {
+                bodyPr.setTIns(Units.toEMU(margin));
+            }
         }
     }
 
@@ -470,6 +499,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     @Override
     public boolean getWordWrap(){
         PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
+            @Override
             public boolean fetch(CTTextBodyProperties props){
                if(props.isSetWrap()){
                     setValue(props.getWrap() == STTextWrappingType.SQUARE);
@@ -500,9 +530,15 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setTextAutofit(TextAutofit value){
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(bodyPr.isSetSpAutoFit()) bodyPr.unsetSpAutoFit();
-            if(bodyPr.isSetNoAutofit()) bodyPr.unsetNoAutofit();
-            if(bodyPr.isSetNormAutofit()) bodyPr.unsetNormAutofit();
+            if(bodyPr.isSetSpAutoFit()) {
+                bodyPr.unsetSpAutoFit();
+            }
+            if(bodyPr.isSetNoAutofit()) {
+                bodyPr.unsetNoAutofit();
+            }
+            if(bodyPr.isSetNormAutofit()) {
+                bodyPr.unsetNormAutofit();
+            }
 
             switch(value){
                 case NONE: bodyPr.addNewNoAutofit(); break;
@@ -519,9 +555,13 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public TextAutofit getTextAutofit(){
         CTTextBodyProperties bodyPr = getTextBodyPr();
         if (bodyPr != null) {
-            if(bodyPr.isSetNoAutofit()) return TextAutofit.NONE;
-            else if (bodyPr.isSetNormAutofit()) return TextAutofit.NORMAL;
-            else if (bodyPr.isSetSpAutoFit()) return TextAutofit.SHAPE;
+            if(bodyPr.isSetNoAutofit()) {
+                return TextAutofit.NONE;
+            } else if (bodyPr.isSetNormAutofit()) {
+                return TextAutofit.NORMAL;
+            } else if (bodyPr.isSetSpAutoFit()) {
+                return TextAutofit.SHAPE;
+            }
         }
         return TextAutofit.NORMAL;
     }
@@ -551,7 +591,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     public Placeholder getTextType(){
         CTPlaceholder ph = getCTPlaceholder();
-        if (ph == null) return null;
+        if (ph == null) {
+            return null;
+        }
 
         int val = ph.getType().intValue();
         return Placeholder.lookupOoxml(val);
@@ -571,12 +613,15 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      */
     public Rectangle2D resizeToFitText(){
         Rectangle2D anchor = getAnchor();
-        if(anchor.getWidth() == 0.)  throw new POIXMLException(
-                "Anchor of the shape was not set.");
+
+        if(anchor.getWidth() == 0.) {
+            throw new POIXMLException("Anchor of the shape was not set.");
+        }
         double height = getTextHeight();
         height += 1; // add a pixel to compensate rounding errors
 
-        anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height);
+        Insets2D insets = getInsets();
+        anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height+insets.top+insets.bottom);
         setAnchor(anchor);
 
         return anchor;
@@ -596,7 +641,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
         thisTB.setBodyPr((CTTextBodyProperties)otherTB.getBodyPr().copy());
 
-        if (thisTB.isSetLstStyle()) thisTB.unsetLstStyle();
+        if (thisTB.isSetLstStyle()) {
+            thisTB.unsetLstStyle();
+        }
         if (otherTB.isSetLstStyle()) {
             thisTB.setLstStyle((CTTextListStyle)otherTB.getLstStyle().copy());
         }
@@ -665,7 +712,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     @Override
     public TextPlaceholder getTextPlaceholder() {
         Placeholder ph = getTextType();
-        if (ph == null) return TextPlaceholder.BODY;
+        if (ph == null) {
+            return TextPlaceholder.BODY;
+        }
         switch (ph) {
         case BODY: return TextPlaceholder.BODY;
         case TITLE: return TextPlaceholder.TITLE;
@@ -679,9 +728,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      * Helper method to allow subclasses to provide their own text paragraph
      *
      * @param p the xml reference
-     * 
+     *
      * @return a new text paragraph
-     * 
+     *
      * @since POI 3.15-beta2
      */
     protected XSLFTextParagraph newTextParagraph(CTTextParagraph p) {
