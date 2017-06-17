@@ -69,11 +69,20 @@ public class DrawTextFragment implements Drawable  {
     /**
      * @return full height of this text run which is sum of ascent, descent and leading
      */
-    public float getHeight(){
-        double h = Math.ceil(layout.getAscent()) + Math.ceil(layout.getDescent()) + layout.getLeading();
+    public float getHeight(){ 
+        double h = Math.ceil(layout.getAscent()) + Math.ceil(layout.getDescent()) + getLeading();
         return (float)h;
     }
 
+    /**
+     * @return the leading height before/after a text line
+     */
+    public float getLeading() {
+        // fix invalid leadings (leading == 0) by fallback to descent
+        double l = layout.getLeading();
+        return (float)(l == 0 ? layout.getDescent() : l);
+    }
+    
     /**
      *
      * @return width if this text run

@@ -329,7 +329,8 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         double height = getTextHeight();
         height += 1; // add a pixel to compensate rounding errors
 
-        anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height);
+        Insets2D insets = getInsets();
+        anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height+insets.top+insets.bottom);
         setAnchor(anchor);
 
         return anchor;
