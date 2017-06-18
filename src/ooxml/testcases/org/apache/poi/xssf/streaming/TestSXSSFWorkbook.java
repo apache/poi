@@ -580,7 +580,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void test56557() throws IOException, InvalidFormatException {
-        Workbook wb = WorkbookFactory.create(XSSFTestDataSamples.getSampleFile("56557.xlsx"));
+        Workbook wb = WorkbookFactory.create(XSSFTestDataSamples.getSampleFile("56557.xlsx"), null, false);
 
         // Using streaming XSSFWorkbook makes the output file invalid
         wb = new SXSSFWorkbook(((XSSFWorkbook) wb));

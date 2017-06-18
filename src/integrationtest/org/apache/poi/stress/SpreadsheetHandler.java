@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 
 public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	public void handleWorkbook(Workbook wb) throws IOException {
@@ -125,6 +126,11 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		}*/
 
 	    for (int i=wb.getNumberOfSheets()-1; i>=0; i--) {
+	    	if(wb.getSheetAt(i) instanceof XSSFChartSheet) {
+	    		// clone for chart-sheets is not supported
+	    		continue;
+			}
+
 	        try {
 	            wb.cloneSheet(i);
 	        } catch (RecordFormatException e) {
