@@ -299,8 +299,7 @@ public class TestAllFiles {
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-xmlbomb-empty.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
-        "spreadsheet/60255_extra_drawingparts.xlsx", // Non-drawing drawing
-        
+
         // old Excel files, which we only support simple text extraction of
         "spreadsheet/testEXCEL_2.xls",
         "spreadsheet/testEXCEL_3.xls",
@@ -321,12 +320,8 @@ public class TestAllFiles {
         "ddf/47143.dat",
 
         // sheet cloning errors
-        "spreadsheet/47813.xlsx",
         "spreadsheet/56450.xls",
-        "spreadsheet/OddStyleRecord.xls",
-        "spreadsheet/WithChartSheet.xlsx",
-        "spreadsheet/chart_sheet.xlsx",
-        "spreadsheet/SimpleScatterChart.xlsx"
+        "spreadsheet/OddStyleRecord.xls"
     );
 
     private static final Set<String> IGNORED = unmodifiableHashSet(
