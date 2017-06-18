@@ -29,6 +29,7 @@ import org.apache.poi.sl.draw.geom.Path;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.TextShape;
 
 public class DrawFreeformShape extends DrawAutoShape {
     public DrawFreeformShape(FreeformShape<?,?> shape) {
@@ -37,7 +38,7 @@ public class DrawFreeformShape extends DrawAutoShape {
 
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
         List<Outline> lst = new ArrayList<Outline>();
-        FreeformShape<?,?> fsh = getShape();
+        FreeformShape<?,?> fsh = (FreeformShape<?, ?>) getShape();
         Path2D sh = fsh.getPath();
 
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
@@ -55,7 +56,7 @@ public class DrawFreeformShape extends DrawAutoShape {
     }
 
     @Override
-    protected FreeformShape<?,?> getShape() {
-        return (FreeformShape<?,?>)shape;
+    protected TextShape<?,?> getShape() {
+        return (TextShape<?,?>)shape;
     }
 }
