@@ -49,7 +49,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 		int b3 = (v >>> 24) & 0xFF;
 		int b2 = (v >>> 16) & 0xFF;
 		int b1 = (v >>>  8) & 0xFF;
-		int b0 = (v >>>  0) & 0xFF;
+		int b0 = (v/* >>>  0*/) & 0xFF;
 		try {
 			out.write(b0);
 			out.write(b1);
@@ -62,14 +62,14 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 
 	@Override
     public void writeLong(long v) {
-		writeInt((int)(v >>  0));
+		writeInt((int)(v/* >>  0*/));
 		writeInt((int)(v >> 32));
 	}
 
 	@Override
     public void writeShort(int v) {
 		int b1 = (v >>>  8) & 0xFF;
-		int b0 = (v >>>  0) & 0xFF;
+		int b0 = (v/* >>>  0*/) & 0xFF;
 		try {
 			out.write(b0);
 			out.write(b1);
