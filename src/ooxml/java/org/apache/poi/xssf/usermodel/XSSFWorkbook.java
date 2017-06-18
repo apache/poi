@@ -217,7 +217,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * cached instance of XSSFCreationHelper for this workbook
-     * @see {@link #getCreationHelper()}
+     * @see #getCreationHelper()
      */
     private XSSFCreationHelper _creationHelper;
 
@@ -399,6 +399,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             // Load individual sheets. The order of sheets is defined by the order
             //  of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
+            //noinspection deprecation
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 parseSheet(shIdMap, ctSheet);
             }
@@ -594,7 +595,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
         // copy sheet's relations
         List<RelationPart> rels = srcSheet.getRelationParts();
-        // if the sheet being cloned has a drawing then rememebr it and re-create it too
+        // if the sheet being cloned has a drawing then remember it and re-create it too
         XSSFDrawing dg = null;
         for(RelationPart rp : rels) {
             POIXMLDocumentPart r = rp.getDocumentPart();
@@ -638,7 +639,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
         clonedSheet.setSelected(false);
 
-        // clone the sheet drawing alongs with its relationships
+        // clone the sheet drawing along with its relationships
         if (dg != null) {
             if(ct.isSetDrawing()) {
                 // unset the existing reference to the drawing,
@@ -1709,6 +1710,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         newcts.set(cts);
 
         //notify sheets
+        //noinspection deprecation
         CTSheet[] sheetArray = ct.getSheetArray();
         for(int i=0; i < sheetArray.length; i++) {
             sheets.get(i).sheet = sheetArray[i];
@@ -1877,6 +1879,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @return true if the sheet contains the name, false otherwise.
      */
     private boolean containsSheet(String name, int excludeSheetIdx) {
+        //noinspection deprecation
         CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
 
         if (name.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
@@ -2359,7 +2362,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Adds a vbaProject.bin file to the workbook.  This will change the workbook
      * type if necessary.
      *
-     * @throws IOException
+     * @throws IOException If copying data from the stream fails.
      */
     public void setVBAProject(InputStream vbaProjectStream) throws IOException {
         if (!isMacroEnabled()) {
@@ -2390,8 +2393,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Adds a vbaProject.bin file taken from another, given workbook to this one.
-     * @throws IOException
-     * @throws InvalidFormatException
+     * @throws IOException If copying the VBAProject stream fails.
+     * @throws InvalidFormatException If an error occurs while handling parts of the XSSF format
      */
     public void setVBAProject(XSSFWorkbook macroWorkbook) throws IOException, InvalidFormatException {
         if (!macroWorkbook.isMacroEnabled()) {
