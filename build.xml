@@ -209,8 +209,8 @@ under the License.
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.12/apache-rat-0.12.jar"/>
-    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.1.jar"/>
-    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.1/forbiddenapis-2.1.jar"/>
+    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.3.jar"/>
+    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.3/forbiddenapis-2.3.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -584,6 +584,7 @@ under the License.
                 <include name="junit-4.11*"/>
                 <include name="forbiddenapis-1.*.jar"/>
                 <include name="forbiddenapis-2.0.jar"/>
+                <include name="forbiddenapis-2.1.jar"/>
                 <include name="apache-rat-0.11.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
