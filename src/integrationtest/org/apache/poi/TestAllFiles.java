@@ -19,6 +19,7 @@ package org.apache.poi;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -386,6 +387,10 @@ public class TestAllFiles {
     
     @Test
     public void testAllFiles() throws Exception {
+        if(handler == null) {
+            fail("Did not find a handler for file " + file);
+        }
+
         System.out.println("Reading " + file + " with " + handler.getClass());
         assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
         File inputFile = new File(ROOT_DIR, file);

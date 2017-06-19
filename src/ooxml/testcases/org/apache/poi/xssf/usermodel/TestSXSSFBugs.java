@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -91,6 +90,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             super.bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged();
         } catch (final RuntimeException e) {
             final Throwable cause = e.getCause();
+            //noinspection StatementWithEmptyBody
             if (cause instanceof IOException && cause.getMessage().equals("Stream closed")) {
                 // expected on the second time that _testDataProvider.writeOutAndReadBack(SXSSFWorkbook) is called
                 // if the test makes it this far, then we know that XSSFName sheet indices are updated when sheet
