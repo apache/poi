@@ -40,7 +40,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     @Override @Ignore("cloneSheet() not implemented") @Test public void bug18800() { /* cloneSheet() not implemented */ }
     @Override @Ignore("cloneSheet() not implemented") @Test public void bug22720() { /* cloneSheet() not implemented */ }
     @Override @Ignore("Evaluation is not fully supported") @Test public void bug47815() { /* Evaluation is not supported */ }
-    @Override @Ignore("Evaluation is not fully supported") @Test public void test58113() { /* Evaluation is not supported */ }
     @Override @Ignore("Evaluation is not fully supported") @Test public void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
     @Override @Ignore("Reading data is not supported") @Test public void bug57798() { /* Reading data is not supported */ }
 
