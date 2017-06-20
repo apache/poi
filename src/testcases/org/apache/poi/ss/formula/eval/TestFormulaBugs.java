@@ -189,13 +189,68 @@ public final class TestFormulaBugs {
 
         wb.close();
 	}
-
-    private void checkFormulaValue(Workbook wb, Cell cell, String formula, double expectedValue) {
-        cell.setCellFormula(formula);
+	
+	// bug 52063: LOOKUP(2-arg) and LOOKUP(3-arg)
+	// FIXME: This could be moved into LookupFunctionsTestCaseData.xls, which is tested by TestLookupFunctionsFromSpreadsheet.java
+	@Test
+	public void testLookupFormula() throws Exception {
+	    Workbook wb = new HSSFWorkbook();
+	    Sheet sheet = wb.createSheet("52063");
 	    
+	    // Note: Values in arrays are in ascending order since LOOKUP expects that in order to work properly
+	    //         column
+	    //         A B C
+	    //       +-------
+	    // row 1 | P Q R
+	    // row 2 | X Y Z
+	    Row row = sheet.createRow(0);
+	    row.createCell(0).setCellValue("P");
+	    row.createCell(1).setCellValue("Q");
+	    row.createCell(2).setCellValue("R");
+	    row = sheet.createRow(1);
+	    row.createCell(0).setCellValue("X");
+	    row.createCell(1).setCellValue("Y");
+	    row.createCell(2).setCellValue("Z");
+	    
+	    Cell evalcell = sheet.createRow(2).createCell(0);
+	    
+	    //// ROW VECTORS
+	    // lookup and result row are the same
+	    checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C1)", "Q");
+	    checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C1)", "R");
+	    checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C1, A1:C1)", "Q");
+	    checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C1, A1:C1)", "R");
+	    
+	    // lookup and result row are different
+	    checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C2)", "Y");
+        checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C2)", "Z");
+        checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C1, A2:C2)", "Y");
+	    checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C1, A2:C2)", "Z");
+	    
+	    //// COLUMN VECTORS
+        // lookup and result column are different
+        checkFormulaValue(wb, evalcell, "LOOKUP(\"P\", A1:B2)", "Q");
+        checkFormulaValue(wb, evalcell, "LOOKUP(\"X\", A1:A2, C1:C2)", "Z");
+	    
+	    wb.close();
+	}
+	
+	private CellValue evaluateFormulaInCell(Workbook wb, Cell cell, String formula) {
+        cell.setCellFormula(formula);
+        
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
         CellValue value = evaluator.evaluate(cell);
         
+        return value;
+	}
+
+    private void checkFormulaValue(Workbook wb, Cell cell, String formula, double expectedValue) {
+        CellValue value = evaluateFormulaInCell(wb, cell, formula);
         assertEquals(expectedValue, value.getNumberValue(), 0.0001);
+    }
+    
+    private void checkFormulaValue(Workbook wb, Cell cell, String formula, String expectedValue) {
+        CellValue value = evaluateFormulaInCell(wb, cell, formula);
+        assertEquals(expectedValue, value.getStringValue());
     }
 }
