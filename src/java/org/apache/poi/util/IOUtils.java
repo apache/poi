@@ -31,6 +31,7 @@ import java.util.zip.Checksum;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.POIDocument;
+import org.apache.poi.ss.usermodel.Workbook;
 
 public final class IOUtils {
     private static final POILogger logger = POILogFactory.getLogger( IOUtils.class );
@@ -209,6 +210,14 @@ public final class IOUtils {
         }
     }
     
+    public static void write(Workbook doc, OutputStream out) throws IOException {
+        try {
+            doc.write(out);
+        } finally {
+            closeQuietly(out);
+        }
+    }
+    
     /**
      * Write a POI Document ({@link org.apache.poi.ss.usermodel.Workbook}, {@link org.apache.poi.sl.usermodel.SlideShow}, etc) to an output stream and close the output stream.
      * This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
@@ -261,6 +270,16 @@ public final class IOUtils {
     public static void writeAndClose(POIDocument doc) throws IOException {
         try {
             doc.write();
+        } finally {
+            closeQuietly(doc);
+        }
+    }
+    
+    // Since the Workbook interface doesn't derive from POIDocument
+    // We'll likely need one of these for each document container interface
+    public static void writeAndClose(Workbook doc, OutputStream out) throws IOException {
+        try {
+            doc.write(out);
         } finally {
             closeQuietly(doc);
         }

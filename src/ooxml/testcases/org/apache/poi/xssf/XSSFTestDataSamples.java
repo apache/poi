@@ -24,11 +24,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -39,7 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class XSSFTestDataSamples {
     /**
-     * Used by {@link writeOutAndReadBack(R wb, String testName)}.  If a
+     * Used by {@link #writeOutAndReadBack(Workbook, String)}.  If a
      * value is set for this in the System Properties, the xlsx file
      * will be written out to that directory.
      */
@@ -74,6 +74,21 @@ public class XSSFTestDataSamples {
      * @throws IOException
      */
     public static <R extends Workbook> File writeOut(R wb, String testName) throws IOException {
+        final File file = getOutputFile(testName);
+        writeOut(wb, file);
+        return file;
+    }
+    
+    private static <R extends Workbook> void writeOut(R wb, File file) throws IOException {
+        IOUtils.write(wb,  new FileOutputStream(file));
+    }
+    
+    // Anticipates the location of where a workbook will be written to
+    // Note that if TEST_OUTPUT_DIR is not set, this will create temporary files
+    // with unique names. Subsequent calls with the same argument may return a different file.
+    // Gets a test data sample file, deleting the file if it exists.
+    // This is used in preparation for writing a workbook out to the returned output file.
+    private static File getOutputFile(String testName) throws IOException {
         final String testOutputDir = System.getProperty(TEST_OUTPUT_DIR);
         final File file;
         if (testOutputDir != null) {
@@ -84,12 +99,6 @@ public class XSSFTestDataSamples {
         }
         if (file.exists()) {
             file.delete();
-        }
-        final OutputStream out = new FileOutputStream(file);
-        try {
-            wb.write(out);
-        } finally {
-            out.close();
         }
         return file;
     }
