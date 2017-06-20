@@ -466,11 +466,24 @@ public final class TestPictures {
      * See "Please remove my file from your svn" on @poi-dev from Dec 12, 2013
      */
     @Test
-    @Ignore
+    @Ignore("requires an internet connection to a 3rd party site")
+    // As of 2017-06-20, the file still exists at the specified URL and the test passes.
 	public void testZeroPictureLength() throws IOException {
         // take the data from www instead of test directory
         URL url = new URL("http://www.cs.sfu.ca/~anoop/courses/CMPT-882-Fall-2002/chris.ppt");
 		HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(url.openStream());
+        /* Assume that the file could retrieved...
+        InputStream is;
+        HSLFSlideShowImpl hslf;
+        try {
+            is = url.openStream();
+            hslf = new HSLFSlideShowImpl(is);
+            is.close();
+        } catch (final IOException e) {
+            Assume.assumeTrue(e.getMessage(), false);
+            throw e;
+        }
+        */
 
 		// Should still have 2 real pictures
 		assertEquals(2, hslf.getPictureData().size());
