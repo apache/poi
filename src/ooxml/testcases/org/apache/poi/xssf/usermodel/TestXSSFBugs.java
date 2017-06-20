@@ -75,7 +75,9 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -3162,13 +3164,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // we currently only populate the dimension during writing out
         // to avoid having to iterate all rows/cells in each add/remove of a row or cell
-        //OutputStream str = new FileOutputStream("/tmp/53611.xlsx");
-        OutputStream str = new ByteArrayOutputStream();
-        try {
-            wb.write(str);
-        } finally {
-            str.close();
-        }
+        IOUtils.write(wb, new NullOutputStream());
 
         assertEquals("B2:I5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
 
