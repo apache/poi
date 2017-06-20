@@ -449,7 +449,7 @@ public class CellReference {
     /**
      * Takes in a 0-based base-10 column and returns a ALPHA-26
      *  representation.
-     * eg column #3 -> D
+     * eg {@code convertNumToColString(3)} returns {@code "D"}
      */
     public static String convertNumToColString(int col) {
         // Excel counts column A as the 1st column, we
