@@ -580,21 +580,15 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void test56557() throws IOException, InvalidFormatException {
-        Workbook wb = WorkbookFactory.create(XSSFTestDataSamples.getSampleFile("56557.xlsx"), null, false);
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56557.xlsx");
 
         // Using streaming XSSFWorkbook makes the output file invalid
         wb = new SXSSFWorkbook(((XSSFWorkbook) wb));
 
+        // Should not throw POIXMLException: java.io.IOException: Unable to parse xml bean when reading back
         Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
         assertNotNull(wbBack);
         wbBack.close();
-
-        /*FileOutputStream out = new FileOutputStream("C:/temp/out.xlsx");
-        try {
-            wb.write(out);
-        } finally {
-            out.close();
-        }*/
 
         wb.close();
     }
