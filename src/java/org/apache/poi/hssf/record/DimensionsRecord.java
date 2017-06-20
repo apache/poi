@@ -20,6 +20,8 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Title:        Dimensions Record<P>
@@ -32,6 +34,9 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 
 public final class DimensionsRecord extends StandardRecord implements Cloneable {
+
+    private static final POILogger logger = POILogFactory.getLogger(DimensionsRecord.class);
+
     public final static short sid = 0x200;
     private int               field_1_first_row;
     private int               field_2_last_row;   // plus 1
@@ -50,6 +55,11 @@ public final class DimensionsRecord extends StandardRecord implements Cloneable 
         field_3_first_col = in.readShort();
         field_4_last_col  = in.readShort();
         field_5_zero      = in.readShort();
+        //POI-61045 -- in practice, there can be an extra 2 bytes
+        if (in.available() == 2) {
+            logger.log(POILogger.INFO, "DimensionsRecord has extra 2 bytes.");
+            in.readShort();
+        }
     }
 
     /**
