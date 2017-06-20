@@ -256,6 +256,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     @Ignore
     public void testCachedReferencesToOtherWorkbooks() throws Exception {
         // TODO
+        fail("unit test not written yet");
     }
     
     /**
