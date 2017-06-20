@@ -258,7 +258,7 @@ public final class IOUtils {
     }
     
     /**
-     * Like {@link #write(POIDocument, File)}, but for writing a POI Document in place (to the same file that it was opened from).
+     * Like {@link #writeAndClose(POIDocument, File)}, but for writing a POI Document in place (to the same file that it was opened from).
      * This will attempt to close the document, even if an error occurred while writing the document.
      * 
      * If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
