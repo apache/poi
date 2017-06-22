@@ -851,4 +851,23 @@ public class TestDataFormatter {
         assertEquals("08:51", dfUS.formatRawCellContents(42605.368761574071, -1, "hh:mm"));
         assertEquals("51:01", dfUS.formatRawCellContents(42605.368761574071, -1, "mm:ss"));
     }
+    
+    /**
+     * bug 60422 : DataFormatter has issues with a specific NumberFormat in Germany locale
+     */
+    @Test
+    public void testBug60422() {
+        Locale defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.GERMANY);
+        try {
+            char euro = '\u20AC';
+            DataFormatter df = new DataFormatter();
+            String formatString = String.format(
+                    "_-* #,##0.00\\ \"%s\"_-;\\-* #,##0.00\\ \"%s\"_-;_-* \"-\"??\\ \"%s\"_-;_-@_-",
+                    euro, euro, euro);
+            assertEquals("4.33 " + euro, df.formatRawCellContents(4.33, 178, formatString));
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
+    }
 }
