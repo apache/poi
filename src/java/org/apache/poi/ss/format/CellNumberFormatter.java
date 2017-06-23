@@ -26,6 +26,7 @@ import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -444,9 +445,9 @@ public class CellNumberFormatter extends CellFormatter {
             writeFraction(value, null, fractional, output, mods);
         } else {
             StringBuffer result = new StringBuffer();
-            Formatter f = new Formatter(result, LocaleUtil.getUserLocale());
+            Formatter f = new Formatter(result, Locale.US);
             try {
-                f.format(LocaleUtil.getUserLocale(), printfFmt, value);
+                f.format(Locale.US, printfFmt, value);
             } finally {
                 f.close();
             }
