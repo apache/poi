@@ -20,10 +20,17 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
 /**
- * A client anchor is attached to an excel worksheet.  It anchors against a
- * top-left and bottom-right cell.
- *
- * @author Yegor Kozlov
+ * A client anchor is attached to an excel worksheet.  It anchors against 
+ * absolute coordinates, a top-left cell and fixed height and width, or
+ * a top-left and bottom-right cell, depending on the {@link AnchorType}:
+ * <ol>
+ * <li> {@link AnchorType#DONT_MOVE_AND_RESIZE} == absolute top-left coordinates and width/height, no cell references
+ * <li> {@link AnchorType#MOVE_DONT_RESIZE} == fixed top-left cell reference, absolute width/height
+ * <li> {@link AnchorType#MOVE_AND_RESIZE} == fixed top-left and bottom-right cell references, dynamic width/height
+ * </ol>
+ * Note this class only reports the current values for possibly calculated positions and sizes.
+ * If the sheet row/column sizes or positions shift, this needs updating via external calculations.
+ * 
  */
 public interface ClientAnchor {
     
@@ -91,8 +98,9 @@ public interface ClientAnchor {
          * <p>
          * Specifies that the current drawing shall not move with its
          * row and column, but should be resized. This option is not normally
-         * used, but is included for completeness.
+         * used, but is included for completeness. 
          * </p>
+         * Note: Excel has no setting for this combination, nor does the ECMA standard.
          */
         DONT_MOVE_DO_RESIZE(1),
         
@@ -145,9 +153,10 @@ public interface ClientAnchor {
     }
     
     /**
-     * Returns the column (0 based) of the first cell.
+     * Returns the column (0 based) of the first cell, or -1 if there is no top-left anchor cell.
+     * This is the case for absolute positioning (AnchorType{@link #DONT_MOVE_AND_RESIZE}).
      *
-     * @return 0-based column of the first cell.
+     * @return 0-based column of the first cell or -1 if none.
      */
     public short getCol1();
 
@@ -159,9 +168,11 @@ public interface ClientAnchor {
     public void setCol1(int col1);
 
     /**
-     * Returns the column (0 based) of the second cell.
+     * Returns the column (0 based) of the second cell, or -1 if there is no bottom-right anchor cell.
+     * This is the case for absolute positioning ({@link AnchorType#DONT_MOVE_AND_RESIZE})
+     * and absolute sizing ({@link AnchorType#MOVE_DONT_RESIZE}.
      *
-     * @return 0-based column of the second cell.
+     * @return 0-based column of the second cell or -1 if none.
      */
     public short getCol2();
 
@@ -173,9 +184,10 @@ public interface ClientAnchor {
     public void setCol2(int col2);
 
     /**
-     * Returns the row (0 based) of the first cell.
+     * Returns the row (0 based) of the first cell, or -1 if there is no bottom-right anchor cell.
+     * This is the case for absolute positioning ({@link AnchorType#DONT_MOVE_AND_RESIZE}).
      *
-     * @return 0-based row of the first cell.
+     * @return 0-based row of the first cell or -1 if none.
      */
     public int getRow1();
 
@@ -187,9 +199,11 @@ public interface ClientAnchor {
     public void setRow1(int row1);
 
     /**
-     * Returns the row (0 based) of the second cell.
+     * Returns the row (0 based) of the second cell, or -1 if there is no bottom-right anchor cell.
+     * This is the case for absolute positioning ({@link AnchorType#DONT_MOVE_AND_RESIZE})
+     * and absolute sizing ({@link AnchorType#MOVE_DONT_RESIZE}.
      *
-     * @return 0-based row of the second cell.
+     * @return 0-based row of the second cell or -1 if none.
      */
     public int getRow2();
 
