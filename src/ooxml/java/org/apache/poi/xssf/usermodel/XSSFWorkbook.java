@@ -83,6 +83,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ExternalLinksTable;
@@ -123,8 +124,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Width of one character of the default font in pixels. Same for Calibry and Arial.
+     * @deprecated POI 3.17 beta 1
+     * @see Units#DEFAULT_CHARACTER_WIDTH
      */
-    public static final float DEFAULT_CHARACTER_WIDTH = 7.0017f;
+    @Removal(version="3.19")
+    public static final float DEFAULT_CHARACTER_WIDTH = Units.DEFAULT_CHARACTER_WIDTH;
 
     /**
      * Excel silently truncates long sheet names to 31 chars.

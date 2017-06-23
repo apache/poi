@@ -83,6 +83,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
@@ -916,7 +917,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public float getColumnWidthInPixels(int columnIndex) {
         float widthIn256 = getColumnWidth(columnIndex);
-        return (float)(widthIn256/256.0*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH);
+        return (float)(widthIn256/256.0*Units.DEFAULT_CHARACTER_WIDTH);
     }
     
     /**
