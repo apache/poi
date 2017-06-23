@@ -18,6 +18,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Shape;
+import org.apache.poi.util.Removal;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNoFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetLineDashProperties;
@@ -30,11 +32,33 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
  * Represents a shape in a SpreadsheetML drawing.
  */
 public abstract class XSSFShape implements Shape {
-    public static final int EMU_PER_PIXEL = 9525;
-    public static final int EMU_PER_POINT = 12700;
+    /**
+     * @deprecated POI 3.17 beta 1
+     * @see Units#EMU_PER_PIXEL
+     */
+    @Removal(version="3.19")
+    public static final int EMU_PER_PIXEL = Units.EMU_PER_PIXEL;
+    
+    /**
+     * @deprecated POI 3.17 beta 1
+     * @see Units#EMU_PER_POINT
+     */
+    @Removal(version="3.19")
+    public static final int EMU_PER_POINT = Units.EMU_PER_POINT;
 
-    public static final int POINT_DPI = 72;
-    public static final int PIXEL_DPI = 96;
+    /**
+     * @deprecated POI 3.17 beta 1
+     * @see Units#POINT_DPI
+     */
+    @Removal(version="3.19")
+    public static final int POINT_DPI = Units.POINT_DPI;
+
+    /**
+     * @deprecated POI 3.17 beta 1
+     * @see Units#PIXEL_DPI
+     */
+    @Removal(version="3.19")
+    public static final int PIXEL_DPI = Units.PIXEL_DPI;
 
     /**
      * Parent drawing
@@ -124,7 +148,7 @@ public abstract class XSSFShape implements Shape {
     public void setLineWidth( double lineWidth ) {
         CTShapeProperties props = getShapeProperties();
         CTLineProperties ln = props.isSetLn() ? props.getLn() : props.addNewLn();
-        ln.setW((int)(lineWidth*EMU_PER_POINT));
+        ln.setW((int)(lineWidth*Units.EMU_PER_POINT));
     }
 
     /**

@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xssf.util.EMUUtils;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
@@ -167,27 +167,27 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         int r = cell.getRow();
         int c = cell.getCol();
         
-        int cw = EMUUtils.EMUsFromColumnWidth(sheet.getColumnWidth(c));
+        int cw = Units.columnWidthToEMU(sheet.getColumnWidth(c));
         
         // start with width - offset, then keep adding column widths until the next one puts us over w
         long wPos = cw - cell.getColOff();
         
         while (wPos < w) {
             c++;
-            cw = EMUUtils.EMUsFromColumnWidth(sheet.getColumnWidth(c));
+            cw = Units.columnWidthToEMU(sheet.getColumnWidth(c));
             wPos += cw;
         }
         // now wPos >= w, so end column = c, now figure offset
         c2.setCol(c);
         c2.setColOff(cw - (wPos - w));
         
-        int rh = EMUUtils.EMUsFromPoints(getRowHeight(sheet, r));
+        int rh = Units.toEMU(getRowHeight(sheet, r));
         // start with height - offset, then keep adding row heights until the next one puts us over h
         long hPos = rh - cell.getRowOff();
         
         while (hPos < h) {
             r++;
-            rh = EMUUtils.EMUsFromPoints(getRowHeight(sheet, r));
+            rh = Units.toEMU(getRowHeight(sheet, r));
             hPos += rh;
         }
         // now hPos >= h, so end row = r, now figure offset
