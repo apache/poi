@@ -858,18 +858,16 @@ public class TestDataFormatter {
      */
     @Test
     public void testBug60422() {
-        Locale defaultLocale = Locale.getDefault();
-        Locale.setDefault(Locale.GERMANY);
         LocaleUtil.setUserLocale(Locale.ROOT);
         try {
             char euro = '\u20AC';
-            DataFormatter df = new DataFormatter();
+            DataFormatter df = new DataFormatter(Locale.GERMANY);
             String formatString = String.format(
                     "_-* #,##0.00\\ \"%s\"_-;\\-* #,##0.00\\ \"%s\"_-;_-* \"-\"??\\ \"%s\"_-;_-@_-",
                     euro, euro, euro);
             assertEquals("4.33 " + euro, df.formatRawCellContents(4.33, 178, formatString));
         } finally {
-            Locale.setDefault(defaultLocale);
+            LocaleUtil.resetUserLocale();
         }
     }
 }
