@@ -72,7 +72,6 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObject;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObjects;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDvAspect;
 
 /**
  * Represents a SpreadsheetML drawing
@@ -427,8 +426,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         CTOleObjects oo = cwb.isSetOleObjects() ? cwb.getOleObjects() : cwb.addNewOleObjects();
 
         CTOleObject ole1 = oo.addNewOleObject();
-        ole1.setProgId("Packager Shell Object");
-        ole1.setDvAspect(STDvAspect.DVASPECT_ICON);
+        ole1.setProgId("Package");
         ole1.setShapeId(shapeId);
         ole1.setId(olePR.getId());
 
