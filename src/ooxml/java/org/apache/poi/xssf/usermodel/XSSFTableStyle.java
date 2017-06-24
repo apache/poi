@@ -17,12 +17,18 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.ss.usermodel.TableStyleType;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyle;
@@ -48,17 +54,41 @@ public class XSSFTableStyle implements TableStyle {
     public XSSFTableStyle(int index, CTDxfs dxfs, CTTableStyle tableStyle, IndexedColorMap colorMap) {
         this.name = tableStyle.getName();
         this.index = index;
+        
+        List<CTDxf> dxfList = new ArrayList<CTDxf>();
+
+        // CT* classes don't handle "mc:AlternateContent" elements, so get the Dxf instances manually
+        XmlCursor cur = dxfs.newCursor();
+        // sometimes there are namespaces sometimes not.
+        String xquery = "declare namespace x='"+XSSFRelation.NS_SPREADSHEETML+"' .//x:dxf | .//dxf";
+        cur.selectPath(xquery);
+        while (cur.toNextSelection()) {
+            XmlObject obj = cur.getObject();
+            String parentName = obj.getDomNode().getParentNode().getNodeName();
+            // ignore alternate content choices, we won't know anything about their namespaces
+            if (parentName.equals("mc:Fallback") || parentName.equals("x:dxfs") || parentName.contentEquals("dxfs")) {
+                CTDxf dxf;
+                try {
+                    if (obj instanceof CTDxf) {
+                        dxf = (CTDxf) obj;
+                    } else {
+                        dxf = CTDxf.Factory.parse(obj.newXMLStreamReader(), new XmlOptions().setDocumentType(CTDxf.type));
+                    }
+                    if (dxf != null) dxfList.add(dxf);
+                } catch (XmlException e) {
+                    // ignore
+                    e.printStackTrace();
+                }
+            }
+        }
+
         for (CTTableStyleElement element : tableStyle.getTableStyleElementList()) {
             TableStyleType type = TableStyleType.valueOf(element.getType().toString());
             DifferentialStyleProvider dstyle = null;
             if (element.isSetDxfId()) {
                 int idx = (int) element.getDxfId();
                 CTDxf dxf;
-                if (idx >= 0 && idx < dxfs.getCount()) {
-                    dxf = dxfs.getDxfArray(idx);
-                } else {
-                    dxf = null;
-                }
+                dxf = dxfList.get(idx);
                 int stripeSize = 0;
                 if (element.isSetSize()) stripeSize = (int) element.getSize();
                 if (dxf != null) dstyle = new XSSFDxfStyleProvider(dxf, stripeSize, colorMap);

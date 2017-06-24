@@ -388,20 +388,22 @@ public enum XSSFBuiltinTableStyle {
             final InputStream is = XSSFBuiltinTableStyle.class.getResourceAsStream("presetTableStyles.xml");
             try {
                 final Document doc = DocumentHelper.readDocument(is);
+                
                 final NodeList styleNodes = doc.getDocumentElement().getChildNodes();
                 for (int i=0; i < styleNodes.getLength(); i++) {
                     final Node node = styleNodes.item(i);
                     if (node.getNodeType() != Node.ELEMENT_NODE) continue; // only care about elements
                     final Element tag = (Element) node;
                     String styleName = tag.getTagName();
+                    XSSFBuiltinTableStyle builtIn = XSSFBuiltinTableStyle.valueOf(styleName);
+                    
                     Node dxfsNode = tag.getElementsByTagName("dxfs").item(0);
                     Node tableStyleNode = tag.getElementsByTagName("tableStyles").item(0);
-
+                    
                     // hack because I can't figure out how to get XMLBeans to parse a sub-element in a standalone manner
                     // - build a fake styles.xml file with just this built-in
                     StylesTable styles = new StylesTable();
                     styles.readFrom(new ByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(Charset.forName("UTF-8"))));
-                    XSSFBuiltinTableStyle builtIn = XSSFBuiltinTableStyle.valueOf(styleName);
                     styleMap.put(builtIn, new XSSFBuiltinTypeStyleStyle(builtIn, styles.getExplicitTableStyle(styleName)));
                 }
             } finally {
