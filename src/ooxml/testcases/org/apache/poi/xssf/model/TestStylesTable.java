@@ -356,4 +356,14 @@ public final class TestStylesTable {
             wb.close();
         }
     }
+
+    @Test
+    public void testLoadWithAlternateContent() {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("style-alternate-content.xlsx");
+        assertNotNull(workbook.getStylesSource());
+
+        StylesTable st = workbook.getStylesSource();
+
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+    }
 }
