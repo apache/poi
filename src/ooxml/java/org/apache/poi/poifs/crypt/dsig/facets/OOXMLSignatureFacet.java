@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
@@ -29,6 +29,9 @@ import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +49,7 @@ import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureException;
 
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -60,6 +64,7 @@ import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.Rel
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTSignatureTime;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.SignatureTimeDocument;
 import org.w3c.dom.Document;
@@ -70,13 +75,13 @@ import com.microsoft.schemas.office.x2006.digsig.SignatureInfoV1Document;
 
 /**
  * Office OpenXML Signature Facet implementation.
- * 
- * @author fcorneli
+ *
  * @see <a href="http://msdn.microsoft.com/en-us/library/cc313071.aspx">[MS-OFFCRYPTO]: Office Document Cryptography Structure</a>
  */
 public class OOXMLSignatureFacet extends SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(OOXMLSignatureFacet.class);
+    private static final String ID_PACKAGE_OBJECT = "idPackageObject";
 
     @Override
     public void preSign(
@@ -98,17 +103,16 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         List<Reference> manifestReferences = new ArrayList<Reference>();
         addManifestReferences(manifestReferences);
         Manifest manifest =  getSignatureFactory().newManifest(manifestReferences);
-        
-        String objectId = "idPackageObject"; // really has to be this value.
+
         List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
         objectContent.add(manifest);
 
         addSignatureTime(document, objectContent);
 
-        XMLObject xo = getSignatureFactory().newXMLObject(objectContent, objectId, null, null);
+        XMLObject xo = getSignatureFactory().newXMLObject(objectContent, ID_PACKAGE_OBJECT, null, null);
         objects.add(xo);
 
-        Reference reference = newReference("#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
+        Reference reference = newReference("#"+ID_PACKAGE_OBJECT, null, XML_DIGSIG_NS+"Object", null, null);
         references.add(reference);
     }
 
@@ -121,7 +125,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
 
         Set<String> digestedPartNames = new HashSet<String>();
         for (PackagePart pp : relsEntryNames) {
-            String baseUri = pp.getPartName().getName().replaceFirst("(.*)/_rels/.*", "$1");
+            final String baseUri = pp.getPartName().getName().replaceFirst("(.*)/_rels/.*", "$1");
 
             PackageRelationshipCollection prc;
             try {
@@ -130,11 +134,11 @@ public class OOXMLSignatureFacet extends SignatureFacet {
             } catch (InvalidFormatException e) {
                 throw new XMLSignatureException("Invalid relationship descriptor: "+pp.getPartName().getName(), e);
             }
-            
+
             RelationshipTransformParameterSpec parameterSpec = new RelationshipTransformParameterSpec();
             for (PackageRelationship relationship : prc) {
                 String relationshipType = relationship.getRelationshipType();
-                
+
                 /*
                  * ECMA-376 Part 2 - 3rd edition
                  * 13.2.4.16 Manifest Element
@@ -144,22 +148,20 @@ public class OOXMLSignatureFacet extends SignatureFacet {
                     continue;
                 }
 
-                if (!isSignedRelationship(relationshipType)) continue;
+                if (!isSignedRelationship(relationshipType)) {
+                    continue;
+                }
 
                 parameterSpec.addRelationshipReference(relationship.getId());
 
-                // TODO: find a better way ...
-                String partName = relationship.getTargetURI().toString();
-                if (!partName.startsWith(baseUri)) {
-                    partName = baseUri + partName;
+                String partName = normalizePartName(relationship.getTargetURI(), baseUri);
+
+                // We only digest a part once.
+                if (digestedPartNames.contains(partName)) {
+                    continue;
                 }
-                try {
-                    partName = new URI(partName).normalize().getPath().replace('\\', '/');
-                    LOG.log(POILogger.DEBUG, "part name: " + partName);
-                } catch (URISyntaxException e) {
-                    throw new XMLSignatureException(e);
-                }
-                
+                digestedPartNames.add(partName);
+
                 String contentType;
                 try {
                     PackagePartName relName = PackagingURIHelper.createPartName(partName);
@@ -168,32 +170,52 @@ public class OOXMLSignatureFacet extends SignatureFacet {
                 } catch (InvalidFormatException e) {
                     throw new XMLSignatureException(e);
                 }
-                
+
                 if (relationshipType.endsWith("customXml")
                     && !(contentType.equals("inkml+xml") || contentType.equals("text/xml"))) {
                     LOG.log(POILogger.DEBUG, "skipping customXml with content type: " + contentType);
                     continue;
                 }
-                
-                if (!digestedPartNames.contains(partName)) {
-                    // We only digest a part once.
-                    String uri = partName + "?ContentType=" + contentType;
-                    Reference reference = newReference(uri, null, null, null, null);
-                    manifestReferences.add(reference);
-                    digestedPartNames.add(partName);
-                }
+
+                String uri = partName + "?ContentType=" + contentType;
+                Reference reference = newReference(uri, null, null, null, null);
+                manifestReferences.add(reference);
             }
-            
+
             if (parameterSpec.hasSourceIds()) {
                 List<Transform> transforms = new ArrayList<Transform>();
                 transforms.add(newTransform(RelationshipTransformService.TRANSFORM_URI, parameterSpec));
                 transforms.add(newTransform(CanonicalizationMethod.INCLUSIVE));
-                String uri = pp.getPartName().getName()
+                String uri = normalizePartName(pp.getPartName().getURI(), baseUri)
                     + "?ContentType=application/vnd.openxmlformats-package.relationships+xml";
                 Reference reference = newReference(uri, transforms, null, null, null);
                 manifestReferences.add(reference);
             }
         }
+        
+        Collections.sort(manifestReferences, new Comparator<Reference>() {
+            public int compare(Reference o1, Reference o2) {
+                return o1.getURI().compareTo(o2.getURI());
+            }
+        });
+    }
+
+    /**
+     * Normalize a URI/part name
+     * TODO: find a better way ...
+     */
+    private static String normalizePartName(URI partName, String baseUri) throws XMLSignatureException {
+        String pn = partName.toASCIIString();
+        if (!pn.startsWith(baseUri)) {
+            pn = baseUri + pn;
+        }
+        try {
+            pn = new URI(pn).normalize().getPath().replace('\\', '/');
+            LOG.log(POILogger.DEBUG, "part name: " + pn);
+        } catch (URISyntaxException e) {
+            throw new XMLSignatureException(e);
+        }
+        return pn;
     }
 
 
@@ -220,8 +242,8 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureTimeSignatureProperty);
         SignatureProperties signatureProperties = getSignatureFactory()
-            .newSignatureProperties(signaturePropertyContent,
-            "id-signature-time-" + signatureConfig.getExecutionTime());
+            .newSignatureProperties(signaturePropertyContent, null);
+//            "id-signature-time-" + signatureConfig.getExecutionTime());
         objectContent.add(signatureProperties);
     }
 
@@ -233,10 +255,28 @@ public class OOXMLSignatureFacet extends SignatureFacet {
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
-        ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
+//        ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
+        XmlCursor cur = ctSigV1.newCursor();
+        cur.toEndToken(); cur.beginElement("SetupID", MS_DIGSIG_NS);
+        cur.toNextToken(); cur.beginElement("SignatureText", MS_DIGSIG_NS);
+        cur.toNextToken(); cur.beginElement("SignatureImage", MS_DIGSIG_NS);
+        cur.toNextToken(); cur.beginElement("SignatureProviderUrl", MS_DIGSIG_NS);
+        cur.dispose();
+        ctSigV1.setSignatureComments("Test");
+        ctSigV1.setWindowsVersion("6.1");
+        ctSigV1.setOfficeVersion("16.0");
+        ctSigV1.setApplicationVersion("16.0");
+        ctSigV1.setMonitors(1);
+        ctSigV1.setHorizontalResolution(3840);
+        ctSigV1.setVerticalResolution(2160);
+        ctSigV1.setColorDepth(32);
+        ctSigV1.setSignatureProviderId(new ClassID().toString());
+        ctSigV1.setSignatureProviderDetails(9);
+        ctSigV1.setSignatureType(1);
+        
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
         n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
-        
+
         List<XMLStructure> signatureInfoContent = new ArrayList<XMLStructure>();
         signatureInfoContent.add(new DOMStructure(n));
         SignatureProperty signatureInfoSignatureProperty = getSignatureFactory()
@@ -268,208 +308,33 @@ public class OOXMLSignatureFacet extends SignatureFacet {
 
     protected static boolean isSignedRelationship(String relationshipType) {
         LOG.log(POILogger.DEBUG, "relationship type: " + relationshipType);
-        for (String signedTypeExtension : signed) {
-            if (relationshipType.endsWith(signedTypeExtension)) {
-                return true;
-            }
-        }
-        if (relationshipType.endsWith("customXml")) {
-            LOG.log(POILogger.DEBUG, "customXml relationship type");
-            return true;
-        }
-        return false;
+        String rt = relationshipType.replaceFirst(".*/relationships/", "");
+        return (signed.contains(rt) || rt.endsWith("customXml"));
     }
-    
-    public static final String[] contentTypes = {
-        /*
-         * Word
-         */
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml",
-        "application/vnd.openxmlformats-officedocument.theme+xml",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml",
-
-        /*
-         * Word 2010
-         */
-        "application/vnd.ms-word.stylesWithEffects+xml",
-
-        /*
-         * Excel
-         */
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
-
-        /*
-         * Powerpoint
-         */
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml",
-        "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml",
-        "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml",
-        "application/vnd.openxmlformats-officedocument.presentationml.slide+xml",
-        "application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml",
-
-        /*
-         * Powerpoint 2010
-         */
-        "application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml",
-        "application/vnd.openxmlformats-officedocument.presentationml.presProps+xml"
-    };
 
     /**
      * Office 2010 list of signed types (extensions).
      */
-    public static final String[] signed = {
-        "powerPivotData", //
-        "activeXControlBinary", //
-        "attachedToolbars", //
-        "connectorXml", //
-        "downRev", //
-        "functionPrototypes", //
-        "graphicFrameDoc", //
-        "groupShapeXml", //
-        "ink", //
-        "keyMapCustomizations", //
-        "legacyDiagramText", //
-        "legacyDocTextInfo", //
-        "officeDocument", //
-        "pictureXml", //
-        "shapeXml", //
-        "smartTags", //
-        "ui/altText", //
-        "ui/buttonSize", //
-        "ui/controlID", //
-        "ui/description", //
-        "ui/enabled", //
-        "ui/extensibility", //
-        "ui/helperText", //
-        "ui/imageID", //
-        "ui/imageMso", //
-        "ui/keyTip", //
-        "ui/label", //
-        "ui/lcid", //
-        "ui/loud", //
-        "ui/pressed", //
-        "ui/progID", //
-        "ui/ribbonID", //
-        "ui/showImage", //
-        "ui/showLabel", //
-        "ui/supertip", //
-        "ui/target", //
-        "ui/text", //
-        "ui/title", //
-        "ui/tooltip", //
-        "ui/userCustomization", //
-        "ui/visible", //
-        "userXmlData", //
-        "vbaProject", //
-        "wordVbaData", //
-        "wsSortMap", //
-        "xlBinaryIndex", //
-        "xlExternalLinkPath/xlAlternateStartup", //
-        "xlExternalLinkPath/xlLibrary", //
-        "xlExternalLinkPath/xlPathMissing", //
-        "xlExternalLinkPath/xlStartup", //
-        "xlIntlMacrosheet", //
-        "xlMacrosheet", //
-        "customData", //
-        "diagramDrawing", //
-        "hdphoto", //
-        "inkXml", //
-        "media", //
-        "slicer", //
-        "slicerCache", //
-        "stylesWithEffects", //
-        "ui/extensibility", //
-        "chartColorStyle", //
-        "chartLayout", //
-        "chartStyle", //
-        "dictionary", //
-        "timeline", //
-        "timelineCache", //
-        "aFChunk", //
-        "attachedTemplate", //
-        "audio", //
-        "calcChain", //
-        "chart", //
-        "chartsheet", //
-        "chartUserShapes", //
-        "commentAuthors", //
-        "comments", //
-        "connections", //
-        "control", //
-        "customProperty", //
-        "customXml", //
-        "diagramColors", //
-        "diagramData", //
-        "diagramLayout", //
-        "diagramQuickStyle", //
-        "dialogsheet", //
-        "drawing", //
-        "endnotes", //
-        "externalLink", //
-        "externalLinkPath", //
-        "font", //
-        "fontTable", //
-        "footer", //
-        "footnotes", //
-        "glossaryDocument", //
-        "handoutMaster", //
-        "header", //
-        "hyperlink", //
-        "image", //
-        "mailMergeHeaderSource", //
-        "mailMergeRecipientData", //
-        "mailMergeSource", //
-        "notesMaster", //
-        "notesSlide", //
-        "numbering", //
-        "officeDocument", //
-        "oleObject", //
-        "package", //
-        "pivotCacheDefinition", //
-        "pivotCacheRecords", //
-        "pivotTable", //
-        "presProps", //
-        "printerSettings", //
-        "queryTable", //
-        "recipientData", //
-        "settings", //
-        "sharedStrings", //
-        "sheetMetadata", //
-        "slide", //
-        "slideLayout", //
-        "slideMaster", //
-        "slideUpdateInfo", //
-        "slideUpdateUrl", //
-        "styles", //
-        "table", //
-        "tableSingleCells", //
-        "tableStyles", //
-        "tags", //
-        "theme", //
-        "themeOverride", //
-        "transform", //
-        "video", //
-        "viewProps", //
-        "volatileDependencies", //
-        "webSettings", //
-        "worksheet", //
-        "xmlMaps", //
-        "ctrlProp", //
-        "customData", //
-        "diagram", //
-        "diagramColorsHeader", //
-        "diagramLayoutHeader", //
-        "diagramQuickStyleHeader", //
-        "documentParts", //
-        "slicer", //
-        "slicerCache", //
-        "vmlDrawing" //
-    };
+    private static final Set<String> signed = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+        "activeXControlBinary","aFChunk","attachedTemplate","attachedToolbars","audio","calcChain","chart","chartColorStyle",
+        "chartLayout","chartsheet","chartStyle","chartUserShapes","commentAuthors","comments","connections","connectorXml",
+        "control","ctrlProp","customData","customData","customProperty","customXml","diagram","diagramColors",
+        "diagramColorsHeader","diagramData","diagramDrawing","diagramLayout","diagramLayoutHeader","diagramQuickStyle",
+        "diagramQuickStyleHeader","dialogsheet","dictionary","documentParts","downRev","drawing","endnotes","externalLink",
+        "externalLinkPath","font","fontTable","footer","footnotes","functionPrototypes","glossaryDocument","graphicFrameDoc",
+        "groupShapeXml","handoutMaster","hdphoto","header","hyperlink","image","ink","inkXml","keyMapCustomizations",
+        "legacyDiagramText","legacyDocTextInfo","mailMergeHeaderSource","mailMergeRecipientData","mailMergeSource","media",
+        "notesMaster","notesSlide","numbering","officeDocument","officeDocument","oleObject","package","pictureXml",
+        "pivotCacheDefinition","pivotCacheRecords","pivotTable","powerPivotData","presProps","printerSettings","queryTable",
+        "recipientData","settings","shapeXml","sharedStrings","sheetMetadata","slicer","slicer","slicerCache","slicerCache",
+        "slide","slideLayout","slideMaster","slideUpdateInfo","slideUpdateUrl","smartTags","styles","stylesWithEffects",
+        "table","tableSingleCells","tableStyles","tags","theme","themeOverride","timeline","timelineCache","transform",
+        "ui/altText","ui/buttonSize","ui/controlID","ui/description","ui/enabled","ui/extensibility","ui/extensibility",
+        "ui/helperText","ui/imageID","ui/imageMso","ui/keyTip","ui/label","ui/lcid","ui/loud","ui/pressed","ui/progID",
+        "ui/ribbonID","ui/showImage","ui/showLabel","ui/supertip","ui/target","ui/text","ui/title","ui/tooltip",
+        "ui/userCustomization","ui/visible","userXmlData","vbaProject","video","viewProps","vmlDrawing",
+        "volatileDependencies","webSettings","wordVbaData","worksheet","wsSortMap","xlBinaryIndex",
+        "xlExternalLinkPath/xlAlternateStartup","xlExternalLinkPath/xlLibrary","xlExternalLinkPath/xlPathMissing",
+        "xlExternalLinkPath/xlStartup","xlIntlMacrosheet","xlMacrosheet","xmlMaps"
+    )));
 }
