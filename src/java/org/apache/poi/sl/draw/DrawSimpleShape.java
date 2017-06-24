@@ -53,6 +53,7 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Shadow;
 import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StaxHelper;
 import org.apache.poi.util.Units;
 
 
@@ -363,7 +364,7 @@ public class DrawSimpleShape extends DrawShape {
             };
 
             try {
-                XMLInputFactory staxFactory = XMLInputFactory.newInstance();
+                XMLInputFactory staxFactory = StaxHelper.newXMLInputFactory();
                 XMLEventReader staxReader = staxFactory.createXMLEventReader(presetIS);
                 XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
                 // Ignore StartElement:
