@@ -25,8 +25,6 @@
 package org.apache.poi.poifs.crypt.dsig.services;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
-import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -91,16 +89,7 @@ public class RelationshipTransformService extends TransformService {
     public static class RelationshipTransformParameterSpec implements TransformParameterSpec {
         List<String> sourceIds = new ArrayList<String>();
         public void addRelationshipReference(String relationshipId) {
-            /********************************* 
-             * TEST CODE - REMOVE ME !!!!!!!!!!!!!!
-             */
-            if ("rId2".equals(relationshipId)) {
-                sourceIds.add(0, relationshipId);
-            } else if ("rId4".equals(relationshipId)) {
-                sourceIds.add(2, relationshipId);
-            } else {
-                sourceIds.add(relationshipId);
-            }
+            sourceIds.add(relationshipId);
         }
         public boolean hasSourceIds() {
             return !sourceIds.isEmpty();
@@ -174,13 +163,15 @@ public class RelationshipTransformService extends TransformService {
         LOG.log(POILogger.DEBUG, "marshallParams(parent,context)");
         DOMStructure domParent = (DOMStructure) parent;
         Element parentNode = (Element)domParent.getNode();
+        // parentNode.setAttributeNS(XML_NS, "xmlns:mdssi", XML_DIGSIG_NS);
         Document doc = parentNode.getOwnerDocument();
         
         for (String sourceId : this.sourceIds) {
-            Element el = doc.createElementNS(OO_DIGSIG_NS, "mdssi:RelationshipReference");
-            el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
-            el.setAttribute("SourceId", sourceId);
-            parentNode.appendChild(el);
+            RelationshipReferenceDocument relRef = RelationshipReferenceDocument.Factory.newInstance();
+            relRef.addNewRelationshipReference().setSourceId(sourceId);
+            Node n = relRef.getRelationshipReference().getDomNode();
+            n = doc.importNode(n, true);
+            parentNode.appendChild(n);
         }
     }
     

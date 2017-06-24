@@ -40,46 +40,27 @@ public class SignatureMarshalListener implements EventListener, SignatureConfigu
         this.target.set(target);
     }
     
-    @Override
     public void handleEvent(Event e) {
-        if (!(e instanceof MutationEvent)) {
-            return;
-        }
+        if (!(e instanceof MutationEvent)) return;
         MutationEvent mutEvt = (MutationEvent)e;
         EventTarget et = mutEvt.getTarget();
-        if (!(et instanceof Element)) {
-            return;
-        }
+        if (!(et instanceof Element)) return;
         handleElement((Element)et);
     }
 
     public void handleElement(Element el) {
         EventTarget target = this.target.get();
         String packageId = signatureConfig.getPackageSignatureId();
-
-        setListener(target, this, false);
-//        if (packageId.equals(el.getAttribute("Id"))) {
-//            el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
-//        }
-        if (OO_DIGSIG_NS.equals(el.getNamespaceURI()) && !OO_DIGSIG_NS.equals(el.getParentNode().getNamespaceURI())) {
-            if (!el.hasAttributeNS(XML_NS, "mdssi")) {
-                el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
-            }
-        }
-        setPrefix(el);
-        if ("X509Certificate".equals(el.getLocalName())) {
-            String x509 = el.getTextContent();
-            x509 = x509.replaceAll("\\s", "");
-            el.setTextContent(x509);
-        }
-//        if ("SignatureValue".equals(el.getLocalName())) {
-//            el.removeAttribute("Id");
-//        }
-        setListener(target, this, true);
-
         if (el.hasAttribute("Id")) {
             el.setIdAttribute("Id", true);
         }
+
+        setListener(target, this, false);
+        if (packageId.equals(el.getAttribute("Id"))) {
+            el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
+        }
+        setPrefix(el);
+        setListener(target, this, true);
     }
 
     // helper method to keep it in one place
@@ -105,7 +86,6 @@ public class SignatureMarshalListener implements EventListener, SignatureConfigu
         }
     }
     
-    @Override
     public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }

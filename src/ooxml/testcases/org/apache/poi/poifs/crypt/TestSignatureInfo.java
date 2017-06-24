@@ -44,7 +44,6 @@ import java.net.URL;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
-import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
@@ -55,9 +54,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
@@ -120,67 +116,6 @@ public class TestSignatureInfo {
         //System.out.println("Having: " + additionalJar);
         Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar, 
                 additionalJar == null || additionalJar.trim().length() == 0);
-    }
-    
-    @Test
-    public void bug61182() throws Exception {
-//        MessageDigest md = MessageDigest.getInstance("SHA-1");
-//        InputStream fis2 = new FileInputStream("tmp/sigtest/idPackageObject.xml");
-//        byte dig[] = md.digest(IOUtils.toByteArray(fis2));
-//        fis2.close();
-//        
-//        String digStr = DatatypeConverter.printBase64Binary(dig);
-//        System.out.println(digStr);
-        
-        
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-        String password = "test", alias = "test";
-        InputStream is = new FileInputStream("tmp/sigtest/test.pfx");
-        keystore.load(is, password.toCharArray());
-        is.close();
-
-        Key key = keystore.getKey(alias, password.toCharArray());
-        x509 = (X509Certificate)keystore.getCertificate(alias);
-        keyPair = new KeyPair(x509.getPublicKey(), (PrivateKey)key);
-
-        SignatureConfig signatureConfig = new SignatureConfig();
-        signatureConfig.setKey(keyPair.getPrivate());
-        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
-        // 2017-06-21T14:03:54Z
-        Calendar oldCal = Calendar.getInstance(LocaleUtil.TIMEZONE_UTC, Locale.ROOT);
-        oldCal.set(2017, 5, 21, 14, 03, 54);
-        signatureConfig.setExecutionTime(oldCal.getTime());
-        signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
-
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(signatureConfig);
-
-        File origFile = new File("tmp/sigtest/excel-unsigned.xlsx");
-        File testFile = new File("tmp/sigtest/excel-poi.xlsx");
-        InputStream fis = new FileInputStream(origFile);
-        OutputStream fos = new FileOutputStream(testFile);
-        IOUtils.copy(fis, fos);
-        fos.close();
-        fis.close();
-
-        OPCPackage pkg = OPCPackage.open(testFile, PackageAccess.READ_WRITE);
-        
-        signatureConfig.setOpcPackage(pkg);
-        si.confirmSignature();
-        assertTrue(si.verifySignature());
-
-        pkg.close();
-
-//        OPCPackage pkgPoi = OPCPackage.open(new File("tmp/sigtest/excel-poi.xlsx"), PackageAccess.READ);
-//        signatureConfig.setOpcPackage(pkgPoi);
-//        assertTrue(si.verifySignature());
-//        pkgPoi.revert();
-
-        
-//        OPCPackage pkg2016 = OPCPackage.open(new File("tmp/sigtest/excel-signed.xlsx"), PackageAccess.READ);
-//        signatureConfig.setOpcPackage(pkg2016);
-//        assertTrue(si.verifySignature());
-//        pkg2016.revert();
     }
     
     @Test

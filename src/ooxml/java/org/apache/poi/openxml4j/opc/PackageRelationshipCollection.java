@@ -18,13 +18,7 @@ package org.apache.poi.openxml4j.opc;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -49,14 +43,14 @@ public final class PackageRelationshipCollection implements
     private final static POILogger logger = POILogFactory.getLogger(PackageRelationshipCollection.class);
 
     /**
-     * Package relationships by ID.
+     * Package relationships ordered by ID.
      */
-    private final Map<String, PackageRelationship> relationshipsByID = new LinkedHashMap<String, PackageRelationship>();
+    private TreeMap<String, PackageRelationship> relationshipsByID;
 
     /**
-     * Package relationships by type.
+     * Package relationships ordered by type.
      */
-    private final Map<String, PackageRelationship> relationshipsByType = new LinkedHashMap<String, PackageRelationship>();
+    private TreeMap<String, PackageRelationship> relationshipsByType;
 
     /**
      * A lookup of internal relationships to avoid
@@ -94,6 +88,8 @@ public final class PackageRelationshipCollection implements
      * Constructor.
      */
     PackageRelationshipCollection() {
+        relationshipsByID = new TreeMap<String, PackageRelationship>();
+        relationshipsByType = new TreeMap<String, PackageRelationship>();
     }
 
     /**
@@ -108,18 +104,20 @@ public final class PackageRelationshipCollection implements
      * @param filter
      *            Relationship type filter.
      */
-    public PackageRelationshipCollection(PackageRelationshipCollection coll, String filter) {
+    public PackageRelationshipCollection(PackageRelationshipCollection coll,
+            String filter) {
+        this();
         for (PackageRelationship rel : coll.relationshipsByID.values()) {
-            if (filter == null || rel.getRelationshipType().equals(filter)) {
+            if (filter == null || rel.getRelationshipType().equals(filter))
                 addRelationship(rel);
-            }
         }
     }
 
     /**
      * Constructor.
      */
-    public PackageRelationshipCollection(OPCPackage container) throws InvalidFormatException {
+    public PackageRelationshipCollection(OPCPackage container)
+            throws InvalidFormatException {
         this(container, null);
     }
 
@@ -132,7 +130,8 @@ public final class PackageRelationshipCollection implements
      * @throws InvalidOperationException
      *             Throws if the specified part is a relationship part.
      */
-    public PackageRelationshipCollection(PackagePart part) throws InvalidFormatException {
+    public PackageRelationshipCollection(PackagePart part)
+            throws InvalidFormatException {
         this(part._container, part);
     }
 
@@ -148,15 +147,16 @@ public final class PackageRelationshipCollection implements
      *             If an error occurs during the parsing of the relatinships
      *             part fo the specified part.
      */
-    public PackageRelationshipCollection(OPCPackage container, PackagePart part) throws InvalidFormatException {
-        if (container == null) {
+    public PackageRelationshipCollection(OPCPackage container, PackagePart part)
+            throws InvalidFormatException {
+        this();
+
+        if (container == null)
             throw new IllegalArgumentException("container needs to be specified");
-        }
 
         // Check if the specified part is not a relationship part
-        if (part != null && part.isRelationshipPart()) {
+        if (part != null && part.isRelationshipPart())
             throw new IllegalArgumentException("part");
-        }
 
         this.container = container;
         this.sourcePart = part;
@@ -179,7 +179,8 @@ public final class PackageRelationshipCollection implements
      * @throws InvalidOperationException
      *             Throws if the specified part is a relationship part.
      */
-    private static PackagePartName getRelationshipPartName(PackagePart part) throws InvalidOperationException {
+    private static PackagePartName getRelationshipPartName(PackagePart part)
+            throws InvalidOperationException {
         PackagePartName partName;
         if (part == null) {
             partName = PackagingURIHelper.PACKAGE_ROOT_PART_NAME;
@@ -262,15 +263,13 @@ public final class PackageRelationshipCollection implements
      *            Must be a value between [0-relationships_count-1]
      */
     public PackageRelationship getRelationship(int index) {
-        if (index < 0 || index > relationshipsByID.values().size()) {
+        if (index < 0 || index > relationshipsByID.values().size())
             throw new IllegalArgumentException("index");
-        }
 
         int i = 0;
         for (PackageRelationship rel : relationshipsByID.values()) {
-            if (index == i++) {
+            if (index == i++)
                 return rel;
-            }
         }
 
         return null;
@@ -288,10 +287,10 @@ public final class PackageRelationshipCollection implements
     }
 
     /**
-     * Get the number of relationships in the collection.
+     * Get the numbe rof relationships in the collection.
      */
     public int size() {
-        return relationshipsByID.size();
+        return relationshipsByID.values().size();
     }
 
     /**
@@ -325,14 +324,12 @@ public final class PackageRelationshipCollection implements
 
                 /* Check OPC Compliance */
                 // Check Rule M4.1
-                if (type.equals(PackageRelationshipTypes.CORE_PROPERTIES)) {
-                    if (!fCorePropertiesRelationship) {
+                if (type.equals(PackageRelationshipTypes.CORE_PROPERTIES))
+                    if (!fCorePropertiesRelationship)
                         fCorePropertiesRelationship = true;
-                    } else {
+                    else
                         throw new InvalidFormatException(
                                 "OPC Compliance error [M4.1]: there is more than one core properties relationship in the package !");
-                    }
-                }
 
                 /* End OPC Compliance */
 
@@ -381,7 +378,6 @@ public final class PackageRelationshipCollection implements
     /**
      * Get this collection's iterator.
      */
-    @Override
     public Iterator<PackageRelationship> iterator() {
         return relationshipsByID.values().iterator();
     }
@@ -398,9 +394,8 @@ public final class PackageRelationshipCollection implements
     public Iterator<PackageRelationship> iterator(String typeFilter) {
         ArrayList<PackageRelationship> retArr = new ArrayList<PackageRelationship>();
         for (PackageRelationship rel : relationshipsByID.values()) {
-            if (rel.getRelationshipType().equals(typeFilter)) {
+            if (rel.getRelationshipType().equals(typeFilter))
                 retArr.add(rel);
-            }
         }
         return retArr.iterator();
     }
