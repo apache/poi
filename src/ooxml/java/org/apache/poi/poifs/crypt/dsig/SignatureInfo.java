@@ -511,7 +511,7 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * JSR105 ds:Signature creation
          */
-        String signatureValueId = signatureConfig.getPackageSignatureId() + "-signature-value";
+        String signatureValueId = null; // signatureConfig.getPackageSignatureId() + "-signature-value";
         javax.xml.crypto.dsig.XMLSignature xmlSignature = signatureFactory
             .newXMLSignature(signedInfo, null, objects, signatureConfig.getPackageSignatureId(),
             signatureValueId);
