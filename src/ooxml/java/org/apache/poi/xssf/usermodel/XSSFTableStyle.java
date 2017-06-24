@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.ss.usermodel.TableStyleType;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -39,6 +41,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleElement;
  * Also used for built-in styles via dummy XML generated from presetTableStyles.xml.
  */
 public class XSSFTableStyle implements TableStyle {
+    private static final POILogger logger = POILogFactory.getLogger(XSSFTableStyle.class);
 
     private final String name;
     private final int index;
@@ -76,8 +79,7 @@ public class XSSFTableStyle implements TableStyle {
                     }
                     if (dxf != null) dxfList.add(dxf);
                 } catch (XmlException e) {
-                    // ignore
-                    e.printStackTrace();
+                    logger.log(POILogger.WARN, "Error parsing XSSFTableStyle", e);
                 }
             }
         }
