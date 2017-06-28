@@ -108,7 +108,7 @@ public interface ClientAnchor {
     
     /**
      * Returns the column (0 based) of the first cell, or -1 if there is no top-left anchor cell.
-     * This is the case for absolute positioning (AnchorType{@link #DONT_MOVE_AND_RESIZE}).
+     * This is the case for absolute positioning {@link AnchorType#MOVE_AND_RESIZE}
      *
      * @return 0-based column of the first cell or -1 if none.
      */
