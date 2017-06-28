@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.examples;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -80,8 +81,8 @@ public class CreateTable {
         table.addColumn();
         
         // Set which area the table should be placed in
-        AreaReference reference = new AreaReference(new CellReference(0, 0), 
-                new CellReference(2,2));
+        AreaReference reference = wb.getCreationHelper().createAreaReference(
+                new CellReference(0, 0), new CellReference(2, 2));
         table.setCellReferences(reference);
 
         // Save

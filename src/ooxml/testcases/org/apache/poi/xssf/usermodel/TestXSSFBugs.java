@@ -64,7 +64,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -1346,7 +1345,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Name name = wb.getName("Intekon.ProdCodes");
         assertEquals("'Abc,1'!$A$1:$A$2", name.getRefersToFormula());
 
-        AreaReference ref = new AreaReference(name.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
+        AreaReference ref = wb.getCreationHelper().createAreaReference(name.getRefersToFormula());
         assertEquals(0, ref.getFirstCell().getRow());
         assertEquals(0, ref.getFirstCell().getCol());
         assertEquals(1, ref.getLastCell().getRow());

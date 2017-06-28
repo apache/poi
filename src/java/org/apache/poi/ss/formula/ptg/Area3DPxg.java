@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.SheetRangeIdentifier;
@@ -37,7 +38,7 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
     private String lastSheetName;
 
     public Area3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, String arearef) {
-        this(externalWorkbookNumber, sheetName, new AreaReference(arearef));
+        this(externalWorkbookNumber, sheetName, new AreaReference(arearef, SpreadsheetVersion.EXCEL2007));
     }
     public Area3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, AreaReference arearef) {
         super(arearef);
@@ -51,7 +52,7 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
     }
 
     public Area3DPxg(SheetIdentifier sheetName, String arearef) {
-        this(sheetName, new AreaReference(arearef));
+        this(sheetName, new AreaReference(arearef, SpreadsheetVersion.EXCEL2007));
     }
     public Area3DPxg(SheetIdentifier sheetName, AreaReference arearef) {
         this(-1, sheetName, arearef);

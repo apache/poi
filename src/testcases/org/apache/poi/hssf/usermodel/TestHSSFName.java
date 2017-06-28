@@ -22,6 +22,7 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
@@ -197,7 +198,6 @@ public final class TestHSSFName extends BaseTestNamedRange {
         workbook.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testDeletedReference() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
@@ -206,7 +206,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
         HSSFName name1 = wb.getNameAt(0);
         assertEquals("a", name1.getNameName());
         assertEquals("Sheet1!$A$1", name1.getRefersToFormula());
-        new AreaReference(name1.getRefersToFormula());
+        wb.getCreationHelper().createAreaReference(name1.getRefersToFormula());
         assertTrue("Successfully constructed first reference", true);
 
         HSSFName name2 = wb.getNameAt(1);
@@ -214,7 +214,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
         assertEquals("Sheet1!#REF!", name2.getRefersToFormula());
         assertTrue(name2.isDeleted());
         try {
-            new AreaReference(name2.getRefersToFormula());
+            wb.getCreationHelper().createAreaReference(name2.getRefersToFormula());
             fail("attempt to supply an invalid reference to AreaReference constructor results in exception");
         } catch (IllegalArgumentException e) { // TODO - use a stronger typed exception for this condition
             // expected during successful test

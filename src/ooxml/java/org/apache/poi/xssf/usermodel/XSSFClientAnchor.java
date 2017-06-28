@@ -18,13 +18,12 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against:

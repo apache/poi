@@ -31,15 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
 
 public final class TestXSSFTable {
@@ -267,7 +266,8 @@ public final class TestXSSFTable {
 
         assertEquals(new CellReference("C1"), table.getStartCellReference());
         assertEquals(new CellReference("M3"), table.getEndCellReference());
-
+        
+        IOUtils.closeQuietly(wb);
     }
 
     @Test
@@ -288,6 +288,8 @@ public final class TestXSSFTable {
         // update cell references to clear the cache
         table.updateReferences();
         assertEquals(11, table.getRowCount());
+        
+        IOUtils.closeQuietly(wb);
     }
 
     @Test
@@ -350,13 +352,14 @@ public final class TestXSSFTable {
         t.addColumn();
         t.addColumn();
         t.addColumn();
-        t.setCellReferences(new AreaReference(
+        t.setCellReferences(wb.getCreationHelper().createAreaReference(
                 new CellReference(c1), new CellReference(c6)
         ));
 
         // Save and re-load
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        IOUtils.closeQuietly(wb);
+        s = wb2.getSheetAt(0);
         
         // Check
         assertEquals(1, s.getTables().size());
@@ -370,6 +373,6 @@ public final class TestXSSFTable {
         assertEquals("ABCD", t.getCTTable().getTableColumns().getTableColumnArray(2).getName());
         
         // Done
-        wb.close();
+        IOUtils.closeQuietly(wb2);
     }
 }

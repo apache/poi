@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
@@ -431,7 +432,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     protected void createSourceReferences(CellReference position, Sheet sourceSheet, PivotTableReferenceConfigurator refConfig){
         
         //Get cell one to the right and one down from position, add both to AreaReference and set pivot table location.
-        AreaReference destination = new AreaReference(position, new CellReference(position.getRow()+1, position.getCol()+1));
+        AreaReference destination = new AreaReference(position, new CellReference(
+                position.getRow()+1, position.getCol()+1), SpreadsheetVersion.EXCEL2007);
 
         CTLocation location;
         if(pivotTableDefinition.getLocation() == null) {

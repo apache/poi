@@ -25,6 +25,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -38,13 +39,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
-/**
- *
- */
+
 public final class TestAreaReference extends TestCase {
 
     public void testAreaRef1() {
-        AreaReference ar = new AreaReference("$A$1:$B$2");
+        AreaReference ar = new AreaReference("$A$1:$B$2", SpreadsheetVersion.EXCEL97);
         assertFalse("Two cells expected", ar.isSingleCell());
         CellReference cf = ar.getFirstCell();
         assertTrue("row is 4",cf.getRow()==0);
@@ -87,14 +86,14 @@ public final class TestAreaReference extends TestCase {
     public void testReferenceWithSheet() {
         AreaReference ar;
 
-        ar = new AreaReference("Tabelle1!B5:B5");
+        ar = new AreaReference("Tabelle1!B5:B5", SpreadsheetVersion.EXCEL97);
         assertTrue(ar.isSingleCell());
         TestCellReference.confirmCell(ar.getFirstCell(), "Tabelle1", 4, 1, false, false, "Tabelle1!B5");
 
         assertEquals(1, ar.getAllReferencedCells().length);
 
 
-        ar = new AreaReference("Tabelle1!$B$5:$B$7");
+        ar = new AreaReference("Tabelle1!$B$5:$B$7", SpreadsheetVersion.EXCEL97);
         assertFalse(ar.isSingleCell());
 
         TestCellReference.confirmCell(ar.getFirstCell(), "Tabelle1", 4, 1, true, true, "Tabelle1!$B$5");
@@ -123,22 +122,22 @@ public final class TestAreaReference extends TestCase {
         assertFalse(AreaReference.isContiguous(refDC3D));
 
         // Check we can only create contiguous entries
-        new AreaReference(refSimple);
-        new AreaReference(ref2D);
+        new AreaReference(refSimple, SpreadsheetVersion.EXCEL97);
+        new AreaReference(ref2D, SpreadsheetVersion.EXCEL97);
         try {
-            new AreaReference(refDCSimple);
+            new AreaReference(refDCSimple, SpreadsheetVersion.EXCEL97);
             fail();
         } catch(IllegalArgumentException e) {
         	// expected during successful test
         }
         try {
-            new AreaReference(refDC2D);
+            new AreaReference(refDC2D, SpreadsheetVersion.EXCEL97);
             fail();
         } catch(IllegalArgumentException e) {
         	// expected during successful test
         }
         try {
-            new AreaReference(refDC3D);
+            new AreaReference(refDC3D, SpreadsheetVersion.EXCEL97);
             fail();
         } catch(IllegalArgumentException e) {
         	// expected during successful test
@@ -147,17 +146,17 @@ public final class TestAreaReference extends TestCase {
         // Test that we split as expected
         AreaReference[] refs;
 
-        refs = AreaReference.generateContiguous(refSimple);
+        refs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refSimple);
         assertEquals(1, refs.length);
         assertTrue(refs[0].isSingleCell());
         assertEquals("$C$10", refs[0].formatAsString());
 
-        refs = AreaReference.generateContiguous(ref2D);
+        refs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, ref2D);
         assertEquals(1, refs.length);
         assertFalse(refs[0].isSingleCell());
         assertEquals("$C$10:$D$11", refs[0].formatAsString());
 
-        refs = AreaReference.generateContiguous(refDCSimple);
+        refs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refDCSimple);
         assertEquals(3, refs.length);
         assertTrue(refs[0].isSingleCell());
         assertTrue(refs[1].isSingleCell());
@@ -166,7 +165,7 @@ public final class TestAreaReference extends TestCase {
         assertEquals("$D$12", refs[1].formatAsString());
         assertEquals("$E$14", refs[2].formatAsString());
 
-        refs = AreaReference.generateContiguous(refDC2D);
+        refs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refDC2D);
         assertEquals(3, refs.length);
         assertFalse(refs[0].isSingleCell());
         assertTrue(refs[1].isSingleCell());
@@ -175,7 +174,7 @@ public final class TestAreaReference extends TestCase {
         assertEquals("$D$12", refs[1].formatAsString());
         assertEquals("$E$14:$E$20", refs[2].formatAsString());
 
-        refs = AreaReference.generateContiguous(refDC3D);
+        refs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refDC3D);
         assertEquals(2, refs.length);
         assertFalse(refs[0].isSingleCell());
         assertFalse(refs[0].isSingleCell());
@@ -230,7 +229,7 @@ public final class TestAreaReference extends TestCase {
 
         // Check the parsing of the reference into cells
         assertFalse(AreaReference.isContiguous(aNamedCell.getRefersToFormula()));
-        AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getRefersToFormula());
+        AreaReference[] arefs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, aNamedCell.getRefersToFormula());
         assertEquals(2, arefs.length);
         assertEquals(refA, arefs[0].formatAsString());
         assertEquals(refB, arefs[1].formatAsString());
@@ -250,16 +249,16 @@ public final class TestAreaReference extends TestCase {
 
     public void testSpecialSheetNames() {
         AreaReference ar;
-        ar = new AreaReference("'Sheet A'!A1:A1");
+        ar = new AreaReference("'Sheet A'!A1:A1", SpreadsheetVersion.EXCEL97);
         confirmAreaSheetName(ar, "Sheet A", "'Sheet A'!A1");
 
-        ar = new AreaReference("'Hey! Look Here!'!A1:A1");
+        ar = new AreaReference("'Hey! Look Here!'!A1:A1", SpreadsheetVersion.EXCEL97);
         confirmAreaSheetName(ar, "Hey! Look Here!", "'Hey! Look Here!'!A1");
 
-        ar = new AreaReference("'O''Toole'!A1:B2");
+        ar = new AreaReference("'O''Toole'!A1:B2", SpreadsheetVersion.EXCEL97);
         confirmAreaSheetName(ar, "O'Toole", "'O''Toole'!A1:B2");
 
-        ar = new AreaReference("'one:many'!A1:B2");
+        ar = new AreaReference("'one:many'!A1:B2", SpreadsheetVersion.EXCEL97);
         confirmAreaSheetName(ar, "one:many", "'one:many'!A1:B2");
     }
 
@@ -274,9 +273,19 @@ public final class TestAreaReference extends TestCase {
         confirmWholeColumnRef("$C:D", 2, 3, true, false);
         confirmWholeColumnRef("AD:$AE", 29, 30, false, true);
     }
+    
+    @SuppressWarnings("deprecation")
+    public void testDeprecatedMethod() {
+        String refSimple = "$C$10:$C$10";
+        AreaReference[] arefs1 = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refSimple);
+        AreaReference[] arefs2 = AreaReference.generateContiguous(refSimple);
+        assertEquals(1, arefs1.length);
+        assertEquals(arefs1.length, arefs2.length);
+        assertEquals(arefs1[0].formatAsString(), arefs2[0].formatAsString());
+    }
 
     private static void confirmWholeColumnRef(String ref, int firstCol, int lastCol, boolean firstIsAbs, boolean lastIsAbs) {
-        AreaReference ar = new AreaReference(ref);
+        AreaReference ar = new AreaReference(ref, SpreadsheetVersion.EXCEL97);
         confirmCell(ar.getFirstCell(), 0, firstCol, true, firstIsAbs);
         confirmCell(ar.getLastCell(), 0xFFFF, lastCol, true, lastIsAbs);
     }

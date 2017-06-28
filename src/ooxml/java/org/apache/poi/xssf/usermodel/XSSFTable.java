@@ -30,6 +30,7 @@ import java.util.Locale;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Table;
@@ -349,7 +350,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public AreaReference getCellReferences() {
         return new AreaReference(
                 getStartCellReference(),
-                getEndCellReference()
+                getEndCellReference(),
+                SpreadsheetVersion.EXCEL2007
         );
     }
     /**
