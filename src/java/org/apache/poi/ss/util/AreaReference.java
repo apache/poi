@@ -108,7 +108,7 @@ public class AreaReference {
 
     /**
      * Creates an area ref from a pair of Cell References.
-     * @deprecated use {@link #new AreaReference(<code>CellReference</code>, <code>CellReference</code>, <code>SpreadsheetVersion</code>)} instead
+     * @deprecated use {@link #AreaReference(CellReference, CellReference, SpreadsheetVersion)} instead
      */
     @Deprecated
     @Removal(version="3.19")
@@ -168,7 +168,7 @@ public class AreaReference {
      *  unbroken) area, or is it made up of
      *  several different parts?
      * (If it is, you will need to call
-     *  {@link #generateContiguous(<code>SpreadsheetVersion</code>, String)})
+     *  {@link #generateContiguous(SpreadsheetVersion, String)})
      */
     public static boolean isContiguous(String reference) {
        // If there's a sheet name, strip it off
@@ -220,7 +220,7 @@ public class AreaReference {
     /**
      * Takes a non-contiguous area reference, and returns an array of contiguous area references
      * @return an array of contiguous area references.
-     * @deprecated use {@link #generateContiguous(<code>SpreadsheetVersion</code>, String)} instead
+     * @deprecated use {@link #generateContiguous(SpreadsheetVersion, String)} instead
      */
     @Deprecated
     @Removal(version="3.19")

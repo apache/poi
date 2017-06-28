@@ -38,7 +38,7 @@ public final class AreaPtg extends Area2DPtgBase {
 	}
 
 	/**
-     * @deprecated use {@link #AreaPtg(<code>AreaReference</code>)} instead
+     * @deprecated use {@link #AreaPtg(AreaReference)} instead
 	 */
 	@Deprecated()
 	@Removal(version="3.19")
