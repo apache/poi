@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a Excel worksheet.
@@ -615,19 +614,6 @@ public interface Sheet extends Iterable<Row> {
      * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     boolean getScenarioProtect();
-
-    /**
-     * Sets the zoom magnication for the sheet.  The zoom is expressed as a
-     * fraction.  For example to express a zoom of 75% use 3 for the numerator
-     * and 4 for the denominator.
-     *
-     * @param numerator     The numerator for the zoom magnification.
-     * @param denominator   The denominator for the zoom magnification.
-     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
-     */
-    @Removal(version="3.16")
-    @Deprecated
-    void setZoom(int numerator, int denominator);
     
     /**
      * Window zoom magnification for current view representing percent values.
@@ -941,15 +927,6 @@ public interface Sheet extends Iterable<Row> {
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
     void autoSizeColumn(int column, boolean useMergedCells);
-
-    /**
-     * Returns cell comment for the specified row and column
-     *
-     * @return cell comment or <code>null</code> if not found
-     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
-     */
-    @Deprecated
-    Comment getCellComment(int row, int column);
     
     /**
      * Returns cell comment for the specified location

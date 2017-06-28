@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.util.Internal;
 /**
  * HSSF wrapper for a cell under evaluation
  */

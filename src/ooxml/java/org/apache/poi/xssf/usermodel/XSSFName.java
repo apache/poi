@@ -292,7 +292,7 @@ public final class XSSFName implements Name {
             return _workbook.getSheetName(sheetId);
         }
         String ref = getRefersToFormula();
-        AreaReference areaRef = new AreaReference(ref);
+        AreaReference areaRef = new AreaReference(ref, SpreadsheetVersion.EXCEL2007);
         return areaRef.getFirstCell().getSheetName();
     }
 

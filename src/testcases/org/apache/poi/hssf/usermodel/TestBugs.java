@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -24,7 +25,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.apache.poi.POITestCase.assertContains;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -98,7 +98,6 @@ import org.junit.Test;
  * <b>YK: If a bug can be tested in terms of common ss interfaces,
  *  define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
-@SuppressWarnings("deprecation")
 public final class TestBugs extends BaseTestBugzillaIssues {
     // to not affect other tests running in the same JVM
     @After
@@ -996,7 +995,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(4, wb.getNumberOfFonts());
 
         HSSFFont f1 = wb.getFontAt((short)0);
-        assertEquals(400, f1.getBoldweight());
+        assertFalse(f1.getBold());
 
         // Check that asking for the same font
         //  multiple times gives you the same thing.
@@ -1020,7 +1019,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         //  yet to add
         assertNull(
             wb.findFont(
-                (short)11, (short)123, (short)22,
+                false, (short)123, (short)22,
                 "Thingy", false, true, (short)2, (byte)2
             )
         );
@@ -1031,7 +1030,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(5, nf.getIndex());
         assertEquals(nf, wb.getFontAt((short)5));
 
-        nf.setBoldweight((short)11);
+        nf.setBold(false);
         nf.setColor((short)123);
         nf.setFontHeight((short)22);
         nf.setFontName("Thingy");
@@ -1046,12 +1045,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Find it now
         assertNotNull(
             wb.findFont(
-                (short)11, (short)123, (short)22,
+                false, (short)123, (short)22,
                 "Thingy", false, true, (short)2, (byte)2
             )
         );
         HSSFFont font = wb.findFont(
-                (short) 11, (short) 123, (short) 22,
+                false, (short) 123, (short) 22,
                 "Thingy", false, true, (short) 2, (byte) 2
         );
         assertNotNull(font);
@@ -1061,7 +1060,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         );
         assertEquals(nf,
                wb.findFont(
-                   (short)11, (short)123, (short)22,
+                   false, (short)123, (short)22,
                    "Thingy", false, true, (short)2, (byte)2
                )
         );

@@ -28,8 +28,10 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -853,11 +855,34 @@ public class TestDataFormatter {
     }
 
     /**
+     * bug 60422 : simple number formats seem ok
+≈     */
+    @Test
+    public void testSimpleNumericFormatsInGermanyLocale() {
+        List<Locale> locales = Arrays.asList(new Locale[] {Locale.GERMANY, Locale.US, Locale.ROOT} );
+        for (Locale locale : locales) {
+            //show that LocaleUtil has no effect on these tests
+            LocaleUtil.setUserLocale(locale);
+            try {
+                char euro = '\u20AC';
+                DataFormatter df = new DataFormatter(Locale.GERMANY);
+                assertEquals("4,33", df.formatRawCellContents(4.33, -1, "#,##0.00"));
+                assertEquals("1.234,33", df.formatRawCellContents(1234.333, -1, "#,##0.00"));
+                assertEquals("-1.234,33", df.formatRawCellContents(-1234.333, -1, "#,##0.00"));
+                assertEquals("1.234,33 " + euro, df.formatRawCellContents(1234.33, -1, "#,##0.00 " + euro));
+                assertEquals("1.234,33 " + euro, df.formatRawCellContents(1234.33, -1, "#,##0.00 \"" + euro + "\""));
+            } finally {
+                LocaleUtil.resetUserLocale();
+            }
+        }
+    }
+
+    /**
      * bug 60422 : DataFormatter has issues with a specific NumberFormat in Germany default locale
-     * Currently, this test only passes if you set LocaleUtil.setUserLocale(Locale.ROOT) or Locale.US.
-     */
+≈    */
     @Test
     public void testBug60422() {
+        //when this is set to Locale.Germany, the result is 
         LocaleUtil.setUserLocale(Locale.ROOT);
         try {
             char euro = '\u20AC';
@@ -865,6 +890,7 @@ public class TestDataFormatter {
             String formatString = String.format(Locale.ROOT,
                     "_-* #,##0.00\\ \"%s\"_-;\\-* #,##0.00\\ \"%s\"_-;_-* \"-\"??\\ \"%s\"_-;_-@_-",
                     euro, euro, euro);
+            //this should be 4,33
             assertEquals("4.33 " + euro, df.formatRawCellContents(4.33, 178, formatString));
         } finally {
             LocaleUtil.resetUserLocale();

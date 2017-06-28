@@ -38,12 +38,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
@@ -58,17 +56,6 @@ public class SXSSFCell implements Cell {
     private CellStyle _style;
     private Property _firstProperty;
     
-    /**
-     * @deprecated POI 3.15 beta 3.
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
-     */
-    @Removal(version="3.17")
-    @Deprecated
-    public SXSSFCell(SXSSFRow row, int cellType)
-    {
-        this(row, CellType.forInt((cellType)));
-    }
-
     public SXSSFCell(SXSSFRow row,CellType cellType)
     {
         _row=row;

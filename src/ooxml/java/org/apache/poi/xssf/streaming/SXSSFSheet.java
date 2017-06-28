@@ -47,7 +47,6 @@ import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
@@ -870,23 +869,6 @@ public class SXSSFSheet implements Sheet
     {
         return _sh.getScenarioProtect();
     }
-
-    /**
-     * Sets the zoom magnification for the sheet.  The zoom is expressed as a
-     * fraction.  For example to express a zoom of 75% use 3 for the numerator
-     * and 4 for the denominator.
-     *
-     * @param numerator     The numerator for the zoom magnification.
-     * @param denominator   The denominator for the zoom magnification.
-     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.16")
-    @Override
-    public void setZoom(int numerator, int denominator)
-    {
-        _sh.setZoom(numerator,denominator);
-    }
     
     /**
      * Window zoom magnification for current view representing percent values.
@@ -1629,20 +1611,6 @@ public class SXSSFSheet implements Sheet
             final int width = Math.min(bestFitWidth,  maxColumnWidth);
             setColumnWidth(column, width);
         }
-    }
-
-    /**
-     * Returns cell comment for the specified row and column
-     *
-     * @return cell comment or <code>null</code> if not found
-     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.16")
-    @Override
-    public XSSFComment getCellComment(int row, int column)
-    {
-        return getCellComment(new CellAddress(row, column));
     }
     
     /**

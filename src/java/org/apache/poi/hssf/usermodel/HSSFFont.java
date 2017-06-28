@@ -31,9 +31,18 @@ import org.apache.poi.ss.usermodel.Font;
 public final class HSSFFont implements Font {
 
     /**
+     * Normal boldness (not bold)
+     */
+    final static short BOLDWEIGHT_NORMAL = 0x190;
+
+    /**
+     * Bold boldness (bold)
+     */
+    final static short BOLDWEIGHT_BOLD = 0x2bc;
+
+    /**
      * Arial font
      */
-
     public final static String FONT_ARIAL = "Arial";
 
 
@@ -199,18 +208,6 @@ public final class HSSFFont implements Font {
        HSSFPalette pallette = wb.getCustomPalette();
        return pallette.getColor( getColor() );
     }
-
-    /**
-     * set the boldness to use
-     * @param boldweight
-     * @see #BOLDWEIGHT_NORMAL
-     * @see #BOLDWEIGHT_BOLD
-     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17. Use {@link #setBold(boolean)} instead.
-     */
-    public void setBoldweight(short boldweight)
-    {
-        font.setBoldWeight(boldweight);
-    }
     
     /**
      * sets the font to be bold or not
@@ -222,25 +219,13 @@ public final class HSSFFont implements Font {
         else
             font.setBoldWeight(BOLDWEIGHT_NORMAL);
     }
-
-    /**
-     * get the boldness to use
-     * @return boldweight
-     * @see #BOLDWEIGHT_NORMAL
-     * @see #BOLDWEIGHT_BOLD
-     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17. Use {@link #getBold} instead.
-     */
-    public short getBoldweight()
-    {
-        return font.getBoldWeight();
-    }
     
     /**
      * get if the font is bold or not
      */
     public boolean getBold()
     {
-        return getBoldweight() == BOLDWEIGHT_BOLD;
+        return font.getBoldWeight() == BOLDWEIGHT_BOLD;
     }
 
     /**

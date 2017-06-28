@@ -37,7 +37,7 @@ public class RepeatingRowsAndColumns {
 
         HSSFFont boldFont = wb.createFont();
         boldFont.setFontHeightInPoints((short)22);
-        boldFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        boldFont.setBold(true);
 
         HSSFCellStyle boldStyle = wb.createCellStyle();
         boldStyle.setFont(boldFont);

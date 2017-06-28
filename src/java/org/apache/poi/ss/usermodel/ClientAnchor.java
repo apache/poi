@@ -17,7 +17,6 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against 
@@ -33,51 +32,6 @@ import org.apache.poi.util.Removal;
  * 
  */
 public interface ClientAnchor {
-    
-    /**
-     * Move and Resize With Anchor Cells
-     * <p>
-     * Specifies that the current drawing shall move and
-     * resize to maintain its row and column anchors (i.e. the
-     * object is anchored to the actual from and to row and column)
-     * </p>
-     * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_AND_RESIZE} instead.
-     */
-    @Removal(version="3.17")
-    public static final AnchorType MOVE_AND_RESIZE = AnchorType.MOVE_AND_RESIZE;
-    
-    /**
-     * Move With Cells but Do Not Resize
-     * <p>
-     * Specifies that the current drawing shall move with its
-     * row and column (i.e. the object is anchored to the
-     * actual from row and column), but that the size shall remain absolute.
-     * </p>
-     * <p>
-     * If additional rows/columns are added between the from and to locations of the drawing,
-     * the drawing shall move its to anchors as needed to maintain this same absolute size.
-     * </p>
-     * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_DONT_RESIZE} instead.
-     */
-    @Removal(version="3.17")
-    public static final AnchorType MOVE_DONT_RESIZE = AnchorType.MOVE_DONT_RESIZE;
-
-    /**
-     * Do Not Move or Resize With Underlying Rows/Columns
-     * <p>
-     * Specifies that the current start and end positions shall
-     * be maintained with respect to the distances from the
-     * absolute start point of the worksheet.
-     * </p>
-     * <p>
-     * If additional rows/columns are added before the
-     * drawing, the drawing shall move its anchors as needed
-     * to maintain this same absolute position.
-     * </p>
-     * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#DONT_MOVE_AND_RESIZE} instead.
-     */
-    @Removal(version="3.17")
-    public static final AnchorType DONT_MOVE_AND_RESIZE = AnchorType.DONT_MOVE_AND_RESIZE;
     
     /**
      * @since POI 3.14beta1
@@ -309,13 +263,6 @@ public interface ClientAnchor {
      * @since POI 3.14
      */
     public void setAnchorType( AnchorType anchorType );
-    /**
-     * Sets the anchor type
-     * @param anchorType the anchor type to set
-     * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead.
-     */
-    @Removal(version="3.17")
-    public void setAnchorType( int anchorType );
 
     /**
      * Gets the anchor type

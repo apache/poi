@@ -57,8 +57,6 @@ public final class TestXSSFChartSheet {
         assertEquals(0, sheet.getNumMergedRegions());
         assertNull(sheet.getActiveCell());
         assertTrue(sheet.getAutobreaks());
-        //noinspection deprecation
-        assertNull(sheet.getCellComment(0, 0));
         assertNull(sheet.getCellComment(new CellAddress(0, 0)));
         assertEquals(0, sheet.getColumnBreaks().length);
         assertTrue(sheet.getRowSumsBelow());

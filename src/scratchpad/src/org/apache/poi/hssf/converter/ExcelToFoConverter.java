@@ -404,22 +404,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     {
         Triplet triplet = new Triplet();
         triplet.fontName = font.getFontName();
-
-        switch ( font.getBoldweight() )
-        {
-        case HSSFFont.BOLDWEIGHT_BOLD:
-            triplet.bold = true;
-            break;
-        case HSSFFont.BOLDWEIGHT_NORMAL:
-        default:
-            triplet.bold = false;
-            break;
-        }
-
-        if ( font.getItalic() )
-        {
-            triplet.italic = true;
-        }
+        triplet.bold = font.getBold();
+        triplet.italic = font.getItalic();
 
         getFontReplacer().update( triplet );
         setBlockProperties( blockTarget, triplet );
