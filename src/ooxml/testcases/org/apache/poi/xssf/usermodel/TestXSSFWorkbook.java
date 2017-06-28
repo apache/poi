@@ -794,7 +794,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         Cell cell9 = row3.createCell(2);
         cell9.setCellValue("Bepa");
 
-        AreaReference source = new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007);
+        AreaReference source = wb.getCreationHelper().createAreaReference("A1:B2");
         sheet.createPivotTable(source, new CellReference("H5"));
     }
 

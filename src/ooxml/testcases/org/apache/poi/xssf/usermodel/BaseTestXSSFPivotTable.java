@@ -290,7 +290,7 @@ public abstract class BaseTestXSSFPivotTable {
         assertNotNull(original);
         assertNotNull(offset);
         
-        AreaReference source = new AreaReference("ORIGinal!A1:C2", _testDataProvider.getSpreadsheetVersion());
+        AreaReference source = wb.getCreationHelper().createAreaReference("ORIGinal!A1:C2");
         // create a pivot table on the same sheet, case insensitive
         original.createPivotTable(source, new CellReference("W1"));
         // create a pivot table on a different sheet, case insensitive

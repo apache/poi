@@ -20,10 +20,14 @@ package org.apache.poi.ss.formula.eval;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.ptg.AreaI;
 import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
@@ -54,15 +58,17 @@ public final class TestRangeEval extends TestCase {
 			createRefEval(refA),
 			createRefEval(refB),
 		};
-		@SuppressWarnings("deprecation")
-        AreaReference ar = new AreaReference(expectedAreaRef);
-		ValueEval result = EvalInstances.Range.evaluate(args, 0, (short)0);
-		assertTrue(result instanceof AreaEval);
-		AreaEval ae = (AreaEval) result;
-		assertEquals(ar.getFirstCell().getRow(), ae.getFirstRow());
-		assertEquals(ar.getLastCell().getRow(), ae.getLastRow());
-		assertEquals(ar.getFirstCell().getCol(), ae.getFirstColumn());
-		assertEquals(ar.getLastCell().getCol(), ae.getLastColumn());
+        List<SpreadsheetVersion> versions = Arrays.asList(new SpreadsheetVersion[] {SpreadsheetVersion.EXCEL97, SpreadsheetVersion.EXCEL2007});
+        for(SpreadsheetVersion version : versions) {
+            AreaReference ar = new AreaReference(expectedAreaRef, version);
+    		ValueEval result = EvalInstances.Range.evaluate(args, 0, (short)0);
+    		assertTrue(result instanceof AreaEval);
+    		AreaEval ae = (AreaEval) result;
+    		assertEquals(ar.getFirstCell().getRow(), ae.getFirstRow());
+    		assertEquals(ar.getLastCell().getRow(), ae.getLastRow());
+    		assertEquals(ar.getFirstCell().getCol(), ae.getFirstColumn());
+    		assertEquals(ar.getLastCell().getCol(), ae.getLastColumn());
+        }
 	}
 
 	private static ValueEval createRefEval(String refStr) {

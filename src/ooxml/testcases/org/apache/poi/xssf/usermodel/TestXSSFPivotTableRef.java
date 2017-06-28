@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
@@ -66,7 +65,7 @@ public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
         Cell cell12 = row1.createCell(3);
         cell12.setCellValue(12.12);
 
-        AreaReference source = new AreaReference("A1:C2", SpreadsheetVersion.EXCEL2007);
+        AreaReference source = wb.getCreationHelper().createAreaReference("A1:C2");
         pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
         
         XSSFSheet offsetSheet = wb.createSheet();
@@ -105,7 +104,8 @@ public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
         Cell tableCell_4_3 = tableRow_4.createCell(4);
         tableCell_4_3.setCellValue(100);
         
-        AreaReference offsetSource = new AreaReference(new CellReference("C2"), new CellReference("E4"));
+        AreaReference offsetSource = wb.getCreationHelper().createAreaReference(
+                new CellReference("C2"), new CellReference("E4"));
         offsetPivotTable = offsetSheet.createPivotTable(offsetSource, new CellReference("C6"));
     }
 }

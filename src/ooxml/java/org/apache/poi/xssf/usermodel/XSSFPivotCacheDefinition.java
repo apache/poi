@@ -146,7 +146,8 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         for (XSSFTable table : sheet.getTables()) {
             // TODO: case-sensitive?
             if (name.equals(table.getName())) {
-                return new AreaReference(table.getStartCellReference(), table.getEndCellReference());
+                return new AreaReference(table.getStartCellReference(), table.getEndCellReference(),
+                        SpreadsheetVersion.EXCEL2007);
             }
         }
         

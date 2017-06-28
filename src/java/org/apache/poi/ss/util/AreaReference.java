@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.util.Removal;
 
 public class AreaReference {
 
@@ -37,15 +38,6 @@ public class AreaReference {
     private final CellReference _lastCell;
     private final boolean _isSingleCell;
     private final SpreadsheetVersion _version; // never null
-
-    /**
-     * @deprecated POI 3.13 beta 1. Prefer supplying a version.
-     */
-    @Deprecated
-    public AreaReference(String reference) {
-        this(reference, DEFAULT_SPREADSHEET_VERSION);
-        // generateContiguous must be updated before this can be deleted.
-    }
     
     /**
      * Create an area ref from a string representation.  Sheet names containing special characters should be
@@ -116,9 +108,19 @@ public class AreaReference {
 
     /**
      * Creates an area ref from a pair of Cell References.
+     * @deprecated use {@link #new AreaReference(<code>CellReference</code>, <code>CellReference</code>, <code>SpreadsheetVersion</code>)} instead
      */
+    @Deprecated
+    @Removal(version="3.19")
     public AreaReference(CellReference topLeft, CellReference botRight) {
-        _version = DEFAULT_SPREADSHEET_VERSION;
+        this(topLeft, botRight, DEFAULT_SPREADSHEET_VERSION);
+    }
+    
+    /**
+     * Creates an area ref from a pair of Cell References.
+     */
+    public AreaReference(CellReference topLeft, CellReference botRight, SpreadsheetVersion version) {
+        _version = (null != version) ? version : DEFAULT_SPREADSHEET_VERSION;
         boolean swapRows = topLeft.getRow() > botRight.getRow();
         boolean swapCols = topLeft.getCol() > botRight.getCol();
         if (swapRows || swapCols) {
@@ -166,7 +168,7 @@ public class AreaReference {
      *  unbroken) area, or is it made up of
      *  several different parts?
      * (If it is, you will need to call
-     *  {@link #generateContiguous(String)})
+     *  {@link #generateContiguous(<code>SpreadsheetVersion</code>, String)})
      */
     public static boolean isContiguous(String reference) {
        // If there's a sheet name, strip it off
@@ -216,15 +218,29 @@ public class AreaReference {
     }
 
     /**
-     * Takes a non-contiguous area reference, and
-     *  returns an array of contiguous area references.
+     * Takes a non-contiguous area reference, and returns an array of contiguous area references
+     * @return an array of contiguous area references.
+     * @deprecated use {@link #generateContiguous(<code>SpreadsheetVersion</code>, String)} instead
      */
+    @Deprecated
+    @Removal(version="3.19")
     public static AreaReference[] generateContiguous(String reference) {
+        return generateContiguous(DEFAULT_SPREADSHEET_VERSION, reference);
+    }
+
+    /**
+     * Takes a non-contiguous area reference, and returns an array of contiguous area references
+     * @return an array of contiguous area references.
+     */
+    public static AreaReference[] generateContiguous(SpreadsheetVersion version, String reference) {
+        if (null == version) {
+            version = DEFAULT_SPREADSHEET_VERSION; // how the code used to behave. 
+        }
         List<AreaReference> refs = new ArrayList<AreaReference>();
         StringTokenizer st = new StringTokenizer(reference, ",");
         while(st.hasMoreTokens()) {
             refs.add(
-                    new AreaReference(st.nextToken())
+                    new AreaReference(st.nextToken(), version)
             );
         }
         return refs.toArray(new AreaReference[refs.size()]);

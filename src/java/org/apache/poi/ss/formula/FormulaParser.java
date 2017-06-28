@@ -817,7 +817,7 @@ public final class FormulaParser {
         CellReference topLeft = new CellReference(actualStartRow, actualStartCol);
         CellReference bottomRight = new CellReference(actualEndRow, actualEndCol);
         SheetIdentifier sheetIden = new SheetIdentifier( null, new NameIdentifier(sheetName, true));
-        Ptg ptg = _book.get3DReferencePtg(new AreaReference(topLeft, bottomRight), sheetIden);
+        Ptg ptg = _book.get3DReferencePtg(new AreaReference(topLeft, bottomRight, _ssVersion), sheetIden);
         return new ParseNode(ptg);
     }
     
@@ -997,7 +997,7 @@ public final class FormulaParser {
         if (part1.isColumn()) {
             return AreaReference.getWholeColumn(_ssVersion, part1.getRep(), part2.getRep());
         }
-        return new AreaReference(part1.getCellReference(), part2.getCellReference());
+        return new AreaReference(part1.getCellReference(), part2.getCellReference(), _ssVersion);
     }
 
     /**

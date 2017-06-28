@@ -20,6 +20,8 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 
 public class HSSFCreationHelper implements CreationHelper {
@@ -75,4 +77,21 @@ public class HSSFCreationHelper implements CreationHelper {
     public HSSFClientAnchor createClientAnchor(){
         return new HSSFClientAnchor();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AreaReference createAreaReference(String reference) {
+        return new AreaReference(reference, workbook.getSpreadsheetVersion());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AreaReference createAreaReference(CellReference topLeft, CellReference bottomRight) {
+        return new AreaReference(topLeft, bottomRight, workbook.getSpreadsheetVersion());
+    }
+
 }
