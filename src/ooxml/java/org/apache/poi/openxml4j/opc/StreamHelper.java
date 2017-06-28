@@ -74,8 +74,12 @@ public final class StreamHelper {
                     out.flush(); // only flush, don't close!
                 }
             });
+            // xmlContent.setXmlStandalone(true);
             trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            trans.setOutputProperty(OutputKeys.INDENT, "yes");
+            // don't indent xml documents, the indent will cause errors in calculating the xml signature
+            // because of different handling of linebreaks in Windows/Unix
+            // see https://stackoverflow.com/questions/36063375
+            trans.setOutputProperty(OutputKeys.INDENT, "no");
             trans.setOutputProperty(OutputKeys.STANDALONE, "yes");
             trans.transform(xmlSource, outputTarget);
         } catch (TransformerException e) {
