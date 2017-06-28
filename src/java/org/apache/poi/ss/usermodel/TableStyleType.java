@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import java.util.EnumSet;
-
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressBase;
 

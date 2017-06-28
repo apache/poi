@@ -70,7 +70,7 @@ public final class TestCellStyle extends TestCase {
         HSSFCellStyle    cs   = wb.createCellStyle();
 
         fnt.setColor(HSSFFont.COLOR_RED);
-        fnt.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        fnt.setBold(true);
         cs.setFont(fnt);
         for (int rownum = 0; rownum < 100; rownum++) {
             r = s.createRow(rownum);

@@ -19,19 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 
 public interface Font {
-    /**
-     * Normal boldness (not bold)
-     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17.
-     * Boldweight constants no longer needed due to {@link #getBold} and {@link #setBold(boolean)}
-     */
-    public final static short BOLDWEIGHT_NORMAL = 0x190;
-
-    /**
-     * Bold boldness (bold)
-     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17.
-     * Boldweight constants no longer needed due to {@link #getBold} and {@link #setBold(boolean)}
-     */
-    public final static short BOLDWEIGHT_BOLD = 0x2bc;
 
     /**
      * normal type of black color.
@@ -283,15 +270,7 @@ public interface Font {
      */
     public short getIndex();
 
-    /**
-     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17. Use {@link #setBold(boolean)}.
-     */
-    public void setBoldweight(short boldweight);
     public void setBold(boolean bold);
 
-    /**
-     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17. Use {@link #getBold()}.
-     */
-    public short getBoldweight();
     public boolean getBold();
 }

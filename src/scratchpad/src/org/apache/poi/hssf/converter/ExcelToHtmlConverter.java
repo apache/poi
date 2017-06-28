@@ -251,15 +251,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     void buildStyle_font( HSSFWorkbook workbook, StringBuilder style,
             HSSFFont font )
     {
-        switch ( font.getBoldweight() )
+        if ( font.getBold() )
         {
-        case HSSFFont.BOLDWEIGHT_BOLD:
             style.append( "font-weight:bold;" );
-            break;
-        case HSSFFont.BOLDWEIGHT_NORMAL:
-            // by default, not not increase HTML size
-            // style.append( "font-weight: normal; " );
-            break;
         }
 
         final HSSFColor fontColor = workbook.getCustomPalette().getColor(

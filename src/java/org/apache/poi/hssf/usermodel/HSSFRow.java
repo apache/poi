@@ -393,7 +393,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
             case CREATE_NULL_AS_BLANK:
                 return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
             default:
-                throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+                throw new IllegalArgumentException("Illegal policy " + policy);
         }
     }
 

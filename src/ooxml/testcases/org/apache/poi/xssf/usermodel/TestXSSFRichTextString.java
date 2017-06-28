@@ -385,8 +385,7 @@ public final class TestXSSFRichTextString extends TestCase {
     public void testLineBreaks_bug48877() throws IOException{
 
         XSSFFont font = new XSSFFont();
-        //noinspection deprecation
-        font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+        font.setBold(true);
         font.setFontHeightInPoints((short) 14);
         XSSFRichTextString str;
         STXstring t1, t2, t3;

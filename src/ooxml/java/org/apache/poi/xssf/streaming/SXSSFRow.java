@@ -47,18 +47,6 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     // use Boolean to have a tri-state for on/off/undefined 
     private Boolean _hidden = UNDEFINED;
     private Boolean _collapsed = UNDEFINED;
-
-    /**
-     *
-     * @param sheet the parent sheet the row belongs to
-     * @param initialSize - no longer needed
-     * @deprecated 2015-11-30 (circa POI 3.14beta1). Use {@link #SXSSFRow(SXSSFSheet)} instead.
-     */
-    @Deprecated
-    public SXSSFRow(SXSSFSheet sheet, @SuppressWarnings("UnusedParameters") int initialSize)
-    {
-        this(sheet);
-    }
     
     public SXSSFRow(SXSSFSheet sheet)
     {
@@ -273,7 +261,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
             case CREATE_NULL_AS_BLANK:
                 return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
             default:
-                throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+                throw new IllegalArgumentException("Illegal policy " + policy);
         }
     }
 

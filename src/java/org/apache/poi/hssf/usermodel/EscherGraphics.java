@@ -330,7 +330,7 @@ public class EscherGraphics extends Graphics
             hssfColor = workbook.getCustomPalette().findSimilarColor((byte)foreground.getRed(), (byte)foreground.getGreen(), (byte)foreground.getBlue());
         boolean bold = (matchFont.getStyle() & Font.BOLD) != 0;
         boolean italic = (matchFont.getStyle() & Font.ITALIC) != 0;
-        HSSFFont hssfFont = workbook.findFont(bold ? HSSFFont.BOLDWEIGHT_BOLD : 0,
+        HSSFFont hssfFont = workbook.findFont(bold,
                     hssfColor.getIndex(),
                     (short)(matchFont.getSize() * 20),
                     matchFont.getName(),
@@ -341,7 +341,7 @@ public class EscherGraphics extends Graphics
         if (hssfFont == null)
         {
             hssfFont = workbook.createFont();
-            hssfFont.setBoldweight(bold ? HSSFFont.BOLDWEIGHT_BOLD : 0);
+            hssfFont.setBold(bold);
             hssfFont.setColor(hssfColor.getIndex());
             hssfFont.setFontHeight((short)(matchFont.getSize() * 20));
             hssfFont.setFontName(matchFont.getName());

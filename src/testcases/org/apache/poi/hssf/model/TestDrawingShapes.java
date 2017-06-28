@@ -154,7 +154,7 @@ public class TestDrawingShapes {
         anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
         assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
         //noinspection deprecation
-        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE.value);
+        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
         assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
 
         HSSFSimpleShape rectangle = drawing.createSimpleShape(anchor);
