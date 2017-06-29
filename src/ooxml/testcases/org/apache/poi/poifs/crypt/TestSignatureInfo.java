@@ -190,13 +190,6 @@ public class TestSignatureInfo {
             getSignatureDocument().getSignature().getSignatureValue().getStringValue();
         assertEquals(signExp, signAct);
         
-        if (new File("build").exists()) {
-            // write out to build, for further comparison between local and Jenkins box 
-            FileOutputStream fos = new FileOutputStream("build/TestSignatureInfo.xlsx");
-            bos.writeTo(fos);
-            fos.close();
-        }
-        
         pkg2.close();
         wb2.close();
     }
