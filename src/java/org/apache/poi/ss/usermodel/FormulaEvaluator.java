@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Map;
 
-import org.apache.poi.util.Internal;
-
 /**
  * Evaluates formula cells.<p/>
  * 
