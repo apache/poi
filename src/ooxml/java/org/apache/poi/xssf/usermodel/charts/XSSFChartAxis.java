@@ -37,6 +37,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickMark;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Base class for all axis types.
@@ -195,6 +196,7 @@ public abstract class XSSFChartAxis implements ChartAxis {
 	protected abstract CTTickMark getMajorCTTickMark();
 	protected abstract CTTickMark getMinorCTTickMark();
 	public abstract CTChartLines getMajorGridLines();
+	public abstract CTShapeProperties getLine();
 	
 	private static STOrientation.Enum fromAxisOrientation(AxisOrientation orientation) {
 		switch (orientation) {

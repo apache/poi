@@ -36,6 +36,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrossBetween;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Value axis type.
@@ -60,6 +61,10 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 	public long getId() {
 		return ctValAx.getAxId().getVal();
 	}
+
+    public CTShapeProperties getLine() {
+        return ctValAx.getSpPr();
+    }
 
 	public void setCrossBetween(AxisCrossBetween crossBetween) {
 		ctValAx.getCrossBetween().setVal(fromCrossBetween(crossBetween));

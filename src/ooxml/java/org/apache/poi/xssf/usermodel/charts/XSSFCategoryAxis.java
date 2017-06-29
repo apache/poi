@@ -33,6 +33,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Category axis type.
@@ -58,6 +59,10 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 		return ctCatAx.getAxId().getVal();
 	}
 
+	public CTShapeProperties getLine() {
+	    return ctCatAx.getSpPr();
+	}
+	
 	protected CTAxPos getCTAxPos() {
 		return ctCatAx.getAxPos();
 	}
