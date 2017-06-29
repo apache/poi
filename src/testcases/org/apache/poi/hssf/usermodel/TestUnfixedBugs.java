@@ -23,12 +23,12 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
 
 import junit.framework.AssertionFailedError;

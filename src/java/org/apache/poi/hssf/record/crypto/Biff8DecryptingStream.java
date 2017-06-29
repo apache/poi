@@ -24,13 +24,13 @@ import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BiffHeaderInput;
 import org.apache.poi.hssf.record.FilePassRecord;
 import org.apache.poi.hssf.record.InterfaceHdrRecord;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.RecordFormatException;
 
 public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndianInput {
 

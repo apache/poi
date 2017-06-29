@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 /**

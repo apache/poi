@@ -22,9 +22,9 @@ import org.apache.poi.hssf.record.ObjectProtectRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Groups the sheet protection records for a worksheet.

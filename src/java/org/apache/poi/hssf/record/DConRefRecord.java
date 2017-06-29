@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -129,8 +130,7 @@ public class DConRefRecord extends StandardRecord
         charCount = LittleEndian.getUShort(data, offset);
         offset += LittleEndian.SHORT_SIZE;
         if (charCount < 2)
-            throw new org.apache.poi.hssf.record.RecordFormatException(
-                    "Character count must be >= 2");
+            throw new RecordFormatException("Character count must be >= 2");
 
         charType = LittleEndian.getUByte(data, offset);
         offset += LittleEndian.BYTE_SIZE; //7 bits reserved + 1 bit type

@@ -21,16 +21,16 @@ import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * The formula record aggregate is used to join together the formula record and it's

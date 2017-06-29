@@ -18,10 +18,12 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.RecordFormatException;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests the serialization and deserialization of the TestEmbeddedObjectRefSubRecord

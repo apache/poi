@@ -17,20 +17,20 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
+import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.ExpPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.RecordFormatException;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  *

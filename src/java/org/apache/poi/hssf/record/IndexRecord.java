@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Title:        Index Record (0x020B)<p>
