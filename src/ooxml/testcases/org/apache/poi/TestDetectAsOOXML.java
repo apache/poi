@@ -75,13 +75,12 @@ public class TestDetectAsOOXML extends TestCase
         // detect header
         InputStream in = new PushbackInputStream(testInput, 10);
         assertFalse(DocumentFactoryHelper.hasOOXMLHeader(in));
-		//noinspection deprecation
-		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
         
         // check if InputStream is still intact
         byte[] test = new byte[3];
         assertEquals(3, in.read(test));
         assertTrue(Arrays.equals(testData, test));
         assertEquals(-1, in.read());
+        in.close();
 	}
 }
