@@ -240,8 +240,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureTimeSignatureProperty);
         SignatureProperties signatureProperties = getSignatureFactory()
-            .newSignatureProperties(signaturePropertyContent,
-            "id-signature-time-" + signatureConfig.getExecutionTime());
+            .newSignatureProperties(signaturePropertyContent, null);
         objectContent.add(signatureProperties);
     }
 
