@@ -135,26 +135,6 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     }
 
     /**
-     * Checks that the supplied InputStream (which MUST
-     *  support mark and reset, or be a PushbackInputStream)
-     *  has a OOXML (zip) header at the start of it.
-     * If your InputStream does not support mark / reset,
-     *  then wrap it in a PushBackInputStream, then be
-     *  sure to always use that, and not the original!
-     *  
-     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
-     * @return true, if the InputStream is an ooxml document
-     * 
-     * @throws IOException if the InputStream can't be read
-     *
-     * @deprecated use the method from DocumentFactoryHelper, deprecated as of 3.15-beta1, therefore eligible for removal in 3.17
-     */
-    @Deprecated
-    public static boolean hasOOXMLHeader(InputStream inp) throws IOException {
-        return DocumentFactoryHelper.hasOOXMLHeader(inp);
-    }
-
-    /**
      * Get the document properties. This gives you access to the
      *  core ooxml properties, and the extended ooxml properties.
      *  
