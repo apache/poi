@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.RecordFormatException;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests the serialization and deserialization of the SeriesTextRecord class

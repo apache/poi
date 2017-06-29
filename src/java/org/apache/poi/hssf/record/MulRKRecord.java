@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.hssf.util.RKUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * MULRK (0x00BD)<p>

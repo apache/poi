@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Title: Interface End Record (0x00E2)<P>

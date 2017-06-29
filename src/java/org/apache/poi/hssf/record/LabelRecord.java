@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Label Record (0x0204) - read only support for strings stored directly in the cell...

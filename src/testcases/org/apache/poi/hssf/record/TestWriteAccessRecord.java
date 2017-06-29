@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.RecordFormatException;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-
-import org.apache.poi.util.HexRead;
 
 /**
  * Tests for {@link WriteAccessRecord}
