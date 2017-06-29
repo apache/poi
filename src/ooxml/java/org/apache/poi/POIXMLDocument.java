@@ -34,7 +34,6 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.xmlbeans.impl.common.SystemCache;
 
 /**

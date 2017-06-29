@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.excelant.util;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;

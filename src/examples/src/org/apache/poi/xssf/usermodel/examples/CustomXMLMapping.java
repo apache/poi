@@ -41,5 +41,6 @@ public class CustomXMLMapping {
             System.out.println(xml);
         }
         pkg.close();
+        wb.close();
     }
 }
