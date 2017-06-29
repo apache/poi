@@ -19,14 +19,11 @@
 package org.apache.poi.ss.usermodel;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
-import org.apache.poi.ss.formula.EvaluationConditionalFormatRule;
 import org.apache.poi.util.LocaleUtil;
 
 /**
