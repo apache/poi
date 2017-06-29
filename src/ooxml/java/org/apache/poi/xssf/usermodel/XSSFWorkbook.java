@@ -1196,16 +1196,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Alias for {@link #sheetIterator()} to allow
      * foreach loops
      * 
-     * <code>Iterator<XSSFSheet> iterator()<code> was replaced with <code>Iterator<Sheet> iterator()</code>
-     * to make iterating over a container (Workbook, Sheet, Row) consistent across POI spreadsheets.
-     * This breaks backwards compatibility and may affect your code.
-     * See {@link XSSFWorkbook#xssfSheetIterator} for how to upgrade your code to be compatible
-     * with the new interface.
-     * 
      * Note: remove() is not supported on this iterator.
      * Use {@link #removeSheetAt(int)} to remove sheets instead.
      * 
-     * @return an iterator  of the sheets.
+     * @return an iterator of the sheets.
      */
     @Override
     public Iterator<Sheet> iterator() {
