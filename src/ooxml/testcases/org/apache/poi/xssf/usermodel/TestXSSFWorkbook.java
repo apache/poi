@@ -52,7 +52,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -999,15 +998,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             sh.createRow(0);
         }
 
-        // Option B:
-        {
-            @SuppressWarnings("deprecation")
-            Iterator<XSSFSheet> it = wb.xssfSheetIterator();
-            XSSFSheet sh = it.next();
-            sh.createRow(0);
-        }
-
-        // Option C (preferred for new code):
+        // Option B (preferred for new code):
         {
             Iterator<Sheet> it = wb.iterator();
             Sheet sh = it.next();
