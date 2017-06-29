@@ -34,6 +34,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Date axis type.  Currently only implements the same values as {@link XSSFCategoryAxis}, since the two are nearly identical.
@@ -65,6 +66,10 @@ public class XSSFDateAxis extends XSSFChartAxis {
 	public long getId() {
 		return ctDateAx.getAxId().getVal();
 	}
+
+    public CTShapeProperties getLine() {
+        return ctDateAx.getSpPr();
+    }
 
 	protected CTAxPos getCTAxPos() {
 		return ctDateAx.getAxPos();
