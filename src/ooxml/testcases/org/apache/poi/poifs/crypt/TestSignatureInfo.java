@@ -184,11 +184,11 @@ public class TestSignatureInfo {
         signatureConfig.setOpcPackage(pkg2);
         assertTrue(si.verifySignature());
         String signExp =
-            "Lxp2LFa+0YWGOBL8zVdf7SWRQiNK/Tt85W+kmH1bunlua030BKbQc6yWIIk6gN6jCTtrJ1h2eMRbLwymygOUpM"+
-            "dd0MeQY3mMWRSO9qEW87SQvyDqBh71zXWW3ZYET+vJWr3BCNEtXCy8jZvgXqILBGk5vMJW/EYaUEhBcDGjCm0=";
+            "HDdvgXblLMiE6gZSoRSQUof6+aedrhK9i51we1n+4Q/ioqrQCeh5UkfQ8lD63nV4ZDbM4/pIVFi6VpMpN/HMnA"+
+            "UHeVdVUCVTgpn3Iz21Ymcd9/aerNov2BjHLhS8X3oUE+XTu2TbJLNmms0I9G4lfg6HWP9t7ZCXBXy6vyCMArc=";
         String signAct = si.getSignatureParts().iterator().next().
             getSignatureDocument().getSignature().getSignatureValue().getStringValue();
-//        assertEquals(signExp, signAct);
+        assertEquals(signExp, signAct);
         
         if (new File("build").exists()) {
             // write out to build, for further comparison between local and Jenkins box 
