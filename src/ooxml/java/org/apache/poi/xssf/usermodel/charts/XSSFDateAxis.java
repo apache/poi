@@ -44,20 +44,11 @@ public class XSSFDateAxis extends XSSFChartAxis {
 
 	private CTDateAx ctDateAx;
 
-	/**
-	 * @param chart
-	 * @param id
-	 * @param pos
-	 */
 	public XSSFDateAxis(XSSFChart chart, long id, AxisPosition pos) {
 		super(chart);
 		createAxis(id, pos);
 	}
 
-	/**
-	 * @param chart
-	 * @param ctDateAx
-	 */
 	public XSSFDateAxis(XSSFChart chart, CTDateAx ctDateAx) {
 		super(chart);
 		this.ctDateAx = ctDateAx;
