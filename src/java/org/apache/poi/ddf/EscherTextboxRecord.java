@@ -17,7 +17,9 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 
@@ -65,8 +67,9 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
 
         listener.afterRecordSerialize( pos, getRecordId(), pos - offset, this );
         int size = pos - offset;
-        if (size != getRecordSize())
+        if (size != getRecordSize()) {
             throw new RecordFormatException(size + " bytes written but getRecordSize() reports " + getRecordSize());
+        }
         return size;
     }
 
@@ -130,54 +133,20 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
     }
 
     @Override
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separator" );
-
-        String theDumpHex = "";
-        try
-        {
-            if (thedata.length != 0)
-            {
-                theDumpHex = "  Extra Data:" + nl;
-                theDumpHex += HexDump.dump(thedata, 0, 0);
-            }
+    protected Object[][] getAttributeMap() {
+        int numCh = getChildRecords().size();
+        List<Object> chLst = new ArrayList<Object>(numCh*2+2);
+        chLst.add("children");
+        chLst.add(numCh);
+        for (EscherRecord er : getChildRecords()) {
+            chLst.add(er.getRecordName());
+            chLst.add(er);
         }
-        catch ( Exception e )
-        {
-            theDumpHex = "Error!!";
-        }
-
-        return getClass().getName() + ":" + nl +
-                "  isContainer: " + isContainerRecord() + nl +
-                "  version: 0x" + HexDump.toHex( getVersion() ) + nl +
-                "  instance: 0x" + HexDump.toHex( getInstance() ) + nl +
-                "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  numchildren: " + getChildRecords().size() + nl +
-                theDumpHex;
-    }
-
-    @Override
-    public String toXml(String tab) {
-        String theDumpHex = "";
-        try
-        {
-            if (thedata.length != 0)
-            {
-                theDumpHex += HexDump.dump(thedata, 0, 0);
-            }
-        }
-        catch ( Exception e )
-        {
-            theDumpHex = "Error!!";
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<ExtraData>").append(theDumpHex).append("</ExtraData>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+        
+        return new Object[][] {
+            { "isContainer", isContainerRecord() },
+            chLst.toArray(),
+            { "Extra Data", thedata }
+        };
     }
 }
-
-
-

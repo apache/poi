@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -175,53 +174,20 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         }
     }
 
-    /**
-     * Retrieve the string representation of this record.
-     */
     @Override
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separator" );
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append( getClass().getName() );
-        stringBuilder.append( ":" );
-        stringBuilder.append( nl );
-        stringBuilder.append( "  isContainer: " );
-        stringBuilder.append( isContainerRecord() );
-        stringBuilder.append( nl );
-        stringBuilder.append( "  version: 0x" );
-        stringBuilder.append( HexDump.toHex( getVersion() ) );
-        stringBuilder.append( nl );
-        stringBuilder.append( "  instance: 0x" );
-        stringBuilder.append( HexDump.toHex( getInstance() ) );
-        stringBuilder.append( nl );
-        stringBuilder.append( "  recordId: 0x" );
-        stringBuilder.append( HexDump.toHex( getRecordId() ) );
-        stringBuilder.append( nl );
-        stringBuilder.append( "  numchildren: " );
-        stringBuilder.append( getChildRecords().size() );
-        stringBuilder.append( nl );
-        stringBuilder.append( "  properties:" );
-        stringBuilder.append( nl );
-
-        for ( EscherProperty property : properties )
-        {
-            stringBuilder.append("    ").append(property).append(nl);
+    protected Object[][] getAttributeMap() {
+        List<Object> attrList = new ArrayList<Object>(properties.size()*2+2);
+        attrList.add("properties");
+        attrList.add(properties.size());
+        for ( EscherProperty property : properties ) {
+            attrList.add(property.getName());
+            attrList.add(property);
         }
-
-        return stringBuilder.toString();
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(),
-                HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())));
-        for (EscherProperty property: getEscherProperties()){
-            builder.append(property.toXml(tab+"\t"));
-        }
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+        
+        return new Object[][]{
+            { "isContainer", isContainerRecord() },
+            { "numchildren", getChildRecords().size() },
+            attrList.toArray()
+        };
     }
 }

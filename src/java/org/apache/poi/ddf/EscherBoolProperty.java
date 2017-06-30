@@ -59,6 +59,7 @@ public class EscherBoolProperty
      * 
      * @deprecated use !isTrue() instead, planed to be removed in POI 3.17
      */
+    @Deprecated
     public boolean isFalse()
     {
         return !isTrue();
@@ -77,7 +78,7 @@ public class EscherBoolProperty
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
                 .append("\" name=\"").append(getName()).append("\" simpleValue=\"").append(getPropertyValue()).append("\" blipId=\"")
-                .append(isBlipId()).append("\" value=\"").append(isTrue()).append("\"").append("/>\n");
+                .append(isBlipId()).append("\" value=\"").append(isTrue()).append("\"").append("/>");
         return builder.toString();
     }
 }

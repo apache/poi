@@ -101,35 +101,6 @@ public class EscherSpRecord
         return "Sp";
     }
 
-
-    /**
-     * @return  the string representing this shape.
-     */
-    @Override
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
-                "  ShapeType: 0x" + HexDump.toHex(getShapeType()) + nl +
-                "  ShapeId: " + field_1_shapeId + nl +
-                "  Flags: " + decodeFlags(field_2_flags) + " (0x" + HexDump.toHex(field_2_flags) + ")" + nl;
-
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<ShapeType>0x").append(HexDump.toHex(getShapeType())).append("</ShapeType>\n")
-                .append(tab).append("\t").append("<ShapeId>").append(field_1_shapeId).append("</ShapeId>\n")
-                .append(tab).append("\t").append("<Flags>").append(decodeFlags(field_2_flags) + " (0x" + HexDump.toHex(field_2_flags) + ")").append("</Flags>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
-    }
-
     /**
      * Converts the shape flags into a more descriptive name.
      */
@@ -241,5 +212,14 @@ public class EscherSpRecord
     public void setShapeType( short value )
     {
         setInstance( value );
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "ShapeType", getShapeType() },
+            { "ShapeId", field_1_shapeId },
+            { "Flags", decodeFlags(field_2_flags)+" (0x"+HexDump.toHex(field_2_flags)+")" }
+        };
     }
 }

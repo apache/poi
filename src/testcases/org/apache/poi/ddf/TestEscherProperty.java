@@ -17,18 +17,19 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 
-/**
- * @author Yegor Kozlov
- */
-public class TestEscherProperty extends TestCase
-{
+public class TestEscherProperty {
     /**
      * assure that EscherProperty.getName() returns correct name for complex properties
      * See Bugzilla 50401 
      */
+    @Test
     public void testPropertyNames() throws Exception {
         EscherProperty p1 = new EscherSimpleProperty( EscherProperties.GROUPSHAPE__SHAPENAME, 0);
         assertEquals("groupshape.shapename", p1.getName());

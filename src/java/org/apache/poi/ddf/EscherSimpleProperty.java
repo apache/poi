@@ -17,8 +17,8 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A simple property is of fixed length and as a property number in addition
@@ -93,13 +93,21 @@ public class EscherSimpleProperty extends EscherProperty
     @Override
     public boolean equals( Object o )
     {
-        if ( this == o ) return true;
-        if ( !( o instanceof EscherSimpleProperty ) ) return false;
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof EscherSimpleProperty ) ) {
+            return false;
+        }
 
         final EscherSimpleProperty escherSimpleProperty = (EscherSimpleProperty) o;
 
-        if ( propertyValue != escherSimpleProperty.propertyValue ) return false;
-        if ( getId() != escherSimpleProperty.getId() ) return false;
+        if ( propertyValue != escherSimpleProperty.propertyValue ) {
+            return false;
+        }
+        if ( getId() != escherSimpleProperty.getId() ) {
+            return false;
+        }
 
         return true;
     }
@@ -134,7 +142,7 @@ public class EscherSimpleProperty extends EscherProperty
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
                 .append("\" name=\"").append(getName()).append("\" blipId=\"")
                 .append(isBlipId()).append("\" complex=\"").append(isComplex()).append("\" value=\"").append("0x")
-                .append(HexDump.toHex(propertyValue)).append("\"/>\n");
+                .append(HexDump.toHex(propertyValue)).append("\"/>");
         return builder.toString();
     }
 }

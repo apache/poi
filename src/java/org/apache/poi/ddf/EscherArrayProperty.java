@@ -121,6 +121,11 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     @Override
     public String toString() {
         StringBuilder results = new StringBuilder();
+        results.append("propNum: ").append(getPropertyNumber());
+        results.append(", propName: ").append(EscherProperties.getPropertyName( getPropertyNumber() ));
+        results.append(", complex: ").append(isComplex());
+        results.append(", blipId: ").append(isBlipId());
+        results.append(", data: \n");
         results.append("    {EscherArrayProperty:" + '\n');
         results.append("     Num Elements: ").append(getNumberOfElementsInArray()).append('\n');
         results.append("     Num Elements In Memory: ").append(getNumberOfElementsInMemory()).append('\n');
@@ -130,11 +135,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         }
         results.append("}" + '\n');
 
-        return "propNum: " + getPropertyNumber()
-                + ", propName: " + EscherProperties.getPropertyName( getPropertyNumber() )
-                + ", complex: " + isComplex()
-                + ", blipId: " + isBlipId()
-                + ", data: " + '\n' + results;
+        return results.toString();
     }
 
     @Override
@@ -146,7 +147,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         for (int i = 0; i < getNumberOfElementsInArray(); i++) {
             builder.append("\t").append(tab).append("<Element>").append(HexDump.toHex(getElement(i))).append("</Element>\n");
         }
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">");
         return builder.toString();
     }
 
@@ -220,7 +221,9 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
             
             @Override
             public byte[] next() {
-                if (!hasNext()) throw new NoSuchElementException();
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
                 return getElement(idx++);
             }
             

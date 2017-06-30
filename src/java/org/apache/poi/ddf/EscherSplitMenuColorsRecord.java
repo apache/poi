@@ -17,7 +17,6 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 
@@ -46,8 +45,9 @@ public class EscherSplitMenuColorsRecord
         field_3_color3 =  LittleEndian.getInt( data, pos + size );size+=4;
         field_4_color4 =  LittleEndian.getInt( data, pos + size );size+=4;
         bytesRemaining -= size;
-        if (bytesRemaining != 0)
+        if (bytesRemaining != 0) {
             throw new RecordFormatException("Expecting no remaining data but got " + bytesRemaining + " byte(s).");
+        }
         return 8 + size + bytesRemaining;
     }
 
@@ -83,34 +83,6 @@ public class EscherSplitMenuColorsRecord
     @Override
     public String getRecordName() {
         return "SplitMenuColors";
-    }
-
-    /**
-     * @return  a string representation of this record.
-     */
-    @Override
-    public String toString() {
-        return getClass().getName() + ":" + '\n' +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
-                "  Color1: 0x" + HexDump.toHex(field_1_color1) + '\n' +
-                "  Color2: 0x" + HexDump.toHex(field_2_color2) + '\n' +
-                "  Color3: 0x" + HexDump.toHex(field_3_color3) + '\n' +
-                "  Color4: 0x" + HexDump.toHex(field_4_color4) + '\n' +
-                "";
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<Color1>0x").append(HexDump.toHex(field_1_color1)).append("</Color1>\n")
-                .append(tab).append("\t").append("<Color2>0x").append(HexDump.toHex(field_2_color2)).append("</Color2>\n")
-                .append(tab).append("\t").append("<Color3>0x").append(HexDump.toHex(field_3_color3)).append("</Color3>\n")
-                .append(tab).append("\t").append("<Color4>0x").append(HexDump.toHex(field_4_color4)).append("</Color4>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
     }
 
     /**
@@ -183,5 +155,15 @@ public class EscherSplitMenuColorsRecord
      */
     public void setColor4( int field_4_color4 ) {
         this.field_4_color4 = field_4_color4;
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "Color1", field_1_color1 },
+            { "Color2", field_2_color2 },
+            { "Color3", field_3_color3 },
+            { "Color4", field_4_color4 }
+        };
     }
 }

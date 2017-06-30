@@ -17,11 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public final class TestEscherSplitMenuColorsRecord extends TestCase {
+public final class TestEscherSplitMenuColorsRecord {
+    @Test
     public void testSerialize() {
         EscherSplitMenuColorsRecord r = createRecord();
 
@@ -38,6 +41,7 @@ public final class TestEscherSplitMenuColorsRecord extends TestCase {
                 HexDump.toHex( data ) );
     }
 
+    @Test
     public void testFillFields() {
         String hexData = "40 00 " +
                 "1E F1 " +
@@ -57,16 +61,20 @@ public final class TestEscherSplitMenuColorsRecord extends TestCase {
         assertEquals( 0x01, r.getColor4() );
     }
 
+    @Test
     public void testToString() {
-        String expected = "org.apache.poi.ddf.EscherSplitMenuColorsRecord:" + '\n' +
-                "  RecordId: 0xF11E" + '\n' +
-                "  Version: 0x0000" + '\n' +
-                "  Instance: 0x0004" + '\n' +
-                "  Color1: 0x00000402" + '\n' +
-                "  Color2: 0x00000002" + '\n' +
-                "  Color3: 0x00000002" + '\n' +
-                "  Color4: 0x00000001" + '\n' +
-                "";
+        String nl = System.getProperty("line.separator");
+        String expected =
+            "org.apache.poi.ddf.EscherSplitMenuColorsRecord (SplitMenuColors):" + nl +
+            "  RecordId: 0xF11E" + nl +
+            "  Version: 0x0000" + nl +
+            "  Instance: 0x0004" + nl +
+            "  Options: 0x0040" + nl +
+            "  Record Size: 24" + nl +
+            "  Color1: 0x00000402" + nl +
+            "  Color2: 0x00000002" + nl +
+            "  Color3: 0x00000002" + nl +
+            "  Color4: 0x00000001";
         assertEquals( expected, createRecord().toString() );
     }
 

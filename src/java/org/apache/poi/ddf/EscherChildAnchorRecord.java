@@ -18,7 +18,6 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -95,37 +94,6 @@ public class EscherChildAnchorRecord
         return "ChildAnchor";
     }
 
-
-    /**
-     * The string representation of this record
-     */
-    @Override
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + nl +
-                "  X1: " + field_1_dx1 + nl +
-                "  Y1: " + field_2_dy1 + nl +
-                "  X2: " + field_3_dx2 + nl +
-                "  Y2: " + field_4_dy2 + nl ;
-
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<X1>").append(field_1_dx1).append("</X1>\n")
-                .append(tab).append("\t").append("<Y1>").append(field_2_dy1).append("</Y1>\n")
-                .append(tab).append("\t").append("<X2>").append(field_3_dx2).append("</X2>\n")
-                .append(tab).append("\t").append("<Y2>").append(field_4_dy2).append("</Y2>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
-    }
 
     /**
      * Retrieves offset within the parent coordinate space for the top left point.
@@ -207,4 +175,13 @@ public class EscherChildAnchorRecord
         this.field_4_dy2 = field_4_dy2;
     }
 
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "X1", field_1_dx1 },
+            { "Y1", field_2_dy1 },
+            { "X2", field_3_dx2 },
+            { "Y2", field_4_dy2 }
+        };
+    }
 }

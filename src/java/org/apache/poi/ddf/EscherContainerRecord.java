@@ -126,9 +126,9 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
     /**
      * Do any of our (top level) children have the given recordId?
-     * 
+     *
      * @param recordId the recordId of the child
-     * 
+     *
      * @return true, if any child has the given recordId
      */
     public boolean hasChildOfType(short recordId) {
@@ -162,7 +162,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     public Iterator<EscherRecord> getChildIterator() {
         return iterator();
     }
-    
+
     /**
      * @return an iterator over the child records
      */
@@ -198,7 +198,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     /**
      * Returns all of our children which are also
      * EscherContainers (may be 0, 1, or vary rarely 2 or 3)
-     * 
+     *
      * @return EscherContainer children
      */
     public List<EscherContainerRecord> getChildContainers() {
@@ -266,48 +266,6 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         _childRecords.add(idx, record);
     }
 
-    @Override
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separator" );
-
-        StringBuffer children = new StringBuffer();
-        if ( _childRecords.size() > 0 )
-        {
-            children.append( "  children: " + nl );
-
-            int count = 0;
-            for ( EscherRecord record : this ) {
-                children.append( "   Child " + count + ":" + nl );
-                String childResult = String.valueOf( record );
-                childResult = childResult.replaceAll( "\n", "\n    " );
-                children.append( "    " );
-                children.append( childResult );
-                children.append( nl );
-                count++;
-            }
-        }
-
-        return getClass().getName() + " (" + getRecordName() + "):" + nl
-                + "  isContainer: " + isContainerRecord() + nl
-                + "  version: 0x" + HexDump.toHex( getVersion() ) + nl
-                + "  instance: 0x" + HexDump.toHex( getInstance() ) + nl
-                + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl
-                + "  numchildren: " + _childRecords.size() + nl
-                + children;
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getRecordName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())));
-        for ( EscherRecord record : this ) {
-            builder.append(record.toXml(tab+"\t"));
-        }
-        builder.append(tab).append("</").append(getRecordName()).append(">\n");
-        return builder.toString();
-    }
-
     public <T extends EscherRecord> T getChildById( short recordId ) {
         for ( EscherRecord childRecord : this ) {
             if ( childRecord.getRecordId() == recordId ) {
@@ -334,5 +292,22 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
                 out.add(r);
             }
         }
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        List<Object> chList = new ArrayList<Object>(_childRecords.size()*2+2);
+        chList.add("children");
+        chList.add(_childRecords.size());
+        int count = 0;
+        for ( EscherRecord record : this ) {
+            chList.add("Child "+count);
+            chList.add(record);
+            count++;
+        }
+        return new Object[][] {
+        	{ "isContainer", isContainerRecord() },
+            chList.toArray()
+        };
     }
 }

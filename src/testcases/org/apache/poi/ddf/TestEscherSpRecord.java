@@ -17,12 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public class TestEscherSpRecord extends TestCase
-{
+public class TestEscherSpRecord {
+    @Test
     public void testSerialize() {
         EscherSpRecord r = createRecord();
 
@@ -37,6 +39,7 @@ public class TestEscherSpRecord extends TestCase
                 HexDump.toHex( data ) );
     }
 
+    @Test
     public void testFillFields() {
         String hexData = "02 00 " +
                 "0A F0 " +
@@ -52,15 +55,20 @@ public class TestEscherSpRecord extends TestCase
         assertEquals( 0x05, r.getFlags() );
     }
 
+    @Test
     public void testToString() {
         String nl = System.getProperty("line.separator");
 
-        String expected = "org.apache.poi.ddf.EscherSpRecord:" + nl +
-                "  RecordId: 0xF00A" + nl +
-                "  Version: 0x0002" + nl +
-                "  ShapeType: 0x0000" + nl +
-                "  ShapeId: 1024" + nl +
-                "  Flags: GROUP|PATRIARCH (0x00000005)" + nl;
+        String expected =
+            "org.apache.poi.ddf.EscherSpRecord (Sp):" + nl +
+            "  RecordId: 0xF00A" + nl +
+            "  Version: 0x0002" + nl +
+            "  Instance: 0x0000" + nl +
+            "  Options: 0x0002" + nl +
+            "  Record Size: 16" + nl +
+            "  ShapeType: 0x0000" + nl +
+            "  ShapeId: 0x00000400" + nl +
+            "  Flags: GROUP|PATRIARCH (0x00000005)";
         assertEquals( expected, createRecord().toString() );
     }
 

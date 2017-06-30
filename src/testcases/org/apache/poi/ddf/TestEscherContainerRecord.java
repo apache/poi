@@ -17,19 +17,24 @@
 
 package org.apache.poi.ddf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link EscherContainerRecord}
  */
-public final class TestEscherContainerRecord extends TestCase {
+public final class TestEscherContainerRecord {
     private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
+    @Test
 	public void testFillFields() {
 		EscherRecordFactory f = new DefaultEscherRecordFactory();
 		byte[] data = HexRead.readFromString("0F 02 11 F1 00 00 00 00");
@@ -49,6 +54,7 @@ public final class TestEscherContainerRecord extends TestCase {
 		assertEquals((short) 0xF222, c.getRecordId());
 	}
 
+    @Test
 	public void testSerialize() {
 		UnknownEscherRecord r = new UnknownEscherRecord();
 		r.setOptions((short) 0x123F);
@@ -69,72 +75,79 @@ public final class TestEscherContainerRecord extends TestCase {
 
 	}
 
+    @Test
 	public void testToString() {
 		EscherContainerRecord r = new EscherContainerRecord();
 		r.setRecordId(EscherContainerRecord.SP_CONTAINER);
 		r.setOptions((short) 0x000F);
 		String nl = System.getProperty("line.separator");
-		assertEquals("org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
-				"  isContainer: true" + nl +
-                "  version: 0x000F" + nl +
-                "  instance: 0x0000" + nl +
-				"  recordId: 0xF004" + nl +
-				"  numchildren: 0" + nl
-				, r.toString());
+        String expected =
+            "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
+            "  RecordId: 0xF004" + nl +
+            "  Version: 0x000F" + nl +
+            "  Instance: 0x0000" + nl +
+            "  Options: 0x000F" + nl +
+            "  Record Size: 8" + nl +
+            "  isContainer: true" + nl +
+            "  children: 0x00000000";
+		assertEquals(expected, r.toString());
 
 		EscherOptRecord r2 = new EscherOptRecord();
 		// don't try to shoot in foot, please -- vlsergey
 		// r2.setOptions((short) 0x9876);
 		r2.setRecordId(EscherOptRecord.RECORD_ID);
 
-		String expected;
 		r.addChildRecord(r2);
-		expected = "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
-				   "  isContainer: true" + nl +
-                   "  version: 0x000F" + nl +
-                   "  instance: 0x0000" + nl +
-				   "  recordId: 0xF004" + nl +
-				   "  numchildren: 1" + nl +
-				   "  children: " + nl +
-				   "   Child 0:" + nl +
-				   "    org.apache.poi.ddf.EscherOptRecord:" + nl +
-				   "      isContainer: false" + nl +
-                   "      version: 0x0003" + nl +
-                   "      instance: 0x0000" + nl +
-				   "      recordId: 0xF00B" + nl +
-				   "      numchildren: 0" + nl +
-				   "      properties:" + nl +
-				   "    " + nl;
-		assertEquals(expected, r.toString());
+		expected = 
+	        "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
+	        "  RecordId: 0xF004" + nl +
+	        "  Version: 0x000F" + nl +
+	        "  Instance: 0x0000" + nl +
+	        "  Options: 0x000F" + nl +
+	        "  Record Size: 16" + nl +
+	        "  isContainer: true" + nl +
+	        "  children: 0x00000001" + nl +
+	        "  Child 0:   org.apache.poi.ddf.EscherOptRecord (Opt):" + nl +
+	        "    RecordId: 0xF00B" + nl +
+	        "    Version: 0x0003" + nl +
+	        "    Instance: 0x0000" + nl +
+	        "    Options: 0x0003" + nl +
+	        "    Record Size: 8" + nl +
+	        "    isContainer: false" + nl +
+	        "    numchildren: 0x00000000" + nl +
+	        "    properties: 0x00000000";
+        assertEquals(expected, r.toString());
 
 		r.addChildRecord(r2);
-		expected = "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
-				"  isContainer: true" + nl +
-                "  version: 0x000F" + nl +
-                "  instance: 0x0000" + nl +
-				"  recordId: 0xF004" + nl +
-				"  numchildren: 2" + nl +
-				"  children: " + nl +
-				"   Child 0:" + nl +
-				"    org.apache.poi.ddf.EscherOptRecord:" + nl +
-				"      isContainer: false" + nl +
-                "      version: 0x0003" + nl +
-                "      instance: 0x0000" + nl +
-				"      recordId: 0xF00B" + nl +
-				"      numchildren: 0" + nl +
-				"      properties:" + nl +
-				"    " + nl +
-				"   Child 1:" + nl +
-				"    org.apache.poi.ddf.EscherOptRecord:" + nl +
-				"      isContainer: false" + nl +
-                "      version: 0x0003" + nl +
-                "      instance: 0x0000" + nl +
-				"      recordId: 0xF00B" + nl +
-				"      numchildren: 0" + nl +
-				"      properties:" + nl +
-				"    " + nl;
+		expected =
+	        "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
+	        "  RecordId: 0xF004" + nl +
+	        "  Version: 0x000F" + nl +
+	        "  Instance: 0x0000" + nl +
+	        "  Options: 0x000F" + nl +
+	        "  Record Size: 24" + nl +
+	        "  isContainer: true" + nl +
+	        "  children: 0x00000002" + nl +
+	        "  Child 0:   org.apache.poi.ddf.EscherOptRecord (Opt):" + nl +
+	        "    RecordId: 0xF00B" + nl +
+	        "    Version: 0x0003" + nl +
+	        "    Instance: 0x0000" + nl +
+	        "    Options: 0x0003" + nl +
+	        "    Record Size: 8" + nl +
+	        "    isContainer: false" + nl +
+	        "    numchildren: 0x00000000" + nl +
+	        "    properties: 0x00000000" + nl +
+	        "  Child 1:   org.apache.poi.ddf.EscherOptRecord (Opt):" + nl +
+	        "    RecordId: 0xF00B" + nl +
+	        "    Version: 0x0003" + nl +
+	        "    Instance: 0x0000" + nl +
+	        "    Options: 0x0003" + nl +
+	        "    Record Size: 8" + nl +
+	        "    isContainer: false" + nl +
+	        "    numchildren: 0x00000000" + nl +
+	        "    properties: 0x00000000";
 		assertEquals(expected, r.toString());
-	}
+    }
 
 	private static final class DummyEscherRecord extends EscherRecord {
 		public DummyEscherRecord() { }
@@ -146,8 +159,11 @@ public final class TestEscherContainerRecord extends TestCase {
         public int getRecordSize() { return 10; }
 		@Override
         public String getRecordName() { return ""; }
+        @Override
+		protected Object[][] getAttributeMap() { return null; }
 	}
 
+    @Test
 	public void testGetRecordSize() {
 		EscherContainerRecord r = new EscherContainerRecord();
 		r.addChildRecord(new DummyEscherRecord());
@@ -158,6 +174,7 @@ public final class TestEscherContainerRecord extends TestCase {
 	 * We were having problems with reading too much data on an UnknownEscherRecord,
 	 *  but hopefully we now read the correct size.
 	 */
+    @Test
 	public void testBug44857() throws Exception {
 		byte[] data = _samples.readFile("Container.dat");
 
@@ -169,6 +186,7 @@ public final class TestEscherContainerRecord extends TestCase {
 	/**
 	 * Ensure {@link EscherContainerRecord} doesn't spill its guts everywhere
 	 */
+    @Test
 	public void testChildren() {
 		EscherContainerRecord ecr = new EscherContainerRecord();
 		List<EscherRecord> children0 = ecr.getChildRecords();

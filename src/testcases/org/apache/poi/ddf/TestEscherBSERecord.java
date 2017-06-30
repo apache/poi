@@ -17,11 +17,18 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
+import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public final class TestEscherBSERecord extends TestCase {
+public final class TestEscherBSERecord {
+    @Test
     public void testFillFields() {
         String data = "01 00 00 00 24 00 00 00 05 05 01 02 03 04 " +
                 " 05 06 07 08 09 0A 0B 0C 0D 0E 0F 00 01 00 00 00 " +
@@ -43,17 +50,16 @@ public final class TestEscherBSERecord extends TestCase {
         assertEquals( 0, r.getRemainingData().length );
     }
 
-    public void testSerialize() {
+    @Test
+    public void testSerialize() throws IOException {
         EscherBSERecord r = createRecord();
-
+        String exp64 = "H4sIAAAAAAAAAGNkYP+gwsDAwMrKyMTMwsrGzsHJxc3Dy8fPwMgAAkxAzAzEICkAgs9OoSwAAAA=";
+        byte[] expected = RawDataUtil.decompress(exp64);
+        
         byte[] data = new byte[8 + 36];
         int bytesWritten = r.serialize( 0, data, new NullEscherSerializationListener() );
-        assertEquals( 44, bytesWritten );
-        assertEquals( "[01, 00, 00, 00, 24, 00, 00, 00, 05, 05, 01, 02, 03, 04, " +
-                "05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00, 01, 00, 00, 00, " +
-                "00, 00, 02, 00, 00, 00, 03, 00, 00, 00, 04, 05, 06, 07]",
-                HexDump.toHex(data));
-
+        assertEquals(data.length, bytesWritten);
+        assertArrayEquals(expected, data);
     }
 
     private EscherBSERecord createRecord() {
@@ -74,26 +80,31 @@ public final class TestEscherBSERecord extends TestCase {
 
     }
 
+    @Test
     public void testToString() {
+        String nl = System.getProperty("line.separator");
         EscherBSERecord record = createRecord();
-        String expected = "org.apache.poi.ddf.EscherBSERecord:" + '\n' +
-                "  RecordId: 0xF007" + '\n' +
-                "  Version: 0x0001" + '\n' +
-                "  Instance: 0x0000" + '\n' +
-                "  BlipTypeWin32: 5" + '\n' +
-                "  BlipTypeMacOS: 5" + '\n' +
-                "  SUID: [01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00]" + '\n' +
-                "  Tag: 1" + '\n' +
-                "  Size: 0" + '\n' +
-                "  Ref: 2" + '\n' +
-                "  Offset: 3" + '\n' +
-                "  Usage: 4" + '\n' +
-                "  Name: 5" + '\n' +
-                "  Unused2: 6" + '\n' +
-                "  Unused3: 7" + '\n' +
-                "  blipRecord: null" + '\n' +
-                "  Extra Data:" + '\n' +
-                ": 0";
+        String expected =
+            "org.apache.poi.ddf.EscherBSERecord (BSE):" + nl +
+            "  RecordId: 0xF007" + nl +
+            "  Version: 0x0001" + nl +
+            "  Instance: 0x0000" + nl +
+            "  Options: 0x0001" + nl +
+            "  Record Size: 44" + nl +
+            "  BlipTypeWin32: 0x05" + nl +
+            "  BlipTypeMacOS: 0x05" + nl +
+            "  SUID: " + nl +
+            "     00: 01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00" + nl +
+            "  Tag: 0x0001" + nl +
+            "  Size: 0x00000000" + nl +
+            "  Ref: 0x00000002" + nl +
+            "  Offset: 0x00000003" + nl +
+            "  Usage: 0x04" + nl +
+            "  Name: 0x05" + nl +
+            "  Unused2: 0x06" + nl +
+            "  Unused3: 0x07" + nl +
+            "  Extra Data: " + nl +
+            "     : 0";                
         String actual = record.toString();
         assertEquals( expected, actual );
     }
