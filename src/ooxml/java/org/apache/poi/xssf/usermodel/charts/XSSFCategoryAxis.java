@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -55,18 +56,23 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 		this.ctCatAx = ctCatAx;
 	}
 
+	@Override
 	public long getId() {
 		return ctCatAx.getAxId().getVal();
 	}
 
+	@Override
+	@Internal
 	public CTShapeProperties getLine() {
 	    return ctCatAx.getSpPr();
 	}
 	
+	@Override
 	protected CTAxPos getCTAxPos() {
 		return ctCatAx.getAxPos();
 	}
 
+	@Override
 	protected CTNumFmt getCTNumFmt() {
 		if (ctCatAx.isSetNumFmt()) {
 			return ctCatAx.getNumFmt();
@@ -74,10 +80,12 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 		return ctCatAx.addNewNumFmt();
 	}
 
+	@Override
 	protected CTScaling getCTScaling() {
 		return ctCatAx.getScaling();
 	}
 
+	@Override
 	protected CTCrosses getCTCrosses() {
 		return ctCatAx.getCrosses();
 	}
@@ -97,10 +105,13 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 		return ctCatAx.getMinorTickMark();
 	}
 
+	@Override
+	@Internal
 	public CTChartLines getMajorGridLines() {
 	    return ctCatAx.getMajorGridlines();
 	}
 	
+	@Override
 	public void crossAxis(ChartAxis axis) {
 		ctCatAx.getCrossAx().setVal(axis.getId());
 	}
@@ -125,6 +136,7 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 		setMinorTickMark(AxisTickMark.NONE);
 	}
 
+	@Override
     public boolean hasNumberFormat() {
         return ctCatAx.isSetNumFmt();
     }

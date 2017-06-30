@@ -23,10 +23,10 @@ import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
@@ -63,18 +63,23 @@ public class XSSFDateAxis extends XSSFChartAxis {
 		this.ctDateAx = ctDateAx;
 	}
 
+	@Override
 	public long getId() {
 		return ctDateAx.getAxId().getVal();
 	}
 
+	@Override
+	@Internal
     public CTShapeProperties getLine() {
         return ctDateAx.getSpPr();
     }
 
+	@Override
 	protected CTAxPos getCTAxPos() {
 		return ctDateAx.getAxPos();
 	}
 
+	@Override
 	protected CTNumFmt getCTNumFmt() {
 		if (ctDateAx.isSetNumFmt()) {
 			return ctDateAx.getNumFmt();
@@ -82,10 +87,12 @@ public class XSSFDateAxis extends XSSFChartAxis {
 		return ctDateAx.addNewNumFmt();
 	}
 
+	@Override
 	protected CTScaling getCTScaling() {
 		return ctDateAx.getScaling();
 	}
 
+	@Override
 	protected CTCrosses getCTCrosses() {
 		return ctDateAx.getCrosses();
 	}
@@ -105,10 +112,13 @@ public class XSSFDateAxis extends XSSFChartAxis {
 		return ctDateAx.getMinorTickMark();
 	}
 
+	@Override
+	@Internal
 	public CTChartLines getMajorGridLines() {
 	    return ctDateAx.getMajorGridlines();
 	}
 	
+	@Override
 	public void crossAxis(ChartAxis axis) {
 		ctDateAx.getCrossAx().setVal(axis.getId());
 	}
@@ -133,6 +143,7 @@ public class XSSFDateAxis extends XSSFChartAxis {
 		setMinorTickMark(AxisTickMark.NONE);
 	}
 
+	@Override
     public boolean hasNumberFormat() {
         return ctDateAx.isSetNumFmt();
     }
