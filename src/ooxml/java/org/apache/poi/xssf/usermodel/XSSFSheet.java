@@ -3980,20 +3980,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
         return new XSSFColor(pr.getTabColor(), getWorkbook().getStylesSource().getIndexedColors());
     }
-
-    /**
-     * Set background color of the sheet tab
-     *
-     * @param colorIndex  the indexed color to set, must be a constant from {@link org.apache.poi.ss.usermodel.IndexedColors}
-     * @deprecated 3.15-beta2. Removed in 3.17. Use {@link #setTabColor(XSSFColor)}.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public void setTabColor(int colorIndex) {
-        IndexedColors indexedColor = IndexedColors.fromInt(colorIndex);
-        XSSFColor color = new XSSFColor(indexedColor, getWorkbook().getStylesSource().getIndexedColors());
-        setTabColor(color);
-    }
     
     /**
      * Set background color of the sheet tab

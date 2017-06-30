@@ -112,8 +112,6 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	/**
 	 * Construct a new CTChartSpace bean.
 	 * By default, it's just an empty placeholder for chart objects.
-	 *
-	 * @return a new CTChartSpace bean
 	 */
 	private void createChart() {
 		chartSpace = CTChartSpace.Factory.newInstance();
