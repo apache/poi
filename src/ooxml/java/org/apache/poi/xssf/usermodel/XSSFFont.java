@@ -408,7 +408,7 @@ public class XSSFFont implements Font {
     /**
      * set the font height in points.
      *
-     * @link #setFontHeight
+     * @see #setFontHeight
      */
     public void setFontHeightInPoints(short height) {
         setFontHeight((double)height);
@@ -608,7 +608,7 @@ public class XSSFFont implements Font {
      * A font family is a set of fonts having common stroke width and serif characteristics.
      *
      * @param family font family
-     * @link #setFamily(int value)
+     * @see #setFamily(int value)
      */
     public void setFamily(FontFamily family) {
         setFamily(family.getValue());
