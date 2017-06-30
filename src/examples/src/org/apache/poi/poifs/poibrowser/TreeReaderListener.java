@@ -49,7 +49,7 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
  * but it could be any other string.</p>
  *
  * <p>The value of a tree node is a {@link DocumentDescriptor}. Unlike
- * a {@link org.apache.poi.poifs.filesystem.POIFSDocument} which may be as heavy
+ * a {@link org.apache.poi.poifs.filesystem.OPOIFSDocument} which may be as heavy
  * as many megabytes, an instance of {@link DocumentDescriptor} is a
  * light-weight object and contains only some meta-information about a
  * document.</p>

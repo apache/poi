@@ -28,7 +28,9 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -187,11 +189,11 @@ public final class TestCellStyle extends TestCase {
         cs.setBorderRight(BorderStyle.THIN);
         cs.setBorderTop(BorderStyle.THIN);
         cs.setFillForegroundColor(( short ) 0xA);
-        cs.setFillPattern(( short ) 1);
+        cs.setFillPattern(FillPatternType.DIAMONDS);
         fnt.setColor(( short ) 0xf);
         fnt.setItalic(true);
         cs2.setFillForegroundColor(( short ) 0x0);
-        cs2.setFillPattern(( short ) 1);
+        cs2.setFillPattern(FillPatternType.DIAMONDS);
         cs2.setFont(fnt);
         for (int rownum = 0; rownum < 100; rownum++) {
             r = s.createRow(rownum);
@@ -226,23 +228,23 @@ public final class TestCellStyle extends TestCase {
         assertEquals(5, wb.getNumberOfFonts());
         
         HSSFCellStyle orig = wb.createCellStyle();
-        orig.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+        orig.setAlignment(HorizontalAlignment.JUSTIFY);
         orig.setFont(fnt);
         orig.setDataFormat((short)18);
         
-        assertTrue(HSSFCellStyle.ALIGN_RIGHT == orig.getAlignment());
-        assertTrue(fnt == orig.getFont(wb));
-        assertTrue(18 == orig.getDataFormat());
+        assertEquals(HorizontalAlignment.JUSTIFY, orig.getAlignmentEnum());
+        assertEquals(fnt, orig.getFont(wb));
+        assertEquals(18, orig.getDataFormat());
         
         HSSFCellStyle clone = wb.createCellStyle();
-        assertFalse(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignmentEnum());
         assertFalse(fnt == clone.getFont(wb));
         assertFalse(18 == clone.getDataFormat());
         
         clone.cloneStyleFrom(orig);
-        assertTrue(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
-        assertTrue(fnt == clone.getFont(wb));
-        assertTrue(18 == clone.getDataFormat());
+        assertEquals(HorizontalAlignment.JUSTIFY, clone.getAlignmentEnum());
+        assertEquals(fnt, clone.getFont(wb));
+        assertEquals(18, clone.getDataFormat());
         assertEquals(5, wb.getNumberOfFonts());
     }
     
@@ -262,13 +264,13 @@ public final class TestCellStyle extends TestCase {
         fmt.getFormat("MadeUpTwo");
         
         HSSFCellStyle orig = wbOrig.createCellStyle();
-        orig.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+        orig.setAlignment(HorizontalAlignment.RIGHT);
         orig.setFont(fnt);
         orig.setDataFormat(fmt.getFormat("Test##"));
         
-        assertTrue(HSSFCellStyle.ALIGN_RIGHT == orig.getAlignment());
-        assertTrue(fnt == orig.getFont(wbOrig));
-        assertTrue(fmt.getFormat("Test##") == orig.getDataFormat());
+        assertEquals(HorizontalAlignment.RIGHT, orig.getAlignmentEnum());
+        assertEquals(fnt, orig.getFont(wbOrig));
+        assertEquals(fmt.getFormat("Test##"), orig.getDataFormat());
         
         // Now a style on another workbook
         HSSFWorkbook wbClone = new HSSFWorkbook();
@@ -278,13 +280,13 @@ public final class TestCellStyle extends TestCase {
         HSSFCellStyle clone = wbClone.createCellStyle();
         assertEquals(4, wbClone.getNumberOfFonts());
         
-        assertFalse(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
+        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignmentEnum());
         assertFalse("TestingFont" == clone.getFont(wbClone).getFontName());
         
         clone.cloneStyleFrom(orig);
-        assertTrue(HSSFCellStyle.ALIGN_RIGHT == clone.getAlignment());
-        assertTrue("TestingFont" == clone.getFont(wbClone).getFontName());
-        assertTrue(fmtClone.getFormat("Test##") == clone.getDataFormat());
+        assertEquals(HorizontalAlignment.RIGHT, clone.getAlignmentEnum());
+        assertEquals("TestingFont", clone.getFont(wbClone).getFontName());
+        assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
         assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
         assertEquals(5, wbClone.getNumberOfFonts());
     }

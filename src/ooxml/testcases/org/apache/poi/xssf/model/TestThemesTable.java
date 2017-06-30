@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.ThemesTable.ThemeElement;
@@ -130,7 +130,7 @@ public class TestThemesTable {
                 if (createFiles) {
                     XSSFCellStyle cs = row.getSheet().getWorkbook().createCellStyle();
                     cs.setFillForegroundColor(color);
-                    cs.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                    cs.setFillPattern(FillPatternType.SOLID_FOREGROUND);
                     row.createCell(1).setCellStyle(cs);
                 }
             }

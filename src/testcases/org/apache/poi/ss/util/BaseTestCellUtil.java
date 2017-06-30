@@ -232,17 +232,17 @@ public class BaseTestCellUtil {
         // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
         // HSSFCellStyle wraps an underlying style record, and the underlying
         // style record is the same between multiple getCellStyle() calls.
-        assertEquals(CellStyle.ALIGN_GENERAL, A1.getCellStyle().getAlignment());
-        assertEquals(CellStyle.ALIGN_GENERAL, B1.getCellStyle().getAlignment());
+        assertEquals(HorizontalAlignment.GENERAL, A1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
 
         // get/set alignment modifies the cell's style
-        CellUtil.setAlignment(A1, null, CellStyle.ALIGN_RIGHT);
-        assertEquals(CellStyle.ALIGN_RIGHT, A1.getCellStyle().getAlignment());
+        CellUtil.setAlignment(A1, HorizontalAlignment.RIGHT);
+        assertEquals(HorizontalAlignment.RIGHT, A1.getCellStyle().getAlignmentEnum());
 
         // get/set alignment doesn't affect the style of cells with
         // the same style prior to modifying the style
         assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
-        assertEquals(CellStyle.ALIGN_GENERAL, B1.getCellStyle().getAlignment());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
 
         wb.close();
     }
@@ -377,15 +377,13 @@ public class BaseTestCellUtil {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Cell A1 = wb1.createSheet().createRow(0).createCell(0);
         Map<String, Object> properties = new HashMap<String, Object>();
-        // FIXME: Use FillPatternType.BRICKS enum
-        properties.put(CellUtil.FILL_PATTERN, CellStyle.BRICKS);
+        properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
         properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
         properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
         
         CellUtil.setCellStyleProperties(A1, properties);
         CellStyle style = A1.getCellStyle();
-        // FIXME: Use FillPatternType.BRICKS enum
-        assertEquals("fill pattern", CellStyle.BRICKS, style.getFillPattern());
+        assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPatternEnum());
         assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
         assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
         wb1.close();
@@ -399,14 +397,12 @@ public class BaseTestCellUtil {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Cell A1 = wb1.createSheet().createRow(0).createCell(0);
         Map<String, Object> properties = new HashMap<String, Object>();
-        // FIXME: Use FillPatternType.BRICKS enum
         properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
         properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
         properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
         
         CellUtil.setCellStyleProperties(A1, properties);
         CellStyle style = A1.getCellStyle();
-        // FIXME: Use FillPatternType.BRICKS enum
         assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPatternEnum());
         assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
         assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));

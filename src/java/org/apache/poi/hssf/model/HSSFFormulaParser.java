@@ -54,19 +54,6 @@ public final class HSSFFormulaParser {
     }
 
     /**
-     * @param formula The formula to parse, excluding the leading equals sign
-     * @param workbook The parent workbook
-     * @param formulaType a constant from {@link FormulaType}
-     * @return the parsed formula tokens
-     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
-     * 
-     * @deprecated POI 3.15 beta 3. Use {@link #parse(String, HSSFWorkbook, FormulaType)} instead.
-     */
-    @Removal(version="3.17")
-    public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) throws FormulaParseException {
-        return parse(formula, workbook, FormulaType.forInt(formulaType));
-    }
-    /**
      * @param formula     The formula to parse, excluding the leading equals sign
      * @param workbook    The parent workbook
      * @param formulaType The type of formula
@@ -77,22 +64,6 @@ public final class HSSFFormulaParser {
         return parse(formula, workbook, formulaType, -1);
     }
 
-    /**
-     * @param formula     the formula to parse
-     * @param workbook    the parent workbook
-     * @param formulaType a constant from {@link FormulaType}
-     * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
-     * The sheet index is required to resolve sheet-level names. <code>-1</code> means that
-     * the scope of the name will be ignored and  the parser will match named ranges only by name
-     *
-     * @return the parsed formula tokens
-     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
-     * @deprecated POI 3.15 beta 3. Use {@link #parse(String, HSSFWorkbook, FormulaType, int)} instead.
-     */
-    @Removal(version="3.17")
-    public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType, int sheetIndex) throws FormulaParseException {
-        return parse(formula, workbook, FormulaType.forInt(formulaType), sheetIndex);
-    }
     /**
      * @param formula     The formula to parse
      * @param workbook    The parent workbook

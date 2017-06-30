@@ -94,7 +94,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 
-@SuppressWarnings("deprecation")
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public TestXSSFBugs() {
         super(XSSFITestDataProvider.instance);
@@ -1112,12 +1111,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         CellStyle blueStyle = wb.createCellStyle();
         blueStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-        blueStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        blueStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         assertEquals(1, blueStyle.getIndex());
 
         CellStyle pinkStyle = wb.createCellStyle();
         pinkStyle.setFillForegroundColor(IndexedColors.PINK.getIndex());
-        pinkStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        pinkStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         assertEquals(2, pinkStyle.getIndex());
 
         // Starts empty
@@ -2979,13 +2978,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFColor color = new XSSFColor(java.awt.Color.RED);
         XSSFCellStyle style = workbook.createCellStyle();
         style.setFillForegroundColor(color);
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cell.setCellStyle(style);
 
         // Everything is fine at this point, cell is red
 
         Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN); //or BorderStyle.THIN
+        properties.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         CellUtil.setCellStyleProperties(cell, properties);
 
         // Now the cell is all black
