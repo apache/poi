@@ -37,7 +37,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Various utility functions that make working with a cells and rows easier. The various methods
@@ -228,22 +227,6 @@ public final class CellUtil {
     /**
      * Take a cell, and apply a font to it
      *
-     * @param cell the cell to set the alignment for 
-     * @param workbook The workbook that is being worked with.
-     * @param font The Font that you want to set.
-     * @throws IllegalArgumentException if <tt>font</tt> and <tt>cell</tt> do not belong to the same workbook
-     *
-     * @deprecated 3.15-beta2. Use {@link #setFont(Cell, Font)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public static void setFont(Cell cell, Workbook workbook, Font font) {
-        setFont(cell, font);
-    }
-    
-    /**
-     * Take a cell, and apply a font to it
-     *
      * @param cell the cell to set the alignment for
      * @param font The Font that you want to set.
      * @throws IllegalArgumentException if <tt>font</tt> and <tt>cell</tt> do not belong to the same workbook
@@ -273,7 +256,7 @@ public final class CellUtil {
      * <p>This is necessary because Excel has an upper limit on the number of styles that it supports.</p>
      * 
      * <p>This function is more efficient than multiple calls to
-     * {@link #setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.Workbook, String, Object)}
+     * {@link #setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, String, Object)}
      * if adding multiple cell styles.</p>
      * 
      * <p>For performance reasons, if this is the only cell in a workbook that uses a cell style,
@@ -316,33 +299,6 @@ public final class CellUtil {
         }
 
         cell.setCellStyle(newStyle);
-    }
-
-    /**
-     * <p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s
-     * current style plus a single style property <code>propertyName</code> with value
-     * <code>propertyValue<code>.
-     * A new style is created if the workbook does not contain a matching style.</p>
-     * 
-     * <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
-     * same style.</p>
-     * 
-     * <p>If setting more than one cell style property on a cell, use
-     * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)},
-     * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
-     * 
-     * @param cell The cell that is to be changed.
-     * @param workbook The workbook that is being worked with.
-     * @param propertyName The name of the property that is to be changed.
-     * @param propertyValue The value of the property that is to be changed.
-     * 
-     * @deprecated 3.15-beta2. Use {@link #setCellStyleProperty(Cell, String, Object)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public static void setCellStyleProperty(Cell cell, Workbook workbook, String propertyName,
-            Object propertyValue) {
-        setCellStyleProperty(cell, propertyName, propertyValue);
     }
 
     /**
