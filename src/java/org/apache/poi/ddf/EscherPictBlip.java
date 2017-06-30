@@ -17,17 +17,16 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
+
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 public final class EscherPictBlip extends EscherBlipRecord {
     private static final POILogger log = POILogFactory.getLogger(EscherPictBlip.class);
@@ -260,39 +259,35 @@ public final class EscherPictBlip extends EscherBlipRecord {
         field_6_fCompression = compressed ? 0 : (byte)0xFE;
     }
 
-    // filtering is always 254 according to available docs, so no point giving it a setter method.
-
-    @Override
-    public String toString() {
-        String extraData = HexDump.toHex(getPicturedata(), 32);
-        return getClass().getName() + ":" + '\n' +
-                "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
-                "  UID: 0x" + HexDump.toHex( field_1_UID ) + '\n' +
-                "  Uncompressed Size: " + HexDump.toHex( field_2_cb ) + '\n' +
-                "  Bounds: " + getBounds() + '\n' +
-                "  Size in EMU: " + getSizeEMU() + '\n' +
-                "  Compressed Size: " + HexDump.toHex( field_5_cbSave ) + '\n' +
-                "  Compression: " + HexDump.toHex( field_6_fCompression ) + '\n' +
-                "  Filter: " + HexDump.toHex( field_7_fFilter ) + '\n' +
-                "  Extra Data:" + '\n' + extraData;
+    /**
+     * Gets the filter byte - this is usually 0xFE
+     *
+     * @return the filter byte
+     */
+    public byte getFilter() {
+        return field_7_fFilter;
+    }
+    
+    /**
+     * Sets the filter byte - this is usually 0xFE
+     *
+     * @param filter the filter byte
+     */
+    public void setFilter(byte filter) {
+        field_7_fFilter = filter;
     }
 
     @Override
-    public String toXml(String tab) {
-        String extraData = "";
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<UID>0x").append(HexDump.toHex( field_1_UID )).append("</UID>\n")
-                .append(tab).append("\t").append("<UncompressedSize>0x").append(HexDump.toHex( field_2_cb )).append("</UncompressedSize>\n")
-                .append(tab).append("\t").append("<Bounds>").append(getBounds()).append("</Bounds>\n")
-                .append(tab).append("\t").append("<SizeInEMU>").append(getSizeEMU()).append("</SizeInEMU>\n")
-                .append(tab).append("\t").append("<CompressedSize>0x").append(HexDump.toHex( field_5_cbSave )).append("</CompressedSize>\n")
-                .append(tab).append("\t").append("<Compression>0x").append(HexDump.toHex( field_6_fCompression )).append("</Compression>\n")
-                .append(tab).append("\t").append("<Filter>0x").append(HexDump.toHex( field_7_fFilter )).append("</Filter>\n")
-                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+    protected Object[][] getAttributeMap() {
+        return new Object[][]{
+            { "UID", field_1_UID },
+            { "Uncompressed Size", field_2_cb },
+            { "Bounds", getBounds().toString() },
+            { "Size in EMU", getSizeEMU().toString() },
+            { "Compressed Size", field_5_cbSave },
+            { "Compression", field_6_fCompression },
+            { "Filter", field_7_fFilter },
+            { "Extra Data", getPicturedata() },
+        };
     }
 }

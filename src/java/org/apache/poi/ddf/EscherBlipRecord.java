@@ -18,7 +18,6 @@
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
 
 public class EscherBlipRecord extends EscherRecord {
     public static final short  RECORD_ID_START    = (short) 0xF018;
@@ -100,22 +99,9 @@ public class EscherBlipRecord extends EscherRecord {
     }
 
     @Override
-    public String toString() {
-        String extraData = HexDump.toHex(field_pictureData, 32);
-        return getClass().getName() + ":" + '\n' +
-                "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
-                "  Extra Data:" + '\n' + extraData;
-    }
-
-    @Override
-    public String toXml(String tab) {
-        String extraData = HexDump.toHex(field_pictureData, 32);
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "Extra Data", getPicturedata() }
+        };
     }
 }

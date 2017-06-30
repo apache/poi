@@ -18,24 +18,21 @@
 package org.apache.poi.ddf;
 
 import static org.junit.Assert.assertArrayEquals;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.POIDataSamples;
+import org.junit.Test;
 
 /**
  * Test read/serialize of escher blip records
- *
- * @author Yegor Kozlov
- */
-public final class TestEscherBlipRecord extends TestCase {
+*/
+public final class TestEscherBlipRecord {
     private static final POIDataSamples _samples = POIDataSamples.getDDFInstance();
 
     //test reading/serializing of a PNG blip
+    @Test
     public void testReadPNG() {
         //provided in bug-44886
         byte[] data = _samples.readFile("Container.dat");
@@ -81,6 +78,7 @@ public final class TestEscherBlipRecord extends TestCase {
     }
 
     //test reading/serializing of a PICT metafile
+    @Test
     public void testReadPICT() {
         //provided in bug-44886
         byte[] data = _samples.readFile("Container.dat");
@@ -133,6 +131,7 @@ public final class TestEscherBlipRecord extends TestCase {
     }
 
     //integral test: check that the read-write-read round trip is consistent
+    @Test
     public void testContainer() {
         byte[] data = _samples.readFile("Container.dat");
 
@@ -143,21 +142,10 @@ public final class TestEscherBlipRecord extends TestCase {
         assertArrayEquals(data, ser);
     }
 
-    private byte[] read(File file) {
-        byte[] data = new byte[(int)file.length()];
-        try {
-            FileInputStream is = new FileInputStream(file);
-            is.read(data);
-            is.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return data;
-    }
-
     /**
      * The test data was created from pl031405.xls attached to Bugzilla #47143
      */
+    @Test
     public void test47143() {
         byte[] data = _samples.readFile("47143.dat");
         EscherBSERecord bse = new EscherBSERecord();

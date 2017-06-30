@@ -17,15 +17,15 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.LittleEndian;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.zip.InflaterInputStream;
+
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Used to dump the contents of escher records to a PrintStream.
@@ -185,12 +185,13 @@ public final class EscherDump {
                     recordName = "MsofbtUDefProp";
                     break;
                 default:
-                    if ( recordId >= (short) 0xF018 && recordId <= (short) 0xF117 )
+                    if ( recordId >= (short) 0xF018 && recordId <= (short) 0xF117 ) {
                         recordName = "MsofbtBLIP";
-                    else if ( ( options & (short) 0x000F ) == (short) 0x000F )
+                    } else if ( ( options & (short) 0x000F ) == (short) 0x000F ) {
                         recordName = "UNKNOWN container";
-                    else
+                    } else {
                         recordName = "UNKNOWN ID";
+                    }
             }
 
             StringBuilder stringBuf = new StringBuilder();
@@ -308,8 +309,9 @@ public final class EscherDump {
                     out.print( " " + propertyId  );
                     if ( ( n16 & (short) 0x8000 ) == 0 )
                     {
-                        if ( ( n16 & (short) 0x4000 ) != 0 )
+                        if ( ( n16 & (short) 0x4000 ) != 0 ) {
                             out.print( ", fBlipID" );
+                        }
                         out.print( ")  " );
 
                         out.print( HexDump.toHex( n32 ) );
@@ -386,8 +388,9 @@ public final class EscherDump {
 
                 byte[] buf = new byte[nDumpSize];
                 int read = in.read( buf );
-                while ( read != -1 && read < nDumpSize )
+                while ( read != -1 && read < nDumpSize ) {
                     read += in.read( buf, read, buf.length );
+                }
                 ByteArrayInputStream bin = new ByteArrayInputStream( buf );
 
                 InputStream in1 = new InflaterInputStream( bin );
@@ -402,10 +405,11 @@ public final class EscherDump {
             boolean isContainer = ( options & (short) 0x000F ) == (short) 0x000F;
             if ( isContainer && remainingBytes >= 0 )
             {	// Container
-                if ( recordBytesRemaining <= (int) remainingBytes )
+                if ( recordBytesRemaining <= (int) remainingBytes ) {
                     out.println( "            completed within" );
-                else
+                } else {
                     out.println( "            continued elsewhere" );
+                }
             }
             else if ( remainingBytes >= 0 )
             // -> 0x0000 ... 0x0FFF
@@ -417,9 +421,9 @@ public final class EscherDump {
                     HexDump.dump( in, out, 0, nDumpSize );
                     remainingBytes -= nDumpSize;
                 }
-            }
-            else
+            } else {
                 out.println( " >> OVERRUN <<" );
+            }
         }
 
     }

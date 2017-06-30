@@ -17,11 +17,10 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The BSE record is related closely to the <code>EscherBlipRecord</code> and stores
+ * The BSE record is related closely to the {@code EscherBlipRecord} and stores
  * extra information about the blip.  A blip record is actually stored inside
  * the BSE record even though the BSE record isn't actually a container record.
  *
@@ -55,6 +54,10 @@ public final class EscherBSERecord extends EscherRecord {
 
     private byte[] _remainingData = new byte[0];
 
+    public EscherBSERecord() {
+        setRecordId(RECORD_ID);
+    }
+    
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
@@ -103,8 +106,7 @@ public final class EscherBSERecord extends EscherRecord {
 
         data[offset + 8] = field_1_blipTypeWin32;
         data[offset + 9] = field_2_blipTypeMacOS;
-        for ( int i = 0; i < 16; i++ )
-            data[offset + 10 + i] = field_3_uid[i];
+        System.arraycopy(field_3_uid, 0, data, offset + 10, 16);
         LittleEndian.putShort( data, offset + 26, field_4_tag );
         LittleEndian.putInt( data, offset + 28, field_5_size );
         LittleEndian.putInt( data, offset + 32, field_6_ref );
@@ -114,8 +116,7 @@ public final class EscherBSERecord extends EscherRecord {
         data[offset + 42] = field_10_unused2;
         data[offset + 43] = field_11_unused3;
         int bytesWritten = 0;
-        if (field_12_blipRecord != null)
-        {
+        if (field_12_blipRecord != null) {
             bytesWritten = field_12_blipRecord.serialize( offset + 44, data, new NullEscherSerializationListener() );
         }
         System.arraycopy( _remainingData, 0, data, offset + 44 + bytesWritten, _remainingData.length );
@@ -350,52 +351,7 @@ public final class EscherBSERecord extends EscherRecord {
      * @param remainingData the remaining bytes
      */
     public void setRemainingData(byte[] remainingData) {
-        if (remainingData == null) {
-            _remainingData = new byte[0];
-        } else {
-            _remainingData = remainingData.clone();
-        }
-    }
-
-    @Override
-    public String toString() {
-        String extraData = _remainingData == null ? null : HexDump.toHex(_remainingData, 32);
-        return getClass().getName() + ":" + '\n' +
-                "  RecordId: 0x" + HexDump.toHex( RECORD_ID ) + '\n' +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
-                "  BlipTypeWin32: " + field_1_blipTypeWin32 + '\n' +
-                "  BlipTypeMacOS: " + field_2_blipTypeMacOS + '\n' +
-                "  SUID: " + (field_3_uid == null ? "" : HexDump.toHex(field_3_uid)) + '\n' +
-                "  Tag: " + field_4_tag + '\n' +
-                "  Size: " + field_5_size + '\n' +
-                "  Ref: " + field_6_ref + '\n' +
-                "  Offset: " + field_7_offset + '\n' +
-                "  Usage: " + field_8_usage + '\n' +
-                "  Name: " + field_9_name + '\n' +
-                "  Unused2: " + field_10_unused2 + '\n' +
-                "  Unused3: " + field_11_unused3 + '\n' +
-                "  blipRecord: " + field_12_blipRecord + '\n' +
-                "  Extra Data:" + '\n' + extraData;
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<BlipTypeWin32>").append(field_1_blipTypeWin32).append("</BlipTypeWin32>\n")
-                .append(tab).append("\t").append("<BlipTypeMacOS>").append(field_2_blipTypeMacOS).append("</BlipTypeMacOS>\n")
-                .append(tab).append("\t").append("<SUID>").append(field_3_uid == null ? "" : HexDump.toHex(field_3_uid)).append("</SUID>\n")
-                .append(tab).append("\t").append("<Tag>").append(field_4_tag).append("</Tag>\n")
-                .append(tab).append("\t").append("<Size>").append(field_5_size).append("</Size>\n")
-                .append(tab).append("\t").append("<Ref>").append(field_6_ref).append("</Ref>\n")
-                .append(tab).append("\t").append("<Offset>").append(field_7_offset).append("</Offset>\n")
-                .append(tab).append("\t").append("<Usage>").append(field_8_usage).append("</Usage>\n")
-                .append(tab).append("\t").append("<Name>").append(field_9_name).append("</Name>\n")
-                .append(tab).append("\t").append("<Unused2>").append(field_10_unused2).append("</Unused2>\n")
-                .append(tab).append("\t").append("<Unused3>").append(field_11_unused3).append("</Unused3>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+        _remainingData = (remainingData == null) ? new byte[0] : remainingData.clone();
     }
 
     /**
@@ -420,5 +376,24 @@ public final class EscherBSERecord extends EscherRecord {
             return " NotKnown";
         }
         return " Client";
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "BlipTypeWin32", field_1_blipTypeWin32 },
+            { "BlipTypeMacOS", field_2_blipTypeMacOS },
+            { "SUID", field_3_uid },
+            { "Tag", field_4_tag },
+            { "Size", field_5_size },
+            { "Ref", field_6_ref },
+            { "Offset", field_7_offset },
+            { "Usage", field_8_usage },
+            { "Name", field_9_name },
+            { "Unused2", field_10_unused2 },
+            { "Unused3", field_11_unused3 },
+            { "Blip Record", field_12_blipRecord },
+            { "Extra Data", _remainingData }
+        };
     }
 }

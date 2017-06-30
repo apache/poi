@@ -17,7 +17,6 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 public class EscherBitmapBlip extends EscherBlipRecord {
@@ -110,29 +109,10 @@ public class EscherBitmapBlip extends EscherBlipRecord {
     }
 
     @Override
-    public String toString() {
-        String nl = System.getProperty( "line.separator" );
-
-        String extraData = HexDump.dump(getPicturedata(), 0, 0);
-
-        return getClass().getName() + ":" + nl +
-            "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-            "  Version: 0x" + HexDump.toHex( getVersion() ) + nl +
-            "  Instance: 0x" + HexDump.toHex( getInstance() ) + nl +
-            "  UID: 0x" + HexDump.toHex( field_1_UID ) + nl +
-            "  Marker: 0x" + HexDump.toHex( field_2_marker ) + nl +
-            "  Extra Data:" + nl + extraData;
-    }
-
-    @Override
-    public String toXml(String tab) {
-        String extraData = HexDump.dump(getPicturedata(), 0, 0);
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-            .append(tab).append("\t").append("<UID>0x").append(HexDump.toHex(field_1_UID)).append("</UID>\n")
-            .append(tab).append("\t").append("<Marker>0x").append(HexDump.toHex(field_2_marker)).append("</Marker>\n")
-            .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "Marker", field_2_marker },
+            { "Extra Data", getPicturedata() }
+        };
     }
 }

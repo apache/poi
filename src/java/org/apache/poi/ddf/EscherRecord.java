@@ -48,11 +48,11 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Delegates to fillFields(byte[], int, EscherRecordFactory)
-     * 
+     *
      * @param data they bytes to serialize from
      * @param f the escher record factory
      * @return The number of bytes written.
-     * 
+     *
      * @see #fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)
      */
     protected int fillFields( byte[] data, EscherRecordFactory f )
@@ -100,7 +100,7 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Determine whether this is a container record by inspecting the option field.
-     * 
+     *
      * @return  true is this is a container field.
      */
     public boolean isContainerRecord() {
@@ -110,7 +110,7 @@ public abstract class EscherRecord implements Cloneable {
     /**
      * Note that <code>options</code> is an internal field.
      * Use {@link #setInstance(short)} ()} and {@link #setVersion(short)} ()} to set the actual fields.
-     * 
+     *
      * @return The options field for this record. All records have one.
      */
     @Internal
@@ -122,10 +122,10 @@ public abstract class EscherRecord implements Cloneable {
     /**
      * Set the options this this record. Container records should have the
      * last nibble set to 0xF.<p>
-     * 
+     *
      * Note that {@code options} is an internal field.
      * Use {@link #getInstance()} and {@link #getVersion()} to access actual fields.
-     * 
+     *
      * @param options the record options
      */
     @Internal
@@ -198,7 +198,7 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Sets the record id for this record.
-     * 
+     *
      * @param recordId the record id
      */
     public void setRecordId( short recordId ) {
@@ -226,9 +226,9 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Escher records may need to be clonable in the future.
-     * 
+     *
      * @return the cloned object
-     * 
+     *
      * @throws CloneNotSupportedException if the subclass hasn't implemented {@link Cloneable}
      */
     @Override
@@ -238,7 +238,7 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Returns the indexed child record.
-     * 
+     *
      * @param index the index of the child within the child records
      * @return the indexed child record
      */
@@ -255,20 +255,22 @@ public abstract class EscherRecord implements Cloneable {
      */
     public void display(PrintWriter w, int indent)
     {
-        for (int i = 0; i < indent * 4; i++) w.print(' ');
+        for (int i = 0; i < indent * 4; i++) {
+            w.print(' ');
+        }
         w.println(getRecordName());
     }
 
     /**
      * Subclasses should return the short name for this escher record.
-     * 
+     *
      * @return the short name for this escher record
      */
     public abstract String getRecordName();
 
     /**
      * Returns the instance part of the option record.
-     * 
+     *
      * @return The instance part of the record
      */
     public short getInstance()
@@ -278,7 +280,7 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Sets the instance part of record
-     * 
+     *
      * @param value instance part value
      */
     public void setInstance( short value )
@@ -288,7 +290,7 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Returns the version part of the option record.
-     * 
+     *
      * @return The version part of the option record
      */
     public short getVersion()
@@ -298,7 +300,7 @@ public abstract class EscherRecord implements Cloneable {
 
     /**
      * Sets the version part of record
-     * 
+     *
      * @param value version part value
      */
     public void setVersion( short value )
@@ -306,23 +308,196 @@ public abstract class EscherRecord implements Cloneable {
         _options = fVersion.setShortValue( _options, value );
     }
 
-    /**
-     * @param tab - each children must be a right of his parent
-     * @return xml representation of this record
-     */
-    public String toXml(String tab){
-        return tab + "<" + getClass().getSimpleName() + ">\n" +
-                tab + "\t" + "<RecordId>0x" + HexDump.toHex(_recordId) + "</RecordId>\n" +
-                tab + "\t" + "<Options>" + _options + "</Options>\n" +
-                tab + "</" + getClass().getSimpleName() + ">\n";
-    }
-    
-    protected String formatXmlRecordHeader(String className, String recordId, String version, String instance){
-        return "<" + className + " recordId=\"0x" + recordId + "\" version=\"0x" +
-                version + "\" instance=\"0x" + instance + "\" size=\"" + getRecordSize() + "\">\n";
-    }
-    
     public String toXml(){
         return toXml("");
+    }
+
+    /**
+     * @param tab - each children must be indented right relative to its parent
+     * @return xml representation of this record
+     */
+    public final String toXml(String tab){
+        final String nl = System.getProperty( "line.separator" );
+        String clsNm = getClass().getSimpleName();
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append(tab).append("<").append(clsNm)
+          .append(" recordId=\"0x").append(HexDump.toHex(getRecordId()))
+          .append("\" version=\"0x").append(HexDump.toHex(getVersion()))
+          .append("\" instance=\"0x").append(HexDump.toHex(getInstance()))
+          .append("\" options=\"0x").append(HexDump.toHex(getOptions()))
+          .append("\" recordSize=\"").append(getRecordSize());
+        Object[][] attrList = getAttributeMap();
+        if (attrList == null || attrList.length == 0) {
+            sb.append("\" />").append(nl);
+        } else {
+            sb.append("\">").append(nl);
+            String childTab = tab+"   ";
+            for (Object[] attrs : attrList) {
+                String tagName = capitalizeAndTrim((String)attrs[0]);
+                boolean hasValue = false;
+                boolean lastChildComplex = false;
+                for (int i=0; i<attrs.length; i+=2) {
+                    Object value = attrs[i+1];
+                    if (value == null) {
+                        // ignore null values
+                        continue;
+                    }
+                    if (!hasValue) {
+                        // only add tagname, when there was a value
+                        sb.append(childTab).append("<").append(tagName).append(">");
+                    }
+                    // add names for optional attributes
+                    String optName = capitalizeAndTrim((String)attrs[i+0]);
+                    if (i>0) {
+                        sb.append(nl).append(childTab).append("  <").append(optName).append(">");
+                    }
+                    lastChildComplex = appendValue(sb, value, true, childTab);
+                    if (i>0) {
+                        sb.append(nl).append(childTab).append("  </").append(optName).append(">");
+                    }
+                    hasValue = true;
+                }
+                if (hasValue) {
+                    if (lastChildComplex) {
+                        sb.append(nl).append(childTab);
+                    }
+                    sb.append("</").append(tagName).append(">").append(nl);
+                }
+            }
+            sb.append(tab).append("</").append(clsNm).append(">");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public final String toString() {
+        final String nl = System.getProperty( "line.separator" );
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append(getClass().getName()).append(" (").append(getRecordName()).append("):").append(nl)
+          .append("  RecordId: 0x").append(HexDump.toHex( getRecordId() )).append(nl)
+          .append("  Version: 0x").append(HexDump.toHex( getVersion() )).append(nl)
+          .append("  Instance: 0x").append(HexDump.toHex( getInstance() )).append(nl)
+          .append("  Options: 0x").append(HexDump.toHex( getOptions() )).append(nl)
+          .append("  Record Size: ").append( getRecordSize() );
+
+        Object[][] attrList = getAttributeMap();
+        if (attrList != null && attrList.length > 0) {
+            String childTab = "  ";
+            for (Object[] attrs : attrList) {
+                for (int i=0; i<attrs.length; i+=2) {
+                    Object value = attrs[i+1];
+                    if (value == null) {
+                        // ignore null values
+                        continue;
+                    }
+                    String name = (String)attrs[i+0];
+                    sb.append(nl).append(childTab).append(name).append(": ");
+                    appendValue(sb, value, false, childTab);
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+    
+    /**
+     * @return true, if value was a complex record, false otherwise
+     */
+    private static boolean appendValue(StringBuilder sb, Object value, boolean toXML, String childTab) {
+        final String nl = System.getProperty( "line.separator" );
+        boolean isComplex = false;
+        if (value instanceof String) {
+            if (toXML) {
+                escapeXML((String)value, sb);
+            } else {
+                sb.append((String)value);
+            }
+        } else if (value instanceof Byte) {
+            sb.append("0x").append(HexDump.toHex((Byte)value));
+        } else if (value instanceof Short) {
+            sb.append("0x").append(HexDump.toHex((Short)value));
+        } else if (value instanceof Integer) {
+            sb.append("0x").append(HexDump.toHex((Integer)value));
+        } else if (value instanceof byte[]) {
+            sb.append(nl).append(HexDump.toHex((byte[])value, 32).replaceAll("(?m)^",childTab+"   "));
+        } else if (value instanceof Boolean) {
+            sb.append(((Boolean)value).booleanValue());
+        } else if (value instanceof EscherRecord) {
+            EscherRecord er = (EscherRecord)value;
+            if (toXML) {
+                sb.append(nl).append(er.toXml(childTab+"    "));
+            } else {
+                sb.append(er.toString().replaceAll("(?m)^",childTab));
+            }
+            isComplex = true;
+        } else if (value instanceof EscherProperty) {
+            EscherProperty ep = (EscherProperty)value;
+            if (toXML) {
+                sb.append(nl).append(ep.toXml(childTab+"  "));
+            } else {
+                sb.append(ep.toString().replaceAll("(?m)^",childTab));
+            }
+            isComplex = true;
+        } else {
+            throw new IllegalArgumentException("unknown attribute type "+value.getClass().getSimpleName());
+        }
+        return isComplex;
+    }
+
+    /**
+     * For the purpose of providing toString() and toXml() a subclass can either override those methods
+     * or provide a Object[][] array in the form {@code { { "Attribute Name (Header)", value, "optional attribute", value }, ... } }.<p>
+     *
+     * Null values won't be printed.<p>
+     *
+     * The attributes record, version, instance, options must not be returned.
+     *
+     * @return the attribute map
+     * 
+     * @since POI 3.17-beta2
+     */
+    @Internal
+    protected abstract Object[][] getAttributeMap();
+
+    private static String capitalizeAndTrim(final String str) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+
+        StringBuilder sb = new StringBuilder(str.length());
+        boolean capitalizeNext = true;
+        for (char ch : str.toCharArray()) {
+            if (!Character.isLetterOrDigit(ch)) {
+                capitalizeNext = true;
+                continue;
+            }
+
+            if (capitalizeNext) {
+                if (!Character.isLetter(ch)) {
+                    sb.append('_');
+                } else {
+                    ch = Character.toTitleCase(ch);
+                }
+                capitalizeNext = false;
+            }
+            sb.append(ch);
+        }
+
+        return sb.toString();
+    }
+
+    private static void escapeXML(String s, StringBuilder out) {
+        if (s == null || s.isEmpty()) {
+            return;
+        }
+        for (char c : s.toCharArray()) {
+            if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+                out.append("&#");
+                out.append((int) c);
+                out.append(';');
+            } else {
+                out.append(c);
+            }
+        }
     }
 }

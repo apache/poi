@@ -17,11 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
-
-import java.util.*;
 
 /**
  * This record defines the drawing groups used for a particular sheet.
@@ -82,8 +85,9 @@ public final class EscherDggRecord extends EscherRecord {
             size += 8;
         }
         bytesRemaining         -= size;
-        if (bytesRemaining != 0)
+        if (bytesRemaining != 0) {
             throw new RecordFormatException("Expecting no remaining data but got " + bytesRemaining + " byte(s).");
+        }
         return 8 + size + bytesRemaining;
     }
 
@@ -123,42 +127,6 @@ public final class EscherDggRecord extends EscherRecord {
     @Override
     public String getRecordName() {
         return "Dgg";
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder field_5_string = new StringBuilder();
-        if(field_5_fileIdClusters != null) for (int i = 0; i < field_5_fileIdClusters.length; i++) {
-            field_5_string.append("  DrawingGroupId").append(i+1).append(": ");
-            field_5_string.append(field_5_fileIdClusters[i].field_1_drawingGroupId);
-            field_5_string.append('\n');
-            field_5_string.append("  NumShapeIdsUsed").append(i+1).append(": ");
-            field_5_string.append(field_5_fileIdClusters[i].field_2_numShapeIdsUsed);
-            field_5_string.append('\n');
-        }
-        return getClass().getName() + ":" + '\n' +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
-                "  ShapeIdMax: " + field_1_shapeIdMax + '\n' +
-                "  NumIdClusters: " + getNumIdClusters() + '\n' +
-                "  NumShapesSaved: " + field_3_numShapesSaved + '\n' +
-                "  DrawingsSaved: " + field_4_drawingsSaved + '\n' +
-                "" + field_5_string;
-
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<ShapeIdMax>").append(field_1_shapeIdMax).append("</ShapeIdMax>\n")
-                .append(tab).append("\t").append("<NumIdClusters>").append(getNumIdClusters()).append("</NumIdClusters>\n")
-                .append(tab).append("\t").append("<NumShapesSaved>").append(field_3_numShapesSaved).append("</NumShapesSaved>\n")
-                .append(tab).append("\t").append("<DrawingsSaved>").append(field_4_drawingsSaved).append("</DrawingsSaved>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
     }
 
     /**
@@ -280,7 +248,9 @@ public final class EscherDggRecord extends EscherRecord {
     public void addCluster( int dgId, int numShapedUsed, boolean sort ) {
         List<FileIdCluster> clusters = new ArrayList<FileIdCluster>(Arrays.asList(field_5_fileIdClusters));
         clusters.add(new FileIdCluster(dgId, numShapedUsed));
-        if(sort) Collections.sort(clusters, MY_COMP );
+        if(sort) {
+            Collections.sort(clusters, MY_COMP );
+        }
         maxDgId = Math.min(maxDgId, dgId);
         field_5_fileIdClusters = clusters.toArray( new FileIdCluster[clusters.size()] );
     }
@@ -297,4 +267,25 @@ public final class EscherDggRecord extends EscherRecord {
             return +1;
         }
     };
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        List<Object> fldIds = new ArrayList<Object>();
+        fldIds.add("FileId Clusters");
+        fldIds.add(field_5_fileIdClusters.length);
+        if(field_5_fileIdClusters != null) {
+            for (FileIdCluster fic : field_5_fileIdClusters) {
+                fldIds.add("Group"+fic.field_1_drawingGroupId);
+                fldIds.add(fic.field_2_numShapeIdsUsed);
+            }
+        }
+        
+        return new Object[][] {
+            { "ShapeIdMax", field_1_shapeIdMax },
+            { "NumIdClusters", getNumIdClusters() },
+            { "NumShapesSaved", field_3_numShapesSaved },
+            { "DrawingsSaved", field_4_drawingsSaved },
+            fldIds.toArray()
+        };
+    }
 }
