@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -58,18 +59,23 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 		this.ctValAx = ctValAx;
 	}
 
+	@Override
 	public long getId() {
 		return ctValAx.getAxId().getVal();
 	}
 
+	@Override
+	@Internal
     public CTShapeProperties getLine() {
         return ctValAx.getSpPr();
     }
 
+	@Override
 	public void setCrossBetween(AxisCrossBetween crossBetween) {
 		ctValAx.getCrossBetween().setVal(fromCrossBetween(crossBetween));
 	}
 
+	@Override
 	public AxisCrossBetween getCrossBetween() {
 		return toCrossBetween(ctValAx.getCrossBetween().getVal());
 	}
@@ -112,10 +118,13 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 		return ctValAx.getMinorTickMark();
 	}
 
+	@Override
+	@Internal
     public CTChartLines getMajorGridLines() {
         return ctValAx.getMajorGridlines();
     }
 
+    @Override
 	public void crossAxis(ChartAxis axis) {
 		ctValAx.getCrossAx().setVal(axis.getId());
 	}
@@ -160,6 +169,7 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 		}
 	}
 
+	@Override
     public boolean hasNumberFormat() {
         return ctValAx.isSetNumFmt();
     }
