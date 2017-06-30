@@ -60,13 +60,6 @@ final class OperandClassTransformer {
 
 	private final FormulaType _formulaType;
 
-	/**
-	 * @deprecated POI 3.15 beta 3. Use {@code OperandClassTransformer(FormulaType)} instead.
-	 */
-	@Removal(version="3.17")
-	public OperandClassTransformer(int formulaType) {
-		this(FormulaType.forInt(formulaType));
-	}
 	public OperandClassTransformer(FormulaType formulaType) {
 		_formulaType = formulaType;
 	}

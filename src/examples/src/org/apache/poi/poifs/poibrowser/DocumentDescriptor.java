@@ -22,7 +22,7 @@ import org.apache.poi.poifs.filesystem.*;
 
 /**
  * <p>Describes the most important (whatever that is) features of a
- * {@link POIFSDocument}.</p>
+ * {@link POIFSDocumentPath}.</p>
  */
 public class DocumentDescriptor
 {
