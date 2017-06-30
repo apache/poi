@@ -32,8 +32,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -242,17 +242,17 @@ public final class TestUnfixedBugs {
            sheet.addMergedRegion(range4);
            
            // set border
-           RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, range1, sheet, wb);
+           RegionUtil.setBorderBottom(BorderStyle.THIN, range1, sheet);
            
-           row2.getCell(0).getCellStyle().setBorderBottom(CellStyle.BORDER_THIN);
-           row2.getCell(1).getCellStyle().setBorderBottom(CellStyle.BORDER_THIN);
+           row2.getCell(0).getCellStyle().setBorderBottom(BorderStyle.THIN);
+           row2.getCell(1).getCellStyle().setBorderBottom(BorderStyle.THIN);
 
            Cell cell0 = CellUtil.getCell(row3, 0);
-           CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+           CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
            Cell cell1 = CellUtil.getCell(row3, 1);
-           CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+           CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
 
-           RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, range4, sheet, wb);
+           RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
     
            // write to file
            OutputStream stream = new FileOutputStream(new File("C:/temp/55752.xlsx"));

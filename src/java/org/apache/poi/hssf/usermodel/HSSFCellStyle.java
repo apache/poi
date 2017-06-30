@@ -33,7 +33,6 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -168,7 +167,7 @@ public final class HSSFCellStyle implements CellStyle {
 
     /**
      * set the font for this style
-     * @param font  a font object created or retreived from the HSSFWorkbook object
+     * @param font  a font object created or retrieved from the HSSFWorkbook object
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
@@ -265,26 +264,6 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * set the type of horizontal alignment for the cell
      * @param align - the type of alignment
-     * @see #ALIGN_GENERAL
-     * @see #ALIGN_LEFT
-     * @see #ALIGN_CENTER
-     * @see #ALIGN_RIGHT
-     * @see #ALIGN_FILL
-     * @see #ALIGN_JUSTIFY
-     * @see #ALIGN_CENTER_SELECTION
-     * @deprecated POI 3.15 beta 3. Use {@link #setAlignment(HorizontalAlignment)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public void setAlignment(short align)
-    {
-        _format.setIndentNotParentAlignment(true);
-        _format.setAlignment(align);
-    }
-    /**
-     * set the type of horizontal alignment for the cell
-     * @param align - the type of alignment
      */
     @Override
     public void setAlignment(HorizontalAlignment align)
@@ -296,13 +275,6 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * get the type of horizontal alignment for the cell
      * @return align - the type of alignment
-     * @see #ALIGN_GENERAL
-     * @see #ALIGN_LEFT
-     * @see #ALIGN_CENTER
-     * @see #ALIGN_RIGHT
-     * @see #ALIGN_FILL
-     * @see #ALIGN_JUSTIFY
-     * @see #ALIGN_CENTER_SELECTION
      * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
      */
     @Deprecated
@@ -345,23 +317,6 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * set the type of vertical alignment for the cell
      * @param align the type of alignment
-     * @see #VERTICAL_TOP
-     * @see #VERTICAL_CENTER
-     * @see #VERTICAL_BOTTOM
-     * @see #VERTICAL_JUSTIFY
-     * @see VerticalAlignment
-     * @deprecated POI 3.15 beta 3. Use {@link #setVerticalAlignment(VerticalAlignment)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public void setVerticalAlignment(short align)
-    {
-        _format.setVerticalAlignment(align);
-    }
-    /**
-     * set the type of vertical alignment for the cell
-     * @param align the type of alignment
      */
     @Override
     public void setVerticalAlignment(VerticalAlignment align)
@@ -372,10 +327,6 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * get the type of vertical alignment for the cell
      * @return align the type of alignment
-     * @see #VERTICAL_TOP
-     * @see #VERTICAL_CENTER
-     * @see #VERTICAL_BOTTOM
-     * @see #VERTICAL_JUSTIFY
      * @see VerticalAlignment
      * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
      */
@@ -465,33 +416,6 @@ public final class HSSFCellStyle implements CellStyle {
     {
         return _format.getIndent();
     }
-
-    /**
-     * set the type of border to use for the left border of the cell
-     * @param border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderLeft(BorderStyle)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public void setBorderLeft(short border) {
-        _format.setIndentNotParentBorder(true);
-        _format.setBorderLeft(border);
-    }
     
     /**
      * set the type of border to use for the left border of the cell
@@ -501,7 +425,8 @@ public final class HSSFCellStyle implements CellStyle {
     @Override
     public void setBorderLeft(BorderStyle border)
     {
-        setBorderLeft(border.getCode());
+        _format.setIndentNotParentBorder(true);
+        _format.setBorderLeft(border.getCode());
     }
 
     /**
@@ -525,34 +450,6 @@ public final class HSSFCellStyle implements CellStyle {
     {
         return BorderStyle.valueOf(_format.getBorderLeft());
     }
-
-    /**
-     * set the type of border to use for the right border of the cell
-     * @param border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderRight(BorderStyle)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public void setBorderRight(short border)
-    {
-        _format.setIndentNotParentBorder(true);
-        _format.setBorderRight(border);
-    }
     
     /**
      * set the type of border to use for the right border of the cell
@@ -562,7 +459,8 @@ public final class HSSFCellStyle implements CellStyle {
     @Override
     public void setBorderRight(BorderStyle border)
     {
-        setBorderRight(border.getCode());
+        _format.setIndentNotParentBorder(true);
+        _format.setBorderRight(border.getCode());
     }
 
     /**
@@ -586,34 +484,6 @@ public final class HSSFCellStyle implements CellStyle {
     {
         return BorderStyle.valueOf(_format.getBorderRight());
     }
-
-    /**
-     * set the type of border to use for the top border of the cell
-     * @param border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderTop(BorderStyle)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public void setBorderTop(short border)
-    {
-        _format.setIndentNotParentBorder(true);
-        _format.setBorderTop(border);
-    }
     
     /**
      * set the type of border to use for the top border of the cell
@@ -623,7 +493,8 @@ public final class HSSFCellStyle implements CellStyle {
     @Override
     public void setBorderTop(BorderStyle border)
     {
-        setBorderTop(border.getCode());
+        _format.setIndentNotParentBorder(true);
+        _format.setBorderTop(border.getCode());
     }
 
     /**
@@ -647,34 +518,6 @@ public final class HSSFCellStyle implements CellStyle {
     {
         return BorderStyle.valueOf(_format.getBorderTop());
     }
-
-    /**
-     * set the type of border to use for the bottom border of the cell
-     * @param border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderBottom(BorderStyle)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public void setBorderBottom(short border)
-    {
-        _format.setIndentNotParentBorder(true);
-        _format.setBorderBottom(border);
-    }
     
     /**
      * set the type of border to use for the bottom border of the cell
@@ -684,7 +527,8 @@ public final class HSSFCellStyle implements CellStyle {
     @Override
     public void setBorderBottom(BorderStyle border)
     {
-        setBorderBottom(border.getCode());
+        _format.setIndentNotParentBorder(true);
+        _format.setBorderBottom(border.getCode());
     }
 
     /**
@@ -791,39 +635,6 @@ public final class HSSFCellStyle implements CellStyle {
     public short getBottomBorderColor()
     {
         return _format.getBottomBorderPaletteIdx();
-    }
-
-    /**
-     * setting to one fills the cell with the foreground color... No idea about
-     * other values
-     *
-     * @see #NO_FILL
-     * @see #SOLID_FOREGROUND
-     * @see #FINE_DOTS
-     * @see #ALT_BARS
-     * @see #SPARSE_DOTS
-     * @see #THICK_HORZ_BANDS
-     * @see #THICK_VERT_BANDS
-     * @see #THICK_BACKWARD_DIAG
-     * @see #THICK_FORWARD_DIAG
-     * @see #BIG_SPOTS
-     * @see #BRICKS
-     * @see #THIN_HORZ_BANDS
-     * @see #THIN_VERT_BANDS
-     * @see #THIN_BACKWARD_DIAG
-     * @see #THIN_FORWARD_DIAG
-     * @see #SQUARES
-     * @see #DIAMONDS
-     *
-     * @param fp  fill pattern (set to 1 to fill w/foreground color)
-     * @deprecated POI 3.15 beta 3. Use {@link #setFillPattern(FillPatternType)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public void setFillPattern(short fp)
-    {
-        setFillPattern(FillPatternType.forInt(fp));
     }
     
     /**

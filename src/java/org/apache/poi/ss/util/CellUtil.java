@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -186,29 +185,6 @@ public final class CellUtil {
      */
     public static Cell createCell(Row row, int column, String value) {
         return createCell(row, column, value, null);
-    }
-
-    /**
-     * Take a cell, and align it.
-     * 
-     * This is superior to cell.getCellStyle().setAlignment(align) because
-     * this method will not modify the CellStyle object that may be referenced
-     * by multiple cells. Instead, this method will search for existing CellStyles
-     * that match the desired CellStyle, creating a new CellStyle with the desired
-     * style if no match exists.
-     *
-     * @param cell the cell to set the alignment for
-     * @param workbook The workbook that is being worked with.
-     * @param align the column alignment to use.
-     *
-     * @deprecated 3.15-beta2. Use {@link #setAlignment(Cell, HorizontalAlignment)} instead.
-     *
-     * @see CellStyle for alignment options
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public static void setAlignment(Cell cell, Workbook workbook, short align) {
-        setAlignment(cell, HorizontalAlignment.forInt(align));
     }
 
     /**
@@ -655,40 +631,6 @@ public final class CellUtil {
      * @param value property value
      */
     private static void put(Map<String, Object> properties, String name, Object value) {
-        properties.put(name, value);
-    }
-
-    /**
-     * Utility method that puts the named short value to the given map.
-     *
-     * @param properties map of properties (String -> Object)
-     * @param name property name
-     * @param value property value
-     */
-    private static void putShort(Map<String, Object> properties, String name, short value) {
-        properties.put(name, value);
-    }
-    
-    /**
-     * Utility method that puts the named BorderStyle, HorizontalAlignment, VerticalAlignment, etc
-     * value to the given map.
-     *
-     * @param properties map of properties (String -> Object)
-     * @param name property name
-     * @param value property value
-     */
-    private static void putEnum(Map<String, Object> properties, String name, Enum<?> value) {
-        properties.put(name, value);
-    }
-
-    /**
-     * Utility method that puts the named boolean value to the given map.
-     *
-     * @param properties map of properties (String -> Object)
-     * @param name property name
-     * @param value property value
-     */
-    private static void putBoolean(Map<String, Object> properties, String name, boolean value) {
         properties.put(name, value);
     }
 

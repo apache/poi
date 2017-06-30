@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.util.IOUtils;
 
 import junit.framework.TestCase;
@@ -118,11 +119,11 @@ public final class TestRowStyle extends TestCase {
         cs.setBorderRight(BorderStyle.THIN);
         cs.setBorderTop(BorderStyle.THIN);
         cs.setFillForegroundColor(( short ) 0xA);
-        cs.setFillPattern(( short ) 1);
+        cs.setFillPattern(FillPatternType.BRICKS);
         fnt.setColor(( short ) 0xf);
         fnt.setItalic(true);
         cs2.setFillForegroundColor(( short ) 0x0);
-        cs2.setFillPattern(( short ) 1);
+        cs2.setFillPattern(FillPatternType.BRICKS);
         cs2.setFont(fnt);
         for (int rownum = 0; rownum < 100; rownum++)
         {
@@ -159,7 +160,7 @@ public final class TestRowStyle extends TestCase {
             assertEquals("Right Border Style for row:",  BorderStyle.THIN, cs.getBorderRightEnum());
             assertEquals("Top Border Style for row:",    BorderStyle.THIN, cs.getBorderTopEnum());
             assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
-            assertEquals("FillPattern for row:",         0x1, cs.getFillPattern());
+            assertEquals("FillPattern for row:",         FillPatternType.BRICKS, cs.getFillPatternEnum());
             
             rownum++;
             if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/ 
@@ -168,7 +169,7 @@ public final class TestRowStyle extends TestCase {
             assertNotNull("Row is not null", r);
             cs2 = r.getRowStyle();
             assertEquals("FillForegroundColor for row: ", cs2.getFillForegroundColor(), (short) 0x0);
-            assertEquals("FillPattern for row: ", cs2.getFillPattern(), (short) 0x1);
+            assertEquals("FillPattern for row: ", cs2.getFillPatternEnum(), FillPatternType.BRICKS);
         }
         IOUtils.closeQuietly(wb2);
     }

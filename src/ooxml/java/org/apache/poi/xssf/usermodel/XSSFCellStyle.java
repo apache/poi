@@ -28,7 +28,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
@@ -221,13 +220,6 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of horizontal alignment for the cell
      *
      * @return short - the type of alignment
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_GENERAL
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_LEFT
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_RIGHT
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_FILL
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
      * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
      */
     @Override
@@ -503,25 +495,7 @@ public class XSSFCellStyle implements CellStyle {
 
     /**
      * Get the fill pattern
-     * @return fill pattern, default value is {@link org.apache.poi.ss.usermodel.CellStyle#NO_FILL}
-     *
-     * @see org.apache.poi.ss.usermodel.CellStyle#NO_FILL
-     * @see org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND
-     * @see org.apache.poi.ss.usermodel.CellStyle#FINE_DOTS
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALT_BARS
-     * @see org.apache.poi.ss.usermodel.CellStyle#SPARSE_DOTS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_HORZ_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_VERT_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_BACKWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_FORWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#BIG_SPOTS
-     * @see org.apache.poi.ss.usermodel.CellStyle#BRICKS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_HORZ_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_VERT_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_BACKWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_FORWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#SQUARES
-     * @see org.apache.poi.ss.usermodel.CellStyle#DIAMONDS
+     * @return fill pattern, default value is the code for {@link org.apache.poi.ss.usermodel.FillPatternType#NO_FILL}
      * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead.
      */
     @Override
@@ -742,11 +716,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the type of vertical alignment for the cell
      *
-     * @return align the type of alignment, default value is {@link org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM}
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_TOP
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_CENTER
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
+     * @return align the type of alignment, default value is {@link org.apache.poi.ss.usermodel.VerticalAlignment}
      * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
      */
     @Override
@@ -783,41 +753,10 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of horizontal alignment for the cell
      *
      * @param align - the type of alignment
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_GENERAL
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_LEFT
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_RIGHT
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_FILL
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
-     * @deprecated POI 3.15 beta 3. Use {@link #setAlignment(HorizontalAlignment)} instead.
-     */
-    @Removal(version="3.17")
-    @Override
-    public void setAlignment(short align) {
-        setAlignment(HorizontalAlignment.forInt(align));
-    }
-
-    /**
-     * Set the type of horizontal alignment for the cell
-     *
-     * @param align - the type of alignment
      */
     @Override
     public void setAlignment(HorizontalAlignment align) {
         getCellAlignment().setHorizontal(align);
-    }
-
-    /**
-     * Set the type of border to use for the bottom border of the cell
-     *
-     * @param border the type of border to use
-     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle)}
-     */
-    @Removal(version="3.17")
-    @Override
-    public void setBorderBottom(short border) {
-        setBorderBottom(BorderStyle.valueOf(border));
     }
 
     /**
@@ -840,17 +779,6 @@ public class XSSFCellStyle implements CellStyle {
         _cellXf.setApplyBorder(true);
     }
 
-    /**
-     * Set the type of border to use for the left border of the cell
-     * @param border the type of border to use
-     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle)}
-     */
-    @Removal(version="3.17")
-    @Override
-    public void setBorderLeft(short border) {
-        setBorderLeft(BorderStyle.valueOf(border));
-    }
-
      /**
      * Set the type of border to use for the left border of the cell
       *
@@ -870,18 +798,6 @@ public class XSSFCellStyle implements CellStyle {
         _cellXf.setApplyBorder(true);
     }
 
-    /**
-     * Set the type of border to use for the right border of the cell
-     *
-     * @param border the type of border to use
-     * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle)}
-     */
-    @Removal(version="3.17")
-    @Override
-    public void setBorderRight(short border) {
-        setBorderRight(BorderStyle.valueOf(border));
-    }
-
      /**
      * Set the type of border to use for the right border of the cell
       *
@@ -899,18 +815,6 @@ public class XSSFCellStyle implements CellStyle {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
-    }
-
-    /**
-     * Set the type of border to use for the top border of the cell
-     *
-     * @param border the type of border to use
-     * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle)}
-     */
-    @Removal(version="3.17")
-    @Override
-    public void setBorderTop(short border) {
-        setBorderTop(BorderStyle.valueOf(border));
     }
 
     /**
@@ -1123,39 +1027,6 @@ public class XSSFCellStyle implements CellStyle {
     }
 
     /**
-     * This element is used to specify cell fill information for pattern and solid color cell fills.
-     * For solid cell fills (no pattern),  foreground color is used.
-     * For cell fills with patterns specified, then the cell fill color is specified by the background color.
-     *
-     * @see org.apache.poi.ss.usermodel.CellStyle#NO_FILL
-     * @see org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND
-     * @see org.apache.poi.ss.usermodel.CellStyle#FINE_DOTS
-     * @see org.apache.poi.ss.usermodel.CellStyle#ALT_BARS
-     * @see org.apache.poi.ss.usermodel.CellStyle#SPARSE_DOTS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_HORZ_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_VERT_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_BACKWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#THICK_FORWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#BIG_SPOTS
-     * @see org.apache.poi.ss.usermodel.CellStyle#BRICKS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_HORZ_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_VERT_BANDS
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_BACKWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#THIN_FORWARD_DIAG
-     * @see org.apache.poi.ss.usermodel.CellStyle#SQUARES
-     * @see org.apache.poi.ss.usermodel.CellStyle#DIAMONDS
-     * @see #setFillBackgroundColor(short)
-     * @see #setFillForegroundColor(short)
-     * @param fp  fill pattern (set to {@link org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND} to fill w/foreground color)
-     * @deprecated POI 3.15. Use {@link #setFillPattern(FillPatternType)} instead.
-     */
-    @Removal(version="3.17")
-    @Override
-    public void setFillPattern(short fp) {
-        setFillPattern(FillPatternType.forInt(fp));
-    }
-
-    /**
      * This element is used to specify cell fill information for pattern and solid color cell fills. For solid cell fills (no pattern),
      * foreground color is used is used. For cell fills with patterns specified, then the cell fill color is specified by the background color element.
      *
@@ -1360,23 +1231,6 @@ public class XSSFCellStyle implements CellStyle {
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
-    }
-
-    /**
-     * Set the type of vertical alignment for the cell
-     *
-     * @param align - align the type of alignment
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_TOP
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_CENTER
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM
-     * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
-     * @see org.apache.poi.ss.usermodel.VerticalAlignment
-     * @deprecated POI 3.15 beta 3. Use {@link #setVerticalAlignment(VerticalAlignment)} instead.
-     */
-    @Removal(version="3.17")
-    @Override
-    public void setVerticalAlignment(short align) {
-        setVerticalAlignment(VerticalAlignment.forInt(align));
     }
 
     /**

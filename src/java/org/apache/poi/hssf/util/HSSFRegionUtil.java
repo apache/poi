@@ -19,8 +19,8 @@ package org.apache.poi.hssf.util;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 
 /**
  * Various utility functions that make working with a region of cells easier.
@@ -42,7 +42,7 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setBorderLeft(int border, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setBorderLeft(border, region, sheet, workbook);
+		RegionUtil.setBorderLeft(border, region, sheet);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setLeftBorderColor(int color, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setLeftBorderColor(color, region, sheet, workbook);
+		RegionUtil.setLeftBorderColor(color, region, sheet);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setBorderRight(int border, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setBorderRight(border, region, sheet, workbook);
+		RegionUtil.setBorderRight(border, region, sheet);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setRightBorderColor(int color, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setRightBorderColor(color, region, sheet, workbook);
+		RegionUtil.setRightBorderColor(color, region, sheet);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setBorderBottom(int border, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setBorderBottom(border, region, sheet, workbook);
+		RegionUtil.setBorderBottom(border, region, sheet);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setBottomBorderColor(int color, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setBottomBorderColor(color, region, sheet, workbook);
+		RegionUtil.setBottomBorderColor(color, region, sheet);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setBorderTop(int border, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setBorderTop(border, region, sheet, workbook);
+		RegionUtil.setBorderTop(border, region, sheet);
 	}
 
 	/**
@@ -133,6 +133,6 @@ public final class HSSFRegionUtil {
 	 */
 	public static void setTopBorderColor(int color, CellRangeAddress region, HSSFSheet sheet,
 			HSSFWorkbook workbook) {
-		RegionUtil.setTopBorderColor(color, region, sheet, workbook);
+		RegionUtil.setTopBorderColor(color, region, sheet);
 	}
 }
