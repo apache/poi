@@ -26,6 +26,7 @@ import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -69,13 +70,11 @@ public class CellNumberFormatter extends CellFormatter {
     // ("#" for integer values, and "#.#" for floating-point values) is
     // different from the 'General' format for numbers ("#" for integer
     // values and "#.#########" for floating-point values).
-    private static final CellFormatter SIMPLE_NUMBER = new GeneralNumberFormatter();
-    private static final CellFormatter SIMPLE_INT = new CellNumberFormatter("#");
-    private static final CellFormatter SIMPLE_FLOAT = new CellNumberFormatter("#.#");
+    private final CellFormatter SIMPLE_NUMBER = new GeneralNumberFormatter(locale);
 
     private static class GeneralNumberFormatter extends CellFormatter {
-        private GeneralNumberFormatter() {
-            super("General");
+        private GeneralNumberFormatter(Locale locale) {
+            super(locale, "General");
         }
 
         public void formatValue(StringBuffer toAppendTo, Object value) {
@@ -86,7 +85,8 @@ public class CellNumberFormatter extends CellFormatter {
             CellFormatter cf;
             if (value instanceof Number) {
                 Number num = (Number) value;
-                cf = (num.doubleValue() % 1.0 == 0) ? SIMPLE_INT : SIMPLE_FLOAT;
+                cf = (num.doubleValue() % 1.0 == 0) ? new CellNumberFormatter(locale, "#") :
+                    new CellNumberFormatter(locale, "#.#");
             } else {
                 cf = CellTextFormatter.SIMPLE_TEXT;
             }
@@ -124,7 +124,17 @@ public class CellNumberFormatter extends CellFormatter {
      * @param format The format to parse.
      */
     public CellNumberFormatter(String format) {
-        super(format);
+        this(LocaleUtil.getUserLocale(), format);
+    }
+
+    /**
+     * Creates a new cell number formatter.
+     *
+     * @param locale The locale to use.
+     * @param format The format to parse.
+     */
+    public CellNumberFormatter(Locale locale, String format) {
+        super(locale, format);
 
         CellNumberPartHandler ph = new CellNumberPartHandler();
         StringBuffer descBuf = CellFormatPart.parseFormat(format, CellFormatType.NUMBER, ph);
@@ -267,7 +277,7 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     private DecimalFormatSymbols getDecimalFormatSymbols() {
-        return DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
+        return DecimalFormatSymbols.getInstance(locale);
     }
     
     private static void placeZeros(StringBuffer sb, List<Special> specials) {
@@ -447,9 +457,9 @@ public class CellNumberFormatter extends CellFormatter {
             writeFraction(value, null, fractional, output, mods);
         } else {
             StringBuffer result = new StringBuffer();
-            Formatter f = new Formatter(result, LocaleUtil.getUserLocale());
+            Formatter f = new Formatter(result, locale);
             try {
-                f.format(LocaleUtil.getUserLocale(), printfFmt, value);
+                f.format(locale, printfFmt, value);
             } finally {
                 f.close();
             }
@@ -725,9 +735,9 @@ public class CellNumberFormatter extends CellFormatter {
     private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
-        Formatter formatter = new Formatter(sb, LocaleUtil.getUserLocale());
+        Formatter formatter = new Formatter(sb, locale);
         try {
-            formatter.format(LocaleUtil.getUserLocale(), fmt, num);
+            formatter.format(locale, fmt, num);
         } finally {
             formatter.close();
         }

@@ -138,6 +138,16 @@ public class CellDateFormatter extends CellFormatter {
      * @param format The format.
      */
     public CellDateFormatter(String format) {
+        this(LocaleUtil.getUserLocale(), format);
+    }
+
+    /**
+     * Creates a new date formatter with the given specification.
+     *
+     * @param locale The locale.
+     * @param format The format.
+     */
+    public CellDateFormatter(Locale locale, String format) {
         super(format);
         DatePartHandler partHandler = new DatePartHandler();
         StringBuffer descBuf = CellFormatPart.parseFormat(format,
@@ -146,7 +156,7 @@ public class CellDateFormatter extends CellFormatter {
         // tweak the format pattern to pass tests on JDK 1.7,
         // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
         String ptrn = descBuf.toString().replaceAll("((y)(?!y))(?<!yy)", "yy");
-        dateFmt = new SimpleDateFormat(ptrn, LocaleUtil.getUserLocale());
+        dateFmt = new SimpleDateFormat(ptrn, locale);
         dateFmt.setTimeZone(LocaleUtil.getUserTimeZone());
     }
 
@@ -182,7 +192,7 @@ public class CellDateFormatter extends CellFormatter {
                     Formatter formatter = new Formatter(toAppendTo, Locale.ROOT);
                     try {
                         long msecs = dateObj.getTime() % 1000;
-                        formatter.format(LocaleUtil.getUserLocale(), sFmt, msecs / 1000.0);
+                        formatter.format(locale, sFmt, msecs / 1000.0);
                     } finally {
                         formatter.close();
                     }

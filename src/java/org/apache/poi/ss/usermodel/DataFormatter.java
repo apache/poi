@@ -311,72 +311,62 @@ public class DataFormatter implements Observer {
 
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
         localeChangedObservable.checkForLocaleChange();
-        Locale originalUserLocale = LocaleUtil.getUserLocale();
-        if (originalUserLocale != locale) {
-            LocaleUtil.setUserLocale(locale);
-        }
 
-        try {
-            // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
-            // That however would require other code to be re factored.
-            // String[] formatBits = formatStrIn.split(";");
-            // int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2; 
-            // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
+        // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
+        // That however would require other code to be re factored.
+        // String[] formatBits = formatStrIn.split(";");
+        // int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2; 
+        // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
-            String formatStr = formatStrIn;
-            
-            // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
-            //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
-            //  of different formats for different ranges, just +ve/-ve, we need to 
-            //  handle these ourselves in a special way.
-            // For now, if we detect 2+ parts, we call out to CellFormat to handle it
-            // TODO Going forward, we should really merge the logic between the two classes
-            if (formatStr.contains(";") && 
-                    (formatStr.indexOf(';') != formatStr.lastIndexOf(';')
-                     || rangeConditionalPattern.matcher(formatStr).matches()
-                    ) ) {
-                try {
-                    // Ask CellFormat to get a formatter for it
-                    CellFormat cfmt = CellFormat.getInstance(formatStr);
-                    // CellFormat requires callers to identify date vs not, so do so
-                    Object cellValueO = Double.valueOf(cellValue);
-                    if (DateUtil.isADateFormat(formatIndex, formatStr) && 
-                            // don't try to handle Date value 0, let a 3 or 4-part format take care of it 
-                            ((Double)cellValueO).doubleValue() != 0.0) {
-                        cellValueO = DateUtil.getJavaDate(cellValue);
-                    }
-                    // Wrap and return (non-cachable - CellFormat does that)
-                    return new CellFormatResultWrapper( cfmt.apply(cellValueO) );
-                } catch (Exception e) {
-                    logger.log(POILogger.WARN, "Formatting failed for format " + formatStr + ", falling back", e);
+        String formatStr = formatStrIn;
+        
+        // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
+        //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
+        //  of different formats for different ranges, just +ve/-ve, we need to 
+        //  handle these ourselves in a special way.
+        // For now, if we detect 2+ parts, we call out to CellFormat to handle it
+        // TODO Going forward, we should really merge the logic between the two classes
+        if (formatStr.contains(";") && 
+                (formatStr.indexOf(';') != formatStr.lastIndexOf(';')
+                 || rangeConditionalPattern.matcher(formatStr).matches()
+                ) ) {
+            try {
+                // Ask CellFormat to get a formatter for it
+                CellFormat cfmt = CellFormat.getInstance(locale, formatStr);
+                // CellFormat requires callers to identify date vs not, so do so
+                Object cellValueO = Double.valueOf(cellValue);
+                if (DateUtil.isADateFormat(formatIndex, formatStr) && 
+                        // don't try to handle Date value 0, let a 3 or 4-part format take care of it 
+                        ((Double)cellValueO).doubleValue() != 0.0) {
+                    cellValueO = DateUtil.getJavaDate(cellValue);
                 }
-            }
-            
-           // Excel's # with value 0 will output empty where Java will output 0. This hack removes the # from the format.
-           if (emulateCSV && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
-               formatStr = formatStr.replaceAll("#", "");
-           }
-           
-            // See if we already have it cached
-            Format format = formats.get(formatStr);
-            if (format != null) {
-                return format;
-            }
-            
-            // Is it one of the special built in types, General or @?
-            if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
-                return generalNumberFormat;
-            }
-            
-            // Build a formatter, and cache it
-            format = createFormat(cellValue, formatIndex, formatStr);
-            formats.put(formatStr, format);
-            return format;
-        } finally {
-            if (originalUserLocale != locale) {
-                LocaleUtil.setUserLocale(originalUserLocale);
+                // Wrap and return (non-cachable - CellFormat does that)
+                return new CellFormatResultWrapper( cfmt.apply(cellValueO) );
+            } catch (Exception e) {
+                logger.log(POILogger.WARN, "Formatting failed for format " + formatStr + ", falling back", e);
             }
         }
+        
+       // Excel's # with value 0 will output empty where Java will output 0. This hack removes the # from the format.
+       if (emulateCSV && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
+           formatStr = formatStr.replaceAll("#", "");
+       }
+       
+        // See if we already have it cached
+        Format format = formats.get(formatStr);
+        if (format != null) {
+            return format;
+        }
+        
+        // Is it one of the special built in types, General or @?
+        if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
+            return generalNumberFormat;
+        }
+        
+        // Build a formatter, and cache it
+        format = createFormat(cellValue, formatIndex, formatStr);
+        formats.put(formatStr, format);
+        return format;
     }
 
     /**

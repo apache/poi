@@ -16,7 +16,10 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
+import java.util.Locale;
 import java.util.logging.Logger;
+
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * This is the abstract supertype for the various cell formatters.
@@ -26,6 +29,7 @@ import java.util.logging.Logger;
 public abstract class CellFormatter {
     /** The original specified format. */
     protected final String format;
+    protected final Locale locale;
 
     /**
      * Creates a new formatter object, storing the format in {@link #format}.
@@ -33,6 +37,17 @@ public abstract class CellFormatter {
      * @param format The format.
      */
     public CellFormatter(String format) {
+        this(LocaleUtil.getUserLocale(), format);
+    }
+
+    /**
+     * Creates a new formatter object, storing the format in {@link #format}.
+     *
+     * @param locale The locale.
+     * @param format The format.
+     */
+    public CellFormatter(Locale locale, String format) {
+        this.locale = locale;
         this.format = format;
     }
 

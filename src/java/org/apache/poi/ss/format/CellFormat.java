@@ -20,6 +20,7 @@ package org.apache.poi.ss.format;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
@@ -35,6 +36,7 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateFormatConverter;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -90,6 +92,7 @@ import org.apache.poi.ss.util.DateFormatConverter;
  *  native character numbers, as documented at https://help.libreoffice.org/Common/Number_Format_Codes
  */
 public class CellFormat {
+    private final Locale locale;
     private final String format;
     private final CellFormatPart posNumFmt;
     private final CellFormatPart zeroNumFmt;
@@ -100,9 +103,6 @@ public class CellFormat {
     private static final Pattern ONE_PART = Pattern.compile(
             CellFormatPart.FORMAT_PAT.pattern() + "(;|$)",
             Pattern.COMMENTS | Pattern.CASE_INSENSITIVE);
-
-    private static final CellFormatPart DEFAULT_TEXT_FORMAT =
-            new CellFormatPart("@");
 
     /*
      * Cells that cannot be formatted, e.g. cells that have a date or time
@@ -121,18 +121,23 @@ public class CellFormat {
     /**
      * Format a value as it would be were no format specified.  This is also
      * used when the format specified is <tt>General</tt>.
+     * @deprecated use {@link #getInstance(Locale, "General")} instead
      */
-    public static final CellFormat GENERAL_FORMAT = new CellFormat("General") {
-        @Override
-        public CellFormatResult apply(Object value) {
-            String text = (new CellGeneralFormatter()).format(value);
-            return new CellFormatResult(true, text, null);
-        }
-    };
+    public static final CellFormat GENERAL_FORMAT = createGeneralFormat(LocaleUtil.getUserLocale());
+            
+    private static CellFormat createGeneralFormat(Locale locale) {
+        return new CellFormat(locale, "General") {
+            @Override
+            public CellFormatResult apply(Object value) {
+                String text = (new CellGeneralFormatter()).format(value);
+                return new CellFormatResult(true, text, null);
+            }
+        };
+    }
 
     /** Maps a format string to its parsed version for efficiencies sake. */
-    private static final Map<String, CellFormat> formatCache =
-            new WeakHashMap<String, CellFormat>();
+    private static final Map<Locale, Map<String, CellFormat>> formatCache =
+            new WeakHashMap<Locale, Map<String, CellFormat>>();
 
     /**
      * Returns a {@link CellFormat} that applies the given format.  Two calls
@@ -143,13 +148,31 @@ public class CellFormat {
      * @return A {@link CellFormat} that applies the given format.
      */
     public static CellFormat getInstance(String format) {
-        CellFormat fmt = formatCache.get(format);
+        return getInstance(LocaleUtil.getUserLocale(), format);
+    }
+
+    /**
+     * Returns a {@link CellFormat} that applies the given format.  Two calls
+     * with the same format may or may not return the same object.
+     *
+     * @param locale The locale.
+     * @param format The format.
+     *
+     * @return A {@link CellFormat} that applies the given format.
+     */
+    public static synchronized CellFormat getInstance(Locale locale, String format) {
+        Map<String, CellFormat> formatMap = formatCache.get(locale);
+        if (formatMap == null) {
+            formatMap = new WeakHashMap<String, CellFormat>();
+            formatCache.put(locale, formatMap);
+        }
+        CellFormat fmt = formatMap.get(format);
         if (fmt == null) {
             if (format.equals("General") || format.equals("@"))
-                fmt = GENERAL_FORMAT;
+                fmt = createGeneralFormat(locale);
             else
-                fmt = new CellFormat(format);
-            formatCache.put(format, fmt);
+                fmt = new CellFormat(locale, format);
+            formatMap.put(format, fmt);
         }
         return fmt;
     }
@@ -159,8 +182,10 @@ public class CellFormat {
      *
      * @param format The format.
      */
-    private CellFormat(String format) {
+    private CellFormat(Locale locale, String format) {
+        this.locale = locale;
         this.format = format;
+        CellFormatPart defaultTextFormat = new CellFormatPart(locale, "@");
         Matcher m = ONE_PART.matcher(format);
         List<CellFormatPart> parts = new ArrayList<CellFormatPart>();
 
@@ -172,7 +197,7 @@ public class CellFormat {
                 if (valueDesc.endsWith(";"))
                     valueDesc = valueDesc.substring(0, valueDesc.length() - 1);
 
-                parts.add(new CellFormatPart(valueDesc));
+                parts.add(new CellFormatPart(locale, valueDesc));
             } catch (RuntimeException e) {
                 CellFormatter.logger.log(Level.WARNING,
                         "Invalid format: " + CellFormatter.quote(m.group()), e);
@@ -187,19 +212,19 @@ public class CellFormat {
             posNumFmt = parts.get(0);
             negNumFmt = null;
             zeroNumFmt = null;
-            textFmt = DEFAULT_TEXT_FORMAT;
+            textFmt = defaultTextFormat;
             break;
         case 2:
             posNumFmt = parts.get(0);
             negNumFmt = parts.get(1);
             zeroNumFmt = null;
-            textFmt = DEFAULT_TEXT_FORMAT;
+            textFmt = defaultTextFormat;
             break;
         case 3:
             posNumFmt = parts.get(0);
             negNumFmt = parts.get(1);
             zeroNumFmt = parts.get(2);
-            textFmt = DEFAULT_TEXT_FORMAT;
+            textFmt = defaultTextFormat;
             break;
         case 4:
         default:
@@ -384,7 +409,7 @@ public class CellFormat {
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
                     return posNumFmt;
                 } else {
-                    return new CellFormatPart("General");
+                    return new CellFormatPart(locale, "General");
                 }
             } else if (formatPartCount == 2) {
                 if ((!posNumFmt.hasCondition() && val >= 0)
