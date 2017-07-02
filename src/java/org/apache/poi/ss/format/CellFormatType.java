@@ -35,7 +35,7 @@ public enum CellFormatType {
             return new CellGeneralFormatter();
         }
         CellFormatter formatter(Locale locale, String pattern) {
-            return new CellGeneralFormatter();
+            return new CellGeneralFormatter(locale);
         }
     },
     /** A numeric format. */
