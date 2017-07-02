@@ -125,11 +125,11 @@ public class CellFormat {
      */
     public static final CellFormat GENERAL_FORMAT = createGeneralFormat(LocaleUtil.getUserLocale());
             
-    private static CellFormat createGeneralFormat(Locale locale) {
+    private static CellFormat createGeneralFormat(final Locale locale) {
         return new CellFormat(locale, "General") {
             @Override
             public CellFormatResult apply(Object value) {
-                String text = (new CellGeneralFormatter()).format(value);
+                String text = (new CellGeneralFormatter(locale)).format(value);
                 return new CellFormatResult(true, text, null);
             }
         };
