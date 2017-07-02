@@ -57,6 +57,7 @@ final class SXSSFEvaluationCell implements EvaluationCell {
      * For forwards compatibility, do not hard-code cell type literals in your code.
      *
      * @return cell type
+     * @deprecated 3.17. Will return a {@link CellType} enum in the future.
      */
     @Override
     public int getCellType() {
@@ -101,6 +102,7 @@ final class SXSSFEvaluationCell implements EvaluationCell {
      * For forwards compatibility, do not hard-code cell type literals in your code.
      *
      * @return cell type of cached formula result
+     * @deprecated 3.17. Will return a {@link CellType} enum in the future.
      */
     @Override
     public int getCachedFormulaResultType() {
