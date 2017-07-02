@@ -854,9 +854,22 @@ public class TestDataFormatter {
         assertEquals("51:01", dfUS.formatRawCellContents(42605.368761574071, -1, "mm:ss"));
     }
 
+    @Test
+    public void testDateFormattingWithLocales() {
+        // 2017-12-01 09:54:33 which is 42747.412892397523 as double
+        DataFormatter dfDE = new DataFormatter(Locale.GERMANY);
+        DataFormatter dfZH = new DataFormatter(Locale.PRC);
+        DataFormatter dfIE = new DataFormatter(new Locale("GA", "IE"));
+        double date = 42747.412892397523;
+        String format = "dd MMMM yyyy HH:mm:ss";
+        assertEquals("12 Januar 2017 09:54:33", dfDE.formatRawCellContents(date, -1, format));
+        assertEquals("12 \u4E00\u6708 2017 09:54:33", dfZH.formatRawCellContents(date, -1, format));
+        assertEquals("12 Ean\u00E1ir 2017 09:54:33", dfIE.formatRawCellContents(date, -1, format));
+    }
+
     /**
      * bug 60422 : simple number formats seem ok
-≈     */
+     */
     @Test
     public void testSimpleNumericFormatsInGermanyLocale() {
         List<Locale> locales = Arrays.asList(new Locale[] {Locale.GERMANY, Locale.US, Locale.ROOT} );
