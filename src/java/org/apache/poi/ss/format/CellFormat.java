@@ -121,7 +121,7 @@ public class CellFormat {
     /**
      * Format a value as it would be were no format specified.  This is also
      * used when the format specified is <tt>General</tt>.
-     * @deprecated use {@link #getInstance(Locale, "General")} instead
+     * @deprecated use {@link #getInstance(Locale, String)} instead
      */
     public static final CellFormat GENERAL_FORMAT = createGeneralFormat(LocaleUtil.getUserLocale());
             
