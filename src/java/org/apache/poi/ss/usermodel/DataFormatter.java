@@ -292,10 +292,6 @@ public class DataFormatter implements Observer {
      * @param cell The cell to retrieve a Format for
      * @return A Format for the format String
      */
-    private Format getFormat(Cell cell) {
-        return getFormat(cell, null);
-    }
-    
     private Format getFormat(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
         if (cell == null) return null;
         
@@ -315,12 +311,12 @@ public class DataFormatter implements Observer {
 
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
         localeChangedObservable.checkForLocaleChange();
-        
-//      // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
-//      // That however would require other code to be re factored.
-//      String[] formatBits = formatStrIn.split(";");
-//      int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2; 
-//      String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
+
+        // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
+        // That however would require other code to be re factored.
+        // String[] formatBits = formatStrIn.split(";");
+        // int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2; 
+        // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
         String formatStr = formatStrIn;
         
@@ -336,7 +332,7 @@ public class DataFormatter implements Observer {
                 ) ) {
             try {
                 // Ask CellFormat to get a formatter for it
-                CellFormat cfmt = CellFormat.getInstance(formatStr);
+                CellFormat cfmt = CellFormat.getInstance(locale, formatStr);
                 // CellFormat requires callers to identify date vs not, so do so
                 Object cellValueO = Double.valueOf(cellValue);
                 if (DateUtil.isADateFormat(formatIndex, formatStr) && 
@@ -607,7 +603,7 @@ public class DataFormatter implements Observer {
         try {
             return new ExcelStyleDateFormatter(formatStr, dateSymbols);
         } catch(IllegalArgumentException iae) {
-
+            logger.log(POILogger.DEBUG, "Formatting failed for format " + formatStr + ", falling back", iae);
             // the pattern could not be parsed correctly,
             // so fall back to the default number format
             return getDefaultFormat(cellValue);
@@ -718,7 +714,7 @@ public class DataFormatter implements Observer {
             setExcelStyleRoundingMode(df);
             return df;
         } catch(IllegalArgumentException iae) {
-
+            logger.log(POILogger.DEBUG, "Formatting failed for format " + formatStr + ", falling back", iae);
             // the pattern could not be parsed correctly,
             // so fall back to the default number format
             return getDefaultFormat(cellValue);
