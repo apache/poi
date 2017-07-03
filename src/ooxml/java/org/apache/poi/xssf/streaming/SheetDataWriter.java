@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.streaming;
 
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,7 +49,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * this class only writes the "sheetData" document fragment
  * so that it was renamed to "SheetDataWriter"
  */
-public class SheetDataWriter {
+public class SheetDataWriter implements Closeable {
     private static final POILogger logger = POILogFactory.getLogger(SheetDataWriter.class);
     
     private final File _fd;
@@ -123,12 +124,8 @@ public class SheetDataWriter {
      * This method <em>must</em> be invoked before calling {@link #getWorksheetXMLInputStream()}
      */
     public void close() throws IOException {
-        flush();
-        _out.close();
-    }
-    
-    protected void flush() throws IOException {
         _out.flush();
+        _out.close();
     }
 
     protected File getTempFile() {

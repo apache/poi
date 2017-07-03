@@ -58,7 +58,7 @@ public final class TestSheetDataWriter {
         SheetDataWriter writer = new SheetDataWriter();
         try {
             writer.outputQuotedString(unicodeSurrogates);
-            writer.flush();
+            writer.close();
             File file = writer.getTempFile();
             FileInputStream is = new FileInputStream(file);
             String text;
@@ -69,7 +69,7 @@ public final class TestSheetDataWriter {
             }
             assertEquals(unicodeSurrogates, text);
         } finally {
-            writer.close();
+            IOUtils.closeQuietly(writer);
         }
     }
 }
