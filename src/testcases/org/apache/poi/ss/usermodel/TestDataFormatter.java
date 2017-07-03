@@ -497,28 +497,21 @@ public class TestDataFormatter {
         assertEquals("120", dfUS.formatRawCellContents(120*second, -1, "[ss]"));
         assertEquals("121", dfUS.formatRawCellContents(121*second, -1, "[ss]"));
 
-        boolean jdk_1_5 = System.getProperty("java.vm.version").startsWith("1.5");
-        if(!jdk_1_5) {
-            // YK: the tests below were written under JDK 1.6 and assume that
-            // the rounding mode in the underlying decimal formatters is HALF_UP
-            // It is not so JDK 1.5 where the default rounding mode is HALV_EVEN and cannot be changed.
+        assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[h]:mm:ss"));
+        assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[h]:mm:ss"));
+        assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[h]:mm:ss"));
+        assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[h]:mm:ss"));
 
-            assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[h]:mm:ss"));
-            assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[h]:mm:ss"));
-            assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[h]:mm:ss"));
-            assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[h]:mm:ss"));
+        assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[hh]:mm:ss"));
+        assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[hh]:mm:ss"));
+        assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[hh]:mm:ss"));
+        assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[hh]:mm:ss"));
 
-            assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[hh]:mm:ss"));
-            assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[hh]:mm:ss"));
-            assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[hh]:mm:ss"));
-            assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[hh]:mm:ss"));
-
-            assertEquals("57:07.2", dfUS.formatRawCellContents(.123, -1, "mm:ss.0;@"));
-            assertEquals("57:41.8", dfUS.formatRawCellContents(.1234, -1, "mm:ss.0;@"));
-            assertEquals("57:41.76", dfUS.formatRawCellContents(.1234, -1, "mm:ss.00;@"));
-            assertEquals("57:41.760", dfUS.formatRawCellContents(.1234, -1, "mm:ss.000;@"));
-            assertEquals("24:00.0", dfUS.formatRawCellContents(123456.6, -1, "mm:ss.0"));
-        }
+        assertEquals("57:07.2", dfUS.formatRawCellContents(.123, -1, "mm:ss.0;@"));
+        assertEquals("57:41.8", dfUS.formatRawCellContents(.1234, -1, "mm:ss.0;@"));
+        assertEquals("57:41.76", dfUS.formatRawCellContents(.1234, -1, "mm:ss.00;@"));
+        assertEquals("57:41.760", dfUS.formatRawCellContents(.1234, -1, "mm:ss.000;@"));
+        assertEquals("24:00.0", dfUS.formatRawCellContents(123456.6, -1, "mm:ss.0"));
     }
 
     @Test
