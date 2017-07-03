@@ -811,7 +811,6 @@ public class TestDataFormatter {
         CellReference ref = new CellReference("D47");
 
         Cell cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
-        //noinspection deprecation
         assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("G9:K9 I7:I12", cell.getCellFormula());
 
@@ -888,18 +887,12 @@ public class TestDataFormatter {
 ≈    */
     @Test
     public void testBug60422() {
-        //when this is set to Locale.Germany, the result is 
-        LocaleUtil.setUserLocale(Locale.ROOT);
-        try {
-            char euro = '\u20AC';
-            DataFormatter df = new DataFormatter(Locale.GERMANY);
-            String formatString = String.format(Locale.ROOT,
-                    "_-* #,##0.00\\ \"%s\"_-;\\-* #,##0.00\\ \"%s\"_-;_-* \"-\"??\\ \"%s\"_-;_-@_-",
-                    euro, euro, euro);
-            //this should be 4,33
-            assertEquals("4.33 " + euro, df.formatRawCellContents(4.33, 178, formatString));
-        } finally {
-            LocaleUtil.resetUserLocale();
-        }
+        char euro = '\u20AC';
+        DataFormatter df = new DataFormatter(Locale.GERMANY);
+        String formatString = String.format(Locale.ROOT,
+                "_-* #,##0.00\\ \"%s\"_-;\\-* #,##0.00\\ \"%s\"_-;_-* \"-\"??\\ \"%s\"_-;_-@_-",
+                euro, euro, euro);
+        assertEquals("4,33 " + euro, df.formatRawCellContents(4.33, 178, formatString));
+        assertEquals("1.234,33 " + euro, df.formatRawCellContents(1234.33, 178, formatString));
     }
 }

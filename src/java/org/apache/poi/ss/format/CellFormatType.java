@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.format;
 
+import java.util.Locale;
+
 /**
  * The different kinds of formats that the formatter understands.
  *
@@ -26,11 +28,14 @@ public enum CellFormatType {
 
     /** The general (default) format; also used for <tt>"General"</tt>. */
     GENERAL {
+        boolean isSpecial(char ch) {
+            return false;
+        }
         CellFormatter formatter(String pattern) {
             return new CellGeneralFormatter();
         }
-        boolean isSpecial(char ch) {
-            return false;
+        CellFormatter formatter(Locale locale, String pattern) {
+            return new CellGeneralFormatter(locale);
         }
     },
     /** A numeric format. */
@@ -41,6 +46,9 @@ public enum CellFormatType {
         CellFormatter formatter(String pattern) {
             return new CellNumberFormatter(pattern);
         }
+        CellFormatter formatter(Locale locale, String pattern) {
+            return new CellNumberFormatter(locale, pattern);
+        }
     },
     /** A date format. */
     DATE {
@@ -49,6 +57,9 @@ public enum CellFormatType {
         }
         CellFormatter formatter(String pattern) {
             return new CellDateFormatter(pattern);
+        }
+        CellFormatter formatter(Locale locale, String pattern) {
+            return new CellDateFormatter(locale, pattern);
         }
     },
     /** An elapsed time format. */
@@ -59,6 +70,9 @@ public enum CellFormatType {
         CellFormatter formatter(String pattern) {
             return new CellElapsedFormatter(pattern);
         }
+        CellFormatter formatter(Locale locale, String pattern) {
+            return new CellElapsedFormatter(pattern);
+        }
     },
     /** A text format. */
     TEXT {
@@ -66,6 +80,9 @@ public enum CellFormatType {
             return false;
         }
         CellFormatter formatter(String pattern) {
+            return new CellTextFormatter(pattern);
+        }
+        CellFormatter formatter(Locale locale, String pattern) {
             return new CellTextFormatter(pattern);
         }
     };
@@ -88,4 +105,15 @@ public enum CellFormatType {
      * @return A new formatter of the appropriate type, for the given pattern.
      */
     abstract CellFormatter formatter(String pattern);
+
+    /**
+     * Returns a new formatter of the appropriate type, for the given pattern.
+     * The pattern must be appropriate for the type.
+     *
+     * @param locale The locale to use.
+     * @param pattern The pattern to use.
+     *
+     * @return A new formatter of the appropriate type, for the given pattern.
+     */
+    abstract CellFormatter formatter(Locale locale, String pattern);
 }
