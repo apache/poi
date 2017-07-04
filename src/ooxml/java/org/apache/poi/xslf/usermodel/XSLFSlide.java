@@ -117,9 +117,9 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-	public CTSlide getXmlObject() {
-		return _slide;
-	}
+    public CTSlide getXmlObject() {
+        return _slide;
+    }
 
     @Override
     protected String getRootElementName(){
@@ -131,7 +131,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-	public XSLFSlideLayout getMasterSheet(){
+    public XSLFSlideLayout getMasterSheet(){
         return getSlideLayout();
     }
 
@@ -170,7 +170,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-	public XSLFNotes getNotes() {
+    public XSLFNotes getNotes() {
        if(_notes == null) {
           for (POIXMLDocumentPart p : getRelations()) {
              if (p instanceof XSLFNotes){
@@ -194,7 +194,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFTheme getTheme(){
-    	return getSlideLayout().getSlideMaster().getTheme();
+        return getSlideLayout().getSlideMaster().getTheme();
     }
 
     /**
@@ -226,12 +226,12 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
 
     @Override
-	public boolean getFollowMasterObjects() {
+    public boolean getFollowMasterObjects() {
         return getFollowMasterGraphics();
     }
 
     @Override
-	public void setFollowMasterObjects(boolean follow) {
+    public void setFollowMasterObjects(boolean follow) {
         setFollowMasterGraphics(follow);
     }
 
@@ -271,7 +271,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-	public boolean getFollowMasterBackground() {
+    public boolean getFollowMasterBackground() {
         return false;
     }
 
@@ -283,12 +283,12 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-	public boolean getFollowMasterColourScheme() {
+    public boolean getFollowMasterColourScheme() {
         return false;
     }
 
     @Override
-	@NotImplemented
+    @NotImplemented
     public void setFollowMasterColourScheme(boolean follow) {
         // not implemented ... only for OLE objects in the specs
         throw new UnsupportedOperationException();

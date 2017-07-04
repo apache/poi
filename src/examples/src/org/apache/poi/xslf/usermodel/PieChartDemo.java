@@ -28,15 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.xslf.usermodel.charts.XSLFCategoryDataSource;
-import org.apache.poi.xslf.usermodel.charts.XSLFChartSeries;
-import org.apache.poi.xslf.usermodel.charts.XSLFNumericalDataSource;
-import org.apache.poi.xslf.usermodel.charts.XSLFPieChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFCategoryDataSource;
+import org.apache.poi.xddf.usermodel.XDDFChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.XDDFPieChartSeries;
 
 /**
  * Build a pie chart from a template pptx
- *
- * @author Yegor Kozlov
  */
 public class PieChartDemo {
     private static void usage(){
@@ -72,8 +70,8 @@ public class PieChartDemo {
             if(chart == null) throw new IllegalStateException("chart not found in the template");
 
             // Series Text
-            List<XSLFChartSeries> series = chart.getChartSeries();
-            XSLFPieChartSeries pie = (XSLFPieChartSeries) series.get(0);
+            List<XDDFChartSeries> series = chart.getChartSeries();
+            XDDFPieChartSeries pie = (XDDFPieChartSeries) series.get(0);
             pie.setTitle(chartTitle);
             pie.setExplosion(25);
 
@@ -91,8 +89,8 @@ public class PieChartDemo {
                 values.add(Double.valueOf(vals[1]));
             }
 
-            pie.setCategoryData(new XSLFCategoryDataSource(categories));
-            pie.setFirstValues(new XSLFNumericalDataSource<Double>(values));
+            pie.setCategoryData(new XDDFCategoryDataSource(categories));
+            pie.setFirstValues(new XDDFNumericalDataSource<Double>(values));
             pie.fillChartData();
 
             // save the result

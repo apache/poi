@@ -15,30 +15,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STTickMark;
 
-public enum AxisTickLabelPosition {
-	HIGH(STTickLblPos.HIGH), LOW(STTickLblPos.LOW), NEXT_TO(STTickLblPos.NEXT_TO), NONE(STTickLblPos.NONE);
+public enum AxisTickMark {
+	CROSS(STTickMark.CROSS), IN(STTickMark.IN), NONE(STTickMark.NONE), OUT(STTickMark.OUT);
 
-	final STTickLblPos.Enum underlying;
+	final STTickMark.Enum underlying;
 
-	AxisTickLabelPosition(STTickLblPos.Enum position) {
-		this.underlying = position;
+	AxisTickMark(STTickMark.Enum tickMark) {
+		this.underlying = tickMark;
 	}
 
-	private final static HashMap<STTickLblPos.Enum, AxisTickLabelPosition> reverse = new HashMap<STTickLblPos.Enum, AxisTickLabelPosition>();
+	private final static HashMap<STTickMark.Enum, AxisTickMark> reverse = new HashMap<STTickMark.Enum, AxisTickMark>();
 	static {
-		reverse.put(STTickLblPos.HIGH, AxisTickLabelPosition.HIGH);
-		reverse.put(STTickLblPos.LOW, AxisTickLabelPosition.LOW);
-		reverse.put(STTickLblPos.NEXT_TO, AxisTickLabelPosition.NEXT_TO);
-		reverse.put(STTickLblPos.NONE, AxisTickLabelPosition.NONE);
+		reverse.put(STTickMark.CROSS, AxisTickMark.CROSS);
+		reverse.put(STTickMark.IN, AxisTickMark.IN);
+		reverse.put(STTickMark.NONE, AxisTickMark.NONE);
+		reverse.put(STTickMark.OUT, AxisTickMark.OUT);
 	}
 
-	static AxisTickLabelPosition valueOf(STTickLblPos.Enum position) {
-		return reverse.get(position);
+	static AxisTickMark valueOf(STTickMark.Enum tickMark) {
+		return reverse.get(tickMark);
 	}
 }

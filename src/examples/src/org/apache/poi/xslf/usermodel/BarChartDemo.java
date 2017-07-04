@@ -28,18 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.xslf.usermodel.charts.AxisOrientation;
-import org.apache.poi.xslf.usermodel.charts.AxisPosition;
-import org.apache.poi.xslf.usermodel.charts.BarDirection;
-import org.apache.poi.xslf.usermodel.charts.XSLFBarChartSeries;
-import org.apache.poi.xslf.usermodel.charts.XSLFCategoryDataSource;
-import org.apache.poi.xslf.usermodel.charts.XSLFChartSeries;
-import org.apache.poi.xslf.usermodel.charts.XSLFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.AxisOrientation;
+import org.apache.poi.xddf.usermodel.AxisPosition;
+import org.apache.poi.xddf.usermodel.BarDirection;
+import org.apache.poi.xddf.usermodel.XDDFBarChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFCategoryDataSource;
+import org.apache.poi.xddf.usermodel.XDDFChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
 
 /**
  * Build a bar chart from a template pptx
- *
- * @author Yegor Kozlov
  */
 public class BarChartDemo {
     private static void usage(){
@@ -94,42 +92,42 @@ public class BarChartDemo {
         }
     }
 
-	private static void setBarData(XSLFChart chart, String chartTitle, List<String> categories, List<Double> values) {
-		// Series Text
-		List<XSLFChartSeries> series = chart.getChartSeries();
-		XSLFBarChartSeries bar = (XSLFBarChartSeries) series.get(0);
-		bar.setTitle(chartTitle);
+    private static void setBarData(XSLFChart chart, String chartTitle, List<String> categories, List<Double> values) {
+        // Series Text
+        List<XDDFChartSeries> series = chart.getChartSeries();
+        XDDFBarChartSeries bar = (XDDFBarChartSeries) series.get(0);
+        bar.setTitle(chartTitle);
 
-		bar.setCategoryData(new XSLFCategoryDataSource(categories));
-		bar.setFirstValues(new XSLFNumericalDataSource<Double>(values));
-		bar.fillChartData();
-	}
+        bar.setCategoryData(new XDDFCategoryDataSource(categories));
+        bar.setFirstValues(new XDDFNumericalDataSource<Double>(values));
+        bar.fillChartData();
+    }
 
-	private static void setColumnData(XSLFChart chart, String chartTitle, List<String> categories, List<Double> values) {
-		// Series Text
-		List<XSLFChartSeries> series = chart.getChartSeries();
-		XSLFBarChartSeries bar = (XSLFBarChartSeries) series.get(0);
-		bar.setTitle(chartTitle);
+    private static void setColumnData(XSLFChart chart, String chartTitle, List<String> categories, List<Double> values) {
+        // Series Text
+        List<XDDFChartSeries> series = chart.getChartSeries();
+        XDDFBarChartSeries bar = (XDDFBarChartSeries) series.get(0);
+        bar.setTitle(chartTitle);
 
-		// in order to transform a bar chart into a column chart, you just need to change the bar direction
-		bar.setBarDirection(BarDirection.COL);
+        // in order to transform a bar chart into a column chart, you just need to change the bar direction
+        bar.setBarDirection(BarDirection.COL);
 
-		// additionally, you can adjust the axes
-		bar.getCategoryAxis().setOrientation(AxisOrientation.MAX_MIN);
-		bar.getValueAxes().get(0).setPosition(AxisPosition.TOP);
-	}
+        // additionally, you can adjust the axes
+        bar.getCategoryAxis().setOrientation(AxisOrientation.MAX_MIN);
+        bar.getValueAxes().get(0).setPosition(AxisPosition.TOP);
+    }
 
-	private static XSLFChart findChart(XSLFSlide slide) {
-		// find chart in the slide
-		XSLFChart chart = null;
-		for(POIXMLDocumentPart part : slide.getRelations()){
-		    if(part instanceof XSLFChart){
-		        chart = (XSLFChart) part;
-		        break;
-		    }
-		}
+    private static XSLFChart findChart(XSLFSlide slide) {
+        // find chart in the slide
+        XSLFChart chart = null;
+        for(POIXMLDocumentPart part : slide.getRelations()){
+            if(part instanceof XSLFChart){
+                chart = (XSLFChart) part;
+                break;
+            }
+        }
 
-		if(chart == null) throw new IllegalStateException("chart not found in the template");
-		return chart;
-	}
+        if(chart == null) throw new IllegalStateException("chart not found in the template");
+        return chart;
+    }
 }

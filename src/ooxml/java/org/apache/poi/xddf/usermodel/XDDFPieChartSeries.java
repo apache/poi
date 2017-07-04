@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -26,27 +26,24 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
 
 @Beta
-public class XSLFPieChartSeries extends XSLFChartSeries {
+public class XDDFPieChartSeries extends XDDFChartSeries {
 	private CTPieSer series;
 	private CTPieChart chart;
 
-	public XSLFPieChartSeries(XSSFSheet sheet, CTPieChart chart) {
+	public XDDFPieChartSeries(XSSFSheet sheet, CTPieChart chart) {
 		super(sheet);
 		this.chart = chart;
 		this.series = chart.getSerArray(0);
 	}
 
 	@Override
-	public void setTitle(String title) {
-		String titleRef = setSheetTitle(title);
-		CTStrRef ref = series.getTx().getStrRef();
-		ref.getStrCache().getPtArray(0).setV(title);
-		ref.setF(titleRef);
+	protected CTStrRef getSeriesTxStrRef() {
+		return series.getTx().getStrRef();
 	}
 
 	@Override
 	public void setShowLeaderLines(boolean showLeaderLines) {
-		if(!series.isSetDLbls()) {
+		if (!series.isSetDLbls()) {
 			series.addNewDLbls();
 		}
 		if (series.getDLbls().isSetShowLeaderLines()) {
@@ -64,6 +61,14 @@ public class XSLFPieChartSeries extends XSLFChartSeries {
 		}
 	}
 
+	public long getExplosion() {
+		if (series.isSetExplosion()) {
+			return series.getExplosion().getVal();
+		} else {
+			return 0;
+		}
+	}
+
 	public void setExplosion(long explosion) {
 		if (series.isSetExplosion()) {
 			series.getExplosion().setVal(explosion);
@@ -71,7 +76,6 @@ public class XSLFPieChartSeries extends XSLFChartSeries {
 			series.addNewExplosion().setVal(explosion);
 		}
 	}
-
 
 	@Override
 	protected CTAxDataSource getAxDS() {

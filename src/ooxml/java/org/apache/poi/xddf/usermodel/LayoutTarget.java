@@ -15,29 +15,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;;
 
-public enum AxisCrosses {
-	AUTO_ZERO(STCrosses.AUTO_ZERO), MAX(STCrosses.MAX), MIN(STCrosses.MIN);
+public enum LayoutTarget {
+	INNER(STLayoutTarget.INNER), OUTER(STLayoutTarget.OUTER);
 
-	final STCrosses.Enum underlying;
+	final STLayoutTarget.Enum underlying;
 
-	AxisCrosses(STCrosses.Enum crosses) {
-		this.underlying = crosses;
+	LayoutTarget(STLayoutTarget.Enum layoutTarget) {
+		this.underlying = layoutTarget;
 	}
 
-	private final static HashMap<STCrosses.Enum, AxisCrosses> reverse = new HashMap<STCrosses.Enum, AxisCrosses>();
+	private final static HashMap<STLayoutTarget.Enum, LayoutTarget> reverse = new HashMap<STLayoutTarget.Enum, LayoutTarget>();
 	static {
-		reverse.put(STCrosses.AUTO_ZERO, AxisCrosses.AUTO_ZERO);
-		reverse.put(STCrosses.MAX, AxisCrosses.MAX);
-		reverse.put(STCrosses.MIN, AxisCrosses.MIN);
+		reverse.put(STLayoutTarget.INNER, LayoutTarget.INNER);
+		reverse.put(STLayoutTarget.OUTER, LayoutTarget.OUTER);
 	}
 
-	static AxisCrosses valueOf(STCrosses.Enum crosses) {
-		return reverse.get(crosses);
+	static LayoutTarget valueOf(STLayoutTarget.Enum layoutTarget) {
+		return reverse.get(layoutTarget);
 	}
 }

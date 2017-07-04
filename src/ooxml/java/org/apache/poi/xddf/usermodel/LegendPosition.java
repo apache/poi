@@ -15,28 +15,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STCrossBetween;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STLegendPos;
 
-public enum AxisCrossBetween {
-	BETWEEN(STCrossBetween.BETWEEN), MIDPOINT_CATEGORY(STCrossBetween.MID_CAT);
+public enum LegendPosition {
+	BOTTOM(STLegendPos.B), LEFT(STLegendPos.L), RIGHT(STLegendPos.R), TOP(STLegendPos.T), TOP_RIGHT(STLegendPos.TR);
 
-	final STCrossBetween.Enum underlying;
+	final STLegendPos.Enum underlying;
 
-	AxisCrossBetween(STCrossBetween.Enum crossBetween) {
-		this.underlying = crossBetween;
+	LegendPosition(STLegendPos.Enum position) {
+		this.underlying = position;
 	}
 
-	private final static HashMap<STCrossBetween.Enum, AxisCrossBetween> reverse = new HashMap<STCrossBetween.Enum, AxisCrossBetween>();
+	private final static HashMap<STLegendPos.Enum, LegendPosition> reverse = new HashMap<STLegendPos.Enum, LegendPosition>();
 	static {
-		reverse.put(STCrossBetween.BETWEEN, AxisCrossBetween.BETWEEN);
-		reverse.put(STCrossBetween.MID_CAT, AxisCrossBetween.MIDPOINT_CATEGORY);
+		reverse.put(STLegendPos.B, LegendPosition.BOTTOM);
+		reverse.put(STLegendPos.L, LegendPosition.LEFT);
+		reverse.put(STLegendPos.R, LegendPosition.RIGHT);
+		reverse.put(STLegendPos.T, LegendPosition.TOP);
+		reverse.put(STLegendPos.TR, LegendPosition.TOP_RIGHT);
 	}
 
-	static AxisCrossBetween valueOf(STCrossBetween.Enum crossBetween) {
-		return reverse.get(crossBetween);
+	static LegendPosition valueOf(STLegendPos.Enum position) {
+		return reverse.get(position);
 	}
 }

@@ -1,8 +1,10 @@
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
@@ -10,20 +12,34 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
-public class XSLFCategoryAxis extends XSLFChartAxis {
+public class XDDFCategoryAxis extends XDDFChartAxis {
 
 	private CTCatAx ctCatAx;
 
-	public XSLFCategoryAxis(CTPlotArea plotArea, AxisPosition position) {
+	public XDDFCategoryAxis(CTPlotArea plotArea, AxisPosition position) {
 		initializeAxis(plotArea, position);
 	}
 
-	public XSLFCategoryAxis(CTCatAx ctCatAx) {
+	public XDDFCategoryAxis(CTCatAx ctCatAx) {
 		this.ctCatAx = ctCatAx;
 	}
 
-	public void crossAxis(XSLFChartAxis axis) {
+	@Override
+	@Internal
+	public CTChartLines getMajorGridLines() {
+	    return ctCatAx.getMajorGridlines();
+	}
+
+	@Override
+	@Internal
+	public CTShapeProperties getLine() {
+	    return ctCatAx.getSpPr();
+	}
+
+	@Override
+	public void crossAxis(ChartAxis axis) {
 		ctCatAx.getCrossAx().setVal(axis.getId());
 	}
 
@@ -36,6 +52,11 @@ public class XSLFCategoryAxis extends XSLFChartAxis {
 	protected CTAxPos getCTAxPos() {
 		return ctCatAx.getAxPos();
 	}
+
+	@Override
+    public boolean hasNumberFormat() {
+        return ctCatAx.isSetNumFmt();
+    }
 
 	@Override
 	protected CTNumFmt getCTNumFmt() {
@@ -52,7 +73,12 @@ public class XSLFCategoryAxis extends XSLFChartAxis {
 
 	@Override
 	protected CTCrosses getCTCrosses() {
-		return ctCatAx.getCrosses();
+		CTCrosses crosses = ctCatAx.getCrosses();
+		if (crosses == null) {
+			return ctCatAx.addNewCrosses();
+		} else {
+			return crosses;
+		}
 	}
 
 	@Override

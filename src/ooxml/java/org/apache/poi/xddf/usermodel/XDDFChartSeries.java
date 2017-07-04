@@ -15,7 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -27,38 +32,75 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 
 /**
- * Base of all XSLF Chart Series
+ * Base of all XDDF Chart Series
  */
 @Beta
-public abstract class XSLFChartSeries {
+public abstract class XDDFChartSeries {
 	protected XSSFSheet sheet;
-	protected XSLFCategoryDataSource categoryData;
-	protected XSLFNumericalDataSource<? extends Number> firstValues;
+	protected XDDFCategoryDataSource categoryData;
+	protected XDDFNumericalDataSource<? extends Number> firstValues;
 
 	protected abstract CTAxDataSource getAxDS();
 	protected abstract CTNumDataSource getNumDS();
 
-	protected XSLFChartSeries(XSSFSheet sheet) {
+	private XDDFCategoryAxis categoryAxis;
+	private List<XDDFValueAxis> valueAxes;
+
+	protected XDDFChartSeries(XSSFSheet sheet) {
 		this.sheet = sheet;
 	}
 
-	public void setCategoryData(XSLFCategoryDataSource category) {
+	protected void defineAxes(CTUnsignedInt[] axes, Map<Long, XDDFCategoryAxis> categories, Map<Long, XDDFValueAxis> values) {
+		List<XDDFValueAxis> list = new ArrayList<XDDFValueAxis>(axes.length);
+		for (int i = 0; i < axes.length; i++) {
+			Long axisId = axes[i].getVal();
+			XDDFCategoryAxis category = categories.get(axisId);
+			if (category == null) {
+				XDDFValueAxis axis = values.get(axisId);
+				if (axis != null ) {
+					list.add(axis);
+				}
+			} else {
+				this.categoryAxis = category;
+			}
+		}
+		this.valueAxes = Collections.unmodifiableList(list);
+	}
+
+	public XDDFCategoryAxis getCategoryAxis() {
+		return categoryAxis;
+	}
+
+	public List<XDDFValueAxis> getValueAxes() {
+		return valueAxes;
+	}
+
+	public void setCategoryData(XDDFCategoryDataSource category) {
 		this.categoryData = category;
 	}
 
-	public void setFirstValues(XSLFNumericalDataSource<? extends Number> values) {
+	public void setFirstValues(XDDFNumericalDataSource<? extends Number> values) {
 		this.firstValues = values;
 	}
 
-	protected String setSheetTitle(String title) {
+	private String setSheetTitle(String title) {
 		sheet.createRow(0).createCell(1).setCellValue(title);
 		return new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
 	}
 
-	public abstract void setTitle(String title);
+	public void setTitle(String title) {
+		String titleRef = setSheetTitle(title);
+		CTStrRef ref = getSeriesTxStrRef();
+		ref.getStrCache().getPtArray(0).setV(title);
+		ref.setF(titleRef);
+	}
+
+	protected abstract CTStrRef getSeriesTxStrRef();
 
 	public abstract void setShowLeaderLines(boolean showLeaderLines);
 

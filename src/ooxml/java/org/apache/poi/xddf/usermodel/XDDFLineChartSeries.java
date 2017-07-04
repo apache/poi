@@ -15,72 +15,39 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 
 @Beta
-public class XSLFBarChartSeries extends XSLFChartSeries {
-	private CTBarSer series;
-	private CTBarChart chart;
-	private XSLFCategoryAxis categoryAxis;
-	private List<XSLFValueAxis> valueAxes;
+public class XDDFLineChartSeries extends XDDFChartSeries {
+	private CTLineSer series;
+	private CTLineChart chart;
 
-	public XSLFBarChartSeries(XSSFSheet sheet, CTBarChart chart, Map<Long, XSLFCategoryAxis> categories, Map<Long, XSLFValueAxis> values) {
+	public XDDFLineChartSeries(XSSFSheet sheet, CTLineChart chart, Map<Long, XDDFCategoryAxis> categories, Map<Long, XDDFValueAxis> values) {
 		super(sheet);
 		this.chart = chart;
 		this.series = chart.getSerArray(0);
 		defineAxes(chart.getAxIdArray(), categories, values);
 	}
 
-	private void defineAxes(CTUnsignedInt[] axes, Map<Long, XSLFCategoryAxis> categories, Map<Long, XSLFValueAxis> values) {
-		List<XSLFValueAxis> list = new ArrayList<XSLFValueAxis>(axes.length);
-		for (int i = 0; i < axes.length; i++) {
-			Long axisId = axes[i].getVal();
-			XSLFCategoryAxis category = categories.get(axisId);
-			if (category == null) {
-				XSLFValueAxis axis = values.get(axisId);
-				if (axis != null ) {
-					list.add(axis);
-				}
-			} else {
-				this.categoryAxis = category;
-			}
-		}
-		this.valueAxes = Collections.unmodifiableList(list);
-	}
-
-	public XSLFCategoryAxis getCategoryAxis() {
-		return categoryAxis;
-	}
-
-	public List<XSLFValueAxis> getValueAxes() {
-		return valueAxes;
-	}
-
 	@Override
-	public void setTitle(String title) {
-		String titleRef = setSheetTitle(title);
-		CTStrRef ref = series.getTx().getStrRef();
-		ref.getStrCache().getPtArray(0).setV(title);
-		ref.setF(titleRef);
+	protected CTStrRef getSeriesTxStrRef() {
+		return series.getTx().getStrRef();
 	}
 
 	@Override
 	public void setShowLeaderLines(boolean showLeaderLines) {
-		if(!series.isSetDLbls()) {
+		if (!series.isSetDLbls()) {
 			series.addNewDLbls();
 		}
 		if (series.getDLbls().isSetShowLeaderLines()) {
@@ -99,23 +66,29 @@ public class XSLFBarChartSeries extends XSLFChartSeries {
 		}
 	}
 
-	public void setBarDirection(BarDirection direction) {
-		chart.getBarDir().setVal(direction.underlying);
-	}
-
-	public void setBarGrouping(BarGrouping grouping) {
-		if (chart.isSetGrouping()) {
-			chart.getGrouping().setVal(grouping.underlying);
+	public void setMarkerSize(short size) {
+		CTMarker marker = getMarker();
+		if (marker.isSetSize()) {
+			marker.getSize().setVal(size);
 		} else {
-			chart.addNewGrouping().setVal(grouping.underlying);
+			marker.addNewSize().setVal(size);
 		}
 	}
 
-	public void setGapWidth(int width) {
-		if (chart.isSetGapWidth()) {
-			chart.getGapWidth().setVal(width);
+	public void setMarkerStyle(MarkerStyle style) {
+		CTMarker marker = getMarker();
+		if (marker.isSetSymbol()) {
+			marker.getSymbol().setVal(style.underlying);
 		} else {
-			chart.addNewGapWidth().setVal(width);
+			marker.addNewSymbol().setVal(style.underlying);
+		}
+	}
+
+	private CTMarker getMarker() {
+		if (series.isSetMarker()) {
+			return series.getMarker();
+		} else {
+			return series.addNewMarker();
 		}
 	}
 

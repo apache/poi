@@ -15,30 +15,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;;
 
-public enum AxisPosition {
-	BOTTOM(STAxPos.B), LEFT(STAxPos.L), RIGHT(STAxPos.R), TOP(STAxPos.T);
+public enum LayoutMode {
+	EDGE(STLayoutMode.EDGE), FACTOR(STLayoutMode.FACTOR);
 
-	final STAxPos.Enum underlying;
+	final STLayoutMode.Enum underlying;
 
-	AxisPosition(STAxPos.Enum position) {
-		this.underlying = position;
+	LayoutMode(STLayoutMode.Enum layoutMode) {
+		this.underlying = layoutMode;
 	}
 
-	private final static HashMap<STAxPos.Enum, AxisPosition> reverse = new HashMap<STAxPos.Enum, AxisPosition>();
+	private final static HashMap<STLayoutMode.Enum, LayoutMode> reverse = new HashMap<STLayoutMode.Enum, LayoutMode>();
 	static {
-		reverse.put(STAxPos.B, AxisPosition.BOTTOM);
-		reverse.put(STAxPos.L, AxisPosition.LEFT);
-		reverse.put(STAxPos.R, AxisPosition.RIGHT);
-		reverse.put(STAxPos.T, AxisPosition.TOP);
+		reverse.put(STLayoutMode.EDGE, LayoutMode.EDGE);
+		reverse.put(STLayoutMode.FACTOR, LayoutMode.FACTOR);
 	}
 
-	static AxisPosition valueOf(STAxPos.Enum position) {
-		return reverse.get(position);
+	static LayoutMode valueOf(STLayoutMode.Enum layoutMode) {
+		return reverse.get(layoutMode);
 	}
 }

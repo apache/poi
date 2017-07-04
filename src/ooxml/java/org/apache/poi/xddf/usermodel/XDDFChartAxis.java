@@ -15,11 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
@@ -27,12 +29,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Base class for all axis types.
  */
 @Beta
-public abstract class XSLFChartAxis {
+public abstract class XDDFChartAxis implements ChartAxis {
 	protected abstract CTUnsignedInt getCTAxId();
 	protected abstract CTAxPos getCTAxPos();
 	protected abstract CTNumFmt getCTNumFmt();
@@ -41,27 +44,35 @@ public abstract class XSLFChartAxis {
 	protected abstract CTBoolean getDelete();
 	protected abstract CTTickMark getMajorCTTickMark();
 	protected abstract CTTickMark getMinorCTTickMark();
+	@Internal public abstract CTChartLines getMajorGridLines();
+	@Internal public abstract CTShapeProperties getLine();
 
+	@Override
 	public long getId() {
 		return getCTAxId().getVal();
 	}
-	
+
+	@Override
 	public AxisPosition getPosition() {
 		return AxisPosition.valueOf(getCTAxPos().getVal());
 	}
+	@Override
 	public void setPosition(AxisPosition position) {
 		getCTAxPos().setVal(position.underlying);
 	}
 
+	@Override
 	public void setNumberFormat(String format) {
 		getCTNumFmt().setFormatCode(format);
 		getCTNumFmt().setSourceLinked(true);
 	}
 
+	@Override
 	public String getNumberFormat() {
 		return getCTNumFmt().getFormatCode();
 	}
 
+	@Override
 	public boolean isSetLogBase() {
 		return getCTScaling().isSetLogBase();
 	}
@@ -69,6 +80,7 @@ public abstract class XSLFChartAxis {
 	private static final double MIN_LOG_BASE = 2.0;
 	private static final double MAX_LOG_BASE = 1000.0;
 
+	@Override
 	public void setLogBase(double logBase) {
 		if (logBase < MIN_LOG_BASE ||
 			MAX_LOG_BASE < logBase) {
@@ -82,6 +94,7 @@ public abstract class XSLFChartAxis {
 		}
 	}
 
+	@Override
 	public double getLogBase() {
 		CTLogBase logBase = getCTScaling().getLogBase();
 		if (logBase != null) {
@@ -90,10 +103,12 @@ public abstract class XSLFChartAxis {
 		return 0.0;
 	}
 
+	@Override
 	public boolean isSetMinimum() {
 		return getCTScaling().isSetMin();
 	}
 
+	@Override
 	public void setMinimum(double min) {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMin()) {
@@ -103,6 +118,7 @@ public abstract class XSLFChartAxis {
 		}
 	}
 
+	@Override
 	public double getMinimum() {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMin()) {
@@ -112,10 +128,12 @@ public abstract class XSLFChartAxis {
 		}
 	}
 
+	@Override
 	public boolean isSetMaximum() {
 		return getCTScaling().isSetMax();
 	}
 
+	@Override
 	public void setMaximum(double max) {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMax()) {
@@ -125,6 +143,7 @@ public abstract class XSLFChartAxis {
 		}
 	}
 
+	@Override
 	public double getMaximum() {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMax()) {
@@ -134,10 +153,12 @@ public abstract class XSLFChartAxis {
 		}
 	}
 
+	@Override
 	public AxisOrientation getOrientation() {
 		return AxisOrientation.valueOf(getCTScaling().getOrientation().getVal());
 	}
 
+	@Override
 	public void setOrientation(AxisOrientation orientation) {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetOrientation()) {
@@ -147,38 +168,46 @@ public abstract class XSLFChartAxis {
 		}
 	}
 
+	@Override
 	public AxisCrosses getCrosses() {
 		return AxisCrosses.valueOf(getCTCrosses().getVal());
 	}
 
+	@Override
 	public void setCrosses(AxisCrosses crosses) {
 		getCTCrosses().setVal(crosses.underlying);
 	}
 
+	@Override
 	public boolean isVisible() {
 		return !getDelete().getVal();
 	}
 
+	@Override
 	public void setVisible(boolean value) {
 		getDelete().setVal(!value);
 	}
 
+	@Override
 	public AxisTickMark getMajorTickMark() {
 		return AxisTickMark.valueOf(getMajorCTTickMark().getVal());
 	}
 
+	@Override
 	public void setMajorTickMark(AxisTickMark tickMark) {
 		getMajorCTTickMark().setVal(tickMark.underlying);
 	}
 
+	@Override
 	public AxisTickMark getMinorTickMark() {
 		return AxisTickMark.valueOf(getMinorCTTickMark().getVal());
 	}
 
+	@Override
 	public void setMinorTickMark(AxisTickMark tickMark) {
 		getMinorCTTickMark().setVal(tickMark.underlying);
 	}
-	
+
 	protected long getNextAxId(CTPlotArea plotArea) {
 		long totalAxisCount =
 			plotArea.sizeOfValAxArray()  +

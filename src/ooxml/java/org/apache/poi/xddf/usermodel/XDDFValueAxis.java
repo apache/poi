@@ -15,10 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel.charts;
+package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
@@ -27,20 +29,34 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
-public class XSLFValueAxis extends XSLFChartAxis {
+public class XDDFValueAxis extends XDDFChartAxis {
 
 	private CTValAx ctValAx;
 
-	public XSLFValueAxis(CTPlotArea plotArea, AxisPosition position) {
+	public XDDFValueAxis(CTPlotArea plotArea, AxisPosition position) {
 		initializeAxis(plotArea, position);
 	}
 
-	public XSLFValueAxis(CTValAx ctValAx) {
+	public XDDFValueAxis(CTValAx ctValAx) {
 		this.ctValAx = ctValAx;
 	}
 
-	public void crossAxis(XSLFChartAxis axis) {
+	@Override
+	@Internal
+	public CTChartLines getMajorGridLines() {
+	    return ctValAx.getMajorGridlines();
+	}
+
+	@Override
+	@Internal
+	public CTShapeProperties getLine() {
+	    return ctValAx.getSpPr();
+	}
+
+	@Override
+	public void crossAxis(ChartAxis axis) {
 		ctValAx.getCrossAx().setVal(axis.getId());
 	}
 
@@ -53,6 +69,11 @@ public class XSLFValueAxis extends XSLFChartAxis {
 	protected CTAxPos getCTAxPos() {
 		return ctValAx.getAxPos();
 	}
+
+	@Override
+    public boolean hasNumberFormat() {
+        return ctValAx.isSetNumFmt();
+    }
 
 	@Override
 	protected CTNumFmt getCTNumFmt() {
@@ -69,7 +90,12 @@ public class XSLFValueAxis extends XSLFChartAxis {
 
 	@Override
 	protected CTCrosses getCTCrosses() {
-		return ctValAx.getCrosses();
+		CTCrosses crosses = ctValAx.getCrosses();
+		if (crosses == null) {
+			return ctValAx.addNewCrosses();
+		} else {
+			return crosses;
+		}
 	}
 
 	@Override
