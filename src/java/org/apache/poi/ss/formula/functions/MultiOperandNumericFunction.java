@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -81,7 +82,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 		}
 	}
 
-	private static final int DEFAULT_MAX_NUM_OPERANDS = 30;
+	private static final int DEFAULT_MAX_NUM_OPERANDS = SpreadsheetVersion.EXCEL2007.getMaxFunctionArgs();
 
 	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 
