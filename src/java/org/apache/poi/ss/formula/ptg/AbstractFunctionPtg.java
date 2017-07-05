@@ -41,12 +41,16 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     private final byte returnClass;
     private final byte[] paramClass;
 
-    private final byte _numberOfArgs;
+    private final int _numberOfArgs;
     private final short _functionIndex;
 
     protected AbstractFunctionPtg(int functionIndex, int pReturnClass, byte[] paramTypes, int nParams) {
-        _numberOfArgs = (byte) nParams;
+        _numberOfArgs = nParams;
+        if (functionIndex < Short.MIN_VALUE || functionIndex > Short.MAX_VALUE)
+            throw new RuntimeException("functionIndex " + functionIndex + " cannot be cast to short");
         _functionIndex = (short) functionIndex;
+        if (pReturnClass < Byte.MIN_VALUE || pReturnClass > Byte.MAX_VALUE)
+            throw new RuntimeException("pReturnClass " + pReturnClass + " cannot be cast to byte");
         returnClass = (byte) pReturnClass;
         paramClass = paramTypes;
     }
