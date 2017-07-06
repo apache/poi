@@ -200,7 +200,7 @@ public class TestDataFormatter {
             );
         }
     }
-    
+
     @Test
     public void testConditionalRanges() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
@@ -820,7 +820,37 @@ public class TestDataFormatter {
 
         wb.close();
     }
-    
+
+    @Test
+    public void testFormatWithTrailingDotsUS() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1,000,000", dfUS.formatRawCellContents(1000000, -1, "#,##0"));
+        assertEquals("1,000", dfUS.formatRawCellContents(1000000, -1, "#,##0,"));
+        assertEquals("1", dfUS.formatRawCellContents(1000000, -1, "#,##0,,"));
+        assertEquals("1,000,000.0", dfUS.formatRawCellContents(1000000, -1, "#,##0.0"));
+        assertEquals("1,000.0", dfUS.formatRawCellContents(1000000, -1, "#,##0.0,"));
+        assertEquals("1.0", dfUS.formatRawCellContents(1000000, -1, "#,##0.0,,"));
+        assertEquals("1,000,000.00", dfUS.formatRawCellContents(1000000, -1, "#,##0.00"));
+        assertEquals("1,000.00", dfUS.formatRawCellContents(1000000, -1, "#,##0.00,"));
+        assertEquals("1.00", dfUS.formatRawCellContents(1000000, -1, "#,##0.00,,"));
+        assertEquals("1,000,000", dfUS.formatRawCellContents(1e24, -1, "#,##0,,,,,,"));
+    }
+
+    @Test
+    public void testFormatWithTrailingDotsOtherLocale() throws Exception {
+        DataFormatter dfIT = new DataFormatter(Locale.ITALY);
+        assertEquals("1.000.000", dfIT.formatRawCellContents(1000000, -1, "#,##0"));
+        assertEquals("1.000", dfIT.formatRawCellContents(1000000, -1, "#,##0,"));
+        assertEquals("1", dfIT.formatRawCellContents(1000000, -1, "#,##0,,"));
+        assertEquals("1.000.000,0", dfIT.formatRawCellContents(1000000, -1, "#,##0.0"));
+        assertEquals("1.000,0", dfIT.formatRawCellContents(1000000, -1, "#,##0.0,"));
+        assertEquals("1,0", dfIT.formatRawCellContents(1000000, -1, "#,##0.0,,"));
+        assertEquals("1.000.000,00", dfIT.formatRawCellContents(1000000, -1, "#,##0.00"));
+        assertEquals("1.000,00", dfIT.formatRawCellContents(1000000, -1, "#,##0.00,"));
+        assertEquals("1,00", dfIT.formatRawCellContents(1000000, -1, "#,##0.00,,"));
+        assertEquals("1.000.000", dfIT.formatRawCellContents(1e24, -1, "#,##0,,,,,,"));
+    }
+
     /**
      * bug 60031: DataFormatter parses months incorrectly when put at the end of date segment
      */
