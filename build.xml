@@ -40,7 +40,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="3.17-beta1"/>
+    <property name="version.id" value="3.17-beta2"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -209,8 +209,8 @@ under the License.
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.12/apache-rat-0.12.jar"/>
-    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.1.jar"/>
-    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.1/forbiddenapis-2.1.jar"/>
+    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.3.jar"/>
+    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.3/forbiddenapis-2.3.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -325,12 +325,15 @@ under the License.
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
         <pathelement location="${main.commons-codec.jar}"/>
-        <pathelement location="${main.log4j.jar}"/>
+        <pathelement location="${main.commons-collections4.jar}"/>
+    </path>
+
+    <!-- some libraries should only be required for compiling/running tests -->
+    <path id="test.jar.classpath">
         <pathelement location="${main.junit.jar}"/>
         <pathelement location="${main.jmh.jar}"/>
         <pathelement location="${main.jmhAnnotation.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
-        <pathelement location="${main.commons-collections4.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -375,6 +378,7 @@ under the License.
 
     <path id="test.ooxml.classpath">
         <path refid="ooxml.classpath"/>
+        <path refid="test.jar.classpath"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
@@ -385,6 +389,7 @@ under the License.
         <pathelement location="${integration.src.test}"/>
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
+        <path refid="test.jar.classpath"/>
         <pathelement location="${main.output.test.dir}"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${integration.output.test.dir}"/>
@@ -420,6 +425,7 @@ under the License.
 
     <path id="test.excelant.classpath">
         <path refid="ooxml.classpath"/>
+        <path refid="test.jar.classpath"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${excelant.output.dir}"/>
         <pathelement location="${excelant.output.test.dir}"/>
@@ -432,11 +438,13 @@ under the License.
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
+        <path refid="test.jar.classpath"/>
         <path path="${env.CLASSPATH}"/>
     </path>
 
     <path id="forbiddenapis.classpath">
         <path refid="main.classpath"/>
+        <path refid="test.jar.classpath"/>
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
@@ -455,6 +463,7 @@ under the License.
         <exclude name="**/TestExtractorFactory.java"/>
         <exclude name="**/OutlookTextExtactor.java"/>
         <exclude name="**/TestEmbedOLEPackage.java"/>
+    	<exclude name="**/TestHxxFEncryption.java"/>
     </patternset>
 
     <!-- Prints POI's Ant usage help -->
@@ -575,6 +584,7 @@ under the License.
                 <include name="junit-4.11*"/>
                 <include name="forbiddenapis-1.*.jar"/>
                 <include name="forbiddenapis-2.0.jar"/>
+                <include name="forbiddenapis-2.1.jar"/>
                 <include name="apache-rat-0.11.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
@@ -857,6 +867,10 @@ under the License.
                    includeantruntime="false">
                    <!-- debug="${compile.debug}" -->
                 <classpath refid="ooxml.classpath"/>
+
+                <!-- unfortunately JUnit is required here for OOXMLLite, we should rather move OOXMLLite
+                to test or a separate folder to clean up dependencies -->
+                <classpath location="${main.junit.jar}"/>
             </javac>
 
             <jar basedir="${xmlbean.classes.dir}" destfile="@{classes-jar}" excludes="org/apache/**" level="9" />
@@ -918,6 +932,7 @@ under the License.
                includeantruntime="false">
             <classpath>
                 <path refid="main.classpath"/>
+                <path refid="test.jar.classpath"/>
                 <pathelement path="${main.output.dir}"/>
             </classpath>
         </javac>
@@ -981,6 +996,7 @@ under the License.
                includeantruntime="false">
             <classpath>
                 <path refid="scratchpad.classpath"/>
+                <path refid="test.jar.classpath"/>
                 <pathelement location="${scratchpad.output.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
             </classpath>
@@ -1024,6 +1040,10 @@ under the License.
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <path refid="ooxml.xmlsec.classpath"/>
+
+                <!-- unfortunately JUnit is required here for OOXMLLite, we should rather move OOXMLLite
+                to test or a separate folder to clean up dependencies -->
+                <pathelement location="${main.junit.jar}"/>
             </classpath>
         </javac>
         <!-- compile the tests -->
@@ -1114,6 +1134,7 @@ under the License.
                includeantruntime="false">
             <classpath>
                 <path refid="excelant.classpath"/>
+                <path refid="test.jar.classpath"/>
                 <pathelement location="${excelant.output.dir}"/>
                 <pathelement path="${main.output.test.dir}"/>
             </classpath>
@@ -1135,6 +1156,7 @@ under the License.
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <path refid="ooxml.classpath"/>
+                <path refid="test.jar.classpath"/>
                 <pathelement location="${ooxml.output.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${examples.output.dir}"/>
@@ -1274,6 +1296,7 @@ under the License.
             <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
                    failureproperty="main.test.failed" showoutput="true">
                 <classpath refid="test.classpath"/>
+                <classpath refid="test.jar.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
@@ -1391,6 +1414,7 @@ under the License.
             <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                    failureproperty="scratchpad.test.failed">
                 <classpath refid="test.scratchpad.classpath"/>
+                <classpath refid="test.jar.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
@@ -1443,7 +1467,10 @@ under the License.
             <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}.exec">
               <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                      failureproperty="ooxml.test.failed">
-                  <classpath refid="@{classpath}"/>
+                  <classpath>
+                      <path refid="@{classpath}"/>
+                      <path refid="test.jar.classpath"/>
+                  </classpath>
                   <syspropertyset refid="junit.properties"/>
                     <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
@@ -1476,6 +1503,7 @@ under the License.
                      failureproperty="ooxml.xmlsec.test.failed">
                   <classpath>
                       <path refid="@{classpath}"/>
+                      <path refid="test.jar.classpath"/>
                       <path refid="ooxml.xmlsec.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
@@ -2724,7 +2752,7 @@ under the License.
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
       <p>A summary of changes is available in the
-        <link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/RELEASE-NOTES.txt">Release Notes</link>.
+        <link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/RELEASE-NOTES-${version.id}.txt">Release Notes</link>.
         A full list of changes is available in the <link href="changes.html">change log</link>.
         People interested should also follow the <link href="mailinglists.html">dev list</link>
         to track progress.</p>

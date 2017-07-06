@@ -577,4 +577,19 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         assertEquals(true, s.getRow(0).getCell(0).getBooleanCellValue());
         assertEquals("Test Row 9", s.getRow(9).getCell(2).getStringCellValue());
     }
+
+    @Test
+    public void test56557() throws IOException, InvalidFormatException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56557.xlsx");
+
+        // Using streaming XSSFWorkbook makes the output file invalid
+        wb = new SXSSFWorkbook(((XSSFWorkbook) wb));
+
+        // Should not throw POIXMLException: java.io.IOException: Unable to parse xml bean when reading back
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        wbBack.close();
+
+        wb.close();
+    }
 }

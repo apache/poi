@@ -18,7 +18,7 @@
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  */

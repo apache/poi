@@ -27,6 +27,7 @@ import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * A stream based way to get at complete records, with

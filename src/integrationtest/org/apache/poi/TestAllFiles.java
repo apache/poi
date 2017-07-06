@@ -19,6 +19,7 @@ package org.apache.poi;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -34,6 +35,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.stress.AbstractFileHandler;
 import org.apache.poi.stress.FileHandler;
 import org.apache.poi.stress.HDGFFileHandler;
@@ -53,6 +56,7 @@ import org.apache.poi.stress.XSSFFileHandler;
 import org.apache.poi.stress.XWPFFileHandler;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.AssumptionViolatedException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -88,6 +92,9 @@ public class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
 
     static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
+
+    private static final Map<String,String> FILE_PASSWORD;
+
     
     // map file extensions to the actual mappers
     static final Map<String, FileHandler> HANDLERS = new HashMap<String, FileHandler>();
@@ -200,12 +207,34 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/BigSSTRecord2CR7", new NullFileHandler());
         HANDLERS.put("spreadsheet/BigSSTRecordCR", new NullFileHandler());
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
+        
+        Map<String,String> passmap = new HashMap<String,String>();
+        passmap.put("slideshow/Password_Protected-hello.ppt", "hello");
+        passmap.put("slideshow/Password_Protected-56-hello.ppt", "hello");
+        passmap.put("slideshow/Password_Protected-np-hello.ppt", "hello");
+        passmap.put("slideshow/cryptoapi-proc2356.ppt", "crypto");
+        passmap.put("spreadsheet/xor-encryption-abc.xls", "abc");
+        passmap.put("spreadsheet/35897-type4.xls", "freedom");
+        passmap.put("spreadsheet/58616.xlsx", Decryptor.DEFAULT_PASSWORD);
+        passmap.put("spreadsheet/password.xls", "password");
+        passmap.put("spreadsheet/protected_passtika.xlsx", "tika");
+        passmap.put("document/bug53475-password-is-pass.docx", "pass");
+        passmap.put("document/bug53475-password-is-solrcell.docx", "solrcell");
+        passmap.put("document/password_password_cryptoapi.doc", "password");
+        passmap.put("document/password_tika_binaryrc4.doc", "tika");
+        passmap.put("poifs/protect.xlsx", Decryptor.DEFAULT_PASSWORD);
+        passmap.put("poifs/extenxls_pwd123.xlsx", "pwd123");
+        passmap.put("poifs/protected_agile.docx", Decryptor.DEFAULT_PASSWORD);
+        passmap.put("poifs/60320-protected.xlsx", "Test001!!");
+        passmap.put("poifs/protected_sha512.xlsx", "this is a test");
+        
+        FILE_PASSWORD = Collections.unmodifiableMap(passmap);
     }
 
-    private static final Set<String> unmodifiableHashSet(String... a) {
+    private static Set<String> unmodifiableHashSet(String... a) {
         return Collections.unmodifiableSet(hashSet(a));
     }
-    private static final Set<String> hashSet(String... a) {
+    private static Set<String> hashSet(String... a) {
         return new HashSet<String>(Arrays.asList(a));
     }
 
@@ -221,6 +250,7 @@ public class TestAllFiles {
         "document/Bug60936.doc",
         "document/Bug60942.doc",
         "document/Bug60942b.doc",
+        "document/cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC",
         "hpsf/TestMickey.doc",
         "document/52117.doc",
         "hpsf/TestInvertedClassID.doc",
@@ -228,25 +258,9 @@ public class TestAllFiles {
     );
 
     private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
-        // password protected files
-        "spreadsheet/password.xls",
-        "spreadsheet/protected_passtika.xlsx",
+        // password protected files without known password
         "spreadsheet/51832.xls",
         "document/PasswordProtected.doc",
-        "slideshow/Password_Protected-hello.ppt",
-        "slideshow/Password_Protected-56-hello.ppt",
-        "slideshow/Password_Protected-np-hello.ppt",
-        "slideshow/cryptoapi-proc2356.ppt",
-        //"document/bug53475-password-is-pass.docx",
-        //"document/bug53475-password-is-solrcell.docx",
-        "spreadsheet/xor-encryption-abc.xls",
-        "spreadsheet/35897-type4.xls",
-        //"poifs/protect.xlsx",
-        //"poifs/protected_sha512.xlsx",
-        //"poifs/extenxls_pwd123.xlsx",
-        //"poifs/protected_agile.docx",
-        "spreadsheet/58616.xlsx",
-        "poifs/60320-protected.xlsx",
 
         // TODO: fails XMLExportTest, is this ok?
         "spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx",
@@ -286,8 +300,7 @@ public class TestAllFiles {
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-xmlbomb-empty.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
-        "spreadsheet/60255_extra_drawingparts.xlsx", // Non-drawing drawing
-        
+
         // old Excel files, which we only support simple text extraction of
         "spreadsheet/testEXCEL_2.xls",
         "spreadsheet/testEXCEL_3.xls",
@@ -308,12 +321,8 @@ public class TestAllFiles {
         "ddf/47143.dat",
 
         // sheet cloning errors
-        "spreadsheet/47813.xlsx",
         "spreadsheet/56450.xls",
-        "spreadsheet/OddStyleRecord.xls",
-        "spreadsheet/WithChartSheet.xlsx",
-        "spreadsheet/chart_sheet.xlsx",
-        "spreadsheet/SimpleScatterChart.xlsx"
+        "spreadsheet/OddStyleRecord.xls"
     );
 
     private static final Set<String> IGNORED = unmodifiableHashSet(
@@ -368,9 +377,20 @@ public class TestAllFiles {
 
     @Parameter(value=1)
     public FileHandler handler;
+
+    @Before
+    public void setPassword() {
+        // this also removes the password for non encrypted files
+        String pass = TestAllFiles.FILE_PASSWORD.get(file);
+        Biff8EncryptionKey.setCurrentUserPassword(pass);
+    }
     
     @Test
     public void testAllFiles() throws Exception {
+        if(handler == null) {
+            fail("Did not find a handler for file " + file);
+        }
+
         System.out.println("Reading " + file + " with " + handler.getClass());
         assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
         File inputFile = new File(ROOT_DIR, file);
@@ -380,7 +400,6 @@ public class TestAllFiles {
                     file.endsWith(".xlsb") || file.endsWith(".pptx")) &&
                 handler instanceof OPCFileHandler;
         boolean ignoreHPSF = (handler instanceof HPSFFileHandler);
-        
         
         try {
             InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64*1024);

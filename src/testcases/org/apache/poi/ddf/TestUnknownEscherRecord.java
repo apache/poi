@@ -17,11 +17,16 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public final class TestUnknownEscherRecord extends TestCase {
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
+import org.junit.Test;
+
+public final class TestUnknownEscherRecord {
+    @Test
     public void testFillFields() {
         String testData =
                 "0F 02 " + // options
@@ -117,6 +122,7 @@ public final class TestUnknownEscherRecord extends TestCase {
 	    assertEquals( (short) 0xFFFF, r.getChild( 0 ).getRecordId() );
     }
 
+    @Test
     public void testSerialize() {
         UnknownEscherRecord r = new UnknownEscherRecord();
         r.setOptions( (short) 0x1234 );
@@ -137,20 +143,27 @@ public final class TestUnknownEscherRecord extends TestCase {
         assertEquals( "[3F, 12, 12, F1, 08, 00, 00, 00, 99, 99, 01, FF, 00, 00, 00, 00]", HexDump.toHex( data ) );
     }
 
+    @Test
     public void testToString() {
         UnknownEscherRecord r = new UnknownEscherRecord();
         r.setOptions( (short) 0x1234 );
         r.setRecordId( (short) 0xF112 );
         byte[] data = new byte[8];
         r.serialize( 0, data, new NullEscherSerializationListener() );
-
-        assertEquals( "org.apache.poi.ddf.UnknownEscherRecord:" + '\n' +
-                "  isContainer: false" + '\n' +
-                "  version: 0x0004" + '\n' +
-                "  instance: 0x0123" + '\n' +
-                "  recordId: 0xF112" + '\n' +
-                "  numchildren: 0" + '\n' +
-                ": 0"
-                , r.toString() );
+        String nl = System.getProperty("line.separator");
+        String expected =
+            "org.apache.poi.ddf.UnknownEscherRecord (Unknown 0xF112):" + nl +
+            "  RecordId: 0xF112" + nl +
+            "  Version: 0x0004" + nl +
+            "  Instance: 0x0123" + nl +
+            "  Options: 0x1234" + nl +
+            "  Record Size: 8" + nl +
+            "  isContainer: false" + nl +
+            "  children: 0x00000000" + nl +
+            "  Extra Data: " + nl +
+            "     : 0";
+        
+        
+        assertEquals(expected, r.toString() );
     }
 }

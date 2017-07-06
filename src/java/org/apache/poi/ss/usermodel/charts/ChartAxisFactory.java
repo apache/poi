@@ -29,13 +29,21 @@ import org.apache.poi.util.Beta;
 public interface ChartAxisFactory {
 
 	/**
-	 * @return new value axis
+	 * @param pos 
+	 * @return new value axis at the end of the list at the specified chart position
 	 */
 	ValueAxis createValueAxis(AxisPosition pos);
 
 	/**
-	 * @return new category axis.
+	 * @param pos 
+	 * @return new category axis at the end of the list at the specified chart position
 	 */
 	ChartAxis createCategoryAxis(AxisPosition pos);
+	
+	/**
+	 * @param pos 
+	 * @return new date category axis at the end of the list at the specified chart position
+	 */
+	ChartAxis createDateAxis(AxisPosition pos);
 
 }

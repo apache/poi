@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Creates new BoolErrRecord. (0x0205) <P>

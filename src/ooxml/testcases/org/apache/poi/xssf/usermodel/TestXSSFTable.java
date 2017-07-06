@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -265,7 +266,8 @@ public final class TestXSSFTable {
 
         assertEquals(new CellReference("C1"), table.getStartCellReference());
         assertEquals(new CellReference("M3"), table.getEndCellReference());
-
+        
+        IOUtils.closeQuietly(wb);
     }
 
     @Test
@@ -286,5 +288,91 @@ public final class TestXSSFTable {
         // update cell references to clear the cache
         table.updateReferences();
         assertEquals(11, table.getRowCount());
+        
+        IOUtils.closeQuietly(wb);
+    }
+
+    @Test
+    public void testDifferentHeaderTypes() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TablesWithDifferentHeaders.xlsx");
+        assertEquals(3, wb.getNumberOfSheets());
+        XSSFSheet s;
+        XSSFTable t;
+
+        // TODO Nicer column fetching
+        
+        s = wb.getSheet("IntHeaders");
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1:B2", t.getCellReferences().formatAsString());
+        assertEquals("12", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+        assertEquals("34", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+        
+        s = wb.getSheet("FloatHeaders");
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1:B2", t.getCellReferences().formatAsString());
+        assertEquals("12.34", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+        assertEquals("34.56", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+        
+        s = wb.getSheet("NoExplicitHeaders");
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1:B3", t.getCellReferences().formatAsString());
+        assertEquals("Column1", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+        assertEquals("Column2", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+    }
+    
+    /**
+     * See https://stackoverflow.com/questions/44407111/apache-poi-cant-format-filled-cells-as-numeric
+     */
+    @Test
+    public void testNumericCellsInTable() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet s = wb.createSheet();
+        
+        // Create some cells, some numeric, some not
+        Cell c1 = s.createRow(0).createCell(0);
+        Cell c2 = s.getRow(0).createCell(1);
+        Cell c3 = s.getRow(0).createCell(2);
+        Cell c4 = s.createRow(1).createCell(0);
+        Cell c5 = s.getRow(1).createCell(1);
+        Cell c6 = s.getRow(1).createCell(2);
+        c1.setCellValue(12);
+        c2.setCellValue(34.56);
+        c3.setCellValue("ABCD");
+        c4.setCellValue("AB");
+        c5.setCellValue("CD");
+        c6.setCellValue("EF");
+
+        // Setting up the CTTable
+        XSSFTable t = s.createTable();
+        t.setName("TableTest");
+        t.setDisplayName("CT_Table_Test");
+        t.addColumn();
+        t.addColumn();
+        t.addColumn();
+        t.setCellReferences(wb.getCreationHelper().createAreaReference(
+                new CellReference(c1), new CellReference(c6)
+        ));
+
+        // Save and re-load
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        IOUtils.closeQuietly(wb);
+        s = wb2.getSheetAt(0);
+        
+        // Check
+        assertEquals(1, s.getTables().size());
+        t = s.getTables().get(0);
+        assertEquals("A1", t.getStartCellReference().formatAsString());
+        assertEquals("C2", t.getEndCellReference().formatAsString());
+        
+        // TODO Nicer column fetching
+        assertEquals("12", t.getCTTable().getTableColumns().getTableColumnArray(0).getName());
+        assertEquals("34.56", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
+        assertEquals("ABCD", t.getCTTable().getTableColumns().getTableColumnArray(2).getName());
+        
+        // Done
+        IOUtils.closeQuietly(wb2);
     }
 }

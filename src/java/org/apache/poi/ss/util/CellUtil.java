@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -38,7 +37,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Various utility functions that make working with a cells and rows easier. The various methods
@@ -198,29 +196,6 @@ public final class CellUtil {
      * style if no match exists.
      *
      * @param cell the cell to set the alignment for
-     * @param workbook The workbook that is being worked with.
-     * @param align the column alignment to use.
-     *
-     * @deprecated 3.15-beta2. Use {@link #setAlignment(Cell, HorizontalAlignment)} instead.
-     *
-     * @see CellStyle for alignment options
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public static void setAlignment(Cell cell, Workbook workbook, short align) {
-        setAlignment(cell, HorizontalAlignment.forInt(align));
-    }
-
-    /**
-     * Take a cell, and align it.
-     * 
-     * This is superior to cell.getCellStyle().setAlignment(align) because
-     * this method will not modify the CellStyle object that may be referenced
-     * by multiple cells. Instead, this method will search for existing CellStyles
-     * that match the desired CellStyle, creating a new CellStyle with the desired
-     * style if no match exists.
-     *
-     * @param cell the cell to set the alignment for
      * @param align the horizontal alignment to use.
      *
      * @see HorizontalAlignment for alignment options
@@ -247,22 +222,6 @@ public final class CellUtil {
      */
     public static void setVerticalAlignment(Cell cell, VerticalAlignment align) {
         setCellStyleProperty(cell, VERTICAL_ALIGNMENT, align);
-    }
-    
-    /**
-     * Take a cell, and apply a font to it
-     *
-     * @param cell the cell to set the alignment for 
-     * @param workbook The workbook that is being worked with.
-     * @param font The Font that you want to set.
-     * @throws IllegalArgumentException if <tt>font</tt> and <tt>cell</tt> do not belong to the same workbook
-     *
-     * @deprecated 3.15-beta2. Use {@link #setFont(Cell, Font)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public static void setFont(Cell cell, Workbook workbook, Font font) {
-        setFont(cell, font);
     }
     
     /**
@@ -297,7 +256,7 @@ public final class CellUtil {
      * <p>This is necessary because Excel has an upper limit on the number of styles that it supports.</p>
      * 
      * <p>This function is more efficient than multiple calls to
-     * {@link #setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.Workbook, String, Object)}
+     * {@link #setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, String, Object)}
      * if adding multiple cell styles.</p>
      * 
      * <p>For performance reasons, if this is the only cell in a workbook that uses a cell style,
@@ -340,33 +299,6 @@ public final class CellUtil {
         }
 
         cell.setCellStyle(newStyle);
-    }
-
-    /**
-     * <p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s
-     * current style plus a single style property <code>propertyName</code> with value
-     * <code>propertyValue<code>.
-     * A new style is created if the workbook does not contain a matching style.</p>
-     * 
-     * <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
-     * same style.</p>
-     * 
-     * <p>If setting more than one cell style property on a cell, use
-     * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)},
-     * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
-     * 
-     * @param cell The cell that is to be changed.
-     * @param workbook The workbook that is being worked with.
-     * @param propertyName The name of the property that is to be changed.
-     * @param propertyValue The value of the property that is to be changed.
-     * 
-     * @deprecated 3.15-beta2. Use {@link #setCellStyleProperty(Cell, String, Object)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public static void setCellStyleProperty(Cell cell, Workbook workbook, String propertyName,
-            Object propertyValue) {
-        setCellStyleProperty(cell, propertyName, propertyValue);
     }
 
     /**
@@ -655,40 +587,6 @@ public final class CellUtil {
      * @param value property value
      */
     private static void put(Map<String, Object> properties, String name, Object value) {
-        properties.put(name, value);
-    }
-
-    /**
-     * Utility method that puts the named short value to the given map.
-     *
-     * @param properties map of properties (String -> Object)
-     * @param name property name
-     * @param value property value
-     */
-    private static void putShort(Map<String, Object> properties, String name, short value) {
-        properties.put(name, value);
-    }
-    
-    /**
-     * Utility method that puts the named BorderStyle, HorizontalAlignment, VerticalAlignment, etc
-     * value to the given map.
-     *
-     * @param properties map of properties (String -> Object)
-     * @param name property name
-     * @param value property value
-     */
-    private static void putEnum(Map<String, Object> properties, String name, Enum<?> value) {
-        properties.put(name, value);
-    }
-
-    /**
-     * Utility method that puts the named boolean value to the given map.
-     *
-     * @param properties map of properties (String -> Object)
-     * @param name property name
-     * @param value property value
-     */
-    private static void putBoolean(Map<String, Object> properties, String name, boolean value) {
         properties.put(name, value);
     }
 

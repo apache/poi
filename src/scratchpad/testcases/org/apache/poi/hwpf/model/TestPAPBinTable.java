@@ -17,29 +17,30 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
+import org.junit.Test;
 
-public final class TestPAPBinTable extends TestCase
-{
+public final class TestPAPBinTable {
 
-    public void testObIs()
-    {
+    @Test
+    public void testObIs() throws IOException {
         // shall not fail with assertions on
-        HWPFTestDataSamples.openSampleFile( "ob_is.doc" );
+        HWPFTestDataSamples.openSampleFile( "ob_is.doc" ).close();;
     }
 
-    public void testReadWrite() throws Exception
-    {
+    @Test
+    public void testReadWrite() throws IOException {
         /** @todo verify the constructors */
-        HWPFDocFixture _hWPFDocFixture = new HWPFDocFixture( this,
-                HWPFDocFixture.DEFAULT_TEST_FILE );
+        HWPFDocFixture _hWPFDocFixture = new HWPFDocFixture( this, HWPFDocFixture.DEFAULT_TEST_FILE );
 
         _hWPFDocFixture.setUp();
         TextPieceTable fakeTPT = new TextPieceTable();
@@ -52,8 +53,8 @@ public final class TestPAPBinTable extends TestCase
                 null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fakeTPT );
 
         HWPFFileSystem fileSys = new HWPFFileSystem();
-        HWPFOutputStream tableOut = fileSys.getStream( "1Table" );
-        HWPFOutputStream mainOut = fileSys.getStream( "WordDocument" );
+        ByteArrayOutputStream tableOut = fileSys.getStream( "1Table" );
+        ByteArrayOutputStream mainOut = fileSys.getStream( "WordDocument" );
         _pAPBinTable.writeTo( mainOut, tableOut, fakeTPT );
 
         byte[] newTableStream = tableOut.toByteArray();

@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.apache.poi.POIDocument;
-import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.CurrentUserAtom;
@@ -46,7 +44,7 @@ import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
-import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -731,44 +729,15 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
     }
 
-    /**
-     * For a given named property entry, either return it or null if
-     * if it wasn't found
-     *
-     * @param setName The property to read
-     * @return The value of the given property or null if it wasn't found.
-     */
+
     @Override
-    protected PropertySet getPropertySet(String setName) {
+    public EncryptionInfo getEncryptionInfo() throws IOException {
         DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
-        return (dea == null)
-                ? super.getPropertySet(setName)
-                : super.getPropertySet(setName, dea.getEncryptionInfo());
+        return (dea != null) ? dea.getEncryptionInfo() : null;
     }
 
-    /**
-     * Writes out the standard Documment Information Properties (HPSF)
-     *
-     * @param outFS          the POIFSFileSystem to write the properties into
-     * @param writtenEntries a list of POIFS entries to add the property names too
-     * @throws IOException if an error when writing to the
-     *                     {@link POIFSFileSystem} occurs
-     */
-    @Override
-    protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
-        super.writeProperties(outFS, writtenEntries);
-        DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
-        if (dea != null) {
-            CryptoAPIEncryptor enc = (CryptoAPIEncryptor) dea.getEncryptionInfo().getEncryptor();
-            try {
-                enc.getSummaryEntries(outFS.getRoot()); // ignore OutputStream
-            } catch (IOException e) {
-                throw e;
-            } catch (GeneralSecurityException e) {
-                throw new IOException(e);
-            }
-        }
-    }
+    
+    
     
     /* ******************* adding methods follow ********************* */
 
@@ -893,6 +862,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
     }
 
+    @Override
+    protected String getEncryptedPropertyStreamName() {
+        return "EncryptedSummary";
+    }
 
     private static class BufAccessBAOS extends ByteArrayOutputStream {
         public byte[] getBuf() {

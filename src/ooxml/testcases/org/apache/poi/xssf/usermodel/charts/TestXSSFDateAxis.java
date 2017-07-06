@@ -15,37 +15,26 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model.io;
+package org.apache.poi.xssf.usermodel.charts;
 
-import java.io.ByteArrayOutputStream;
+import junit.framework.TestCase;
 
-import org.apache.poi.util.Internal;
+import org.apache.poi.ss.usermodel.charts.*;
+import org.apache.poi.xssf.usermodel.*;
 
-@Internal
-public final class HWPFOutputStream extends ByteArrayOutputStream {
+public final class TestXSSFDateAxis extends TestCase {
+ 
+	public void testAccessMethods() throws Exception {
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet();
+		XSSFDrawing drawing = sheet.createDrawingPatriarch();
+		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+		XSSFChart chart = drawing.createChart(anchor);
+		XSSFDateAxis axis = chart.getChartAxisFactory().createDateAxis(AxisPosition.BOTTOM);
 
-    int _offset;
+		axis.setCrosses(AxisCrosses.AUTO_ZERO);
+		assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
 
-    public HWPFOutputStream() {
-        super();
-    }
-
-    public int getOffset() {
-        return _offset;
-    }
-
-    public synchronized void reset() {
-        super.reset();
-        _offset = 0;
-    }
-
-    public synchronized void write(byte[] buf, int off, int len) {
-        super.write(buf, off, len);
-        _offset += len;
-    }
-
-    public synchronized void write(int b) {
-        super.write(b);
-        _offset++;
-    }
+		assertEquals(chart.getAxis().size(), 1);
+	}
 }

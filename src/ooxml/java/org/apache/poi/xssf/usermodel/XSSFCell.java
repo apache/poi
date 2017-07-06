@@ -655,8 +655,18 @@ public final class XSSFCell implements Cell {
         }
     }
     
+    /**
+     * POI currently supports these formula types:
+     * <ul>
+     * <li> {@link STCellFormulaType#NORMAL}
+     * <li> {@link STCellFormulaType#SHARED}
+     * <li> {@link STCellFormulaType#ARRAY}
+     * </ul>
+     * POI does not support {@link STCellFormulaType#DATA_TABLE} formulas.
+     * @return true if the cell is of a formula type POI can handle
+     */
     private boolean isFormulaCell() {
-        if (_cell.getF() != null || getSheet().isCellInArrayFormulaContext(this)) {
+        if ( (_cell.isSetF() && _cell.getF().getT() != STCellFormulaType.DATA_TABLE ) || getSheet().isCellInArrayFormulaContext(this)) {
             return true;
         }
         return false;
@@ -679,7 +689,12 @@ public final class XSSFCell implements Cell {
     }
 
     /**
-     * Return the cell type.
+     * Return the cell type.  Tables in an array formula return 
+     * {@link CellType#FORMULA} for all cells, even though the formula is only defined
+     * in the OOXML file for the top left cell of the array. 
+     * <p/>
+     * NOTE: POI does not support data table formulas.
+     * Cells in a data table appear to POI as plain cells typed from their cached value.
      *
      * @return the cell type
      * @since POI 3.15 beta 3

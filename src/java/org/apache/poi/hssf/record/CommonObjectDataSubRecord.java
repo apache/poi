@@ -22,6 +22,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * The common object data record is used to store all common preferences for an excel object.

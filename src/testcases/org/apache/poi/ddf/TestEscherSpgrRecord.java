@@ -17,11 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public final class TestEscherSpgrRecord extends TestCase {
+public final class TestEscherSpgrRecord {
+    @Test
     public void testSerialize() {
         EscherSpgrRecord r = createRecord();
 
@@ -38,6 +41,7 @@ public final class TestEscherSpgrRecord extends TestCase {
                 HexDump.toHex( data ) );
     }
 
+    @Test
     public void testFillFields() {
         String hexData = "10 00 " +
                 "09 F0 " +
@@ -57,16 +61,20 @@ public final class TestEscherSpgrRecord extends TestCase {
         assertEquals( 4, r.getRectY2() );
     }
 
+    @Test
     public void testToString() {
-
-        String expected = "org.apache.poi.ddf.EscherSpgrRecord:" + '\n' +
-                "  RecordId: 0xF009" + '\n' +
-                "  Version: 0x0000" + '\n' +
-                "  Instance: 0x0001" + '\n' +
-                "  RectX: 1" + '\n' +
-                "  RectY: 2" + '\n' +
-                "  RectWidth: 3" + '\n' +
-                "  RectHeight: 4" + '\n';
+        String nl = System.getProperty("line.separator");
+        String expected =
+            "org.apache.poi.ddf.EscherSpgrRecord (Spgr):" + nl +
+            "  RecordId: 0xF009" + nl +
+            "  Version: 0x0000" + nl +
+            "  Instance: 0x0001" + nl +
+            "  Options: 0x0010" + nl +
+            "  Record Size: 24" + nl +
+            "  RectX: 0x00000001" + nl +
+            "  RectY: 0x00000002" + nl +
+            "  RectWidth: 0x00000003" + nl +
+            "  RectHeight: 0x00000004";
         assertEquals( expected, createRecord().toString() );
     }
 

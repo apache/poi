@@ -26,6 +26,7 @@ import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -48,7 +49,7 @@ public class CellNumberFormatter extends CellFormatter {
     private final Special numerator;
     private final Special afterInteger;
     private final Special afterFractional;
-    private final boolean integerCommas;
+    private final boolean showGroupingSeparator;
     private final List<Special> specials =  new ArrayList<Special>();
     private final List<Special> integerSpecials = new ArrayList<Special>();
     private final List<Special> fractionalSpecials = new ArrayList<Special>();
@@ -69,13 +70,11 @@ public class CellNumberFormatter extends CellFormatter {
     // ("#" for integer values, and "#.#" for floating-point values) is
     // different from the 'General' format for numbers ("#" for integer
     // values and "#.#########" for floating-point values).
-    private static final CellFormatter SIMPLE_NUMBER = new GeneralNumberFormatter();
-    private static final CellFormatter SIMPLE_INT = new CellNumberFormatter("#");
-    private static final CellFormatter SIMPLE_FLOAT = new CellNumberFormatter("#.#");
+    private final CellFormatter SIMPLE_NUMBER = new GeneralNumberFormatter(locale);
 
     private static class GeneralNumberFormatter extends CellFormatter {
-        private GeneralNumberFormatter() {
-            super("General");
+        private GeneralNumberFormatter(Locale locale) {
+            super(locale, "General");
         }
 
         public void formatValue(StringBuffer toAppendTo, Object value) {
@@ -86,7 +85,8 @@ public class CellNumberFormatter extends CellFormatter {
             CellFormatter cf;
             if (value instanceof Number) {
                 Number num = (Number) value;
-                cf = (num.doubleValue() % 1.0 == 0) ? SIMPLE_INT : SIMPLE_FLOAT;
+                cf = (num.doubleValue() % 1.0 == 0) ? new CellNumberFormatter(locale, "#") :
+                    new CellNumberFormatter(locale, "#.#");
             } else {
                 cf = CellTextFormatter.SIMPLE_TEXT;
             }
@@ -124,7 +124,17 @@ public class CellNumberFormatter extends CellFormatter {
      * @param format The format to parse.
      */
     public CellNumberFormatter(String format) {
-        super(format);
+        this(LocaleUtil.getUserLocale(), format);
+    }
+
+    /**
+     * Creates a new cell number formatter.
+     *
+     * @param locale The locale to use.
+     * @param format The format to parse.
+     */
+    public CellNumberFormatter(Locale locale, String format) {
+        super(locale, format);
 
         CellNumberPartHandler ph = new CellNumberPartHandler();
         StringBuffer descBuf = CellFormatPart.parseFormat(format, CellFormatType.NUMBER, ph);
@@ -177,7 +187,7 @@ public class CellNumberFormatter extends CellFormatter {
         }
         
         double scaleByRef[] = { ph.getScale() };
-        integerCommas = interpretIntegerCommas(descBuf, specials, decimalPoint, integerEnd(), fractionalEnd(), scaleByRef);
+        showGroupingSeparator = interpretIntegerCommas(descBuf, specials, decimalPoint, integerEnd(), fractionalEnd(), scaleByRef);
         if (exponent == null) {
             scale = scaleByRef[0];
         } else {
@@ -259,14 +269,17 @@ public class CellNumberFormatter extends CellFormatter {
             }
             fmtBuf.append('E');
             placeZeros(fmtBuf, exponentSpecials.subList(2, exponentSpecials.size()));
-            DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
-            decimalFmt = new DecimalFormat(fmtBuf.toString(), dfs);
+            decimalFmt = new DecimalFormat(fmtBuf.toString(), getDecimalFormatSymbols());
             printfFmt = null;
         }
 
         desc = descBuf.toString();
     }
 
+    private DecimalFormatSymbols getDecimalFormatSymbols() {
+        return DecimalFormatSymbols.getInstance(locale);
+    }
+    
     private static void placeZeros(StringBuffer sb, List<Special> specials) {
         for (Special s : specials) {
             if (isDigitFmt(s)) {
@@ -436,7 +449,7 @@ public class CellNumberFormatter extends CellFormatter {
         }
 
         Set<CellNumberStringMod> mods = new TreeSet<CellNumberStringMod>();
-        StringBuffer output = new StringBuffer(desc);
+        StringBuffer output = new StringBuffer(localiseFormat(desc));
 
         if (exponent != null) {
             writeScientific(value, output, mods);
@@ -444,20 +457,23 @@ public class CellNumberFormatter extends CellFormatter {
             writeFraction(value, null, fractional, output, mods);
         } else {
             StringBuffer result = new StringBuffer();
-            Formatter f = new Formatter(result, LocaleUtil.getUserLocale());
+            Formatter f = new Formatter(result, locale);
             try {
-                f.format(LocaleUtil.getUserLocale(), printfFmt, value);
+                f.format(locale, printfFmt, value);
             } finally {
                 f.close();
             }
 
             if (numerator == null) {
                 writeFractional(result, output);
-                writeInteger(result, output, integerSpecials, mods, integerCommas);
+                writeInteger(result, output, integerSpecials, mods, showGroupingSeparator);
             } else {
                 writeFraction(value, result, fractional, output, mods);
             }
         }
+
+        DecimalFormatSymbols dfs = getDecimalFormatSymbols();
+        String groupingSeparator = Character.toString(dfs.getGroupingSeparator());
 
         // Now strip out any remaining '#'s and add any pending text ...
         Iterator<CellNumberStringMod> changes = mods.iterator();
@@ -478,7 +494,7 @@ public class CellNumberFormatter extends CellFormatter {
                 switch (nextChange.getOp()) {
                 case CellNumberStringMod.AFTER:
                     // ignore adding a comma after a deleted char (which was a '#')
-                    if (nextChange.getToAdd().equals(",") && deletedChars.get(s.pos)) {
+                    if (nextChange.getToAdd().equals(groupingSeparator) && deletedChars.get(s.pos)) {
                         break;
                     }
                     output.insert(modPos + 1, nextChange.getToAdd());
@@ -545,7 +561,7 @@ public class CellNumberFormatter extends CellFormatter {
         StringBuffer result = new StringBuffer();
         FieldPosition fractionPos = new FieldPosition(DecimalFormat.FRACTION_FIELD);
         decimalFmt.format(value, result, fractionPos);
-        writeInteger(result, output, integerSpecials, mods, integerCommas);
+        writeInteger(result, output, integerSpecials, mods, showGroupingSeparator);
         writeFractional(result, output);
 
         /*
@@ -683,6 +699,27 @@ public class CellNumberFormatter extends CellFormatter {
             LOG.log(POILogger.ERROR, "error while fraction evaluation", ignored);
         }
     }
+    
+    private String localiseFormat(String format) {
+        DecimalFormatSymbols dfs = getDecimalFormatSymbols();
+        if(format.contains(",") && dfs.getGroupingSeparator() != ',') {
+            if(format.contains(".") && dfs.getDecimalSeparator() != '.') {
+                format = replaceLast(format, "\\.", "[DECIMAL_SEPARATOR]");
+                format = format.replace(',', dfs.getGroupingSeparator())
+                        .replace("[DECIMAL_SEPARATOR]", Character.toString(dfs.getDecimalSeparator()));
+            } else {
+                format = format.replace(',', dfs.getGroupingSeparator());
+            }
+        } else if(format.contains(".") && dfs.getDecimalSeparator() != '.') {
+            format = format.replace('.', dfs.getDecimalSeparator());
+        }
+        return format;
+    }
+    
+    
+    private static String replaceLast(String text, String regex, String replacement) {
+        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+    }
 
     private static boolean hasChar(char ch, List<Special>... numSpecials) {
         for (List<Special> specials : numSpecials) {
@@ -698,9 +735,9 @@ public class CellNumberFormatter extends CellFormatter {
     private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
-        Formatter formatter = new Formatter(sb, LocaleUtil.getUserLocale());
+        Formatter formatter = new Formatter(sb, locale);
         try {
-            formatter.format(LocaleUtil.getUserLocale(), fmt, num);
+            formatter.format(locale, fmt, num);
         } finally {
             formatter.close();
         }
@@ -709,9 +746,13 @@ public class CellNumberFormatter extends CellFormatter {
 
     private void writeInteger(StringBuffer result, StringBuffer output,
             List<Special> numSpecials, Set<CellNumberStringMod> mods,
-            boolean showCommas) {
+            boolean showGroupingSeparator) {
 
-        int pos = result.indexOf(".") - 1;
+        DecimalFormatSymbols dfs = getDecimalFormatSymbols();
+        String decimalSeparator = Character.toString(dfs.getDecimalSeparator());
+        String groupingSeparator = Character.toString(dfs.getGroupingSeparator());
+
+        int pos = result.indexOf(decimalSeparator) - 1;
         if (pos < 0) {
             if (exponent != null && numSpecials == integerSpecials) {
                 pos = result.indexOf("E") - 1;
@@ -723,13 +764,13 @@ public class CellNumberFormatter extends CellFormatter {
         int strip;
         for (strip = 0; strip < pos; strip++) {
             char resultCh = result.charAt(strip);
-            if (resultCh != '0' && resultCh != ',') {
+            if (resultCh != '0' && resultCh != dfs.getGroupingSeparator()) {
                 break;
             }
         }
 
         ListIterator<Special> it = numSpecials.listIterator(numSpecials.size());
-        boolean followWithComma = false;
+        boolean followWithGroupingSeparator = false;
         Special lastOutputIntegerDigit = null;
         int digit = 0;
         while (it.hasPrevious()) {
@@ -741,16 +782,16 @@ public class CellNumberFormatter extends CellFormatter {
                 resultCh = '0';
             }
             Special s = it.previous();
-            followWithComma = showCommas && digit > 0 && digit % 3 == 0;
+            followWithGroupingSeparator = showGroupingSeparator && digit > 0 && digit % 3 == 0;
             boolean zeroStrip = false;
             if (resultCh != '0' || s.ch == '0' || s.ch == '?' || pos >= strip) {
                 zeroStrip = s.ch == '?' && pos < strip;
                 output.setCharAt(s.pos, (zeroStrip ? ' ' : resultCh));
                 lastOutputIntegerDigit = s;
             }
-            if (followWithComma) {
-                mods.add(insertMod(s, zeroStrip ? " " : ",", CellNumberStringMod.AFTER));
-                followWithComma = false;
+            if (followWithGroupingSeparator) {
+                mods.add(insertMod(s, zeroStrip ? " " : groupingSeparator, CellNumberStringMod.AFTER));
+                followWithGroupingSeparator = false;
             }
             digit++;
             --pos;
@@ -761,10 +802,10 @@ public class CellNumberFormatter extends CellFormatter {
             // pos was decremented at the end of the loop above when the iterator was at its end
             ++pos;
             extraLeadingDigits = new StringBuffer(result.substring(0, pos));
-            if (showCommas) {
+            if (showGroupingSeparator) {
                 while (pos > 0) {
                     if (digit > 0 && digit % 3 == 0) {
-                        extraLeadingDigits.insert(pos, ',');
+                        extraLeadingDigits.insert(pos, groupingSeparator);
                     }
                     digit++;
                     --pos;
@@ -778,7 +819,8 @@ public class CellNumberFormatter extends CellFormatter {
         int digit;
         int strip;
         if (fractionalSpecials.size() > 0) {
-            digit = result.indexOf(".") + 1;
+            String decimalSeparator = Character.toString(getDecimalFormatSymbols().getDecimalSeparator());
+            digit = result.indexOf(decimalSeparator) + 1;
             if (exponent != null) {
                 strip = result.indexOf("e") - 1;
             } else {

@@ -83,6 +83,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ExternalLinksTable;
@@ -123,8 +124,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Width of one character of the default font in pixels. Same for Calibry and Arial.
+     * @deprecated POI 3.17 beta 1
+     * @see Units#DEFAULT_CHARACTER_WIDTH
      */
-    public static final float DEFAULT_CHARACTER_WIDTH = 7.0017f;
+    @Removal(version="3.19")
+    public static final float DEFAULT_CHARACTER_WIDTH = Units.DEFAULT_CHARACTER_WIDTH;
 
     /**
      * Excel silently truncates long sheet names to 31 chars.
@@ -217,7 +221,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * cached instance of XSSFCreationHelper for this workbook
-     * @see {@link #getCreationHelper()}
+     * @see #getCreationHelper()
      */
     private XSSFCreationHelper _creationHelper;
 
@@ -399,6 +403,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             // Load individual sheets. The order of sheets is defined by the order
             //  of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
+            //noinspection deprecation
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 parseSheet(shIdMap, ctSheet);
             }
@@ -594,7 +599,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
         // copy sheet's relations
         List<RelationPart> rels = srcSheet.getRelationParts();
-        // if the sheet being cloned has a drawing then rememebr it and re-create it too
+        // if the sheet being cloned has a drawing then remember it and re-create it too
         XSSFDrawing dg = null;
         for(RelationPart rp : rels) {
             POIXMLDocumentPart r = rp.getDocumentPart();
@@ -638,7 +643,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
         clonedSheet.setSelected(false);
 
-        // clone the sheet drawing alongs with its relationships
+        // clone the sheet drawing along with its relationships
         if (dg != null) {
             if(ct.isSetDrawing()) {
                 // unset the existing reference to the drawing,
@@ -895,16 +900,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         CTSheet sheet = workbook.getSheets().addNewSheet();
         sheet.setName(sheetname);
         return sheet;
-    }
-
-    /**
-     * Finds a font that matches the one with the supplied attributes
-     * @deprecated POI 3.15. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
-     */
-    @Deprecated
-    @Override
-    public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
-        return stylesSource.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
     
     /**
@@ -1201,16 +1196,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Alias for {@link #sheetIterator()} to allow
      * foreach loops
      * 
-     * <code>Iterator<XSSFSheet> iterator()<code> was replaced with <code>Iterator<Sheet> iterator()</code>
-     * to make iterating over a container (Workbook, Sheet, Row) consistent across POI spreadsheets.
-     * This breaks backwards compatibility and may affect your code.
-     * See {@link XSSFWorkbook#xssfSheetIterator} for how to upgrade your code to be compatible
-     * with the new interface.
-     * 
      * Note: remove() is not supported on this iterator.
      * Use {@link #removeSheetAt(int)} to remove sheets instead.
      * 
-     * @return an iterator  of the sheets.
+     * @return an iterator of the sheets.
      */
     @Override
     public Iterator<Sheet> iterator() {
@@ -1241,74 +1230,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             throw new UnsupportedOperationException("remove method not supported on XSSFWorkbook.iterator(). "+
                     "Use Sheet.removeSheetAt(int) instead.");
         }
-    }
-    
-    /**
-     * xssfSheetIterator was added to make transitioning to the new Iterator<Sheet> iterator()
-     *  interface less painful for projects currently using POI.
-     *  
-     *  If your code was written using a for-each loop:
-     *  <pre><code>
-     *  for (XSSFSheet sh : wb) {
-     *      sh.createRow(0);
-     *  }
-     *  </code></pre>
-     *  
-     *  There are two ways to upgrade your code:
-     *  // Option A:
-     *  <pre><code>
-     *  for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
-     *      sh.createRow(0);
-     *  }
-     *  </code></pre>
-     *      
-     *  // Option B (preferred for new code):
-     *  <pre><code>
-     *  for (Sheet sh : wb) {
-     *      sh.createRow(0);
-     *  }
-     *  </code></pre>
-     *  
-     *  
-     *  
-     *  If your code was written using an iterator variable:
-     *  <pre><code>
-     *  Iterator<XSSFSheet> it = wb.iterator();
-     *  XSSFSheet sh = it.next();
-     *  sh.createRow(0);
-     *  </code></pre>
-     *  
-     *  There are three ways to upgrade your code:
-     *  // Option A:
-     *  <pre><code>
-     *  Iterator<XSSFSheet> it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) wb.iterator();
-     *  XSSFSheet sh = it.next();
-     *  sh.createRow(0);
-     *  </code></pre>
-     *
-     *  // Option B:
-     *  <pre><code>
-     *  &#64;SuppressWarnings("deprecation")
-     *  Iterator<XSSFSheet> it = wb.xssfSheetIterator();
-     *  XSSFSheet sh = it.next();
-     *  sh.createRow(0);
-     *  </code></pre>
-     *
-     *  // Option C (preferred for new code):
-     *  <pre><code>
-     *  Iterator<Sheet> it = wb.iterator();
-     *  Sheet sh = it.next();
-     *  sh.createRow(0);
-     *  </code></pre>
-     *  
-     *  @deprecated 3.13. New projects should use the preferred options. Note: XSSFWorkbook.xssfSheetIterator
-     *  is deprecated and will be removed in 3.15.
-     *
-     * @return an iterator of the sheets.
-     */
-    @Deprecated
-    public Iterator<XSSFSheet> xssfSheetIterator() {
-        return new SheetIterator<XSSFSheet>();
     }
     
     /**
@@ -1709,6 +1630,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         newcts.set(cts);
 
         //notify sheets
+        //noinspection deprecation
         CTSheet[] sheetArray = ct.getSheetArray();
         for(int i=0; i < sheetArray.length; i++) {
             sheets.get(i).sheet = sheetArray[i];
@@ -1877,6 +1799,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @return true if the sheet contains the name, false otherwise.
      */
     private boolean containsSheet(String name, int excludeSheetIdx) {
+        //noinspection deprecation
         CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
 
         if (name.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
@@ -2359,7 +2282,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Adds a vbaProject.bin file to the workbook.  This will change the workbook
      * type if necessary.
      *
-     * @throws IOException
+     * @throws IOException If copying data from the stream fails.
      */
     public void setVBAProject(InputStream vbaProjectStream) throws IOException {
         if (!isMacroEnabled()) {
@@ -2390,8 +2313,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Adds a vbaProject.bin file taken from another, given workbook to this one.
-     * @throws IOException
-     * @throws InvalidFormatException
+     * @throws IOException If copying the VBAProject stream fails.
+     * @throws InvalidFormatException If an error occurs while handling parts of the XSSF format
      */
     public void setVBAProject(XSSFWorkbook macroWorkbook) throws IOException, InvalidFormatException {
         if (!macroWorkbook.isMacroEnabled()) {

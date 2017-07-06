@@ -38,19 +38,19 @@ public abstract class BaseTestFont {
     protected final void baseTestDefaultFont(String defaultName, short defaultSize, short defaultColor) throws IOException {
         //get default font and check against default value
         Workbook workbook = _testDataProvider.createWorkbook();
-        Font fontFind=workbook.findFont(Font.BOLDWEIGHT_NORMAL, defaultColor, defaultSize, defaultName, false, false, Font.SS_NONE, Font.U_NONE);
+        Font fontFind=workbook.findFont(false, defaultColor, defaultSize, defaultName, false, false, Font.SS_NONE, Font.U_NONE);
         assertNotNull(fontFind);
 
         //get default font, then change 2 values and check against different values (height changes)
         Font font=workbook.createFont();
-        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        assertEquals(Font.BOLDWEIGHT_BOLD, font.getBoldweight());
+        font.setBold(true);
+        assertTrue(font.getBold());
         font.setUnderline(Font.U_DOUBLE);
         assertEquals(Font.U_DOUBLE, font.getUnderline());
         font.setFontHeightInPoints((short)15);
         assertEquals(15*20, font.getFontHeight());
         assertEquals(15, font.getFontHeightInPoints());
-        fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, defaultColor, (short)(15*20), defaultName, false, false, Font.SS_NONE, Font.U_DOUBLE);
+        fontFind=workbook.findFont(true, defaultColor, (short)(15*20), defaultName, false, false, Font.SS_NONE, Font.U_DOUBLE);
         assertNotNull(fontFind);
         workbook.close();
     }
@@ -61,7 +61,7 @@ public abstract class BaseTestFont {
         int num0 = wb.getNumberOfFonts();
 
         Font f1=wb.createFont();
-        f1.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        f1.setBold(true);
         short idx1 = f1.getIndex();
         wb.createCellStyle().setFont(f1);
 
@@ -76,7 +76,7 @@ public abstract class BaseTestFont {
         wb.createCellStyle().setFont(f3);
 
         assertEquals(num0 + 3,wb.getNumberOfFonts());
-        assertEquals(Font.BOLDWEIGHT_BOLD,wb.getFontAt(idx1).getBoldweight());
+        assertTrue(wb.getFontAt(idx1).getBold());
         assertEquals(Font.U_DOUBLE,wb.getFontAt(idx2).getUnderline());
         assertEquals(23,wb.getFontAt(idx3).getFontHeightInPoints());
         wb.close();
@@ -97,7 +97,7 @@ public abstract class BaseTestFont {
         int num0 = wb1.getNumberOfFonts();
 
         Font font=wb1.createFont();
-        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setBold(true);
         font.setStrikeout(true);
         font.setColor(IndexedColors.YELLOW.getIndex());
         font.setFontName("Courier");
@@ -161,7 +161,7 @@ public abstract class BaseTestFont {
 
         //default font
         Font f1 = wb.getFontAt((short)0);
-        assertEquals(Font.BOLDWEIGHT_NORMAL, f1.getBoldweight());
+        assertFalse(f1.getBold());
 
         // Check that asking for the same font
         //  multiple times gives you the same thing.
@@ -172,7 +172,7 @@ public abstract class BaseTestFont {
         //  yet to add
         assertNull(
             wb.findFont(
-                Font.BOLDWEIGHT_BOLD, (short)123, (short)(22*20),
+                true, (short)123, (short)(22*20),
                 "Thingy", false, true, (short)2, (byte)2
             )
         );
@@ -183,7 +183,7 @@ public abstract class BaseTestFont {
 
         assertSame(nf, wb.getFontAt(nfIdx));
 
-        nf.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        nf.setBold(true);
         nf.setColor((short)123);
         nf.setFontHeightInPoints((short)22);
         nf.setFontName("Thingy");
@@ -201,13 +201,13 @@ public abstract class BaseTestFont {
         // Find it now
         assertNotNull(
             wb.findFont(
-                Font.BOLDWEIGHT_BOLD, (short)123, (short)(22*20),
+                true, (short)123, (short)(22*20),
                 "Thingy", false, true, (short)2, (byte)2
             )
         );
         assertSame(nf,
                wb.findFont(
-                   Font.BOLDWEIGHT_BOLD, (short)123, (short)(22*20),
+                   true, (short)123, (short)(22*20),
                    "Thingy", false, true, (short)2, (byte)2
                )
         );

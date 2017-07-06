@@ -40,21 +40,6 @@ public class HSSFHyperlink implements Hyperlink {
      * Construct a new hyperlink
      * 
      * This method is internal to be used only by
-     * {@link HSSFCreationHelper#createHyperlink(int)}.
-     *
-     * @param type the type of hyperlink to create
-     * @deprecated POI 3.15 beta 3
-     */
-    @Internal(since="3.15 beta 3")
-    protected HSSFHyperlink( int type )
-    {
-        this(HyperlinkType.forInt(type));
-    }
-    
-    /**
-     * Construct a new hyperlink
-     * 
-     * This method is internal to be used only by
      * {@link HSSFCreationHelper#createHyperlink(HyperlinkType)}.
      *
      * @param type the type of hyperlink to create

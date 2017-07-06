@@ -65,9 +65,10 @@ public class EscherOptRecord extends AbstractEscherOptRecord
     @Override
     public void setVersion( short value )
     {
-        if ( value != 0x3 )
+        if ( value != 0x3 ) {
             throw new IllegalArgumentException( RECORD_DESCRIPTION
                     + " can have only '0x3' version" );
+        }
 
         super.setVersion( value );
     }

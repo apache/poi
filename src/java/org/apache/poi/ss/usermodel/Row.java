@@ -19,8 +19,6 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Iterator;
 
-import org.apache.poi.util.Removal;
-
 /**
  * High level representation of a row of a spreadsheet.
  */
@@ -237,46 +235,10 @@ public interface Row extends Iterable<Cell> {
      *  if for the case of null and blank cells
      */
     public enum MissingCellPolicy {
-        RETURN_NULL_AND_BLANK(1),
-        RETURN_BLANK_AS_NULL(2),
-        CREATE_NULL_AS_BLANK(3);
-        
-        /**
-         * @deprecated as of POI 3.15-beta2, scheduled for removal in 3.17 - the id has no function and will be removed.
-         * The {@code id} is only kept only for backwards compatibility with applications that hard-coded the number
-         */
-        @Removal(version="3.17")
-        @Deprecated
-        public final int id;
-        private MissingCellPolicy(int id) {
-            this.id = id;
-        }
+        RETURN_NULL_AND_BLANK,
+        RETURN_BLANK_AS_NULL,
+        CREATE_NULL_AS_BLANK;
     }
-
-    /**
-     * Missing cells are returned as null, Blank cells are returned as normal
-     * 
-     * @deprecated as of POI 3.15-beta2, scheduled for removal in 3.17 - use the MissingCellPolicy enum
-     **/
-    @Removal(version="3.17")
-    @Deprecated
-    public static final MissingCellPolicy RETURN_NULL_AND_BLANK = MissingCellPolicy.RETURN_NULL_AND_BLANK;
-    /**
-     * Missing cells and blank cells are returned as null
-     * 
-     * @deprecated as of POI 3.15-beta2, scheduled for removal in 3.17 - use the MissingCellPolicy enum
-     **/
-    @Removal(version="3.17")
-    @Deprecated
-    public static final MissingCellPolicy RETURN_BLANK_AS_NULL = MissingCellPolicy.RETURN_BLANK_AS_NULL;
-    /**
-     * A new, blank cell is created for missing cells. Blank cells are returned as normal
-     * 
-     * @deprecated as of POI 3.15-beta2, scheduled for removal in 3.17 - use the MissingCellPolicy enum
-     **/
-    @Removal(version="3.17")
-    @Deprecated
-    public static final MissingCellPolicy CREATE_NULL_AS_BLANK = MissingCellPolicy.CREATE_NULL_AS_BLANK;
     
     /**
      * Returns the rows outline level. Increased as you

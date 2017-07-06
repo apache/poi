@@ -30,12 +30,10 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -244,17 +242,17 @@ public final class TestUnfixedBugs {
            sheet.addMergedRegion(range4);
            
            // set border
-           RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, range1, sheet, wb);
+           RegionUtil.setBorderBottom(BorderStyle.THIN, range1, sheet);
            
-           row2.getCell(0).getCellStyle().setBorderBottom(CellStyle.BORDER_THIN);
-           row2.getCell(1).getCellStyle().setBorderBottom(CellStyle.BORDER_THIN);
+           row2.getCell(0).getCellStyle().setBorderBottom(BorderStyle.THIN);
+           row2.getCell(1).getCellStyle().setBorderBottom(BorderStyle.THIN);
 
            Cell cell0 = CellUtil.getCell(row3, 0);
-           CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+           CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
            Cell cell1 = CellUtil.getCell(row3, 1);
-           CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+           CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
 
-           RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, range4, sheet, wb);
+           RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
     
            // write to file
            OutputStream stream = new FileOutputStream(new File("C:/temp/55752.xlsx"));
@@ -360,41 +358,5 @@ public final class TestUnfixedBugs {
        assertNotNull("Expecting cell at rownum " + rowNum, cell);
        assertEquals("Did not have expected contents at rownum " + rowNum, 
                contents + ".0", cell.toString());
-   }
-
-   @Test
-   public void test58325_one() {
-       check58325(XSSFTestDataSamples.openSampleWorkbook("58325_lt.xlsx"), 1);
-   }
-
-   @Test
-   public void test58325_three() {
-       check58325(XSSFTestDataSamples.openSampleWorkbook("58325_db.xlsx"), 3);
-   }
-
-   private void check58325(XSSFWorkbook wb, int expectedShapes) {
-       XSSFSheet sheet = wb.getSheet("MetasNM001");
-       assertNotNull(sheet);
-
-       StringBuilder str = new StringBuilder();
-       str.append("sheet " + sheet.getSheetName() + " - ");
-
-       XSSFDrawing drawing = sheet.getDrawingPatriarch();
-       //drawing = ((XSSFSheet)sheet).createDrawingPatriarch();
-
-       List<XSSFShape> shapes = drawing.getShapes();
-       str.append("drawing.getShapes().size() = " + shapes.size());
-       Iterator<XSSFShape> it = shapes.iterator();
-       while(it.hasNext()) {           
-           XSSFShape shape = it.next();
-           str.append(", " + shape);
-           str.append(", Col1:"+((XSSFClientAnchor)shape.getAnchor()).getCol1());
-           str.append(", Col2:"+((XSSFClientAnchor)shape.getAnchor()).getCol2());
-           str.append(", Row1:"+((XSSFClientAnchor)shape.getAnchor()).getRow1());
-           str.append(", Row2:"+((XSSFClientAnchor)shape.getAnchor()).getRow2());
-       }
-       
-       assertEquals("Having shapes: " + str, 
-               expectedShapes, shapes.size());
    }
 }

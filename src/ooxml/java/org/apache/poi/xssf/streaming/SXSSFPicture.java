@@ -29,14 +29,13 @@ import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.XSSFAnchor;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
-import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
@@ -156,7 +155,7 @@ public final class SXSSFPicture implements Picture {
         assert (w > scaledWidth);
         double cw = getColumnWidthInPixels(col2);
         double deltaW = w - scaledWidth;
-        int dx2 = (int)(XSSFShape.EMU_PER_PIXEL * (cw - deltaW));
+        int dx2 = (int)(Units.EMU_PER_PIXEL * (cw - deltaW));
 
         anchor.setCol2(col2);
         anchor.setDx2(dx2);
@@ -171,13 +170,13 @@ public final class SXSSFPicture implements Picture {
         assert (h > scaledHeight);
         double ch = getRowHeightInPixels(row2);
         double deltaH = h - scaledHeight;
-        int dy2 = (int)(XSSFShape.EMU_PER_PIXEL * (ch - deltaH));
+        int dy2 = (int)(Units.EMU_PER_PIXEL * (ch - deltaH));
         anchor.setRow2(row2);
         anchor.setDy2(dy2);
 
         CTPositiveSize2D size2d =  getCTPicture().getSpPr().getXfrm().getExt();
-        size2d.setCx((long)(scaledWidth * XSSFShape.EMU_PER_PIXEL));
-        size2d.setCy((long)(scaledHeight * XSSFShape.EMU_PER_PIXEL));
+        size2d.setCx((long)(scaledWidth * Units.EMU_PER_PIXEL));
+        size2d.setCy((long)(scaledHeight * Units.EMU_PER_PIXEL));
 
         return anchor;
     }
@@ -188,7 +187,7 @@ public final class SXSSFPicture implements Picture {
         CTCol col = sheet.getColumnHelper().getColumn(columnIndex, false);
         double numChars = col == null || !col.isSetWidth() ? DEFAULT_COLUMN_WIDTH : col.getWidth();
 
-        return (float)numChars*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH;
+        return (float)numChars*Units.DEFAULT_CHARACTER_WIDTH;
     }
 
     private float getRowHeightInPixels(int rowIndex) {
@@ -198,7 +197,7 @@ public final class SXSSFPicture implements Picture {
         SXSSFSheet sheet = _wb.getSXSSFSheet(xssfSheet);
         Row row = sheet.getRow(rowIndex);
         float height = row != null ?  row.getHeightInPoints() : sheet.getDefaultRowHeightInPoints();
-        return height * XSSFShape.PIXEL_DPI / XSSFShape.POINT_DPI;
+        return height * Units.PIXEL_DPI / Units.POINT_DPI;
     }
     /**
      * Return the dimension of this image

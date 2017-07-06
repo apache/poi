@@ -23,10 +23,11 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
@@ -68,16 +69,6 @@ public class SXSSFCreationHelper implements CreationHelper {
     public DataFormat createDataFormat() {
         return helper.createDataFormat();
     }
-    /**
-     * {@inheritDoc}
-     * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public Hyperlink createHyperlink(int type) {
-        return helper.createHyperlink(type);
-    }
     @Override
     public Hyperlink createHyperlink(HyperlinkType type) {
         return helper.createHyperlink(type);
@@ -90,4 +81,21 @@ public class SXSSFCreationHelper implements CreationHelper {
     public ClientAnchor createClientAnchor() {
         return helper.createClientAnchor();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AreaReference createAreaReference(String reference) {
+        return new AreaReference(reference, wb.getSpreadsheetVersion());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AreaReference createAreaReference(CellReference topLeft, CellReference bottomRight) {
+        return new AreaReference(topLeft, bottomRight, wb.getSpreadsheetVersion());
+    }
+
 }

@@ -21,7 +21,6 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Removal;
 
 /**
@@ -58,20 +57,6 @@ public final class RegionUtil {
         }
     }
 
-    /**
-     * Sets the left border style for a region of cells by manipulating the cell style of the individual
-     * cells on the left
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setBorderLeft(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setBorderLeft(border, region, sheet);
-    }
     /**
      * Sets the left border style for a region of cells by manipulating the cell style of the individual
      * cells on the left
@@ -119,20 +104,6 @@ public final class RegionUtil {
      * 
      * @param color The color of the border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setLeftBorderColor(int, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setLeftBorderColor(color, region, sheet);
-    }
-    /**
-     * Sets the left border color for a region of cells by manipulating the cell style of the individual
-     * cells on the left
-     * 
-     * @param color The color of the border
-     * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
      * @since POI 3.15 beta 2
      */
@@ -147,20 +118,6 @@ public final class RegionUtil {
         }
     }
 
-    /**
-     * Sets the right border style for a region of cells by manipulating the cell style of the individual
-     * cells on the right
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setBorderRight(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setBorderRight(border, region, sheet);
-    }
     /**
      * Sets the right border style for a region of cells by manipulating the cell style of the individual
      * cells on the right
@@ -208,20 +165,6 @@ public final class RegionUtil {
      * 
      * @param color The color of the border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setRightBorderColor(int, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setRightBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setRightBorderColor(color, region, sheet);
-    }
-    /**
-     * Sets the right border color for a region of cells by manipulating the cell style of the individual
-     * cells on the right
-     * 
-     * @param color The color of the border
-     * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
      * @since POI 3.15 beta 2
      */
@@ -236,20 +179,6 @@ public final class RegionUtil {
         }
     }
 
-    /**
-     * Sets the bottom border style for a region of cells by manipulating the cell style of the individual
-     * cells on the bottom
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setBorderBottom(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setBorderBottom(border, region, sheet);
-    }
     /**
      * Sets the bottom border style for a region of cells by manipulating the cell style of the individual
      * cells on the bottom
@@ -297,20 +226,6 @@ public final class RegionUtil {
      * 
      * @param color The color of the border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setBottomBorderColor(int, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setBottomBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setBottomBorderColor(color, region, sheet);
-    }
-    /**
-     * Sets the bottom border color for a region of cells by manipulating the cell style of the individual
-     * cells on the bottom
-     * 
-     * @param color The color of the border
-     * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
      * @since POI 3.15 beta 2
      */
@@ -325,20 +240,6 @@ public final class RegionUtil {
         }
     }
 
-    /**
-     * Sets the top border style for a region of cells by manipulating the cell style of the individual
-     * cells on the top
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setBorderTop(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setBorderTop(border, region, sheet);
-    }
     /**
      * Sets the top border style for a region of cells by manipulating the cell style of the individual
      * cells on the top
@@ -380,20 +281,6 @@ public final class RegionUtil {
         }
     }
 
-    /**
-     * Sets the top border color for a region of cells by manipulating the cell style of the individual
-     * cells on the top
-     * 
-     * @param color The color of the border
-     * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
-     * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setTopBorderColor(int, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.17")
-    public static void setTopBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setTopBorderColor(color, region, sheet);
-    }
     /**
      * Sets the top border color for a region of cells by manipulating the cell style of the individual
      * cells on the top

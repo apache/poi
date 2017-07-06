@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -41,7 +40,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     @Override @Ignore("cloneSheet() not implemented") @Test public void bug18800() { /* cloneSheet() not implemented */ }
     @Override @Ignore("cloneSheet() not implemented") @Test public void bug22720() { /* cloneSheet() not implemented */ }
     @Override @Ignore("Evaluation is not fully supported") @Test public void bug47815() { /* Evaluation is not supported */ }
-    @Override @Ignore("Evaluation is not fully supported") @Test public void test58113() { /* Evaluation is not supported */ }
     @Override @Ignore("Evaluation is not fully supported") @Test public void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
     @Override @Ignore("Reading data is not supported") @Test public void bug57798() { /* Reading data is not supported */ }
 
@@ -91,6 +89,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             super.bug60197_NamedRangesReferToCorrectSheetWhenSheetOrderIsChanged();
         } catch (final RuntimeException e) {
             final Throwable cause = e.getCause();
+            //noinspection StatementWithEmptyBody
             if (cause instanceof IOException && cause.getMessage().equals("Stream closed")) {
                 // expected on the second time that _testDataProvider.writeOutAndReadBack(SXSSFWorkbook) is called
                 // if the test makes it this far, then we know that XSSFName sheet indices are updated when sheet

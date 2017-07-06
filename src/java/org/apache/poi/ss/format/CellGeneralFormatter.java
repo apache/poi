@@ -29,7 +29,11 @@ import org.apache.poi.util.LocaleUtil;
 public class CellGeneralFormatter extends CellFormatter {
     /** Creates a new general formatter. */
     public CellGeneralFormatter() {
-        super("General");
+        this(LocaleUtil.getUserLocale());
+    }
+    /** Creates a new general formatter. */
+    public CellGeneralFormatter(Locale locale) {
+        super(locale, "General");
     }
 
     /**
@@ -59,9 +63,9 @@ public class CellGeneralFormatter extends CellFormatter {
                 stripZeros = false;
             }
 
-            Formatter formatter = new Formatter(toAppendTo, LocaleUtil.getUserLocale());
+            Formatter formatter = new Formatter(toAppendTo, locale);
             try {
-                formatter.format(LocaleUtil.getUserLocale(), fmt, value);
+                formatter.format(locale, fmt, value);
             } finally {
                 formatter.close();
             }

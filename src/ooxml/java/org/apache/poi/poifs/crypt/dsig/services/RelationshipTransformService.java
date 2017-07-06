@@ -25,10 +25,9 @@
 package org.apache.poi.poifs.crypt.dsig.services;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
@@ -36,9 +35,8 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.xml.crypto.Data;
 import javax.xml.crypto.MarshalException;
@@ -50,23 +48,20 @@ import javax.xml.crypto.dsig.TransformException;
 import javax.xml.crypto.dsig.TransformService;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
+import org.apache.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.XmlSort;
-import org.apache.xmlbeans.XmlCursor;
+import org.apache.xml.security.signature.XMLSignatureInput;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTRelationshipReference;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.RelationshipReferenceDocument;
-import org.openxmlformats.schemas.xpackage.x2006.relationships.CTRelationship;
-import org.openxmlformats.schemas.xpackage.x2006.relationships.CTRelationships;
-import org.openxmlformats.schemas.xpackage.x2006.relationships.RelationshipsDocument;
-import org.openxmlformats.schemas.xpackage.x2006.relationships.STTargetMode;
 import org.w3.x2000.x09.xmldsig.TransformDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * JSR105 implementation of the RelationshipTransform transformation.
@@ -89,7 +84,7 @@ public class RelationshipTransformService extends TransformService {
     public static class RelationshipTransformParameterSpec implements TransformParameterSpec {
         List<String> sourceIds = new ArrayList<String>();
         public void addRelationshipReference(String relationshipId) {
-            sourceIds.add(relationshipId);
+                sourceIds.add(relationshipId);
         }
         public boolean hasSourceIds() {
             return !sourceIds.isEmpty();
@@ -163,15 +158,13 @@ public class RelationshipTransformService extends TransformService {
         LOG.log(POILogger.DEBUG, "marshallParams(parent,context)");
         DOMStructure domParent = (DOMStructure) parent;
         Element parentNode = (Element)domParent.getNode();
-        // parentNode.setAttributeNS(XML_NS, "xmlns:mdssi", XML_DIGSIG_NS);
         Document doc = parentNode.getOwnerDocument();
         
         for (String sourceId : this.sourceIds) {
-            RelationshipReferenceDocument relRef = RelationshipReferenceDocument.Factory.newInstance();
-            relRef.addNewRelationshipReference().setSourceId(sourceId);
-            Node n = relRef.getRelationshipReference().getDomNode();
-            n = doc.importNode(n, true);
-            parentNode.appendChild(n);
+            Element el = doc.createElementNS(OO_DIGSIG_NS, "mdssi:RelationshipReference");
+            el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
+            el.setAttribute("SourceId", sourceId);
+            parentNode.appendChild(el);
         }
     }
     
@@ -180,6 +173,13 @@ public class RelationshipTransformService extends TransformService {
         return null;
     }
 
+    /**
+     * The relationships transform takes the XML document from the Relationships part
+     * and converts it to another XML document.
+     * 
+     * @see <a href="https://www.ecma-international.org/activities/Office%20Open%20XML%20Formats/Draft%20ECMA-376%203rd%20edition,%20March%202011/Office%20Open%20XML%20Part%202%20-%20Open%20Packaging%20Conventions.pdf">13.2.4.24 Relationships Transform Algorithm</a>
+     * @see <a href="https://stackoverflow.com/questions/36063375">XML Relationship Transform Algorithm</a>
+     */
     public Data transform(Data data, XMLCryptoContext context) throws TransformException {
         LOG.log(POILogger.DEBUG, "transform(data,context)");
         LOG.log(POILogger.DEBUG, "data java type: " + data.getClass().getName());
@@ -187,53 +187,40 @@ public class RelationshipTransformService extends TransformService {
         LOG.log(POILogger.DEBUG, "URI: " + octetStreamData.getURI());
         InputStream octetStream = octetStreamData.getOctetStream();
         
-        RelationshipsDocument relDoc;
+        Document doc;
         try {
-            relDoc = RelationshipsDocument.Factory.parse(octetStream, DEFAULT_XML_OPTIONS);
+            doc = DocumentHelper.readDocument(octetStream);
         } catch (Exception e) {
             throw new TransformException(e.getMessage(), e);
         }
-        LOG.log(POILogger.DEBUG, "relationships document", relDoc);
         
-        CTRelationships rels = relDoc.getRelationships();
-        List<CTRelationship> relList = rels.getRelationshipList();
-        Iterator<CTRelationship> relIter = rels.getRelationshipList().iterator();
-        while (relIter.hasNext()) {
-            CTRelationship rel = relIter.next();
-            /*
-             * See: ISO/IEC 29500-2:2008(E) - 13.2.4.24 Relationships Transform
-             * Algorithm.
-             */
-            if (!this.sourceIds.contains(rel.getId())) {
-                LOG.log(POILogger.DEBUG, "removing element: " + rel.getId());
-                relIter.remove();
-            } else {
-                if (!rel.isSetTargetMode()) {
-                    rel.setTargetMode(STTargetMode.INTERNAL);
+        // keep only those relationships which id is registered in the sourceIds
+        Element root = doc.getDocumentElement();
+        NodeList nl = root.getChildNodes();
+        TreeMap<String,Element> rsList = new TreeMap<String,Element>();
+        for (int i=nl.getLength()-1; i>=0; i--) {
+            Node n = nl.item(i);
+            if ("Relationship".equals(n.getLocalName())) {
+                Element el = (Element)n;
+                String id = el.getAttribute("Id");
+                if (sourceIds.contains(id)) {
+                    String targetMode = el.getAttribute("TargetMode");
+                    if ("".equals(targetMode)) {
+                        el.setAttribute("TargetMode", "Internal");
+                    }
+                    rsList.put(id, el);
                 }
             }
+            root.removeChild(n);
         }
-        
-        // TODO: remove non element nodes ???
-        LOG.log(POILogger.DEBUG, "# Relationship elements", relList.size());
-        
-        XmlSort.sort(rels, new Comparator<XmlCursor>(){
-            public int compare(XmlCursor c1, XmlCursor c2) {
-                String id1 = ((CTRelationship)c1.getObject()).getId();
-                String id2 = ((CTRelationship)c2.getObject()).getId();
-                return id1.compareTo(id2);
-            }
-        });
 
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            XmlOptions xo = new XmlOptions();
-            xo.setSaveNoXmlDecl();
-            relDoc.save(bos, xo);
-            return new OctetStreamData(new ByteArrayInputStream(bos.toByteArray()));
-        } catch (IOException e) {
-            throw new TransformException(e.getMessage(), e);
+        for (Element el : rsList.values()) {
+            root.appendChild(el);
         }
+        
+        LOG.log(POILogger.DEBUG, "# Relationship elements: ", rsList.size());
+        
+        return new ApacheNodeSetData(new XMLSignatureInput(root));
     }
 
     public Data transform(Data data, XMLCryptoContext context, OutputStream os) throws TransformException {

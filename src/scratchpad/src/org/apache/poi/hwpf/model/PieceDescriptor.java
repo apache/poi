@@ -19,128 +19,76 @@ package org.apache.poi.hwpf.model;
 
 import java.nio.charset.Charset;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 @Internal
-public final class PieceDescriptor
-{
-
-  short descriptor;
-   private static BitField fNoParaLast = BitFieldFactory.getInstance(0x01);
-   private static BitField fPaphNil = BitFieldFactory.getInstance(0x02);
-   private static BitField fCopied = BitFieldFactory.getInstance(0x04);
-  int fc;
-  PropertyModifier prm;
-  boolean unicode = false;
-  private final Charset charset;
-
+public final class PieceDescriptor {
+    private final short descriptor;
+    int fc;     // used from the outside?!?
+    private final PropertyModifier prm;
+    private final boolean unicode;
+    private final Charset charset;
 
     public PieceDescriptor(byte[] buf, int offset) {
         this(buf, offset, null);
     }
 
     /**
-     *
      * This initializer should only be used for HWPFOldDocuments.
      *
-     * @param buf
-     * @param offset
+     * @param buf The buffer to read data from
+     * @param offset The offset into the buffer to start reading from
      * @param charset which charset to use if this is not unicode
      */
-  public PieceDescriptor(byte[] buf, int offset, Charset charset) {
-      descriptor = LittleEndian.getShort(buf, offset);
-      offset += LittleEndian.SHORT_SIZE;
-      fc = LittleEndian.getInt(buf, offset);
-      offset += LittleEndian.INT_SIZE;
-      prm = new PropertyModifier(LittleEndian.getShort(buf, offset));
-      if (charset == null) {
-        // see if this piece uses unicode.
-        //From the documentation: If the second most significant bit
-          //is clear, then this indicates the actual file offset of the Unicode character (two bytes). If the
-          //second most significant bit is set, then the actual address of the codepage-1252
-          //compressed version of the Unicode character (one byte), is actually at the offset indicated
-          //by clearing this bit and dividing by two.
-        if ((fc & 0x40000000) == 0) {
-          unicode = true;
-          this.charset = null;
+    public PieceDescriptor(byte[] buf, int offset, Charset charset) {
+        descriptor = LittleEndian.getShort(buf, offset);
+        offset += LittleEndian.SHORT_SIZE;
+        fc = LittleEndian.getInt(buf, offset);
+        offset += LittleEndian.INT_SIZE;
+        prm = new PropertyModifier(LittleEndian.getShort(buf, offset));
+        if (charset == null) {
+            // see if this piece uses unicode.
+            //From the documentation: If the second most significant bit
+            //is clear, then this indicates the actual file offset of the Unicode character (two bytes). If the
+            //second most significant bit is set, then the actual address of the codepage-1252
+            //compressed version of the Unicode character (one byte), is actually at the offset indicated
+            //by clearing this bit and dividing by two.
+            if ((fc & 0x40000000) == 0) {
+                unicode = true;
+                this.charset = null;
+            } else {
+                unicode = false;
+                fc &= ~(0x40000000);//gives me FC in doc stream
+                fc /= 2;
+                this.charset = StringUtil.WIN_1252;
+            }
         } else {
-          unicode = false;
-          fc &= ~(0x40000000);//gives me FC in doc stream
-          fc /= 2;
-          this.charset = StringUtil.WIN_1252;
+            if (charset == StringUtil.UTF16LE) {
+                unicode = true;
+            } else {
+                unicode = false;
+            }
+            this.charset = charset;
         }
-      } else {
-          if (charset == StringUtil.UTF16LE) {
-              unicode = true;
-          }
-          this.charset = charset;
-      }
 
-  }
-
-  public int getFilePosition()
-  {
-    return fc;
-  }
-
-  public void setFilePosition(int pos)
-  {
-    fc = pos;
-  }
-
-  public boolean isUnicode()
-  {
-    return unicode;
-  }
-
-    /**
-     *
-     * @return charset to use if this is not a Unicode PieceDescriptor
-     * this can be <code>null</code>
-     */
-  public Charset getCharset() {
-    return charset;
-  }
-
-    public PropertyModifier getPrm()
-    {
-        return prm;
     }
 
-  protected byte[] toByteArray()
-  {
-    // set up the fc
-    int tempFc = fc;
-    if (!unicode)
-    {
-      tempFc *= 2;
-      tempFc |= (0x40000000);
+    public int getFilePosition() {
+        return fc;
     }
 
-    int offset = 0;
-    byte[] buf = new byte[8];
-    LittleEndian.putShort(buf, offset, descriptor);
-    offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putInt(buf, offset, tempFc);
-    offset += LittleEndian.INT_SIZE;
-    LittleEndian.putShort(buf, offset, prm.getValue());
+    public void setFilePosition(int pos) {
+        fc = pos;
+    }
 
-    return buf;
-
-  }
-
-  public static int getSizeInBytes()
-  {
-    return 8;
-  }
+    public boolean isUnicode() {
+        return unicode;
+    }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + descriptor;
@@ -149,35 +97,66 @@ public final class PieceDescriptor
         return result;
     }
 
+    /**
+     * @return charset to use if this is not a Unicode PieceDescriptor
+     * this can be <code>null</code>
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public PropertyModifier getPrm() {
+        return prm;
+    }
+
+    protected byte[] toByteArray() {
+        // set up the fc
+        int tempFc = fc;
+        if (!unicode) {
+            tempFc *= 2;
+            tempFc |= (0x40000000);
+        }
+
+        int offset = 0;
+        byte[] buf = new byte[8];
+        LittleEndian.putShort(buf, offset, descriptor);
+        offset += LittleEndian.SHORT_SIZE;
+        LittleEndian.putInt(buf, offset, tempFc);
+        offset += LittleEndian.INT_SIZE;
+        LittleEndian.putShort(buf, offset, prm.getValue());
+
+        return buf;
+    }
+
+    public static int getSizeInBytes() {
+        return 8;
+    }
+
     @Override
-    public boolean equals( Object obj )
-    {
-        if ( this == obj )
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if ( obj == null )
+        if (obj == null)
             return false;
-        if ( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         PieceDescriptor other = (PieceDescriptor) obj;
-        if ( descriptor != other.descriptor )
+        if (descriptor != other.descriptor)
             return false;
-        if ( prm == null )
-        {
-            if ( other.prm != null )
+        if (prm == null) {
+            if (other.prm != null)
                 return false;
-        }
-        else if ( !prm.equals( other.prm ) )
+        } else if (!prm.equals(other.prm))
             return false;
-        if ( unicode != other.unicode )
+        if (unicode != other.unicode)
             return false;
         return true;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "PieceDescriptor (pos: " + getFilePosition() + "; "
-                + ( isUnicode() ? "unicode" : "non-unicode" ) + "; prm: "
+                + (isUnicode() ? "unicode" : "non-unicode") + "; prm: "
                 + getPrm() + ")";
     }
 }

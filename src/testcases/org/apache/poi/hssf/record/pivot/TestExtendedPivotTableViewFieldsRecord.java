@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record.pivot;
 
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.pivottable.ExtendedPivotTableViewFieldsRecord;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.RecordFormatException;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;

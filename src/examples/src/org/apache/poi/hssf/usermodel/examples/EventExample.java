@@ -114,6 +114,7 @@ public class EventExample
         fin.close();
         // and our document input stream (don't want to leak these!)
         din.close();
+        poifs.close();
         System.out.println("done.");
     }
 }

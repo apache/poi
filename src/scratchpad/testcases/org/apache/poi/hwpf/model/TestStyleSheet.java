@@ -17,25 +17,29 @@
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-public final class TestStyleSheet
-  extends TestCase
-{
+import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public final class TestStyleSheet {
   private StyleSheet _styleSheet = null;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public void testReadWrite()
-    throws Exception
+  @Test
+  public void testReadWrite() throws IOException
   {
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
 
-    HWPFOutputStream tableOut = fileSys.getStream("1Table");
-    HWPFOutputStream mainOut =  fileSys.getStream("WordDocument");
+    ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
+    ByteArrayOutputStream mainOut =  fileSys.getStream("WordDocument");
 
     _styleSheet.writeTo(tableOut);
 
@@ -43,14 +47,13 @@ public final class TestStyleSheet
 
     StyleSheet newStyleSheet = new StyleSheet(newTableStream, 0);
     assertEquals(newStyleSheet, _styleSheet);
-
   }
 
-  public void testReadWriteFromNonZeroOffset()
-    throws Exception
+  @Test
+  public void testReadWriteFromNonZeroOffset() throws IOException
   {
     HWPFFileSystem fileSys = new HWPFFileSystem();
-    HWPFOutputStream tableOut = fileSys.getStream("1Table");
+    ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
 
     tableOut.write(new byte[20]); // 20 bytes of whatever at the front.
     _styleSheet.writeTo(tableOut);
@@ -61,11 +64,8 @@ public final class TestStyleSheet
     assertEquals(newStyleSheet, _styleSheet);
   }
 
-  @Override
-protected void setUp()
-    throws Exception
-  {
-    super.setUp();
+  @Before
+  public void setUp() throws IOException {
     /**@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
     _hWPFDocFixture.setUp();
@@ -77,15 +77,11 @@ protected void setUp()
     _styleSheet = new StyleSheet(tableStream, fib.getFcStshf());
   }
 
-  @Override
-protected void tearDown()
-    throws Exception
-  {
+  @After
+  public void tearDown() throws Exception {
     _styleSheet = null;
     _hWPFDocFixture.tearDown();
 
     _hWPFDocFixture = null;
-    super.tearDown();
   }
-
 }

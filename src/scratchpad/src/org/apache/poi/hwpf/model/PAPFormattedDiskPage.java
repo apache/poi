@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -182,7 +182,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
      * @throws IOException
      *             if an I/O error occurs.
      */
-    protected byte[] toByteArray( HWPFOutputStream dataStream,
+    protected byte[] toByteArray( ByteArrayOutputStream dataStream,
             CharIndexTranslator translator ) throws IOException
     {
         byte[] buf = new byte[512];
@@ -296,7 +296,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
 
                 byte[] hugePapx = new byte[grpprl.length - 2];
                 System.arraycopy( grpprl, 2, hugePapx, 0, grpprl.length - 2 );
-                int dataStreamOffset = dataStream.getOffset();
+                int dataStreamOffset = dataStream.size();
                 dataStream.write( hugePapx );
 
                 // grpprl = grpprl containing only a sprmPHugePapx2

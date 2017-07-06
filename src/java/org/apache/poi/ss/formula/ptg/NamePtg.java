@@ -23,6 +23,7 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
+ * See the spec at 2.5.198.76 PtgName
  * 
  * @author andy
  * @author Jason Height (jheight at chariot dot net dot au)

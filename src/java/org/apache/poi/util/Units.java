@@ -45,6 +45,25 @@ public class Units {
      */
     public static final int POINT_DPI = 72;    
 
+
+    /**
+     * Width of one "standard character" of the default font in pixels. Same for Calibri and Arial.
+     * "Standard character" defined as the widest digit character in the given font.
+     * Copied from XSSFWorkbook, since that isn't available here.
+     * <p/>
+     * Note this is only valid for workbooks using the default Excel font.
+     * <p/>
+     * Would be nice to eventually support arbitrary document default fonts.
+     */
+    public static final float DEFAULT_CHARACTER_WIDTH = 7.0017f;
+
+    /**
+     * Column widths are in fractional characters, this is the EMU equivalent.
+     * One character is defined as the widest value for the integers 0-9 in the 
+     * default font.
+     */
+    public static final int EMU_PER_CHARACTER = (int) (EMU_PER_PIXEL * DEFAULT_CHARACTER_WIDTH);
+
     /**
      * Converts points to EMUs
      * @param points points
@@ -126,5 +145,25 @@ public class Units {
         points *= POINT_DPI;
         points /= PIXEL_DPI;
         return points;
+    }
+    
+    public static int charactersToEMU(double characters) {
+        return (int) characters * EMU_PER_CHARACTER;
+    }
+    
+    /**
+     * @param columnWidth specified in 256ths of a standard character
+     * @return equivalent EMUs
+     */
+    public static int columnWidthToEMU(int columnWidth) {
+        return charactersToEMU(columnWidth / 256d);
+    }
+    
+    /**
+     * @param twips (1/20th of a point) typically used for row heights
+     * @return equivalent EMUs
+     */
+    public static int TwipsToEMU(short twips) {
+        return (int) (twips / 20d * EMU_PER_POINT);
     }
 }

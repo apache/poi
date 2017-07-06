@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -81,9 +80,9 @@ public final class ListTables
     }
 
     public void writeListDataTo( FileInformationBlock fib,
-            HWPFOutputStream tableStream ) throws IOException
+            ByteArrayOutputStream tableStream ) throws IOException
     {
-        final int startOffset = tableStream.getOffset();
+        final int startOffset = tableStream.size();
         fib.setFcPlfLst( startOffset );
 
     int listSize = _listMap.size();
@@ -109,12 +108,12 @@ public final class ListTables
          * account for the array of LVLs. -- Page 76 of 621 -- [MS-DOC] --
          * v20110315 Word (.doc) Binary File Format
          */
-        fib.setLcbPlfLst( tableStream.getOffset() - startOffset );
+        fib.setLcbPlfLst( tableStream.size() - startOffset );
         tableStream.write( levelBuf.toByteArray() );
     }
 
     public void writeListOverridesTo( FileInformationBlock fib,
-            HWPFOutputStream tableStream ) throws IOException
+            ByteArrayOutputStream tableStream ) throws IOException
     {
         _plfLfo.writeTo( fib, tableStream );
     }

@@ -179,7 +179,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		wb2.close();
 	}
 
-	
+
 	@Test
 	public void testActiveCellBug56114() throws IOException {
 	    Workbook wb = new HSSFWorkbook();
@@ -197,15 +197,17 @@ public final class TestHSSFCell extends BaseTestCell {
         assertEquals(0, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
 
 	    cell.setAsActiveCell();
+	    cell.setCellValue("this should be active");
         
         assertEquals(1, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
         assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
 
-//	    FileOutputStream fos = new FileOutputStream("/tmp/56114.xls");
-//
-//	    wb.write(fos);
-//
-//	    fos.close();
+	    /*OutputStream fos = new FileOutputStream("c:/temp/56114.xls");
+		try {
+			wb.write(fos);
+		} finally {
+			fos.close();
+		}*/
 	            
 	    Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
 	    wb.close();
@@ -217,12 +219,13 @@ public final class TestHSSFCell extends BaseTestCell {
         
         assertEquals(3, ((HSSFSheet)wbBack.getSheetAt(0)).getSheet().getActiveCellRow());
         assertEquals(3, ((HSSFSheet)wbBack.getSheetAt(0)).getSheet().getActiveCellCol());
-	    
-//	    fos = new FileOutputStream("/tmp/56114a.xls");
-//
-//	    wbBack.write(fos);
-//
-//	    fos.close();
+
+		/*fos = new FileOutputStream("c:/temp/56114a.xls");
+		try {
+			wb.write(fos);
+		} finally {
+			fos.close();
+		}*/
 	            
         Workbook wbBack2 = _testDataProvider.writeOutAndReadBack(wbBack);
         wbBack.close();
@@ -336,7 +339,6 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * the {@link StringRecord} following the {@link FormulaRecord} after the result type had been
 	 * changed to number/boolean/error.  Excel silently ignores the extra record, but some POI
 	 * versions (prior to bug 46213 / r717883) crash instead.
-	 * @throws IOException 
 	 */
 	@Test
 	public void testCachedTypeChange() throws IOException {

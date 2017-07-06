@@ -17,11 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.RecordFormatException;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 /**
  *
  * @author Josh Micich

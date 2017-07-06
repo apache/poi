@@ -18,7 +18,6 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -46,7 +45,9 @@ public class EscherClientDataRecord
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
-        if (remainingData == null) remainingData = new byte[0];
+        if (remainingData == null) {
+            remainingData = new byte[0];
+        }
         LittleEndian.putShort( data, offset, getOptions() );
         LittleEndian.putShort( data, offset + 2, getRecordId() );
         LittleEndian.putInt( data, offset + 4, remainingData.length );
@@ -74,34 +75,6 @@ public class EscherClientDataRecord
     }
 
     /**
-     * Returns the string representation of this record.
-     */
-    @Override
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-        String extraData = HexDump.dump(getRemainingData(), 0, 0);
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + nl +
-                "  Extra Data:" + nl +
-                extraData;
-
-    }
-
-    @Override
-    public String toXml(String tab) {
-        String extraData = HexDump.dump(getRemainingData(), 0, 0).trim();
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()),
-                HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
-    }
-
-    /**
      * Any data recording this record.
      * 
      * @return the remaining bytes
@@ -120,5 +93,12 @@ public class EscherClientDataRecord
         this.remainingData = (remainingData == null)
             ? new byte[0]
             : remainingData.clone();
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "Extra Data", getRemainingData() }
+        };
     }
 }

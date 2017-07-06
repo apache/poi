@@ -64,7 +64,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -75,7 +74,9 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -93,7 +94,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 
-@SuppressWarnings("deprecation")
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public TestXSSFBugs() {
         super(XSSFITestDataProvider.instance);
@@ -1111,12 +1111,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         CellStyle blueStyle = wb.createCellStyle();
         blueStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-        blueStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        blueStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         assertEquals(1, blueStyle.getIndex());
 
         CellStyle pinkStyle = wb.createCellStyle();
         pinkStyle.setFillForegroundColor(IndexedColors.PINK.getIndex());
-        pinkStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        pinkStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         assertEquals(2, pinkStyle.getIndex());
 
         // Starts empty
@@ -1344,7 +1344,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Name name = wb.getName("Intekon.ProdCodes");
         assertEquals("'Abc,1'!$A$1:$A$2", name.getRefersToFormula());
 
-        AreaReference ref = new AreaReference(name.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
+        AreaReference ref = wb.getCreationHelper().createAreaReference(name.getRefersToFormula());
         assertEquals(0, ref.getFirstCell().getRow());
         assertEquals(0, ref.getFirstCell().getCol());
         assertEquals(1, ref.getLastCell().getRow());
@@ -2885,51 +2885,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.close();
     }
 
-    private void createXls() throws IOException {
-        Workbook workbook = new HSSFWorkbook();
-        FileOutputStream fileOut = new FileOutputStream("/tmp/rotated.xls");
-        Sheet sheet1 = workbook.createSheet();
-        Row row1 = sheet1.createRow((short) 0);
+    /**
+     * helper function for {@link #test58043()}
+     * Side-effects: closes the provided workbook!
+     *
+     * @param workbook the workbook to save for manual checking
+     * @param outputFile the output file location to save the workbook to
+     */
+    private void saveRotatedTextExample(Workbook workbook, File outputFile) throws IOException {
+        Sheet sheet = workbook.createSheet();
+        Row row = sheet.createRow((short) 0);
 
-        Cell cell1 = row1.createCell(0);
+        Cell cell = row.createCell(0);
 
-        cell1.setCellValue("Successful rotated text.");
-
-        CellStyle style = workbook.createCellStyle();
-        style.setRotation((short) -90);
-
-        cell1.setCellStyle(style);
-
-        workbook.write(fileOut);
-        fileOut.close();
-        workbook.close();
-    }
-
-    private void createXlsx() throws IOException {
-        Workbook workbook = new XSSFWorkbook();
-        FileOutputStream fileOut = new FileOutputStream("/tmp/rotated.xlsx");
-        Sheet sheet1 = workbook.createSheet();
-        Row row1 = sheet1.createRow((short) 0);
-
-        Cell cell1 = row1.createCell(0);
-
-        cell1.setCellValue("Unsuccessful rotated text.");
+        cell.setCellValue("Unsuccessful rotated text.");
 
         CellStyle style = workbook.createCellStyle();
         style.setRotation((short) -90);
 
-        cell1.setCellStyle(style);
+        cell.setCellStyle(style);
 
-        workbook.write(fileOut);
-        fileOut.close();
+        OutputStream fos = new FileOutputStream(outputFile);
+        workbook.write(fos);
+        fos.close();
         workbook.close();
     }
 
     @Ignore("Creates files for checking results manually, actual values are tested in Test*CellStyle")
     @Test
     public void test58043() throws IOException {
-        createXls();
-        createXlsx();
+        saveRotatedTextExample(new HSSFWorkbook(), TempFile.createTempFile("rotated", ".xls"));
+        saveRotatedTextExample(new XSSFWorkbook(), TempFile.createTempFile("rotated", ".xlsx"));
     }
 
     @Test
@@ -2992,13 +2978,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFColor color = new XSSFColor(java.awt.Color.RED);
         XSSFCellStyle style = workbook.createCellStyle();
         style.setFillForegroundColor(color);
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cell.setCellStyle(style);
 
         // Everything is fine at this point, cell is red
 
         Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN); //or BorderStyle.THIN
+        properties.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         CellUtil.setCellStyleProperties(cell, properties);
 
         // Now the cell is all black
@@ -3176,13 +3162,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // we currently only populate the dimension during writing out
         // to avoid having to iterate all rows/cells in each add/remove of a row or cell
-        //OutputStream str = new FileOutputStream("/tmp/53611.xlsx");
-        OutputStream str = new ByteArrayOutputStream();
-        try {
-            wb.write(str);
-        } finally {
-            str.close();
-        }
+        IOUtils.write(wb, new NullOutputStream());
 
         assertEquals("B2:I5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
 

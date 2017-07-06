@@ -215,6 +215,10 @@ public class DrawTextParagraph implements Drawable {
         y = penY - y;
     }
 
+    public float getFirstLineLeading() {
+        return (lines.isEmpty()) ? 0 : lines.get(0).getLeading();
+    }
+
     public float getFirstLineHeight() {
         return (lines.isEmpty()) ? 0 : lines.get(0).getHeight();
     }
@@ -253,7 +257,8 @@ public class DrawTextParagraph implements Drawable {
         for (;;) {
             int startIndex = measurer.getPosition();
 
-            double wrappingWidth = getWrappingWidth(lines.size() == 0, graphics) + 1; // add a pixel to compensate rounding errors
+            // add a pixel to compensate rounding errors
+            double wrappingWidth = getWrappingWidth(lines.isEmpty(), graphics) + 1;
             // shape width can be smaller that the sum of insets (this was proved by a test file)
             if(wrappingWidth < 0) {
                 wrappingWidth = 1;

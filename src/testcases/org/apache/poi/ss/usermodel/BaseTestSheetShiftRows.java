@@ -36,7 +36,6 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

@@ -17,9 +17,12 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public final class TestEscherBoolProperty extends TestCase {
+import org.junit.Test;
+
+public final class TestEscherBoolProperty {
+    @Test
     public void testToString() {
         EscherBoolProperty p = new EscherBoolProperty((short)1, 1);
         assertEquals("propNum: 1, RAW: 0x0001, propName: unknown, complex: false, blipId: false, value: 1 (0x00000001)", p.toString());

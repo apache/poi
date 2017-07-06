@@ -72,6 +72,7 @@ import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
+import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
@@ -85,6 +86,7 @@ import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
+import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -99,12 +101,20 @@ public class TestSignatureInfo {
     private static Calendar cal;
     private KeyPair keyPair = null;
     private X509Certificate x509 = null;
+
+    @AfterClass
+    public static void removeUserLocale() {
+        LocaleUtil.resetUserLocale();
+    }
     
     @BeforeClass
     public static void initBouncy() throws IOException {
         CryptoFunctions.registerBouncyCastle();
 
         // Set cal to now ... only set to fixed date for debugging ...
+        LocaleUtil.resetUserLocale();
+        LocaleUtil.resetUserTimeZone();
+        
         cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         assertNotNull(cal);
 //        cal.set(2014, 7, 6, 21, 42, 12);
@@ -116,6 +126,72 @@ public class TestSignatureInfo {
         //System.out.println("Having: " + additionalJar);
         Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar, 
                 additionalJar == null || additionalJar.trim().length() == 0);
+    }
+    
+    @Test
+    public void bug61182() throws Exception {
+        String pfxInput =
+            "H4sIAAAAAAAAAFXTfzzTeRwH8P2uGRmG6hKSmJh9a2HsuPy60VnHCEU6v86sieZH2Jr2qFl+s+ZHJ5tfUcfKb4uho/OjiFq1qTv5ceFyp0PqEK"+
+            "fH4+66++Pz+Dwer9fj8f7r9cRzEd4QMBTPRWxDIM14ZN47NfAWsJgL34Bx4at4Lvwdngvd9b8KqgbjQpGbMXzzgRGovytVFTBEzIXU47kQCd4U"+
+            "ofJPvHl8JwyTjRS55hbKoor3UJLDE1i/PcPKCBAIDATjQlKiK67XjVYdcnkZgD2txroiAUb8W9dtn57DvTsbM+3wIsdocXDEN7TdPKgaSl+tU1"+
+            "xq9oqiB5yMaZCPho8uUEbFU9U6u3N7lEMLTJGeA0RfX+5FMRrpXPFrbrlJ8uNUCE2H247P28Ckyfqlsy32yeKg/HTbH5JpqUDNw2B32+SaiRw7"+
+            "ofRMePUpaAoK7KYgmd5ZIc0rLLYjJBfOWCb28xlrGhbpJvdToFdqt5PXVjEz5YOJ6g7W0fskuKW9/iZP0yLEVpR9XkkHmb6tfpcE8YwCdWNCan"+
+            "LvAsco25JdF1j2/FLAMVU79HdOex07main90dy40511OZtTGZ+TdVd3lKZ7D3clEg9hLESHwSNnZ6239X4yLM4xYSElQ/hqSbwdmiozYG9PhF2"+
+            "Zf0XaZnxzTK0Iot+rJ3kYoxWTLE8DR9leV62Ywbtlg4mapYOxb3lT7fQ1x4EQ44flh2oFWSPLR8LMbsc6jzJsV6OZ3TrODjHEdw9W+8OD32vd8"+
+            "XQ6iCaIHcrSOn6qS0TKLr786234eeSAhvAQbEsVn7vrvc/487Be/O2e/+5Y5zRq2zAtz6pfcNyraJNDqMW1inNkgJ3t3VESbZ3pNzyl3KHILs0"+
+            "51dY6msDYSlWhw40TglXxj9rw95O6gFWIuN012W/vhS50jpKXcao4gc1aLaXtJXxirbRkpZ/0e7a0pD6TDa7+GxEdEEML3VGo9udD5YUKhU3y7"+
+            "SzWAgN6WIEIglq7LilvCjqIVLIfg8CvVGL9f5iSsCDf5hef4vMxbyvcjINuy06gZu+iPYOWNxjfrwKGYzoqqotK2aywgYVrPMh0JovfkDuN95n"+
+            "MdVlYHbN1Mnn4TxAwuv+u3AkBlDZvRUUCwoDMUGxeMNPhTaAgWl60xhhBgCBaEMgAACReMAav7n3x598IDYJ9GxGXRAwaPOT/kfO/1AgPqLQkp"+
+            "MiIVaHthnUS4v2y32e2BjdMPyIImUTBW3cV3R5tjVQm0MOm+D2C5+bBW9vHLjLR4lun4toQiY3Ls/v4bES/OJ4EmpZk5xhL9i5ClofYZNEsxFn"+
+            "An/q821Tg+Cq9Er4XYGQe8ogjjLJ2b7dUsJ3auFQFNUJF7Ke7yUL2EeYYxl6vz5l4q5u8704mRbFts1E1eWMp6WIy91GPrsVlRGvtuNERfrjfE"+
+            "YtzUI3Flcv65zJUbUBEzUnTS0fEYso2XyToAl8kb251mUY2o2lJzv5dp/1htmcjeeP2MjxC+3S45ljx7jd52Pv9XAat+ryiauFOF7YgztkoWWD"+
+            "h62tplPH1bzDV+d0NLdaE5AfVJ09HuUYTFS+iggtvT5Euyk+unj4N2XvzW91n+GNjtgWfKOHmkinUPvYRh70Jv+wlPJrVaT8mL7GxJLqDC9jbv"+
+            "Gznoiae6es+wQejnk3XjU366MrK/zXxngBYj9J6NnXc9mMiTFLX8WqQ8iTelTAFs2NJzPoDzrBUz4JFIEOa6Dja6dULc68g1jFDTeEHZyra7RZ"+
+            "2ElqGDEqcNRo3SNX6feMy9EF1GOyZK0Sa87KwjKw8aM68dpsIYjfLcTXaZ6atg0BKfMnl6axeUGEaIFSP7rzj9wjzumRbG3jgUVp2lX5AK/tsO"+
+            "7R4TQX/9/H6RiN34c9KldmPZZGANXzzTajZS9mR2OSvlJ+F4AgSko4htrMAKFTBu51/5SWNsO1vlRaaG48ZRJ+8PzuHQMdvS36gNpRPi7jhF1S"+
+            "H3B2ycI4y0VURv6SrqJNUY/X645ZFJQ+eBO+ptG7o8axf1dcqh2beiQk+GRTeZ37LVeUlaeo9vl1/+8tyBfyT2v5lFC5E19WdKIyCuZe7r99Px"+
+            "D/Od4Qj0TA92+DQnbCQTCMy/wwse9O4gsEebkkpPIP5GBV3Q0YBsj75XE0uSFQ1tCZSW8bNa9MUJZ/nPBfExohHlgGAAA=";
+        
+        Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
+        cal.clear();
+        cal.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+        cal.set(2017, 6, 1);
+        
+        SignatureConfig signatureConfig = prepareConfig("test", "CN=Test", pfxInput);
+        signatureConfig.setExecutionTime(cal.getTime());
+
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(signatureConfig);
+
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        wb1.createSheet().createRow(1).createCell(1).setCellValue("Test");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
+        wb1.write(bos);
+        wb1.close();
+        
+        OPCPackage pkg1 = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()));
+        
+        signatureConfig.setOpcPackage(pkg1);
+        si.confirmSignature();
+        assertTrue(si.verifySignature());
+        bos.reset();
+        pkg1.save(bos);
+        pkg1.close();
+        
+        XSSFWorkbook wb2 = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()));
+        assertEquals("Test", wb2.getSheetAt(0).getRow(1).getCell(1).getStringCellValue());
+        OPCPackage pkg2 = wb2.getPackage();
+        signatureConfig.setOpcPackage(pkg2);
+        assertTrue(si.verifySignature());
+        String signExp =
+            "HDdvgXblLMiE6gZSoRSQUof6+aedrhK9i51we1n+4Q/ioqrQCeh5UkfQ8lD63nV4ZDbM4/pIVFi6VpMpN/HMnA"+
+            "UHeVdVUCVTgpn3Iz21Ymcd9/aerNov2BjHLhS8X3oUE+XTu2TbJLNmms0I9G4lfg6HWP9t7ZCXBXy6vyCMArc=";
+        String signAct = si.getSignatureParts().iterator().next().
+            getSignatureDocument().getSignature().getSignatureValue().getStringValue();
+        assertEquals(signExp, signAct);
+        
+        pkg2.close();
+        wb2.close();
     }
     
     @Test
@@ -611,15 +687,21 @@ public class TestSignatureInfo {
             pkg.close();
         }
     }
-    
-    private void sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
-        initKeyPair(alias, signerDn);
+
+    private SignatureConfig prepareConfig(String alias, String signerDn, String pfxInput) throws Exception {
+        initKeyPair(alias, signerDn, pfxInput);
 
         SignatureConfig signatureConfig = new SignatureConfig();
         signatureConfig.setKey(keyPair.getPrivate());
         signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
         signatureConfig.setExecutionTime(cal.getTime());
         signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
+
+        return signatureConfig;
+    }
+    
+    private void sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
+        SignatureConfig signatureConfig = prepareConfig(alias, signerDn, null);
         signatureConfig.setOpcPackage(pkgCopy);
         
         SignatureInfo si = new SignatureInfo();
@@ -656,13 +738,21 @@ public class TestSignatureInfo {
     }
 
     private void initKeyPair(String alias, String subjectDN) throws Exception {
+        initKeyPair(alias, subjectDN, null);
+    }
+    
+    private void initKeyPair(String alias, String subjectDN, String pfxInput) throws Exception {
         final char password[] = "test".toCharArray();
         File file = new File("build/test.pfx");
 
         KeyStore keystore = KeyStore.getInstance("PKCS12");
 
-        if (file.exists()) {
-            FileInputStream fis = new FileInputStream(file);
+        if (pfxInput != null) {
+            InputStream fis = new ByteArrayInputStream(RawDataUtil.decompress(pfxInput));
+            keystore.load(fis, password);
+            fis.close();
+        } else if (file.exists()) { 
+            InputStream fis = new FileInputStream(file);
             keystore.load(fis, password);
             fis.close();
         } else {
@@ -685,9 +775,12 @@ public class TestSignatureInfo {
                 , notBefore, notAfter, null, keyPair.getPrivate(), true, 0, null, null, keyUsage);
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), password, new Certificate[]{x509});
-            FileOutputStream fos = new FileOutputStream(file);
-            keystore.store(fos, password);
-            fos.close();
+            
+            if (pfxInput == null) {
+                FileOutputStream fos = new FileOutputStream(file);
+                keystore.store(fos, password);
+                fos.close();
+            }
         }
     }
 
@@ -701,8 +794,7 @@ public class TestSignatureInfo {
         // in the Sonar Maven runs where we are at a different source directory
         File buildDir = new File("build");
         if(!buildDir.exists()) {
-            assertTrue("Failed to create " + buildDir.getAbsolutePath(), 
-                    buildDir.mkdirs());
+            assertTrue("Failed to create " + buildDir.getAbsolutePath(), buildDir.mkdirs());
         }
         File tmpFile = new File(buildDir, "sigtest"+extension);
 

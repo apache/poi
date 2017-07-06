@@ -38,12 +38,12 @@ public final class TestFormulaBugs {
 	 * Bug 27349 - VLOOKUP with reference to another sheet.<p/> This test was
 	 * added <em>long</em> after the relevant functionality was fixed.
 	 */
-    @Test
+	@Test
 	public void test27349() throws Exception {
 		// 27349-vlookupAcrossSheets.xls is bugzilla/attachment.cgi?id=10622
 		InputStream is = HSSFTestDataSamples.openSampleFileStream("27349-vlookupAcrossSheets.xls");
-        // original bug may have thrown exception here,
-        // or output warning to stderr
+		// original bug may have thrown exception here,
+		// or output warning to stderr
 		Workbook wb = new HSSFWorkbook(is);
 
 		Sheet sheet = wb.getSheetAt(0);
@@ -70,7 +70,7 @@ public final class TestFormulaBugs {
 	 * 
 	 * seems to be a duplicate of 24925
 	 */
-    @Test
+	@Test
 	public void test27405() throws Exception {
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("input");
@@ -119,7 +119,7 @@ public final class TestFormulaBugs {
 	/**
 	 * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p/>
 	 */
-    @Test
+	@Test
 	public void test42448() throws IOException {
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet1 = wb.createSheet("Sheet1");
@@ -173,29 +173,84 @@ public final class TestFormulaBugs {
 
 	@Test
 	public void test55032() throws IOException {
-        Workbook wb = new HSSFWorkbook();
-        Sheet sheet = wb.createSheet("input");
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet("input");
 
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(1);
+		Row row = sheet.createRow(0);
+		Cell cell = row.createCell(1);
 
-        checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, ,0)", -59777.14585);
-        checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, ,)", -59777.14585);
-        checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, 500,)", -59878.6315455);
-        
-        checkFormulaValue(wb, cell, "FV(0.08/12, 20*12, 500, ,)", -294510.2078107270);
-        checkFormulaValue(wb, cell, "PMT(0.08/12, 20*12, 500, ,)", -4.1822003450);
-        checkFormulaValue(wb, cell, "NPER(0.08/12, 20*12, 500, ,)", -2.0758873434);
+		checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, ,0)", -59777.14585);
+		checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, ,)", -59777.14585);
+		checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, 500,)", -59878.6315455);
+		
+		checkFormulaValue(wb, cell, "FV(0.08/12, 20*12, 500, ,)", -294510.2078107270);
+		checkFormulaValue(wb, cell, "PMT(0.08/12, 20*12, 500, ,)", -4.1822003450);
+		checkFormulaValue(wb, cell, "NPER(0.08/12, 20*12, 500, ,)", -2.0758873434);
 
-        wb.close();
+		wb.close();
+	}
+	
+	// bug 52063: LOOKUP(2-arg) and LOOKUP(3-arg)
+	// FIXME: This could be moved into LookupFunctionsTestCaseData.xls, which is tested by TestLookupFunctionsFromSpreadsheet.java
+	@Test
+	public void testLookupFormula() throws Exception {
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet("52063");
+		
+		// Note: Values in arrays are in ascending order since LOOKUP expects that in order to work properly
+		//		 column
+		//		 A B C
+		//	   +-------
+		// row 1 | P Q R
+		// row 2 | X Y Z
+		Row row = sheet.createRow(0);
+		row.createCell(0).setCellValue("P");
+		row.createCell(1).setCellValue("Q");
+		row.createCell(2).setCellValue("R");
+		row = sheet.createRow(1);
+		row.createCell(0).setCellValue("X");
+		row.createCell(1).setCellValue("Y");
+		row.createCell(2).setCellValue("Z");
+		
+		Cell evalcell = sheet.createRow(2).createCell(0);
+		
+		//// ROW VECTORS
+		// lookup and result row are the same
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C1)", "Q");
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C1)", "R");
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C1, A1:C1)", "Q");
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C1, A1:C1)", "R");
+		
+		// lookup and result row are different
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C2)", "Y");
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C2)", "Z");
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"Q\", A1:C1, A2:C2)", "Y");
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"R\", A1:C1, A2:C2)", "Z");
+		
+		//// COLUMN VECTORS
+		// lookup and result column are different
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"P\", A1:B2)", "Q");
+		checkFormulaValue(wb, evalcell, "LOOKUP(\"X\", A1:A2, C1:C2)", "Z");
+		
+		wb.close();
+	}
+	
+	private CellValue evaluateFormulaInCell(Workbook wb, Cell cell, String formula) {
+		cell.setCellFormula(formula);
+		
+		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		CellValue value = evaluator.evaluate(cell);
+		
+		return value;
 	}
 
-    private void checkFormulaValue(Workbook wb, Cell cell, String formula, double expectedValue) {
-        cell.setCellFormula(formula);
-	    
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        CellValue value = evaluator.evaluate(cell);
-        
-        assertEquals(expectedValue, value.getNumberValue(), 0.0001);
-    }
+	private void checkFormulaValue(Workbook wb, Cell cell, String formula, double expectedValue) {
+		CellValue value = evaluateFormulaInCell(wb, cell, formula);
+		assertEquals(expectedValue, value.getNumberValue(), 0.0001);
+	}
+	
+	private void checkFormulaValue(Workbook wb, Cell cell, String formula, String expectedValue) {
+		CellValue value = evaluateFormulaInCell(wb, cell, formula);
+		assertEquals(expectedValue, value.getStringValue());
+	}
 }

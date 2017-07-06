@@ -25,6 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * OBJRECORD (0x005D)<p>

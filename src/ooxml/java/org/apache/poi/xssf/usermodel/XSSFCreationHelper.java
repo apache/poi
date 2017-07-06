@@ -19,8 +19,9 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 public class XSSFCreationHelper implements CreationHelper {
@@ -55,19 +56,6 @@ public class XSSFCreationHelper implements CreationHelper {
     public XSSFColor createExtendedColor() {
         return new XSSFColor(CTColor.Factory.newInstance(), workbook.getStylesSource().getIndexedColors());
     }
-
-    /**
-     * Create a new XSSFHyperlink.
-     *
-     * @param type - the type of hyperlink to create, see {@link HyperlinkType}
-     * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    @Override
-    public XSSFHyperlink createHyperlink(int type) {
-        return new XSSFHyperlink(type);
-    }
     
     /**
      * Create a new XSSFHyperlink.
@@ -99,5 +87,21 @@ public class XSSFCreationHelper implements CreationHelper {
     @Override
     public XSSFClientAnchor createClientAnchor() {
         return new XSSFClientAnchor();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AreaReference createAreaReference(String reference) {
+        return new AreaReference(reference, workbook.getSpreadsheetVersion());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AreaReference createAreaReference(CellReference topLeft, CellReference bottomRight) {
+        return new AreaReference(topLeft, bottomRight, workbook.getSpreadsheetVersion());
     }
 }

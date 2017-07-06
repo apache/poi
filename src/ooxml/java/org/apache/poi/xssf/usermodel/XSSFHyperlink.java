@@ -40,17 +40,6 @@ public class XSSFHyperlink implements Hyperlink {
 
     /**
      * Create a new XSSFHyperlink. This method is protected to be used only by
-     * {@link XSSFCreationHelper#createHyperlink(int)}.
-     *
-     * @param type - the type of hyperlink to create, see {@link Hyperlink}
-     * @deprecated POI 3.15 beta 3. Use {@link #XSSFHyperlink(HyperlinkType)} instead.
-     */
-    protected XSSFHyperlink(int type) {
-        this(HyperlinkType.forInt(type));
-    }
-    
-    /**
-     * Create a new XSSFHyperlink. This method is protected to be used only by
      * {@link XSSFCreationHelper#createHyperlink(HyperlinkType)}.
      *
      * @param type - the type of hyperlink to create

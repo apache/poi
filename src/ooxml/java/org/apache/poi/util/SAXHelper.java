@@ -62,9 +62,24 @@ public final class SAXHelper {
     
     private static final SAXParserFactory saxFactory;
     static {
-        saxFactory = SAXParserFactory.newInstance();
-        saxFactory.setValidating(false);
-        saxFactory.setNamespaceAware(true);
+        try {
+            saxFactory = SAXParserFactory.newInstance();
+            saxFactory.setValidating(false);
+            saxFactory.setNamespaceAware(true);
+        } catch (RuntimeException re) {
+            logger.log(POILogger.WARN, "Failed to create SAXParserFactory", re);
+            throw re;
+        } catch (Exception e) {
+            logger.log(POILogger.WARN, "Failed to create SAXParserFactory", e);
+            throw new RuntimeException("Failed to create SAXParserFactory", e);
+        } catch (Error e) {
+            // catches NoClassDefFoundError, which may be due to a local class path issue
+            // This may occur if the code is run inside a web container
+            // or a restricted JVM
+            // See bug 61170: https://bz.apache.org/bugzilla/show_bug.cgi?id=61170
+            logger.log(POILogger.WARN, "Failed to create SAXParserFactory", e);
+            throw e;
+        }
     }
             
     private static void trySetSAXFeature(XMLReader xmlReader, String feature) {

@@ -30,9 +30,12 @@ import java.util.Locale;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.usermodel.TableStyleInfo;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
@@ -40,6 +43,7 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
 
 /**
@@ -213,7 +217,6 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return List of XSSFXmlColumnPr
      */
     public List<XSSFXmlColumnPr> getXmlColumnPrs() {
-        
         if (xmlColumnPr==null) {
             xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
             for (CTTableColumn column: getTableColumns()) {
@@ -224,6 +227,29 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             }
         }
         return xmlColumnPr;
+    }
+    
+    /**
+     * Adds another column to the table.
+     * 
+     * Warning - Return type likely to change!
+     */
+    @Internal("Return type likely to change")
+    public void addColumn() {
+        // Ensure we have Table Columns
+        CTTableColumns columns = ctTable.getTableColumns();
+        if (columns == null) {
+            columns = ctTable.addNewTableColumns();
+        }
+        
+        // Add another Column, and give it a sensible ID
+        CTTableColumn column = columns.addNewTableColumn();
+        int num = columns.sizeOfTableColumnArray();
+        columns.setCount(num);
+        column.setId(num);
+        
+        // Have the Headers updated if possible
+        updateHeaders();
     }
     
     /**
@@ -311,7 +337,47 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         return getNumberOfMappedColumns();
     }
 
-    
+    /**
+     * @return The reference for the cells of the table
+     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
+     *
+     * Does not track updates to underlying changes to CTTable
+     * To synchronize with changes to the underlying CTTable,
+     * call {@link #updateReferences()}.
+     * 
+     * @since 3.17 beta 1
+     */
+    public AreaReference getCellReferences() {
+        return new AreaReference(
+                getStartCellReference(),
+                getEndCellReference(),
+                SpreadsheetVersion.EXCEL2007
+        );
+    }
+    /**
+     * Updates the reference for the cells of the table
+     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
+     * and synchronizes any changes
+     * 
+     * @since 3.17 beta 1
+     */
+    public void setCellReferences(AreaReference refs) {
+        // Strip the Sheet name
+        String ref = refs.formatAsString();
+        if (ref.indexOf('!') != -1) {
+            ref = ref.substring(ref.indexOf('!')+1);
+        }
+        
+        // Update
+        ctTable.setRef(ref);
+        if (ctTable.isSetAutoFilter()) {
+            ctTable.getAutoFilter().setRef(ref);
+        }
+        
+        // Have everything recomputed
+        updateReferences();
+        updateHeaders();
+    }
     
     /**
      * @return The reference for the cell in the top-left part of the table
@@ -401,6 +467,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * If calling both {@link #updateReferences()} and
      * {@link #updateHeaders()}, {@link #updateReferences()}
      * should be called first.
+     * 
+     * Note that a Table <em>must</em> have a header. To reproduce
+     *  the equivalent of inserting a table in Excel without Headers,
+     *  manually add cells with values of "Column1", "Column2" etc first. 
      */
     public void updateHeaders() {
         XSSFSheet sheet = (XSSFSheet)getParent();
@@ -410,13 +480,14 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         int headerRow = ref.getRow();
         int firstHeaderColumn = ref.getCol();
         XSSFRow row = sheet.getRow(headerRow);
+        DataFormatter formatter = new DataFormatter();
 
         if (row != null && row.getCTRow().validate()) {
             int cellnum = firstHeaderColumn;
             for (CTTableColumn col : getCTTable().getTableColumns().getTableColumnArray()) {
                 XSSFCell cell = row.getCell(cellnum);
                 if (cell != null) {
-                    col.setName(cell.getStringCellValue());
+                    col.setName(formatter.formatCellValue(cell));
                 }
                 cellnum++;
             }

@@ -51,9 +51,9 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
             super(stream, size, chunkSize);
         }
 
-        public BinaryRC4CipherInputStream(InputStream stream)
+        public BinaryRC4CipherInputStream(InputStream stream, int size, int initialPos)
                 throws GeneralSecurityException {
-            super(stream, Integer.MAX_VALUE, chunkSize);
+            super(stream, size, chunkSize, initialPos);
         }    
     }
 
@@ -141,7 +141,7 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
     @Override
     public InputStream getDataStream(InputStream stream, int size, int initialPos)
             throws IOException, GeneralSecurityException {
-        return new BinaryRC4CipherInputStream(stream);
+        return new BinaryRC4CipherInputStream(stream, size, initialPos);
     }
     
 

@@ -17,7 +17,8 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.util.Removal;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * An object that handles instantiating concrete
@@ -41,14 +42,6 @@ public interface CreationHelper {
      * Creates a new DataFormat instance
      */
     DataFormat createDataFormat();
-
-    /**
-     * Creates a new Hyperlink, of the given type
-     * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
-     */
-    @Removal(version="3.17")
-    @Deprecated
-    Hyperlink createHyperlink(int type);
     
     /**
      * Creates a new Hyperlink, of the given type
@@ -75,4 +68,22 @@ public interface CreationHelper {
      * @see org.apache.poi.ss.usermodel.Drawing
      */
     ClientAnchor createClientAnchor();
+
+    /**
+     * Creates an AreaReference.
+     *
+     * @param reference cell reference
+     * @return an AreaReference instance
+     */
+    AreaReference createAreaReference(String reference);
+
+    /**
+     * Creates an area ref from a pair of Cell References..
+     *
+     * @param topLeft cell reference
+     * @param bottomRight cell reference
+     * @return an AreaReference instance
+     */
+    AreaReference createAreaReference(CellReference topLeft, CellReference bottomRight);
+
 }

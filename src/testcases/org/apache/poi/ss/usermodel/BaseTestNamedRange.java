@@ -500,8 +500,7 @@ public abstract class BaseTestNamedRange {
         assertNotNull(aNamedCell);
 
         // retrieve the cell at the named range and test its contents
-        @SuppressWarnings("deprecation")
-        AreaReference aref = new AreaReference(aNamedCell.getRefersToFormula());
+        AreaReference aref = wb.getCreationHelper().createAreaReference(aNamedCell.getRefersToFormula());
         assertTrue("Should be exactly 1 cell in the named cell :'" +cellName+"'", aref.isSingleCell());
 
         CellReference cref = aref.getFirstCell();
@@ -512,7 +511,6 @@ public abstract class BaseTestNamedRange {
         Cell c = r.getCell(cref.getCol());
         String contents = c.getRichStringCellValue().getString();
         assertEquals("Contents of cell retrieved by its named reference", contents, cellValue);
-        
         wb.close();
     }
 

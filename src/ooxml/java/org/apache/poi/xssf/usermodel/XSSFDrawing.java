@@ -58,6 +58,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTAbsoluteAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
@@ -676,7 +677,10 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
                 anchor = new XSSFClientAnchor(ct.getFrom(), ct.getTo());
             } else if (parentXbean instanceof CTOneCellAnchor) {
                 CTOneCellAnchor ct = (CTOneCellAnchor)parentXbean;
-                anchor = new XSSFClientAnchor(ct.getFrom(), CTMarker.Factory.newInstance());
+                anchor = new XSSFClientAnchor(getSheet(), ct.getFrom(), ct.getExt());
+            } else if (parentXbean instanceof CTAbsoluteAnchor) {
+                CTAbsoluteAnchor ct = (CTAbsoluteAnchor) parentXbean;
+                anchor = new XSSFClientAnchor(getSheet(), ct.getPos(), ct.getExt());
             }
         }
         return anchor;

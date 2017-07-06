@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.model.io;
 
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,16 +27,16 @@ import org.apache.poi.util.Internal;
 @Internal
 public final class HWPFFileSystem
 {
-  Map<String, HWPFOutputStream> _streams = new HashMap<String, HWPFOutputStream>();
+  private Map<String, ByteArrayOutputStream> _streams = new HashMap<String, ByteArrayOutputStream>();
 
   public HWPFFileSystem()
   {
-    _streams.put("WordDocument", new HWPFOutputStream());
-    _streams.put("1Table", new HWPFOutputStream());
-    _streams.put("Data", new HWPFOutputStream());
+    _streams.put("WordDocument", new ByteArrayOutputStream(100000));
+    _streams.put("1Table", new ByteArrayOutputStream(100000));
+    _streams.put("Data", new ByteArrayOutputStream(100000));
   }
 
-  public HWPFOutputStream getStream(String name)
+  public ByteArrayOutputStream getStream(String name)
   {
     return _streams.get(name);
   }

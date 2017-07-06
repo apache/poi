@@ -32,10 +32,6 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.DataSpaceMapUtils;
@@ -46,6 +42,8 @@ import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor.StreamDescriptorE
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
@@ -124,40 +122,33 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
      * 
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
-    public OutputStream getSummaryEntries(DirectoryNode dir)
+    public void setSummaryEntries(DirectoryNode dir, String encryptedStream, NPOIFSFileSystem entries)
     throws IOException, GeneralSecurityException {
         CryptoAPIDocumentOutputStream bos = new CryptoAPIDocumentOutputStream(this); // NOSONAR
         byte buf[] = new byte[8];
         
         bos.write(buf, 0, 8); // skip header
-        String entryNames[] = {
-            SummaryInformation.DEFAULT_STREAM_NAME,
-            DocumentSummaryInformation.DEFAULT_STREAM_NAME
-        };
-        
         List<StreamDescriptorEntry> descList = new ArrayList<StreamDescriptorEntry>();
 
         int block = 0;
-        for (String entryName : entryNames) {
-            if (!dir.hasEntry(entryName)) {
+        for (Entry entry : entries.getRoot()) {
+            if (entry.isDirectoryEntry()) {
                 continue;
             }
             StreamDescriptorEntry descEntry = new StreamDescriptorEntry();
             descEntry.block = block;
             descEntry.streamOffset = bos.size();
-            descEntry.streamName = entryName;
+            descEntry.streamName = entry.getName();
             descEntry.flags = StreamDescriptorEntry.flagStream.setValue(0, 1);
             descEntry.reserved2 = 0;
             
             bos.setBlock(block);
-            DocumentInputStream dis = dir.createDocumentInputStream(entryName);
+            DocumentInputStream dis = dir.createDocumentInputStream(entry);
             IOUtils.copy(dis, bos);
             dis.close();
             
             descEntry.streamSize = bos.size() - descEntry.streamOffset;
             descList.add(descEntry);
-            
-            dir.getEntry(entryName).delete();
             
             block++;
         }
@@ -197,16 +188,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         bos.write(buf, 0, 8);
         bos.setSize(savedSize);
         
-        dir.createDocument("EncryptedSummary", new ByteArrayInputStream(bos.getBuf(), 0, savedSize));
-        DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
-        
-        try {
-            dsi.write(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        } catch (WritingNotSupportedException e) {
-            throw new IOException(e);
-        }
-        
-        return bos;
+        dir.createDocument(encryptedStream, new ByteArrayInputStream(bos.getBuf(), 0, savedSize));
     }
 
     protected int getKeySizeInBytes() {

@@ -17,60 +17,21 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 /**
- * A client anchor is attached to an excel worksheet.  It anchors against a
- * top-left and bottom-right cell.
- *
- * @author Yegor Kozlov
+ * A client anchor is attached to an excel worksheet.  It anchors against 
+ * absolute coordinates, a top-left cell and fixed height and width, or
+ * a top-left and bottom-right cell, depending on the {@link AnchorType}:
+ * <ol>
+ * <li> {@link AnchorType#DONT_MOVE_AND_RESIZE} == absolute top-left coordinates and width/height, no cell references
+ * <li> {@link AnchorType#MOVE_DONT_RESIZE} == fixed top-left cell reference, absolute width/height
+ * <li> {@link AnchorType#MOVE_AND_RESIZE} == fixed top-left and bottom-right cell references, dynamic width/height
+ * </ol>
+ * Note this class only reports the current values for possibly calculated positions and sizes.
+ * If the sheet row/column sizes or positions shift, this needs updating via external calculations.
+ * 
  */
 public interface ClientAnchor {
-    
-    /**
-     * Move and Resize With Anchor Cells
-     * <p>
-     * Specifies that the current drawing shall move and
-     * resize to maintain its row and column anchors (i.e. the
-     * object is anchored to the actual from and to row and column)
-     * </p>
-     * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_AND_RESIZE} instead.
-     */
-    @Removal(version="3.17")
-    public static final AnchorType MOVE_AND_RESIZE = AnchorType.MOVE_AND_RESIZE;
-    
-    /**
-     * Move With Cells but Do Not Resize
-     * <p>
-     * Specifies that the current drawing shall move with its
-     * row and column (i.e. the object is anchored to the
-     * actual from row and column), but that the size shall remain absolute.
-     * </p>
-     * <p>
-     * If additional rows/columns are added between the from and to locations of the drawing,
-     * the drawing shall move its to anchors as needed to maintain this same absolute size.
-     * </p>
-     * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#MOVE_DONT_RESIZE} instead.
-     */
-    @Removal(version="3.17")
-    public static final AnchorType MOVE_DONT_RESIZE = AnchorType.MOVE_DONT_RESIZE;
-
-    /**
-     * Do Not Move or Resize With Underlying Rows/Columns
-     * <p>
-     * Specifies that the current start and end positions shall
-     * be maintained with respect to the distances from the
-     * absolute start point of the worksheet.
-     * </p>
-     * <p>
-     * If additional rows/columns are added before the
-     * drawing, the drawing shall move its anchors as needed
-     * to maintain this same absolute position.
-     * </p>
-     * @deprecated since POI 3.14beta1 (circa 2015-11-24). Use {@link AnchorType#DONT_MOVE_AND_RESIZE} instead.
-     */
-    @Removal(version="3.17")
-    public static final AnchorType DONT_MOVE_AND_RESIZE = AnchorType.DONT_MOVE_AND_RESIZE;
     
     /**
      * @since POI 3.14beta1
@@ -91,8 +52,9 @@ public interface ClientAnchor {
          * <p>
          * Specifies that the current drawing shall not move with its
          * row and column, but should be resized. This option is not normally
-         * used, but is included for completeness.
+         * used, but is included for completeness. 
          * </p>
+         * Note: Excel has no setting for this combination, nor does the ECMA standard.
          */
         DONT_MOVE_DO_RESIZE(1),
         
@@ -145,9 +107,10 @@ public interface ClientAnchor {
     }
     
     /**
-     * Returns the column (0 based) of the first cell.
+     * Returns the column (0 based) of the first cell, or -1 if there is no top-left anchor cell.
+     * This is the case for absolute positioning {@link AnchorType#MOVE_AND_RESIZE}
      *
-     * @return 0-based column of the first cell.
+     * @return 0-based column of the first cell or -1 if none.
      */
     public short getCol1();
 
@@ -159,9 +122,11 @@ public interface ClientAnchor {
     public void setCol1(int col1);
 
     /**
-     * Returns the column (0 based) of the second cell.
+     * Returns the column (0 based) of the second cell, or -1 if there is no bottom-right anchor cell.
+     * This is the case for absolute positioning ({@link AnchorType#DONT_MOVE_AND_RESIZE})
+     * and absolute sizing ({@link AnchorType#MOVE_DONT_RESIZE}.
      *
-     * @return 0-based column of the second cell.
+     * @return 0-based column of the second cell or -1 if none.
      */
     public short getCol2();
 
@@ -173,9 +138,10 @@ public interface ClientAnchor {
     public void setCol2(int col2);
 
     /**
-     * Returns the row (0 based) of the first cell.
+     * Returns the row (0 based) of the first cell, or -1 if there is no bottom-right anchor cell.
+     * This is the case for absolute positioning ({@link AnchorType#DONT_MOVE_AND_RESIZE}).
      *
-     * @return 0-based row of the first cell.
+     * @return 0-based row of the first cell or -1 if none.
      */
     public int getRow1();
 
@@ -187,9 +153,11 @@ public interface ClientAnchor {
     public void setRow1(int row1);
 
     /**
-     * Returns the row (0 based) of the second cell.
+     * Returns the row (0 based) of the second cell, or -1 if there is no bottom-right anchor cell.
+     * This is the case for absolute positioning ({@link AnchorType#DONT_MOVE_AND_RESIZE})
+     * and absolute sizing ({@link AnchorType#MOVE_DONT_RESIZE}.
      *
-     * @return 0-based row of the second cell.
+     * @return 0-based row of the second cell or -1 if none.
      */
     public int getRow2();
 
@@ -295,13 +263,6 @@ public interface ClientAnchor {
      * @since POI 3.14
      */
     public void setAnchorType( AnchorType anchorType );
-    /**
-     * Sets the anchor type
-     * @param anchorType the anchor type to set
-     * @deprecated POI 3.15. Use {@link #setAnchorType(AnchorType)} instead.
-     */
-    @Removal(version="3.17")
-    public void setAnchorType( int anchorType );
 
     /**
      * Gets the anchor type

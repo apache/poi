@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -91,7 +92,9 @@ public class TestStructuredReferences {
             
             // update Table
             final XSSFTable table = wb.getTable("\\_Prime.1");
-            final AreaReference newArea = new AreaReference(table.getStartCellReference(), new CellReference(table.getEndRowIndex() + 1, table.getEndColIndex()));
+            final AreaReference newArea = wb.getCreationHelper().createAreaReference(
+                    table.getStartCellReference(),
+                    new CellReference(table.getEndRowIndex() + 1, table.getEndColIndex()));
             String newAreaStr = newArea.formatAsString();
             table.getCTTable().setRef(newAreaStr);
             table.getCTTable().getAutoFilter().setRef(newAreaStr);

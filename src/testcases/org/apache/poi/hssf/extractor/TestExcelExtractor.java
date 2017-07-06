@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.extractor;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertStartsWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -388,4 +388,13 @@ public final class TestExcelExtractor {
 		assertNotNull(extractor.getText());
 		extractor.close();
 	}
+
+	@Test
+	public void test61045() throws IOException {
+		//bug 61045. File is govdocs1 626534
+		ExcelExtractor extractor = createExtractor("61045_govdocs1_626534.xls");
+		String txt = extractor.getText();
+		assertContains(txt, "NONBUSINESS");
+	}
+
 }

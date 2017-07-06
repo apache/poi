@@ -107,4 +107,8 @@ public abstract class EscherProperty {
      * @return the length of the part
      */
     abstract public int serializeComplexPart( byte[] data, int pos );
+
+
+    @Override
+    abstract public String toString();
 }

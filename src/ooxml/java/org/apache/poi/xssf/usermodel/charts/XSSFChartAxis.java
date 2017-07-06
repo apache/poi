@@ -17,25 +17,28 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisOrientation;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickMark;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Base class for all axis types.
@@ -54,27 +57,33 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		this.chart = chart;
 	}
 
+	@Override
 	public AxisPosition getPosition() {
 		return toAxisPosition(getCTAxPos());
 	}
 
+	@Override
 	public void setPosition(AxisPosition position) {
 		getCTAxPos().setVal(fromAxisPosition(position));
 	}
 
+	@Override
 	public void setNumberFormat(String format) {
 		getCTNumFmt().setFormatCode(format);
 		getCTNumFmt().setSourceLinked(true);
 	}
 
+	@Override
 	public String getNumberFormat() {
 		return getCTNumFmt().getFormatCode();
 	}
 
+	@Override
 	public boolean isSetLogBase() {
 		return getCTScaling().isSetLogBase();
 	}
 
+	@Override
 	public void setLogBase(double logBase) {
 		if (logBase < MIN_LOG_BASE ||
 			MAX_LOG_BASE < logBase) {
@@ -88,6 +97,7 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		}
 	}
 
+	@Override
 	public double getLogBase() {
 		CTLogBase logBase = getCTScaling().getLogBase();
 		if (logBase != null) {
@@ -96,10 +106,12 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		return 0.0;
 	}
 
+	@Override
 	public boolean isSetMinimum() {
 		return getCTScaling().isSetMin();
 	}
 
+	@Override
 	public void setMinimum(double min) {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMin()) {
@@ -109,6 +121,7 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		}
 	}
 
+	@Override
 	public double getMinimum() {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMin()) {
@@ -118,10 +131,12 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		}
 	}
 
+	@Override
 	public boolean isSetMaximum() {
 		return getCTScaling().isSetMax();
 	}
 
+	@Override
 	public void setMaximum(double max) {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMax()) {
@@ -131,6 +146,7 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		}
 	}
 
+	@Override
 	public double getMaximum() {
 		CTScaling scaling = getCTScaling();
 		if (scaling.isSetMax()) {
@@ -140,10 +156,12 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		}
 	}
 
+	@Override
 	public AxisOrientation getOrientation() {
 		return toAxisOrientation(getCTScaling().getOrientation());
 	}
 
+	@Override
 	public void setOrientation(AxisOrientation orientation) {
 		CTScaling scaling = getCTScaling();
 		STOrientation.Enum stOrientation = fromAxisOrientation(orientation);
@@ -154,34 +172,42 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		}
 	}
 
+	@Override
 	public AxisCrosses getCrosses() {
 		return toAxisCrosses(getCTCrosses());
 	}
 
+	@Override
 	public void setCrosses(AxisCrosses crosses) {
 		getCTCrosses().setVal(fromAxisCrosses(crosses));
 	}
 
+	@Override
 	public boolean isVisible() {
 		return !getDelete().getVal();
 	}
 
+	@Override
 	public void setVisible(boolean value) {
 		getDelete().setVal(!value);
 	}
 
+	@Override
 	public AxisTickMark getMajorTickMark() {
 		return toAxisTickMark(getMajorCTTickMark());
 	}
 
+	@Override
 	public void setMajorTickMark(AxisTickMark tickMark) {
 		getMajorCTTickMark().setVal(fromAxisTickMark(tickMark));
 	}
 
+	@Override
 	public AxisTickMark getMinorTickMark() {
 		return toAxisTickMark(getMinorCTTickMark());
 	}
 
+	@Override
 	public void setMinorTickMark(AxisTickMark tickMark) {
 		getMinorCTTickMark().setVal(fromAxisTickMark(tickMark));
 	}
@@ -193,7 +219,9 @@ public abstract class XSSFChartAxis implements ChartAxis {
 	protected abstract CTBoolean getDelete();
 	protected abstract CTTickMark getMajorCTTickMark();
 	protected abstract CTTickMark getMinorCTTickMark();
-
+	@Internal public abstract CTChartLines getMajorGridLines();
+	@Internal public abstract CTShapeProperties getLine();
+	
 	private static STOrientation.Enum fromAxisOrientation(AxisOrientation orientation) {
 		switch (orientation) {
 			case MIN_MAX: return STOrientation.MIN_MAX;

@@ -2172,18 +2172,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
             setColumnWidth(column, (int) (width));
         }
-
-    }
-
-    /**
-     * Returns cell comment for the specified row and column
-     *
-     * @return cell comment or <code>null</code> if not found
-     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
-     */
-    @Override
-    public HSSFComment getCellComment(int row, int column) {
-        return findCellComment(row, column);
     }
     
     /**

@@ -97,7 +97,7 @@ public class NumberRenderingSpreadsheetGenerator {
 		HSSFRow row = sheet.createRow(0);
 		HSSFCellStyle style = wb.createCellStyle();
 		HSSFFont font = wb.createFont();
-		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		font.setBold(true);
 		style.setFont(font);
 		writeHeaderCell(row, 0, "Value", style);
 		writeHeaderCell(row, 1, "Raw Long Bits", style);

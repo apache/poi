@@ -83,6 +83,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
@@ -760,20 +761,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         getPane().setState(STPaneState.SPLIT);
         getPane().setActivePane(STPane.Enum.forInt(activePane));
     }
-
-    /**
-     * Return cell comment at row, column, if one exists. Otherwise returns null.
-     * @param row the row where the comment is located
-     * @param column the column where the comment is located
-     * @return the cell comment, if one exists. Otherwise return null.
-     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
-     */
-    @Deprecated
-    @Override
-    @Removal(version="3.16")
-    public XSSFComment getCellComment(int row, int column) {
-        return getCellComment(new CellAddress(row, column));
-    }
     
     /**
      * Return cell comment at row, column, if one exists. Otherwise returns null.
@@ -916,7 +903,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public float getColumnWidthInPixels(int columnIndex) {
         float widthIn256 = getColumnWidth(columnIndex);
-        return (float)(widthIn256/256.0*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH);
+        return (float)(widthIn256/256.0*Units.DEFAULT_CHARACTER_WIDTH);
     }
     
     /**
@@ -2780,23 +2767,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Sets the zoom magnification for the sheet.  The zoom is expressed as a
-     * fraction.  For example to express a zoom of 75% use 3 for the numerator
-     * and 4 for the denominator.
-     *
-     * @param numerator     The numerator for the zoom magnification.
-     * @param denominator   The denominator for the zoom magnification.
-     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.16")
-    @Override
-    public void setZoom(int numerator, int denominator) {
-        int zoom = 100*numerator/denominator;
-        setZoom(zoom);
-    }
-
-    /**
      * Window zoom magnification for current view representing percent values.
      * Valid values range from 10 to 400. Horizontal & Vertical scale together.
      *
@@ -3975,6 +3945,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
        RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
        XSSFTable table = rp.getDocumentPart();
        tbl.setId(rp.getRelationship().getId());
+       table.getCTTable().setId(tableNumber);
 
        tables.put(tbl.getId(), table);
 
@@ -4008,20 +3979,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             return null;
         }
         return new XSSFColor(pr.getTabColor(), getWorkbook().getStylesSource().getIndexedColors());
-    }
-
-    /**
-     * Set background color of the sheet tab
-     *
-     * @param colorIndex  the indexed color to set, must be a constant from {@link org.apache.poi.ss.usermodel.IndexedColors}
-     * @deprecated 3.15-beta2. Removed in 3.17. Use {@link #setTabColor(XSSFColor)}.
-     */
-    @Deprecated
-    @Removal(version="3.17")
-    public void setTabColor(int colorIndex) {
-        IndexedColors indexedColor = IndexedColors.fromInt(colorIndex);
-        XSSFColor color = new XSSFColor(indexedColor, getWorkbook().getStylesSource().getIndexedColors());
-        setTabColor(color);
     }
     
     /**

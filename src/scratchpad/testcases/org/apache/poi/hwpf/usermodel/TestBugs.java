@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -43,13 +42,14 @@ import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
  * Test different problems reported in the Apache Bugzilla
@@ -607,7 +607,7 @@ public class TestBugs{
         System.arraycopy(doc.getTableStream(), doc.getFileInformationBlock()
                 .getFcDop(), originalData, 0, originalData.length);
 
-        HWPFOutputStream outputStream = new HWPFOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         doc.getDocProperties().writeTo(outputStream);
         final byte[] oldData = outputStream.toByteArray();
 
@@ -620,7 +620,7 @@ public class TestBugs{
 
         doc = HWPFTestDataSamples.writeOutAndReadBack(doc);
 
-        outputStream = new HWPFOutputStream();
+        outputStream = new ByteArrayOutputStream();
         doc.getDocProperties().writeTo(outputStream);
         final byte[] newData = outputStream.toByteArray();
 

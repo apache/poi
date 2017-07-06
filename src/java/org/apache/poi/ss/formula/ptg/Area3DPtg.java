@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
@@ -41,7 +42,7 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 
 
 	public Area3DPtg(String arearef, int externIdx) {
-		super(new AreaReference(arearef));
+		super(new AreaReference(arearef, SpreadsheetVersion.EXCEL97));
 		setExternSheetIndex(externIdx);
 	}
 

@@ -18,11 +18,11 @@
  */
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -202,10 +202,10 @@ public class PlfLfo
         return result;
     }
 
-    void writeTo( FileInformationBlock fib, HWPFOutputStream outputStream )
+    void writeTo( FileInformationBlock fib, ByteArrayOutputStream outputStream )
             throws IOException
     {
-        final int offset = outputStream.getOffset();
+        final int offset = outputStream.size();
         fib.setFcPlfLfo( offset );
 
         LittleEndian.putUInt( _lfoMac, outputStream );
@@ -221,6 +221,6 @@ public class PlfLfo
         {
             _rgLfoData[i].writeTo( outputStream );
         }
-        fib.setLcbPlfLfo( outputStream.getOffset() - offset );
+        fib.setLcbPlfLfo( outputStream.size() - offset );
     }
 }

@@ -20,7 +20,11 @@ package org.apache.poi.hssf.eventmodel;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Event-based record factory.  As opposed to RecordFactory

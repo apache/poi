@@ -91,6 +91,7 @@ public class SheetUtil {
         public void evaluateAll() {}
         @Override
         public int evaluateFormulaCell(Cell cell) {
+            //noinspection deprecation
             return cell.getCachedFormulaResultType();
         }
         /** 
@@ -157,9 +158,9 @@ public class SheetUtil {
                 AttributedString str = new AttributedString(txt);
                 copyAttributes(font, str, 0, txt.length());
 
-                if (rt.numFormattingRuns() > 0) {
+                /*if (rt.numFormattingRuns() > 0) {
                     // TODO: support rich text fragments
-                }
+                }*/
 
                 width = getCellWidth(defaultCharWidth, colspan, style, width, str);
             }
@@ -329,7 +330,7 @@ public class SheetUtil {
     /**
      * Copy text attributes from the supplied Font to Java2D AttributedString
      */
-    private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
+    private static void copyAttributes(Font font, AttributedString str, @SuppressWarnings("SameParameterValue") int startIdx, int endIdx) {
         str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
         str.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints());
         if (font.getBold()) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
@@ -360,9 +361,9 @@ public class SheetUtil {
      * Use this where you want to know if the given cell is explicitly defined
      * or not.
      *
-     * @param sheet
-     * @param rowIx
-     * @param colIx
+     * @param sheet The workbook sheet to look at.
+     * @param rowIx The 0-based index of the row.
+     * @param colIx The 0-based index of the cell.
      * @return cell at the given location, or null if not defined
      * @throws NullPointerException if sheet is null
      */
@@ -384,10 +385,10 @@ public class SheetUtil {
      *  then will return the cell itself.
      * <p>If there is no cell defined at the given co-ordinates, will return
      *  null.
-     *  
-     * @param sheet
-     * @param rowIx
-     * @param colIx
+     *
+     * @param sheet The workbook sheet to look at.
+     * @param rowIx The 0-based index of the row.
+     * @param colIx The 0-based index of the cell.
      * @return cell at the given location, its base merged cell, or null if not defined
      * @throws NullPointerException if sheet is null
      */

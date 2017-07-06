@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.streaming;
 
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,7 +49,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * this class only writes the "sheetData" document fragment
  * so that it was renamed to "SheetDataWriter"
  */
-public class SheetDataWriter {
+public class SheetDataWriter implements Closeable {
     private static final POILogger logger = POILogFactory.getLogger(SheetDataWriter.class);
     
     private final File _fd;
@@ -122,12 +123,12 @@ public class SheetDataWriter {
      * flush and close the temp data writer. 
      * This method <em>must</em> be invoked before calling {@link #getWorksheetXMLInputStream()}
      */
-    public void close() throws IOException{
+    public void close() throws IOException {
         _out.flush();
         _out.close();
     }
 
-    protected File getTempFile(){
+    protected File getTempFile() {
         return _fd;
     }
     
@@ -329,7 +330,7 @@ public class SheetDataWriter {
     }
 
     //Taken from jdk1.3/src/javax/swing/text/html/HTMLWriter.java
-     protected void outputQuotedString(String s) throws IOException {
+    protected void outputQuotedString(String s) throws IOException {
         if (s == null || s.length() == 0) {
             return;
         }
@@ -393,13 +394,19 @@ public class SheetDataWriter {
                     break;
                 default:
                     // YK: XmlBeans silently replaces all ISO control characters ( < 32) with question marks.
-                    // the same rule applies to unicode surrogates and "not a character" symbols.
-                    if( c < ' ' || Character.isLowSurrogate(c) || Character.isHighSurrogate(c) ||
-                            ('\uFFFE' <= c && c <= '\uFFFF')) {
+                    // the same rule applies to "not a character" symbols.
+                    if (replaceWithQuestionMark(c)) {
                         if (counter > last) {
                             _out.write(chars, last, counter - last);
                         }
                         _out.write('?');
+                        last = counter + 1;
+                    }
+                    else if (Character.isHighSurrogate(c) || Character.isLowSurrogate(c)) {
+                        if (counter > last) {
+                            _out.write(chars, last, counter - last);
+                        }
+                        _out.write(c);
                         last = counter + 1;
                     }
                     else if (c > 127) {
@@ -421,6 +428,10 @@ public class SheetDataWriter {
         }
     }
 
+    static boolean replaceWithQuestionMark(char c) {
+        return c < ' ' || ('\uFFFE' <= c && c <= '\uFFFF');
+    }
+     
     /**
      * Deletes the temporary file that backed this sheet on disk.
      * @return true if the file was deleted, false if it wasn't.

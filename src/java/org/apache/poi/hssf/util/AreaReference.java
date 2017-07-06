@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.util;
 
+import org.apache.poi.ss.SpreadsheetVersion;
+
 /**
  * @deprecated POI 3.15 beta 3. Use {@link org.apache.poi.ss.util.AreaReference} instead.
  */
@@ -28,7 +30,7 @@ public final class AreaReference extends org.apache.poi.ss.util.AreaReference {
      * The area reference must be contiguous (i.e. represent a single rectangle, not a union of rectangles)
      */
     public AreaReference(String reference) {
-		super(reference);
+		super(reference, SpreadsheetVersion.EXCEL97);
     }
     
     /**

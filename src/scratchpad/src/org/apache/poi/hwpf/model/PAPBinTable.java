@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmIterator;
 import org.apache.poi.hwpf.sprm.SprmOperation;
@@ -386,15 +386,15 @@ public class PAPBinTable
         return _paragraphs;
     }
 
-    public void writeTo( HWPFOutputStream wordDocumentStream,
-            HWPFOutputStream tableStream, CharIndexTranslator translator )
+    public void writeTo( ByteArrayOutputStream wordDocumentStream,
+            ByteArrayOutputStream tableStream, CharIndexTranslator translator )
             throws IOException
     {
 
         PlexOfCps binTable = new PlexOfCps(4);
     
         // each FKP must start on a 512 byte page.
-        int docOffset = wordDocumentStream.getOffset();
+        int docOffset = wordDocumentStream.size();
         int mod = docOffset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
         if (mod != 0)
         {
@@ -403,7 +403,7 @@ public class PAPBinTable
         }
     
         // get the page number for the first fkp
-        docOffset = wordDocumentStream.getOffset();
+        docOffset = wordDocumentStream.size();
         int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
     
         // get the ending fc

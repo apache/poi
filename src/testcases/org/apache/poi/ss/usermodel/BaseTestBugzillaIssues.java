@@ -1041,14 +1041,13 @@ public abstract class BaseTestBugzillaIssues {
         wb.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void bug56981() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         CellStyle vertTop = wb.createCellStyle();
-        vertTop.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+        vertTop.setVerticalAlignment(VerticalAlignment.TOP);
         CellStyle vertBottom = wb.createCellStyle();
-        vertBottom.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        vertBottom.setVerticalAlignment(VerticalAlignment.BOTTOM);
         Sheet sheet = wb.createSheet("Sheet 1");
         Row row = sheet.createRow(0);
         Cell top = row.createCell(0);
@@ -1298,7 +1297,6 @@ public abstract class BaseTestBugzillaIssues {
         wb2.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void bug58260() throws IOException {
         //Create workbook and worksheet
@@ -1320,7 +1318,7 @@ public abstract class BaseTestBugzillaIssues {
             } catch (IllegalStateException e) {
                fail("Failed for row " + i);
             }
-            style.setAlignment(CellStyle.ALIGN_RIGHT);
+            style.setAlignment(HorizontalAlignment.RIGHT);
             if((wb instanceof HSSFWorkbook)) {
                 // there are some predefined styles
                 assertEquals(i+21, style.getIndex());

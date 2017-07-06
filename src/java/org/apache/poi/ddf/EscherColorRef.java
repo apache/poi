@@ -230,10 +230,14 @@ public class EscherColorRef {
      * @return {@link SysIndexSource} if {@link #hasSysIndexFlag()} is {@code true}, otherwise null
      */
     public SysIndexSource getSysIndexSource() {
-        if (!hasSysIndexFlag()) return null;
+        if (!hasSysIndexFlag()) {
+            return null;
+        }
         int val = FLAG_RED.getValue(colorRef);
         for (SysIndexSource sis : SysIndexSource.values()) {
-            if (sis.value == val) return sis;
+            if (sis.value == val) {
+                return sis;
+            }
         }
         return null;
     }
@@ -243,11 +247,17 @@ public class EscherColorRef {
      * @return {@link SysIndexProcedure} if {@link #hasSysIndexFlag()} is {@code true}, otherwise null
      */
     public SysIndexProcedure getSysIndexProcedure() {
-        if (!hasSysIndexFlag()) return null;
+        if (!hasSysIndexFlag()) {
+            return null;
+        }
         int val = FLAG_GREEN.getValue(colorRef);
         for (SysIndexProcedure sip : SysIndexProcedure.values()) {
-            if (sip == SysIndexProcedure.INVERT_AFTER || sip == SysIndexProcedure.INVERT_HIGHBIT_AFTER) continue;
-            if (sip.mask.isSet(val)) return sip;
+            if (sip == SysIndexProcedure.INVERT_AFTER || sip == SysIndexProcedure.INVERT_HIGHBIT_AFTER) {
+                continue;
+            }
+            if (sip.mask.isSet(val)) {
+                return sip;
+            }
         }
         return null;
     }
@@ -257,10 +267,16 @@ public class EscherColorRef {
      * 2 for {@link SysIndexProcedure#INVERT_HIGHBIT_AFTER} 
      */
     public int getSysIndexInvert() {
-        if (!hasSysIndexFlag()) return 0;
+        if (!hasSysIndexFlag()) {
+            return 0;
+        }
         int val = FLAG_GREEN.getValue(colorRef);
-        if ((SysIndexProcedure.INVERT_AFTER.mask.isSet(val))) return 1;
-        if ((SysIndexProcedure.INVERT_HIGHBIT_AFTER.mask.isSet(val))) return 2;
+        if ((SysIndexProcedure.INVERT_AFTER.mask.isSet(val))) {
+            return 1;
+        }
+        if ((SysIndexProcedure.INVERT_HIGHBIT_AFTER.mask.isSet(val))) {
+            return 2;
+        }
         return 0;
     }
     
@@ -270,7 +286,9 @@ public class EscherColorRef {
      * @see org.apache.poi.hslf.record.ColorSchemeAtom#getColor(int)
      */
     public int getSchemeIndex() {
-        if (!hasSchemeIndexFlag()) return -1;
+        if (!hasSchemeIndexFlag()) {
+            return -1;
+        }
         return FLAG_RED.getValue(colorRef);
     }
     

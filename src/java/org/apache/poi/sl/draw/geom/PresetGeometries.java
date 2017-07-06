@@ -37,6 +37,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StaxHelper;
 
 /**
  * 
@@ -59,7 +60,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
             }
         };
         
-        XMLInputFactory staxFactory = XMLInputFactory.newFactory();
+        XMLInputFactory staxFactory = StaxHelper.newXMLInputFactory();
         XMLEventReader staxReader = staxFactory.createXMLEventReader(is);
         XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
         // ignore StartElement:

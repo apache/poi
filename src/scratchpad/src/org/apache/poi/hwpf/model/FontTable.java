@@ -17,10 +17,10 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -118,11 +118,11 @@ public final class FontTable
     @Deprecated
     public void writeTo( HWPFFileSystem sys ) throws IOException
     {
-        HWPFOutputStream tableStream = sys.getStream( "1Table" );
+        ByteArrayOutputStream tableStream = sys.getStream( "1Table" );
         writeTo( tableStream );
     }
 
-    public void writeTo( HWPFOutputStream tableStream ) throws IOException
+    public void writeTo( ByteArrayOutputStream tableStream ) throws IOException
     {
         byte[] buf = new byte[LittleEndian.SHORT_SIZE];
         LittleEndian.putShort(buf, 0, _stringCount);

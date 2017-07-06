@@ -261,7 +261,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     /**
      * Get the Sheet object at the given index.
      *
-     * @param index of the sheet number (0-based physical & logical)
+     * @param index of the sheet number (0-based physical &amp; logical)
      * @return Sheet at the provided index
      * @throws IllegalArgumentException if the index is out of range (index
      *            &lt; 0 || index &gt;= getNumberOfSheets()).
@@ -289,15 +289,6 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return new font object
      */
     Font createFont();
-
-    /**
-     * Finds a font that matches the one with the supplied attributes
-     *
-     * @return the font with the matched attributes or <code>null</code>
-     * @deprecated POI 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
-     */
-    @Deprecated
-    Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
     
     /**
      * Finds a font that matches the one with the supplied attributes

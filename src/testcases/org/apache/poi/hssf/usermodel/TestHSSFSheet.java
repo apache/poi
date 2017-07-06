@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.apache.poi.POITestCase.assertBetween;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,7 +58,13 @@ import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.AutoFilter;
+import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.junit.Test;
@@ -505,7 +510,6 @@ public final class TestHSSFSheet extends BaseTestSheet {
         workbook.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void zoom() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -945,7 +949,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertEquals(11*20, bs.getFont(wbSimple).getFontHeight());
         assertEquals(8, bs.getFont(wbSimple).getColor());
         assertFalse(bs.getFont(wbSimple).getItalic());
-        assertEquals(HSSFFont.BOLDWEIGHT_NORMAL, bs.getFont(wbSimple).getBoldweight());
+        assertFalse(bs.getFont(wbSimple).getBold());
 
 
         HSSFCellStyle cs = wbComplex.getSheetAt(0).getColumnStyle(1);

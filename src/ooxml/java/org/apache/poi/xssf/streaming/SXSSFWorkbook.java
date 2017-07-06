@@ -57,6 +57,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -382,7 +383,8 @@ public class SXSSFWorkbook implements Workbook {
                     zos.putNextEntry(new ZipEntry(ze.getName()));
                     InputStream is = zipEntrySource.getInputStream(ze);
                     XSSFSheet xSheet=getSheetFromZipEntryName(ze.getName());
-                    if(xSheet!=null) {
+                    // See bug 56557, we should not inject data into the special ChartSheets
+                    if(xSheet!=null && !(xSheet instanceof XSSFChartSheet)) {
                         SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
                         InputStream xis = sxSheet.getWorksheetXMLInputStream();
                         try {
@@ -808,21 +810,6 @@ public class SXSSFWorkbook implements Workbook {
     public Font createFont()
     {
         return _wb.createFont();
-    }
-
-    /**
-     * Finds a font that matches the one with the supplied attributes
-     *
-     * @return the font with the matched attributes or <code>null</code>
-     * @deprecated POI 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
-     */
-    @Deprecated
-    @Override
-    @Removal(version="3.17")
-    public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline)
-    {
-        //noinspection deprecation
-        return _wb.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
     
     /**
