@@ -687,6 +687,57 @@ public class DataFormatter implements Observer {
         return sb.toString();
     }
 
+    private static class InternalDecimalFormatWithScale extends Format {
+
+        private static final Pattern endsWithCommas = Pattern.compile("(,+)$");
+        private BigDecimal divider;
+        private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
+        private final DecimalFormat df;
+        private static final String trimTrailingCommas(String s) {
+            return s.replaceAll(",+$", "");
+        }
+
+        public InternalDecimalFormatWithScale(String pattern, DecimalFormatSymbols symbols) {
+            df = new DecimalFormat(trimTrailingCommas(pattern), symbols);
+            setExcelStyleRoundingMode(df);
+            Matcher endsWithCommasMatcher = endsWithCommas.matcher(pattern);
+            if (endsWithCommasMatcher.find()) {
+                String commas = (endsWithCommasMatcher.group(1));
+                BigDecimal temp = BigDecimal.ONE;
+                for (int i = 0; i < commas.length(); ++i) {
+                    temp = temp.multiply(ONE_THOUSAND);
+                }
+                divider = temp;
+            } else {
+                divider = null;
+            }
+        }
+
+        private Object scaleInput(Object obj) {
+            if (divider != null) {
+                if (obj instanceof BigDecimal) {
+                    obj = ((BigDecimal) obj).divide(divider, RoundingMode.HALF_UP);
+                } else if (obj instanceof Double) {
+                    obj = (Double) obj / divider.doubleValue();
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            }
+            return obj;
+        }
+
+        @Override
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            obj = scaleInput(obj);
+            return df.format(obj, toAppendTo, pos);
+        }
+
+        @Override
+        public Object parseObject(String source, ParsePosition pos) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private Format createNumberFormat(String formatStr, double cellValue) {
         String format = cleanFormatForNumber(formatStr);
         DecimalFormatSymbols symbols = decimalSymbols;
@@ -710,9 +761,7 @@ public class DataFormatter implements Observer {
         }
         
         try {
-            DecimalFormat df = new DecimalFormat(format, symbols);
-            setExcelStyleRoundingMode(df);
-            return df;
+            return new InternalDecimalFormatWithScale(format, symbols);
         } catch(IllegalArgumentException iae) {
             logger.log(POILogger.DEBUG, "Formatting failed for format " + formatStr + ", falling back", iae);
             // the pattern could not be parsed correctly,
