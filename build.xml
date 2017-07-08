@@ -2809,4 +2809,8 @@ under the License.
     </section>
 ]]></echo>
     </target>
+
+    <target name="test-env" description="tests if ant is available on the jenkins slave">
+      <echo>Using Ant: ${ant.version} from ${ant.home}</echo>    
+    </target>
 </project>
