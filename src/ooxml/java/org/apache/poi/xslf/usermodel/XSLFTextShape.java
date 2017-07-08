@@ -19,6 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -601,23 +602,29 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     @Override
     public double getTextHeight(){
-        DrawFactory drawFact = DrawFactory.getInstance(null);
+        return getTextHeight(null);
+    }
+    
+    @Override
+    public double getTextHeight(Graphics2D graphics){
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
         DrawTextShape dts = drawFact.getDrawable(this);
-        return dts.getTextHeight();
+        return dts.getTextHeight(graphics);
     }
 
-    /**
-     * Adjust the size of the shape so it encompasses the text inside it.
-     *
-     * @return a <code>Rectangle2D</code> that is the bounds of this shape.
-     */
+    @Override
     public Rectangle2D resizeToFitText(){
+        return resizeToFitText(null);
+    }
+    
+    @Override
+    public Rectangle2D resizeToFitText(Graphics2D graphics) {
         Rectangle2D anchor = getAnchor();
 
         if(anchor.getWidth() == 0.) {
             throw new POIXMLException("Anchor of the shape was not set.");
         }
-        double height = getTextHeight();
+        double height = getTextHeight(graphics);
         height += 1; // add a pixel to compensate rounding errors
 
         Insets2D insets = getInsets();

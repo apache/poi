@@ -207,7 +207,7 @@ public class DrawTextShape extends DrawSimpleShape {
      * @param oldGraphics the graphics context, which properties are to be copied, may be null
      * @return the height in points
      */
-    protected double getTextHeight(Graphics2D oldGraphics) {
+    public double getTextHeight(Graphics2D oldGraphics) {
         // dry-run in a 1x1 image and return the vertical advance
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();

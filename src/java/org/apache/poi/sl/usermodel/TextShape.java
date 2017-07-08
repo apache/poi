@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public interface TextShape<
@@ -173,8 +175,21 @@ public interface TextShape<
 
     /**
      * Compute the cumulative height occupied by the text
+     * 
+     * @return the cumulative height occupied by the text
      */
     double getTextHeight();
+
+    /**
+     * Compute the cumulative height occupied by the text
+     * 
+     * @param graphics a customized graphics context, e.g. which contains font mappings
+     * 
+     * @return the cumulative height occupied by the text
+     * 
+     * @since POI 3.17-beta2
+     */
+    double getTextHeight(Graphics2D graphics);
     
     /**
      * Returns the type of vertical alignment for the text.
@@ -255,4 +270,25 @@ public interface TextShape<
      * @return the text placeholder
      */
     TextPlaceholder getTextPlaceholder();
+    
+    /**
+     * Adjust the size of the shape so it encompasses the text inside it.
+     *
+     * @return a {@code Rectangle2D} that is the bounds of this shape.
+     * 
+     * @since POI 3.17-beta2
+     */
+    Rectangle2D resizeToFitText();
+
+    /**
+     * Adjust the size of the shape so it encompasses the text inside it.
+     *
+     * @param graphics a customized graphics context, e.g. which contains font mappings
+     *
+     * @return a {@code Rectangle2D} that is the bounds of this shape.
+     * 
+     * @since POI 3.17-beta2
+     */
+    Rectangle2D resizeToFitText(Graphics2D graphics);
+
 }
