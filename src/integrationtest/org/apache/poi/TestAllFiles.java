@@ -188,6 +188,7 @@ public class TestAllFiles {
         HANDLERS.put(".xml", new NullFileHandler());
         HANDLERS.put(".csv", new NullFileHandler());
         HANDLERS.put(".ods", new NullFileHandler());
+        HANDLERS.put(".ttf", new NullFileHandler());
         // VBA source files
         HANDLERS.put(".vba", new NullFileHandler());
         HANDLERS.put(".bas", new NullFileHandler());
