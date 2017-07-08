@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import static org.apache.poi.hslf.record.RecordTypes.OEPlaceholderAtom;
 import static org.apache.poi.hslf.record.RecordTypes.RoundTripHFPlaceholder12;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -312,21 +313,20 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         }
     }
 
-
+    @Override
+    public Rectangle2D resizeToFitText() {
+        return resizeToFitText(null);
+    }
     
-    /**
-     * Adjust the size of the shape so it encompasses the text inside it.
-     *
-     * @return a <code>Rectangle2D</code> that is the bounds of this shape.
-     */
-    public Rectangle2D resizeToFitText(){
+    @Override
+    public Rectangle2D resizeToFitText(Graphics2D graphics) {
         Rectangle2D anchor = getAnchor();
         if(anchor.getWidth() == 0.) {
             LOG.log(POILogger.WARN, "Width of shape wasn't set. Defaulting to 200px");
             anchor.setRect(anchor.getX(), anchor.getY(), 200., anchor.getHeight());
             setAnchor(anchor);
         }
-        double height = getTextHeight();
+        double height = getTextHeight(graphics);
         height += 1; // add a pixel to compensate rounding errors
 
         Insets2D insets = getInsets();
@@ -736,10 +736,15 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
-    public double getTextHeight(){
-        DrawFactory drawFact = DrawFactory.getInstance(null);
+    public double getTextHeight() {
+        return getTextHeight(null);
+    }
+    
+    @Override
+    public double getTextHeight(Graphics2D graphics) {
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
         DrawTextShape dts = drawFact.getDrawable(this);
-        return dts.getTextHeight();
+        return dts.getTextHeight(graphics);
     }
 
     @Override

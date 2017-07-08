@@ -19,7 +19,8 @@
 
 package org.apache.poi.sl;
 
-import static org.apache.poi.sl.TestTable.openSampleSlideshow;
+import static org.apache.poi.sl.SLCommonUtils.openSampleSlideshow;
+import static org.apache.poi.sl.SLCommonUtils.xslfOnly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -37,25 +38,12 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestHeadersFooters {
-    private static boolean xslfOnly = false;
-
-    @BeforeClass
-    public static void checkHslf() {
-        try {
-            Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
-        } catch (Exception e) {
-            xslfOnly = true;
-        }
-    }
-
-    
     @Test
     public void bug58144a() throws IOException {
-        assumeFalse(xslfOnly);
+        assumeFalse(xslfOnly());
         SlideShow<?,?> ppt = openSampleSlideshow("bug58144-headers-footers-2003.ppt");
         HSLFSlide sl = (HSLFSlide)ppt.getSlides().get(0);
         HeadersFooters hfs = sl.getHeadersFooters();
@@ -69,7 +57,7 @@ public class TestHeadersFooters {
     
     @Test
     public void bug58144b() throws IOException {
-        assumeFalse(xslfOnly);
+        assumeFalse(xslfOnly());
         SlideShow<?,?> ppt = openSampleSlideshow("bug58144-headers-footers-2007.ppt");
         Slide<?,?> sl =  ppt.getSlides().get(0);
         HeadersFooters hfs2 = ((HSLFSlide)sl).getHeadersFooters();

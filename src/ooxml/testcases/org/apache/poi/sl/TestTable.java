@@ -19,6 +19,8 @@
 
 package org.apache.poi.sl;
 
+import static org.apache.poi.sl.SLCommonUtils.openSampleSlideshow;
+import static org.apache.poi.sl.SLCommonUtils.xslfOnly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -32,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
@@ -41,38 +42,13 @@ import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestTable {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-    private static boolean xslfOnly = false;
-
-    @BeforeClass
-    public static void checkHslf() {
-        try {
-            Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
-        } catch (Exception e) {
-            xslfOnly = true;
-        }
-    }
-    
-    
-    /** a generic way to open a sample slideshow document **/
-    public static SlideShow<?,?> openSampleSlideshow(String sampleName) throws IOException {
-        InputStream is = _slTests.openResourceAsStream(sampleName);
-        try {
-            return SlideShowFactory.create(is);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            is.close();
-        }
-    }
     
     @Test
     public void colWidthRowHeight() throws IOException {
-        assumeFalse(xslfOnly);
+        assumeFalse(xslfOnly());
 
         // Test of table dimensions of same slideshow saved as ppt/x
         // to check if both return similar (points) value
@@ -121,7 +97,7 @@ public class TestTable {
 
     @Test
     public void directionHSLF() throws IOException {
-        assumeFalse(xslfOnly);
+        assumeFalse(xslfOnly());
         SlideShow<?,?> ppt1 = new HSLFSlideShow();
         testTextDirection(ppt1);
         ppt1.close();
@@ -173,7 +149,7 @@ public class TestTable {
     
     @Test
     public void tableSpan() throws IOException {
-        String files[] = (xslfOnly) ? new String[]{ "bug60993.pptx" } : new String[]{ "bug60993.pptx", "bug60993.ppt" };
+        String files[] = (xslfOnly()) ? new String[]{ "bug60993.pptx" } : new String[]{ "bug60993.pptx", "bug60993.ppt" };
         for (String f : files) {
             SlideShow<?,?> ppt = openSampleSlideshow(f);
             Slide<?,?> slide = ppt.getSlides().get(0);
