@@ -75,6 +75,14 @@ public class TestOfficeXMLException extends TestCase {
 		// xls file is
 		confirmIsPOIFS("SampleSS.xls", true);
 		
+		// older biff formats aren't
+        confirmIsPOIFS("testEXCEL_3.xls", false);
+        confirmIsPOIFS("testEXCEL_4.xls", false);
+        
+        // newer excel formats are
+        confirmIsPOIFS("testEXCEL_5.xls", true);
+        confirmIsPOIFS("testEXCEL_95.xls", true);
+		
 		// text file isn't
 		confirmIsPOIFS("SampleSS.txt", false);
 	}

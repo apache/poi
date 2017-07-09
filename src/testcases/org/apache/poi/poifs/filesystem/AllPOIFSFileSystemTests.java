@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
     , TestDocumentNode.class
     , TestDocumentOutputStream.class
     , TestEmptyDocument.class
+    , TestNotOLE2Exception.class
     , TestOfficeXMLException.class
     , TestPOIFSDocumentPath.class
     , TestPOIFSFileSystem.class
