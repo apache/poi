@@ -22,7 +22,7 @@ import java.util.List;
 
 public interface ShapeContainer<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,?>
+    P extends TextParagraph<S,P,? extends TextRun>
 > extends Iterable<S> {
     /**
      * Returns an list containing all of the elements in this container in proper
