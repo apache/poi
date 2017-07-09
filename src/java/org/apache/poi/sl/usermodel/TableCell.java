@@ -24,7 +24,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 
 public interface TableCell<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,?>
+    P extends TextParagraph<S,P,? extends TextRun>
 > extends TextShape<S,P> {
     enum BorderEdge { bottom, left, top, right }
 
