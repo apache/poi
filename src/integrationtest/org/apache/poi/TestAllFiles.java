@@ -156,6 +156,7 @@ public class TestAllFiles {
         HANDLERS.put(".dat", new HMEFFileHandler());
 
         // TODO: are these readable by some of the formats?
+        HANDLERS.put(".wri", new NullFileHandler());
         HANDLERS.put(".shw", new NullFileHandler());
         HANDLERS.put(".zvi", new NullFileHandler());
         HANDLERS.put(".mpp", new NullFileHandler());
