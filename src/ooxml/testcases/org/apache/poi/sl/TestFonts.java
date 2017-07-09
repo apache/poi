@@ -19,6 +19,7 @@ package org.apache.poi.sl;
 
 import static org.apache.poi.sl.SLCommonUtils.xslfOnly;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.awt.Color;
@@ -32,6 +33,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +73,9 @@ public class TestFonts {
 
     private static final String INIT_FONTS[] = { "mona.ttf" };
     
+    // currently linux and mac return quite different values
+    private static final int[] expected_sizes = { 311, 312, 313, 399 };
+    
     @BeforeClass
     public static void initGE() throws FontFormatException, IOException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -87,7 +92,8 @@ public class TestFonts {
         TextBox<?,?> tb = resizeToFitText(ppt);
         Rectangle2D anc = tb.getAnchor();
         // ignore font metrics differences on windows / linux (... hopefully ...)
-//        assertEquals(anc.getHeight(), 312d, 5);
+        boolean found = Arrays.binarySearch(expected_sizes, (int)anc.getHeight()) > -1;
+        assertTrue(found);
 //        setFont(tb, "Mona");
 //        FileOutputStream fos = new FileOutputStream("bla-hslf.ppt");
 //        ppt.write(fos);
@@ -101,7 +107,8 @@ public class TestFonts {
         TextBox<?,?> tb = resizeToFitText(ppt);
         Rectangle2D anc = tb.getAnchor();
         // ignore font metrics differences on windows / linux (... hopefully ...)
-//        assertEquals(anc.getHeight(), 312d, 5);
+        boolean found = Arrays.binarySearch(expected_sizes, (int)anc.getHeight()) > -1;
+        assertTrue(found);
 //        setFont(tb, "Mona");
 //        FileOutputStream fos = new FileOutputStream("bla-xslf.ppt");
 //        ppt.write(fos);
