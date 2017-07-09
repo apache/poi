@@ -793,7 +793,15 @@ public class TestBugs{
                 HWPFTestDataSamples.openSampleFile("56880.doc");
         assertEqualsIgnoreNewline("Check Request", doc.getRange().text());
     }
-
+    
+    /**
+     * Bug 61268 - NegativeArraySizeException parsing word 97 document
+     */
+    @Test
+    public void testBug61268() throws Exception
+    {
+        assertNotNull(getText("Bug61268.doc"));
+    }
     
     // These are the values the are expected to be read when the file
     // is checked.

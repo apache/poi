@@ -55,8 +55,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
             thedata = new byte[0];
             offset += 8;
             bytesWritten += 8;
-            while ( bytesRemaining > 0 )
-            {
+            while ( bytesRemaining > 0 ) {
                 EscherRecord child = recordFactory.createRecord( data, offset );
                 int childBytesWritten = child.fillFields( data, offset, recordFactory );
                 bytesWritten += childBytesWritten;
@@ -67,6 +66,10 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
             return bytesWritten;
         }
 
+        if (bytesRemaining < 0) {
+            bytesRemaining = 0;
+        }
+        
         thedata = new byte[bytesRemaining];
         System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
         return bytesRemaining + 8;
