@@ -22,7 +22,7 @@ import java.awt.geom.Rectangle2D;
 
 public interface Shape<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,? extends TextRun>
+    P extends TextParagraph<S,P,?>
 > {
 	ShapeContainer<S,P> getParent();
 
