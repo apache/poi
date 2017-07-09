@@ -25,7 +25,7 @@ import org.apache.poi.sl.draw.geom.IAdjustableShape;
 
 public interface SimpleShape<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,? extends TextRun>
+    P extends TextParagraph<S,P,?>
 > extends Shape<S,P>, IAdjustableShape, PlaceableShape<S,P> {
 
     FillStyle getFillStyle();

@@ -29,7 +29,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 public interface SlideShow<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,? extends TextRun>
+    P extends TextParagraph<S,P,?>
 > extends Closeable {
 	Slide<S,P> createSlide() throws IOException;
 
