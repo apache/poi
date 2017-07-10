@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 
 /**
- * Quill -> QuillSub -> CONTENTS
+ * Read Quill Contents (/Quill/QuillSub/CONTENTS) from an HPBF (Publisher .pub) document
  */
 public final class QuillContents extends HPBFPart {
 	private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
@@ -39,7 +39,7 @@ public final class QuillContents extends HPBFPart {
 
 		// Now parse the first 512 bytes, and produce
 		//  all our bits
-        byte data[] = getData();
+		byte data[] = getData();
 
 		// Check first 8 bytes
 		String f8 = new String(data, 0, 8, LocaleUtil.CHARSET_1252);
