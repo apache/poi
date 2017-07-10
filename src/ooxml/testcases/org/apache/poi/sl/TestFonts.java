@@ -18,7 +18,6 @@
 package org.apache.poi.sl;
 
 import static org.apache.poi.sl.SLCommonUtils.xslfOnly;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
@@ -74,7 +73,7 @@ public class TestFonts {
     private static final String INIT_FONTS[] = { "mona.ttf" };
     
     // currently linux and mac return quite different values
-    private static final int[] expected_sizes = { 311, 312, 313, 399 };
+    private static final int[] expected_sizes = { 311, 312, 313, 398, 399 };
     
     @BeforeClass
     public static void initGE() throws FontFormatException, IOException {
@@ -108,7 +107,7 @@ public class TestFonts {
         Rectangle2D anc = tb.getAnchor();
         // ignore font metrics differences on windows / linux (... hopefully ...)
         boolean found = Arrays.binarySearch(expected_sizes, (int)anc.getHeight()) > -1;
-        assertTrue(found);
+        assertTrue((int)anc.getHeight() + " not found in list of exepcted values", found);
 //        setFont(tb, "Mona");
 //        FileOutputStream fos = new FileOutputStream("bla-xslf.ppt");
 //        ppt.write(fos);
