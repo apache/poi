@@ -26,11 +26,15 @@ import org.apache.poi.hpbf.model.qcbits.UnknownQCBit;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Read Quill Contents (/Quill/QuillSub/CONTENTS) from an HPBF (Publisher .pub) document
  */
 public final class QuillContents extends HPBFPart {
+	private static POILogger logger = POILogFactory.getLogger(QuillContents.class);
+
 	private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
 	private QCBit[] bits;
 
@@ -69,7 +73,13 @@ public final class QuillContents extends HPBFPart {
 				if(bitType.equals("TEXT")) {
 					bits[i] = new QCTextBit(thingType, bitType, bitData);
 				} else if(bitType.equals("PLC ")) {
-					bits[i] = QCPLCBit.createQCPLCBit(thingType, bitType, bitData);
+					try {
+						bits[i] = QCPLCBit.createQCPLCBit(thingType, bitType, bitData);
+					} catch (ArrayIndexOutOfBoundsException e) {
+						// bug 60685: fall back so that the rest of the document can be read
+						logger.log(POILogger.WARN, "Unable to read Quill Contents PLC Bit record. Ignoring this record.");
+						bits[i] = new UnknownQCBit(thingType, bitType, bitData);
+					}
 				} else {
 					bits[i] = new UnknownQCBit(thingType, bitType, bitData);
 				}
