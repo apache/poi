@@ -188,14 +188,17 @@ public class XSSFExportToXml implements Comparator<String>{
                         Node tableRootNode = getNodeByXPath(table.getCommonXpath(),doc.getFirstChild(),doc,true);
 
                         short startColumnIndex = table.getStartCellReference().getCol();
-                        for(int j = startColumnIndex; j<= table.getEndCellReference().getCol();j++) {
-                            XSSFCell cell = row.getCell(j);
-                            if (cell!=null) {
-                                XSSFXmlColumnPr pointer = tableColumns.get(j-startColumnIndex);
-                                String localXPath = pointer.getLocalXPath();
-                                Node currentNode = getNodeByXPath(localXPath,tableRootNode,doc,false);
-
-                                mapCellOnNode(cell,currentNode);
+                        for(int j = startColumnIndex; j<= table.getEndCellReference().getCol(); j++) {
+                            int tableColumnIndex = j - startColumnIndex;
+                            if (tableColumnIndex < tableColumns.size()) { 
+                                XSSFCell cell = row.getCell(j);
+                                if (cell != null) {
+                                    XSSFXmlColumnPr pointer = tableColumns.get(tableColumnIndex);
+                                    String localXPath = pointer.getLocalXPath();
+                                    Node currentNode = getNodeByXPath(localXPath,tableRootNode,doc,false);
+    
+                                    mapCellOnNode(cell,currentNode);
+                                }
                             }
                         }
                     }
