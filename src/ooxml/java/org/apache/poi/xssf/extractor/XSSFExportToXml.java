@@ -53,6 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -172,7 +173,7 @@ public class XSSFExportToXml implements Comparator<String>{
                 // Exports elements and attributes mapped with tables
                 if (table!=null) {
 
-                    List<XSSFXmlColumnPr> tableColumns = table.getXmlColumnPrs();
+                    List<CTTableColumn> tableColumns = table.getCTTable().getTableColumns().getTableColumnList();
 
                     XSSFSheet sheet = table.getXSSFSheet();
 
@@ -188,16 +189,19 @@ public class XSSFExportToXml implements Comparator<String>{
                         Node tableRootNode = getNodeByXPath(table.getCommonXpath(),doc.getFirstChild(),doc,true);
 
                         short startColumnIndex = table.getStartCellReference().getCol();
-                        for(int j = startColumnIndex; j<= table.getEndCellReference().getCol(); j++) {
-                            int tableColumnIndex = j - startColumnIndex;
-                            if (tableColumnIndex < tableColumns.size()) { 
-                                XSSFCell cell = row.getCell(j);
-                                if (cell != null) {
-                                    XSSFXmlColumnPr pointer = tableColumns.get(tableColumnIndex);
-                                    String localXPath = pointer.getLocalXPath();
-                                    Node currentNode = getNodeByXPath(localXPath,tableRootNode,doc,false);
-    
-                                    mapCellOnNode(cell,currentNode);
+                        for (int j = startColumnIndex; j <= table.getEndCellReference().getCol(); j++) {
+                            XSSFCell cell = row.getCell(j);
+                            if (cell != null) {
+                                int tableColumnIndex = j - startColumnIndex;
+                                if (tableColumnIndex < tableColumns.size()) { 
+                                    CTTableColumn ctTableColumn = tableColumns.get(tableColumnIndex);
+                                    if (ctTableColumn.getXmlColumnPr() != null) {
+                                        XSSFXmlColumnPr pointer = new XSSFXmlColumnPr(table, ctTableColumn,
+                                                ctTableColumn.getXmlColumnPr());
+                                        String localXPath = pointer.getLocalXPath();
+                                        Node currentNode = getNodeByXPath(localXPath,tableRootNode,doc,false);
+                                        mapCellOnNode(cell,currentNode);
+                                    }
                                 }
                             }
                         }

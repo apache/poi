@@ -666,6 +666,8 @@ public final class TestXSSFExportToXML {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             exporter.exportToXML(bos, true);
             assertNotNull(DocumentHelper.readDocument(new ByteArrayInputStream(bos.toByteArray())));
+            String exportedXml = bos.toString("UTF-8");
+            assertEquals("<Test><Test>1</Test></Test>", exportedXml.replaceAll("\\s+", ""));
         }
     }
 }
