@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.Removal;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -123,6 +124,8 @@ public class CellFormat {
      * used when the format specified is <tt>General</tt>.
      * @deprecated use {@link #getInstance(Locale, String)} instead
      */
+    @Deprecated
+    @Removal(version="3.18")
     public static final CellFormat GENERAL_FORMAT = createGeneralFormat(LocaleUtil.getUserLocale());
             
     private static CellFormat createGeneralFormat(final Locale locale) {
