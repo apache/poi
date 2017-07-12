@@ -82,7 +82,7 @@ final class MathX {
             retval = Double.NaN;
         }
         else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.UP).doubleValue();
+            retval = new java.math.BigDecimal(NumberToTextConverter.toText(n)).setScale(p, java.math.RoundingMode.UP).doubleValue();
         }
 
         return retval;
@@ -110,7 +110,7 @@ final class MathX {
             retval = Double.NaN;
         }
         else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.DOWN).doubleValue();
+            retval = new java.math.BigDecimal(NumberToTextConverter.toText(n)).setScale(p, java.math.RoundingMode.DOWN).doubleValue();
         }
 
         return retval;
