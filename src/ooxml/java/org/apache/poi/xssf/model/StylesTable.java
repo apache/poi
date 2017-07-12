@@ -558,15 +558,6 @@ public class StylesTable extends POIXMLDocumentPart {
     public int getNumDataFormats() {
         return numberFormats.size();
     }
-    
-    /**
-     * For unit testing only
-     * @deprecated POI 3.14 beta 2. Use {@link #getNumDataFormats()} instead.
-     */
-    @Internal
-    public int _getNumberFormatSize() {
-        return getNumDataFormats();
-    }
 
     /**
      * For unit testing only
