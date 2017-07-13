@@ -22,6 +22,8 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +36,8 @@ import org.apache.poi.hemf.record.HemfHeader;
 import org.apache.poi.hemf.record.HemfRecord;
 import org.apache.poi.hemf.record.HemfRecordType;
 import org.apache.poi.hemf.record.HemfText;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
 
 public class HemfExtractorTest {
@@ -160,8 +164,37 @@ public class HemfExtractorTest {
         assertEquals(expectedParts.size(), foundExpected);
     }
 
-    /*
+
+
+    @Test(expected = RecordFormatException.class)
+    public void testInfiniteLoopOnFile() throws Exception {
+        InputStream is = null;
+        try {
+            is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("61294.emf");
+
+            HemfExtractor ex = new HemfExtractor(is);
+            for (HemfRecord record : ex) {
+
+            }
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    @Test(expected = RecordFormatException.class)
+    public void testInfiniteLoopOnByteArray() throws Exception {
+        InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("61294.emf");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        IOUtils.copy(is, bos);
+        is.close();
+
+        HemfExtractor ex = new HemfExtractor(new ByteArrayInputStream(bos.toByteArray()));
+        for (HemfRecord record : ex) {
+
+        }
+    }
+
+     /*
         govdocs1 064213.doc-0.emf contains an example of extextouta
      */
-
 }
