@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/xmlbeans-2.6.0.jar" sourcepath="ooxml-lib/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.12.jar" sourcepath="/var/folders/0f/v056x8d93t3byyg1l42hd48r1vc0mv/T/.org.sf.feeling.decompiler1499934768182/source/junit-4.12-sources.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/curvesapi-1.04.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-schemas-1.3.jar" sourcepath="ooxml-lib/ooxml-schemas-1.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-security-1.1.jar" sourcepath="ooxml-lib/ooxml-security-1.1-sources.jar"/>

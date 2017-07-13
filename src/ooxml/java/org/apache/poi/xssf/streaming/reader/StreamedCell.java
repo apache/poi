@@ -30,283 +30,329 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.NotImplemented;
 
 /**
- * Represents cell in a row
- * Value of cell is represented as a string.
+ * Represents cell in a row Value of cell is represented as a string.
  *
  */
-public class StreamedCell  implements Cell{
-	private String value;
-	private int cellNumber;
-	
-	public StreamedCell(){
-		
-	}
-
-	/**
-	 * <pre>
-	 * Return cell value
-	 * </pre>
-	 * Return the value of a cell in String format.
-	 * Value will be same as how it is represented in excel.
-	 * @return String
-	 */
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
-	public String toString(){
-		return value;
-	}
-
-	/**
-	 * <pre>
-	 * Returns the cell number
-	 * </pre>
-	 *
-	 * @return
-	 */
-    public int getCellNumber() {
-        return cellNumber;
-    }
+public class StreamedCell implements Cell {
+    private String value;
+    private int cellNumber;
+    private CellType cellType;
 
     /**
      * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * Return cell value
+     * </pre>
+     * 
+     * Return the value of a cell in String format. Value will be same as how it
+     * is represented in excel.
+     * 
+     * @return String
      */
-    public void setCellNumber(int cellNumber) {
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
+
+    int getCellNumber() {
+        return cellNumber;
+    }
+
+    void setCellNumber(int cellNumber) {
         this.cellNumber = cellNumber;
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Returns the column index of the cell.
+     * </pre>
+     * 
+     * @return int that represents cell number
      */
+    @Override
     public int getColumnIndex() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.cellNumber;
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getRowIndex() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Sheet getSheet() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Row getRow() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
-     */    
+     * </pre>
+     * 
+     * @param cellType
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setCellType(int cellType) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * </pre>
+     * 
+     * @param cellType
      */
+    @Override
+    @NotImplemented
     public void setCellType(CellType cellType) {
-        // TODO Auto-generated method stub
-        
+        // to avoid setting this by user
+        if (this.cellType == null) {
+            this.cellType = cellType;
+        }
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getCellType() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Return the cell type.
+     * </pre>
+     * 
+     * @return CellType
      */
+    @Override
+    @NotImplemented
     public CellType getCellTypeEnum() {
-        // TODO Auto-generated method stub
-        return null;
+        return cellType;
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getCachedFormulaResultType() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellType getCachedFormulaResultTypeEnum() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * </pre>
+     * 
+     * @param value
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellValue(double value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * </pre>
+     * 
+     * @param value
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellValue(Date value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellValue(Calendar value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellValue(RichTextString value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellValue(String value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
-     * @param cellNumber
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellFormula(String formula) throws FormulaParseException {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory foot print.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public String getCellFormula() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory foot print.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public double getNumericCellValue() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory foot print.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Date getDateCellValue() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public RichTextString getRichStringCellValue() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      *  Returns the String value of cell content
-     *  </pre>
+     * </pre>
+     * 
+     * @return String, representing the value of cell
      */
+    @Override
     public String getStringCellValue() {
         return value;
     }
@@ -315,183 +361,218 @@ public class StreamedCell  implements Cell{
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      * 
      */
+    @Override
+    @NotImplemented
     public void setCellValue(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellErrorValue(byte value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory foot print.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getBooleanCellValue() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public byte getErrorCellValue() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setCellStyle(CellStyle style) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellStyle getCellStyle() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setAsActiveCell() {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellAddress getAddress() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implememted yet.");
     }
+
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      * 
      */
+    @Override
+    @NotImplemented
     public void setCellComment(Comment comment) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Comment getCellComment() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void removeCellComment() {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Hyperlink getHyperlink() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      * 
      */
+    @Override
+    @NotImplemented
     public void setHyperlink(Hyperlink link) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
-     *</pre>
+     * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void removeHyperlink() {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellRangeAddress getArrayFormulaRange() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isPartOfArrayFormulaGroup() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
-
-	/*@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		value = null;
-	}*/
-	
-	
-	
 }

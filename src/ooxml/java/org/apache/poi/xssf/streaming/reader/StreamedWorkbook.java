@@ -21,11 +21,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -38,148 +47,173 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StaxHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 /**
- * Represents the excel workbook
+ * Represents the excel workbook. This version of Workbook is used fore reading
+ * very large excel files with a less memory footprint. It does not support
+ * creation of a workbook. It uses StAX(Streaming API for XML) to stream the
+ * spreadsheet. In order to reduce the memory footprint, only minimal
+ * functionalities are supported.
  *
  */
-public class StreamedWorkbook implements Workbook{
-    
+public class StreamedWorkbook implements Workbook {
+
     private static final POILogger logger = POILogFactory.getLogger(StreamedWorkbook.class);
-	
-	private File inputFile;
-	
-	private Iterator<InputStream> sheetIterator;
+
+    private File inputFile;
+
+    private Iterator<InputStream> sheetIterator;
     private SharedStringsTable sharedStringsTable;
     private StylesTable stylesTable;
-	
-	/**
-	 * <pre>
-	 * Accepts the file path and return an instance of StreamedWorkBook
-	 *</pre>
-	 * @param filePath
-	 * @throws Exception 
-	 */
-	public StreamedWorkbook(String filePath) throws Exception{
-		if((filePath != null) && !(filePath.trim().isEmpty())){
-			inputFile = new File(filePath);
-			
-			if(inputFile != null){
-			    XSSFReader reader = getExcelReader(inputFile);
-	            if(reader != null){
-	                sheetIterator = reader.getSheetsData();
-	                sharedStringsTable = reader.getSharedStringsTable();
-	                stylesTable = reader.getStylesTable();
-	            }
-	        }
-			
-		}else{
+    private XSSFReader globalReader;
+    private List<StreamedSheet> sheetList = null;
+    private boolean isClosed;
+
+    private static final NamespaceContext NS_CONTEXT = new SimpleNamespaceContext();
+    private static final String ACTIVE_SHEET_PATH = "//ss:workbookView/@activeTab";
+    private static final String SHEET_NAME_PATH = "//ss:sheets/ss:sheet/@name";
+    private static final String VISIBLE_SHEET_PATH = "//ss:sheets/ss:sheet[@state='visible']/@sheetId";
+    private static final String HIDDEN_SHEET_PATH = "//ss:sheets/ss:sheet[@state='hidden']/@sheetId";
+    private static final String VERY_HIDDEN_SHEET_PATH = "//ss:sheets/ss:sheet[@state='veryHidden']/@sheetId";
+
+    /**
+     * <pre>
+     * Accepts the file path and return an instance of StreamedWorkBook
+     * </pre>
+     * 
+     * @param filePath
+     * @throws Exception
+     */
+    public StreamedWorkbook(String filePath) throws Exception {
+        if ((filePath != null) && !(filePath.trim().isEmpty())) {
+            inputFile = new File(filePath);
+
+            if (inputFile != null) {
+                XSSFReader reader = getExcelReader(inputFile);
+                if (reader != null) {
+                    this.sheetIterator = reader.getSheetsData();
+                    this.sharedStringsTable = reader.getSharedStringsTable();
+                    this.stylesTable = reader.getStylesTable();
+                    this.globalReader = reader;
+                }
+            }
+
+        } else {
             throw new Exception("No sheets found");
         }
-	}
-	
-	/**
-	 * <pre>
-	 * Fetch all sheets from given excel file
-	 * </pre>
-	 * @return
-	 * @throws Exception
-	 */
-	public Iterator<StreamedSheet> getSheetIterator() throws Exception{
-	    
-	    return getAllSheets();
-	}
-	
-	
-	 /**
-     * Returns the list of sheets for the given excel file
-     * @param file
-     * @return
-     * @throws Exception 
+    }
+
+    /**
+     * <pre>
+     * Fetch all sheets from given excel file
+     * </pre>
+     * 
+     * @return Iterator<StreamedSheet>
+     * @throws Exception
      */
-    private Iterator<StreamedSheet>  getAllSheets() throws Exception{
-        
+    public Iterator<StreamedSheet> getSheetIterator() throws Exception {
+        return getAllSheets();
+    }
+
+    /**
+     * Returns the list of sheets for the given excel file
+     * 
+     * @param file
+     * @return Iterator<StreamedSheet>
+     */
+    private Iterator<StreamedSheet> getAllSheets() {
         return getStreamedSheetIterator();
     }
-    
-    private Iterator<StreamedSheet> getStreamedSheetIterator() throws Exception{
-        List<StreamedSheet> sheetList = null;
-        XMLInputFactory factory = null; 
-        
-        if(sheetIterator != null){
-            factory = XMLInputFactory.newInstance();
-            sheetList =  new ArrayList<StreamedSheet>();
+
+    private Iterator<StreamedSheet> getStreamedSheetIterator() {
+        XMLInputFactory factory = StaxHelper.newXMLInputFactory();
+
+        if (sheetIterator != null) {
+            sheetList = new ArrayList<StreamedSheet>();
             int sheetNumber = 0;
-            while(sheetIterator.hasNext()){
+            Object[] sheetNames = getValuesFromWorkbookData(SHEET_NAME_PATH);
+            while (sheetIterator.hasNext()) {
                 InputStream sheetInputStream = sheetIterator.next();
-                StreamedSheet sheet = createStreamedSheet(factory.createXMLEventReader(sheetInputStream), sheetNumber);
-                sheetList.add(sheet);
-                sheetNumber++;
+                StreamedSheet sheet = null;
+                try {
+                    sheet = createStreamedSheet(factory.createXMLEventReader(sheetInputStream), sheetNumber,
+                            sheetNames[sheetNumber].toString());
+                    sheetList.add(sheet);
+                    sheetNumber++;
+                } catch (XMLStreamException e) {
+                    logger.log(POILogger.ERROR, "Exception while reading the workbook. " + e.getMessage());
+                }
             }
-        }else{
-            throw new Exception("Workbook already closed");
+        } else {
+            throw new RuntimeException("Workbook already closed");
         }
-        
+
         return sheetList.iterator();
-        
+
     }
-    
+
     /**
      * Creates and returns the instance of StreamedSheet
      *
      * @param parser
      * @param sheetNumber
-     * @return
+     * @param sheetName
+     * @return StreamedSheet
      */
-    private StreamedSheet createStreamedSheet(XMLEventReader parser,int sheetNumber){
+    private StreamedSheet createStreamedSheet(XMLEventReader parser, int sheetNumber, String sheetName) {
         StreamedSheet sheet = new StreamedSheet();
         sheet.setXmlParser(parser);
         sheet.setSharedStringsTable(sharedStringsTable);
         sheet.setStylesTable(stylesTable);
         sheet.setSheetNumber(sheetNumber);
+        sheet.setSheetName(sheetName);
         sheet.createEventHandler();
-        
+
         return sheet;
     }
-    
-    
-    
+
     /**
      * Receives the excel file and returns the file excel file reader
+     * 
      * @param inputStream
      * @return
      * @throws Exception
      */
-    private XSSFReader getExcelReader(File file) throws Exception{
+    private XSSFReader getExcelReader(File file) throws Exception {
         XSSFReader reader = null;
         OPCPackage pkg = null;
         pkg = OPCPackage.open(file);
         reader = new XSSFReader(pkg);
         return reader;
     }
-    
-    
-    
-    /*
-     *  TO DO 
-     */
 
-    
     /**
      * <pre>
-     * Will be supported in the future.
+     * Convenience method to get the active sheet.  The active sheet is is the sheet
+     * which is currently displayed when the workbook is viewed in Excel.
+     * 'Selected' sheet(s) is a distinct concept.
      * </pre>
      * 
+     * @return int
      */
+    @Override
     public int getActiveSheetIndex() {
-        // TODO Auto-generated method stub
-        return 0;
+
+        return Integer.parseInt(getValuesFromWorkbookData(ACTIVE_SHEET_PATH)[0].toString());
+
     }
 
     /**
@@ -188,32 +222,41 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setActiveSheet(int sheetIndex) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Returns the sheet number of the first visible sheet.
      * </pre>
      * 
+     * @return int
      */
+    @Override
     public int getFirstVisibleTab() {
-        // TODO Auto-generated method stub
-        return 0;
+        Object[] visibleTabs = getValuesFromWorkbookData(VISIBLE_SHEET_PATH);
+
+        return (Integer.parseInt(visibleTabs[0].toString()) - 1);
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setFirstVisibleTab(int sheetIndex) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -221,10 +264,13 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setSheetOrder(String sheetname, int pos) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -232,10 +278,13 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setSelectedTab(int index) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -244,32 +293,47 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setSheetName(int sheet, String name) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Returns the sheet name of specified index
      * </pre>
      * 
-     */    
+     * @return String;
+     * 
+     */
+    @Override
     public String getSheetName(int sheet) {
-        // TODO Auto-generated method stub
-        return null;
+        return getValuesFromWorkbookData(SHEET_NAME_PATH)[sheet].toString();
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Returns the sheet index for the sheet name given
      * </pre>
      * 
+     * @return int
+     * 
      */
+    @Override
     public int getSheetIndex(String name) {
-        // TODO Auto-generated method stub
-        return 0;
+        int index = 0;
+        for (Object sheetName : getValuesFromWorkbookData(SHEET_NAME_PATH)) {
+            if (sheetName.toString().equals(name)) {
+                return index;
+            }
+            index++;
+        }
+
+        return -1;
     }
 
     /**
@@ -277,10 +341,13 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public int getSheetIndex(Sheet sheet) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -289,10 +356,13 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */    
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public Sheet createSheet() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -301,10 +371,14 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
+     * 
      */
+    @Override
+    @NotImplemented
     public Sheet createSheet(String sheetname) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -313,10 +387,13 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public Sheet cloneSheet(int sheetNum) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -324,78 +401,82 @@ public class StreamedWorkbook implements Workbook{
      * Use Iterator<StreamedSheet> getSheetIterator() instead.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Iterator<Sheet> sheetIterator() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet. Use getSheetIterator()");
     }
 
     /**
      * <pre>
      *  Returns the number of sheets,
      * </pre>
+     * 
+     * @return int representing the number of sheets in workbook
      */
+    @Override
     public int getNumberOfSheets() {
         int sheetCount = 0;
-        
-        if(this.sheetIterator != null){
-            while(sheetIterator.hasNext()){
+
+        if (this.sheetIterator != null) {
+            while (sheetIterator.hasNext()) {
                 sheetIterator.next();
                 sheetCount++;
             }
-        }else{
+        } else {
             logger.log(POILogger.ERROR, "Workbook already closed");
         }
-        
-        
+
         return sheetCount;
     }
 
     /**
      * <pre>
-     *  Currently not supported due to memory footprint.
-     *  Will be supported in future.
+     *  Returns sheet at specified index
      * </pre>
+     * 
+     * @return Sheet for the specified index
      */
+    @Override
     public Sheet getSheetAt(int index) {
-        
-/*        StreamedSheet sheet = null;
-        int sheetCount = 0;
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        
-        if(inputFile != null && inputFile.exists()){
-            try {
-                XSSFReader reader = getExcelReader(inputFile);
-                
-                
-                
-                while(reader.getSheetsData().hasNext()){
-                    
-                    if(index == sheetCount){
-                        sheet = createStreamedSheet(factory.createXMLEventReader(reader.getSheetsData().next()), sheetCount);
-                    }else{
-                        reader.getSheetsData().next();
-                    }
-                    
-                    sheetCount++;
+        if (sheetList == null && !isClosed) {
+            getAllSheets();
+        }
+
+        if (sheetList != null) {
+            for (StreamedSheet sheet : sheetList) {
+                if (sheet.getSheetNumber() == index) {
+                    return sheet;
                 }
-                
-            } catch (Exception e) {
-                logger.log(POILogger.ERROR, "No sheets found !!");
             }
         }
-        return sheet;*/
+
         return null;
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Returns the sheet with specified name
      * </pre>
      * 
      */
+    @Override
     public Sheet getSheet(String name) {
-        // TODO Auto-generated method stub
+
+        if (sheetList == null && !isClosed) {
+            getAllSheets();
+        }
+
+        if (sheetList != null) {
+            for (StreamedSheet sheet : sheetList) {
+                if (sheet.getSheetName().equals(name)) {
+                    return sheet;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -405,10 +486,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void removeSheetAt(int index) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -417,24 +500,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Font createFont() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-    /**
-     * <pre>
-     * Will be supported in the future.
-     * </pre>
-     * 
-     */
-    public Font findFont(short boldWeight, short color, short fontHeight,
-            String name, boolean italic, boolean strikeout, short typeOffset,
-            byte underline) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -442,12 +513,13 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
-    public Font findFont(boolean bold, short color, short fontHeight,
-            String name, boolean italic, boolean strikeout, short typeOffset,
-            byte underline) {
-        // TODO Auto-generated method stub
-        return null;
+    @Override
+    @NotImplemented
+    public Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout,
+            short typeOffset, byte underline) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -455,10 +527,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public short getNumberOfFonts() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -466,10 +540,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Font getFontAt(short idx) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -478,46 +554,51 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
     public CellStyle createCellStyle() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
-
 
     /**
      * <pre>
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getNumCellStyles() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Not Supported due to memory footprint.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellStyle getCellStyleAt(int idx) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
-    
     /**
      * <pre>
      * Not supported right now, as StreamedWorkbook
      * supports only reading.
      * </pre>
      * 
-     */    
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void write(OutputStream stream) throws IOException {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -525,14 +606,22 @@ public class StreamedWorkbook implements Workbook{
      * Close the workbook
      * </pre>
      * 
-     */    
+     */
+    @Override
     public void close() throws IOException {
-        if(sheetIterator != null){
-            while(sheetIterator.hasNext()){
+        if (sheetIterator != null) {
+            while (sheetIterator.hasNext()) {
                 sheetIterator.next().close();
             }
             sheetIterator = null;
         }
+
+        if (sheetList != null) {
+            sheetList.clear();
+            sheetList = null;
+        }
+
+        isClosed = true;
     }
 
     /**
@@ -540,10 +629,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
-     */    
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public int getNumberOfNames() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -551,10 +642,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Name getName(String name) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -562,10 +655,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public List<? extends Name> getNames(String name) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -573,105 +668,121 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public List<? extends Name> getAllNames() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
      * <pre>
      * Will be supported in the future.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public Name getNameAt(int nameIndex) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public Name createName() {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
+    }
+
+    /**
+     * <pre>
+     * Will be supported in the future.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public int getNameIndex(String name) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public void removeName(int index) {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public void removeName(String name) {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public void removeName(Name name) {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public int linkExternalWorkbook(String name, Workbook workbook) {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
      * </pre>
      * 
      */
-    public Name getNameAt(int nameIndex) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    
-    /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     */       
-    public Name createName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * <pre>
-     * Will be supported in the future.
-     * </pre>
-     * 
-     */    
-    public int getNameIndex(String name) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     */   
-    public void removeName(int index) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     */   
-    public void removeName(String name) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     */   
-    public void removeName(Name name) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     */      
-    public int linkExternalWorkbook(String name, Workbook workbook) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     */   
+    @Override
+    @NotImplemented
     public void setPrintArea(int sheetIndex, String reference) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -680,11 +791,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */   
-    public void setPrintArea(int sheetIndex, int startColumn, int endColumn,
-            int startRow, int endRow) {
-        // TODO Auto-generated method stub
-        
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -692,10 +804,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public String getPrintArea(int sheetIndex) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -704,10 +818,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */      
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void removePrintArea(int sheetIndex) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -715,10 +831,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public MissingCellPolicy getMissingCellPolicy() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -727,10 +845,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */  
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -739,10 +859,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */  
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public DataFormat createDataFormat() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -751,10 +873,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */  
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public int addPicture(byte[] pictureData, int format) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -762,10 +886,11 @@ public class StreamedWorkbook implements Workbook{
      * Not supported due to memory footprint.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
     public List<? extends PictureData> getAllPictures() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -773,10 +898,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public CreationHelper getCreationHelper() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -784,10 +911,12 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public boolean isHidden() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -796,31 +925,55 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */  
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setHidden(boolean hiddenFlag) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Return true if the sheet with given index is hidden
      * </pre>
      * 
-     */ 
+     * @return boolean
+     */
+    @Override
     public boolean isSheetHidden(int sheetIx) {
-        // TODO Auto-generated method stub
+        // throw new UnsupportedOperationException("Not implemented yet");
+
+        Object[] hiddenSheetIdxAry = getValuesFromWorkbookData(HIDDEN_SHEET_PATH);
+
+        for (Object o : hiddenSheetIdxAry) {
+            int index = Integer.parseInt(o.toString()) - 1;
+            if (index == sheetIx) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Return true if the sheet with given index is veryHidden
      * </pre>
      * 
-     */ 
+     * @return boolean
+     */
+    @Override
     public boolean isSheetVeryHidden(int sheetIx) {
-        // TODO Auto-generated method stub
+        Object[] veryHiddedSheetIdxAry = getValuesFromWorkbookData(VERY_HIDDEN_SHEET_PATH);
+
+        for (Object o : veryHiddedSheetIdxAry) {
+            int index = Integer.parseInt(o.toString()) - 1;
+            if (index == sheetIx) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -830,10 +983,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setSheetHidden(int sheetIx, boolean hidden) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -842,10 +997,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setSheetHidden(int sheetIx, int hidden) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -854,10 +1011,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void addToolPack(UDFFinder toopack) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -866,10 +1025,12 @@ public class StreamedWorkbook implements Workbook{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setForceFormulaRecalculation(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
 
     /**
@@ -877,10 +1038,11 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
-     */     
+     */
+    @Override
+    @NotImplemented
     public boolean getForceFormulaRecalculation() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -888,20 +1050,143 @@ public class StreamedWorkbook implements Workbook{
      * Will be supported in the future.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public SpreadsheetVersion getSpreadsheetVersion() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
-
 
     /**
      * <pre>
-     * Will be supported in the future.
+     * Use Iterator<StreamedSheet> getSheetIterator() instead.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public Iterator<Sheet> iterator() {
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet. Use getSheetIterator()");
+    }
+
+    /**
+     * <pre>
+     * Returns the visibility of sheet for the given index.
+     * </pre>
+     * 
+     * @return SheetVisibility[Hidden/Visible/VeryHidden]
+     */
+    @Override
+    public SheetVisibility getSheetVisibility(int sheetIx) {
+        Object[] visibleSheetIdxAry = getValuesFromWorkbookData(VISIBLE_SHEET_PATH);
+        for (Object o : visibleSheetIdxAry) {
+            int index = (Integer.parseInt(o.toString()) - 1);
+            if (index == sheetIx) {
+                return SheetVisibility.VISIBLE;
+            }
+        }
+
+        if (isSheetHidden(sheetIx)) {
+            return SheetVisibility.HIDDEN;
+        }
+
+        if (isSheetVeryHidden(sheetIx)) {
+            return SheetVisibility.VERY_HIDDEN;
+        }
+
+        throw new IllegalArgumentException("Invalid sheet index");
+
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
+    }
+
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public int addOlePackage(byte[] oleData, String label, String fileName, String command) throws IOException {
+        throw new UnsupportedOperationException("Not supported due to memory footprint");
+    }
+
+    /**
+     * Strictly for reading any specific value from any node in workbook.xml DOM
+     * Parser is used here assuming that workbook.xml will never contribute
+     * towards the size of excel file.
+     *
+     * @param xml
+     * @param xpathQuery
+     * @return Object[]
+     * @throws Exception
+     */
+    private Object[] getValuesFromWorkbookData(String xpathQuery) {
+        List<String> valueAry = new ArrayList<String>();
+        DocumentBuilder builder = DocumentHelper.newDocumentBuilder();
+        try {
+            Document doc = builder.parse(globalReader.getWorkbookData());
+            XPathFactory xpathFactory = XPathFactory.newInstance();
+            XPath xpath = xpathFactory.newXPath();
+            xpath.setNamespaceContext(NS_CONTEXT);
+            doc.normalize();
+
+            XPathExpression xPathExpr = xpath.compile(xpathQuery);
+            NodeList nodeList = (NodeList) xPathExpr.evaluate(doc, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                valueAry.add(nodeList.item(i).getNodeValue());
+            }
+        } catch (Exception e) {
+            logger.log(POILogger.ERROR, "Exception while reading the workbook.");
+        }
+
+        return valueAry.toArray();
+    }
+
+    private static final class SimpleNamespaceContext implements NamespaceContext {
+
+        private final Map<String, String> map = new HashMap<String, String>();
+        private final Map<String, String> reverseMap = new HashMap<String, String>();
+
+        SimpleNamespaceContext() {
+            map.put("ss", XSSFRelation.NS_SPREADSHEETML);
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                reverseMap.put(entry.getValue(), entry.getKey());
+            }
+        }
+
+        @Override
+        public String getNamespaceURI(String prefix) {
+            return map.get(prefix);
+        }
+
+        @Override
+        public String getPrefix(String namespaceURI) {
+            return reverseMap.get(namespaceURI);
+        }
+
+        @Override
+        @SuppressWarnings("rawtypes")
+        public Iterator getPrefixes(String namespaceURI) {
+            return map.keySet().iterator();
+        }
     }
 }

@@ -45,158 +45,147 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 
 /**
- * Represents an excel sheet.
+ * Represents an excel sheet. StreamedSheet currently supports only the minimal
+ * functionalities as additional features requires caching of sheet data, which
+ * consumes memory.
  *
  */
-public class StreamedSheet implements Sheet{
-	private XMLEventReader xmlParser;
-	private SharedStringsTable sharedStringsTable;
-	private StylesTable stylesTable;
-	private int numberOfColumns;
-	private int sheetNumber;
-	private StreamedSheetEventHandler eventHandler = null;
-	
-	/**
-	 * <pre>
-	 * Fetch all rows from the excel.
-	 * </pre>
-	 * 
-	 * This method consumes only less memory, but it is 
-	 * advisable to use it only for small excel files, since 
-	 * it will fetch all rows in a single call.
-	 * 
-	 * @return Iterator<Row>
-	 * @throws XMLStreamException
-	 */
-	public Iterator<StreamedRow> getAllRows() throws XMLStreamException{
-		return getAllRows(this, sharedStringsTable, stylesTable);
-	}
-	
-	/**
-	 * <pre>
-	 * Used to fetch N number of rows.
-	 * </pre>
-	 * 
-	 * Recommended method to reduce memory utilization.
-	 * It allows to read big excel files in batch.
-	 * This gives control to the user to process the records already fetched, 
-	 * before fetching next set of records.
-	 * After reading N records, invoke the same method with number of rows to be
-	 * fetched to get the next set of rows.
-	 * <br>
-	 * 
-	 * *********************Usage****************************
-	 * Iterator<StreamedRow> rows = sheet.getNRows(1);
-	 * <br>
-	 * while(rows.hasNext()){ //read the first 1 row
-	 * <br>
-	 *     StreamedRow row = rows.next();
-	 * <br>
-	 * }
-	 *  <br>
-	 * rows = sheet.getNRows(10);
-	 *  <br>
-     * while(rows.hasNext()){ //read the next 10 rows
-     *  <br>
-     *     StreamedRow row = rows.next();
-     *  <br>
+public class StreamedSheet implements Sheet {
+    private XMLEventReader xmlParser;
+    private SharedStringsTable sharedStringsTable;
+    private StylesTable stylesTable;
+    private int numberOfColumns;
+    private int sheetNumber;
+    private String sheetName;
+    private StreamedSheetEventHandler eventHandler = null;
+
+    /**
+     * <pre>
+     * Fetch all rows from the excel.
+     * </pre>
+     * 
+     * This method consumes only less memory, but it is advisable to use it only
+     * for small excel files, since it will fetch all rows in a single call.
+     * 
+     * @return Iterator<Row>
+     * @throws XMLStreamException
+     */
+    public Iterator<StreamedRow> getAllRows() throws XMLStreamException {
+        return getAllRows(this, sharedStringsTable, stylesTable);
+    }
+
+    /**
+     * <pre>
+     * Used to fetch N number of rows.
+     * </pre>
+     * 
+     * Recommended method to reduce memory utilization. It allows to read big
+     * excel files in batch. This gives control to the user to process the
+     * records already fetched, before fetching next set of records. After
+     * reading N records, invoke the same method with number of rows to be
+     * fetched to get the next set of rows. <br>
+     * 
+     * *********************Usage****************************
+     * Iterator<StreamedRow> rows = sheet.getNRows(1); <br>
+     * while(rows.hasNext()){ //read the first 1 row <br>
+     * StreamedRow row = rows.next(); <br>
+     * } <br>
+     * rows = sheet.getNRows(10); <br>
+     * while(rows.hasNext()){ //read the next 10 rows <br>
+     * StreamedRow row = rows.next(); <br>
      * }
-	 * 
-	 * @param numberOfRows
-	 * @return Iterator<Row>
-	 * @throws XMLStreamException
-	 */
-	public Iterator<StreamedRow> getNRows(int numberOfRows) throws XMLStreamException{
-		return getNRows(this, eventHandler, numberOfRows);
-	}
+     * 
+     * @param numberOfRows
+     * @return Iterator<Row>
+     * @throws XMLStreamException
+     */
+    public Iterator<StreamedRow> getNRows(int numberOfRows) throws XMLStreamException {
+        return getNRows(this, eventHandler, numberOfRows);
+    }
 
-	public boolean hasMoreRows(){
-		return xmlParser.hasNext();
-	}
-	
-	
-	public XMLEventReader getXmlParser() {
-		return xmlParser;
-	}
+    public boolean hasMoreRows() {
+        return xmlParser.hasNext();
+    }
 
-	public void setXmlParser(XMLEventReader xmlParser) {
-		this.xmlParser = xmlParser;
-	}
+    public XMLEventReader getXmlParser() {
+        return xmlParser;
+    }
 
-	public void setSharedStringsTable(SharedStringsTable sharedStringsTable) {
-		this.sharedStringsTable = sharedStringsTable;
-	}
+    public void setXmlParser(XMLEventReader xmlParser) {
+        this.xmlParser = xmlParser;
+    }
 
-	public void setStylesTable(StylesTable stylesTable) {
-		this.stylesTable = stylesTable;
-	}
-	
-	public void createEventHandler(){
-		eventHandler = new StreamedSheetEventHandler(sharedStringsTable, stylesTable);
-	}
+    public void setSharedStringsTable(SharedStringsTable sharedStringsTable) {
+        this.sharedStringsTable = sharedStringsTable;
+    }
 
+    public void setStylesTable(StylesTable stylesTable) {
+        this.stylesTable = stylesTable;
+    }
 
-	public int getNumberOfColumns() {
-		return numberOfColumns;
-	}
+    public void createEventHandler() {
+        eventHandler = new StreamedSheetEventHandler(sharedStringsTable, stylesTable);
+    }
 
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
 
-	public void setNumberOfColumns(int numberOfColumns) {
-		this.numberOfColumns = numberOfColumns;
-	}
+    public void setNumberOfColumns(int numberOfColumns) {
+        this.numberOfColumns = numberOfColumns;
+    }
 
+    public int getSheetNumber() {
+        return sheetNumber;
+    }
 
-	public int getSheetNumber() {
-		return sheetNumber;
-	}
+    public void setSheetNumber(int sheetNumber) {
+        this.sheetNumber = sheetNumber;
+    }
 
+    /*
+     * @Override protected void finalize() throws Throwable { super.finalize();
+     * 
+     * xmlParser = null; sharedStringsTable = null; stylesTable = null;
+     * eventHandler = null;
+     * 
+     * }
+     */
 
-	public void setSheetNumber(int sheetNumber) {
-		this.sheetNumber = sheetNumber;
-	}
-
-/*	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		
-		xmlParser = null;
-		sharedStringsTable = null;
-		stylesTable = null;
-		eventHandler = null;
-		
-	}*/
-	
-	 /**
+    /**
      * reads all data from sheet
+     * 
      * @param xmlParser
      * @param sharedStringsTable
      * @param stylesTable
      * @return
-     * @throws XMLStreamException 
+     * @throws XMLStreamException
      */
-    private Iterator<StreamedRow> getAllRows(StreamedSheet sheet,
-            SharedStringsTable sharedStringsTable, StylesTable stylesTable) throws XMLStreamException {
+    private Iterator<StreamedRow> getAllRows(StreamedSheet sheet, SharedStringsTable sharedStringsTable,
+            StylesTable stylesTable) throws XMLStreamException {
         List<StreamedRow> dataList = new ArrayList<StreamedRow>();
         StreamedSheetEventHandler eventHandler = new StreamedSheetEventHandler(sharedStringsTable, stylesTable);
-        while(sheet.getXmlParser().hasNext()){
-            XMLEvent event = sheet.getXmlParser().nextEvent();  
+        while (sheet.getXmlParser().hasNext()) {
+            XMLEvent event = sheet.getXmlParser().nextEvent();
             eventHandler.handleEvent(event);
-            if(eventHandler.isEndOfRow()){
+            if (eventHandler.isEndOfRow()) {
                 dataList.add(eventHandler.getRow());
                 eventHandler.setEndOfRow(false);
             }
             sheet.setNumberOfColumns(eventHandler.getNumberOfColumns());
         }
-        
+
         return dataList.iterator();
     }
-    
+
     /**
      * Reads N Rows from excel
+     * 
      * @param sheet
      * @param sharedStringsTable
      * @param stylesTable
@@ -204,30 +193,34 @@ public class StreamedSheet implements Sheet{
      * @return
      * @throws XMLStreamException
      */
-    private Iterator<StreamedRow> getNRows(StreamedSheet sheet, StreamedSheetEventHandler eventHandler, int numberOfRows) throws XMLStreamException {
-        List<StreamedRow> dataList = new ArrayList<StreamedRow>();      
-        while(sheet.getXmlParser().hasNext()){
-            XMLEvent event = sheet.getXmlParser().nextEvent();  
+    private Iterator<StreamedRow> getNRows(StreamedSheet sheet, StreamedSheetEventHandler eventHandler,
+            int numberOfRows) throws XMLStreamException {
+        List<StreamedRow> dataList = new ArrayList<StreamedRow>();
+        while (sheet.getXmlParser().hasNext()) {
+            XMLEvent event = sheet.getXmlParser().nextEvent();
             eventHandler.handleEvent(event);
-            if(eventHandler.isEndOfRow()){
+            if (eventHandler.isEndOfRow()) {
                 dataList.add(eventHandler.getRow());
                 eventHandler.setEndOfRow(false);
             }
             sheet.setNumberOfColumns(eventHandler.getNumberOfColumns());
-            if(dataList.size() == numberOfRows){
+            if (dataList.size() == numberOfRows) {
                 break;
             }
         }
-        
+
         return dataList.iterator();
     }
 
     /**
      * Not supported. Refer getAllRows or getNRows
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Iterator<Row> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Not supported. Refer getAllRows or getNRows");
     }
 
     /**
@@ -236,10 +229,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Row createRow(int rownum) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -248,30 +243,38 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void removeRow(Row row) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      *  Not supported due to memory footprint.
      * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Row getRow(int rownum) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      *  Not supported due to memory footprint.
      * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getPhysicalNumberOfRows() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -279,20 +282,25 @@ public class StreamedSheet implements Sheet{
      * Will be supported in the future.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getFirstRowNum() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     /**
      * <pre>
      *  Not supported due to memory footprint.
      * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getLastRowNum() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -301,20 +309,26 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setColumnHidden(int columnIndex, boolean hidden) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      *  Not supported due to memory footprint.
      * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isColumnHidden(int columnIndex) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -323,10 +337,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setRightToLeft(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -335,10 +352,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isRightToLeft() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -347,31 +366,36 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setColumnWidth(int columnIndex, int width) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
      */
+    @Override
+    @NotImplemented
     public int getColumnWidth(int columnIndex) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
-
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public float getColumnWidthInPixels(int columnIndex) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -380,40 +404,51 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */    
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setDefaultColumnWidth(int width) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getDefaultColumnWidth() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public short getDefaultRowHeight() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public float getDefaultRowHeightInPoints() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -422,10 +457,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */   
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void setDefaultRowHeight(short height) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -434,20 +472,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */   
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
     public void setDefaultRowHeightInPoints(float height) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellStyle getColumnStyle(int column) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -456,10 +499,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */   
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public int addMergedRegion(CellRangeAddress region) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -468,20 +514,26 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */   
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public int addMergedRegionUnsafe(CellRangeAddress region) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void validateMergedRegions() {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -490,10 +542,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void setVerticallyCenter(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -502,30 +557,38 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setHorizontallyCenter(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getHorizontallyCenter() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getVerticallyCenter() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -534,10 +597,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void removeMergedRegion(int index) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -546,50 +612,64 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void removeMergedRegions(Collection<Integer> indices) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Not supported due to memory footprint.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getNumMergedRegions() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Not supported due to memory footprint.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
     public CellRangeAddress getMergedRegion(int index) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Not supported due to memory footprint.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public List<CellRangeAddress> getMergedRegions() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Not supported. Use getAllRows or getNRows
      * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Iterator<Row> rowIterator() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.Use getAllRows or getNRows.");
     }
 
     /**
@@ -598,20 +678,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
     public void setForceFormulaRecalculation(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getForceFormulaRecalculation() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -620,10 +705,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setAutobreaks(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -632,30 +719,39 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setDisplayGuts(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     *  supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setDisplayZeros(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isDisplayZeros() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -664,10 +760,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setFitToPage(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -676,10 +774,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setRowSumsBelow(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -688,70 +788,88 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setRowSumsRight(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getAutobreaks() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint..
+     * </pre>
      */
+    @Override
+    @NotImplemented
     public boolean getDisplayGuts() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getFitToPage() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getRowSumsBelow() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getRowSumsRight() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isPrintGridlines() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -760,20 +878,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setPrintGridlines(boolean show) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isPrintRowAndColumnHeadings() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -782,40 +905,53 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void setPrintRowAndColumnHeadings(boolean show) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public PrintSetup getPrintSetup() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Header getHeader() {
-        // TODO Auto-generated method stub
-        return null;
+        // <TO DO>
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Footer getFooter() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -824,20 +960,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setSelected(boolean value) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public double getMargin(short margin) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -846,20 +987,26 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void setMargin(short margin, double size) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
-    
+
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getProtect() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -868,20 +1015,26 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void protectSheet(String password) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean getScenarioProtect() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -890,10 +1043,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @NotImplemented
     public void setZoom(int numerator, int denominator) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -902,40 +1057,53 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void setZoom(int scale) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public short getTopRow() {
-        // TODO Auto-generated method stub
-        return 0;
+        // <TO DO>
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
     public short getLeftCol() {
-        // TODO Auto-generated method stub
-        return 0;
+        // <TO DO>
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void showInPane(int toprow, int leftcol) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -944,10 +1112,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
     public void shiftRows(int startRow, int endRow, int n) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -956,11 +1127,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
-    public void shiftRows(int startRow, int endRow, int n,
-            boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        // TODO Auto-generated method stub
-        
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
+    public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -969,11 +1142,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
-    public void createFreezePane(int colSplit, int rowSplit,
-            int leftmostColumn, int topRow) {
-        // TODO Auto-generated method stub
-        
+     * @exception UnsupportedOperationException
+     * 
+     */
+    @Override
+    @NotImplemented
+    public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -982,10 +1157,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void createFreezePane(int colSplit, int rowSplit) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -994,21 +1171,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
-     */ 
-    public void createSplitPane(int xSplitPos, int ySplitPos,
-            int leftmostColumn, int topRow, int activePane) {
-        // TODO Auto-generated method stub
-        
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
+    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public PaneInformation getPaneInformation() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1017,20 +1198,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setDisplayGridlines(boolean show) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isDisplayGridlines() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1039,20 +1225,26 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setDisplayFormulas(boolean show) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isDisplayFormulas() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1061,20 +1253,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setDisplayRowColHeadings(boolean show) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isDisplayRowColHeadings() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1083,20 +1280,25 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setRowBreak(int row) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
+     * <pre>
      * Will be supported in future.
-     *  </pre>
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isRowBroken(int row) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1105,45 +1307,65 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void removeRowBreak(int row) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int[] getRowBreaks() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int[] getColumnBreaks() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
+    /**
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public void setColumnBreak(int column) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public boolean isColumnBroken(int column) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1152,10 +1374,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void removeColumnBreak(int column) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1164,10 +1388,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setColumnGroupCollapsed(int columnNumber, boolean collapsed) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1176,10 +1402,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void groupColumn(int fromColumn, int toColumn) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1188,10 +1416,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void ungroupColumn(int fromColumn, int toColumn) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1200,10 +1430,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void groupRow(int fromRow, int toRow) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1212,10 +1444,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void ungroupRow(int fromRow, int toRow) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1224,10 +1458,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setRowGroupCollapsed(int row, boolean collapse) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1236,10 +1472,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setDefaultColumnStyle(int column, CellStyle style) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1248,10 +1486,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void autoSizeColumn(int column) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1260,50 +1500,51 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void autoSizeColumn(int column, boolean useMergedCells) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
-    public Comment getCellComment(int row, int column) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
-     */
+    @Override
+    @NotImplemented
     public Comment getCellComment(CellAddress ref) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * WNot supported due to memory footprint..
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Map<CellAddress, ? extends Comment> getCellComments() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Drawing getDrawingPatriarch() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1312,40 +1553,65 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Drawing createDrawingPatriarch() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * <pre>
      * Will not be supported due to memory constraints
      * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Workbook getWorkbook() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     *  Returns sheet name
+     * </pre>
+     * 
+     * @return String
      */
+    @Override
     public String getSheetName() {
-        // TODO Auto-generated method stub
-        return null;
+        return sheetName;
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported right now, as StreamedWorkbook
+     * supports only reading.
+     * </pre>
+     * 
      */
+    @NotImplemented
+    public void setSheetName(String sheetName) {
+        // to avoid setting sheet name by user
+        if (this.sheetName == null) {
+            this.sheetName = sheetName;
+        }
+    }
+
+    /**
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
+     */
+    @Override
+    @NotImplemented
     public boolean isSelected() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1354,11 +1620,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
-    public CellRange<? extends Cell> setArrayFormula(String formula,
-            CellRangeAddress range) {
-        // TODO Auto-generated method stub
-        return null;
+    @Override
+    @NotImplemented
+    public CellRange<? extends Cell> setArrayFormula(String formula, CellRangeAddress range) {
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1367,30 +1634,38 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellRange<? extends Cell> removeArrayFormula(Cell cell) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public DataValidationHelper getDataValidationHelper() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public List<? extends DataValidation> getDataValidations() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1399,10 +1674,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void addValidationData(DataValidation dataValidation) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1411,40 +1688,49 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public AutoFilter setAutoFilter(CellRangeAddress range) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public SheetConditionalFormatting getSheetConditionalFormatting() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellRangeAddress getRepeatingRows() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
      */
+    @Override
+    @NotImplemented
     public CellRangeAddress getRepeatingColumns() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1453,10 +1739,12 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setRepeatingRows(CellRangeAddress rowRangeRef) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1465,61 +1753,77 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public int getColumnOutlineLevel(int columnIndex) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Hyperlink getHyperlink(int row, int column) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public Hyperlink getHyperlink(CellAddress addr) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
-
 
     /**
      * <pre>
      * Will not be supported due to memory constraints
      * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public List<? extends Hyperlink> getHyperlinkList() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
-     *  <pre>
-     * Will be supported in future.
-     *  </pre>
+     * <pre>
+     * Not supported due to memory footprint.
+     * </pre>
+     * 
+     * @exception UnsupportedOperationException
      */
+    @Override
+    @NotImplemented
     public CellAddress getActiveCell() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -1528,15 +1832,13 @@ public class StreamedSheet implements Sheet{
      * supports only reading.
      * </pre>
      * 
+     * @exception UnsupportedOperationException
+     * 
      */
+    @Override
+    @NotImplemented
     public void setActiveCell(CellAddress address) {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
-
-
-	
-	
-	
 }
