@@ -361,7 +361,7 @@ public final class IOUtils {
     }
 
     /**
-     * Skips bytes from a stream.  Returns -1L if EOF was hit before
+     * Skips bytes from a stream.  Returns -1L if len > available() or if EOF was hit before
      * the end of the stream.
      *
      * @param in inputstream
@@ -370,15 +370,46 @@ public final class IOUtils {
      * @throws IOException on IOException
      */
     public static long skipFully(InputStream in, long len) throws IOException {
-        int total = 0;
+        long total = 0;
         while (true) {
+            long toSkip = len-total;
+            //check that the stream has the toSkip available
+            //FileInputStream can mis-report 20k skipped on a 10k file
+            if (toSkip > in.available()) {
+                return -1L;
+            }
             long got = in.skip(len-total);
             if (got < 0) {
                 return -1L;
+            } else if (got == 0) {
+                got = fallBackToReadFully(len-total, in);
+                if (got < 0) {
+                    return -1L;
+                }
             }
             total += got;
             if (total == len) {
                 return total;
+            }
+        }
+    }
+
+    //an InputStream can return 0 whether or not it hits EOF
+    //if it returns 0, back off to readFully to test for -1
+    private static long fallBackToReadFully(long lenToRead, InputStream in) throws IOException {
+        byte[] buffer = new byte[8192];
+        long readSoFar = 0;
+
+        while (true) {
+            int toSkip = (lenToRead > Integer.MAX_VALUE ||
+                    (lenToRead-readSoFar) > buffer.length) ? buffer.length : (int)(lenToRead-readSoFar);
+            long readNow = readFully(in, buffer, 0, toSkip);
+            if (readNow < toSkip) {
+                return -1L;
+            }
+            readSoFar += readNow;
+            if (readSoFar == lenToRead) {
+                return readSoFar;
             }
         }
     }
