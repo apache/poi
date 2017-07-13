@@ -210,6 +210,17 @@ public final class IOUtils {
         }
     }
     
+    /**
+     * Write a ({@link org.apache.poi.ss.usermodel.Workbook}) to an output stream and close the output stream.
+     * This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
+     * 
+     * If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
+     * This function exists for Java 6 code.
+     *
+     * @param doc  a writeable document to write to the output stream
+     * @param out  the output stream that the document is written to
+     * @throws IOException 
+     */
     public static void write(Workbook doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
