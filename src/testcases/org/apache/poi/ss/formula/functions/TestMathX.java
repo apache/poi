@@ -750,7 +750,7 @@ public class TestMathX extends AbstractNumericTestCase {
         d = 150.0; p = -2;
         assertEquals("roundDown ", 100, MathX.roundDown(d, p));
         
-        d = 0.049999999999999975d; p = 2;
+        d = 0.0499999999999975d; p = 2;
         assertEquals("roundDown ", 0.04d, MathX.roundDown(d, p));
 
         d = 0.049999999999999975d; p = 1;
@@ -839,13 +839,16 @@ public class TestMathX extends AbstractNumericTestCase {
         d = Double.MAX_VALUE; p = 1;
         assertEquals("roundUp ", Double.MAX_VALUE, MathX.roundUp(d, p));
 
+        // Excel's min positive value is several orders of magnitude larger than Java's (Java 8: 4.9e-324, Excel 2016 on Windows 10: 2.2259157957E-308)
         d = Double.MIN_VALUE; p = 1;
+        assertEquals("roundUp ", 0.0d, MathX.roundUp(d, p));
+        d = 2.2259157957E-308; p = 1;
         assertEquals("roundUp ", 0.1d, MathX.roundUp(d, p));
 
         //github-43: https://github.com/apache/poi/pull/43
-        //@Ignore("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
-        //d = 3987 * 0.2; p = 2;
-        //assertEquals("roundUp ", 797.40, MathX.roundUp(d, p));
+        // "ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
+        d = 3987 * 0.2; p = 2;
+        assertEquals("roundUp ", 797.40, MathX.roundUp(d, p));
     }
 
     public void testCeiling() {
