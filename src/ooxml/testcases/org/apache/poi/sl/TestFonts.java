@@ -73,7 +73,9 @@ public class TestFonts {
     private static final String INIT_FONTS[] = { "mona.ttf" };
     
     // currently linux and mac return quite different values
-    private static final int[] expected_sizes = { 311, 312, 313, 398, 399 };
+    private static final int[] expected_sizes = { 311, 312, 313,
+            362, //Windows 10, 13.3" 1080p high-dpi
+            398, 399 };
     
     @BeforeClass
     public static void initGE() throws FontFormatException, IOException {
