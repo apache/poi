@@ -132,7 +132,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     public void useSharedStringsTable() throws Exception {
         SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
 
-        SharedStringsTable sss =  POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
+        SharedStringsTable sss = POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
         
         assertNotNull(sss);
 
