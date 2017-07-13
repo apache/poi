@@ -101,7 +101,7 @@ public class StreamedRow implements Row {
 
     /**
      * <pre>
-     * Retuns the List of Cells contained in the row.
+     * Returns the List of Cells contained in the row.
      * </pre>
      * 
      * @return List<StreamedCell>

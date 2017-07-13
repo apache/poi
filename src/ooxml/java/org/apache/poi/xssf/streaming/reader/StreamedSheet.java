@@ -1541,6 +1541,7 @@ public class StreamedSheet implements Sheet {
      * 
      * @exception UnsupportedOperationException
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     @NotImplemented
     public Drawing getDrawingPatriarch() {
@@ -1555,6 +1556,7 @@ public class StreamedSheet implements Sheet {
      * 
      * @exception UnsupportedOperationException
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     @NotImplemented
     public Drawing createDrawingPatriarch() {

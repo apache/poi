@@ -372,8 +372,6 @@ public class StreamedWorkbook implements Workbook {
      * </pre>
      * 
      * @exception UnsupportedOperationException
-     * 
-     * 
      */
     @Override
     @NotImplemented
@@ -388,7 +386,6 @@ public class StreamedWorkbook implements Workbook {
      * </pre>
      * 
      * @exception UnsupportedOperationException
-     * 
      */
     @Override
     @NotImplemented
@@ -460,7 +457,6 @@ public class StreamedWorkbook implements Workbook {
      * <pre>
      * Returns the sheet with specified name
      * </pre>
-     * 
      */
     @Override
     public Sheet getSheet(String name) {
@@ -557,6 +553,7 @@ public class StreamedWorkbook implements Workbook {
      * @exception UnsupportedOperationException
      */
     @Override
+    @NotImplemented
     public CellStyle createCellStyle() {
         throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
