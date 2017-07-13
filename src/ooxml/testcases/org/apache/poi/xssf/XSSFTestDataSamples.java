@@ -88,11 +88,16 @@ public class XSSFTestDataSamples {
     // with unique names. Subsequent calls with the same argument may return a different file.
     // Gets a test data sample file, deleting the file if it exists.
     // This is used in preparation for writing a workbook out to the returned output file.
+    // testName is a filename fragment and should not include the extension
     private static File getOutputFile(String testName) throws IOException {
         final String testOutputDir = System.getProperty(TEST_OUTPUT_DIR);
         final File file;
         if (testOutputDir != null) {
-            file = new File(testOutputDir, testName + ".xlsx");
+            // In case user provided testName with a file extension, don't repeat the file extension a second time
+            final String testNameWithExtension = testName.endsWith(".xlsx") ? testName : testName + ".xlsx";
+            // FIXME: may want to defer to the TempFile with a persistent file creation strategy to the test output dir
+            // This would add the random value in the middle of the filename so that test runs wouldn't overwrite files
+            file = new File(testOutputDir, testNameWithExtension);
         }
         else {
             file = TempFile.createTempFile(testName, ".xlsx");

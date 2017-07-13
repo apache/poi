@@ -66,12 +66,7 @@ public final class TestUnfixedBugs {
 
         verifyBug54084Unicode(wb);
 
-//        OutputStream baos = new FileOutputStream("/tmp/test.xlsx");
-//        try {
-//            wb.write(baos);
-//        } finally {
-//            baos.close();
-//        }
+        //XSSFTestDataSamples.writeOut(wb, "bug 54084 for manual review");
 
         // now write the file and read it back in
         XSSFWorkbook wbWritten = XSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -254,13 +249,8 @@ public final class TestUnfixedBugs {
 
            RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
     
-           // write to file
-           OutputStream stream = new FileOutputStream(new File("C:/temp/55752.xlsx"));
-           try {
-               wb.write(stream);
-           } finally {
-               stream.close();
-           }
+           // write to file for manual inspection
+           XSSFTestDataSamples.writeOut(wb, "bug 55752 for review");
        } finally {
            wb.close();
        }
@@ -288,13 +278,7 @@ public final class TestUnfixedBugs {
        checkRows57423(testSheet);
        
        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-
-       /*FileOutputStream stream = new FileOutputStream("C:\\temp\\57423.xlsx");
-       try {
-           wb.write(stream);
-       } finally {
-           stream.close();
-       }*/
+       /* XSSFTestDataSamples.writeOut(wb, "bug 57423 for manual review"); */
 
        wb.close();
        
