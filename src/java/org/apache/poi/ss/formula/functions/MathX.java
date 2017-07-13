@@ -90,16 +90,13 @@ final class MathX {
     }
     
     private static double round(double n, int p, java.math.RoundingMode rounding) {
-        double retval;
-
         if (Double.isNaN(n) || Double.isInfinite(n)) {
-            retval = Double.NaN;
+            return Double.NaN;
         }
         else {
-            retval = new java.math.BigDecimal(NumberToTextConverter.toText(n)).setScale(p, rounding).doubleValue();
+            final String excelNumber = NumberToTextConverter.toText(n);
+            return new java.math.BigDecimal(excelNumber).setScale(p, rounding).doubleValue();
         }
-
-        return retval;
     }
 
 
