@@ -48,16 +48,7 @@ final class MathX {
      * @param p
      */
     public static double round(double n, int p) {
-        double retval;
-
-        if (Double.isNaN(n) || Double.isInfinite(n)) {
-            retval = Double.NaN;
-        }
-        else {
-            retval = new java.math.BigDecimal(NumberToTextConverter.toText(n)).setScale(p, java.math.RoundingMode.HALF_UP).doubleValue();
-        }
-
-        return retval;
+        return round(n, p, java.math.RoundingMode.HALF_UP);
     }
 
     /**
@@ -76,16 +67,7 @@ final class MathX {
      * @param p
      */
     public static double roundUp(double n, int p) {
-        double retval;
-
-        if (Double.isNaN(n) || Double.isInfinite(n)) {
-            retval = Double.NaN;
-        }
-        else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.UP).doubleValue();
-        }
-
-        return retval;
+        return round(n, p, java.math.RoundingMode.UP);
     }
 
     /**
@@ -104,13 +86,17 @@ final class MathX {
      * @param p
      */
     public static double roundDown(double n, int p) {
+        return round(n, p, java.math.RoundingMode.DOWN);
+    }
+    
+    private static double round(double n, int p, java.math.RoundingMode rounding) {
         double retval;
 
         if (Double.isNaN(n) || Double.isInfinite(n)) {
             retval = Double.NaN;
         }
         else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.DOWN).doubleValue();
+            retval = new java.math.BigDecimal(NumberToTextConverter.toText(n)).setScale(p, rounding).doubleValue();
         }
 
         return retval;
