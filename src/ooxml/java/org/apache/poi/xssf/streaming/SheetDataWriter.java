@@ -207,23 +207,27 @@ public class SheetDataWriter implements Closeable {
     }
 
     void beginRow(int rownum, SXSSFRow row) throws IOException {
-        _out.write("<row r=\"" + (rownum + 1) + "\"");
-        if (row.hasCustomHeight())
-            _out.write(" customHeight=\"true\"  ht=\"" + row.getHeightInPoints() + "\"");
-        if (row.getZeroHeight())
-            _out.write(" hidden=\"true\"");
+        _out.write("<row");
+        writeAttribute("r", Integer.toString(rownum + 1));
+        if (row.hasCustomHeight()) {
+            writeAttribute("customHeight", "true");
+            writeAttribute("ht", Float.toString(row.getHeightInPoints()));
+        }
+        if (row.getZeroHeight()) {
+            writeAttribute("hidden", "true");
+        }
         if (row.isFormatted()) {
-            _out.write(" s=\"" + row.getRowStyleIndex() + "\"");
-            _out.write(" customFormat=\"1\"");
+            writeAttribute("s", Integer.toString(row.getRowStyleIndex()));
+            writeAttribute("customFormat", "1");
         }
         if (row.getOutlineLevel() != 0) {
-            _out.write(" outlineLevel=\"" + row.getOutlineLevel() + "\"");
+            writeAttribute("outlineLevel", Integer.toString(row.getOutlineLevel()));
         }
         if(row.getHidden() != null) {
-            _out.write(" hidden=\"" + (row.getHidden() ? "1" : "0") + "\"");
+            writeAttribute("hidden", row.getHidden() ? "1" : "0");
         }
         if(row.getCollapsed() != null) {
-            _out.write(" collapsed=\"" + (row.getCollapsed() ? "1" : "0") + "\"");
+            writeAttribute("collapsed", row.getCollapsed() ? "1" : "0");
         }
         
         _out.write(">\n");
@@ -239,30 +243,32 @@ public class SheetDataWriter implements Closeable {
             return;
         }
         String ref = new CellReference(_rownum, columnIndex).formatAsString();
-        _out.write("<c r=\"" + ref + "\"");
+        _out.write("<c");
+        writeAttribute("r", ref);
         CellStyle cellStyle = cell.getCellStyle();
         if (cellStyle.getIndex() != 0) {
             // need to convert the short to unsigned short as the indexes can be up to 64k
             // ideally we would use int for this index, but that would need changes to some more 
             // APIs
-            _out.write(" s=\"" + (cellStyle.getIndex() & 0xffff) + "\"");
+            writeAttribute("s", Integer.toString(cellStyle.getIndex() & 0xffff));
         }
         CellType cellType = cell.getCellTypeEnum();
         switch (cellType) {
             case BLANK: {
-                _out.write(">");
+                _out.write('>');
                 break;
             }
             case FORMULA: {
-                _out.write(">");
-                _out.write("<f>");
+                _out.write("><f>");
                 outputQuotedString(cell.getCellFormula());
                 _out.write("</f>");
                 switch (cell.getCachedFormulaResultTypeEnum()) {
                     case NUMERIC:
                         double nval = cell.getNumericCellValue();
                         if (!Double.isNaN(nval)) {
-                            _out.write("<v>" + nval + "</v>");
+                            _out.write("<v>");
+                            _out.write(Double.toString(nval));
+                            _out.write("</v>");
                         }
                         break;
                     default:
@@ -275,15 +281,15 @@ public class SheetDataWriter implements Closeable {
                     XSSFRichTextString rt = new XSSFRichTextString(cell.getStringCellValue());
                     int sRef = _sharedStringSource.addEntry(rt.getCTRst());
 
-                    _out.write(" t=\"" + STCellType.S + "\">");
-                    _out.write("<v>");
+                    writeAttribute("t", STCellType.S.toString());
+                    _out.write("><v>");
                     _out.write(String.valueOf(sRef));
                     _out.write("</v>");
                 } else {
-                    _out.write(" t=\"inlineStr\">");
-                    _out.write("<is><t");
+                    writeAttribute("t", "inlineStr");
+                    _out.write("><is><t");
                     if (hasLeadingTrailingSpaces(cell.getStringCellValue())) {
-                        _out.write(" xml:space=\"preserve\"");
+                        writeAttribute("xml:space", "preserve");
                     }
                     _out.write(">");
                     outputQuotedString(cell.getStringCellValue());
@@ -292,20 +298,26 @@ public class SheetDataWriter implements Closeable {
                 break;
             }
             case NUMERIC: {
-                _out.write(" t=\"n\">");
-                _out.write("<v>" + cell.getNumericCellValue() + "</v>");
+                writeAttribute("t", "n");
+                _out.write("><v>");
+                _out.write(Double.toString(cell.getNumericCellValue()));
+                _out.write("</v>");
                 break;
             }
             case BOOLEAN: {
-                _out.write(" t=\"b\">");
-                _out.write("<v>" + (cell.getBooleanCellValue() ? "1" : "0") + "</v>");
+                writeAttribute("t", "b");
+                _out.write("><v>");
+                _out.write(cell.getBooleanCellValue() ? "1" : "0");
+                _out.write("</v>");
                 break;
             }
             case ERROR: {
                 FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
 
-                _out.write(" t=\"e\">");
-                _out.write("<v>" + error.getString() + "</v>");
+                writeAttribute("t", "e");
+                _out.write("><v>");
+                _out.write(error.getString());
+                _out.write("</v>");
                 break;
             }
             default: {
@@ -315,6 +327,13 @@ public class SheetDataWriter implements Closeable {
         _out.write("</c>");
     }
 
+    private void writeAttribute(String name, String value) throws IOException {
+        _out.write(' ');
+        _out.write(name);
+        _out.write("=\"");
+        _out.write(value);
+        _out.write('\"');
+    }
 
     /**
      * @return  whether the string has leading / trailing spaces that

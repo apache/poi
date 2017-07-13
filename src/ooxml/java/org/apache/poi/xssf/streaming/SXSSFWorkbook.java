@@ -406,7 +406,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, InputStream worksheetData) throws IOException {
-        InputStreamReader inReader=new InputStreamReader(in,"UTF-8"); //TODO: Is it always UTF-8 or do we need to read the xml encoding declaration in the file? If not, we should perhaps use a SAX reader instead.
+        InputStreamReader inReader=new InputStreamReader(in,"UTF-8");
         OutputStreamWriter outWriter=new OutputStreamWriter(out,"UTF-8");
         boolean needsStartTag = true;
         int c;
