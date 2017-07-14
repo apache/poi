@@ -26,6 +26,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,8 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import javax.imageio.ImageIO;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -3096,4 +3095,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
         wb.close();
     }
+
+    @Test
+    public void test61287() throws IOException {
+        final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("61287.xls");
+        ExcelExtractor ex = new ExcelExtractor((HSSFWorkbook)wb);
+        String text = ex.getText();
+        assertContains(text, "资产负债表");
+        wb.close();
+    }
+
 }
