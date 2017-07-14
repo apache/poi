@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLRelation;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 
 /**
  * @author Yegor Kozlov
@@ -35,25 +36,25 @@ public final class XWPFRelation extends POIXMLRelation {
 
     public static final XWPFRelation DOCUMENT = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+            PackageRelationshipTypes.CORE_DOCUMENT,
             "/word/document.xml",
             null
     );
     public static final XWPFRelation TEMPLATE = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+            PackageRelationshipTypes.CORE_DOCUMENT,
             "/word/document.xml",
             null
     );
     public static final XWPFRelation MACRO_DOCUMENT = new XWPFRelation(
             "application/vnd.ms-word.document.macroEnabled.main+xml",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+            PackageRelationshipTypes.CORE_DOCUMENT,
             "/word/document.xml",
             null
     );
     public static final XWPFRelation MACRO_TEMPLATE_DOCUMENT = new XWPFRelation(
             "application/vnd.ms-word.template.macroEnabledTemplate.main+xml",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+            PackageRelationshipTypes.CORE_DOCUMENT,
             "/word/document.xml",
             null
     );
