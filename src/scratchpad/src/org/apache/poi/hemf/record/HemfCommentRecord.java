@@ -89,8 +89,15 @@ public class HemfCommentRecord implements HemfRecord {
         int recordSize = (int)remainingRecordSize;
         byte[] arr = new byte[dataSize+initialBytes.length];
         System.arraycopy(initialBytes,0,arr, 0, initialBytes.length);
-        IOUtils.readFully(leis, arr, initialBytes.length, dataSize);
-        IOUtils.skipFully(leis, recordSize-dataSize);
+        long read = IOUtils.readFully(leis, arr, initialBytes.length, dataSize);
+        if (read != dataSize) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
+        long toSkip = recordSize-dataSize;
+        long skipped = IOUtils.skipFully(leis, toSkip);
+        if (toSkip != skipped) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
 
         return arr;
     }
@@ -103,8 +110,16 @@ public class HemfCommentRecord implements HemfRecord {
         }
 
         byte[] arr = new byte[(int)dataSize];
-        IOUtils.readFully(leis, arr);
-        IOUtils.skipFully(leis, recordSize-dataSize);
+
+        long read = IOUtils.readFully(leis, arr);
+        if (read != dataSize) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
+        long toSkip = recordSize-dataSize;
+        long skipped = IOUtils.skipFully(leis, recordSize-dataSize);
+        if (toSkip != skipped) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
         return arr;
     }
 
