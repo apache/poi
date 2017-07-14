@@ -45,6 +45,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
@@ -63,6 +65,8 @@ import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -3137,6 +3141,17 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         String text = ex.getText();
         assertContains(text, "\u8D44\u4EA7\u8D1F\u503A\u8868");
         wb.close();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void test61300() throws Exception {
+        NPOIFSFileSystem npoifs = new NPOIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"));
+
+        DocumentEntry entry =
+                (DocumentEntry) npoifs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+        PropertySet properties =
+                new PropertySet(new DocumentInputStream(entry));
+
     }
 
 }

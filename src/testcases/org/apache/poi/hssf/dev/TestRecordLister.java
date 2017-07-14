@@ -22,6 +22,7 @@ import java.io.PrintStream;
 
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
 public class TestRecordLister extends BaseXLSIteratingTest {
@@ -37,6 +38,7 @@ public class TestRecordLister extends BaseXLSIteratingTest {
         EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 5
         EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
         EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
+        EXCLUDED.put("61300.xls", RecordFormatException.class);
 
     }
 	

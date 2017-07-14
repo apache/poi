@@ -331,7 +331,8 @@ public class TestAllFiles {
         // need JDK8+ - https://bugs.openjdk.java.net/browse/JDK-8038081
         "slideshow/42474-2.ppt",
         // OPC handler works / XSSF handler fails
-        "spreadsheet/57181.xlsm"
+        "spreadsheet/57181.xlsm",
+        "spreadsheet/61300.xls"//intentionally fuzzed -- used to cause infinite loop
     );
 
     @Parameters(name="{index}: {0} using {1}")

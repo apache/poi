@@ -16,19 +16,20 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.PrintStream;
+
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.PrintStream;
-
-import static org.junit.Assert.assertTrue;
 
 public class TestReSave extends BaseXLSIteratingTest {
     @BeforeClass
@@ -50,6 +51,7 @@ public class TestReSave extends BaseXLSIteratingTest {
         EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
         EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("XRefCalc.xls", RuntimeException.class);            // "Buffer overrun"
+        EXCLUDED.put("61300.xls", RecordFormatException.class);
     }
 
 	@Override
