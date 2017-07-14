@@ -45,11 +45,11 @@ import org.apache.poi.util.LocaleUtil;
 public final class PackagePropertiesPart extends PackagePart implements
 		PackageProperties {
 
-	public final static String NAMESPACE_DC_URI = "http://purl.org/dc/elements/1.1/";
+	public final static String NAMESPACE_DC_URI = PackageProperties.NAMESPACE_DC;
 
 	public final static String NAMESPACE_CP_URI = PackageNamespaces.CORE_PROPERTIES;
 
-	public final static String NAMESPACE_DCTERMS_URI = "http://purl.org/dc/terms/";
+	public final static String NAMESPACE_DCTERMS_URI = PackageProperties.NAMESPACE_DCTERMS;
 
 	private final static String DEFAULT_DATEFORMAT =   "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
