@@ -279,8 +279,8 @@ public class FoDocumentFacade
 
     public Element setDublinCoreProperty( String name, String value )
     {
-        return setProperty( "http://purl.org/dc/elements/1.1/", "dc", name,
-                value );
+        // poi-ooxml: org.apache.poi.openxml4j.opc.PackageProperties#NAMESPACE_DC
+        return setProperty( "http://purl.org/dc/elements/1.1/", "dc", name, value );
     }
 
     public void setKeywords( String value )
