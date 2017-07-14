@@ -260,7 +260,7 @@ public class TestRelationships extends TestCase {
     			partB.getRelationship("rId1").getTargetURI().toString());
     	// Check core too
     	assertEquals("/docProps/core.xml",
-    			pkg.getRelationshipsByType("http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties").getRelationship(0).getTargetURI().toString());
+    			pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_PROPERTIES).getRelationship(0).getTargetURI().toString());
     	
     	
     	// Add some more

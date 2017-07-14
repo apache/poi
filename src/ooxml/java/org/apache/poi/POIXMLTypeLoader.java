@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeLoader;
@@ -49,6 +50,13 @@ import org.xml.sax.SAXException;
 public class POIXMLTypeLoader {
 
     private static ThreadLocal<ClassLoader> classLoader = new ThreadLocal<ClassLoader>();
+
+    // TODO: Do these have a good home like o.a.p.openxml4j.opc.PackageNamespaces and PackageRelationshipTypes?
+    // These constants should be common to all of POI and easy to use by other applications such as Tika
+    private static final String MS_OFFICE_URN = "urn:schemas-microsoft-com:office:office";
+    private static final String MS_EXCEL_URN = "urn:schemas-microsoft-com:office:excel";
+    private static final String MS_WORD_URN = "urn:schemas-microsoft-com:office:word";
+    private static final String MS_VML_URN = "urn:schemas-microsoft-com:vml";
     
     public static final XmlOptions DEFAULT_XML_OPTIONS;
     static {
@@ -66,17 +74,17 @@ public class POIXMLTypeLoader {
         map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/chart", "c");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing", "wp");
-        map.put("http://schemas.openxmlformats.org/markup-compatibility/2006", "ve");
+        map.put(PackageNamespaces.MARKUP_COMPATIBILITY, "ve");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/math", "m");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes", "vt");
         map.put("http://schemas.openxmlformats.org/presentationml/2006/main", "p");
         map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
         map.put("http://schemas.microsoft.com/office/word/2006/wordml", "wne");
-        map.put("urn:schemas-microsoft-com:office:office", "o");
-        map.put("urn:schemas-microsoft-com:office:excel", "x");
-        map.put("urn:schemas-microsoft-com:office:word", "w10");
-        map.put("urn:schemas-microsoft-com:vml", "v");
+        map.put(MS_OFFICE_URN, "o");
+        map.put(MS_EXCEL_URN, "x");
+        map.put(MS_WORD_URN, "w10");
+        map.put(MS_VML_URN, "v");
         DEFAULT_XML_OPTIONS.setSaveSuggestedPrefixes(Collections.unmodifiableMap(map));
     }
     
