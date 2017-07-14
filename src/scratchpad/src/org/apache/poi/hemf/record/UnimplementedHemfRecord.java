@@ -41,7 +41,7 @@ public class UnimplementedHemfRecord implements HemfRecord {
     public long init(LittleEndianInputStream leis, long recordId, long recordSize) throws IOException {
         this.recordId = recordId;
         long skipped = IOUtils.skipFully(leis, recordSize);
-        if (skipped < 0) {
+        if (skipped < recordSize) {
             throw new IOException("End of stream reached before record read");
         }
         return skipped;

@@ -37,16 +37,16 @@ import org.junit.Test;
  * Class to test IOUtils
  */
 public final class TestIOUtils {
+
     static File TMP = null;
-    static long SEED = new Random().nextLong();
-    static Random RANDOM = new Random(SEED);
+    static final long LENGTH = new Random().nextInt(10000);
 
     @BeforeClass
     public static void setUp() throws IOException {
         TMP = File.createTempFile("poi-ioutils-", "");
         OutputStream os = new FileOutputStream(TMP);
-        for (int i = 0; i < RANDOM.nextInt(10000); i++) {
-            os.write(RANDOM.nextInt((byte)127));
+        for (int i = 0; i < LENGTH; i++) {
+            os.write(0x01);
         }
         os.flush();
         os.close();
@@ -62,14 +62,14 @@ public final class TestIOUtils {
     public void testSkipFully() throws IOException {
         InputStream is =  new FileInputStream(TMP);
         long skipped = IOUtils.skipFully(is, 20000L);
-        assertEquals("seed: "+SEED, -1L, skipped);
+        assertEquals("length: "+LENGTH, LENGTH, skipped);
     }
 
     @Test
     public void testSkipFullyGtIntMax() throws IOException {
         InputStream is =  new FileInputStream(TMP);
         long skipped = IOUtils.skipFully(is, Integer.MAX_VALUE + 20000L);
-        assertEquals("seed: "+SEED, -1L, skipped);
+        assertEquals("length: "+LENGTH, LENGTH, skipped);
     }
 
     @Test
@@ -78,7 +78,7 @@ public final class TestIOUtils {
         InputStream is = new FileInputStream(TMP);
         IOUtils.copy(is, bos);
         long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), 20000L);
-        assertEquals("seed: "+SEED, -1L, skipped);
+        assertEquals("length: "+LENGTH, LENGTH, skipped);
     }
 
     @Test
@@ -87,13 +87,31 @@ public final class TestIOUtils {
         InputStream is = new FileInputStream(TMP);
         IOUtils.copy(is, bos);
         long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), Integer.MAX_VALUE+ 20000L);
-        assertEquals("seed: "+SEED, -1L, skipped);
+        assertEquals("length: "+LENGTH, LENGTH, skipped);
+    }
+
+    @Test
+    public void testZeroByte() throws IOException {
+        long skipped = IOUtils.skipFully((new ByteArrayInputStream(new byte[0])), 100);
+        assertEquals("zero byte", -1L, skipped);
+    }
+
+    @Test
+    public void testSkipZero() throws IOException {
+        InputStream is =  new FileInputStream(TMP);
+        long skipped = IOUtils.skipFully(is, 0);
+        assertEquals("zero length", 0, skipped);
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void testSkipNegative() throws IOException {
+        InputStream is =  new FileInputStream(TMP);
+        long skipped = IOUtils.skipFully(is, -1);
     }
 
     @Test
     public void testWonkyInputStream() throws IOException {
         long skipped = IOUtils.skipFully(new WonkyInputStream(), 10000);
-        assertEquals("seed: "+SEED, 10000, skipped);
+        assertEquals("length: "+LENGTH, 10000, skipped);
     }
 
     /**

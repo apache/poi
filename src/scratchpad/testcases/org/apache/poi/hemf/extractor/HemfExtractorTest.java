@@ -164,8 +164,6 @@ public class HemfExtractorTest {
         assertEquals(expectedParts.size(), foundExpected);
     }
 
-
-
     @Test(expected = RecordFormatException.class)
     public void testInfiniteLoopOnFile() throws Exception {
         InputStream is = null;
