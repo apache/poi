@@ -310,6 +310,9 @@ public final class IOUtils {
         byte[] buff = new byte[4096];
         int count;
         while ((count = inp.read(buff)) != -1) {
+            if (count < -1) {
+                throw new RecordFormatException("Can't have read < -1 bytes");
+            }
             if (count > 0) {
                 out.write(buff, 0, count);
             }

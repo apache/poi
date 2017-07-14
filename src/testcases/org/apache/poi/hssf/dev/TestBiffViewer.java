@@ -28,6 +28,7 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -53,6 +54,7 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
         // EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("50833.xls", IllegalArgumentException.class);       // "Name is too long" when setting username
         EXCLUDED.put("XRefCalc.xls", RuntimeException.class);            // "Buffer overrun"
+        EXCLUDED.put("61300.xls", RecordFormatException.class);
     }
 
     @Override

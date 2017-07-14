@@ -20,6 +20,7 @@ package org.apache.poi.poifs.filesystem;
 import java.io.IOException;
 
 import org.apache.poi.poifs.storage.DataInputBlock;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * This class provides methods to read a DocumentEntry managed by a
@@ -64,6 +65,9 @@ public final class ODocumentInputStream extends DocumentInputStream {
 		_current_offset = 0;
 		_marked_offset = 0;
 		_document_size = document.getSize();
+		if (_document_size < 0) {
+			throw new RecordFormatException("document_size cannot be < 0");
+		}
 		_closed = false;
 		_document = documentNode.getDocument();
 		_currentBlock = getDataInputBlock(0);

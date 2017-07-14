@@ -24,6 +24,7 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
 public class TestEFBiffViewer extends BaseXLSIteratingTest {
@@ -46,6 +47,7 @@ public class TestEFBiffViewer extends BaseXLSIteratingTest {
         EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
         EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("XRefCalc.xls", RuntimeException.class);            // "Buffer overrun"
+        EXCLUDED.put("61300.xls", RecordFormatException.class);
     }
 	
 	@Override

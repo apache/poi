@@ -16,18 +16,23 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.Assert.assertFalse;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
-
-import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.assertFalse;
 
 public class HSSFFileHandler extends SpreadsheetHandler {
 	private final POIFSFileHandler delegate = new POIFSFileHandler();
@@ -61,6 +66,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/50833.xls");
 		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/51832.xls");
 		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/XRefCalc.xls");
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/61300.xls");
 	}
 
 	@Override
