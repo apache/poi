@@ -36,6 +36,13 @@ public abstract class HeaderFooterBase extends StandardRecord {
 	protected HeaderFooterBase(RecordInputStream in) {
 		if (in.remaining() > 0) {
 			int field_1_footer_len = in.readShort();
+			//61287 -- if the footer_len == 0, there may not be a multibyte flag
+			if (field_1_footer_len == 0) {
+				field_3_text = "";
+				if (in.remaining() == 0) {
+					return;
+				}
+			}
 			field_2_hasMultibyte = in.readByte() != 0x00;
 
 			if (field_2_hasMultibyte) {
