@@ -3101,7 +3101,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("61287.xls");
         ExcelExtractor ex = new ExcelExtractor((HSSFWorkbook)wb);
         String text = ex.getText();
-        assertContains(text, "资产负债表");
+        assertContains(text, "\u8D44\u4EA7\u8D1F\u503A\u8868");
         wb.close();
     }
 
