@@ -44,7 +44,7 @@ import org.apache.poi.util.LittleEndianInput;
  *
  * <p>
  * YK: For now (March 2011) this class is only used to read
- *   @link org.apache.poi.hssf.record.common.UnicodeString.ExtRst} blocks of a UnicodeString.
+ *   @see org.apache.poi.hssf.record.common.UnicodeString.ExtRst blocks of a UnicodeString.
  *
  * </p>
  */
