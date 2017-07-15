@@ -185,10 +185,10 @@ public class CellReference {
     /**
      * takes in a column reference portion of a CellRef and converts it from
      * ALPHA-26 number format to 0-based base 10.
-     * 'A' -> 0
-     * 'Z' -> 25
-     * 'AA' -> 26
-     * 'IV' -> 255
+     * 'A' -&gt; 0
+     * 'Z' -&gt; 25
+     * 'AA' -&gt; 26
+     * 'IV' -&gt; 255
      * @return zero based column index
      */
     public static int convertColStringToIndex(String ref) {

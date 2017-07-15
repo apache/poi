@@ -186,7 +186,7 @@ public class CryptoFunctions {
      * If the given algorithm is not implemented in the JCE, it will try to load it from the bouncy castle
      * provider.
      *
-     * @param key the secrect key
+     * @param key the secret key
      * @param cipherAlgorithm the cipher algorithm
      * @param chain the chaining mode
      * @param vec the initialization vector (IV), can be null
@@ -205,7 +205,7 @@ public class CryptoFunctions {
      * If the given algorithm is not implemented in the JCE, it will try to load it from the bouncy castle
      * provider.
      *
-     * @param key the secrect key
+     * @param key the secret key
      * @param cipherAlgorithm the cipher algorithm
      * @param chain the chaining mode
      * @param vec the initialization vector (IV), can be null

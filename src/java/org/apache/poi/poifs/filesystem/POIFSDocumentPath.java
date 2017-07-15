@@ -229,8 +229,7 @@ public class POIFSDocumentPath
      *
      * @return the nth component;
      *
-     * @exception ArrayIndexOutOfBoundsException if n < 0 or n >=
-     *                                           length()
+     * @exception ArrayIndexOutOfBoundsException if n &lt; 0 or n >= length()
      */
 
     public String getComponent(int n)

@@ -65,7 +65,6 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1344,7 +1343,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Answer whether protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     @Override
     public boolean getProtect() {
@@ -1548,7 +1547,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * A flag indicating whether scenarios are locked when the sheet is protected.
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     @Override
     public boolean getScenarioProtect() {
@@ -2477,7 +2476,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
-     * @throws IllegalArgumentException if width > 255*256 (the maximum column width in Excel is 255 characters)
+     * @throws IllegalArgumentException if width &gt; 255*256 (the maximum column width in Excel is 255 characters)
      */
     @Override
     public void setColumnWidth(int columnIndex, int width) {
@@ -2768,7 +2767,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     /**
      * Window zoom magnification for current view representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     * Valid values range from 10 to 400. Horizontal &amp; Vertical scale together.
      *
      * For example:
      * <pre>
@@ -3899,7 +3898,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     }
 
-    @SuppressWarnings("resource")
     @Override
     public XSSFAutoFilter setAutoFilter(CellRangeAddress range) {
         CTAutoFilter af = worksheet.getAutoFilter();
@@ -4159,7 +4157,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * including: pivotCacheDefinition, pivotCacheRecords
      * @return returns a pivotTable
      */
-    @SuppressWarnings("resource")
     @Beta
     private XSSFPivotTable createPivotTable() {
         XSSFWorkbook wb = getWorkbook();
