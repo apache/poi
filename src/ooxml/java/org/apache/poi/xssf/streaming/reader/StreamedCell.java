@@ -37,10 +37,15 @@ import org.apache.poi.util.NotImplemented;
  *
  */
 public class StreamedCell implements Cell {
+    private final Row row;
     private String value;
-    private int cellNumber;
-    private CellType cellType;
+    private int columnIndex;
+    private CellType cellType = CellType._NONE;
 
+    StreamedCell(Row row) {
+        this.row = row;
+    }
+    
     /**
      * <pre>
      * Return cell value
@@ -64,12 +69,8 @@ public class StreamedCell implements Cell {
         return value;
     }
 
-    int getCellNumber() {
-        return cellNumber;
-    }
-
-    void setCellNumber(int cellNumber) {
-        this.cellNumber = cellNumber;
+    void setColumnIndex(int columnIndex) {
+        this.columnIndex = columnIndex;
     }
 
     /**
@@ -81,7 +82,7 @@ public class StreamedCell implements Cell {
      */
     @Override
     public int getColumnIndex() {
-        return this.cellNumber;
+        return this.columnIndex;
     }
 
     /**
@@ -111,43 +112,25 @@ public class StreamedCell implements Cell {
     }
 
     /**
-     * <pre>
-     * Will be supported in future.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public Row getRow() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        return row;
     }
 
     /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     * @param cellType
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public void setCellType(int cellType) {
-        throw new UnsupportedOperationException("Operation not supported.");
+        setCellType(CellType.forInt(cellType));
     }
 
     /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     * @param cellType
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public void setCellType(CellType cellType) {
         // to avoid setting this by user
         if (this.cellType == null) {
@@ -156,24 +139,15 @@ public class StreamedCell implements Cell {
     }
 
     /**
-     * <pre>
-     * Will be supported in future.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public int getCellType() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        return cellType.getCode();
     }
 
     /**
-     * <pre>
-     * Return the cell type.
-     * </pre>
-     * 
-     * @return CellType
+     * {@inheritDoc}
      */
     @Override
     @NotImplemented
@@ -454,16 +428,11 @@ public class StreamedCell implements Cell {
     }
 
     /**
-     * <pre>
-     * Will be supported in future.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public CellAddress getAddress() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        return new CellAddress(getRow().getRowNum(), columnIndex);
     }
 
     /**

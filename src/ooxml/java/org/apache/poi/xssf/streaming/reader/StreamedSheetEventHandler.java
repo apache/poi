@@ -269,9 +269,9 @@ public class StreamedSheetEventHandler {
                 fillEmptyCells();
             }
 
-            cell = new StreamedCell();
+            cell = new StreamedCell(row);
             cell.setValue(data);
-            cell.setCellNumber(previousCellIndex + 1);
+            cell.setColumnIndex(previousCellIndex + 1);
             setCellType(cell, cellContentType, data);
             row.getCells().add(cell);
 
@@ -411,7 +411,7 @@ public class StreamedSheetEventHandler {
         int currentCellIndex = cellPositions.indexOf(currentCellPosition);
         if ((currentCellIndex - previousCellIndex) > 1) {
             for (int i = (previousCellIndex + 1); i < currentCellIndex; i++) {
-                cell = new StreamedCell();
+                cell = new StreamedCell(row);
                 cell.setValue(null);
                 row.getCells().add(cell);
             }

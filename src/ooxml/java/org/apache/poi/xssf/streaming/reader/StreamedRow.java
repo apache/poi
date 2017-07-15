@@ -239,7 +239,7 @@ public class StreamedRow implements Row {
         short firstCellNumber = -1;
 
         if (cells != null && cells.size() > 0) {
-            firstCellNumber = (short) cells.get(0).getCellNumber();
+            firstCellNumber = (short) cells.get(0).getColumnIndex();
         }
 
         return firstCellNumber;
@@ -258,7 +258,7 @@ public class StreamedRow implements Row {
         short lastCellNumber = -1;
 
         if (cells != null && cells.size() > 0) {
-            lastCellNumber = (short) (cells.get((cells.size() - 1)).getCellNumber() + 1);
+            lastCellNumber = (short) (cells.get((cells.size() - 1)).getColumnIndex() + 1);
         }
 
         return lastCellNumber;
