@@ -845,6 +845,7 @@ under the License.
                     <include name="org/apache/poi/POIXMLTypeLoader.java"/>
                     <include name="org/apache/poi/util/DocumentHelper.java"/>
                     <include name="org/apache/poi/util/SAXHelper.java"/>
+                    <include name="org/apache/poi/openxml4j/opc/PackageNamespaces.java"/>
                 </fileset>
                 <fileset dir="${main.src}">
                     <include name="org/apache/poi/util/POILogFactory.java"/>
