@@ -41,6 +41,6 @@ import org.apache.poi.util.ReplacingInputStream;
 @Internal
 public class EvilUnclosedBRFixingInputStream extends ReplacingInputStream {
    public EvilUnclosedBRFixingInputStream(InputStream source) {
-      super(source, "<br>", "<br>");
+      super(source, "<br>", "<br/>");
    }
 }
