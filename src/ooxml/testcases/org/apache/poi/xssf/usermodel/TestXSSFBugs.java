@@ -226,7 +226,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Excel will sometimes write a button with a textbox
      * containing &gt;br&lt; (not closed!).
      * Clearly Excel shouldn't do this, but test that we can
-     * read the file despite the naughtyness
+     * read the file despite the naughtiness
      */
     @Test
     public void bug49020() throws IOException {

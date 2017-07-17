@@ -174,7 +174,7 @@ public class TestXSSFVMLDrawing {
         } finally {
             stream.close();
         }
-        Pattern p = Pattern.compile("<br>");
+        Pattern p = Pattern.compile("<br/>");
         int count = 0;
         for (XmlObject xo : vml.getItems()) {
             String split[] = p.split(xo.toString());
