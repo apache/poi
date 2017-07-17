@@ -38,7 +38,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Common superclass for testing usermodel API for array formulas.<br/>
+ * Common superclass for testing usermodel API for array formulas.<br>
  * Formula evaluation is not tested here.
  *
  * @author Yegor Kozlov

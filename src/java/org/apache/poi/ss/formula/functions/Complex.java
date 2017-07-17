@@ -27,25 +27,25 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel COMPLEX () function.<p/>
- * <p/>
- * <b>Syntax</b>:<br/> <b>COMPLEX   </b>(<b>real_num</b>,<b>i_num</b>,<b>suffix </b> )<br/>
- * <p/>
+ * Implementation for Excel COMPLEX () function.<p>
+ * <p>
+ * <b>Syntax</b>:<br> <b>COMPLEX   </b>(<b>real_num</b>,<b>i_num</b>,<b>suffix </b> )<br>
+ * <p>
  * Converts real and imaginary coefficients into a complex number of the form x + yi or x + yj.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * All complex number functions accept "i" and "j" for suffix, but neither "I" nor "J".
  * Using uppercase results in the #VALUE! error value. All functions that accept two
  * or more complex numbers require that all suffixes match.
- * <p/>
+ * <p>
  * <b>real_num</b> The real coefficient of the complex number.
  * If this argument is nonnumeric, this function returns the #VALUE! error value.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * <b>i_num</b> The imaginary coefficient of the complex number.
  * If this argument is nonnumeric, this function returns the #VALUE! error value.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * <b>suffix</b> The suffix for the imaginary component of the complex number.
  * <ul>
  * <li>If omitted, suffix is assumed to be "i".</li>

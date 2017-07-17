@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * CATLAB - Category Labels (0x0856)<br/>
+ * CATLAB - Category Labels (0x0856)<br>
  * 
  * @author Patrick Cheng
  */

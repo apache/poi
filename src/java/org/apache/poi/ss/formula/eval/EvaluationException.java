@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula.eval;
 /**
  * This class is used to simplify error handling logic <i>within</i> operator and function
  * implementations.   Note - <tt>OperationEval.evaluate()</tt> and <tt>Function.evaluate()</tt>
- * method signatures do not throw this exception so it cannot propagate outside.<p/>
+ * method signatures do not throw this exception so it cannot propagate outside.<p>
  * 
  * Here is an example coded without <tt>EvaluationException</tt>, to show how it can help:
  * <pre>
@@ -51,9 +51,9 @@ package org.apache.poi.ss.formula.eval;
  * </pre>
  * In this example, if any error is encountered while processing the arguments, an error is 
  * returned immediately. This code is difficult to refactor due to all the points where errors
- * are returned.<br/>
+ * are returned.<br>
  * Using <tt>EvaluationException</tt> allows the error returning code to be consolidated to one
- * place.<p/>
+ * place.<p>
  * <pre>
  * public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
  *	try {
@@ -91,14 +91,14 @@ package org.apache.poi.ss.formula.eval;
  *	return temp;
  *}
  * </pre>   
- * It is not mandatory to use EvaluationException, doing so might give the following advantages:<br/>
- *  - Methods can more easily be extracted, allowing for re-use.<br/>
+ * It is not mandatory to use EvaluationException, doing so might give the following advantages:<br>
+ *  - Methods can more easily be extracted, allowing for re-use.<br>
  *  - Type management (typecasting etc) is simpler because error conditions have been separated from
- * intermediate calculation values.<br/>
- *  - Fewer local variables are required. Local variables can have stronger types.<br/>
+ * intermediate calculation values.<br>
+ *  - Fewer local variables are required. Local variables can have stronger types.<br>
  *  - It is easier to mimic common Excel error handling behaviour (exit upon encountering first 
  *  error), because exceptions conveniently propagate up the call stack regardless of execution 
- *  points or the number of levels of nested calls.<p/>
+ *  points or the number of levels of nested calls.<p>
  *  
  * <b>Note</b> - Only standard evaluation errors are represented by <tt>EvaluationException</tt> (
  * i.e. conditions expected to be encountered when evaluating arbitrary Excel formulas). Conditions

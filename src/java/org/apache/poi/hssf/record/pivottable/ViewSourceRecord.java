@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * SXVS - View Source (0x00E3)<br/>
+ * SXVS - View Source (0x00E3)<br>
  * 
  * @author Patrick Cheng
  */

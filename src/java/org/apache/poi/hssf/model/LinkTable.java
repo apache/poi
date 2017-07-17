@@ -40,21 +40,21 @@ import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
- * Link Table (OOO pdf reference: 4.10.3 ) <p/>
+ * Link Table (OOO pdf reference: 4.10.3 ) <p>
  *
  * The main data of all types of references is stored in the Link Table inside the Workbook Globals
  * Substream (4.2.5). The Link Table itself is optional and occurs only if there are any
  * references in the document.
- *  <p/>
+ *  <p>
  *
  *  In BIFF8 the Link Table consists of
  *  <ul>
- *  <li>zero or more EXTERNALBOOK Blocks<p/>
+ *  <li>zero or more EXTERNALBOOK Blocks<p>
  *  	each consisting of
  *  	<ul>
  *  	<li>exactly one EXTERNALBOOK (0x01AE) record</li>
  *  	<li>zero or more EXTERNALNAME (0x0023) records</li>
- *  	<li>zero or more CRN Blocks<p/>
+ *  	<li>zero or more CRN Blocks<p>
  *			each consisting of
  *  		<ul>
  *  		<li>exactly one XCT (0x0059)record</li>

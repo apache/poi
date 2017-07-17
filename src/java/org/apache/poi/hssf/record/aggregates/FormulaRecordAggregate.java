@@ -85,11 +85,11 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 	 * the {@link Ptg} tokens for the formula.  However as it turns out in these
 	 * cases, Excel encodes the unshared {@link Ptg} tokens in the right place (inside the {@link
 	 * FormulaRecord}).  So the the only thing that needs to be done is to ignore the erroneous
-	 * shared formula flag.<br/>
+	 * shared formula flag.<br>
 	 *
 	 * This method may also be used for setting breakpoints to help diagnose issues regarding the
 	 * abnormally-set 'shared formula' flags.
-	 * (see TestValueRecordsAggregate.testSpuriousSharedFormulaFlag()).<p/>
+	 * (see TestValueRecordsAggregate.testSpuriousSharedFormulaFlag()).<p>
 	 */
 	private static void handleMissingSharedFormulaRecord(FormulaRecord formula) {
 		// make sure 'unshared' formula is actually available

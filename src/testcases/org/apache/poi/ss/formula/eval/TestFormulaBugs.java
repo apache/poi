@@ -29,13 +29,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Miscellaneous tests for bugzilla entries.<p/> The test name contains the
+ * Miscellaneous tests for bugzilla entries.<p> The test name contains the
  * bugzilla bug id.
  */
 public final class TestFormulaBugs {
 
 	/**
-	 * Bug 27349 - VLOOKUP with reference to another sheet.<p/> This test was
+	 * Bug 27349 - VLOOKUP with reference to another sheet.<p> This test was
 	 * added <em>long</em> after the relevant functionality was fixed.
 	 */
 	@Test
@@ -66,7 +66,7 @@ public final class TestFormulaBugs {
 	}
 
 	/**
-	 * Bug 27405 - isnumber() formula always evaluates to false in if statement<p/>
+	 * Bug 27405 - isnumber() formula always evaluates to false in if statement<p>
 	 * 
 	 * seems to be a duplicate of 24925
 	 */
@@ -117,7 +117,7 @@ public final class TestFormulaBugs {
 	}
 
 	/**
-	 * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p/>
+	 * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p>
 	 */
 	@Test
 	public void test42448() throws IOException {

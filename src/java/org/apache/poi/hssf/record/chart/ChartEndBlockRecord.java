@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ENDBLOCK - Chart Future Record Type End Block (0x0853)<br/>
+ * ENDBLOCK - Chart Future Record Type End Block (0x0853)<br>
  * 
  * @author Patrick Cheng
  */

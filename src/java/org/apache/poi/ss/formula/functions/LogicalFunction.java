@@ -82,12 +82,12 @@ public abstract class LogicalFunction extends Fixed1ArgFunction {
 	};
 
     /**
-     * Implementation of Excel <tt>ISERR()</tt> function.<p/>
+     * Implementation of Excel <tt>ISERR()</tt> function.<p>
      *
-     * <b>Syntax</b>:<br/>
-     * <b>ISERR</b>(<b>value</b>)<p/>
+     * <b>Syntax</b>:<br>
+     * <b>ISERR</b>(<b>value</b>)<p>
      *
-     * <b>value</b>  The value to be tested<p/>
+     * <b>value</b>  The value to be tested<p>
      *
      * Returns the logical value <tt>TRUE</tt> if value refers to any error value except
      * <tt>'#N/A'</tt>; otherwise, it returns <tt>FALSE</tt>.
@@ -103,13 +103,13 @@ public abstract class LogicalFunction extends Fixed1ArgFunction {
     };
 
 	/**
-	 * Implementation for Excel ISNA() function.<p/>
+	 * Implementation for Excel ISNA() function.<p>
 	 *
-	 * <b>Syntax</b>:<br/>
-	 * <b>ISNA</b>(<b>value</b>)<p/>
+	 * <b>Syntax</b>:<br>
+	 * <b>ISNA</b>(<b>value</b>)<p>
 	 *
-	 * <b>value</b>  The value to be tested<br/>
-	 * <br/>
+	 * <b>value</b>  The value to be tested<br>
+	 * <br>
 	 * Returns <tt>TRUE</tt> if the specified value is '#N/A', <tt>FALSE</tt> otherwise.
 	 */
 	public static final Function ISNA = new LogicalFunction() {

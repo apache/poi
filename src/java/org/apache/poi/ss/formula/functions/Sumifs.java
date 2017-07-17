@@ -22,9 +22,9 @@ package org.apache.poi.ss.formula.functions;
 /**
  * Implementation for the Excel function SUMIFS<p>
  *
- * Syntax : <br/>
+ * Syntax : <br>
  *  SUMIFS ( <b>sum_range</b>, <b>criteria_range1</b>, <b>criteria1</>,
- *  [<b>criteria_range2</b>,  <b>criteria2</b>], ...) <br/>
+ *  [<b>criteria_range2</b>,  <b>criteria2</b>], ...) <br>
  *    <ul>
  *      <li><b>sum_range</b> Required. One or more cells to sum, including numbers or names, ranges,
  *      or cell references that contain numbers. Blank and text values are ignored.</li>

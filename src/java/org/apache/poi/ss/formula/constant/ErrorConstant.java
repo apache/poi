@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 /**
- * Represents a constant error code value as encoded in a constant values array. <p/>
+ * Represents a constant error code value as encoded in a constant values array. <p>
  * 
  * This class is a type-safe wrapper for a 16-bit int value performing a similar job to 
  * <tt>ErrorEval</tt>.

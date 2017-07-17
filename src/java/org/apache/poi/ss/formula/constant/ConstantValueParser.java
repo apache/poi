@@ -24,7 +24,7 @@ import org.apache.poi.util.StringUtil;
 /**
  * To support Constant Values (2.5.7) as required by the CRN record.
  * This class is also used for two dimensional arrays which are encoded by 
- * EXTERNALNAME (5.39) records and Array tokens.<p/>
+ * EXTERNALNAME (5.39) records and Array tokens.<p>
  * 
  * @author Josh Micich
  */

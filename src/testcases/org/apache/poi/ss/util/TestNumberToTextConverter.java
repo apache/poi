@@ -89,7 +89,7 @@ public final class TestNumberToTextConverter extends TestCase {
 	 * In other places (e.g. {@link NumberRecord}, {@link NumberPtg}, array items (via {@link 
 	 * ConstantValueParser}), there seems to be no special NaN translation scheme.  If a NaN bit 
 	 * pattern is somehow encoded into any of these places Excel actually attempts to render the 
-	 * values as a plain number. That is the unusual functionality that this method is testing.<p/>   
+	 * values as a plain number. That is the unusual functionality that this method is testing.<p>   
 	 * 
 	 * There are multiple encodings (bit patterns) for NaN, and CPUs and applications can convert
 	 * to a preferred NaN encoding  (Java prefers <tt>0x7FF8000000000000L</tt>).  Besides the 
@@ -99,10 +99,10 @@ public final class TestNumberToTextConverter extends TestCase {
 	 * Observed NaN behaviour on HotSpot/Windows:
 	 * <tt>Double.longBitsToDouble()</tt> will set one bit 51 (the NaN signaling flag) if it isn't
 	 *  already. <tt>Double.doubleToLongBits()</tt> will return a double with bit pattern 
-	 *  <tt>0x7FF8000000000000L</tt> for any NaN bit pattern supplied.<br/>
-	 * Differences are likely to be observed with other architectures.<p/>
+	 *  <tt>0x7FF8000000000000L</tt> for any NaN bit pattern supplied.<br>
+	 * Differences are likely to be observed with other architectures.<p>
 	 *  
-	 * <p/>
+	 * <p>
 	 * The few test case examples calling this method represent functionality which may not be 
 	 * important for POI to support.
 	 */

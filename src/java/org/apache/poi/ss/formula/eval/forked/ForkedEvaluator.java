@@ -89,7 +89,7 @@ public final class ForkedEvaluator {
 	}
 	/**
 	 * Copies the values of all updated cells (modified by calls to {@link
-	 * #updateCell(String, int, int, ValueEval)}) to the supplied <tt>workbook</tt>.<br/>
+	 * #updateCell(String, int, int, ValueEval)}) to the supplied <tt>workbook</tt>.<br>
 	 * Typically, the supplied <tt>workbook</tt> is a writable copy of the 'master workbook',
 	 * but at the very least it must contain sheets with the same names.
 	 */

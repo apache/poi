@@ -49,16 +49,16 @@ final class EvaluationTracker {
 
 	/**
 	 * Notifies this evaluation tracker that evaluation of the specified cell is
-	 * about to start.<br/>
+	 * about to start.<br>
 	 *
 	 * In the case of a <code>true</code> return code, the caller should
 	 * continue evaluation of the specified cell, and also be sure to call
-	 * <tt>endEvaluate()</tt> when complete.<br/>
+	 * <tt>endEvaluate()</tt> when complete.<br>
 	 *
 	 * In the case of a <code>null</code> return code, the caller should
 	 * return an evaluation result of
 	 * <tt>ErrorEval.CIRCULAR_REF_ERROR<tt>, and not call <tt>endEvaluate()</tt>.
-	 * <br/>
+	 * <br>
 	 * @return <code>false</code> if the specified cell is already being evaluated
 	 */
 	public boolean startEvaluate(FormulaCellCacheEntry cce) {
@@ -94,10 +94,10 @@ final class EvaluationTracker {
 	}
 
 	/**
-	 * Notifies this evaluation tracker that the evaluation of the specified cell is complete. <p/>
+	 * Notifies this evaluation tracker that the evaluation of the specified cell is complete. <p>
 	 *
 	 * Every successful call to <tt>startEvaluate</tt> must be followed by a call to <tt>endEvaluate</tt> (recommended in a finally block) to enable
-	 * proper tracking of which cells are being evaluated at any point in time.<p/>
+	 * proper tracking of which cells are being evaluated at any point in time.<p>
 	 *
 	 * Assuming a well behaved client, parameters to this method would not be
 	 * required. However, they have been included to assert correct behaviour,

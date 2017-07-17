@@ -26,7 +26,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 public final class AreaReference extends org.apache.poi.ss.util.AreaReference {
     /**
      * Create an area ref from a string representation.  Sheet names containing special characters should be
-     * delimited and escaped as per normal syntax rules for formulas.<br/> 
+     * delimited and escaped as per normal syntax rules for formulas.<br> 
      * The area reference must be contiguous (i.e. represent a single rectangle, not a union of rectangles)
      */
     public AreaReference(String reference) {

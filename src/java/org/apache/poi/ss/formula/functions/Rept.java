@@ -24,10 +24,10 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel REPT () function.<p/>
- * <p/>
- * <b>Syntax</b>:<br/> <b>REPT  </b>(<b>text</b>,<b>number_times</b> )<br/>
- * <p/>
+ * Implementation for Excel REPT () function.<p>
+ * <p>
+ * <b>Syntax</b>:<br> <b>REPT  </b>(<b>text</b>,<b>number_times</b> )<br>
+ * <p>
  * Repeats text a given number of times. Use REPT to fill a cell with a number of instances of a text string.
  *
  * text : text The text that you want to repeat.

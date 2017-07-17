@@ -30,7 +30,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * <p>A Paragraph within a Document, Table, Header etc.</p>
- * <p/>
+ * <p>
  * <p>A paragraph has a lot of styling information, but the
  * actual text (possibly along with more styling) is held on
  * the child {@link XWPFRun}s.</p>
@@ -428,8 +428,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Returns the paragraph alignment which shall be applied to text in this
      * paragraph.
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * If this element is not set on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -448,8 +448,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the paragraph alignment which shall be applied to text in this
      * paragraph.
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * If this element is not set on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -483,12 +483,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Returns the text vertical alignment which shall be applied to text in
      * this paragraph.
-     * <p/>
+     * <p>
      * If the line height (before any added spacing) is larger than one or more
      * characters on the line, all characters will be aligned to each other as
      * specified by this element.
      * </p>
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -508,12 +508,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the text vertical alignment which shall be applied to text in
      * this paragraph.
-     * <p/>
+     * <p>
      * If the line height (before any added spacing) is larger than one or more
      * characters on the line, all characters will be aligned to each other as
      * specified by this element.
      * </p>
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -554,8 +554,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the border which shall be displayed above a set of paragraphs
      * which have the same set of paragraph border settings.
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * To determine if any two adjoining paragraphs shall have an individual top
      * and bottom border or a between border, the set of borders on the two
      * adjoining paragraphs are compared. If the border information on those two
@@ -566,7 +566,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * determines the space above the text (ignoring any spacing above) which
      * should be left before this border is drawn, specified in points.
      * </p>
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -613,7 +613,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the border which shall be displayed below a set of paragraphs
      * which have the same set of paragraph border settings.
-     * <p/>
+     * <p>
      * To determine if any two adjoining paragraphs shall have an individual top
      * and bottom border or a between border, the set of borders on the two
      * adjoining paragraphs are compared. If the border information on those two
@@ -625,7 +625,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * below) which should be left before this border is drawn, specified in
      * points.
      * </p>
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -668,7 +668,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the border which shall be displayed on the left side of the
      * page around the specified paragraph.
-     * <p/>
+     * <p>
      * To determine if any two adjoining paragraphs should have a left border
      * which spans the full line height or not, the left border shall be drawn
      * between the top border or between border at the top (whichever would be
@@ -676,7 +676,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * border at the bottom (whichever would be rendered for the current
      * paragraph).
      * </p>
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -718,7 +718,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the border which shall be displayed on the right side of the
      * page around the specified paragraph.
-     * <p/>
+     * <p>
      * To determine if any two adjoining paragraphs should have a right border
      * which spans the full line height or not, the right border shall be drawn
      * between the top border or between border at the top (whichever would be
@@ -726,7 +726,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * border at the bottom (whichever would be rendered for the current
      * paragraph).
      * </p>
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -768,7 +768,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the border which shall be displayed between each paragraph in a
      * set of paragraphs which have the same set of paragraph border settings.
-     * <p/>
+     * <p>
      * To determine if any two adjoining paragraphs should have a between border
      * or an individual top and bottom border, the set of borders on the two
      * adjoining paragraphs are compared. If the border information on those two
@@ -779,7 +779,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * bottom of each paragraph with an identical following paragraph, taking
      * into account any space after the line pitch.
      * </p>
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph, its value is determined
      * by the setting previously set at any level of the style hierarchy (i.e.
      * that previous setting remains unchanged). If this setting is never
@@ -805,7 +805,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Specifies that when rendering this document in a paginated
      * view, the contents of this paragraph are rendered on the start of a new
      * page in the document.
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph,
      * its value is determined by the setting previously set at any level of the
      * style hierarchy (i.e. that previous setting remains unchanged). If this
@@ -847,7 +847,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Specifies that when rendering this document in a paginated
      * view, the contents of this paragraph are rendered on the start of a new
      * page in the document.
-     * <p/>
+     * <p>
      * If this element is omitted on a given paragraph,
      * its value is determined by the setting previously set at any level of the
      * style hierarchy (i.e. that previous setting remains unchanged). If this
@@ -884,7 +884,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the spacing that should be added after the last line in this
      * paragraph in the document in absolute units.
-     * <p/>
+     * <p>
      * If the afterLines attribute or the afterAutoSpacing attribute is also
      * specified, then this attribute value is ignored.
      * </p>
@@ -920,7 +920,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * <b>The value of this attribute is
      * specified in one hundredths of a line.
      * </b>
-     * <p/>
+     * <p>
      * If the afterAutoSpacing attribute
      * is also specified, then this attribute value is ignored. If this setting
      * is never specified in the style hierarchy, then its value shall be zero
@@ -952,7 +952,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     /**
      * Specifies the spacing that should be added above the first line in this
      * paragraph in the document in absolute units.
-     * <p/>
+     * <p>
      * If the beforeLines attribute or the beforeAutoSpacing attribute is also
      * specified, then this attribute value is ignored.
      * </p>
@@ -982,7 +982,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Specifies the spacing that should be added before the first line in this
      * paragraph in the document in line units. <b> The value of this attribute
      * is specified in one hundredths of a line. </b>
-     * <p/>
+     * <p>
      * If the beforeAutoSpacing attribute is also specified, then this attribute
      * value is ignored. If this setting is never specified in the style
      * hierarchy, then its value shall be zero.
@@ -1084,7 +1084,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * margin for this paragraph and the left edge of that paragraph's content
      * in a left to right paragraph, and the right text margin and the right
      * edge of that paragraph's text in a right to left paragraph
-     * <p/>
+     * <p>
      * If this attribute is omitted, its value shall be assumed to be zero.
      * Negative values are defined such that the text is moved past the text margin,
      * positive values move the text inside the text margin.
@@ -1103,7 +1103,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * margin for this paragraph and the left edge of that paragraph's content
      * in a left to right paragraph, and the right text margin and the right
      * edge of that paragraph's text in a right to left paragraph
-     * <p/>
+     * <p>
      * If this attribute is omitted, its value shall be assumed to be zero.
      * Negative values are defined such that the text is moved past the text margin,
      * positive values move the text inside the text margin.
@@ -1122,7 +1122,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * margin for this paragraph and the right edge of that paragraph's content
      * in a left to right paragraph, and the right text margin and the right
      * edge of that paragraph's text in a right to left paragraph
-     * <p/>
+     * <p>
      * If this attribute is omitted, its value shall be assumed to be zero.
      * Negative values are defined such that the text is moved past the text margin,
      * positive values move the text inside the text margin.
@@ -1142,7 +1142,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * margin for this paragraph and the right edge of that paragraph's content
      * in a left to right paragraph, and the right text margin and the right
      * edge of that paragraph's text in a right to left paragraph
-     * <p/>
+     * <p>
      * If this attribute is omitted, its value shall be assumed to be zero.
      * Negative values are defined such that the text is moved past the text margin,
      * positive values move the text inside the text margin.
@@ -1180,7 +1180,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * towards the beginning of the direction of text flow.
      * This indentation is specified relative to the paragraph indentation which is specified for
      * all other lines in the parent paragraph.
-     * <p/>
+     * <p>
      * The firstLine and hanging attributes are mutually exclusive, if both are specified, then the
      * firstLine value is ignored.
      * </p>

@@ -214,17 +214,17 @@ public final class TestValueRecordsAggregate {
 	 * Sometimes the 'shared formula' flag (<tt>FormulaRecord.isSharedFormula()</tt>) is set when
 	 * there is no corresponding SharedFormulaRecord available. SharedFormulaRecord definitions do
 	 * not span multiple sheets.  They are are only defined within a sheet, and thus they do not
-	 * have a sheet index field (only row and column range fields).<br/>
+	 * have a sheet index field (only row and column range fields).<br>
 	 * So it is important that the code which locates the SharedFormulaRecord for each
 	 * FormulaRecord does not allow matches across sheets.</br>
 	 *
 	 * Prior to bugzilla 44449 (Feb 2008), POI <tt>ValueRecordsAggregate.construct(int, List)</tt>
 	 * allowed <tt>SharedFormulaRecord</tt>s to be erroneously used across sheets.  That incorrect
-	 * behaviour is shown by this test.<p/>
+	 * behaviour is shown by this test.<p>
 	 *
 	 * <b>Notes on how to produce the test spreadsheet</b>:</p>
 	 * The setup for this test (AbnormalSharedFormulaFlag.xls) is rather fragile, insomuchas
-	 * re-saving the file (either with Excel or POI) clears the flag.<br/>
+	 * re-saving the file (either with Excel or POI) clears the flag.<br>
 	 * <ol>
 	 * <li>A new spreadsheet was created in Excel (File | New | Blank Workbook).</li>
 	 * <li>Sheet3 was deleted.</li>
@@ -234,9 +234,9 @@ public final class TestValueRecordsAggregate {
 	 * <li>The spreadsheet was saved as AbnormalSharedFormulaFlag.xls.</li>
 	 * </ol>
 	 * Prior to the row delete action the spreadsheet has two <tt>SharedFormulaRecord</tt>s. One
-	 * for each sheet. To expose the bug, the shared formulas have been made to overlap.<br/>
+	 * for each sheet. To expose the bug, the shared formulas have been made to overlap.<br>
 	 * The row delete action (as described here) seems to to delete the
-	 * <tt>SharedFormulaRecord</tt> from Sheet1 (but not clear the 'shared formula' flags.<br/>
+	 * <tt>SharedFormulaRecord</tt> from Sheet1 (but not clear the 'shared formula' flags.<br>
 	 * There are other variations on this theme to create the same effect.
 	 *
 	 */

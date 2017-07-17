@@ -142,9 +142,9 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 		}
 
 		/**
-		 * Read a GUID in standard text form e.g.<br/>
+		 * Read a GUID in standard text form e.g.<br>
 		 * 13579BDF-0246-8ACE-0123-456789ABCDEF 
-		 * <br/> -&gt; <br/>
+		 * <br> -&gt; <br>
 		 *  0x13579BDF, 0x0246, 0x8ACE 0x0123456789ABCDEF
 		 */
 		public static GUID parse(String rep) {
@@ -240,7 +240,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     private String _address;
     /**
      * Text describing a place in document.  In Excel UI, this is appended to the
-     * address, (after a '#' delimiter).<br/>
+     * address, (after a '#' delimiter).<br>
      * This field is optional.  If present, the {@link #HLINK_PLACE} must be set.
      */
     private String _textMark;

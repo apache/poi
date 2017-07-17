@@ -116,7 +116,7 @@ final class StatsLib {
      * returns the kth largest element in the array. Duplicates
      * are considered as distinct values. Hence, eg.
      * for array {1,2,4,3,3} & k=2, returned value is 3.
-     * <br/>
+     * <br>
      * k <= 0 & k >= v.length and null or empty arrays
      * will result in return value Double.NaN
      */
@@ -134,7 +134,7 @@ final class StatsLib {
      * returns the kth smallest element in the array. Duplicates
      * are considered as distinct values. Hence, eg.
      * for array {1,1,2,4,3,3} & k=2, returned value is 1.
-     * <br/>
+     * <br>
      * k <= 0 & k >= v.length or null array or empty array
      * will result in return value Double.NaN
      * @param v

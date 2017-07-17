@@ -63,7 +63,7 @@ public class HwmfBitmapDib {
         BI_BITCOUNT_3(0x0008),
         /**
          * Each pixel in the bitmap is represented by a 16-bit value.
-         * <br/>
+         * <br>
          * If the Compression field of the BitmapInfoHeader Object is BI_RGB, the Colors field of DIB
          *  is NULL. Each WORD in the bitmap array represents a single pixel. The relative intensities of
          *  red, green, and blue are represented with 5 bits for each color component. The value for blue
@@ -71,11 +71,11 @@ public class HwmfBitmapDib {
          *  bit is not used. The color table is used for optimizing colors on palette-based devices, and
          *  contains the number of entries specified by the ColorUsed field of the BitmapInfoHeader
          *  Object.
-         * <br/>
+         * <br>
          * If the Compression field of the BitmapInfoHeader Object is BI_BITFIELDS, the Colors field
          *  contains three DWORD color masks that specify the red, green, and blue components,
          *  respectively, of each pixel. Each WORD in the bitmap array represents a single pixel.
-         * <br/>
+         * <br>
          * When the Compression field is set to BI_BITFIELDS, bits set in each DWORD mask MUST be
          *  contiguous and SHOULD NOT overlap the bits of another mask.
          */
@@ -90,18 +90,18 @@ public class HwmfBitmapDib {
         BI_BITCOUNT_5(0x0018),
         /**
          * The bitmap has a maximum of 2^24 colors.
-         * <br/>
+         * <br>
          * If the Compression field of the BitmapInfoHeader Object is set to BI_RGB, the Colors field
          *  of DIB is set to NULL. Each DWORD in the bitmap array represents the relative intensities of
          *  blue, green, and red, respectively, for a pixel. The high byte in each DWORD is not used. The
          *  Colors color table is used for optimizing colors used on palette-based devices, and MUST
          *  contain the number of entries specified by the ColorUsed field of the BitmapInfoHeader
          *  Object.
-         * <br/>
+         * <br>
          * If the Compression field of the BitmapInfoHeader Object is set to BI_BITFIELDS, the Colors
          *  field contains three DWORD color masks that specify the red, green, and blue components,
          *  respectively, of each pixel. Each DWORD in the bitmap array represents a single pixel.
-         * <br/>
+         * <br>
          * When the Compression field is set to BI_BITFIELDS, bits set in each DWORD mask must be
          *  contiguous and should not overlap the bits of another mask. All the bits in the pixel do not
          *  need to be used.

@@ -54,7 +54,7 @@ public class HSLFTestDataSamples {
 
 	/**
 	 * Writes a slideshow to a <tt>ByteArrayOutputStream</tt> and reads it back
-	 * from a <tt>ByteArrayInputStream</tt>.<p/>
+	 * from a <tt>ByteArrayInputStream</tt>.<p>
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSLFSlideShowImpl writeOutAndReadBack(HSLFSlideShowImpl original) {
@@ -70,7 +70,7 @@ public class HSLFTestDataSamples {
 
 	/**
 	 * Writes a slideshow to a <tt>ByteArrayOutputStream</tt> and reads it back
-	 * from a <tt>ByteArrayInputStream</tt>.<p/>
+	 * from a <tt>ByteArrayInputStream</tt>.<p>
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSLFSlideShow writeOutAndReadBack(HSLFSlideShow original) {

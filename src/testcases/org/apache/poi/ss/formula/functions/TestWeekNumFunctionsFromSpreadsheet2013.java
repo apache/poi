@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests WeekNum() as loaded from a test data 2013 excel spreadsheet.<p/>
+ * Tests WeekNum() as loaded from a test data 2013 excel spreadsheet.<p>
  */
 public class TestWeekNumFunctionsFromSpreadsheet2013 extends BaseTestFunctionsFromSpreadsheet {
     @Parameters(name="{0}")

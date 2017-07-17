@@ -22,7 +22,7 @@ import org.apache.poi.ss.formula.functions.Function;
 
 
 /**
- * Implementation of Excel formula token '%'. <p/>
+ * Implementation of Excel formula token '%'. <p>
  * @author Josh Micich
  */
 public final class PercentEval extends Fixed1ArgFunction {

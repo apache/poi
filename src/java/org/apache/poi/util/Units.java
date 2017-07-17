@@ -50,9 +50,9 @@ public class Units {
      * Width of one "standard character" of the default font in pixels. Same for Calibri and Arial.
      * "Standard character" defined as the widest digit character in the given font.
      * Copied from XSSFWorkbook, since that isn't available here.
-     * <p/>
+     * <p>
      * Note this is only valid for workbooks using the default Excel font.
-     * <p/>
+     * <p>
      * Would be nice to eventually support arbitrary document default fonts.
      */
     public static final float DEFAULT_CHARACTER_WIDTH = 7.0017f;

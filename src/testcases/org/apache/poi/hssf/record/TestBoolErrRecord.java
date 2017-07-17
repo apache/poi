@@ -44,7 +44,7 @@ public final class TestBoolErrRecord extends TestCase {
 
 	/**
 	 * Bugzilla 47479 was due to an apparent error in OOO which (as of version 3.0.1) 
-	 * writes the <i>value</i> field of BOOLERR records as 2 bytes instead of 1.<br/>
+	 * writes the <i>value</i> field of BOOLERR records as 2 bytes instead of 1.<br>
 	 * Coincidentally, the extra byte written is zero, which is exactly the value 
 	 * required by the <i>isError</i> field.  This probably why Excel seems to have
 	 * no problem.  OOO does not have the same bug for error values (which wouldn't

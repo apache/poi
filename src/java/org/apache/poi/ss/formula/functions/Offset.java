@@ -25,18 +25,18 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 /**
- * Implementation for Excel function OFFSET()<p/>
+ * Implementation for Excel function OFFSET()<p>
  *
  * OFFSET returns an area reference that is a specified number of rows and columns from a
- * reference cell or area.<p/>
+ * reference cell or area.<p>
  *
- * <b>Syntax</b>:<br/>
- * <b>OFFSET</b>(<b>reference</b>, <b>rows</b>, <b>cols</b>, height, width)<p/>
- * <b>reference</b> is the base reference.<br/>
- * <b>rows</b> is the number of rows up or down from the base reference.<br/>
- * <b>cols</b> is the number of columns left or right from the base reference.<br/>
- * <b>height</b> (default same height as base reference) is the row count for the returned area reference.<br/>
- * <b>width</b> (default same width as base reference) is the column count for the returned area reference.<br/>
+ * <b>Syntax</b>:<br>
+ * <b>OFFSET</b>(<b>reference</b>, <b>rows</b>, <b>cols</b>, height, width)<p>
+ * <b>reference</b> is the base reference.<br>
+ * <b>rows</b> is the number of rows up or down from the base reference.<br>
+ * <b>cols</b> is the number of columns left or right from the base reference.<br>
+ * <b>height</b> (default same height as base reference) is the row count for the returned area reference.<br>
+ * <b>width</b> (default same width as base reference) is the column count for the returned area reference.<br>
  *
  * @author Josh Micich
  */
@@ -71,11 +71,11 @@ public final class Offset implements Function {
 			return (short) (_offset + _length - 1);
 		}
 		/**
-		 * Moves the range by the specified translation amount.<p/>
+		 * Moves the range by the specified translation amount.<p>
 		 *
 		 * This method also 'normalises' the range: Excel specifies that the width and height
 		 * parameters (length field here) cannot be negative.  However, OFFSET() does produce
-		 * sensible results in these cases.  That behavior is replicated here. <p/>
+		 * sensible results in these cases.  That behavior is replicated here. <p>
 		 *
 		 * @param translationAmount may be zero negative or positive
 		 *

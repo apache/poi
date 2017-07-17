@@ -67,7 +67,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * <p>High(ish) level class for working with .docx files.</p>
- * <p/>
+ * <p>
  * <p>This class tries to hide some of the complexity
  * of the underlying file format, but as it's not a
  * mature and stable API yet, certain parts of the
@@ -969,9 +969,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 	
 	/**
-     * Verifies that the documentProtection tag in settings.xml file <br/>
-     * specifies that the protection is enforced (w:enforcement="1") <br/>
-     * <br/>
+     * Verifies that the documentProtection tag in settings.xml file <br>
+     * specifies that the protection is enforced (w:enforcement="1") <br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -985,10 +985,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Verifies that the documentProtection tag in settings.xml file <br/>
-     * specifies that the protection is enforced (w:enforcement="1") <br/>
-     * and that the kind of protection is readOnly (w:edit="readOnly")<br/>
-     * <br/>
+     * Verifies that the documentProtection tag in settings.xml file <br>
+     * specifies that the protection is enforced (w:enforcement="1") <br>
+     * and that the kind of protection is readOnly (w:edit="readOnly")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1002,10 +1002,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Verifies that the documentProtection tag in settings.xml file <br/>
-     * specifies that the protection is enforced (w:enforcement="1") <br/>
-     * and that the kind of protection is forms (w:edit="forms")<br/>
-     * <br/>
+     * Verifies that the documentProtection tag in settings.xml file <br>
+     * specifies that the protection is enforced (w:enforcement="1") <br>
+     * and that the kind of protection is forms (w:edit="forms")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1019,10 +1019,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Verifies that the documentProtection tag in settings.xml file <br/>
-     * specifies that the protection is enforced (w:enforcement="1") <br/>
-     * and that the kind of protection is comments (w:edit="comments")<br/>
-     * <br/>
+     * Verifies that the documentProtection tag in settings.xml file <br>
+     * specifies that the protection is enforced (w:enforcement="1") <br>
+     * and that the kind of protection is comments (w:edit="comments")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1036,10 +1036,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Verifies that the documentProtection tag in settings.xml file <br/>
-     * specifies that the protection is enforced (w:enforcement="1") <br/>
-     * and that the kind of protection is trackedChanges (w:edit="trackedChanges")<br/>
-     * <br/>
+     * Verifies that the documentProtection tag in settings.xml file <br>
+     * specifies that the protection is enforced (w:enforcement="1") <br>
+     * and that the kind of protection is trackedChanges (w:edit="trackedChanges")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1057,11 +1057,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforces the readOnly protection.<br/>
-     * In the documentProtection tag inside settings.xml file, <br/>
-     * it sets the value of enforcement to "1" (w:enforcement="1") <br/>
-     * and the value of edit to readOnly (w:edit="readOnly")<br/>
-     * <br/>
+     * Enforces the readOnly protection.<br>
+     * In the documentProtection tag inside settings.xml file, <br>
+     * it sets the value of enforcement to "1" (w:enforcement="1") <br>
+     * and the value of edit to readOnly (w:edit="readOnly")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1073,8 +1073,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforces the readOnly protection with a password.<br/>
-     * <br/>
+     * Enforces the readOnly protection with a password.<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *   &lt;w:documentProtection w:edit=&quot;readOnly&quot; w:enforcement=&quot;1&quot;
@@ -1093,11 +1093,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforce the Filling Forms protection.<br/>
-     * In the documentProtection tag inside settings.xml file, <br/>
-     * it sets the value of enforcement to "1" (w:enforcement="1") <br/>
-     * and the value of edit to forms (w:edit="forms")<br/>
-     * <br/>
+     * Enforce the Filling Forms protection.<br>
+     * In the documentProtection tag inside settings.xml file, <br>
+     * it sets the value of enforcement to "1" (w:enforcement="1") <br>
+     * and the value of edit to forms (w:edit="forms")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1109,8 +1109,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforce the Filling Forms protection.<br/>
-     * <br/>
+     * Enforce the Filling Forms protection.<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *   &lt;w:documentProtection w:edit=&quot;forms&quot; w:enforcement=&quot;1&quot;
@@ -1129,11 +1129,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforce the Comments protection.<br/>
-     * In the documentProtection tag inside settings.xml file,<br/>
-     * it sets the value of enforcement to "1" (w:enforcement="1") <br/>
-     * and the value of edit to comments (w:edit="comments")<br/>
-     * <br/>
+     * Enforce the Comments protection.<br>
+     * In the documentProtection tag inside settings.xml file,<br>
+     * it sets the value of enforcement to "1" (w:enforcement="1") <br>
+     * and the value of edit to comments (w:edit="comments")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1145,8 +1145,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforce the Comments protection.<br/>
-     * <br/>
+     * Enforce the Comments protection.<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *   &lt;w:documentProtection w:edit=&quot;comments&quot; w:enforcement=&quot;1&quot;
@@ -1165,11 +1165,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforce the Tracked Changes protection.<br/>
-     * In the documentProtection tag inside settings.xml file, <br/>
-     * it sets the value of enforcement to "1" (w:enforcement="1") <br/>
-     * and the value of edit to trackedChanges (w:edit="trackedChanges")<br/>
-     * <br/>
+     * Enforce the Tracked Changes protection.<br>
+     * In the documentProtection tag inside settings.xml file, <br>
+     * it sets the value of enforcement to "1" (w:enforcement="1") <br>
+     * and the value of edit to trackedChanges (w:edit="trackedChanges")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -1181,8 +1181,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Enforce the Tracked Changes protection.<br/>
-     * <br/>
+     * Enforce the Tracked Changes protection.<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *   &lt;w:documentProtection w:edit=&quot;trackedChanges&quot; w:enforcement=&quot;1&quot;
@@ -1211,9 +1211,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Remove protection enforcement.<br/>
-     * In the documentProtection tag inside settings.xml file <br/>
-     * it sets the value of enforcement to "0" (w:enforcement="0") <br/>
+     * Remove protection enforcement.<br>
+     * In the documentProtection tag inside settings.xml file <br>
+     * it sets the value of enforcement to "0" (w:enforcement="0") <br>
      */
     public void removeProtectionEnforcement() {
         settings.removeEnforcement();
@@ -1221,9 +1221,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * Enforces fields update on document open (in Word).
-     * In the settings.xml file <br/>
+     * In the settings.xml file <br>
      * sets the updateSettings value to true (w:updateSettings w:val="true")
-     * <p/>
+     * <p>
      * NOTICES:
      * <ul>
      * <li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"

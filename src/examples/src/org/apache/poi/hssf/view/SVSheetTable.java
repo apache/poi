@@ -64,11 +64,11 @@ public class SVSheetTable extends JTable {
   /**
    * This field is the magic number to convert from a Character width to a java
    * pixel width.
-   * <p/>
+   * <p>
    * When the "normal" font size in a workbook changes, this effects all of the
    * heights and widths. Unfortunately there is no way to retrieve this
    * information, hence the MAGIC number.
-   * <p/>
+   * <p>
    * This number may only work for the normal style font size of Arial size 10.
    */
   private static final int magicCharFactor = 7;

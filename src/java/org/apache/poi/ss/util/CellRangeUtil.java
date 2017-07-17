@@ -41,7 +41,7 @@ public final class CellRangeUtil {
      * Get the type of intersection between two cell ranges
      * 
      * @param crB - the specified range
-     * @return code which reflects how the specified range is related to this range.<br/>
+     * @return code which reflects how the specified range is related to this range.<br>
      * Possible return codes are:
      * <ul>
      *     <li>{@link #NO_INTERSECTION} - the specified range is outside of this range;</li> 
@@ -81,7 +81,7 @@ public final class CellRangeUtil {
     }
 
     /**
-     * Do all possible cell merges between cells of the list so that:<br/>
+     * Do all possible cell merges between cells of the list so that:<br>
      * <ul>
      *   <li>if a cell range is completely inside of another cell range, it gets removed from the list</li>
      *   <li>if two cells have a shared border, merge them into one bigger cell range</li>

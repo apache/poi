@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The bar record is used to define a bar chart.<p/>
+ * The bar record is used to define a bar chart.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

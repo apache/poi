@@ -31,9 +31,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 /**
  * Experimental class to offer rudimentary read-only processing of
  * of the contentblock of an SDT/ContentControl.
- * <p/>
- * <p/>
- * <p/>
+ * <p>
+ * <p>
+ * <p>
  * WARNING - APIs expected to change rapidly
  */
 public class XWPFSDTContent implements ISDTContent {

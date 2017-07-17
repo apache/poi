@@ -34,7 +34,7 @@ import org.w3c.dom.Node;
 /**
  * This class implements the Map element (Open Office XML Part 4:
  * chapter 3.16.2)
- * <p/>
+ * <p>
  * This element contains all of the properties related to the XML map,
  * and the behaviors expected during data refresh operations.
  *

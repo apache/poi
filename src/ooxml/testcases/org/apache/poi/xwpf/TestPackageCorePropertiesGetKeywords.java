@@ -29,7 +29,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  * submitted because even though the
  * {@link PackageProperties#getKeywordsProperty()} had been present before, the
  * {@link CoreProperties#getKeywords()} had been missing.
- * <p/>
+ * <p>
  * The author of this has added {@link CoreProperties#getKeywords()} and
  * {@link CoreProperties#setKeywords(String)} and this test is supposed to test
  * them.

@@ -46,7 +46,7 @@ import org.xml.sax.XMLReader;
  * org.apache.poi.hssf.eventusermodel.examples.
  * As with the HSSF version, this tries to spot missing
  *  rows and cells, and output empty entries for them.
- * <p/>
+ * <p>
  * Data sheets are read using a SAX parser to keep the
  * memory footprint relatively small, so this should be
  * able to read enormous workbooks.  The styles table and
@@ -55,7 +55,7 @@ import org.xml.sax.XMLReader;
  * (read-only) class is used for the shared string table
  * because the standard POI SharedStringsTable grows very
  * quickly with the number of unique strings.
- * <p/>
+ * <p>
  * For a more advanced implementation of SAX event parsing
  * of XLSX files, see {@link XSSFEventBasedExcelExtractor}
  * and {@link XSSFSheetXMLHandler}. Note that for many cases,

@@ -136,7 +136,7 @@ public final class RecordFactory {
     private static final Class<?>[] CONSTRUCTOR_ARGS = { RecordInputStream.class, };
 
     /**
-     * contains the classes for all the records we want to parse.<br/>
+     * contains the classes for all the records we want to parse.<br>
      * Note - this most but not *every* subclass of Record.
      */
     @SuppressWarnings("unchecked")

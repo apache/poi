@@ -44,7 +44,7 @@ public final class TestSharedValueManager extends TestCase {
 	 * ranges.  The first sheet has one row and one column shared formula ranges which intersect.
 	 * The second sheet has two column shared formula ranges - one contained within the other.
 	 * These shared formula ranges were created by fill-dragging a single cell formula across the
-	 * desired region.  The larger shared formula ranges were placed first.<br/>
+	 * desired region.  The larger shared formula ranges were placed first.<br>
 	 *
 	 * There are probably many ways to produce similar effects, but it should be noted that Excel
 	 * is quite temperamental in this regard.  Slight variations in technique can cause the shared
@@ -58,7 +58,7 @@ public final class TestSharedValueManager extends TestCase {
 	 * the bugs depended on the {@link SharedFormulaRecord}s being searched in a particular order.
 	 * At the time of writing of the test, the order was being determined by the call to {@link
 	 * Collection#toArray(Object[])} on {@link HashMap#values()} where the items in the map were
-	 * using default {@link Object#hashCode()}<br/>
+	 * using default {@link Object#hashCode()}<br>
 	 */
 	private static final int MAX_ATTEMPTS=5;
 
@@ -95,7 +95,7 @@ public final class TestSharedValueManager extends TestCase {
 
 	/**
 	 * This bug occurs for similar reasons to the bug in {@link #testPartiallyOverlappingRanges()}
-	 * but the symptoms are much uglier - serialization fails with {@link NullPointerException}.<br/>
+	 * but the symptoms are much uglier - serialization fails with {@link NullPointerException}.<br>
 	 */
 	public void testCompletelyOverlappedRanges() {
 		Record[] records;
@@ -128,7 +128,7 @@ public final class TestSharedValueManager extends TestCase {
 	 * records.  Prior to this fix, POI would attempt to use the upper left corner of the
 	 * shared formula range as the locator cell.  The correct cell to use is the 'first cell'
 	 * in the shared formula group which is not always the top left cell.  This is possible
-	 * because shared formula groups may be sparse and may overlap.<br/>
+	 * because shared formula groups may be sparse and may overlap.<br>
 	 *
 	 * Two existing sample files (15228.xls and ex45046-21984.xls) had similar issues.
 	 * These were not explored fully, but seem to be fixed now.

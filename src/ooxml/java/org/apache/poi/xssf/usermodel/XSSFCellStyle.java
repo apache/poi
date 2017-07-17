@@ -364,7 +364,7 @@ public class XSSFCellStyle implements CellStyle {
 
     /**
      * Get the color to use for the bottom border
-     * <br/>
+     * <br>
      * Color is optional. When missing, IndexedColors.AUTOMATIC is implied.
      * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#AUTOMATIC}
      * @see org.apache.poi.ss.usermodel.IndexedColors
@@ -666,10 +666,10 @@ public class XSSFCellStyle implements CellStyle {
      * <p>
      * Expressed in degrees. Values range from 0 to 180. The first letter of
      * the text is considered the center-point of the arc.
-     * <br/>
+     * <br>
      * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
      * horizon is calculated as:
-     * <br/>
+     * <br>
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *
@@ -960,7 +960,7 @@ public class XSSFCellStyle implements CellStyle {
 
     /**
     * Set the foreground fill color represented as a {@link XSSFColor} value.
-     * <br/>
+     * <br>
     * <i>Note: Ensure Foreground color is set prior to background color.</i>
     * @param color the color to use
     * @see #setFillBackgroundColor(org.apache.poi.xssf.usermodel.XSSFColor) )
@@ -981,7 +981,7 @@ public class XSSFCellStyle implements CellStyle {
 
     /**
      * Set the foreground fill color as a indexed color value
-     * <br/>
+     * <br>
      * <i>Note: Ensure Foreground color is set prior to background color.</i>
      * @param fg the color to use
      * @see org.apache.poi.ss.usermodel.IndexedColors
@@ -1181,10 +1181,10 @@ public class XSSFCellStyle implements CellStyle {
      * <p>
      * Expressed in degrees. Values range from 0 to 180. The first letter of
      * the text is considered the center-point of the arc.
-     * <br/>
+     * <br>
      * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
      * horizon is calculated as:
-     * <br/>
+     * <br>
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *

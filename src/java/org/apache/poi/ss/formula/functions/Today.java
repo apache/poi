@@ -25,7 +25,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
- * Implementation of Excel TODAY() Function<br/>
+ * Implementation of Excel TODAY() Function<br>
  */
 public final class Today extends Fixed0ArgFunction {
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {

@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula;
 
 /**
  * Should be implemented by any {@link org.apache.poi.ss.formula.ptg.Ptg} subclass that needs a workbook to render its formula.
- * <br/>
+ * <br>
  *
  * For POI internal use only
  *

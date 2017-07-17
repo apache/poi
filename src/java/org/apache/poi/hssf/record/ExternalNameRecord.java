@@ -47,7 +47,7 @@ public final class ExternalNameRecord extends StandardRecord {
 
 	/**
 	 * 'rgoper' / 'Last received results of the DDE link'
-	 * (seems to be only applicable to DDE links)<br/>
+	 * (seems to be only applicable to DDE links)<br>
 	 * Logically this is a 2-D array, which has been flattened into 1-D array here.
 	 */
 	private Object[] _ddeValues;

@@ -372,8 +372,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Whether the bold property shall be applied to all non-complex script
      * characters in the contents of this run when displayed in a document
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * This formatting property is a toggle property, which specifies that its
      * behavior differs between its use within a style definition and its use as
      * direct formatting. When used as part of a style definition, setting this
@@ -384,7 +384,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * direct formatting, setting this property to true or false shall set the
      * absolute state of the resulting property.
      * </p>
-     * <p/>
+     * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then bold shall not be
@@ -417,8 +417,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Specifies that the contents of this run should be displayed along with an
      * underline appearing directly below the character heigh
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then an underline shall
@@ -451,7 +451,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Specifies that the contents of this run shall be displayed with a single
      * horizontal line through the center of the line.
-     * <p/>
+     * <p>
      * This formatting property is a toggle property, which specifies that its
      * behaviour differs between its use within a style definition and its use as
      * direct formatting. When used as part of a style definition, setting this
@@ -462,7 +462,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * formatting, setting this property to true or false shall set the absolute
      * state of the resulting property.
      * </p>
-     * <p/>
+     * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then strikethrough shall
@@ -597,7 +597,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * run in relation to the default appearance of the run's text. This allows
      * the text to be repositioned as subscript or superscript without altering
      * the font size of the run properties.
-     * <p/>
+     * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then the text shall not
@@ -666,7 +666,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Specifies the fonts which shall be used to display the text contents of
      * this run. Specifies a font which shall be used to format all characters
      * in the ASCII range (0 - 127) within the parent run.
-     * <p/>
+     * <p>
      * Also sets the other font ranges, if they haven't been set before
      *
      * @param fontFamily
@@ -764,7 +764,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Specifies the font size which shall be applied to all non complex script
      * characters in the contents of this run when displayed.
-     * <p/>
+     * <p>
      * If this element is not present, the default value is to leave the value
      * applied at previous level in the style hierarchy. If this element is
      * never applied in the style hierarchy, then any appropriate font size may
@@ -799,14 +799,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * lowered for this run in relation to the default baseline of the
      * surrounding non-positioned text. This allows the text to be repositioned
      * without altering the font size of the contents.
-     * <p/>
+     * <p>
      * If the val attribute is positive, then the parent run shall be raised
      * above the baseline of the surrounding text by the specified number of
      * half-points. If the val attribute is negative, then the parent run shall
      * be lowered below the baseline of the surrounding text by the specified
      * number of half-points.
      * </p>
-     * <p/>
+     * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then the text shall not

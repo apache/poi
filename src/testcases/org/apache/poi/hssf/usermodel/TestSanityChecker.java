@@ -33,7 +33,7 @@ import org.apache.poi.hssf.usermodel.SanityChecker.CheckRecord;
 import org.junit.Test;
 
 /**
- * A Test case for a test utility class.<br/>
+ * A Test case for a test utility class.<br>
  * Okay, this may seem strange but I need to test my test logic.
  *
  * @author Glen Stampoultzis (glens at apache.org)

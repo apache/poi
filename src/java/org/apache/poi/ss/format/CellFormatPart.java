@@ -35,12 +35,12 @@ import static org.apache.poi.ss.format.CellFormatter.quote;
  * Objects of this class represent a single part of a cell format expression.
  * Each cell can have up to four of these for positive, zero, negative, and text
  * values.
- * <p/>
+ * <p>
  * Each format part can contain a color, a condition, and will always contain a
  * format specification.  For example <tt>"[Red][>=10]#"</tt> has a color
  * (<tt>[Red]</tt>), a condition (<tt>>=10</tt>) and a format specification
  * (<tt>#</tt>).
- * <p/>
+ * <p>
  * This class also contains patterns for matching the subparts of format
  * specification.  These are used internally, but are made public in case other
  * code has use for them.

@@ -42,7 +42,7 @@ public final class PageSettingsBlock extends RecordAggregate {
         private static final ContinueRecord[] EMPTY_CONTINUE_RECORD_ARRAY = { };
         private final Record _pls;
         /**
-         * holds any continue records found after the PLS record.<br/>
+         * holds any continue records found after the PLS record.<br>
          * This would not be required if PLS was properly interpreted.
          * Currently, PLS is an {@link UnknownRecord} and does not automatically
          * include any trailing {@link ContinueRecord}s.

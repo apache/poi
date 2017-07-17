@@ -182,12 +182,12 @@ public abstract class TextFunction implements Function {
     };
 
     /**
-	 * An implementation of the MID function<br/>
+	 * An implementation of the MID function<br>
 	 * MID returns a specific number of
-	 * characters from a text string, starting at the specified position.<p/>
+	 * characters from a text string, starting at the specified position.<p>
 	 *
-	 * <b>Syntax<b>:<br/> <b>MID</b>(<b>text</b>, <b>start_num</b>,
-	 * <b>num_chars</b>)<br/>
+	 * <b>Syntax<b>:<br> <b>MID</b>(<b>text</b>, <b>start_num</b>,
+	 * <b>num_chars</b>)<br>
 	 *
 	 * Author: Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
 	 */
@@ -294,14 +294,14 @@ public abstract class TextFunction implements Function {
 	};
 
 	/**
-	 * An implementation of the TEXT function<br/>
+	 * An implementation of the TEXT function<br>
 	 * TEXT returns a number value formatted with the given number formatting string. 
 	 * This function is not a complete implementation of the Excel function, but
 	 *  handles most of the common cases. All work is passed down to 
 	 *  {@link DataFormatter} to be done, as this works much the same as the
 	 *  display focused work that that does. 
 	 *
-	 * <b>Syntax<b>:<br/> <b>TEXT</b>(<b>value</b>, <b>format_text</b>)<br/>
+	 * <b>Syntax<b>:<br> <b>TEXT</b>(<b>value</b>, <b>format_text</b>)<br>
 	 */
 	public static final Function TEXT = new Fixed2ArgFunction() {
 
@@ -371,24 +371,24 @@ public abstract class TextFunction implements Function {
 		}
 	}
 	/**
-	 * Implementation of the FIND() function.<p/>
+	 * Implementation of the FIND() function.<p>
 	 *
-	 * <b>Syntax</b>:<br/>
-	 * <b>FIND</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p/>
+	 * <b>Syntax</b>:<br>
+	 * <b>FIND</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p>
 	 *
 	 * FIND returns the character position of the first (case sensitive) occurrence of
 	 * <tt>find_text</tt> inside <tt>within_text</tt>.  The third parameter,
 	 * <tt>start_num</tt>, is optional (default=1) and specifies where to start searching
-	 * from.  Character positions are 1-based.<p/>
+	 * from.  Character positions are 1-based.<p>
 	 *
 	 * Author: Torstein Tauno Svendsen (torstei@officenet.no)
 	 */
 	public static final Function FIND = new SearchFind(true);
 	/**
-	 * Implementation of the FIND() function.<p/>
+	 * Implementation of the FIND() function.<p>
 	 *
-	 * <b>Syntax</b>:<br/>
-	 * <b>SEARCH</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p/>
+	 * <b>Syntax</b>:<br>
+	 * <b>SEARCH</b>(<b>find_text</b>, <b>within_text</b>, start_num)<p>
 	 *
 	 * SEARCH is a case-insensitive version of FIND()
 	 */

@@ -33,7 +33,7 @@ public final class TestEqualEval extends TestCase {
 	private static final EvalInstances EI = null;
 
 	/**
-	 * Test for bug observable at svn revision 692218 (Sep 2008)<br/>
+	 * Test for bug observable at svn revision 692218 (Sep 2008)<br>
 	 * The value from a 1x1 area should be taken immediately, regardless of srcRow and srcCol
 	 */
 	public void test1x1AreaOperand() {
@@ -130,7 +130,7 @@ public final class TestEqualEval extends TestCase {
 	 * Bug 47198 involved a formula "-A1=0" where cell A1 was 0.0.
 	 * Excel evaluates "-A1=0" to TRUE, not because it thinks -0.0==0.0
 	 * but because "-A1" evaluated to +0.0
-	 * <p/>
+	 * <p>
 	 * Note - the original diagnosis of bug 47198 was that
 	 * "Excel considers -0.0 to be equal to 0.0" which is NQR
 	 * See {@link TestMinusZeroResult} for more specific tests regarding -0.0.

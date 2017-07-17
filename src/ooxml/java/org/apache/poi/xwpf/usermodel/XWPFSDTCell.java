@@ -22,9 +22,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
  * Experimental class to offer rudimentary read-only processing of
  * of StructuredDocumentTags/ContentControl that can appear
  * in a table row as if a table cell.
- * <p/>
+ * <p>
  * These can contain one or more cells or other SDTs within them.
- * <p/>
+ * <p>
  * WARNING - APIs expected to change rapidly
  */
 public class XWPFSDTCell extends AbstractXWPFSDT implements ICell {

@@ -23,10 +23,10 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
- * Implementation for Excel DELTA() function.<p/>
- * <p/>
- * <b>Syntax</b>:<br/> <b>DEC2HEX  </b>(<b>number</b>,<b>places</b> )<br/>
- * <p/>
+ * Implementation for Excel DELTA() function.<p>
+ * <p>
+ * <b>Syntax</b>:<br> <b>DEC2HEX  </b>(<b>number</b>,<b>places</b> )<br>
+ * <p>
  * Converts a decimal number to hexadecimal.
  *
  * The decimal integer you want to convert. If number is negative, places is ignored

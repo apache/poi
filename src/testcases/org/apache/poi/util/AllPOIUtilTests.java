@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Test suite for all sub-packages of org.apache.poi.util<br/>
+ * Test suite for all sub-packages of org.apache.poi.util<br>
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

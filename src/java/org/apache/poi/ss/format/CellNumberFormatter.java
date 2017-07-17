@@ -583,7 +583,7 @@ public class CellNumberFormatter extends CellFormatter {
         * the result is the original format, and that starting from that situation,
         * the indexes of the original special characters can be used to place the new
         * characters.  As just described, this is not true for the exponent's sign.
-        * <p/>
+        * <p>
         * So here is how we handle it:
         *
         * (1) When parsing the format, remove the sign from after the 'e' and put it
@@ -847,7 +847,7 @@ public class CellNumberFormatter extends CellFormatter {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * For a number, this is <tt>"#"</tt> for integer values, and <tt>"#.#"</tt>
      * for floating-point values.
      */

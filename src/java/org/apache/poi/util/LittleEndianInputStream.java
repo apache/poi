@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Wraps an {@link InputStream} providing {@link LittleEndianInput}<p/>
+ * Wraps an {@link InputStream} providing {@link LittleEndianInput}<p>
  *
  * This class does not buffer any input, so the stream read position maintained
  * by this class is consistent with that of the inner stream.

@@ -25,7 +25,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
 /**
- * Abstracts a workbook for the purpose of formula parsing.<br/>
+ * Abstracts a workbook for the purpose of formula parsing.<br>
  *
  * For POI internal use only
  *

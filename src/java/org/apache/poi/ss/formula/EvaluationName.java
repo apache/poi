@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 /**
- * Abstracts a name record for formula evaluation.<br/>
+ * Abstracts a name record for formula evaluation.<br>
  *
  * For POI internal use only
  *

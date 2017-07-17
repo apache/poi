@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests QUOTIENT() as loaded from a test data spreadsheet.<p/>
+ * Tests QUOTIENT() as loaded from a test data spreadsheet.<p>
  */
 public class TestQuotientFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     @Parameters(name="{0}")

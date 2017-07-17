@@ -395,7 +395,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     Name createName();
 
     /**
-     * Gets the defined name index by name<br/>
+     * Gets the defined name index by name<br>
      * <i>Note:</i> Excel defined names are case-insensitive and
      * this method performs a case-insensitive search.
      *

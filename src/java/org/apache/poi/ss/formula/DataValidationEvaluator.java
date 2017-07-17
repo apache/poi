@@ -44,12 +44,12 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SheetUtil;
 
 /**
- * Evaluates Data Validation constraints.<p/>
+ * Evaluates Data Validation constraints.<p>
  *
  * For performance reasons, this class keeps a cache of all previously retrieved {@link DataValidation} instances.  
  * Be sure to call {@link #clearAllCachedValues()} if any workbook validation definitions are 
  * added, modified, or deleted.
- * <p/>
+ * <p>
  * Changing cell values should be fine, as long as the corresponding {@link WorkbookEvaluator#clearAllCachedResultValues()}
  * is called as well.
  * 
@@ -58,7 +58,7 @@ public class DataValidationEvaluator {
 
     /**
      * Expensive to compute, so cache them as they are retrieved.
-     * <p/>
+     * <p>
      * Sheets don't implement equals, and since its an interface, 
      * there's no guarantee instances won't be recreated on the fly by some implementation.
      * So we use sheet name.
@@ -157,10 +157,10 @@ public class DataValidationEvaluator {
      * If {@link #getValidationForCell(CellReference)} returns an instance, and the
      * {@link ValidationType} is {@link ValidationType#LIST}, return the valid
      * values, whether they are from a static list or cell range.
-     * <p/>
+     * <p>
      * For all other validation types, or no validation at all, this method
      * returns null.
-     * <p/>
+     * <p>
      * This method could throw an exception if the validation type is not LIST,
      * but since this method is mostly useful in UI contexts, null seems the
      * easier path.
@@ -214,7 +214,7 @@ public class DataValidationEvaluator {
      * Use the validation returned by {@link #getValidationForCell(CellReference)} if you
      * want the error display details. This is the validation checked by this
      * method, which attempts to replicate Excel's data validation rules.
-     * <p/>
+     * <p>
      * Note that to properly apply some validations, care must be taken to
      * offset the base validation formula by the relative position of the
      * current cell, or the wrong value is checked.

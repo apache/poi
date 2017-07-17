@@ -25,7 +25,7 @@ import org.apache.poi.util.AllPOIUtilTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 /**
- * Root Test Suite for entire POI project.  (Includes all sub-packages of org.apache.poi)<br/>
+ * Root Test Suite for entire POI project.  (Includes all sub-packages of org.apache.poi)<br>
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

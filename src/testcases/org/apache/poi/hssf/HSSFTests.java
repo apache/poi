@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Test Suite for all sub-packages of org.apache.poi.hssf<br/>
+ * Test Suite for all sub-packages of org.apache.poi.hssf<br>
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

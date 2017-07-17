@@ -210,7 +210,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * test read-constructor-then-serialize for a double-byte external reference 'UNC-Volume' style
      * string
-     * <p/>
+     * <p>
      * @throws IOException
      */
     public void testReadWriteDBExtRefUncVol() throws IOException
@@ -233,7 +233,7 @@ public class TestDConRefRecord extends TestCase
 
     /**
      * test read-constructor-then-serialize for a double-byte self-reference style string
-     * <p/>
+     * <p>
      * @throws IOException
      */
     public void testReadWriteDBSelfRef() throws IOException
@@ -243,7 +243,7 @@ public class TestDConRefRecord extends TestCase
 
     /**
      * test read-constructor-then-serialize for a single-byte self-reference style string
-     * <p/>
+     * <p>
      * @throws IOException
      */
     public void testReadWriteSBSelfRef() throws IOException

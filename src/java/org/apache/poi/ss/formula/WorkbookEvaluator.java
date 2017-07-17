@@ -44,11 +44,11 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 /**
- * Evaluates formula cells.<p/>
+ * Evaluates formula cells.<p>
  *
  * For performance reasons, this class keeps a cache of all previously calculated intermediate
  * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
- * calls to evaluate~ methods on this class.<br/>
+ * calls to evaluate~ methods on this class.<br>
  *
  * For POI internal use only
  *
@@ -595,7 +595,7 @@ public final class WorkbookEvaluator {
     /**
      * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
      * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
-     * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
+     * StringPtg, BoolPtg <br>special Note: OperationPtg subtypes cannot be
      * passed here!
      */
     private ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) {

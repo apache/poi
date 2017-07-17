@@ -42,9 +42,9 @@ public class CustomIndexedColorMap implements IndexedColorMap {
 
     /**
      * OOXML spec says if this exists it must have all indexes.
-     * <p/>
+     * <p>
      * From the OOXML Spec, Part 1, section 18.8.27:
-     * <p/><i>
+     * <p><i>
      * This element contains a sequence of RGB color values that correspond to color indexes (zero-based). When
      * using the default indexed color palette, the values are not written out, but instead are implied. When the color
      * palette has been modified from default, then the entire color palette is written out.

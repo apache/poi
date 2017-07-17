@@ -28,7 +28,7 @@ import org.apache.poi.util.RecordFormatException;
 
 /**
  * Groups the sheet protection records for a worksheet.
- * <p/>
+ * <p>
  *
  * See OOO excelfileformat.pdf sec 4.18.2 'Sheet Protection in a Workbook
  * (BIFF5-BIFF8)'
@@ -124,14 +124,14 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 	 * This method reads {@link WorksheetProtectionBlock} records from the supplied RecordStream
 	 * until the first non-WorksheetProtectionBlock record is encountered. As each record is read,
 	 * it is incorporated into this WorksheetProtectionBlock.
-	 * <p/>
+	 * <p>
 	 * As per the OOO documentation, the protection block records can be expected to be written
 	 * together (with no intervening records), but earlier versions of POI (prior to Jun 2009)
 	 * didn't do this.  Workbooks with sheet protection created by those earlier POI versions
 	 * seemed to be valid (Excel opens them OK). So PO allows continues to support reading of files
 	 * with non continuous worksheet protection blocks.
 	 *
-	 * <p/>
+	 * <p>
 	 * <b>Note</b> - when POI writes out this WorksheetProtectionBlock, the records will always be
 	 * written in one consolidated block (in the standard ordering) regardless of how scattered the
 	 * records were when they were originally read.

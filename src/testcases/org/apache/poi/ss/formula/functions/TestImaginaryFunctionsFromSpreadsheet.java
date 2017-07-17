@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests Imaginary() as loaded from a test data spreadsheet.<p/>
+ * Tests Imaginary() as loaded from a test data spreadsheet.<p>
  */
 public class TestImaginaryFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     @Parameters(name="{0}")

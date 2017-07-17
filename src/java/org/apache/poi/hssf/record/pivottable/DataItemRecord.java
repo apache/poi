@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * SXDI - Data Item (0x00C5)<br/>
+ * SXDI - Data Item (0x00C5)<br>
  * 
  * @author Patrick Cheng
  */

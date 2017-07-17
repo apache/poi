@@ -126,9 +126,9 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * If the default font is changed the resized image can be streched vertically or horizontally.
      * </p>
      * <p>
-     * <code>resize(1.0,1.0)</code> keeps the original size,<br/>
-     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br/>
-     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br/>
+     * <code>resize(1.0,1.0)</code> keeps the original size,<br>
+     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br>
+     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br>
      * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
      * </p>
      *

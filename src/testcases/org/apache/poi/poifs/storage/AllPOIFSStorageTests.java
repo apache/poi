@@ -20,7 +20,7 @@ package org.apache.poi.poifs.storage;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 /**
- * Tests for org.apache.poi.poifs.storage<br/>
+ * Tests for org.apache.poi.poifs.storage<br>
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

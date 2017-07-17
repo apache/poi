@@ -24,11 +24,11 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 /**
- * Implementation of 'Analysis Toolpak' Excel function IFERROR()<br/>
+ * Implementation of 'Analysis Toolpak' Excel function IFERROR()<br>
  *
- * Returns an error text if there is an error in the evaluation<p/>
+ * Returns an error text if there is an error in the evaluation<p>
  * 
- * <b>Syntax</b><br/>
+ * <b>Syntax</b><br>
  * <b>IFERROR</b>(<b>expression</b>, <b>string</b>)
  * 
  * @author Johan Karlsteen

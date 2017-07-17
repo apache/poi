@@ -66,7 +66,7 @@ public final class TestRowRecordsAggregate {
 	 * Prior to Aug 2008, POI would re-serialize spreadsheets with {@link ArrayRecord}s or
 	 * {@link TableRecord}s with those records out of order.  Similar to
 	 * {@link SharedFormulaRecord}s, these records should appear immediately after the first
-	 * {@link FormulaRecord}s that they apply to (and only once).<br/>
+	 * {@link FormulaRecord}s that they apply to (and only once).<br>
 	 */
     @Test
 	public void testArraysAndTables() throws Exception {
@@ -127,10 +127,10 @@ public final class TestRowRecordsAggregate {
 	/**
 	 * This problem was noted as the overt symptom of bug 46280.  The logic for skipping {@link
 	 * UnknownRecord}s in the constructor {@link RowRecordsAggregate} did not allow for the
-	 * possibility of tailing {@link ContinueRecord}s.<br/>
+	 * possibility of tailing {@link ContinueRecord}s.<br>
 	 * The functionality change being tested here is actually not critical to the overall fix
 	 * for bug 46280, since the fix involved making sure the that offending <i>PivotTable</i>
-	 * records do not get into {@link RowRecordsAggregate}.<br/>
+	 * records do not get into {@link RowRecordsAggregate}.<br>
 	 * This fix in {@link RowRecordsAggregate} was implemented anyway since any {@link
 	 * UnknownRecord} has the potential of being 'continued'.
 	 */
