@@ -24,18 +24,18 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
 import org.apache.poi.ss.formula.TwoDEval;
 /**
- * Implementation of the VLOOKUP() function.<p/>
+ * Implementation of the VLOOKUP() function.<p>
  *
- * VLOOKUP finds a row in a lookup table by the first column value and returns the value from another column.<br/>
+ * VLOOKUP finds a row in a lookup table by the first column value and returns the value from another column.<br>
  *
- * <b>Syntax</b>:<br/>
- * <b>VLOOKUP</b>(<b>lookup_value</b>, <b>table_array</b>, <b>col_index_num</b>, range_lookup)<p/>
+ * <b>Syntax</b>:<br>
+ * <b>VLOOKUP</b>(<b>lookup_value</b>, <b>table_array</b>, <b>col_index_num</b>, range_lookup)<p>
  *
- * <b>lookup_value</b>  The value to be found in the first column of the table array.<br/>
- * <b>table_array</b> An area reference for the lookup data. <br/>
- * <b>col_index_num</b> a 1 based index specifying which column value of the lookup data will be returned.<br/>
+ * <b>lookup_value</b>  The value to be found in the first column of the table array.<br>
+ * <b>table_array</b> An area reference for the lookup data. <br>
+ * <b>col_index_num</b> a 1 based index specifying which column value of the lookup data will be returned.<br>
  * <b>range_lookup</b> If TRUE (default), VLOOKUP finds the largest value less than or equal to
- * the lookup_value.  If FALSE, only exact matches will be considered<br/>
+ * the lookup_value.  If FALSE, only exact matches will be considered<br>
  */
 public final class Vlookup extends Var3or4ArgFunction {
 	private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;

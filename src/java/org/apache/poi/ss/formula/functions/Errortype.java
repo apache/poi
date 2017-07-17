@@ -27,10 +27,10 @@ import org.apache.poi.ss.usermodel.FormulaError;
 /**
  * Implementation for the ERROR.TYPE() Excel function.
  * <p>
- * <b>Syntax:</b><br/>
+ * <b>Syntax:</b><br>
  * <b>ERROR.TYPE</b>(<b>errorValue</b>)</p>
  * <p>
- * Returns a number corresponding to the error type of the supplied argument.<p/>
+ * Returns a number corresponding to the error type of the supplied argument.<p>
  * <p>
  *    <table border="1" cellpadding="1" cellspacing="1" summary="Return values for ERROR.TYPE()">
  *      <tr><td>errorValue</td><td>Return Value</td></tr>

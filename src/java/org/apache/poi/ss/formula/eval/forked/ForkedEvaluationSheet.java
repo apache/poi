@@ -34,7 +34,7 @@ import org.apache.poi.util.Internal;
  * Represents a sheet being used for forked evaluation.  Initially, objects of this class contain
  * only the cells from the master workbook. By calling {@link #getOrCreateUpdatableCell(int, int)},
  * the master cell object is logically replaced with a {@link ForkedEvaluationCell} instance, which
- * will be used in all subsequent evaluations.<br/>
+ * will be used in all subsequent evaluations.<br>
  *
  * For POI internal use only
  */

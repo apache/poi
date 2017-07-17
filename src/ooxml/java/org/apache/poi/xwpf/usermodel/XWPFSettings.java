@@ -67,10 +67,10 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     /**
-     * Set zoom.<br/>
-     * In the zoom tag inside settings.xml file <br/>
+     * Set zoom.<br>
+     * In the zoom tag inside settings.xml file <br>
      * it sets the value of zoom
-     * <br/>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *    &lt;w:zoom w:percent="50" /&gt;
@@ -95,10 +95,10 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     /**
-     * Set zoom.<br/>
-     * In the zoom tag inside settings.xml file <br/>
+     * Set zoom.<br>
+     * In the zoom tag inside settings.xml file <br>
      * it sets the value of zoom
-     * <br/>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *    &lt;w:zoom w:percent="50" /&gt;
@@ -113,10 +113,10 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 	
 	/**
-     * Verifies the documentProtection tag inside settings.xml file <br/>
-     * if the protection is enforced (w:enforcement="1") <br/>
-     *  <p/>
-     * <br/>
+     * Verifies the documentProtection tag inside settings.xml file <br>
+     * if the protection is enforced (w:enforcement="1") <br>
+     *  <p>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -136,11 +136,11 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     /**
-     * Verifies the documentProtection tag inside settings.xml file <br/>
-     * if the protection is enforced (w:enforcement="1") <br/>
-     * and if the kind of protection equals to passed (STDocProtect.Enum editValue) <br/>
-     * <p/>
-     * <br/>
+     * Verifies the documentProtection tag inside settings.xml file <br>
+     * if the protection is enforced (w:enforcement="1") <br>
+     * and if the kind of protection equals to passed (STDocProtect.Enum editValue) <br>
+     * <p>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -160,12 +160,12 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     /**
-     * Enforces the protection with the option specified by passed editValue.<br/>
-     * <br/>
-     * In the documentProtection tag inside settings.xml file <br/>
-     * it sets the value of enforcement to "1" (w:enforcement="1") <br/>
-     * and the value of edit to the passed editValue (w:edit="[passed editValue]")<br/>
-     * <br/>
+     * Enforces the protection with the option specified by passed editValue.<br>
+     * <br>
+     * In the documentProtection tag inside settings.xml file <br>
+     * it sets the value of enforcement to "1" (w:enforcement="1") <br>
+     * and the value of edit to the passed editValue (w:edit="[passed editValue]")<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
@@ -178,8 +178,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     /**
-     * Enforces the protection with the option specified by passed editValue and password.<br/>
-     * <br/>
+     * Enforces the protection with the option specified by passed editValue and password.<br>
+     * <br>
      * sample snippet from settings.xml
      * <pre>
      *   &lt;w:documentProtection w:edit=&quot;[passed editValue]&quot; w:enforcement=&quot;1&quot;
@@ -343,9 +343,9 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     /**
-     * Removes protection enforcement.<br/>
-     * In the documentProtection tag inside settings.xml file <br/>
-     * it sets the value of enforcement to "0" (w:enforcement="0") <br/>
+     * Removes protection enforcement.<br>
+     * In the documentProtection tag inside settings.xml file <br>
+     * it sets the value of enforcement to "0" (w:enforcement="0") <br>
      */
     public void removeEnforcement() {
         safeGetDocumentProtection().setEnforcement(STOnOff.X_0);
@@ -353,9 +353,9 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     /**
      * Enforces fields update on document open (in Word).
-     * In the settings.xml file <br/>
+     * In the settings.xml file <br>
      * sets the updateSettings value to true (w:updateSettings w:val="true")
-     * <p/>
+     * <p>
      * NOTICES:
      * <ul>
      * <li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"

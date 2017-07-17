@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests lookup functions (VLOOKUP, HLOOKUP, LOOKUP, MATCH) as loaded from a test data spreadsheet.<p/>
+ * Tests lookup functions (VLOOKUP, HLOOKUP, LOOKUP, MATCH) as loaded from a test data spreadsheet.<p>
  * These tests have been separated from the common function and operator tests because the lookup
  * functions have more complex test cases and test data setup.
  *

@@ -75,7 +75,7 @@ public final class InternalSheet {
     private PageSettingsBlock _psBlock;
 
     /**
-     * 'Worksheet Protection Block'<br/>
+     * 'Worksheet Protection Block'<br>
      *  Aggregate object is always present, but possibly empty.
      */
     private final WorksheetProtectionBlock _protectionBlock = new WorksheetProtectionBlock();

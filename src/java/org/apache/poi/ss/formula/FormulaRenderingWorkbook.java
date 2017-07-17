@@ -22,7 +22,7 @@ import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 
 /**
- * Abstracts a workbook for the purpose of converting formula to text.<br/>
+ * Abstracts a workbook for the purpose of converting formula to text.<br>
  *
  * For POI internal use only
  *

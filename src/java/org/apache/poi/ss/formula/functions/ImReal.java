@@ -27,14 +27,14 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel ImReal() function.<p/>
- * <p/>
- * <b>Syntax</b>:<br/> <b>ImReal  </b>(<b>Inumber</b>)<br/>
- * <p/>
+ * Implementation for Excel ImReal() function.<p>
+ * <p>
+ * <b>Syntax</b>:<br> <b>ImReal  </b>(<b>Inumber</b>)<br>
+ * <p>
  * Returns the real coefficient of a complex number in x + yi or x + yj text format.
- * <p/>
+ * <p>
  * Inumber     A complex number for which you want the real coefficient.
- * <p/>
+ * <p>
  * Remarks
  * <ul>
  * <li>If inumber is not in the form x + yi or x + yj, this function returns the #NUM! error value.</li>

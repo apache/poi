@@ -54,7 +54,7 @@ public final class HSSFTestDataSamples {
 	}
 	/**
 	 * Writes a spreadsheet to a <tt>ByteArrayOutputStream</tt> and reads it back
-	 * from a <tt>ByteArrayInputStream</tt>.<p/>
+	 * from a <tt>ByteArrayInputStream</tt>.<p>
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {

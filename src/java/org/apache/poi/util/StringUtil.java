@@ -153,7 +153,7 @@ public class StringUtil {
      * <li>byte[]/char[] characterData</li>
      * </ol>
      * For this encoding, the is16BitFlag is always present even if nChars==0.
-     * <br/>
+     * <br>
      * This method should be used when the nChars field is <em>not</em> stored
      * as a ushort immediately before the is16BitFlag. Otherwise, {@link
      * #readUnicodeString(LittleEndianInput)} can be used.
@@ -192,7 +192,7 @@ public class StringUtil {
 	 * <li>byte[]/char[] characterData</li>
 	 * </ol>
 	 * For this encoding, the is16BitFlag is always present even if nChars==0.
-	 * <br/>
+	 * <br>
 	 * This method should be used when the nChars field is <em>not</em> stored
 	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link
 	 * #writeUnicodeString(LittleEndianOutput, String)} can be used.

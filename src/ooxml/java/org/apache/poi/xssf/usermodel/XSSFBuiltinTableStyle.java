@@ -365,7 +365,7 @@ public enum XSSFBuiltinTableStyle {
      * Only init once - thus the synchronized.  Lazy, after creating instances,
      * and only when a style is actually needed, to avoid overhead for uses
      * that don't need the actual style definitions.
-     * <p/>
+     * <p>
      * Public so clients can initialize the map on startup rather than lazily
      * during evaluation if desired.
      */

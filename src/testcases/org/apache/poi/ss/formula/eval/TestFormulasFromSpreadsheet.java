@@ -46,7 +46,7 @@ import org.junit.runners.Parameterized.Parameters;
 import junit.framework.AssertionFailedError;
 
 /**
- * Tests formulas and operators as loaded from a test data spreadsheet.<p/>
+ * Tests formulas and operators as loaded from a test data spreadsheet.<p>
  * This class does not test implementors of <tt>Function</tt> and <tt>OperationEval</tt> in
  * isolation.  Much of the evaluation engine (i.e. <tt>HSSFFormulaEvaluator</tt>, ...) gets
  * exercised as well.  Tests for bug fixes and specific/tricky behaviour can be found in the

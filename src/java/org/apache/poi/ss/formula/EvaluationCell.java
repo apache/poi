@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.CellType;
 
 /**
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
- * and non-formula cells.<br/>
+ * and non-formula cells.<br>
  * 
  * For POI internal use only
  * 

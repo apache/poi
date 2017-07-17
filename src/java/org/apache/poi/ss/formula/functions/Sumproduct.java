@@ -32,16 +32,16 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 /**
  * Implementation for the Excel function SUMPRODUCT<p>
  *
- * Syntax : <br/>
+ * Syntax : <br>
  *  SUMPRODUCT ( array1[, array2[, array3[, ...]]])
  *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
  *      <tr><th>array1, ... arrayN&nbsp;&nbsp;</th><td>typically area references,
  *      possibly cell references or scalar values</td></tr>
- *    </table><br/>
+ *    </table><br>
  *
  * Let A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub> represent the element in the <b>i</b>th row <b>j</b>th column
- * of the <b>n</b>th array<br/>
- * Assuming each array has the same dimensions (W, H), the result is defined as:<br/>
+ * of the <b>n</b>th array<br>
+ * Assuming each array has the same dimensions (W, H), the result is defined as:<br>
  * SUMPRODUCT = &Sigma;<sub><b>i</b>: 1..H</sub> &nbsp;
  * 	(&nbsp; &Sigma;<sub><b>j</b>: 1..W</sub> &nbsp;
  * 	  (&nbsp; &Pi;<sub><b>n</b>: 1..N</sub>
@@ -196,7 +196,7 @@ public final class Sumproduct implements Function {
 	 * Determines a <code>double</code> value for the specified <code>ValueEval</code>.
 	 * @param isScalarProduct <code>false</code> for SUMPRODUCTs over area refs.
 	 * @throws EvaluationException if <code>ve</code> represents an error value.
-	 * <p/>
+	 * <p>
 	 * Note - string values and empty cells are interpreted differently depending on
 	 * <code>isScalarProduct</code>.  For scalar products, if any term is blank or a string, the
 	 * error (#VALUE!) is raised.  For area (sum)products, if any term is blank or a string, the

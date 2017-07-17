@@ -26,7 +26,7 @@ import org.apache.poi.util.LocaleUtil;
 
 
 /**
- * Internal calculation methods for Excel 'Analysis ToolPak' function YEARFRAC()<br/>
+ * Internal calculation methods for Excel 'Analysis ToolPak' function YEARFRAC()<br>
  *  
  * Algorithm inspired by www.dwheeler.com/yearfrac
  */

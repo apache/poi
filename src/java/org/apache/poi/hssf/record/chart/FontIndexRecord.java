@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The font index record indexes into the font table for the text record.<p/>
+ * The font index record indexes into the font table for the text record.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

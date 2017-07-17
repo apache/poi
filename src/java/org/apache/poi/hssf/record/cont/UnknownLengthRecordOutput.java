@@ -65,7 +65,7 @@ final class UnknownLengthRecordOutput implements LittleEndianOutput {
 		return MAX_DATA_SIZE - _size;
 	}
 	/**
-	 * Finishes writing the current record and updates 'ushort size' field.<br/>
+	 * Finishes writing the current record and updates 'ushort size' field.<br>
 	 * After this method is called, only {@link #getTotalSize()} may be called.
 	 */
 	public void terminate() {

@@ -25,8 +25,8 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
  * For most Excel functions, involving references ((cell, area), (2d, 3d)), the references are
  * passed in as arguments, and the exact location remains fixed.  However, a select few Excel
  * functions have the ability to access cells that were not part of any reference passed as an
- * argument.<br/>
- * Two important functions with this feature are <b>INDIRECT</b> and <b>OFFSET</b><p/>
+ * argument.<br>
+ * Two important functions with this feature are <b>INDIRECT</b> and <b>OFFSET</b><p>
  *
  * When POI evaluates formulas, each reference argument is capable of evaluating any cell inside
  * its range.  Actually, even cells outside the reference range but on the same sheet can be

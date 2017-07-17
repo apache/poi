@@ -52,7 +52,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
 
     /**
      * A factory method allowing to create a conditional formatting rule
-     * with a cell comparison operator<p/>
+     * with a cell comparison operator<p>
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from

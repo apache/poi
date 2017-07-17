@@ -51,12 +51,12 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * {@link ConditionalFormattingEvaluator}. This references a rule, its owning
  * {@link ConditionalFormatting}, its priority order (lower index = higher priority in Excel),
  * and the information needed to evaluate the rule for a given cell.
- * <p/>
+ * <p>
  * Having this all combined and cached avoids repeated access calls to the
  * underlying structural objects, XSSF CT* objects and HSSF raw byte structures.
  * Those objects can be referenced from here. This object will be out of sync if
  * anything modifies the referenced structures' evaluation properties.
- * <p/>
+ * <p>
  * The assumption is that consuming applications will read the display properties once and
  * create whatever style objects they need, caching those at the application level.
  * Thus this class only caches values needed for evaluation, not display.
@@ -225,7 +225,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     /**
      * Per Excel Help, XSSF rule priority is sheet-wide, not just within the owning ConditionalFormatting object.
      * This can be seen by creating 4 rules applying to two different ranges and examining the XML.
-     * <p/>
+     * <p>
      * HSSF priority is based on definition/persistence order.
      * 
      * @param o

@@ -17,7 +17,7 @@
 package org.apache.poi.ss.formula.functions;
 
 /**
- * <p>Some utils for converting from and to any base<p/>
+ * <p>Some utils for converting from and to any base<p>
  *
  * @author cedric dot walter @ gmail dot com
  */

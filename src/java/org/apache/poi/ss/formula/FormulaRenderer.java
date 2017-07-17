@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
- * Common logic for rendering formulas.<br/>
+ * Common logic for rendering formulas.<br>
  *
  * For POI internal use only
  *

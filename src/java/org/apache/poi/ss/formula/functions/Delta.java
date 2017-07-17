@@ -23,10 +23,10 @@ import org.apache.poi.ss.formula.eval.*;
 import java.math.BigDecimal;
 
 /**
- * Implementation for Excel DELTA() function.<p/>
- * <p/>
- * <b>Syntax</b>:<br/> <b>DELTA </b>(<b>number1</b>,<b>number2</b> )<br/>
- * <p/>
+ * Implementation for Excel DELTA() function.<p>
+ * <p>
+ * <b>Syntax</b>:<br> <b>DELTA </b>(<b>number1</b>,<b>number2</b> )<br>
+ * <p>
  * Tests whether two values are equal. Returns 1 if number1 = number2; returns 0 otherwise.
  * Use this function to filter a set of values. For example, by summing several DELTA functions
  * you calculate the count of equal pairs. This function is also known as the Kronecker Delta function.

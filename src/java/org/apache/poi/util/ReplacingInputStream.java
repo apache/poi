@@ -66,7 +66,7 @@ public class ReplacingInputStream extends FilterInputStream {
     /**
      * Replace occurrences of pattern in the input.<p>
      *
-     * If you want to normalize line endings DOS/MAC (\n\r | \r) to UNIX (\n), you can call the following:<br/>
+     * If you want to normalize line endings DOS/MAC (\n\r | \r) to UNIX (\n), you can call the following:<br>
      * {@code new ReplacingInputStream(new ReplacingInputStream(is, "\n\r", "\n"), "\r", "\n")}
      *
      * @param in input

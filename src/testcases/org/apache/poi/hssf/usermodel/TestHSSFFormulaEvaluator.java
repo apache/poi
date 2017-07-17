@@ -94,7 +94,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 
 	/**
 	 * When evaluating defined names, POI has to decide whether it is capable.  Currently
-	 * (May2009) POI only supports simple cell and area refs.<br/>
+	 * (May2009) POI only supports simple cell and area refs.<br>
 	 * The sample spreadsheet (bugzilla attachment 23508) had a name flagged as 'complex'
 	 * which contained a simple area ref.  It is not clear what the 'complex' flag is used
 	 * for but POI should look elsewhere to decide whether it can evaluate the name.

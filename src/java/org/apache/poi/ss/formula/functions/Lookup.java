@@ -24,16 +24,16 @@ import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
 import org.apache.poi.ss.formula.TwoDEval;
 
 /**
- * Implementation of Excel function LOOKUP.<p/>
+ * Implementation of Excel function LOOKUP.<p>
  *
  * LOOKUP finds an index  row in a lookup table by the first column value and returns the value from another column.
  *
- * <b>Syntax</b>:<br/>
- * <b>VLOOKUP</b>(<b>lookup_value</b>, <b>lookup_vector</b>, result_vector)<p/>
+ * <b>Syntax</b>:<br>
+ * <b>VLOOKUP</b>(<b>lookup_value</b>, <b>lookup_vector</b>, result_vector)<p>
  *
- * <b>lookup_value</b>  The value to be found in the lookup vector.<br/>
- * <b>lookup_vector</> An area reference for the lookup data. <br/>
- * <b>result_vector</b> Single row or single column area reference from which the result value is chosen.<br/>
+ * <b>lookup_value</b>  The value to be found in the lookup vector.<br>
+ * <b>lookup_vector</> An area reference for the lookup data. <br>
+ * <b>result_vector</b> Single row or single column area reference from which the result value is chosen.<br>
  *
  * @author Josh Micich
  */

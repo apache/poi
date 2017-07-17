@@ -23,14 +23,14 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.NumericFunction;
 
 /**
- * Implementation of Excel 'Analysis ToolPak' function MROUND()<br/>
+ * Implementation of Excel 'Analysis ToolPak' function MROUND()<br>
  *
- * Returns a number rounded to the desired multiple.<p/>
+ * Returns a number rounded to the desired multiple.<p>
  *
- * <b>Syntax</b><br/>
+ * <b>Syntax</b><br>
  * <b>MROUND</b>(<b>number</b>, <b>multiple</b>)
  *
- * <p/>
+ * <p>
  *
  * @author Yegor Kozlov
  */

@@ -161,7 +161,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * Convenience method to extract text in cells.  This
      * does not extract text recursively in cells, and it does not
      * currently include text in SDT (form) components.
-     * <p/>
+     * <p>
      * To get all text within a table, see XWPFWordExtractor's appendTableText
      * as an example.
      *

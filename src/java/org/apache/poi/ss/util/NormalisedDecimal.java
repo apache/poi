@@ -30,15 +30,15 @@ import java.math.BigInteger;
  * <li>Conversions to text</li>
  * </ol>
  *
- * <p/>
+ * <p>
  * This class does not handle negative numbers or zero.
- * <p/>
- * The value of a {@link NormalisedDecimal} is given by<br/>
+ * <p>
+ * The value of a {@link NormalisedDecimal} is given by<br>
  * <tt> significand &times; 10<sup>decimalExponent</sup></tt>
- * <br/>
- * where:<br/>
+ * <br>
+ * where:<br>
  *
- * <tt>significand</tt> = wholePart + fractionalPart / 2<sup>24</sup><br/>
+ * <tt>significand</tt> = wholePart + fractionalPart / 2<sup>24</sup><br>
  *
  * @author Josh Micich
  */

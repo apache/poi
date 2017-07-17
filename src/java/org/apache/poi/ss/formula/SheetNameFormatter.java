@@ -162,7 +162,7 @@ public final class SheetNameFormatter {
 	/**
 	 * Used to decide whether sheet names like 'AB123' need delimiting due to the fact that they 
 	 * look like cell references.
-	 * <p/>
+	 * <p>
 	 * This code is currently being used for translating formulas represented with <code>Ptg</code>
 	 * tokens into human readable text form.  In formula expressions, a sheet name always has a 
 	 * trailing '!' so there is little chance for ambiguity.  It doesn't matter too much what this 
@@ -177,7 +177,7 @@ public final class SheetNameFormatter {
 	 * 
 	 * At the time of writing, POI's formula parser tolerates cell-like sheet names in formulas
 	 * with or without delimiters.  The same goes for Excel(2007), both manual and automated entry.  
-	 * <p/>
+	 * <p>
 	 * For better or worse this implementation attempts to replicate Excel's formula renderer.
 	 * Excel uses range checking on the apparent 'row' and 'column' components.  Note however that
 	 * the maximum sheet size varies across versions.
@@ -190,7 +190,7 @@ public final class SheetNameFormatter {
 	/**
 	 * Note - this method assumes the specified rawSheetName has only letters and digits.  It 
 	 * cannot be used to match absolute or range references (using the dollar or colon char).
-	 * <p/>
+	 * <p>
 	 * Some notable cases:
 	 *    <blockquote><table border="0" cellpadding="1" cellspacing="0" 
 	 *                 summary="Notable cases.">

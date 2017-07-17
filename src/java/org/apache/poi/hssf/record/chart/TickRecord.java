@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The Tick record defines how tick marks and label positioning/formatting<p/>
+ * The Tick record defines how tick marks and label positioning/formatting<p>
  * 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */

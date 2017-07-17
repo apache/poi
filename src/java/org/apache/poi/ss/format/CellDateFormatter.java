@@ -222,7 +222,7 @@ public class CellDateFormatter extends CellFormatter {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * For a date, this is <tt>"mm/d/y"</tt>.
      */
     public void simpleValue(StringBuffer toAppendTo, Object value) {

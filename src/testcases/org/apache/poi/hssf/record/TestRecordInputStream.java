@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public final class TestRecordInputStream extends TestCase {
 
 	/**
-	 * Data inspired by attachment 22626 of bug 45866<br/>
+	 * Data inspired by attachment 22626 of bug 45866<br>
 	 * A unicode string of 18 chars, with a continue record where the compression flag changes
 	 */
 	private static final String HED_DUMP1 = ""

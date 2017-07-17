@@ -87,9 +87,9 @@ import org.apache.poi.util.POILogger;
  * <term> ::= <factor>  [ <mulop> <factor> ]*
  * <factor> ::= <number> | (<expression>) | <cellRef> | <function>
  * <function> ::= <functionName> ([expression [, expression]*])
- * <p/>
+ * <p>
  * For POI internal use only
- * <p/>
+ * <p>
  */
 @Internal
 public final class FormulaParser {

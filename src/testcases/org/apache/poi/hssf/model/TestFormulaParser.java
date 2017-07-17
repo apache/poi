@@ -599,7 +599,7 @@ public final class TestFormulaParser {
     }
     
     /**
-     * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
+     * Test for bug observable at svn revision 618865 (5-Feb-2008)<br>
      * a formula consisting of a single no-arg function got rendered without the function braces
      */
     @Test
@@ -920,7 +920,7 @@ public final class TestFormulaParser {
     }
     /**
      * Make sure that POI uses the right Func Ptg when encoding formulas.  Functions with variable
-     * number of args should get FuncVarPtg, functions with fixed args should get FuncPtg.<p/>
+     * number of args should get FuncVarPtg, functions with fixed args should get FuncPtg.<p>
      *
      * Prior to the fix for bug 44675 POI would encode FuncVarPtg for all functions.  In many cases
      * Excel tolerates the wrong Ptg and evaluates the formula OK (e.g. SIN), but in some cases
@@ -1544,7 +1544,7 @@ public final class TestFormulaParser {
     /**
      * Zero is not a valid row number so cell references like 'A0' are not valid.
      * Actually, they should be treated like defined names.
-     * <br/>
+     * <br>
      * In addition, leading zeros (on the row component) should be removed from cell
      * references during parsing.
      */

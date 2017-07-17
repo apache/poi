@@ -98,7 +98,7 @@ public class TestForkedEvaluator {
 	 * As of Sep 2009, the Forked evaluator can update values from existing cells (this is because
 	 * the underlying 'master' cell is used as a key into the calculation cache.  Prior to the fix
 	 * for this bug, an attempt to update a missing cell would result in NPE.  This junit tests for
-	 * a more meaningful error message.<br/>
+	 * a more meaningful error message.<br>
 	 *
 	 * An alternate solution might involve allowing empty cells to be created as necessary.  That
 	 * was considered less desirable because so far, the underlying 'master' workbook is strictly

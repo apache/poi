@@ -26,13 +26,13 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
- * Implementation of Excel 'Analysis ToolPak' function WORKDAY()<br/>
+ * Implementation of Excel 'Analysis ToolPak' function WORKDAY()<br>
  * Returns the date past a number of workdays beginning at a start date, considering an interval of holidays. A workday is any non
  * saturday/sunday date.
- * <p/>
- * <b>Syntax</b><br/>
+ * <p>
+ * <b>Syntax</b><br>
  * <b>WORKDAY</b>(<b>startDate</b>, <b>days</b>, holidays)
- * <p/>
+ * <p>
  * 
  * @author jfaenomoto@gmail.com
  */

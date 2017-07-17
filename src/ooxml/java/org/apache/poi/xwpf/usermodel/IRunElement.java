@@ -23,7 +23,7 @@ import org.apache.poi.wp.usermodel.CharacterRun;
  * where a run (text with common stylings) can,
  * eg {@link XWPFRun} or {@link XWPFSDT}.
  * TODO More methods to follow shortly!
- * <p/>
+ * <p>
  * TODO Make this based on {@link CharacterRun}
  */
 public interface IRunElement {}

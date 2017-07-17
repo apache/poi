@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.util.Internal;
 
 /**
- * Abstracts a workbook for the purpose of formula evaluation.<br/>
+ * Abstracts a workbook for the purpose of formula evaluation.<br>
  *
  * For POI internal use only
  *

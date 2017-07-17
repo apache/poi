@@ -50,7 +50,7 @@ public final class TestLinkTable extends TestCase {
 
 	/**
 	 * The example file attached to bugzilla 45046 is a clear example of Name records being present
-	 * without an External Book (SupBook) record.  Excel has no trouble reading this file.<br/>
+	 * without an External Book (SupBook) record.  Excel has no trouble reading this file.<br>
 	 * TODO get OOO documentation updated to reflect this (that EXTERNALBOOK is optional).
 	 *
 	 * It's not clear what exact steps need to be taken in Excel to create such a workbook

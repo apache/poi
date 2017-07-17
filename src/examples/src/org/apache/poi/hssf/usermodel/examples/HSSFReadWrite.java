@@ -140,15 +140,15 @@ public final class HSSFReadWrite {
      * Method main
      *
      * Given 1 argument takes that as the filename, inputs it and dumps the
-     * cell values/types out to sys.out.<br/>
+     * cell values/types out to sys.out.<br>
      *
      * given 2 arguments where the second argument is the word "write" and the
      * first is the filename - writes out a sample (test) spreadsheet
-     * see {@link HSSFReadWrite#testCreateSampleSheet(String)}.<br/>
+     * see {@link HSSFReadWrite#testCreateSampleSheet(String)}.<br>
      *
      * given 2 arguments where the first is an input filename and the second
      * an output filename (not write), attempts to fully read in the
-     * spreadsheet and fully write it out.<br/>
+     * spreadsheet and fully write it out.<br>
      *
      * given 3 arguments where the first is an input filename and the second an
      * output filename (not write) and the third is "modify1", attempts to read in the

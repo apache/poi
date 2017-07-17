@@ -51,7 +51,7 @@ public final class TestFormulaRecordAggregate extends TestCase {
 	/**
 	 * Sometimes a {@link StringRecord} appears after a {@link FormulaRecord} even though the
 	 * formula has evaluated to a text value.  This might be more likely to occur when the formula
-	 * <i>can</i> evaluate to a text value.<br/>
+	 * <i>can</i> evaluate to a text value.<br>
 	 * Bug 46213 attachment 22874 has such an extra {@link StringRecord} at stream offset 0x5765.
 	 * This file seems to open in Excel (2007) with no trouble.  When it is re-saved, Excel omits
 	 * the extra record.  POI should do the same.

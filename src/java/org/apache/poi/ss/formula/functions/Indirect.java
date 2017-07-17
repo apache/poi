@@ -31,15 +31,15 @@ import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.usermodel.Table;
 
 /**
- * Implementation for Excel function INDIRECT<p/>
+ * Implementation for Excel function INDIRECT<p>
  *
- * INDIRECT() returns the cell or area reference denoted by the text argument.<p/>
+ * INDIRECT() returns the cell or area reference denoted by the text argument.<p>
  *
  * <b>Syntax</b>:</br>
- * <b>INDIRECT</b>(<b>ref_text</b>,isA1Style)<p/>
+ * <b>INDIRECT</b>(<b>ref_text</b>,isA1Style)<p>
  *
  * <b>ref_text</b> a string representation of the desired reference as it would
- * normally be written in a cell formula.<br/>
+ * normally be written in a cell formula.<br>
  * <b>isA1Style</b> (default TRUE) specifies whether the ref_text should be
  * interpreted as A1-style or R1C1-style.
  *

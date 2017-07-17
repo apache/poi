@@ -91,12 +91,12 @@ public class DConRefRecord extends StandardRecord
     /**
      * The link's path string. This is the <code>rgb</code> field of a
      * <code>XLUnicodeStringNoCch</code>. Therefore it will contain at least one leading special
-     * character (0x01 or 0x02) and probably other ones.<p/>
+     * character (0x01 or 0x02) and probably other ones.<p>
      * @see <A href="http://msdn.microsoft.com/en-us/library/dd923491(office.12).aspx">
      * DConFile [MS-XLS s. 2.5.77]</A> and
      * <A href="http://msdn.microsoft.com/en-us/library/dd950157(office.12).aspx">
      * VirtualPath [MS-XLS s. 2.5.69]</a>
-     * <p/>
+     * <p>
      */
     private byte[] path;
     /**

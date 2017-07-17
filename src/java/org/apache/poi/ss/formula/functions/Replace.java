@@ -23,17 +23,17 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * An implementation of the Excel REPLACE() function:<p/>
+ * An implementation of the Excel REPLACE() function:<p>
  * Replaces part of a text string based on the number of characters
- * you specify, with another text string.<br/>
+ * you specify, with another text string.<br>
  *
- * <b>Syntax</b>:<br/>
- * <b>REPLACE</b>(<b>oldText</b>, <b>startNum</b>, <b>numChars</b>, <b>newText</b>)<p/>
+ * <b>Syntax</b>:<br>
+ * <b>REPLACE</b>(<b>oldText</b>, <b>startNum</b>, <b>numChars</b>, <b>newText</b>)<p>
  *
- * <b>oldText</b>  The text string containing characters to replace<br/>
- * <b>startNum</b> The position of the first character to replace (1-based)<br/>
- * <b>numChars</b> The number of characters to replace<br/>
- * <b>newText</b> The new text value to replace the removed section<br/>
+ * <b>oldText</b>  The text string containing characters to replace<br>
+ * <b>startNum</b> The position of the first character to replace (1-based)<br>
+ * <b>numChars</b> The number of characters to replace<br>
+ * <b>newText</b> The new text value to replace the removed section<br>
  *
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */

@@ -43,11 +43,11 @@ public final class NumericFunctionInvoker {
 
 	/**
 	 * Invokes the specified function with the arguments.
-	 * <p/>
+	 * <p>
 	 * Assumes that the cell coordinate parameters of
 	 *  <code>Function.evaluate(args, srcCellRow, srcCellCol)</code>
 	 * are not required.
-	 * <p/>
+	 * <p>
 	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
 	 * result causes the current junit test to fail.
 	 */
@@ -56,7 +56,7 @@ public final class NumericFunctionInvoker {
 	}
 	/**
 	 * Invokes the specified operator with the arguments.
-	 * <p/>
+	 * <p>
 	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
 	 * result causes the current junit test to fail.
 	 */

@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * SXPI - Page Item (0x00B6)<br/>
+ * SXPI - Page Item (0x00B6)<br>
  * 
  * @author Patrick Cheng
  */

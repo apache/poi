@@ -331,7 +331,7 @@ public class LittleEndian implements LittleEndianConsts
 
     /**
      * executes:
-     * <p/>
+     * <p>
      * <code>
      * data[offset] = (byte)value;
      * </code>

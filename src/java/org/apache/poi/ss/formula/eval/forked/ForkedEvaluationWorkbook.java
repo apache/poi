@@ -35,7 +35,7 @@ import org.apache.poi.util.Internal;
 /**
  * Represents a workbook being used for forked evaluation. Most operations are delegated to the
  * shared master workbook, except those that potentially involve cell values that may have been
- * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.<br/>
+ * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.<br>
  * 
  * For POI internal use only
  */

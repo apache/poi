@@ -150,11 +150,11 @@ final class LookupUtils {
 	}
 
 	/**
-	 * Enumeration to support <b>4</b> valued comparison results.<p/>
+	 * Enumeration to support <b>4</b> valued comparison results.<p>
 	 * Excel lookup functions have complex behaviour in the case where the lookup array has mixed
 	 * types, and/or is unordered.  Contrary to suggestions in some Excel documentation, there
 	 * does not appear to be a universal ordering across types.  The binary search algorithm used
-	 * changes behaviour when the evaluated 'mid' value has a different type to the lookup value.<p/>
+	 * changes behaviour when the evaluated 'mid' value has a different type to the lookup value.<p>
 	 *
 	 * A simple int might have done the same job, but there is risk in confusion with the well
 	 * known <tt>Comparable.compareTo()</tt> and <tt>Comparator.compare()</tt> which both use
@@ -366,7 +366,7 @@ final class LookupUtils {
 	 *      <tr><td>"abc"</td><td>&nbsp;</td><td>#REF!</td></tr>
 	 *      <tr><td>""</td><td>&nbsp;</td><td>#REF!</td></tr>
 	 *      <tr><td>&lt;blank&gt;</td><td>&nbsp;</td><td>#VALUE!</td></tr>
-	 *    </table><br/>
+	 *    </table><br>
 	 *
 	 * Note - out of range errors (result index too high) are handled by the caller.
 	 * @return column or row index as a zero-based value, never negative.

@@ -24,9 +24,9 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel VALUE() function.<p/>
+ * Implementation for Excel VALUE() function.<p>
  *
- * <b>Syntax</b>:<br/> <b>VALUE</b>(<b>text</b>)<br/>
+ * <b>Syntax</b>:<br> <b>VALUE</b>(<b>text</b>)<br>
  *
  * Converts the text argument to a number. Leading and/or trailing whitespace is
  * ignored. Currency symbols and thousands separators are stripped out.

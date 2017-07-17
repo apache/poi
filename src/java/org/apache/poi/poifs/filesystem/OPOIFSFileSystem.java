@@ -96,7 +96,7 @@ public class OPOIFSFileSystem
 
     /**
      * Create a OPOIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
-     * EOF.  The stream is always closed.<p/>
+     * EOF.  The stream is always closed.<p>
      *
      * Some streams are usable after reaching EOF (typically those that return <code>true</code>
      * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream

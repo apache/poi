@@ -29,7 +29,7 @@ import org.apache.poi.util.HexRead;
 import org.apache.poi.util.IOUtils;
 
 /**
- * Test utility class.<br/>
+ * Test utility class.<br>
  *
  * Creates raw <code>byte[]</code> data from hex-dump String arrays.
  *
@@ -48,7 +48,7 @@ public final class RawDataUtil {
 	}
 
 	/**
-	 * Development time utility method.<br/>
+	 * Development time utility method.<br>
 	 * Transforms a byte array into hex-dump String lines in java source code format.
 	 */
 	public static void dumpData(byte[] data) {
@@ -73,7 +73,7 @@ public final class RawDataUtil {
 	}
 
 	/**
-	 * Development time utility method.<br/>
+	 * Development time utility method.<br>
 	 * Confirms that the specified byte array is equivalent to the hex-dump String lines.
 	 */
 	public static void confirmEqual(byte[] expected, String[] hexDataLines) {

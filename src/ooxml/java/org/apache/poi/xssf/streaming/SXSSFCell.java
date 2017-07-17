@@ -229,7 +229,7 @@ public class SXSSFCell implements Cell {
     /**
      * Converts the supplied date to its equivalent Excel numeric value and sets
      * that into the cell.
-     * <p/>
+     * <p>
      * <b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
      * cases (when entering date values), Excel automatically adjusts the
      * <i>cell style</i> to some date format, creating the illusion that the cell

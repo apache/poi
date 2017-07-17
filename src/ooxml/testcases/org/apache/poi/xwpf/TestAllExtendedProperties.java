@@ -33,7 +33,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVect
  * submitted because even though the
  * {@link PackageProperties#getKeywordsProperty()} had been present before, the
  * {@link CoreProperties#getKeywords()} had been missing.
- * <p/>
+ * <p>
  * The author of this has added {@link CoreProperties#getKeywords()} and
  * {@link CoreProperties#setKeywords(String)} and this test is supposed to test
  * them.

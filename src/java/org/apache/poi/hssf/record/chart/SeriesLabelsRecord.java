@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The series label record defines the type of label associated with the data format record.<p/>
+ * The series label record defines the type of label associated with the data format record.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

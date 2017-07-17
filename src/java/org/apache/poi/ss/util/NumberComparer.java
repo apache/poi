@@ -35,23 +35,23 @@ public final class NumberComparer {
 	 * mostly the same as those from {@link Double#compare(double, double)} but with some
 	 * rounding.  For numbers that are very close, this code converts to a format having 15
 	 * decimal digits of precision and a decimal exponent, before completing the comparison.
-	 * <p/>
+	 * <p>
 	 * In Excel formula evaluation, expressions like "(0.06-0.01)=0.05" evaluate to "TRUE" even
 	 * though the equivalent java expression is <code>false</code>.  In examples like this,
 	 * Excel achieves the effect by having additional logic for comparison operations.
-	 * <p/>
-	 * <p/>
+	 * <p>
+	 * <p>
 	 * Note - Excel also gives special treatment to expressions like "0.06-0.01-0.05" which
 	 * evaluates to "0" (in java, rounding anomalies give a result of 6.9E-18).  The special
 	 * behaviour here is for different reasons to the example above:  If the last operator in a
 	 * cell formula is '+' or '-' and the result is less than 2<sup>50</sup> times smaller than
 	 * first operand, the result is rounded to zero.
 	 * Needless to say, the two rules are not consistent and it is relatively easy to find
-	 * examples that satisfy<br/>
-	 * "A=B" is "TRUE" but "A-B" is not "0"<br/>
-	 * and<br/>
-	 * "A=B" is "FALSE" but "A-B" is "0"<br/>
-	 * <br/>
+	 * examples that satisfy<br>
+	 * "A=B" is "TRUE" but "A-B" is not "0"<br>
+	 * and<br>
+	 * "A=B" is "FALSE" but "A-B" is "0"<br>
+	 * <br>
 	 * This rule (for rounding the result of a final addition or subtraction), has not been
 	 * implemented in POI (as of Jul-2009).
 	 *

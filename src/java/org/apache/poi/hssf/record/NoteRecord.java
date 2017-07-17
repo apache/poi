@@ -47,7 +47,7 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 	private boolean field_5_hasMultibyte;
 	private String field_6_author;
 	/**
-	 * Saves padding byte value to reduce delta during round-trip serialization.<br/>
+	 * Saves padding byte value to reduce delta during round-trip serialization.<br>
 	 *
 	 * The documentation is not clear about how padding should work.  In any case
 	 * Excel(2007) does something different.

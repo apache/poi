@@ -32,7 +32,7 @@ public final class TestEvilUnclosedBRFixingInputStream {
 
     static class EvilUnclosedBRFixingInputStream extends ReplacingInputStream {
         public EvilUnclosedBRFixingInputStream(byte[] source) {
-            super(new ByteArrayInputStream(source), "<br>", "<br/>");
+            super(new ByteArrayInputStream(source), "<br>", "<br>");
         }
     }
 
@@ -49,7 +49,7 @@ public final class TestEvilUnclosedBRFixingInputStream {
     @Test
     public void testProblem() throws IOException {
         byte[] orig = getBytes("<p><div>Hello<br>There!</div> <div>Tags!</div></p>");
-        byte[] fixed = getBytes("<p><div>Hello<br/>There!</div> <div>Tags!</div></p>");
+        byte[] fixed = getBytes("<p><div>Hello<br>There!</div> <div>Tags!</div></p>");
 
         EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(orig);
 
@@ -63,7 +63,7 @@ public final class TestEvilUnclosedBRFixingInputStream {
     @Test
     public void testBufferSize() throws IOException {
         byte[] orig = getBytes("<p><div>Hello<br> <br>There!</div> <div>Tags!<br><br></div></p>");
-        byte[] fixed = getBytes("<p><div>Hello<br/> <br/>There!</div> <div>Tags!<br/><br/></div></p>");
+        byte[] fixed = getBytes("<p><div>Hello<br> <br>There!</div> <div>Tags!<br><br></div></p>");
 
         // Vary the buffer size, so that we can end up with the br in the
         //  overflow or only part in the buffer

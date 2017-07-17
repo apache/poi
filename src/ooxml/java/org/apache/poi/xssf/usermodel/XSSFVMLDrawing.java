@@ -130,7 +130,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
              * The result is that they contain things like &gt;br&lt;, which breaks the XML parsing.
              * This very sick InputStream wrapper attempts to spot these go past, and fix them.
              */
-            doc = DocumentHelper.readDocument(new ReplacingInputStream(is, "<br>", "<br/>"));
+            doc = DocumentHelper.readDocument(new ReplacingInputStream(is, "<br>", "<br>"));
         } catch (SAXException e) {
             throw new XmlException(e.getMessage(), e);
         }

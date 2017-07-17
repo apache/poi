@@ -74,7 +74,7 @@ public class CellTextFormatter extends CellFormatter {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * For text, this is just printing the text.
      */
     public void simpleValue(StringBuffer toAppendTo, Object value) {
