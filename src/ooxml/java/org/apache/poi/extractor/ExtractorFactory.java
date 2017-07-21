@@ -167,6 +167,10 @@ public class ExtractorFactory {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
             throw e;
+        } catch (Error e) {
+            // ensure file-handle release
+            IOUtils.closeQuietly(fs);
+            throw e;
         }
      }
 
@@ -279,6 +283,11 @@ public class ExtractorFactory {
             pkg.revert();
             throw e;
         } catch (RuntimeException e) {
+            // ensure that we close the package again if there is an error opening it, however
+            // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
+            pkg.revert();
+            throw e;
+        } catch (Error e) {
             // ensure that we close the package again if there is an error opening it, however
             // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
             pkg.revert();
