@@ -74,8 +74,10 @@ public class TestFonts {
     
     // currently linux and mac return quite different values
     private static final int[] expected_sizes = { 311, 312, 313,
-            362, //Windows 10, 13.3" 1080p high-dpi
-            398, 399 };
+            362, // Windows 10, 13.3" 1080p high-dpi
+            398, 399,
+            406  // Ubuntu Trusty, 15", 1680x1050
+    };
     
     @BeforeClass
     public static void initGE() throws FontFormatException, IOException {
@@ -94,7 +96,8 @@ public class TestFonts {
         Rectangle2D anc = tb.getAnchor();
         // ignore font metrics differences on windows / linux (... hopefully ...)
         boolean found = Arrays.binarySearch(expected_sizes, (int)anc.getHeight()) > -1;
-        assertTrue(found);
+        assertTrue("Did not find height " + anc.getHeight() + " in expected sizes: " + Arrays.toString(expected_sizes),
+                found);
 //        setFont(tb, "Mona");
 //        FileOutputStream fos = new FileOutputStream("bla-hslf.ppt");
 //        ppt.write(fos);
@@ -109,7 +112,8 @@ public class TestFonts {
         Rectangle2D anc = tb.getAnchor();
         // ignore font metrics differences on windows / linux (... hopefully ...)
         boolean found = Arrays.binarySearch(expected_sizes, (int)anc.getHeight()) > -1;
-        assertTrue((int)anc.getHeight() + " not found in list of exepcted values", found);
+        assertTrue("Did not find height " + anc.getHeight() + " in expected sizes: " + Arrays.toString(expected_sizes),
+                found);
 //        setFont(tb, "Mona");
 //        FileOutputStream fos = new FileOutputStream("bla-xslf.ppt");
 //        ppt.write(fos);
