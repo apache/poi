@@ -20,7 +20,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'
+		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'	// 2.x requires Gradle >=4
 		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
 	}
 }
