@@ -60,9 +60,9 @@ public class TestStreamedWorkbook {
         File f = files.getFile("InvalidFile.txt");
         StreamedWorkbook workbook = null;
         try {
-
             workbook = new StreamedWorkbook(f.getAbsolutePath());
             workbook.getSheetIterator();
+            fail("expected an exception");
         } catch (Exception e) {
             assertEquals("No valid entries or contents found, this is not a valid OOXML (Office Open XML) file",
                     e.getMessage());
@@ -82,25 +82,21 @@ public class TestStreamedWorkbook {
         int streamedSheetcount = 0;
         int count = 0;
 
-        try {
-            Iterator<StreamedSheet> streamedSheetIterator = streamedWorkbook.getSheetIterator();
+        Iterator<StreamedSheet> streamedSheetIterator = streamedWorkbook.getSheetIterator();
 
-            while (streamedSheetIterator.hasNext()) {
-                streamedSheetIterator.next();
-                streamedSheetcount++;
-            }
-
-            Iterator<Sheet> sheetIterator = workbook.sheetIterator();
-
-            while (sheetIterator.hasNext()) {
-                sheetIterator.next();
-                count++;
-            }
-
-            assertEquals(count, streamedSheetcount);
-        } catch (Exception e) {
-
+        while (streamedSheetIterator.hasNext()) {
+            streamedSheetIterator.next();
+            streamedSheetcount++;
         }
+
+        Iterator<Sheet> sheetIterator = workbook.sheetIterator();
+
+        while (sheetIterator.hasNext()) {
+            sheetIterator.next();
+            count++;
+        }
+
+        assertEquals(count, streamedSheetcount);
 
         streamedWorkbook.close();
         workbook.close();
@@ -114,13 +110,10 @@ public class TestStreamedWorkbook {
         StreamedWorkbook streamedWorkbook = new StreamedWorkbook(f.getAbsolutePath());
         Workbook workbook = new XSSFWorkbook(f);
 
-        try {
-            int sheetCount = workbook.getNumberOfSheets();
-            int streamedSheetCount = streamedWorkbook.getNumberOfSheets();
+        int sheetCount = workbook.getNumberOfSheets();
+        int streamedSheetCount = streamedWorkbook.getNumberOfSheets();
 
-            assertEquals(sheetCount, streamedSheetCount);
-        } catch (Exception e) {
-        }
+        assertEquals(sheetCount, streamedSheetCount);
 
         workbook.close();
         streamedWorkbook.close();
@@ -469,8 +462,9 @@ public class TestStreamedWorkbook {
 
                     try {
                         cell = (StreamedCell) row.getCell(10);
-                    } catch (Exception exception) {
-                        assertEquals(true, exception instanceof IndexOutOfBoundsException);
+                        fail("expected an exception");
+                    } catch (IndexOutOfBoundsException exception) {
+                        //expected
                     }
                 }
 
@@ -529,6 +523,7 @@ public class TestStreamedWorkbook {
             workbook.close();
 
             workbook.getSheetIterator();
+            fail("expected an exception");
         } catch (Exception e) {
             assertEquals("Workbook already closed", e.getMessage());
         }
