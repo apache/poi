@@ -21,12 +21,16 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.fonts.FontCharset;
+import org.apache.poi.common.usermodel.fonts.FontPitch;
+import org.apache.poi.hslf.usermodel.HSLFFontInfo;
+import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.junit.Test;
 
 
 /**
- * Test adding fonts to the presenataion resources
+ * Test adding fonts to the presentation resources
  */
 public final class TestPPFont {
 
@@ -34,25 +38,25 @@ public final class TestPPFont {
     public void testCreate() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         assertEquals(1, ppt.getNumberOfFonts());
-        assertEquals("Arial", ppt.getFont(0).getFontName());
+        assertEquals("Arial", ppt.getFont(0).getTypeface());
 
         //adding the same font twice
-        assertEquals(0, ppt.addFont(PPFont.ARIAL));
+        assertEquals(0, (int)ppt.addFont(HSLFFontInfoPredefined.ARIAL).getIndex());
         assertEquals(1, ppt.getNumberOfFonts());
 
-        assertEquals(1, ppt.addFont(PPFont.TIMES_NEW_ROMAN));
-        assertEquals(2, ppt.addFont(PPFont.COURIER_NEW));
-        assertEquals(3, ppt.addFont(PPFont.WINGDINGS));
+        assertEquals(1, (int)ppt.addFont(HSLFFontInfoPredefined.TIMES_NEW_ROMAN).getIndex());
+        assertEquals(2, (int)ppt.addFont(HSLFFontInfoPredefined.COURIER_NEW).getIndex());
+        assertEquals(3, (int)ppt.addFont(HSLFFontInfoPredefined.WINGDINGS).getIndex());
 
         assertEquals(4, ppt.getNumberOfFonts());
 
-        assertEquals(PPFont.TIMES_NEW_ROMAN.getFontName(), ppt.getFont(1).getFontName());
-        assertEquals(PPFont.COURIER_NEW.getFontName(), ppt.getFont(2).getFontName());
+        assertEquals(HSLFFontInfoPredefined.TIMES_NEW_ROMAN.getTypeface(), ppt.getFont(1).getTypeface());
+        assertEquals(HSLFFontInfoPredefined.COURIER_NEW.getTypeface(), ppt.getFont(2).getTypeface());
 
-        PPFont font3 = ppt.getFont(3);
-        assertEquals(PPFont.WINGDINGS.getFontName(), font3.getFontName());
-        assertEquals(PPFont.SYMBOL_CHARSET, font3.getCharSet());
-        assertEquals(PPFont.VARIABLE_PITCH, font3.getPitchAndFamily());
+        HSLFFontInfo font3 = ppt.getFont(3);
+        assertEquals(HSLFFontInfoPredefined.WINGDINGS.getTypeface(), font3.getTypeface());
+        assertEquals(FontCharset.SYMBOL, font3.getCharset());
+        assertEquals(FontPitch.VARIABLE, font3.getPitch());
         
         ppt.close();
     }

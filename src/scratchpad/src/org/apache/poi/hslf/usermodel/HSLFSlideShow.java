@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
@@ -41,9 +42,34 @@ import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.model.MovieShape;
-import org.apache.poi.hslf.model.PPFont;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.DocumentAtom;
+import org.apache.poi.hslf.record.ExAviMovie;
+import org.apache.poi.hslf.record.ExControl;
+import org.apache.poi.hslf.record.ExEmbed;
+import org.apache.poi.hslf.record.ExEmbedAtom;
+import org.apache.poi.hslf.record.ExMCIMovie;
+import org.apache.poi.hslf.record.ExObjList;
+import org.apache.poi.hslf.record.ExObjListAtom;
+import org.apache.poi.hslf.record.ExOleObjAtom;
+import org.apache.poi.hslf.record.ExOleObjStg;
+import org.apache.poi.hslf.record.ExVideoContainer;
+import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.MainMaster;
+import org.apache.poi.hslf.record.Notes;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.PositionDependentRecordContainer;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.Slide;
+import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.TxMasterStyleAtom;
+import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -874,18 +900,11 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	/**
 	 * Add a font in this presentation
 	 *
-	 * @param font
-	 *            the font to add
-	 * @return 0-based index of the font
+	 * @param fontInfo the font to add
+	 * @return the registered HSLFFontInfo - the font info object is unique based on the typeface
 	 */
-	public int addFont(PPFont font) {
-		FontCollection fonts = getDocumentRecord().getEnvironment().getFontCollection();
-		int idx = fonts.getFontIndex(font.getFontName());
-		if (idx == -1) {
-			idx = fonts.addFont(font.getFontName(), font.getCharSet(), font.getFontFlags(), font
-					.getFontType(), font.getPitchAndFamily());
-		}
-		return idx;
+	public HSLFFontInfo addFont(FontInfo fontInfo) {
+		return getDocumentRecord().getEnvironment().getFontCollection().addFont(fontInfo);
 	}
 
 	/**
@@ -896,17 +915,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 * @return of an instance of <code>PPFont</code> or <code>null</code> if not
 	 *         found
 	 */
-	public PPFont getFont(int idx) {
-		FontCollection fonts = getDocumentRecord().getEnvironment().getFontCollection();
-		for (Record ch : fonts.getChildRecords()) {
-			if (ch instanceof FontEntityAtom) {
-				FontEntityAtom atom = (FontEntityAtom) ch;
-				if (atom.getFontIndex() == idx) {
-					return new PPFont(atom);
-				}
-			}
-		}
-		return null;
+	public HSLFFontInfo getFont(int idx) {
+	    return getDocumentRecord().getEnvironment().getFontCollection().getFontInfo(idx);
 	}
 
 	/**

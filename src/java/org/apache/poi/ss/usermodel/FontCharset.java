@@ -17,13 +17,16 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Removal;
 
 /**
  * Charset represents the basic set of characters associated with a font (that it can display), and 
  * corresponds to the ANSI codepage (8-bit or DBCS) of that character set used by a given language. 
  * 
- * @author Gisella Bronzetti
+ * @deprecated enum will be replaced by common version org.apache.poi.common.usermodel.FontCharset
  */
+@Removal(version="4.0")
+@Deprecated
 public enum FontCharset {
 
      ANSI(0),

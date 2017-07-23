@@ -17,11 +17,9 @@
 
 package org.apache.poi.hwmf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
 
-import javax.imageio.ImageIO;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -39,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
@@ -118,7 +118,9 @@ public class TestHwmfParsing {
                 SlideShow<?,?> ss = SlideShowFactory.create(fis);
                 int wmfIdx = 1;
                 for (PictureData pd : ss.getPictureData()) {
-                    if (pd.getType() != PictureType.WMF) continue;
+                    if (pd.getType() != PictureType.WMF) {
+                        continue;
+                    }
                     byte wmfData[] = pd.getData();
                     String filename = String.format(Locale.ROOT, "%s-%04d.wmf", basename, wmfIdx);
                     FileOutputStream fos = new FileOutputStream(new File(outdir, filename));
@@ -211,7 +213,7 @@ public class TestHwmfParsing {
         for (HwmfRecord r : wmf.getRecords()) {
             if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
                 HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
-                charset = (font.getCharSet().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharSet().getCharset();
+                charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
             if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
@@ -239,7 +241,7 @@ public class TestHwmfParsing {
         for (HwmfRecord r : wmf.getRecords()) {
             if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
                 HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
-                charset = (font.getCharSet().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharSet().getCharset();
+                charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
             if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;

@@ -19,6 +19,8 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.common.usermodel.fonts.FontGroup;
+import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.util.Internal;
 
@@ -26,12 +28,18 @@ import org.apache.poi.util.Internal;
  * Some text.
  */
 public interface TextRun {
+    /**
+     * Type of text capitals
+     */
     enum TextCap {
         NONE,
         SMALL,
         ALL
     }
     
+    /**
+     * Type of placeholder fields
+     */
     enum FieldType {
         SLIDE_NUMBER, DATE_TIME
     }
@@ -87,18 +95,64 @@ public interface TextRun {
     void setFontSize(Double fontSize);
 
     /**
+     * Get the font family - convenience method for {@link #getFontInfo(FontGroup)} 
+     * 
      * @return  font family or null if not set
      */
     String getFontFamily();
 
     /**
-     * Specifies the typeface, or name of the font that is to be used for this text run.
+     * Get the font family - convenience method for {@link #getFontInfo(FontGroup)}
+     * 
+     * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
+     *    if {@code null}, the font group matching the first character will be returned 
+     * 
+     * @return  font family or null if not set
+     */
+    String getFontFamily(FontGroup fontGroup);
+
+    /**
+     * Specifies the typeface, or name of the font that is to be used for this text run -
+     * convenience method for calling {@link #setFontInfo(FontInfo, FontGroup)} with just a font name
      *
      * @param typeface  the font to apply to this text run.
-     * The value of <code>null</code> unsets the Typeface attrubute from the underlying xml.
+     *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
      */
     void setFontFamily(String typeface);
 
+    /**
+     * Specifies the typeface, or name of the font that is to be used for this text run -
+     * convenience method for calling {@link #setFontInfo(FontInfo, FontGroup)} with just a font name
+     *
+     * @param typeface  the font to apply to this text run.
+     *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
+     * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
+     *    if {@code null}, the font group matching the first character will be returned 
+     */
+    void setFontFamily(String typeface, FontGroup fontGroup);
+
+    /**
+     * Get the font info for the given font group
+     * 
+     * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
+     *    if {@code null}, the font group matching the first character will be returned 
+     * @return  font info or {@code null} if not set
+     * 
+     * @since POI 3.17-beta2
+     */
+    FontInfo getFontInfo(FontGroup fontGroup);
+
+    /**
+     * Specifies the font to be used for this text run.
+     *
+     * @param fontInfo the font to apply to this text run.
+     *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
+     * @param fontGroup the font group, i.e. the range of glpyhs to be covered. defaults to latin, if {@code null}.
+     * 
+     * @since POI 3.17-beta2
+     */
+    void setFontInfo(FontInfo fontInfo, FontGroup fontGroup);
+    
     /**
      * @return true, if text is bold
      */

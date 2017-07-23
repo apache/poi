@@ -19,6 +19,12 @@
 
 package org.apache.poi.sl.draw;
 
+import java.awt.Font;
+import java.awt.Graphics2D;
+
+import org.apache.poi.common.usermodel.fonts.FontInfo;
+import org.apache.poi.util.StringUtil;
+
 /**
  * Manages fonts when rendering slides.
  *
@@ -29,28 +35,50 @@ public interface DrawFontManager {
     /**
      * select a font to be used to paint text
      *
-     * @param typeface the font family as defined in the .pptx file.
-     * This can be unknown or missing in the graphic environment.
-     * @param pitchFamily a pitch-and-family,
-     * see {@link org.apache.poi.hwmf.record.HwmfFont#getFamily()} and
-     * {@link org.apache.poi.hwmf.record.HwmfFont#getPitch()}
-     * for how to calculate those (ancient) values
+     * @param graphics the graphics context to request additional rendering hints
+     * @param fontInfo the font info object corresponding to the text run font
      *
      * @return the font to be used to paint text
      */
-    String getRendererableFont(String typeface, int pitchFamily);
+    FontInfo getMappedFont(Graphics2D graphics, FontInfo fontInfo);
 
     /**
      * In case the original font doesn't contain a glyph, use the
      * returned fallback font as an alternative
      *
-     * @param typeface the font family as defined in the .pptx file.
-     * @param pitchFamily a pitch-and-family,
-     * see {@link org.apache.poi.hwmf.record.HwmfFont#getFamily()} and
-     * {@link org.apache.poi.hwmf.record.HwmfFont#getPitch()}
-     * for how to calculate those (ancient) values
+     * @param graphics the graphics context to request additional rendering hints
+     * @param fontInfo the font info object corresponding to the text run font
      * 
      * @return the font to be used as a fallback for the original typeface
      */
-    String getFallbackFont(String typeface, int pitchFamily);
+    FontInfo getFallbackFont(Graphics2D graphics, FontInfo fontInfo);
+
+    /**
+     * Map text charset depending on font family.<p>
+     * 
+     * Currently this only maps for wingdings font (into unicode private use area)
+     *
+     * @param graphics the graphics context to request additional rendering hints
+     * @param fontInfo the font info object corresponding to the text run font
+     * @param text the raw text
+     * 
+     * @return String with mapped codepoints
+     *
+     * @see <a href="http://stackoverflow.com/questions/8692095">Drawing exotic fonts in a java applet</a>
+     * @see StringUtil#mapMsCodepointString(String)
+     */
+    String mapFontCharset(Graphics2D graphics, FontInfo fontInfo, String text);
+
+    /**
+     * Create an AWT font object with the given attributes
+     *
+     * @param graphics the graphics context to request additional rendering hints
+     * @param fontInfo the font info object corresponding to the text run font
+     * @param size the font size in points
+     * @param bold {@code true} if the font is bold
+     * @param italic {@code true} if the font is italic
+     * 
+     * @return the AWT font object
+     */
+    Font createAWTFont(Graphics2D graphics, FontInfo fontInfo, double size, boolean bold, boolean italic);
 }

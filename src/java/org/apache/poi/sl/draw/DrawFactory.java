@@ -236,4 +236,15 @@ public class DrawFactory {
             }
         }
     }
+    
+    /**
+     * Return a FontManager, either registered beforehand or a default implementation
+     *
+     * @param graphics the graphics context holding potentially a font manager
+     * @return the font manager
+     */
+    public DrawFontManager getFontManager(Graphics2D graphics) {
+        DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
+        return (fontHandler != null) ? fontHandler : new DrawFontManagerDefault();
+    }
 }

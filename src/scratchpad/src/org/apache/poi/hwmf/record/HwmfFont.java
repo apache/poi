@@ -19,102 +19,18 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 
+import org.apache.poi.common.usermodel.fonts.FontCharset;
+import org.apache.poi.common.usermodel.fonts.FontFamily;
+import org.apache.poi.common.usermodel.fonts.FontInfo;
+import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * The Font object specifies the attributes of a logical font
  */
-public class HwmfFont {
-
-    private static final POILogger logger = POILogFactory.getLogger(HwmfFont.class);
-
-    public enum WmfCharset {
-        /** Specifies the English character set. */
-        ANSI_CHARSET(0x00000000, "Cp1252"),
-        /**
-         * Specifies a character set based on the current system locale;
-         * for example, when the system locale is United States English,
-         * the default character set is ANSI_CHARSET.
-         */
-        DEFAULT_CHARSET(0x00000001, "Cp1252"),
-        /** Specifies a character set of symbols. */
-        SYMBOL_CHARSET(0x00000002, ""),
-        /** Specifies the Apple Macintosh character set. */
-        MAC_CHARSET(0x0000004D, "MacRoman"),
-        /** Specifies the Japanese character set. */
-        SHIFTJIS_CHARSET(0x00000080, "Shift_JIS"),
-        /** Also spelled "Hangeul". Specifies the Hangul Korean character set. */
-        HANGUL_CHARSET(0x00000081, "cp949"),
-        /** Also spelled "Johap". Specifies the Johab Korean character set. */
-        JOHAB_CHARSET(0x00000082, "x-Johab"),
-        /** Specifies the "simplified" Chinese character set for People's Republic of China. */
-        GB2312_CHARSET(0x00000086, "GB2312"),
-        /**
-         * Specifies the "traditional" Chinese character set, used mostly in
-         * Taiwan and in the Hong Kong and Macao Special Administrative Regions.
-         */
-        CHINESEBIG5_CHARSET(0x00000088, "Big5"),
-        /** Specifies the Greek character set. */
-        GREEK_CHARSET(0x000000A1, "Cp1253"),
-        /** Specifies the Turkish character set. */
-        TURKISH_CHARSET(0x000000A2, "Cp1254"),
-        /** Specifies the Vietnamese character set. */
-        VIETNAMESE_CHARSET(0x000000A3, "Cp1258"),
-        /** Specifies the Hebrew character set. */
-        HEBREW_CHARSET(0x000000B1, "Cp1255"),
-        /** Specifies the Arabic character set. */
-        ARABIC_CHARSET(0x000000B2, "Cp1256"),
-        /** Specifies the Baltic (Northeastern European) character set. */
-        BALTIC_CHARSET(0x000000BA, "Cp1257"),
-        /** Specifies the Russian Cyrillic character set. */
-        RUSSIAN_CHARSET(0x000000CC, "Cp1251"),
-        /** Specifies the Thai character set. */
-        THAI_CHARSET(0x000000DE, "x-windows-874"),
-        /** Specifies a Eastern European character set. */
-        EASTEUROPE_CHARSET(0x000000EE, "Cp1250"),
-        /**
-         * Specifies a mapping to one of the OEM code pages,
-         * according to the current system locale setting.
-         */
-        OEM_CHARSET(0x000000FF, "Cp1252");
-
-        int flag;
-        Charset charset;
-
-        WmfCharset(int flag, String javaCharsetName) {
-            this.flag = flag;
-            if (javaCharsetName.length() > 0) {
-                try {
-                    charset = Charset.forName(javaCharsetName);
-                    return;
-                } catch (UnsupportedCharsetException e) {
-                    logger.log(POILogger.WARN, "Unsupported charset: "+javaCharsetName);
-                }
-            }
-            charset = null;
-        }
-
-        /**
-         *
-         * @return charset for the font or <code>null</code> if there is no matching charset or
-         *         if the charset is a &quot;default&quot;
-         */
-        public Charset getCharset() {
-            return charset;
-        }
-
-        public static WmfCharset valueOf(int flag) {
-            for (WmfCharset cs : values()) {
-                if (cs.flag == flag) return cs;
-            }
-            return null;
-        }
-    }
+public class HwmfFont implements FontInfo {
 
     /**
      * The output precision defines how closely the output must match the requested font's height,
@@ -176,7 +92,9 @@ public class HwmfFont {
 
         static WmfOutPrecision valueOf(int flag) {
             for (WmfOutPrecision op : values()) {
-                if (op.flag == flag) return op;
+                if (op.flag == flag) {
+                    return op;
+                }
             }
             return null;
         }
@@ -237,7 +155,9 @@ public class HwmfFont {
 
         static WmfClipPrecision valueOf(int flag) {
             for (WmfClipPrecision cp : values()) {
-                if (cp.flag == flag) return cp;
+                if (cp.flag == flag) {
+                    return cp;
+                }
             }
             return null;
         }
@@ -292,90 +212,15 @@ public class HwmfFont {
 
         static WmfFontQuality valueOf(int flag) {
             for (WmfFontQuality fq : values()) {
-                if (fq.flag == flag) return fq;
+                if (fq.flag == flag) {
+                    return fq;
+                }
             }
             return null;
         }
     }
     
-    /**
-     * A property of a font that describes its general appearance.
-     */
-    public enum WmfFontFamilyClass {
-        /**
-         * The default font is specified, which is implementation-dependent.
-         */
-        FF_DONTCARE (0x00),
-        /**
-         * Fonts with variable stroke widths, which are proportional to the actual widths of
-         * the glyphs, and which have serifs. "MS Serif" is an example.
-         */
-        FF_ROMAN (0x01),
-        /**
-         * Fonts with variable stroke widths, which are proportional to the actual widths of the
-         * glyphs, and which do not have serifs. "MS Sans Serif" is an example.
-         */
-        FF_SWISS (0x02),
-        /**
-         * Fonts with constant stroke width, with or without serifs. Fixed-width fonts are
-         * usually modern. "Pica", "Elite", and "Courier New" are examples.
-         */
-        FF_MODERN (0x03),
-        /**
-         * Fonts designed to look like handwriting. "Script" and "Cursive" are examples.
-         */
-        FF_SCRIPT (0x04),
-        /**
-         * Novelty fonts. "Old English" is an example.
-         */
-        FF_DECORATIVE (0x05);
-        
-        int flag;
-        WmfFontFamilyClass(int flag) {
-            this.flag = flag;
-        }
 
-        static WmfFontFamilyClass valueOf(int flag) {
-            for (WmfFontFamilyClass ff : values()) {
-                if (ff.flag == flag) return ff;
-            }
-            return null;
-        }
-    }
-
-    /**
-     * A property of a font that describes the pitch, of the characters.
-     */
-    public enum WmfFontPitch {
-        /**
-         * The default pitch, which is implementation-dependent.
-         */
-        DEFAULT_PITCH (0x00),
-        /**
-         * A fixed pitch, which means that all the characters in the font occupy the same
-         * width when output in a string.
-         */
-        FIXED_PITCH (0x01),
-        /**
-         * A variable pitch, which means that the characters in the font occupy widths
-         * that are proportional to the actual widths of the glyphs when output in a string. For example,
-         * the "i" and space characters usually have much smaller widths than a "W" or "O" character.
-         */
-        VARIABLE_PITCH (0x02);
-        
-        int flag;
-        WmfFontPitch(int flag) {
-            this.flag = flag;
-        }
-
-        static WmfFontPitch valueOf(int flag) {
-            for (WmfFontPitch fp : values()) {
-                if (fp.flag == flag) return fp;
-            }
-            return null;
-        }        
-    }
-    
     /**
      * A 16-bit signed integer that specifies the height, in logical units, of the font's
      * character cell. The character height is computed as the character cell height minus the
@@ -454,7 +299,7 @@ public class HwmfFont {
      * If a typeface name in the FaceName field is specified, the CharSet value MUST match the
      * character set of that typeface.
      */
-    WmfCharset charSet;
+    FontCharset charSet;
 
     /**
      * An 8-bit unsigned integer that defines the output precision.
@@ -486,12 +331,12 @@ public class HwmfFont {
      * intended for specifying fonts when the exact typeface wanted is not available.
      * (LSB 4 bits)
      */
-    WmfFontFamilyClass family;
+    FontFamily family;
     
     /**
      * A property of a font that describes the pitch (MSB 2 bits)
      */
-    WmfFontPitch pitch;
+    FontPitch pitch;
 
     /**
      * A null-terminated string of 8-bit Latin-1 [ISO/IEC-8859-1] ANSI
@@ -509,7 +354,7 @@ public class HwmfFont {
         italic = leis.readByte() != 0;
         underline = leis.readByte() != 0;
         strikeOut = leis.readByte() != 0;
-        charSet = WmfCharset.valueOf(leis.readUByte());
+        charSet = FontCharset.valueOf(leis.readUByte());
         outPrecision = WmfOutPrecision.valueOf(leis.readUByte());
         clipPrecision = WmfClipPrecision.valueOf(leis.readUByte());
         quality = WmfFontQuality.valueOf(leis.readUByte());
@@ -561,10 +406,6 @@ public class HwmfFont {
         return strikeOut;
     }
 
-    public WmfCharset getCharSet() {
-        return charSet;
-    }
-
     public WmfOutPrecision getOutPrecision() {
         return outPrecision;
     }
@@ -581,15 +422,53 @@ public class HwmfFont {
         return pitchAndFamily;
     }
 
-    public WmfFontFamilyClass getFamily() {
-        return WmfFontFamilyClass.valueOf(pitchAndFamily & 0xF);
+    @Override
+    public FontFamily getFamily() {
+        return FontFamily.valueOf(pitchAndFamily & 0xF);
     }
 
-    public WmfFontPitch getPitch() {
-        return WmfFontPitch.valueOf((pitchAndFamily >>> 6) & 3);
+    @Override
+    public void setFamily(FontFamily family) {
+        throw new UnsupportedOperationException("setCharset not supported by HwmfFont.");
     }
 
-    public String getFacename() {
+    @Override
+    public FontPitch getPitch() {
+        return FontPitch.valueOf((pitchAndFamily >>> 6) & 3);
+    }
+
+    @Override
+    public void setPitch(FontPitch pitch) {
+        throw new UnsupportedOperationException("setPitch not supported by HwmfFont.");
+    }
+
+    @Override
+    public Integer getIndex() {
+        return null;
+    }
+
+    @Override
+    public void setIndex(int index) {
+        throw new UnsupportedOperationException("setIndex not supported by HwmfFont.");
+    }
+
+    @Override
+    public String getTypeface() {
         return facename;
+    }
+
+    @Override
+    public void setTypeface(String typeface) {
+        throw new UnsupportedOperationException("setTypeface not supported by HwmfFont.");
+    }
+
+    @Override
+    public FontCharset getCharset() {
+        return charSet;
+    }
+
+    @Override
+    public void setCharset(FontCharset charset) {
+        throw new UnsupportedOperationException("setCharset not supported by HwmfFont.");
     }
 }
