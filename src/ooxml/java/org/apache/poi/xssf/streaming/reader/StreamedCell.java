@@ -86,17 +86,10 @@ public class StreamedCell implements Cell {
     }
 
     /**
-     * <pre>
-     * Will be supported in future.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
-    public int getRowIndex() {
-        throw new UnsupportedOperationException("Not implememted yet.");
-    }
+    public int getRowIndex() { return row.getRowNum(); }
 
     /**
      * <pre>
@@ -108,7 +101,7 @@ public class StreamedCell implements Cell {
     @Override
     @NotImplemented
     public Sheet getSheet() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
@@ -165,7 +158,7 @@ public class StreamedCell implements Cell {
     @Override
     @NotImplemented
     public int getCachedFormulaResultType() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
@@ -178,7 +171,7 @@ public class StreamedCell implements Cell {
     @Override
     @NotImplemented
     public CellType getCachedFormulaResultTypeEnum() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
@@ -277,7 +270,7 @@ public class StreamedCell implements Cell {
     @Override
     @NotImplemented
     public String getCellFormula() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
@@ -316,7 +309,7 @@ public class StreamedCell implements Cell {
     @Override
     @NotImplemented
     public RichTextString getRichStringCellValue() {
-        throw new UnsupportedOperationException("Not implememted yet.");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
