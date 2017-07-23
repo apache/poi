@@ -20,17 +20,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.xssf.streaming.value.BooleanValue;
+import org.apache.poi.xssf.streaming.value.RichTextValue;
+import org.apache.poi.xssf.streaming.value.StringValue;
+import org.apache.poi.xssf.streaming.value.Value;
 
 /**
  * Represents cell in a row Value of cell is represented as a string.
@@ -38,7 +35,8 @@ import org.apache.poi.util.NotImplemented;
  */
 public class StreamedCell implements Cell {
     private final Row row;
-    private String value;
+    private String data;
+    private Value value;
     private int columnIndex;
     private CellType cellType = CellType._NONE;
 
@@ -57,16 +55,18 @@ public class StreamedCell implements Cell {
      * @return String
      */
     public String getValue() {
-        return value;
+        return data;
     }
 
-    public void setValue(String value) {
+    void setValue(String data, Value value, CellType cellType) {
+        this.data = data;
         this.value = value;
+        setCellType(cellType);
     }
 
     @Override
     public String toString() {
-        return value;
+        return data;
     }
 
     void setColumnIndex(int columnIndex) {
@@ -287,29 +287,41 @@ public class StreamedCell implements Cell {
     }
 
     /**
-     * <pre>
-     * Not supported due to memory foot print.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public Date getDateCellValue() {
-        throw new UnsupportedOperationException("Operation not supported.");
+        CellType cellType = getCellTypeEnum();
+        if (cellType == CellType.BLANK) {
+            return null;
+        }
+
+        double value = getNumericCellValue();
+        return DateUtil.getJavaDate(value, false);
     }
 
     /**
-     * <pre>
-     * Will be supported in future.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public RichTextString getRichStringCellValue() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        CellType cellType = getCellTypeEnum();
+        if (getCellTypeEnum() != CellType.STRING)
+            throw typeMismatch(CellType.STRING, cellType, false);
+
+        StringValue sval = (StringValue) value;
+        if (sval.isRichText())
+            return ((RichTextValue) value).getValue();
+        else {
+            String plainText = getStringCellValue();
+            return getSheet().getWorkbook().getCreationHelper().createRichTextString(plainText);
+        }
+    }
+
+    private static RuntimeException typeMismatch(CellType expectedTypeCode, CellType actualTypeCode, boolean isFormulaCell) {
+        String msg = "Cannot get a " + expectedTypeCode + " value from a " + actualTypeCode
+                + " " + (isFormulaCell ? "formula " : "") + "cell";
+        return new IllegalStateException(msg);
     }
 
     /**
@@ -321,7 +333,7 @@ public class StreamedCell implements Cell {
      */
     @Override
     public String getStringCellValue() {
-        return value;
+        return data;
     }
 
     /**
@@ -354,16 +366,22 @@ public class StreamedCell implements Cell {
     }
 
     /**
-     * <pre>
-     * Not supported due to memory foot print.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
+     * {@inheritDoc}
      */
     @Override
-    @NotImplemented
     public boolean getBooleanCellValue() {
-        throw new UnsupportedOperationException("Operation not supported.");
+        CellType cellType = getCellTypeEnum();
+        switch(cellType)
+        {
+            case BLANK:
+                return false;
+            case BOOLEAN:
+            {
+                return ((BooleanValue)value).getValue();
+            }
+            default:
+                throw typeMismatch(CellType.BOOLEAN, cellType, false);
+        }
     }
 
     /**

@@ -35,6 +35,9 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.streaming.value.BooleanValue;
+import org.apache.poi.xssf.streaming.value.NumericValue;
+import org.apache.poi.xssf.streaming.value.PlainStringValue;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
@@ -77,12 +80,12 @@ public class StreamedSheetEventHandler {
             + "h:mm;@|[$-409]h:mm\\ AM/PM;@|h:mm:ss;@|[$-409]h:mm:ss\\ AM/PM;@|mm:ss.0;@|[h]:mm:ss;@|"
             + "[$-409]m/d/yy\\ h:mm\\ AM/PM;@|DD/MM/YYYY";
 
-    public static final String DEFAULT_CELL_TYPE = "DEFAULT";
-    public static final String STRING_CELL_TYPE = "STRING";
-    public static final String BOOLEAN_CELL_TYPE = "BOOLEAN";
-    public static final String DATE_CELL_TYPE = "DATE";
-    public static final String FORMULA_CELL_TYPE = "FORMULA";
-    public static final String NUMERIC_CELL_TYPE = "NUMERIC";
+    private static final String DEFAULT_CELL_TYPE = "DEFAULT";
+    private static final String STRING_CELL_TYPE = "STRING";
+    private static final String BOOLEAN_CELL_TYPE = "BOOLEAN";
+    private static final String DATE_CELL_TYPE = "DATE";
+    private static final String FORMULA_CELL_TYPE = "FORMULA";
+    private static final String NUMERIC_CELL_TYPE = "NUMERIC";
 
     /**
      * Constructor
@@ -238,29 +241,30 @@ public class StreamedSheetEventHandler {
     /**
      * Creates cells and store data
      * 
-     * @param data
+     * @param data cell data
      */
-    private void storeData(String data) {
+    private void storeData(final String data) {
+        String formattedData = data;
         if (!(cellContentType.equals(FORMULA_CELL_TYPE))) {
             if (cellContentType.equals(STRING_CELL_TYPE)) {
-                data = getStringData(data);
+                formattedData = getStringData(formattedData);
             } else if (cellContentType.equals(DATE_CELL_TYPE)) {
-                data = getDateAsString(data);
+                formattedData = getDateAsString(formattedData);
             } else if (cellContentType.equals(BOOLEAN_CELL_TYPE)) {
-                if (data.trim().equals("1")) {
-                    data = "TRUE";
-                } else if (data.trim().equals("0")) {
-                    data = "FALSE";
-                } else if (data.trim().equals("")) {
-                    data = null;
+                if (formattedData.trim().equals("1")) {
+                    formattedData = "TRUE";
+                } else if (formattedData.trim().equals("0")) {
+                    formattedData = "FALSE";
+                } else if (formattedData.trim().equals("")) {
+                    formattedData = null;
                 } else {
                     try {
-                        int value = Integer.parseInt(data);
+                        int value = Integer.parseInt(formattedData);
                         if (value > 0) {
-                            data = "TRUE";
+                            formattedData = "TRUE";
                         }
                     } catch (Exception e) {
-                        data = null;
+                        formattedData = null;
                     }
                 }
             }
@@ -270,36 +274,33 @@ public class StreamedSheetEventHandler {
             }
 
             cell = new StreamedCell(row);
-            cell.setValue(data);
             cell.setColumnIndex(previousCellIndex + 1);
-            setCellType(cell, cellContentType, data);
+            if (formattedData == null || formattedData.trim().isEmpty()) {
+                cell.setCellType(CellType.BLANK);
+            } else if (cellContentType.equals(BOOLEAN_CELL_TYPE)) {
+                BooleanValue bv = new BooleanValue();
+                if(formattedData.equals("TRUE")) {
+                    bv.setValue(true);
+                } else if(formattedData.equals("TRUE")) {
+                     bv.setValue(false);
+                }
+                cell.setValue(formattedData, bv, CellType.BOOLEAN);
+            } else if (cellContentType.equals(STRING_CELL_TYPE)) {
+                PlainStringValue psv = new PlainStringValue();
+                psv.setValue(formattedData);
+                cell.setValue(formattedData, psv, CellType.STRING);
+            } else if (cellContentType.equals(FORMULA_CELL_TYPE)) {
+                PlainStringValue psv = new PlainStringValue();
+                psv.setValue(formattedData);
+                cell.setValue(formattedData, psv, CellType.FORMULA);
+            } else {
+                NumericValue nv = new NumericValue();
+                nv.setValue(Double.parseDouble(data));
+                cell.setValue(formattedData, nv, CellType.NUMERIC);
+            }
             row.getCells().add(cell);
 
         }
-    }
-
-    /**
-     * Set the content type of cell.
-     * 
-     *
-     * @param cell
-     * @param contentType
-     * @param data
-     */
-    private void setCellType(Cell cell, String contentType, String data) {
-
-        if (contentType.equals(BOOLEAN_CELL_TYPE)) {
-            cell.setCellType(CellType.BOOLEAN);
-        } else if (contentType.equals(STRING_CELL_TYPE)) {
-            if (data != null && data.trim().isEmpty()) {
-                cell.setCellType(CellType.BLANK);
-            } else {
-                cell.setCellType(CellType.STRING);
-            }
-        } else if (contentType.equals(FORMULA_CELL_TYPE)) {
-            cell.setCellType(CellType.FORMULA);
-        }
-
     }
 
     /**
@@ -412,7 +413,7 @@ public class StreamedSheetEventHandler {
         if ((currentCellIndex - previousCellIndex) > 1) {
             for (int i = (previousCellIndex + 1); i < currentCellIndex; i++) {
                 cell = new StreamedCell(row);
-                cell.setValue(null);
+                cell.setValue(null, null, CellType.BLANK);
                 row.getCells().add(cell);
             }
 
@@ -426,10 +427,6 @@ public class StreamedSheetEventHandler {
 
     public void setEndOfRow(boolean isEndOfRow) {
         this.isEndOfRow = isEndOfRow;
-    }
-
-    public int getRowNumber() {
-        return rowNumber;
     }
 
     public int getNumberOfColumns() {
