@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import org.apache.poi.OldFileFormatException;
-import org.apache.poi.hwmf.record.HwmfFont;
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
@@ -201,7 +201,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         OldFontTable oldFontTable = doc.getOldFontTable();
         assertEquals(5, oldFontTable.getFontNames().length);
         assertEquals("\u7D30\u660E\u9AD4", oldFontTable.getFontNames()[0].getMainFontName());
-        assertEquals(HwmfFont.WmfCharset.CHINESEBIG5_CHARSET.getCharset(), Charset.forName("Big5"));
+        assertEquals(FontCharset.CHINESEBIG5.getCharset(), Charset.forName("Big5"));
         assertEquals("Times New Roman", oldFontTable.getFontNames()[1].getMainFontName());
         doc.close();
 

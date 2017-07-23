@@ -64,8 +64,8 @@ public final class TestSlideMaster {
 
         int font1 = master.get(0).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "font.index", true).getValue();
         int font2 = master.get(1).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "font.index", true).getValue();
-        assertEquals("Arial", env.getFontCollection().getFontWithId(font1));
-        assertEquals("Georgia", env.getFontCollection().getFontWithId(font2));
+        assertEquals("Arial", env.getFontCollection().getFontInfo(font1).getTypeface());
+        assertEquals("Georgia", env.getFontCollection().getFontInfo(font2).getTypeface());
 
         CharFlagsTextProp prop1 = (CharFlagsTextProp)master.get(0).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "char_flags", true);
         assertEquals(false, prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
@@ -83,8 +83,8 @@ public final class TestSlideMaster {
 
         int b1 = master.get(0).getStyleAttribute(TextHeaderAtom.BODY_TYPE, 0, "bullet.font", false).getValue();
         int b2 = master.get(1).getStyleAttribute(TextHeaderAtom.BODY_TYPE, 0, "bullet.font", false).getValue();
-        assertEquals("Arial", env.getFontCollection().getFontWithId(b1));
-        assertEquals("Georgia", env.getFontCollection().getFontWithId(b2));
+        assertEquals("Arial", env.getFontCollection().getFontInfo(b1).getTypeface());
+        assertEquals("Georgia", env.getFontCollection().getFontInfo(b2).getTypeface());
 
         ppt.close();
     }

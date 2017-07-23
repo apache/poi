@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
@@ -97,20 +98,18 @@ public final class FontEntityAtom extends RecordAtom {
 	 * Will be converted to null-terminated if not already
      * @param name of the font
      */
-    public void setFontName(String name){
-		// Add a null termination if required
-		if(! name.endsWith("\u0000")) {
-			name += '\u0000';
-		}
+    public void setFontName(String name) {
+        // Ensure it's not now too long
+        int nameLen = name.length() + (name.endsWith("\u0000") ? 0 : 1);
+        if (nameLen > 32) {
+            throw new HSLFException("The length of the font name, including null termination, must not exceed 32 characters");
+        }
 
-		// Ensure it's not now too long
-		if(name.length() > 32) {
-			throw new HSLFException("The length of the font name, including null termination, must not exceed 32 characters");
-		}
-
-		// Everything's happy, so save the name
+        // Everything's happy, so save the name
         byte[] bytes = StringUtil.getToUnicodeLE(name);
         System.arraycopy(bytes, 0, _recdata, 0, bytes.length);
+        // null the remaining bytes
+        Arrays.fill(_recdata, 64-bytes.length, 64, (byte)0);
     }
 
     public void setFontIndex(int idx){
