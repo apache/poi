@@ -72,7 +72,10 @@ public class TestFonts {
     private static final String INIT_FONTS[] = { "mona.ttf" };
 
     // currently linux and mac return quite different values
-    private static final int[] expected_sizes = { 311, 312, 313, 318,
+    private static final int[] expected_sizes = {
+            306, //Windows 10, 15.6" 3840x2160
+            311, 312, 313, 318,
+            348, //Windows 10, 15.6" 3840x2160
             362, // Windows 10, 13.3" 1080p high-dpi
             398, 399,
             406  // Ubuntu Trusty, 15", 1680x1050
