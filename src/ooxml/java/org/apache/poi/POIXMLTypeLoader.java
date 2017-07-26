@@ -69,6 +69,9 @@ public class POIXMLTypeLoader {
         // so only user code using XmlObject/XmlToken.Factory.parse
         // directly can bypass the entity check, which is probably unlikely (... and not within our responsibility :)) 
         // DEFAULT_XML_OPTIONS.setLoadEntityBytesLimit(4096);
+        
+        // POI is not thread-safe - so we can switch to unsynchronized xmlbeans mode - see #61350
+        DEFAULT_XML_OPTIONS.setUnsynchronized();
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
