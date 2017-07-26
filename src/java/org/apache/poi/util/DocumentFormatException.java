@@ -15,33 +15,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.util;
 
 /**
- * A common exception thrown by our binary format parsers
- *  (especially HSSF and DDF), when they hit invalid
- *  format or data when processing a record.
+ * This is similar to {@link RecordFormatException}, except this is thrown
+ * when there's a higher order problem with parsing a document beyond individual records.
  */
-public class RecordFormatException
-    extends RuntimeException
-{
-    public RecordFormatException(String exception)
-    {
+public class DocumentFormatException extends RuntimeException {
+
+    public DocumentFormatException(String exception) {
         super(exception);
     }
-    
-    public RecordFormatException(String exception, Throwable thr) {
-      super(exception, thr);
+
+    public DocumentFormatException(String exception, Throwable thr) {
+        super(exception, thr);
     }
-    
-    public RecordFormatException(Throwable thr) {
-      super(thr);
+
+    public DocumentFormatException(Throwable thr) {
+        super(thr);
     }
 
     /**
-     * Syntactic sugar to check whether a RecordFormatException should
+     * Syntactic sugar to check whether a DocumentFormatException should
      * be thrown.  If assertTrue is <code>false</code>, this will throw this
      * exception with the message.
      *
@@ -49,8 +46,8 @@ public class RecordFormatException
      * @param message
      */
     public static void check(boolean assertTrue, String message) {
-        if (! assertTrue) {
-            throw new RecordFormatException(message);
+        if (!assertTrue) {
+            throw new DocumentFormatException(message);
         }
     }
 }
