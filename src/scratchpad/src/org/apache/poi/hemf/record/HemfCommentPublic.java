@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -34,6 +35,9 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfCommentPublic  {
+
+    private static final int MAX_RECORD_LENGTH = 1000000;
+
 
     /**
      * Stub, to be implemented
@@ -80,7 +84,7 @@ public class HemfCommentPublic  {
             }
             List<HemfMultiFormatsData> list = new ArrayList<HemfMultiFormatsData>();
             for (EmrFormat emrFormat : emrFormatList) {
-                byte[] data = new byte[emrFormat.size];
+                byte[] data = IOUtils.safelyAllocate(emrFormat.size, MAX_RECORD_LENGTH);
                 System.arraycopy(rawBytes, emrFormat.offset-4, data, 0, emrFormat.size);
                 list.add(new HemfMultiFormatsData(emrFormat.signature, emrFormat.version, data));
             }
@@ -129,12 +133,8 @@ public class HemfCommentPublic  {
                 wmfBytes = new byte[0];
                 return;
             }
-            if (winMetafileSizeLong > Integer.MAX_VALUE) {
-                throw new RecordFormatException("Metafile record length can't be > Integer.MAX_VALUE");
-            }
-            int winMetafileSize = (int)winMetafileSizeLong;
-            wmfBytes = new byte[winMetafileSize];
-            System.arraycopy(rawBytes, offset, wmfBytes, 0, winMetafileSize);
+            wmfBytes = IOUtils.safelyAllocate(winMetafileSizeLong, MAX_RECORD_LENGTH);
+            System.arraycopy(rawBytes, offset, wmfBytes, 0, wmfBytes.length);
         }
 
         /**

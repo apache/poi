@@ -17,14 +17,13 @@
 
 package org.apache.poi.hwmf.record;
 
+import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.imageio.ImageIO;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -38,6 +37,9 @@ import org.apache.poi.util.RecordFormatException;
  * The DeviceIndependentBitmap Object defines an image in device-independent bitmap (DIB) format.
  */
 public class HwmfBitmapDib {
+
+    private static final int MAX_RECORD_LENGTH = 10000000;
+
     public static enum BitCount {
         /**
          * The image SHOULD be in either JPEG or PNG format. <6> Neither of these formats includes
@@ -385,7 +387,7 @@ public class HwmfBitmapDib {
         int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
         
         // create the image data and leave the parsing to the ImageIO api
-        byte buf[] = new byte[BMP_HEADER_SIZE+imageSize];
+        byte buf[] = IOUtils.safelyAllocate(BMP_HEADER_SIZE+imageSize, MAX_RECORD_LENGTH);
 
         // https://en.wikipedia.org/wiki/BMP_file_format #  Bitmap file header
         buf[0] = (byte)'B';

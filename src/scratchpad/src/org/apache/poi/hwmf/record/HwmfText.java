@@ -26,6 +26,7 @@ import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetMapMode;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.POILogFactory;
@@ -33,7 +34,8 @@ import org.apache.poi.util.POILogger;
 
 public class HwmfText {
     private static final POILogger logger = POILogFactory.getLogger(HwmfText.class);
-    
+    private static final int MAX_RECORD_LENGTH = 1000000;
+
     /**
      * The META_SETTEXTCHAREXTRA record defines inter-character spacing for text justification in the 
      * playback device context. Spacing is added to the white space between each character, including
@@ -164,7 +166,7 @@ public class HwmfText {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             stringLength = leis.readShort();
-            rawTextBytes = new byte[stringLength+(stringLength&1)];
+            rawTextBytes = IOUtils.safelyAllocate(stringLength+(stringLength&1), MAX_RECORD_LENGTH);
             leis.readFully(rawTextBytes);
             yStart = leis.readShort();
             xStart = leis.readShort();
@@ -188,7 +190,7 @@ public class HwmfText {
          * This does not include the extra optional padding on the byte array.
          */
         private byte[] getTextBytes() {
-            byte[] ret = new byte[stringLength];
+            byte[] ret = IOUtils.safelyAllocate(stringLength, MAX_RECORD_LENGTH);
             System.arraycopy(rawTextBytes, 0, ret, 0, stringLength);
             return ret;
         }
@@ -315,7 +317,7 @@ public class HwmfText {
                 size += 4*LittleEndianConsts.SHORT_SIZE;
             }
             
-            rawTextBytes = new byte[stringLength+(stringLength&1)];
+            rawTextBytes = IOUtils.safelyAllocate(stringLength+(stringLength&1), MAX_RECORD_LENGTH);
             leis.readFully(rawTextBytes);
             size += rawTextBytes.length;
             
@@ -355,7 +357,7 @@ public class HwmfText {
          * This does not include the extra optional padding on the byte array.
          */
         private byte[] getTextBytes() {
-            byte[] ret = new byte[stringLength];
+            byte[] ret = IOUtils.safelyAllocate(stringLength, MAX_RECORD_LENGTH);
             System.arraycopy(rawTextBytes, 0, ret, 0, stringLength);
             return ret;
         }
