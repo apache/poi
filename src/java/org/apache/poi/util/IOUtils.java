@@ -431,4 +431,19 @@ public final class IOUtils {
         return toSkip - remain;
     }
 
+    public static byte[] safelyAllocate(long length, int maxLength) {
+        if (length < 0L) {
+            throw new RecordFormatException("Can't allocate an array of length < 0");
+        }
+        if (length > (long)Integer.MAX_VALUE) {
+            throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
+        }
+        if (length > maxLength) {
+            throw new RecordFormatException("Not allowed to allocate an array > "+
+                    maxLength+" for this record type." +
+                    "If the file is not corrupt, please open an issue on bugzilla to request " +
+                    "increasing the maximum allowable size for this record type");
+        }
+        return new byte[(int)length];
+    }
 }
