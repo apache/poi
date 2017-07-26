@@ -53,15 +53,22 @@ public final class OperationEvaluationContext {
     private final int _columnIndex;
     private final EvaluationTracker _tracker;
     private final WorkbookEvaluator _bookEvaluator;
-
+    private final boolean _isSingleValue;
+    
     public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
             int srcColNum, EvaluationTracker tracker) {
+        this(bookEvaluator, workbook, sheetIndex, srcRowNum, srcColNum, tracker, true);
+    }
+
+    public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
+            int srcColNum, EvaluationTracker tracker, boolean isSingleValue) {
         _bookEvaluator = bookEvaluator;
         _workbook = workbook;
         _sheetIndex = sheetIndex;
         _rowIndex = srcRowNum;
         _columnIndex = srcColNum;
         _tracker = tracker;
+        _isSingleValue = isSingleValue;
     }
 
     public EvaluationWorkbook getWorkbook() {
@@ -409,6 +416,14 @@ public final class OperationEvaluationContext {
     }
     public int getSheetIndex() {
         return _sheetIndex;
+    }
+    
+    /**
+     * default true 
+     * @return flag indicating whether evaluation should "unwrap" the result to a single value based on the context row/column
+     */
+    public boolean isSingleValue() {
+        return _isSingleValue;
     }
     
     private ValueEval getExternalNameXEval(ExternalName externName, String workbookName) {

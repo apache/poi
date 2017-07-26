@@ -196,7 +196,8 @@ public class DataValidationEvaluator {
             }
         } else if (formula != null) {
             // evaluate formula for cell refs then get their values
-            ValueEval eval = context.getEvaluator().getWorkbookEvaluator().evaluate(formula, context.getTarget(), context.getRegion());
+            // note this should return the raw formula result, not the "unwrapped" version that returns a single value.
+            ValueEval eval = context.getEvaluator().getWorkbookEvaluator().evaluateList(formula, context.getTarget(), context.getRegion());
             // formula is a StringEval if the validation is by a fixed list.  Use the explicit list later.
             // there is no way from the model to tell if the list is fixed values or formula based.
             if (eval instanceof TwoDEval) {
@@ -344,6 +345,7 @@ public class DataValidationEvaluator {
              * @see org.apache.poi.ss.formula.DataValidationEvaluator.ValidationEnum#isValidValue(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.DataValidationConstraint, org.apache.poi.ss.formula.WorkbookEvaluator)
              */
             public boolean isValidValue(Cell cell, DataValidationContext context) {
+                // unwrapped single value
                 ValueEval comp = context.getEvaluator().getWorkbookEvaluator().evaluate(context.getFormula1(), context.getTarget(), context.getRegion());
                 if (comp instanceof RefEval) {
                     comp = ((RefEval) comp).getInnerValueEval(((RefEval) comp).getFirstSheetIndex());
@@ -419,6 +421,7 @@ public class DataValidationEvaluator {
             } catch (NumberFormatException e) {
                 // must be an expression, then.  Overloading by Excel in the file formats.
             }
+            // note the call to the "unwrapped" version, which returns a single value
             ValueEval eval = context.getEvaluator().getWorkbookEvaluator().evaluate(formula, context.getTarget(), context.getRegion());
             if (eval instanceof RefEval) {
                 eval = ((RefEval) eval).getInnerValueEval(((RefEval) eval).getFirstSheetIndex());
