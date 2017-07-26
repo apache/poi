@@ -180,10 +180,6 @@ public class TestSignatureInfo {
         pkg1.save(bos);
         pkg1.close();
         
-        FileOutputStream fos = new FileOutputStream("tmp/sigtest/poi.xlsx");
-        bos.writeTo(fos);
-        fos.close();
-        
         XSSFWorkbook wb2 = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()));
         assertEquals("Test", wb2.getSheetAt(0).getRow(1).getCell(1).getStringCellValue());
         OPCPackage pkg2 = wb2.getPackage();
