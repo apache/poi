@@ -223,34 +223,7 @@ public class XLSXToHTMLConverter{
 	        }
         return borderWidth;
     }
-
-    public static String getColor(XSSFColor color){
-        StringBuilder stringBuilder = new StringBuilder(7);
-        stringBuilder.append('#');
-        //Note: in HSSF, the method was called getTriplet();
-        for(short s: color.getRGB()){
-            if (s < 10){
-            	stringBuilder.append('0');
-            }
-            stringBuilder.append(Integer.toHexString(s));
-        }
-        String result = stringBuilder.toString();
-
-        if(result.equals("#ffffff")){
-        	return "white";
-        }
-        if(result.equals("#c0c0c0")){
-        	return "silver";
-        }
-        if(result.equals("#808080")){
-        	return "gray";
-        }
-        if(result.equals("#000000")){
-        	return "black";
-        }
-        return result;
-    }
-
+    
     /**
      * See <a href="http://apache-poi.1045710.n5.nabble.com/Excel-Column-Width-Unit-Converter-pixels-excel-column-width-units-td2301481.html">here</a> for Xio explanation and details
      */
@@ -267,28 +240,7 @@ public class XLSXToHTMLConverter{
 
         style.append("white-space:pre-wrap;");
         appendAlign(style, cellStyle.getAlignmentEnum().getCode());
-        switch (cellStyle.getFillPatternEnum().getCode()) {
-            // no fill
-            case 0: 
-            	break;
-            case 1:
-                final XSSFColor foregroundColor = cellStyle.getFillForegroundColorColor();
-                if (foregroundColor == null){
-                	break;
-                }
-                String fgCol = getColor(foregroundColor);
-                style.append("background-color:" + fgCol + ";");
-                break;
-            default:
-                final XSSFColor backgroundColor = cellStyle.getFillBackgroundColorColor();
-                if (backgroundColor == null){
-                	break;
-                }
-                String bgCol = getColor(backgroundColor);
-                style.append("background-color:" + bgCol + ";");
-                break;
-        }
-
+       
         buildStyle_border(workbook, style, "top", cellStyle.getBorderTopEnum(), cellStyle.getTopBorderColor());
         buildStyle_border(workbook, style, "right", cellStyle.getBorderRightEnum(), cellStyle.getRightBorderColor());
         buildStyle_border(workbook, style, "bottom", cellStyle.getBorderBottomEnum(), cellStyle.getBottomBorderColor());
