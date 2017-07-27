@@ -156,26 +156,34 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
             // parse the document with cursor and add
             // the XmlObject to its lists
-            XmlCursor cursor = ctDocument.getBody().newCursor();
-            cursor.selectPath("./*");
-            while (cursor.toNextSelection()) {
-                XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
-                    bodyElements.add(p);
-                    paragraphs.add(p);
-                } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
-                    bodyElements.add(t);
-                    tables.add(t);
-                } else if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
-                    bodyElements.add(c);
-                    contentControls.add(c);
+            XmlCursor docCursor = ctDocument.newCursor();
+            docCursor.selectPath("./*");
+            while (docCursor.toNextSelection()) {
+                XmlObject o = docCursor.getObject();
+                if (o instanceof CTBody) {
+                    XmlCursor bodyCursor = o.newCursor();
+                    bodyCursor.selectPath("./*");
+                    while (bodyCursor.toNextSelection()) {
+                        XmlObject bodyObj = bodyCursor.getObject();
+                        if (bodyObj instanceof CTP) {
+                            XWPFParagraph p = new XWPFParagraph((CTP) bodyObj,
+                                    this);
+                            bodyElements.add(p);
+                            paragraphs.add(p);
+                        } else if (bodyObj instanceof CTTbl) {
+                            XWPFTable t = new XWPFTable((CTTbl) bodyObj, this);
+                            bodyElements.add(t);
+                            tables.add(t);
+                        } else if (bodyObj instanceof CTSdtBlock) {
+                            XWPFSDT c = new XWPFSDT((CTSdtBlock) bodyObj, this);
+                            bodyElements.add(c);
+                            contentControls.add(c);
+                        }
+                    }
+                    bodyCursor.dispose();
                 }
             }
-            cursor.dispose();
-
+            docCursor.dispose();
             // Sort out headers and footers
             if (doc.getDocument().getBody().getSectPr() != null)
                 headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
