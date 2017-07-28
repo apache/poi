@@ -289,18 +289,25 @@ public class XLSXToHTMLConverter{
 	
     /**
      * Converts Excel file (97-2007) into HTML file.
-     * 
-     * @param workbook workbook instance to process
+     *
+     * @param workbook
+     *            workbook instance to process
+     * @param keepColumnHeaders If user wish to keep column headers on output
+     * @param keepRowNumbers If user wish to keep row numbers on output
      * @return DOM representation of result HTML
-     * @throws IOException 
-     * @throws ParserConfigurationException 
+     * @throws IOException
+     * @throws ParserConfigurationException
      */
-    public static Document convert(XSSFWorkbook workbook) throws IOException, ParserConfigurationException{
-    	XLSXToHTMLConverter xlsxToHTMLConverter = new XLSXToHTMLConverter(XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument());
-    	xlsxToHTMLConverter.processWorkbook(workbook);
+    public static Document convert(XSSFWorkbook workbook, boolean keepColumnHeaders, boolean keepRowNumbers) throws IOException, ParserConfigurationException {
+        XLSXToHTMLConverter xlsxToHTMLConverter = new XLSXToHTMLConverter(
+                                                                          XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument());
+        xlsxToHTMLConverter.setOutputColumnHeaders(keepColumnHeaders);
+        xlsxToHTMLConverter.setOutputRowNumbers(keepRowNumbers);
+        xlsxToHTMLConverter.processWorkbook(workbook);
         Document doc = xlsxToHTMLConverter.getDocument();
         return doc;
     }
+
 	
 	protected void processWorkbook(XSSFWorkbook workbook){
 	   for(int s = 0; s < workbook.getNumberOfSheets(); s++){
