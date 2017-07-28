@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
@@ -623,4 +624,14 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             return true;
         }
         return false;
-    }}
+    }
+    
+    /**
+     * Remove relations
+     */
+    protected void onTableDelete() {
+        for (RelationPart part : getRelationParts()) {
+            removeRelation(part.getDocumentPart(), true);
+        }
+    }
+}

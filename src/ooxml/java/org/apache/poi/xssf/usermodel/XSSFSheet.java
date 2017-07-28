@@ -3957,6 +3957,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         return new ArrayList<XSSFTable>(tables.values());
     }
 
+    /**
+     * Remove table references and relations
+     * @param t table to remove
+     */
+    public void removeTable(XSSFTable t) {
+        long id = t.getCTTable().getId();
+        Map.Entry<String, XSSFTable> toDelete = null;
+        
+        for (Map.Entry<String, XSSFTable> entry : tables.entrySet()) {
+            if (entry.getValue().getCTTable().getId() == id) toDelete = entry;
+        }
+        if (toDelete != null) {
+            removeRelation(getRelationById(toDelete.getKey()), true);
+            tables.remove(toDelete.getKey());
+            toDelete.getValue().onTableDelete();
+        }
+    }
+    
     @Override
     public XSSFSheetConditionalFormatting getSheetConditionalFormatting(){
         return new XSSFSheetConditionalFormatting(this);
@@ -4396,6 +4414,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         XSSFIgnoredErrorHelper.addIgnoredErrors(ctIgnoredError, ref, ignoredErrorTypes);
     }
 
+    /**
+     * called when a sheet is being deleted/removed from a workbook, to clean up relations and other document pieces tied to the sheet
+     */
+    protected void onSheetDelete() {
+        for (RelationPart part : getRelationParts()) {
+            if (part.getDocumentPart() instanceof XSSFTable) {
+                // call table delete
+                removeTable((XSSFTable) part.getDocumentPart());
+                continue;
+            }
+            removeRelation(part.getDocumentPart(), true);
+        }
+    }
+    
     /**
      * Determine the OleObject which links shapes with embedded resources
      *
