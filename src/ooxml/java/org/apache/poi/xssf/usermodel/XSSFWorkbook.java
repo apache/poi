@@ -1366,6 +1366,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param index the 0-based index of the sheet to delete
      */
     private void onSheetDelete(int index) {
+        // remove all sheet relations
+        final XSSFSheet sheet = getSheetAt(index);
+
+        sheet.onSheetDelete();
+        
         //delete the CTSheet reference from workbook.xml
         workbook.getSheets().removeSheet(index);
 
