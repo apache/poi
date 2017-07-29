@@ -165,8 +165,10 @@ for more details about the DSL.</b>
         def shellcmds = '# show which files are currently modified in the working copy\n' +
             'svn status\n' +
             '\n' +
+            '# print out information about which exact version of java we are using\n' +
             'echo Java-Home: $JAVA_HOME\n' +
             'ls -al $JAVA_HOME/\n' +
+            '$JAVA_HOME/bin/java -version\n' +
             '\n' +
             (poijob.shell ?: '') + '\n' +
             '# ignore any error message\n' +
