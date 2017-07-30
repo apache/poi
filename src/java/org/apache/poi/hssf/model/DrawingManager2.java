@@ -17,24 +17,23 @@
 
 package org.apache.poi.hssf.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
-
-import java.util.List;
-import java.util.ArrayList;
+import org.apache.poi.util.Removal;
 
 
 /**
  * Provides utilities to manage drawing groups.
  */
-public class DrawingManager2
-{
-    EscherDggRecord dgg;
-    List<EscherDgRecord> drawingGroups = new ArrayList<EscherDgRecord>();
+public class DrawingManager2 {
+    private final EscherDggRecord dgg;
+    private final List<EscherDgRecord> drawingGroups = new ArrayList<EscherDgRecord>();
 
 
-    public DrawingManager2( EscherDggRecord dgg )
-    {
+    public DrawingManager2( EscherDggRecord dgg ) {
         this.dgg = dgg;
     }
     
@@ -50,8 +49,7 @@ public class DrawingManager2
      *
      * @return a new drawing group
      */
-    public EscherDgRecord createDgRecord()
-    {
+    public EscherDgRecord createDgRecord() {
         EscherDgRecord dg = new EscherDgRecord();
         dg.setRecordId( EscherDgRecord.RECORD_ID );
         short dgId = findNewDrawingGroupId();
@@ -70,11 +68,34 @@ public class DrawingManager2
      * @param drawingGroupId the drawing group id
      * 
      * @return a new shape id
+     * 
+     * @deprecated in POI 3.17-beta2, use allocateShapeId(EscherDgRecord) 
      */
-    public int allocateShapeId(short drawingGroupId)
-    {
-        EscherDgRecord dg = getDrawingGroup(drawingGroupId);
-        return allocateShapeId(drawingGroupId, dg);
+    @Deprecated
+    @Removal(version="4.0")
+    public int allocateShapeId(short drawingGroupId) {
+        for (EscherDgRecord dg : drawingGroups) {
+            if (dg.getDrawingGroupId() == drawingGroupId) {
+                return allocateShapeId(dg);
+            }
+        }
+        throw new IllegalStateException("Drawing group id "+drawingGroupId+" doesn't exist.");
+    }
+
+    /**
+     * Allocates new shape id for the drawing group
+     *
+     * @param drawingGroupId the drawing group id
+     * @param dg the EscherDgRecord which receives the new shape
+     *
+     * @return a new shape id.
+     * 
+     * @deprecated in POI 3.17-beta2, use allocateShapeId(EscherDgRecord) 
+     */
+    @Deprecated
+    @Removal(version="4.0")
+    public int allocateShapeId(short drawingGroupId, EscherDgRecord dg) {
+        return allocateShapeId(dg);
     }
 
     /**
@@ -85,71 +106,17 @@ public class DrawingManager2
      *
      * @return a new shape id.
      */
-    public int allocateShapeId(short drawingGroupId, EscherDgRecord dg)
-    {
-        dgg.setNumShapesSaved( dgg.getNumShapesSaved() + 1 );
-
-        // Add to existing cluster if space available
-        for (int i = 0; i < dgg.getFileIdClusters().length; i++)
-        {
-            EscherDggRecord.FileIdCluster c = dgg.getFileIdClusters()[i];
-            if (c.getDrawingGroupId() == drawingGroupId && c.getNumShapeIdsUsed() != 1024)
-            {
-                int result = c.getNumShapeIdsUsed() + (1024 * (i+1));
-                c.incrementShapeId();
-                dg.setNumShapes( dg.getNumShapes() + 1 );
-                dg.setLastMSOSPID( result );
-                if (result >= dgg.getShapeIdMax())
-                    dgg.setShapeIdMax( result + 1 );
-                return result;
-            }
-        }
-
-        // Create new cluster
-        dgg.addCluster( drawingGroupId, 0 );
-        dgg.getFileIdClusters()[dgg.getFileIdClusters().length-1].incrementShapeId();
-        dg.setNumShapes( dg.getNumShapes() + 1 );
-        int result = (1024 * dgg.getFileIdClusters().length);
-        dg.setLastMSOSPID( result );
-        if (result >= dgg.getShapeIdMax())
-            dgg.setShapeIdMax( result + 1 );
-        return result;
+    public int allocateShapeId(EscherDgRecord dg) {
+        return dgg.allocateShapeId(dg, true);
     }
-    ////////////  Non-public methods /////////////
     
     /**
      * Finds the next available (1 based) drawing group id
      * 
      * @return the next available drawing group id
      */
-    public short findNewDrawingGroupId()
-    {
-        short dgId = 1; 
-        while ( drawingGroupExists( dgId ) )
-            dgId++;
-        return dgId;
-    }
-
-    EscherDgRecord getDrawingGroup(int drawingGroupId)
-    {
-        return drawingGroups.get(drawingGroupId-1);
-    }
-
-    boolean drawingGroupExists( short dgId )
-    {
-        for ( int i = 0; i < dgg.getFileIdClusters().length; i++ )
-        {
-            if ( dgg.getFileIdClusters()[i].getDrawingGroupId() == dgId )
-                return true;
-        }
-        return false;
-    }
-
-    int findFreeSPIDBlock()
-    {
-        int max = dgg.getShapeIdMax();
-        int next = ( ( max / 1024 ) + 1 ) * 1024;
-        return next;
+    public short findNewDrawingGroupId() {
+        return dgg.findNewDrawingGroupId();
     }
 
     /**
@@ -157,8 +124,7 @@ public class DrawingManager2
      *
      * @return the drawing group container record
      */
-    public EscherDggRecord getDgg()
-    {
+    public EscherDggRecord getDgg() {
         return dgg;
     }
 

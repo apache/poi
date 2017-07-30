@@ -17,21 +17,25 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherDgRecord;
+import static org.junit.Assert.assertEquals;
 
-public final class TestDrawingManager2 extends TestCase {
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.junit.Before;
+import org.junit.Test;
+
+public final class TestDrawingManager2 {
     private DrawingManager2 drawingManager2;
     private EscherDggRecord dgg;
 
-    @Override
-    protected void setUp() {
+    @Before
+    public void setUp() {
         dgg = new EscherDggRecord();
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[0] );
         drawingManager2 = new DrawingManager2( dgg );
     }
 
+    @Test
     public void testCreateDgRecord() {
         EscherDgRecord dgRecord1 = drawingManager2.createDgRecord();
         assertEquals( 1, dgRecord1.getDrawingGroupId() );
@@ -47,33 +51,71 @@ public final class TestDrawingManager2 extends TestCase {
         assertEquals( 0, dgg.getNumShapesSaved() );
     }
 
+    @Test
+    public void testCreateDgRecordOld() {
+        // converted from TestDrawingManager(1)
+        EscherDggRecord dgg = new EscherDggRecord();
+        dgg.setDrawingsSaved( 0 );
+        dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[]{} );
+        DrawingManager2 dm = new DrawingManager2( dgg );
+
+        EscherDgRecord dgRecord = dm.createDgRecord();
+        assertEquals( -1, dgRecord.getLastMSOSPID() );
+        assertEquals( 0, dgRecord.getNumShapes() );
+        assertEquals( 1, dm.getDgg().getDrawingsSaved() );
+        assertEquals( 1, dm.getDgg().getFileIdClusters().length );
+        assertEquals( 1, dm.getDgg().getFileIdClusters()[0].getDrawingGroupId() );
+        assertEquals( 0, dm.getDgg().getFileIdClusters()[0].getNumShapeIdsUsed() );
+    }
+
+    @Test
     public void testAllocateShapeId() {
         EscherDgRecord dgRecord1 = drawingManager2.createDgRecord();
+        assertEquals( 1, dgg.getDrawingsSaved() );
         EscherDgRecord dgRecord2 = drawingManager2.createDgRecord();
+        assertEquals( 2, dgg.getDrawingsSaved() );
 
-        assertEquals( 1024, drawingManager2.allocateShapeId( (short)1 ) );
+        assertEquals( 1024, drawingManager2.allocateShapeId( dgRecord1 ) );
         assertEquals( 1024, dgRecord1.getLastMSOSPID() );
         assertEquals( 1025, dgg.getShapeIdMax() );
-        assertEquals( 1025, drawingManager2.allocateShapeId( (short)1 ) );
+        assertEquals( 1, dgg.getFileIdClusters()[0].getDrawingGroupId() );
+        assertEquals( 1, dgg.getFileIdClusters()[0].getNumShapeIdsUsed() );
+        assertEquals( 1, dgRecord1.getNumShapes() );
+        assertEquals( 1025, drawingManager2.allocateShapeId( dgRecord1 ) );
         assertEquals( 1025, dgRecord1.getLastMSOSPID() );
         assertEquals( 1026, dgg.getShapeIdMax() );
-        assertEquals( 1026, drawingManager2.allocateShapeId( (short)1 ) );
+        assertEquals( 1026, drawingManager2.allocateShapeId( dgRecord1 ) );
         assertEquals( 1026, dgRecord1.getLastMSOSPID() );
         assertEquals( 1027, dgg.getShapeIdMax() );
-        assertEquals( 2048, drawingManager2.allocateShapeId( (short)2 ) );
+        assertEquals( 2048, drawingManager2.allocateShapeId( dgRecord2 ) );
         assertEquals( 2048, dgRecord2.getLastMSOSPID() );
         assertEquals( 2049, dgg.getShapeIdMax() );
 
         for (int i = 0; i < 1021; i++)
         {
-            drawingManager2.allocateShapeId( (short)1 );
+            drawingManager2.allocateShapeId( dgRecord1 );
             assertEquals( 2049, dgg.getShapeIdMax() );
         }
-        assertEquals( 3072, drawingManager2.allocateShapeId( (short) 1 ) );
+        assertEquals( 3072, drawingManager2.allocateShapeId( dgRecord1 ) );
         assertEquals( 3073, dgg.getShapeIdMax() );
 
         assertEquals( 2, dgg.getDrawingsSaved() );
         assertEquals( 4, dgg.getNumIdClusters() );
         assertEquals( 1026, dgg.getNumShapesSaved() );
+    }
+
+    @Test
+    public void testFindNewDrawingGroupId() {
+        // converted from TestDrawingManager(1)
+        EscherDggRecord dgg = new EscherDggRecord();
+        dgg.setDrawingsSaved( 1 );
+        dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[]{
+            new EscherDggRecord.FileIdCluster( 2, 10 )} );
+        DrawingManager2 dm = new DrawingManager2( dgg );
+        assertEquals( 1, dm.findNewDrawingGroupId() );
+        dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[]{
+            new EscherDggRecord.FileIdCluster( 1, 10 ),
+            new EscherDggRecord.FileIdCluster( 2, 10 )} );
+        assertEquals( 3, dm.findNewDrawingGroupId() );
     }
 }

@@ -43,6 +43,11 @@ public class HSSFTestHelper {
         }
 
         @Override
+        public int allocateShapeId(EscherDgRecord dg) {
+            return 1025;
+        }
+        
+        @Override
         public int allocateShapeId(short drawingGroupId, EscherDgRecord dg) {
             return 1025;
         }

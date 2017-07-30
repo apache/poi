@@ -874,19 +874,18 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
         HSSFSheet sheet1 = wb1.getSheetAt(0);
 
-        wb1.getWorkbook().findDrawingGroup();
-        DrawingManager2 dm1 = wb1.getWorkbook().getDrawingManager();
-
+        DrawingManager2 dm1 = wb1.getWorkbook().findDrawingGroup();
+        int maxDrawingGroupId1 = dm1.getDgg().getMaxDrawingGroupId();
         wb1.cloneSheet(0);
+
+        //check EscherDggRecord - a workbook-level registry of drawing objects
+        assertEquals(maxDrawingGroupId1 + 1, dm1.getDgg().getMaxDrawingGroupId());
 
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
         
-        wb2.getWorkbook().findDrawingGroup();
-        DrawingManager2 dm2 = wb2.getWorkbook().getDrawingManager();
-
-        //check EscherDggRecord - a workbook-level registry of drawing objects
-        assertEquals(dm1.getDgg().getMaxDrawingGroupId() + 1, dm2.getDgg().getMaxDrawingGroupId());
+        DrawingManager2 dm2 = wb2.getWorkbook().findDrawingGroup();
+        assertEquals(maxDrawingGroupId1 + 1, dm2.getDgg().getMaxDrawingGroupId());
 
         HSSFSheet sheet2 = wb2.getSheetAt(1);
 
