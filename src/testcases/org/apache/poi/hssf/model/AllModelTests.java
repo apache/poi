@@ -25,9 +25,8 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    TestDrawingManager.class,
     TestDrawingManager2.class,
-    //TestFormulaParser.class, //converted to junit4
+    TestFormulaParser.class,
     TestFormulaParserEval.class,
     TestFormulaParserIf.class,
     TestLinkTable.class,

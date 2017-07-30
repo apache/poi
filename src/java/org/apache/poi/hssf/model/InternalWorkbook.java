@@ -2163,7 +2163,7 @@ public final class InternalWorkbook {
                                 throw new RecordFormatException("EscherDgRecord wasn't set/processed before.");
                             }
                             EscherSpRecord sp = (EscherSpRecord)shapeChildRecord;
-                            int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
+                            int shapeId = drawingManager.allocateShapeId(dg);
                             //allocateShapeId increments the number of shapes. roll back to the previous value
                             dg.setNumShapes(dg.getNumShapes()-1);
                             sp.setShapeId(shapeId);

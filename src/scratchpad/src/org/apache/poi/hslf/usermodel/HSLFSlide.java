@@ -166,7 +166,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         int dgId = dgg.getMaxDrawingGroupId() + 1;
         dg.setOptions((short)(dgId << 4));
         dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
-        dgg.setMaxDrawingGroupId(dgId);
 
         for (EscherContainerRecord c : dgContainer.getChildContainers()) {
             EscherSpRecord spr = null;
