@@ -65,11 +65,14 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
     ],
-    [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org'
+    [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org',
+    	addShell: 'if not exist lib/findbugs-noUpdateChecks-2.0.3.zip powershell -Command wget -Uri "http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download=" -OutFile lib/findbugs-noUpdateChecks-2.0.3.zip -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome'
     ],
-    [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org'
+    [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', 
+    	disabled: true
     ],
-    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org'
+    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows',
+    	disabled: true
     ],
 ]
 
@@ -89,6 +92,14 @@ def jdkMapping = [
     'OpenJDK': 'OpenJDK 6 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
     'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
+
+def shellEx(def context, String cmd, def poijob) {
+	if (poijob.windows) {
+		context.batchFile(cmd) 
+	} else {
+		context.shell(cmd) 
+	} 
+}
 
 poijobs.each { poijob ->
     def jdkKey = poijob.jdk ?: defaultJdk
@@ -169,22 +180,38 @@ for more details about the DSL.</b>
             scm(trigger)
         }
 
-        def shellcmds = '# show which files are currently modified in the working copy\n' +
-            'svn status\n' +
-            '\n' +
-            '# print out information about which exact version of java we are using\n' +
-            'echo Java-Home: $JAVA_HOME\n' +
-            'ls -al $JAVA_HOME/\n' +
-            '$JAVA_HOME/bin/java -version\n' +
-            '\n' +
-            (poijob.shell ?: '') + '\n' +
-            '# ignore any error message\n' +
-            'exit 0\n'
+		def shellCmdsUnix =
+'''# show which files are currently modified in the working copy
+svn status
+
+# print out information about which exact version of java we are using
+echo Java-Home: $JAVA_HOME
+ls -al $JAVA_HOME/
+$JAVA_HOME/bin/java -version
+'''+(poijob.shell ?: '')+
+'''# ignore any error message
+exit 0'''
+
+		def shellCmdsWin =
+'''@echo off
+:: show which files are currently modified in the working copy
+svn status
+
+:: print out information about which exact version of java we are using
+echo Java-Home: %JAVA_HOME%
+dir "%JAVA_HOME%"
+"%JAVA_HOME%/bin/java" -version
+'''+(poijob.shell ?: '')+
+'''
+:: ignore any error message
+exit 0'''
+
+        def shellcmds = (poijob.windows) ? shellCmdsWin : shellCmdsUnix
 
         // Create steps and publishers depending on the type of Job that is selected
         if(poijob.maven) {
             steps {
-                shell(shellcmds)
+                shellEx(delegate, shellcmds, poijob)
                 maven {
                     goals('clean')
                     rootPOM('sonar/pom.xml')
@@ -220,7 +247,7 @@ for more details about the DSL.</b>
             }
         } else if (poijob.javadoc) {
             steps {
-                shell(shellcmds)
+                shellEx(delegate, shellcmds, poijob)
                 ant {
                     targets(['clean', 'javadocs'] + (poijob.properties ?: []))
                     prop('coverage.enabled', true)
@@ -228,7 +255,7 @@ for more details about the DSL.</b>
                     //properties(poijob.properties ?: '')
                     antInstallation(antRT)
                 }
-                shell('zip -r build/javadocs.zip build/tmp/site/build/site/apidocs')
+                shellEx(delegate, 'zip -r build/javadocs.zip build/tmp/site/build/site/apidocs', poijob)
             }
             publishers {
                 if (!poijob.skipcigame) {
@@ -240,7 +267,7 @@ for more details about the DSL.</b>
             }
         } else if (poijob.apicheck) {
             steps {
-                shell(shellcmds)
+                shellEx(delegate, shellcmds, poijob)
                 gradle {
                     tasks('japicmp')
                     useWrapper(false)
@@ -257,7 +284,7 @@ for more details about the DSL.</b>
             }
         } else if(poijob.sonar) {
             steps {
-                shell(shellcmds)
+                shellEx(delegate, shellcmds, poijob)
                 gradle {
                     switches('-PenableSonar')
                     switches('-Dsonar.host.url=$SONAR_HOST_URL')
@@ -275,9 +302,9 @@ for more details about the DSL.</b>
             }
         } else {
             steps {
-                shell(shellcmds)
+                shellEx(delegate, shellcmds, poijob)
                 if(poijob.addShell) {
-                    shell(poijob.addShell)
+                    shellEx(delegate, poijob.addShell, poijob)
                 }
                 // For Jobs that should still have the default set of publishers we can configure different steps here
                 if(poijob.gradle) {
