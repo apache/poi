@@ -10,11 +10,16 @@ def triggerSundays = '''
 H H * * 0
 '''
 
+def findbugsUrl = 'http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
+def findbugsLib = 'lib/findbugs-noUpdateChecks-2.0.3.zip'
+def xercesUrl = 'http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar'
+def xercesLib = 'compile-lib/xercesImpl-2.6.1.jar'
+
 def poijobs = [
     [ name: 'POI-DSL-1.6',
             // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
             // as part of the Ant build
-            addShell: 'wget -O lib/findbugs-noUpdateChecks-2.0.3.zip http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
+            addShell: "wget -O ${findbugsLib} ${findbugsUrl}"
     ],
     [ name: 'POI-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *'
     ],
@@ -42,12 +47,12 @@ def poijobs = [
         disabled: true, skipcigame: true
     ],
     [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
-        shell: 'mkdir -p compile-lib && test -f compile-lib/xercesImpl-2.6.1.jar || wget -O compile-lib/xercesImpl-2.6.1.jar http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar\n',
+        shell: "mkdir -p compile-lib && test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
         // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
-        properties: ['-Dadditionaljar=compile-lib/xercesImpl-2.6.1.jar'],
+        properties: ["-Dadditionaljar=${xercesLib}"],
         // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
         // as part of the Ant build
-        addShell: 'wget -O lib/findbugs-noUpdateChecks-2.0.3.zip http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
+        addShell: "wget -O ${findbugsLib} ${findbugsUrl}"
     ],
     [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
     ],
@@ -66,13 +71,13 @@ def poijobs = [
     [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
     ],
     [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org',
-    	addShell: 'if not exist lib/findbugs-noUpdateChecks-2.0.3.zip powershell -Command wget -Uri "http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download=" -OutFile lib/findbugs-noUpdateChecks-2.0.3.zip -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome'
+    	addShell: "@if not exist ${findbugsLib} powershell -Command wget -Uri \"${findbugsUrl}\" -OutFile ${findbugsLib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
     ],
-    [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', 
-    	disabled: true
+    [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org',
+    	addShell: "@if not exist ${findbugsLib} powershell -Command wget -Uri \"${findbugsUrl}\" -OutFile ${findbugsLib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
     ],
-    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows',
-    	disabled: true
+    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org',
+    	addShell: "@if not exist ${findbugsLib} powershell -Command wget -Uri \"${findbugsUrl}\" -OutFile ${findbugsLib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
     ],
 ]
 
@@ -101,6 +106,67 @@ def shellEx(def context, String cmd, def poijob) {
 	} 
 }
 
+def defaultDesc = '''
+<img src="https://poi.apache.org/resources/images/project-logo.jpg" />
+<p>
+Apache POI - the Java API for Microsoft Documents
+</p>
+<p>
+<b>This is an automatically generated Job Config, do not edit it here!
+Instead change the Jenkins Job DSL at <a href="https://svn.apache.org/repos/asf/poi/trunk/jenkins">https://svn.apache.org/repos/asf/poi/trunk/jenkins</a>,
+see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki">https://github.com/jenkinsci/job-dsl-plugin/wiki</a>
+for more details about the DSL.</b>
+</p>'''
+
+def apicheckDesc = '''
+<p>
+<b><a href="https://builds.apache.org/analysis/dashboard?id=org.apache.poi%3Apoi-parent&did=1" target="_blank">Sonar reports</a></b> -
+<p>
+<b><a href="lastSuccessfulBuild/artifact/build/main/build/reports/japi.html">API Check POI</a></b>
+<b><a href="lastSuccessfulBuild/artifact/build/ooxml/build/reports/japi.html">API Check POI-OOXML</a></b>
+<b><a href="lastSuccessfulBuild/artifact/build/excelant/build/reports/japi.html">API Check POI-Excelant</a></b>
+<b><a href="lastSuccessfulBuild/artifact/build/scratchpad/build/reports/japi.html">API Check POI-Scratchpad</a></b>
+
+</p>
+'''
+
+def sonarDesc = '''
+<p>
+<b><a href="lastSuccessfulBuild/findbugsResult/" target="_blank">Findbugs report of latest build</a></b> -
+<b><a href="https://builds.apache.org/analysis/dashboard?id=org.apache.poi%3Apoi-parent&did=1" target="_blank">Sonar reports</a></b> -
+<b><a href="lastSuccessfulBuild/artifact/build/coverage/index.html" target="_blank">Coverage of latest build</a></b>
+</p>
+'''
+
+def shellCmdsUnix =
+'''# show which files are currently modified in the working copy
+svn status
+
+# print out information about which exact version of java we are using
+echo Java-Home: $JAVA_HOME
+ls -al $JAVA_HOME/
+$JAVA_HOME/bin/java -version
+
+POIJOBSHELL
+
+# ignore any error message
+exit 0'''
+
+def shellCmdsWin =
+'''@echo off
+:: show which files are currently modified in the working copy
+svn status
+
+:: print out information about which exact version of java we are using
+echo Java-Home: %JAVA_HOME%
+dir "%JAVA_HOME:\\\\=\\%"
+"%JAVA_HOME%/bin/java" -version
+
+POIJOBSHELL
+
+:: ignore any error message
+exit /b 0'''
+
 poijobs.each { poijob ->
     def jdkKey = poijob.jdk ?: defaultJdk
     def trigger = poijob.trigger ?: defaultTrigger
@@ -113,38 +179,7 @@ poijobs.each { poijob ->
             disabled()
         }
 
-        def defaultDesc = '''
-<img src="https://poi.apache.org/resources/images/project-logo.jpg" />
-<p>
-Apache POI - the Java API for Microsoft Documents
-</p>
-<p>
-<b>This is an automatically generated Job Config, do not edit it here!
-Instead change the Jenkins Job DSL at <a href="https://svn.apache.org/repos/asf/poi/trunk/jenkins">https://svn.apache.org/repos/asf/poi/trunk/jenkins</a>,
-see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki">https://github.com/jenkinsci/job-dsl-plugin/wiki</a>
-for more details about the DSL.</b>
-</p>'''
-
-        description( defaultDesc +
-(poijob.apicheck ? 
-'''
-<p>
-<b><a href="https://builds.apache.org/analysis/dashboard?id=org.apache.poi%3Apoi-parent&did=1" target="_blank">Sonar reports</a></b> -
-<p>
-<b><a href="lastSuccessfulBuild/artifact/build/main/build/reports/japi.html">API Check POI</a></b>
-<b><a href="lastSuccessfulBuild/artifact/build/ooxml/build/reports/japi.html">API Check POI-OOXML</a></b>
-<b><a href="lastSuccessfulBuild/artifact/build/excelant/build/reports/japi.html">API Check POI-Excelant</a></b>
-<b><a href="lastSuccessfulBuild/artifact/build/scratchpad/build/reports/japi.html">API Check POI-Scratchpad</a></b>
-
-</p>
-''' :
-'''
-<p>
-<b><a href="lastSuccessfulBuild/findbugsResult/" target="_blank">Findbugs report of latest build</a></b> -
-<b><a href="https://builds.apache.org/analysis/dashboard?id=org.apache.poi%3Apoi-parent&did=1" target="_blank">Sonar reports</a></b> -
-<b><a href="lastSuccessfulBuild/artifact/build/coverage/index.html" target="_blank">Coverage of latest build</a></b>
-</p>
-'''))
+        description( defaultDesc + (poijob.apicheck ? apicheckDesc : sonarDesc) )
         logRotator {
             numToKeep(5)
             artifactNumToKeep(1)
@@ -180,33 +215,7 @@ for more details about the DSL.</b>
             scm(trigger)
         }
 
-		def shellCmdsUnix =
-'''# show which files are currently modified in the working copy
-svn status
-
-# print out information about which exact version of java we are using
-echo Java-Home: $JAVA_HOME
-ls -al $JAVA_HOME/
-$JAVA_HOME/bin/java -version
-'''+(poijob.shell ?: '')+
-'''# ignore any error message
-exit 0'''
-
-		def shellCmdsWin =
-'''@echo off
-:: show which files are currently modified in the working copy
-svn status
-
-:: print out information about which exact version of java we are using
-echo Java-Home: %JAVA_HOME%
-dir "%JAVA_HOME%"
-"%JAVA_HOME%/bin/java" -version
-'''+(poijob.shell ?: '')+
-'''
-:: ignore any error message
-exit 0'''
-
-        def shellcmds = (poijob.windows) ? shellCmdsWin : shellCmdsUnix
+        def shellcmds = (poijob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', poijob.shell ?: '')
 
         // Create steps and publishers depending on the type of Job that is selected
         if(poijob.maven) {
