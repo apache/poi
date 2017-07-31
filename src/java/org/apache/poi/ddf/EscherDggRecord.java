@@ -59,9 +59,6 @@ public final class EscherDggRecord extends EscherRecord {
             return field_2_numShapeIdsUsed;
         }
 
-        /**
-         * @return the current used shape ids value and increases it afterwards
-         */
         private void incrementUsedShapeId() {
             field_2_numShapeIdsUsed++;
         }
