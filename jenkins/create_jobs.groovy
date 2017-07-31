@@ -65,6 +65,12 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
     ],
+    [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org'
+    ],
+    [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org'
+    ],
+    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org'
+    ],
 ]
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
@@ -88,7 +94,8 @@ poijobs.each { poijob ->
     def jdkKey = poijob.jdk ?: defaultJdk
     def trigger = poijob.trigger ?: defaultTrigger
     def email = poijob.email ?: defaultEmail
-    def slaves = defaultSlaves + (poijob.slaveAdd ?: '')
+    def slaves = poijob.slaves ?: defaultSlaves + (poijob.slaveAdd ?: '')
+    def antRT = defaultAnt + (poijob.windows ? ' (Windows)' : '')
 
     job(poijob.name) {
         if (poijob.disabled) {
@@ -219,7 +226,7 @@ for more details about the DSL.</b>
                     prop('coverage.enabled', true)
                     // Properties did not work, so I had to use targets instead
                     //properties(poijob.properties ?: '')
-                    antInstallation(defaultAnt)
+                    antInstallation(antRT)
                 }
                 shell('zip -r build/javadocs.zip build/tmp/site/build/site/apidocs')
             }
@@ -282,12 +289,12 @@ for more details about the DSL.</b>
                     ant {
                         targets(['clean', 'compile-all'] + (poijob.properties ?: []))
                         prop('coverage.enabled', true)
-                        antInstallation(defaultAnt)
+                        antInstallation(antRT)
                     }
                     ant {
                         targets(['-Dscratchpad.ignore=true', 'jacocotask', 'test-all', 'testcoveragereport'] + (poijob.properties ?: []))
                         prop('coverage.enabled', true)
-                        antInstallation(defaultAnt)
+                        antInstallation(antRT)
                     }
                 } else {
                     ant {
@@ -295,14 +302,14 @@ for more details about the DSL.</b>
                         prop('coverage.enabled', true)
                         // Properties did not work, so I had to use targets instead
                         //properties(poijob.properties ?: '')
-                        antInstallation(defaultAnt)
+                        antInstallation(antRT)
                     }
                     ant {
                         targets(['run'] + (poijob.properties ?: []))
                         buildFile('src/integrationtest/build.xml')
                         // Properties did not work, so I had to use targets instead
                         //properties(poijob.properties ?: '')
-                        antInstallation(defaultAnt)
+                        antInstallation(antRT)
                     }
                 }
             }
