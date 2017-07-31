@@ -25,7 +25,7 @@ public class JvmBugs {
      * The LineBreakMeasurer is used for calculating text bounds.
      * The last official JDK 6 version (1.6.0_45) and also JDK 7 (1.7.0_21)
      * for Windows are affected. For JDK 7 - update to a more recent version.
-     * For JDK 6 - replace the fontmanager.dll with the previous release.
+     * For JDK 6 - replace the fontmanager.dll with the previous release (1.6.0_43).
      * 
      * For performance reasons, this method only checks for a windows jvm
      * with version 1.6.0_45 and 1.7.0_21.
@@ -40,6 +40,7 @@ public class JvmBugs {
      * @see <a href="http://svn.apache.org/viewvc/poi/trunk/src/testcases/org/apache/poi/ss/usermodel/BaseTestSheetAutosizeColumn.java?view=markup">Workaround for XSSF and HSSF</a>
      * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=54904">POI Bug #54904</a>
      * @see <a href="http://bugs.java.com/view_bug.do?bug_id=6501991">JDK Bug #6501991</a>
+     * @see <a href="http://bugs.java.com/view_bug.do?bug_id=8013716">JDK Bug #8013716</a>
      * @see <a href="https://bitbucket.org/fakraemer/line-break-measurer-test">LineBreakMeasurerTest</a>
      */
     public static boolean hasLineBreakMeasurerBug() {

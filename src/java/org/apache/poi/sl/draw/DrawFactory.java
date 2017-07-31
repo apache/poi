@@ -228,7 +228,12 @@ public class DrawFactory {
             graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);
         }
         
-        String fonts[][] = { { "Calibri", "Lucida Sans" }, { "Cambria", "Lucida Bright" } };
+        String fonts[][] = {
+            { "Calibri", "Lucida Sans" },
+            { "Cambria", "Lucida Bright" },
+            { "Times New Roman", "Lucida Bright" },
+            { "serif", "Lucida Bright" }
+        };
 
         for (String f[] : fonts) {
             if (!fontMap.containsKey(f[0])) {

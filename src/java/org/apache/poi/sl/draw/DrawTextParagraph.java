@@ -254,6 +254,7 @@ public class DrawTextParagraph implements Drawable {
         lines.clear();
 
         DrawFactory fact = DrawFactory.getInstance(graphics);
+        fact.fixFonts(graphics);
         StringBuilder text = new StringBuilder();
         AttributedString at = getAttributedString(graphics, text);
         boolean emptyParagraph = ("".equals(text.toString().trim()));
