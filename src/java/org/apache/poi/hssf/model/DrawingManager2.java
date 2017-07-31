@@ -101,7 +101,6 @@ public class DrawingManager2 {
     /**
      * Allocates new shape id for the drawing group
      *
-     * @param drawingGroupId the drawing group id
      * @param dg the EscherDgRecord which receives the new shape
      *
      * @return a new shape id.

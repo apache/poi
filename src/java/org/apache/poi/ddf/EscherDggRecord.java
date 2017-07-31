@@ -290,7 +290,6 @@ public final class EscherDggRecord extends EscherRecord {
     /**
      * Allocates new shape id for the drawing group
      *
-     * @param drawingGroupId the drawing group id
      * @param dg the EscherDgRecord which receives the new shape
      * @param sort if true then sort clusters by drawing group id.(
      *  In Excel the clusters are sorted but in PPT they are not)
