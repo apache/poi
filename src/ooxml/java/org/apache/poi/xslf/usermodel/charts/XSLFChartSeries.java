@@ -97,7 +97,7 @@ public abstract class XSLFChartSeries {
 		CTNumData cache = ds.getNumRef().getNumCache();
 		String formatCode = firstValues.getFormatCode();
 		if (formatCode == null) {
-			cache.unsetFormatCode();
+			if (cache.isSetFormatCode()) cache.unsetFormatCode();
 		} else {
 			cache.setFormatCode(formatCode);
 		}

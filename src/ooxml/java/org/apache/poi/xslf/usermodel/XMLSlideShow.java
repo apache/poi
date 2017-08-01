@@ -78,6 +78,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     private List<XSLFSlide> _slides;
     private List<XSLFSlideMaster> _masters;
     private List<XSLFPictureData> _pictures;
+    private List<XSLFChart> _charts;
     private XSLFTableStyles _tableStyles;
     private XSLFNotesMaster _notesMaster;
     private XSLFCommentAuthors _commentAuthors;
@@ -128,10 +129,16 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
             Map<String, XSLFSlideMaster> masterMap = new HashMap<String, XSLFSlideMaster>();
             Map<String, XSLFSlide> shIdMap = new HashMap<String, XSLFSlide>();
+            Map<String, XSLFChart> chartMap = new HashMap<String, XSLFChart>();
             for (RelationPart rp : getRelationParts()) {
                 POIXMLDocumentPart p = rp.getDocumentPart();
                 if (p instanceof XSLFSlide) {
                     shIdMap.put(rp.getRelationship().getId(), (XSLFSlide) p);
+                    for (POIXMLDocumentPart c : p.getRelations()) {
+                    	if (c instanceof XSLFChart) {
+                    		chartMap.put(c.getPackagePart().getPartName().getName(), (XSLFChart) c);
+                    	}
+                    }
                 } else if (p instanceof XSLFSlideMaster) {
                     masterMap.put(getRelationId(p), (XSLFSlideMaster) p);
                 } else if (p instanceof XSLFTableStyles){
@@ -141,6 +148,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 } else if (p instanceof XSLFCommentAuthors) {
                     _commentAuthors = (XSLFCommentAuthors)p;
                 }
+            }
+
+            _charts = new ArrayList<XSLFChart>(chartMap.size());
+            for(XSLFChart chart : chartMap.values()) {
+            	_charts.add(chart);
             }
 
             _masters = new ArrayList<XSLFSlideMaster>(masterMap.size());
@@ -206,6 +218,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
         int slideNumber = 256, cnt = 1;
         CTSlideIdList slideList;
+        XSLFRelation relationType = XSLFRelation.SLIDE;
         if (!_presentation.isSetSldIdLst()) {
             slideList = _presentation.addNewSldIdLst();
         } else {
@@ -215,35 +228,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 cnt++;
             }
 
-            // Bug 55791: We also need to check that the resulting file name is not already taken
-            // this can happen when removing/adding slides
-            while(true) {
-                String slideName = XSLFRelation.SLIDE.getFileName(cnt);
-                boolean found = false;
-                for (POIXMLDocumentPart relation : getRelations()) {
-                    if (relation.getPackagePart() != null &&
-                            slideName.equals(relation.getPackagePart().getPartName().getName())) {
-                        // name is taken => try next one
-                        found = true;
-                        break;
-                    }
-                }
-
-                if(!found &&
-                        getPackage().getPartsByName(Pattern.compile(Pattern.quote(slideName))).size() > 0) {
-                    // name is taken => try next one
-                    found = true;
-                }
-
-                if (!found) {
-                    break;
-                }
-                cnt++;
-            }
+            cnt = findNextAvailableFileNameIndex(relationType, cnt);
         }
 
-        RelationPart rp = createRelationship(
-                XSLFRelation.SLIDE, XSLFFactory.getInstance(), cnt, false);
+        RelationPart rp = createRelationship
+                (relationType, XSLFFactory.getInstance(), cnt, false);
         XSLFSlide slide = rp.getDocumentPart();
 
         CTSlideIdListEntry slideId = slideList.addNewSldId();
@@ -256,6 +245,35 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         _slides.add(slide);
         return slide;
     }
+
+	private int findNextAvailableFileNameIndex(XSLFRelation relationType, int idx) {
+		// Bug 55791: We also need to check that the resulting file name is not already taken
+		// this can happen when removing/adding slides, notes or charts
+		while(true) {
+		    String fileName = relationType.getFileName(idx);
+		    boolean found = false;
+		    for (POIXMLDocumentPart relation : getRelations()) {
+		        if (relation.getPackagePart() != null &&
+		                fileName.equals(relation.getPackagePart().getPartName().getName())) {
+		            // name is taken => try next one
+		            found = true;
+		            break;
+		        }
+		    }
+
+		    if(!found &&
+		            getPackage().getPartsByName(Pattern.compile(Pattern.quote(fileName))).size() > 0) {
+		        // name is taken => try next one
+		        found = true;
+		    }
+
+		    if (!found) {
+		        break;
+		    }
+		    idx++;
+		}
+		return idx;
+	}
 
     /**
      * Create a blank slide using the default (first) master.
@@ -272,8 +290,21 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
             }
             layout = sl[0];
         }
-        
+
         return createSlide(layout);
+    }
+
+    /**
+     * Create a blank chart on the given slide.
+     */
+    public XSLFChart createChart(XSLFSlide slide) {
+    	int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART, _charts.size() + 1);
+        XSLFChart chart = (XSLFChart) createRelationship(XSLFRelation.CHART, XSLFFactory.getInstance(), chartIdx);
+        slide.addRelation(null, XSLFRelation.CHART, chart);
+        POIXMLDocumentPart worksheet = createRelationship(XSLFChart.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx);
+        chart.addRelation(null, XSLFChart.WORKBOOK_RELATIONSHIP, worksheet);
+        _charts.add(chart);
+        return chart;
     }
 
     /**
@@ -298,39 +329,16 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
             createNotesMaster();
         }
 
-        Integer slideIndex = XSLFRelation.SLIDE.getFileNameIndex(slide);
+        int slideIndex = XSLFRelation.SLIDE.getFileNameIndex(slide);
 
-        // Bug 55791: We also need to check that the resulting file name is not already taken
-        // this can happen when removing/adding slides
-        while(true) {
-            String slideName = XSLFRelation.NOTES.getFileName(slideIndex);
-            boolean found = false;
-            for (POIXMLDocumentPart relation : getRelations()) {
-                if (relation.getPackagePart() != null &&
-                    slideName.equals(relation.getPackagePart().getPartName().getName())) {
-                    // name is taken => try next one
-                    found = true;
-                    break;
-                }
-            }
-
-            if(!found &&
-                getPackage().getPartsByName(Pattern.compile(Pattern.quote(slideName))).size() > 0) {
-                // name is taken => try next one
-                found = true;
-            }
-
-            if (!found) {
-                break;
-            }
-            slideIndex++;
-        }
+        XSLFRelation relationType = XSLFRelation.NOTES;
+        slideIndex = findNextAvailableFileNameIndex(relationType, slideIndex);
 
         // add notes slide to presentation
         XSLFNotes notesSlide = (XSLFNotes) createRelationship
-            (XSLFRelation.NOTES, XSLFFactory.getInstance(), slideIndex);
+            (relationType, XSLFFactory.getInstance(), slideIndex);
         // link slide and notes slide with each other
-        slide.addRelation(null, XSLFRelation.NOTES, notesSlide);
+        slide.addRelation(null, relationType, notesSlide);
         notesSlide.addRelation(null, XSLFRelation.NOTES_MASTER, _notesMaster);
         notesSlide.addRelation(null, XSLFRelation.SLIDE, slide);
 
@@ -402,6 +410,13 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     }
 
     /**
+     * Return all the charts in the slideshow
+     */
+    public List<XSLFChart> getCharts() {
+        return _charts;
+    }
+
+    /**
      * Returns the list of comment authors, if there is one.
      * Will only be present if at least one slide has comments on it.
      */
@@ -441,7 +456,14 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     public XSLFSlide removeSlide(int index){
         XSLFSlide slide = _slides.remove(index);
         removeRelation(slide);
-         _presentation.getSldIdLst().removeSldId(index);
+        _presentation.getSldIdLst().removeSldId(index);
+        for (POIXMLDocumentPart p : slide.getRelations()) {
+        	if (p instanceof XSLFChart) {
+        		XSLFChart chart = (XSLFChart) p;
+        		slide.removeChartRelation(chart);
+        		_charts.remove(chart);
+        	}
+        }
         return slide;
     }
 
