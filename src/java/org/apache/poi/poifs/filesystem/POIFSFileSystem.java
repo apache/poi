@@ -33,8 +33,7 @@ import org.apache.poi.util.CloseIgnoringInputStream;
  */
 public class POIFSFileSystem
     extends NPOIFSFileSystem // TODO Temporary workaround during #56791
-    implements POIFSViewable
-{
+    implements POIFSViewable {
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
      */
@@ -45,8 +44,7 @@ public class POIFSFileSystem
     /**
      * Constructor, intended for writing
      */
-    public POIFSFileSystem()
-    {
+    public POIFSFileSystem() {
         super();
     }
 
@@ -79,9 +77,7 @@ public class POIFSFileSystem
      * @exception IOException on errors reading, or on invalid data
      */
 
-    public POIFSFileSystem(InputStream stream)
-        throws IOException
-    {
+    public POIFSFileSystem(InputStream stream) throws IOException {
         super(stream);
     }
 
@@ -130,6 +126,7 @@ public class POIFSFileSystem
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
         return NPOIFSFileSystem.hasPOIFSHeader(inp);
     }
+
     /**
      * Checks if the supplied first 8 bytes of a stream / file
      *  has a POIFS (OLE2) header.
@@ -171,8 +168,7 @@ public class POIFSFileSystem
      * @param args names of the files; arg[ 0 ] is the input file,
      *             arg[ 1 ] is the output file
      */
-    public static void main(String args[]) throws IOException
-    {
+    public static void main(String args[]) throws IOException {
         OPOIFSFileSystem.main(args);
     }
 }
