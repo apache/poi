@@ -32,6 +32,7 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.HexDump;
 import org.junit.Test;
 
 /**
@@ -104,6 +105,10 @@ public class TestPOIFSProperties {
     }
 
     private void checkFromByteArray(byte[] bytes) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
+        // on some environments in CI we see strange failures, let's verify that the size is exactly right
+        // this can be removed again after the problem is identified
+        assertEquals("Had: " + HexDump.toHex(bytes), 5120, bytes.length);
+
         POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes));
         SummaryInformation summary2 = (SummaryInformation) PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
         assertNotNull(summary2);
