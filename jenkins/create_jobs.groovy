@@ -10,8 +10,10 @@ def triggerSundays = '''
 H H * * 0
 '''
 
-def findbugsUrl = 'http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
-def findbugsLib = 'lib/findbugs-noUpdateChecks-2.0.3.zip'
+def findbugs2Url = 'http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
+def findbugs2Lib = 'lib/findbugs-noUpdateChecks-2.0.3.zip'
+def findbugs3Url = 'http://downloads.sourceforge.net/project/findbugs/findbugs/3.0.1/findbugs-noUpdateChecks-3.0.1.zip?download='
+def findbugs3Lib = 'lib/findbugs-noUpdateChecks-3.0.1.zip'
 def xercesUrl = 'http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar'
 def xercesLib = 'compile-lib/xercesImpl-2.6.1.jar'
 
@@ -19,7 +21,7 @@ def poijobs = [
     [ name: 'POI-DSL-1.6',
             // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
             // as part of the Ant build
-            addShell: "wget -O ${findbugsLib} ${findbugsUrl}"
+            addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}"
     ],
     [ name: 'POI-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *'
     ],
@@ -52,7 +54,7 @@ def poijobs = [
         properties: ["-Dadditionaljar=${xercesLib}"],
         // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
         // as part of the Ant build
-        addShell: "wget -O ${findbugsLib} ${findbugsUrl}"
+        addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}"
     ],
     [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
     ],
@@ -70,14 +72,13 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
     ],
-    [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org',
-    	addShell: "@if not exist ${findbugsLib} powershell -Command wget -Uri \"${findbugsUrl}\" -OutFile ${findbugsLib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
+    [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
+    	addShell: "@if not exist ${findbugs2Lib} powershell -Command wget -Uri \"${findbugs2Url}\" -OutFile ${findbugs2Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
     ],
     [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org',
-    	addShell: "@if not exist ${findbugsLib} powershell -Command wget -Uri \"${findbugsUrl}\" -OutFile ${findbugsLib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
+    	addShell: "@if not exist ${findbugs3Lib} powershell -Command wget -Uri \"${findbugs3Url}\" -OutFile ${findbugs3Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
     ],
-    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, windows: true, slaves: 'Windows', email: 'kiwiwings@apache.org',
-    	addShell: "@if not exist ${findbugsLib} powershell -Command wget -Uri \"${findbugsUrl}\" -OutFile ${findbugsLib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
+    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
     ],
 ]
 
