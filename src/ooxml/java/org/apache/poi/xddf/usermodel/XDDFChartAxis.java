@@ -35,185 +35,262 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
  * Base class for all axis types.
  */
 @Beta
-public abstract class XDDFChartAxis implements ChartAxis {
-	protected abstract CTUnsignedInt getCTAxId();
-	protected abstract CTAxPos getCTAxPos();
-	protected abstract CTNumFmt getCTNumFmt();
-	protected abstract CTScaling getCTScaling();
-	protected abstract CTCrosses getCTCrosses();
-	protected abstract CTBoolean getDelete();
-	protected abstract CTTickMark getMajorCTTickMark();
-	protected abstract CTTickMark getMinorCTTickMark();
-	@Internal public abstract CTChartLines getMajorGridLines();
-	@Internal public abstract CTShapeProperties getLine();
+public abstract class XDDFChartAxis {
+    protected abstract CTUnsignedInt getCTAxId();
+    protected abstract CTAxPos getCTAxPos();
+    protected abstract CTNumFmt getCTNumFmt();
+    protected abstract CTScaling getCTScaling();
+    protected abstract CTCrosses getCTCrosses();
+    protected abstract CTBoolean getDelete();
+    protected abstract CTTickMark getMajorCTTickMark();
+    protected abstract CTTickMark getMinorCTTickMark();
 
-	@Override
-	public long getId() {
-		return getCTAxId().getVal();
-	}
+    @Internal
+    public abstract CTChartLines getMajorGridLines();
 
-	@Override
-	public AxisPosition getPosition() {
-		return AxisPosition.valueOf(getCTAxPos().getVal());
-	}
-	@Override
-	public void setPosition(AxisPosition position) {
-		getCTAxPos().setVal(position.underlying);
-	}
+    @Internal
+    public abstract CTShapeProperties getLine();
 
-	@Override
-	public void setNumberFormat(String format) {
-		getCTNumFmt().setFormatCode(format);
-		getCTNumFmt().setSourceLinked(true);
-	}
+    /**
+     * @return axis id
+     */
+    public long getId() {
+        return getCTAxId().getVal();
+    }
 
-	@Override
-	public String getNumberFormat() {
-		return getCTNumFmt().getFormatCode();
-	}
+    /**
+     * @return axis position
+     */
+    public AxisPosition getPosition() {
+        return AxisPosition.valueOf(getCTAxPos().getVal());
+    }
 
-	@Override
-	public boolean isSetLogBase() {
-		return getCTScaling().isSetLogBase();
-	}
+    /**
+     * @param position
+     *            new axis position
+     */
+    public void setPosition(AxisPosition position) {
+        getCTAxPos().setVal(position.underlying);
+    }
 
-	private static final double MIN_LOG_BASE = 2.0;
-	private static final double MAX_LOG_BASE = 1000.0;
+    /**
+     * Use this to check before retrieving a number format, as calling
+     * {@link #getNumberFormat()} may create a default one if none exists.
+     *
+     * @return true if a number format element is defined, false if not
+     */
+    public abstract boolean hasNumberFormat();
 
-	@Override
-	public void setLogBase(double logBase) {
-		if (logBase < MIN_LOG_BASE ||
-			MAX_LOG_BASE < logBase) {
-			throw new IllegalArgumentException("Axis log base must be between 2 and 1000 (inclusive), got: " + logBase);
-		}
-		CTScaling scaling = getCTScaling();
-		if (scaling.isSetLogBase()) {
-			scaling.getLogBase().setVal(logBase);
-		} else {
-			scaling.addNewLogBase().setVal(logBase);
-		}
-	}
+    /**
+     * @param format
+     *            axis number format
+     */
+    public void setNumberFormat(String format) {
+        getCTNumFmt().setFormatCode(format);
+        getCTNumFmt().setSourceLinked(true);
+    }
 
-	@Override
-	public double getLogBase() {
-		CTLogBase logBase = getCTScaling().getLogBase();
-		if (logBase != null) {
-			return logBase.getVal();
-		}
-		return 0.0;
-	}
+    /**
+     * @return axis number format
+     */
+    public String getNumberFormat() {
+        return getCTNumFmt().getFormatCode();
+    }
 
-	@Override
-	public boolean isSetMinimum() {
-		return getCTScaling().isSetMin();
-	}
+    /**
+     * @return true if log base is defined, false otherwise
+     */
+    public boolean isSetLogBase() {
+        return getCTScaling().isSetLogBase();
+    }
 
-	@Override
-	public void setMinimum(double min) {
-		CTScaling scaling = getCTScaling();
-		if (scaling.isSetMin()) {
-			scaling.getMin().setVal(min);
-		} else {
-			scaling.addNewMin().setVal(min);
-		}
-	}
+    private static final double MIN_LOG_BASE = 2.0;
+    private static final double MAX_LOG_BASE = 1000.0;
 
-	@Override
-	public double getMinimum() {
-		CTScaling scaling = getCTScaling();
-		if (scaling.isSetMin()) {
-			return scaling.getMin().getVal();
-		} else {
-			return 0.0;
-		}
-	}
+    /**
+     * @param logBase
+     *            a number between 2 and 1000 (inclusive)
+     * @throws IllegalArgumentException
+     *             if log base not within allowed range
+     */
+    public void setLogBase(double logBase) {
+        if (logBase < MIN_LOG_BASE || MAX_LOG_BASE < logBase) {
+            throw new IllegalArgumentException("Axis log base must be between 2 and 1000 (inclusive), got: " + logBase);
+        }
+        CTScaling scaling = getCTScaling();
+        if (scaling.isSetLogBase()) {
+            scaling.getLogBase().setVal(logBase);
+        } else {
+            scaling.addNewLogBase().setVal(logBase);
+        }
+    }
 
-	@Override
-	public boolean isSetMaximum() {
-		return getCTScaling().isSetMax();
-	}
+    /**
+     * @return axis log base or 0.0 if not set
+     */
+    public double getLogBase() {
+        CTLogBase logBase = getCTScaling().getLogBase();
+        if (logBase != null) {
+            return logBase.getVal();
+        }
+        return 0.0;
+    }
 
-	@Override
-	public void setMaximum(double max) {
-		CTScaling scaling = getCTScaling();
-		if (scaling.isSetMax()) {
-			scaling.getMax().setVal(max);
-		} else {
-			scaling.addNewMax().setVal(max);
-		}
-	}
+    /**
+     * @return true if minimum value is defined, false otherwise
+     */
+    public boolean isSetMinimum() {
+        return getCTScaling().isSetMin();
+    }
 
-	@Override
-	public double getMaximum() {
-		CTScaling scaling = getCTScaling();
-		if (scaling.isSetMax()) {
-			return scaling.getMax().getVal();
-		} else {
-			return 0.0;
-		}
-	}
+    /**
+     * @param min
+     *            axis minimum
+     */
+    public void setMinimum(double min) {
+        CTScaling scaling = getCTScaling();
+        if (scaling.isSetMin()) {
+            scaling.getMin().setVal(min);
+        } else {
+            scaling.addNewMin().setVal(min);
+        }
+    }
 
-	@Override
-	public AxisOrientation getOrientation() {
-		return AxisOrientation.valueOf(getCTScaling().getOrientation().getVal());
-	}
+    /**
+     * @return axis minimum or 0.0 if not set
+     */
+    public double getMinimum() {
+        CTScaling scaling = getCTScaling();
+        if (scaling.isSetMin()) {
+            return scaling.getMin().getVal();
+        } else {
+            return 0.0;
+        }
+    }
 
-	@Override
-	public void setOrientation(AxisOrientation orientation) {
-		CTScaling scaling = getCTScaling();
-		if (scaling.isSetOrientation()) {
-			scaling.getOrientation().setVal(orientation.underlying);
-		} else {
-			scaling.addNewOrientation().setVal(orientation.underlying);
-		}
-	}
+    /**
+     * @return true if maximum value is defined, false otherwise
+     */
+    public boolean isSetMaximum() {
+        return getCTScaling().isSetMax();
+    }
 
-	@Override
-	public AxisCrosses getCrosses() {
-		return AxisCrosses.valueOf(getCTCrosses().getVal());
-	}
+    /**
+     * @param max
+     *            axis maximum
+     */
+    public void setMaximum(double max) {
+        CTScaling scaling = getCTScaling();
+        if (scaling.isSetMax()) {
+            scaling.getMax().setVal(max);
+        } else {
+            scaling.addNewMax().setVal(max);
+        }
+    }
 
-	@Override
-	public void setCrosses(AxisCrosses crosses) {
-		getCTCrosses().setVal(crosses.underlying);
-	}
+    /**
+     * @return axis maximum or 0.0 if not set
+     */
+    public double getMaximum() {
+        CTScaling scaling = getCTScaling();
+        if (scaling.isSetMax()) {
+            return scaling.getMax().getVal();
+        } else {
+            return 0.0;
+        }
+    }
 
-	@Override
-	public boolean isVisible() {
-		return !getDelete().getVal();
-	}
+    /**
+     * @return axis orientation
+     */
+    public AxisOrientation getOrientation() {
+        return AxisOrientation.valueOf(getCTScaling().getOrientation().getVal());
+    }
 
-	@Override
-	public void setVisible(boolean value) {
-		getDelete().setVal(!value);
-	}
+    /**
+     * @param orientation
+     *            axis orientation
+     */
+    public void setOrientation(AxisOrientation orientation) {
+        CTScaling scaling = getCTScaling();
+        if (scaling.isSetOrientation()) {
+            scaling.getOrientation().setVal(orientation.underlying);
+        } else {
+            scaling.addNewOrientation().setVal(orientation.underlying);
+        }
+    }
 
-	@Override
-	public AxisTickMark getMajorTickMark() {
-		return AxisTickMark.valueOf(getMajorCTTickMark().getVal());
-	}
+    /**
+     * @return axis cross type
+     */
+    public AxisCrosses getCrosses() {
+        return AxisCrosses.valueOf(getCTCrosses().getVal());
+    }
 
-	@Override
-	public void setMajorTickMark(AxisTickMark tickMark) {
-		getMajorCTTickMark().setVal(tickMark.underlying);
-	}
+    /**
+     * @param crosses
+     *            axis cross type
+     */
+    public void setCrosses(AxisCrosses crosses) {
+        getCTCrosses().setVal(crosses.underlying);
+    }
 
-	@Override
-	public AxisTickMark getMinorTickMark() {
-		return AxisTickMark.valueOf(getMinorCTTickMark().getVal());
-	}
+    /**
+     * Declare this axis cross another axis.
+     *
+     * @param axis
+     *            that this axis should cross
+     */
+    public abstract void crossAxis(XDDFChartAxis axis);
 
-	@Override
-	public void setMinorTickMark(AxisTickMark tickMark) {
-		getMinorCTTickMark().setVal(tickMark.underlying);
-	}
+    /**
+     * @return visibility of the axis.
+     */
+    public boolean isVisible() {
+        return !getDelete().getVal();
+    }
 
-	protected long getNextAxId(CTPlotArea plotArea) {
-		long totalAxisCount =
-			plotArea.sizeOfValAxArray()  +
-			plotArea.sizeOfCatAxArray()  +
-			plotArea.sizeOfDateAxArray() +
-			plotArea.sizeOfSerAxArray();
-		return totalAxisCount;
-	}
+    /**
+     * @param value
+     *            visibility of the axis.
+     */
+    public void setVisible(boolean value) {
+        getDelete().setVal(!value);
+    }
+
+    /**
+     * @return major tick mark.
+     */
+    public AxisTickMark getMajorTickMark() {
+        return AxisTickMark.valueOf(getMajorCTTickMark().getVal());
+    }
+
+    /**
+     * @param tickMark
+     *            major tick mark type.
+     */
+    public void setMajorTickMark(AxisTickMark tickMark) {
+        getMajorCTTickMark().setVal(tickMark.underlying);
+    }
+
+    /**
+     * @return minor tick mark.
+     */
+    public AxisTickMark getMinorTickMark() {
+        return AxisTickMark.valueOf(getMinorCTTickMark().getVal());
+    }
+
+    /**
+     * @param tickMark
+     *            minor tick mark type.
+     */
+    public void setMinorTickMark(AxisTickMark tickMark) {
+        getMinorCTTickMark().setVal(tickMark.underlying);
+    }
+
+    protected long getNextAxId(CTPlotArea plotArea) {
+        long totalAxisCount = plotArea.sizeOfValAxArray() + plotArea.sizeOfCatAxArray() + plotArea.sizeOfDateAxArray()
+                + plotArea.sizeOfSerAxArray();
+        return totalAxisCount;
+    }
 }

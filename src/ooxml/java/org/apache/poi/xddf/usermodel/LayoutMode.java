@@ -22,21 +22,22 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;;
 
 public enum LayoutMode {
-	EDGE(STLayoutMode.EDGE), FACTOR(STLayoutMode.FACTOR);
+    EDGE(STLayoutMode.EDGE),
+    FACTOR(STLayoutMode.FACTOR);
 
-	final STLayoutMode.Enum underlying;
+    final STLayoutMode.Enum underlying;
 
-	LayoutMode(STLayoutMode.Enum layoutMode) {
-		this.underlying = layoutMode;
-	}
+    LayoutMode(STLayoutMode.Enum layoutMode) {
+        this.underlying = layoutMode;
+    }
 
-	private final static HashMap<STLayoutMode.Enum, LayoutMode> reverse = new HashMap<STLayoutMode.Enum, LayoutMode>();
-	static {
-		reverse.put(STLayoutMode.EDGE, LayoutMode.EDGE);
-		reverse.put(STLayoutMode.FACTOR, LayoutMode.FACTOR);
-	}
+    private final static HashMap<STLayoutMode.Enum, LayoutMode> reverse = new HashMap<STLayoutMode.Enum, LayoutMode>();
+    static {
+        reverse.put(STLayoutMode.EDGE, LayoutMode.EDGE);
+        reverse.put(STLayoutMode.FACTOR, LayoutMode.FACTOR);
+    }
 
-	static LayoutMode valueOf(STLayoutMode.Enum layoutMode) {
-		return reverse.get(layoutMode);
-	}
+    static LayoutMode valueOf(STLayoutMode.Enum layoutMode) {
+        return reverse.get(layoutMode);
+    }
 }

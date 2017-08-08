@@ -31,10 +31,9 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.xddf.usermodel.AxisOrientation;
 import org.apache.poi.xddf.usermodel.AxisPosition;
 import org.apache.poi.xddf.usermodel.BarDirection;
-import org.apache.poi.xddf.usermodel.XDDFBarChartSeries;
-import org.apache.poi.xddf.usermodel.XDDFCategoryDataSource;
-import org.apache.poi.xddf.usermodel.XDDFChartSeries;
-import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.XDDFBarChartData;
+import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
 
 /**
  * Build a bar chart from a template pptx
@@ -59,25 +58,27 @@ public class BarChartDemo {
             String chartTitle = modelReader.readLine();  // first line is chart title
 
             // Category Axis Data
-            List<String> categories = new ArrayList<String>(3);
+            List<String> listCategories = new ArrayList<String>(3);
 
             // Values
-            List<Double> values = new ArrayList<Double>(3);
+            List<Double> listValues = new ArrayList<Double>(3);
 
             // set model
             String ln;
             while((ln = modelReader.readLine()) != null){
                 String[] vals = ln.split("\\s+");
-                categories.add(vals[0]);
-                values.add(Double.valueOf(vals[1]));
+                listCategories.add(vals[0]);
+                listValues.add(Double.valueOf(vals[1]));
             }
+            String[] categories = listCategories.toArray(new String[listCategories.size()]);
+            Double[] values = listValues.toArray(new Double[listValues.size()]);
 
             pptx = new XMLSlideShow(new FileInputStream(args[0]));
             XSLFSlide slide = pptx.getSlides().get(0);
             setBarData(findChart(slide), chartTitle, categories, values);
 
             XSLFChart chart = findChart(pptx.createSlide().importContent(slide));
-            setColumnData(chart, "Column variant", categories, values);
+            setColumnData(chart, "Column variant");
 
             // save the result
             OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx");
@@ -87,27 +88,28 @@ public class BarChartDemo {
                 out.close();
             }
         } finally {
-            if (pptx != null) pptx.close();
+            if (pptx != null) {
+                pptx.close();
+            }
             modelReader.close();
         }
     }
 
-    private static void setBarData(XSLFChart chart, String chartTitle, List<String> categories, List<Double> values) {
+    private static void setBarData(XSLFChart chart, String chartTitle, String[] categories, Double[] values) {
         // Series Text
-        List<XDDFChartSeries> series = chart.getChartSeries();
-        XDDFBarChartSeries bar = (XDDFBarChartSeries) series.get(0);
-        bar.setTitle(chartTitle);
+        List<XDDFChartData> series = chart.getChartSeries();
+        XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
 
-        bar.setCategoryData(new XDDFCategoryDataSource(categories));
-        bar.setFirstValues(new XDDFNumericalDataSource<Double>(values));
-        bar.fillChartData();
+        bar.getSeries(0).replaceData(XDDFDataSourcesFactory.fromArray(categories), XDDFDataSourcesFactory.fromArray(values));
+        bar.getSeries(0).setTitle(chartTitle);
+        bar.plot();
     }
 
-    private static void setColumnData(XSLFChart chart, String chartTitle, List<String> categories, List<Double> values) {
+    private static void setColumnData(XSLFChart chart, String chartTitle) {
         // Series Text
-        List<XDDFChartSeries> series = chart.getChartSeries();
-        XDDFBarChartSeries bar = (XDDFBarChartSeries) series.get(0);
-        bar.setTitle(chartTitle);
+        List<XDDFChartData> series = chart.getChartSeries();
+        XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
+        bar.getSeries(0).setTitle(chartTitle);
 
         // in order to transform a bar chart into a column chart, you just need to change the bar direction
         bar.setBarDirection(BarDirection.COL);
@@ -127,7 +129,9 @@ public class BarChartDemo {
             }
         }
 
-        if(chart == null) throw new IllegalStateException("chart not found in the template");
+        if(chart == null) {
+            throw new IllegalStateException("chart not found in the template");
+        }
         return chart;
     }
 }

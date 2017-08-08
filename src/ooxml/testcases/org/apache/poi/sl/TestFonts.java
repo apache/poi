@@ -78,6 +78,7 @@ public class TestFonts {
             311, 312, 313, 318,
             348, //Windows 10, 15.6" 3840x2160
             362, // Windows 10, 13.3" 1080p high-dpi
+            377, // MacOS Sierra
             398, 399,
             406  // Ubuntu Trusty, 15", 1680x1050
     };

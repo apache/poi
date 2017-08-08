@@ -22,26 +22,26 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STBarGrouping;
 
 public enum BarGrouping {
-	STANDARD(STBarGrouping.STANDARD),
-	CLUSTERED(STBarGrouping.CLUSTERED),
-	STACKED(STBarGrouping.STACKED),
-	PERCENT_STACKED(STBarGrouping.PERCENT_STACKED);
+    STANDARD(STBarGrouping.STANDARD),
+    CLUSTERED(STBarGrouping.CLUSTERED),
+    STACKED(STBarGrouping.STACKED),
+    PERCENT_STACKED(STBarGrouping.PERCENT_STACKED);
 
-	final STBarGrouping.Enum underlying;
+    final STBarGrouping.Enum underlying;
 
-	BarGrouping(STBarGrouping.Enum grouping) {
-		this.underlying = grouping;
-	}
+    BarGrouping(STBarGrouping.Enum grouping) {
+        this.underlying = grouping;
+    }
 
-	private final static HashMap<STBarGrouping.Enum, BarGrouping> reverse = new HashMap<STBarGrouping.Enum, BarGrouping>();
-	static {
-		reverse.put(STBarGrouping.STANDARD, BarGrouping.STANDARD);
-		reverse.put(STBarGrouping.CLUSTERED, BarGrouping.CLUSTERED);
-		reverse.put(STBarGrouping.STACKED, BarGrouping.STACKED);
-		reverse.put(STBarGrouping.PERCENT_STACKED, BarGrouping.PERCENT_STACKED);
-	}
+    private final static HashMap<STBarGrouping.Enum, BarGrouping> reverse = new HashMap<STBarGrouping.Enum, BarGrouping>();
+    static {
+        reverse.put(STBarGrouping.STANDARD, BarGrouping.STANDARD);
+        reverse.put(STBarGrouping.CLUSTERED, BarGrouping.CLUSTERED);
+        reverse.put(STBarGrouping.STACKED, BarGrouping.STACKED);
+        reverse.put(STBarGrouping.PERCENT_STACKED, BarGrouping.PERCENT_STACKED);
+    }
 
-	static BarGrouping valueOf(STBarGrouping.Enum grouping) {
-		return reverse.get(grouping);
-	}
+    static BarGrouping valueOf(STBarGrouping.Enum grouping) {
+        return reverse.get(grouping);
+    }
 }

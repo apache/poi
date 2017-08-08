@@ -22,21 +22,22 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 
 public enum AxisOrientation {
-	MIN_MAX(STOrientation.MIN_MAX), MAX_MIN(STOrientation.MAX_MIN);
+    MIN_MAX(STOrientation.MIN_MAX),
+    MAX_MIN(STOrientation.MAX_MIN);
 
-	final STOrientation.Enum underlying;
+    final STOrientation.Enum underlying;
 
-	AxisOrientation(STOrientation.Enum orientation) {
-		this.underlying = orientation;
-	}
+    AxisOrientation(STOrientation.Enum orientation) {
+        this.underlying = orientation;
+    }
 
-	private final static HashMap<STOrientation.Enum, AxisOrientation> reverse = new HashMap<STOrientation.Enum, AxisOrientation>();
-	static {
-		reverse.put(STOrientation.MIN_MAX, AxisOrientation.MIN_MAX);
-		reverse.put(STOrientation.MAX_MIN, AxisOrientation.MAX_MIN);
-	}
+    private final static HashMap<STOrientation.Enum, AxisOrientation> reverse = new HashMap<STOrientation.Enum, AxisOrientation>();
+    static {
+        reverse.put(STOrientation.MIN_MAX, AxisOrientation.MIN_MAX);
+        reverse.put(STOrientation.MAX_MIN, AxisOrientation.MAX_MIN);
+    }
 
-	static AxisOrientation valueOf(STOrientation.Enum orientation) {
-		return reverse.get(orientation);
-	}
+    static AxisOrientation valueOf(STOrientation.Enum orientation) {
+        return reverse.get(orientation);
+    }
 }

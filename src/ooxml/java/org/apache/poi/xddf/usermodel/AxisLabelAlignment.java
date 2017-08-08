@@ -22,22 +22,24 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLblAlgn;
 
 public enum AxisLabelAlignment {
-	CENTER(STLblAlgn.CTR), LEFT(STLblAlgn.L), RIGHT(STLblAlgn.R);
+    CENTER(STLblAlgn.CTR),
+    LEFT(STLblAlgn.L),
+    RIGHT(STLblAlgn.R);
 
-	final STLblAlgn.Enum underlying;
+    final STLblAlgn.Enum underlying;
 
-	AxisLabelAlignment(STLblAlgn.Enum alignment) {
-		this.underlying = alignment;
-	}
+    AxisLabelAlignment(STLblAlgn.Enum alignment) {
+        this.underlying = alignment;
+    }
 
-	private final static HashMap<STLblAlgn.Enum, AxisLabelAlignment> reverse = new HashMap<STLblAlgn.Enum, AxisLabelAlignment>();
-	static {
-		reverse.put(STLblAlgn.CTR, AxisLabelAlignment.CENTER);
-		reverse.put(STLblAlgn.L, AxisLabelAlignment.LEFT);
-		reverse.put(STLblAlgn.R, AxisLabelAlignment.RIGHT);
-	}
+    private final static HashMap<STLblAlgn.Enum, AxisLabelAlignment> reverse = new HashMap<STLblAlgn.Enum, AxisLabelAlignment>();
+    static {
+        reverse.put(STLblAlgn.CTR, AxisLabelAlignment.CENTER);
+        reverse.put(STLblAlgn.L, AxisLabelAlignment.LEFT);
+        reverse.put(STLblAlgn.R, AxisLabelAlignment.RIGHT);
+    }
 
-	static AxisLabelAlignment valueOf(STLblAlgn.Enum alignment) {
-		return reverse.get(alignment);
-	}
+    static AxisLabelAlignment valueOf(STLblAlgn.Enum alignment) {
+        return reverse.get(alignment);
+    }
 }

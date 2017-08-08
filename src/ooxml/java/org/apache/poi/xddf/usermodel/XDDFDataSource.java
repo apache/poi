@@ -20,7 +20,13 @@
 package org.apache.poi.xddf.usermodel;
 
 public interface XDDFDataSource<T> {
-	int getPointCount();
+    int getPointCount();
 
-	T getPointAt(int index);
+    T getPointAt(int index);
+
+    boolean isReference();
+
+    boolean isNumeric();
+
+    String getFormulaString();
 }

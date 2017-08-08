@@ -22,30 +22,30 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STScatterStyle;
 
 public enum ScatterStyle {
-	LINE(STScatterStyle.LINE),
-	LINE_MARKER(STScatterStyle.LINE_MARKER),
-	MARKER(STScatterStyle.MARKER),
-	NONE(STScatterStyle.NONE),
-	SMOOTH(STScatterStyle.SMOOTH),
-	SMOOTH_MARKER(STScatterStyle.SMOOTH_MARKER);
+    LINE(STScatterStyle.LINE),
+    LINE_MARKER(STScatterStyle.LINE_MARKER),
+    MARKER(STScatterStyle.MARKER),
+    NONE(STScatterStyle.NONE),
+    SMOOTH(STScatterStyle.SMOOTH),
+    SMOOTH_MARKER(STScatterStyle.SMOOTH_MARKER);
 
-	final STScatterStyle.Enum underlying;
+    final STScatterStyle.Enum underlying;
 
-	ScatterStyle(STScatterStyle.Enum style) {
-		this.underlying = style;
-	}
+    ScatterStyle(STScatterStyle.Enum style) {
+        this.underlying = style;
+    }
 
-	private final static HashMap<STScatterStyle.Enum, ScatterStyle> reverse = new HashMap<STScatterStyle.Enum, ScatterStyle>();
-	static {
-		reverse.put(STScatterStyle.LINE, ScatterStyle.LINE);
-		reverse.put(STScatterStyle.LINE_MARKER, ScatterStyle.LINE_MARKER);
-		reverse.put(STScatterStyle.MARKER, ScatterStyle.MARKER);
-		reverse.put(STScatterStyle.NONE, ScatterStyle.NONE);
-		reverse.put(STScatterStyle.SMOOTH, ScatterStyle.SMOOTH);
-		reverse.put(STScatterStyle.SMOOTH_MARKER, ScatterStyle.SMOOTH_MARKER);
-	}
+    private final static HashMap<STScatterStyle.Enum, ScatterStyle> reverse = new HashMap<STScatterStyle.Enum, ScatterStyle>();
+    static {
+        reverse.put(STScatterStyle.LINE, ScatterStyle.LINE);
+        reverse.put(STScatterStyle.LINE_MARKER, ScatterStyle.LINE_MARKER);
+        reverse.put(STScatterStyle.MARKER, ScatterStyle.MARKER);
+        reverse.put(STScatterStyle.NONE, ScatterStyle.NONE);
+        reverse.put(STScatterStyle.SMOOTH, ScatterStyle.SMOOTH);
+        reverse.put(STScatterStyle.SMOOTH_MARKER, ScatterStyle.SMOOTH_MARKER);
+    }
 
-	static ScatterStyle valueOf(STScatterStyle.Enum style) {
-		return reverse.get(style);
-	}
+    static ScatterStyle valueOf(STScatterStyle.Enum style) {
+        return reverse.get(style);
+    }
 }

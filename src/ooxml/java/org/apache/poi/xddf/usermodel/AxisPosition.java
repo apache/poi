@@ -22,23 +22,26 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
 
 public enum AxisPosition {
-	BOTTOM(STAxPos.B), LEFT(STAxPos.L), RIGHT(STAxPos.R), TOP(STAxPos.T);
+    BOTTOM(STAxPos.B),
+    LEFT(STAxPos.L),
+    RIGHT(STAxPos.R),
+    TOP(STAxPos.T);
 
-	final STAxPos.Enum underlying;
+    final STAxPos.Enum underlying;
 
-	AxisPosition(STAxPos.Enum position) {
-		this.underlying = position;
-	}
+    AxisPosition(STAxPos.Enum position) {
+        this.underlying = position;
+    }
 
-	private final static HashMap<STAxPos.Enum, AxisPosition> reverse = new HashMap<STAxPos.Enum, AxisPosition>();
-	static {
-		reverse.put(STAxPos.B, AxisPosition.BOTTOM);
-		reverse.put(STAxPos.L, AxisPosition.LEFT);
-		reverse.put(STAxPos.R, AxisPosition.RIGHT);
-		reverse.put(STAxPos.T, AxisPosition.TOP);
-	}
+    private final static HashMap<STAxPos.Enum, AxisPosition> reverse = new HashMap<STAxPos.Enum, AxisPosition>();
+    static {
+        reverse.put(STAxPos.B, AxisPosition.BOTTOM);
+        reverse.put(STAxPos.L, AxisPosition.LEFT);
+        reverse.put(STAxPos.R, AxisPosition.RIGHT);
+        reverse.put(STAxPos.T, AxisPosition.TOP);
+    }
 
-	static AxisPosition valueOf(STAxPos.Enum position) {
-		return reverse.get(position);
-	}
+    static AxisPosition valueOf(STAxPos.Enum position) {
+        return reverse.get(position);
+    }
 }

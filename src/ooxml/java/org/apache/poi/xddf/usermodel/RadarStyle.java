@@ -22,24 +22,24 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STRadarStyle;
 
 public enum RadarStyle {
-	FILLED(STRadarStyle.FILLED),
-	MARKER(STRadarStyle.MARKER),
-	STANDARD(STRadarStyle.STANDARD);
+    FILLED(STRadarStyle.FILLED),
+    MARKER(STRadarStyle.MARKER),
+    STANDARD(STRadarStyle.STANDARD);
 
-	final STRadarStyle.Enum underlying;
+    final STRadarStyle.Enum underlying;
 
-	RadarStyle(STRadarStyle.Enum style) {
-		this.underlying = style;
-	}
+    RadarStyle(STRadarStyle.Enum style) {
+        this.underlying = style;
+    }
 
-	private final static HashMap<STRadarStyle.Enum, RadarStyle> reverse = new HashMap<STRadarStyle.Enum, RadarStyle>();
-	static {
-		reverse.put(STRadarStyle.FILLED, RadarStyle.FILLED);
-		reverse.put(STRadarStyle.MARKER, RadarStyle.MARKER);
-		reverse.put(STRadarStyle.STANDARD, RadarStyle.STANDARD);
-	}
+    private final static HashMap<STRadarStyle.Enum, RadarStyle> reverse = new HashMap<STRadarStyle.Enum, RadarStyle>();
+    static {
+        reverse.put(STRadarStyle.FILLED, RadarStyle.FILLED);
+        reverse.put(STRadarStyle.MARKER, RadarStyle.MARKER);
+        reverse.put(STRadarStyle.STANDARD, RadarStyle.STANDARD);
+    }
 
-	static RadarStyle valueOf(STRadarStyle.Enum style) {
-		return reverse.get(style);
-	}
+    static RadarStyle valueOf(STRadarStyle.Enum style) {
+        return reverse.get(style);
+    }
 }

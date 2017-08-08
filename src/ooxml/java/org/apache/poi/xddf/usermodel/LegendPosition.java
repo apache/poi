@@ -22,24 +22,28 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLegendPos;
 
 public enum LegendPosition {
-	BOTTOM(STLegendPos.B), LEFT(STLegendPos.L), RIGHT(STLegendPos.R), TOP(STLegendPos.T), TOP_RIGHT(STLegendPos.TR);
+    BOTTOM(STLegendPos.B),
+    LEFT(STLegendPos.L),
+    RIGHT(STLegendPos.R),
+    TOP(STLegendPos.T),
+    TOP_RIGHT(STLegendPos.TR);
 
-	final STLegendPos.Enum underlying;
+    final STLegendPos.Enum underlying;
 
-	LegendPosition(STLegendPos.Enum position) {
-		this.underlying = position;
-	}
+    LegendPosition(STLegendPos.Enum position) {
+        this.underlying = position;
+    }
 
-	private final static HashMap<STLegendPos.Enum, LegendPosition> reverse = new HashMap<STLegendPos.Enum, LegendPosition>();
-	static {
-		reverse.put(STLegendPos.B, LegendPosition.BOTTOM);
-		reverse.put(STLegendPos.L, LegendPosition.LEFT);
-		reverse.put(STLegendPos.R, LegendPosition.RIGHT);
-		reverse.put(STLegendPos.T, LegendPosition.TOP);
-		reverse.put(STLegendPos.TR, LegendPosition.TOP_RIGHT);
-	}
+    private final static HashMap<STLegendPos.Enum, LegendPosition> reverse = new HashMap<STLegendPos.Enum, LegendPosition>();
+    static {
+        reverse.put(STLegendPos.B, LegendPosition.BOTTOM);
+        reverse.put(STLegendPos.L, LegendPosition.LEFT);
+        reverse.put(STLegendPos.R, LegendPosition.RIGHT);
+        reverse.put(STLegendPos.T, LegendPosition.TOP);
+        reverse.put(STLegendPos.TR, LegendPosition.TOP_RIGHT);
+    }
 
-	static LegendPosition valueOf(STLegendPos.Enum position) {
-		return reverse.get(position);
-	}
+    static LegendPosition valueOf(STLegendPos.Enum position) {
+        return reverse.get(position);
+    }
 }

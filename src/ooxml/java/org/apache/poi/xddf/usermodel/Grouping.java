@@ -19,25 +19,27 @@ package org.apache.poi.xddf.usermodel;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STBarDir;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STGrouping;
 
-public enum BarDirection {
-    BAR(STBarDir.BAR),
-    COL(STBarDir.COL);
+public enum Grouping {
+    STANDARD(STGrouping.STANDARD),
+    STACKED(STGrouping.STACKED),
+    PERCENT_STACKED(STGrouping.PERCENT_STACKED);
 
-    final STBarDir.Enum underlying;
+    final STGrouping.Enum underlying;
 
-    BarDirection(STBarDir.Enum direction) {
-        this.underlying = direction;
+    Grouping(STGrouping.Enum grouping) {
+        this.underlying = grouping;
     }
 
-    private final static HashMap<STBarDir.Enum, BarDirection> reverse = new HashMap<STBarDir.Enum, BarDirection>();
+    private final static HashMap<STGrouping.Enum, Grouping> reverse = new HashMap<STGrouping.Enum, Grouping>();
     static {
-        reverse.put(STBarDir.BAR, BarDirection.BAR);
-        reverse.put(STBarDir.COL, BarDirection.COL);
+        reverse.put(STGrouping.STANDARD, Grouping.STANDARD);
+        reverse.put(STGrouping.STACKED, Grouping.STACKED);
+        reverse.put(STGrouping.PERCENT_STACKED, Grouping.PERCENT_STACKED);
     }
 
-    static BarDirection valueOf(STBarDir.Enum direction) {
-        return reverse.get(direction);
+    static Grouping valueOf(STGrouping.Enum grouping) {
+        return reverse.get(grouping);
     }
 }

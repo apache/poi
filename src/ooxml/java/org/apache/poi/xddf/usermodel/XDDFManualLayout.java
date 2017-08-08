@@ -29,173 +29,177 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 @Beta
 public final class XDDFManualLayout {
 
-	/**
-	 * Underlaying CTManualLayout bean.
-	 */
-	private CTManualLayout layout;
+    /**
+     * Underlaying CTManualLayout bean.
+     */
+    private CTManualLayout layout;
 
-	private static final LayoutMode defaultLayoutMode = LayoutMode.EDGE;
-	private static final LayoutTarget defaultLayoutTarget = LayoutTarget.INNER;
+    private static final LayoutMode defaultLayoutMode = LayoutMode.EDGE;
+    private static final LayoutTarget defaultLayoutTarget = LayoutTarget.INNER;
 
-	/**
-	 * Create a new DrawingML manual layout.
-	 * @param ctLayout a DrawingML layout that should be used as base.
-	 */
-	public XDDFManualLayout(CTLayout ctLayout) {
-		initializeLayout(ctLayout);
-	}
+    /**
+     * Create a new DrawingML manual layout.
+     *
+     * @param ctLayout
+     *            a DrawingML layout that should be used as base.
+     */
+    public XDDFManualLayout(CTLayout ctLayout) {
+        initializeLayout(ctLayout);
+    }
 
-	/**
-	 * Create a new DrawingML manual layout for chart.
-	 * @param ctPlotArea a chart's plot area to create layout for.
-	 */
-	public XDDFManualLayout(CTPlotArea ctPlotArea) {
-		CTLayout ctLayout = ctPlotArea.isSetLayout() ?
-			ctPlotArea.getLayout() : ctPlotArea.addNewLayout();
+    /**
+     * Create a new DrawingML manual layout for chart.
+     *
+     * @param ctPlotArea
+     *            a chart's plot area to create layout for.
+     */
+    public XDDFManualLayout(CTPlotArea ctPlotArea) {
+        CTLayout ctLayout = ctPlotArea.isSetLayout() ? ctPlotArea.getLayout() : ctPlotArea.addNewLayout();
 
-		initializeLayout(ctLayout);
-	}
+        initializeLayout(ctLayout);
+    }
 
-	/**
-	 * Return the underlying CTManualLayout bean.
-	 *
-	 * @return the underlying CTManualLayout bean.
-	 */
-	@Internal public CTManualLayout getCTManualLayout(){
-		return layout;
-	}
+    /**
+     * Return the underlying CTManualLayout bean.
+     *
+     * @return the underlying CTManualLayout bean.
+     */
+    @Internal
+    public CTManualLayout getCTManualLayout() {
+        return layout;
+    }
 
-	public void setWidthRatio(double ratio) {
-		if (!layout.isSetW()) {
-			layout.addNewW();
-		}
-		layout.getW().setVal(ratio);
-	}
+    public void setWidthRatio(double ratio) {
+        if (!layout.isSetW()) {
+            layout.addNewW();
+        }
+        layout.getW().setVal(ratio);
+    }
 
-	public double getWidthRatio() {
-		if (!layout.isSetW()) {
-			return 0.0;
-		}
-		return layout.getW().getVal();
-	}
+    public double getWidthRatio() {
+        if (!layout.isSetW()) {
+            return 0.0;
+        }
+        return layout.getW().getVal();
+    }
 
-	public void setHeightRatio(double ratio) {
-		if (!layout.isSetH()) {
-			layout.addNewH();
-		}
-		layout.getH().setVal(ratio);
-	}
+    public void setHeightRatio(double ratio) {
+        if (!layout.isSetH()) {
+            layout.addNewH();
+        }
+        layout.getH().setVal(ratio);
+    }
 
-	public double getHeightRatio() {
-		if (!layout.isSetH()) {
-			return 0.0;
-		}
-		return layout.getH().getVal();
-	}
+    public double getHeightRatio() {
+        if (!layout.isSetH()) {
+            return 0.0;
+        }
+        return layout.getH().getVal();
+    }
 
-	public LayoutTarget getTarget() {
-		if (!layout.isSetLayoutTarget()) {
-			return defaultLayoutTarget;
-		}
-		return LayoutTarget.valueOf(layout.getLayoutTarget().getVal());
-	}
+    public LayoutTarget getTarget() {
+        if (!layout.isSetLayoutTarget()) {
+            return defaultLayoutTarget;
+        }
+        return LayoutTarget.valueOf(layout.getLayoutTarget().getVal());
+    }
 
-	public void setTarget(LayoutTarget target) {
-		if (!layout.isSetLayoutTarget()) {
-			layout.addNewLayoutTarget();
-		}
-		layout.getLayoutTarget().setVal(target.underlying);
-	}
+    public void setTarget(LayoutTarget target) {
+        if (!layout.isSetLayoutTarget()) {
+            layout.addNewLayoutTarget();
+        }
+        layout.getLayoutTarget().setVal(target.underlying);
+    }
 
-	public LayoutMode getXMode() {
-		if (!layout.isSetXMode()) {
-			return defaultLayoutMode;
-		}
-		return LayoutMode.valueOf(layout.getXMode().getVal());
-	}
+    public LayoutMode getXMode() {
+        if (!layout.isSetXMode()) {
+            return defaultLayoutMode;
+        }
+        return LayoutMode.valueOf(layout.getXMode().getVal());
+    }
 
-	public void setXMode(LayoutMode mode) {
-		if (!layout.isSetXMode()) {
-			layout.addNewXMode();
-		}
-		layout.getXMode().setVal(mode.underlying);
-	}
+    public void setXMode(LayoutMode mode) {
+        if (!layout.isSetXMode()) {
+            layout.addNewXMode();
+        }
+        layout.getXMode().setVal(mode.underlying);
+    }
 
-	public LayoutMode getYMode() {
-		if (!layout.isSetYMode()) {
-			return defaultLayoutMode;
-		}
-		return LayoutMode.valueOf(layout.getYMode().getVal());
-	}
+    public LayoutMode getYMode() {
+        if (!layout.isSetYMode()) {
+            return defaultLayoutMode;
+        }
+        return LayoutMode.valueOf(layout.getYMode().getVal());
+    }
 
-	public void setYMode(LayoutMode mode) {
-		if (!layout.isSetYMode()) {
-			layout.addNewYMode();
-		}
-		layout.getYMode().setVal(mode.underlying);
-	}
+    public void setYMode(LayoutMode mode) {
+        if (!layout.isSetYMode()) {
+            layout.addNewYMode();
+        }
+        layout.getYMode().setVal(mode.underlying);
+    }
 
-	public double getX() {
-		if (!layout.isSetX()) {
-			return 0.0;
-		}
-		return layout.getX().getVal();
-	}
+    public double getX() {
+        if (!layout.isSetX()) {
+            return 0.0;
+        }
+        return layout.getX().getVal();
+    }
 
-	public void setX(double x) {
-		if (!layout.isSetX()) {
-			layout.addNewX();
-		}
-		layout.getX().setVal(x);
-	}
+    public void setX(double x) {
+        if (!layout.isSetX()) {
+            layout.addNewX();
+        }
+        layout.getX().setVal(x);
+    }
 
-	public double getY() {
-		if (!layout.isSetY()) {
-			return 0.0;
-		}
-		return layout.getY().getVal();
-	}
+    public double getY() {
+        if (!layout.isSetY()) {
+            return 0.0;
+        }
+        return layout.getY().getVal();
+    }
 
-	public void setY(double y) {
-		if (!layout.isSetY()) {
-			layout.addNewY();
-		}
-		layout.getY().setVal(y);
-	}
+    public void setY(double y) {
+        if (!layout.isSetY()) {
+            layout.addNewY();
+        }
+        layout.getY().setVal(y);
+    }
 
-	public LayoutMode getWidthMode() {
-		if (!layout.isSetWMode()) {
-			return defaultLayoutMode;
-		}
-		return LayoutMode.valueOf(layout.getWMode().getVal());
-	}
+    public LayoutMode getWidthMode() {
+        if (!layout.isSetWMode()) {
+            return defaultLayoutMode;
+        }
+        return LayoutMode.valueOf(layout.getWMode().getVal());
+    }
 
-	public void setWidthMode(LayoutMode mode) {
-		if (!layout.isSetWMode()) {
-			layout.addNewWMode();
-		}
-		layout.getWMode().setVal(mode.underlying);
-	}
+    public void setWidthMode(LayoutMode mode) {
+        if (!layout.isSetWMode()) {
+            layout.addNewWMode();
+        }
+        layout.getWMode().setVal(mode.underlying);
+    }
 
-	public LayoutMode getHeightMode() {
-		if (!layout.isSetHMode()) {
-			return defaultLayoutMode;
-		}
-		return LayoutMode.valueOf(layout.getHMode().getVal());
-	}
+    public LayoutMode getHeightMode() {
+        if (!layout.isSetHMode()) {
+            return defaultLayoutMode;
+        }
+        return LayoutMode.valueOf(layout.getHMode().getVal());
+    }
 
-	public void setHeightMode(LayoutMode mode) {
-		if (!layout.isSetHMode()) {
-			layout.addNewHMode();
-		}
-		layout.getHMode().setVal(mode.underlying);
-	}
+    public void setHeightMode(LayoutMode mode) {
+        if (!layout.isSetHMode()) {
+            layout.addNewHMode();
+        }
+        layout.getHMode().setVal(mode.underlying);
+    }
 
-	private void initializeLayout(CTLayout ctLayout) {
-		if (ctLayout.isSetManualLayout()) {
-			this.layout = ctLayout.getManualLayout();
-		} else {
-			this.layout = ctLayout.addNewManualLayout();
-		}
-	}
+    private void initializeLayout(CTLayout ctLayout) {
+        if (ctLayout.isSetManualLayout()) {
+            this.layout = ctLayout.getManualLayout();
+        } else {
+            this.layout = ctLayout.addNewManualLayout();
+        }
+    }
 }

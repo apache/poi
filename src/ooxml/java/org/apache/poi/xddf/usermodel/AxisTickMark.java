@@ -22,23 +22,26 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickMark;
 
 public enum AxisTickMark {
-	CROSS(STTickMark.CROSS), IN(STTickMark.IN), NONE(STTickMark.NONE), OUT(STTickMark.OUT);
+    CROSS(STTickMark.CROSS),
+    IN(STTickMark.IN),
+    NONE(STTickMark.NONE),
+    OUT(STTickMark.OUT);
 
-	final STTickMark.Enum underlying;
+    final STTickMark.Enum underlying;
 
-	AxisTickMark(STTickMark.Enum tickMark) {
-		this.underlying = tickMark;
-	}
+    AxisTickMark(STTickMark.Enum tickMark) {
+        this.underlying = tickMark;
+    }
 
-	private final static HashMap<STTickMark.Enum, AxisTickMark> reverse = new HashMap<STTickMark.Enum, AxisTickMark>();
-	static {
-		reverse.put(STTickMark.CROSS, AxisTickMark.CROSS);
-		reverse.put(STTickMark.IN, AxisTickMark.IN);
-		reverse.put(STTickMark.NONE, AxisTickMark.NONE);
-		reverse.put(STTickMark.OUT, AxisTickMark.OUT);
-	}
+    private final static HashMap<STTickMark.Enum, AxisTickMark> reverse = new HashMap<STTickMark.Enum, AxisTickMark>();
+    static {
+        reverse.put(STTickMark.CROSS, AxisTickMark.CROSS);
+        reverse.put(STTickMark.IN, AxisTickMark.IN);
+        reverse.put(STTickMark.NONE, AxisTickMark.NONE);
+        reverse.put(STTickMark.OUT, AxisTickMark.OUT);
+    }
 
-	static AxisTickMark valueOf(STTickMark.Enum tickMark) {
-		return reverse.get(tickMark);
-	}
+    static AxisTickMark valueOf(STTickMark.Enum tickMark) {
+        return reverse.get(tickMark);
+    }
 }

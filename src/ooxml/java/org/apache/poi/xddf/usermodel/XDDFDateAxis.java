@@ -19,7 +19,6 @@ package org.apache.poi.xddf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
@@ -34,110 +33,110 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
- * Date axis type.  Currently only implements the same values as {@link XSSFCategoryAxis}, since the two are nearly identical.
+ * Date axis type. Currently only implements the same values as
+ * {@link XDDFCategoryAxis}, since the two are nearly identical.
  */
 @Beta
 public class XDDFDateAxis extends XDDFChartAxis {
 
-	private CTDateAx ctDateAx;
+    private CTDateAx ctDateAx;
 
+    public XDDFDateAxis(CTPlotArea plotArea, AxisPosition position) {
+        initializeAxis(plotArea, position);
+    }
 
-	public XDDFDateAxis(CTPlotArea plotArea, AxisPosition position) {
-		initializeAxis(plotArea, position);
-	}
+    public XDDFDateAxis(CTDateAx ctDateAx) {
+        this.ctDateAx = ctDateAx;
+    }
 
-	public XDDFDateAxis(CTDateAx ctDateAx) {
-		this.ctDateAx = ctDateAx;
-	}
+    @Override
+    @Internal
+    public CTChartLines getMajorGridLines() {
+        return ctDateAx.getMajorGridlines();
+    }
 
-	@Override
-	@Internal
-	public CTChartLines getMajorGridLines() {
-	    return ctDateAx.getMajorGridlines();
-	}
+    @Override
+    @Internal
+    public CTShapeProperties getLine() {
+        return ctDateAx.getSpPr();
+    }
 
-	@Override
-	@Internal
-	public CTShapeProperties getLine() {
-	    return ctDateAx.getSpPr();
-	}
+    @Override
+    public void crossAxis(XDDFChartAxis axis) {
+        ctDateAx.getCrossAx().setVal(axis.getId());
+    }
 
-	@Override
-	public void crossAxis(ChartAxis axis) {
-		ctDateAx.getCrossAx().setVal(axis.getId());
-	}
+    @Override
+    protected CTUnsignedInt getCTAxId() {
+        return ctDateAx.getAxId();
+    }
 
-	@Override
-	protected CTUnsignedInt getCTAxId() {
-		return ctDateAx.getAxId();
-	}
+    @Override
+    protected CTAxPos getCTAxPos() {
+        return ctDateAx.getAxPos();
+    }
 
-	@Override
-	protected CTAxPos getCTAxPos() {
-		return ctDateAx.getAxPos();
-	}
-
-	@Override
+    @Override
     public boolean hasNumberFormat() {
         return ctDateAx.isSetNumFmt();
     }
 
-	@Override
-	protected CTNumFmt getCTNumFmt() {
-		if (ctDateAx.isSetNumFmt()) {
-			return ctDateAx.getNumFmt();
-		}
-		return ctDateAx.addNewNumFmt();
-	}
+    @Override
+    protected CTNumFmt getCTNumFmt() {
+        if (ctDateAx.isSetNumFmt()) {
+            return ctDateAx.getNumFmt();
+        }
+        return ctDateAx.addNewNumFmt();
+    }
 
-	@Override
-	protected CTScaling getCTScaling() {
-		return ctDateAx.getScaling();
-	}
+    @Override
+    protected CTScaling getCTScaling() {
+        return ctDateAx.getScaling();
+    }
 
-	@Override
-	protected CTCrosses getCTCrosses() {
-		CTCrosses crosses = ctDateAx.getCrosses();
-		if (crosses == null) {
-			return ctDateAx.addNewCrosses();
-		} else {
-			return crosses;
-		}
-	}
+    @Override
+    protected CTCrosses getCTCrosses() {
+        CTCrosses crosses = ctDateAx.getCrosses();
+        if (crosses == null) {
+            return ctDateAx.addNewCrosses();
+        } else {
+            return crosses;
+        }
+    }
 
-	@Override
-	protected CTBoolean getDelete() {
-		return ctDateAx.getDelete();
-	}
+    @Override
+    protected CTBoolean getDelete() {
+        return ctDateAx.getDelete();
+    }
 
-	@Override
-	protected CTTickMark getMajorCTTickMark() {
-		return ctDateAx.getMajorTickMark();
-	}
+    @Override
+    protected CTTickMark getMajorCTTickMark() {
+        return ctDateAx.getMajorTickMark();
+    }
 
-	@Override
-	protected CTTickMark getMinorCTTickMark() {
-		return ctDateAx.getMinorTickMark();
-	}
+    @Override
+    protected CTTickMark getMinorCTTickMark() {
+        return ctDateAx.getMinorTickMark();
+    }
 
-	private void initializeAxis(CTPlotArea plotArea, AxisPosition position) {
-		final long id = getNextAxId(plotArea);
-		ctDateAx = plotArea.addNewDateAx();
-		ctDateAx.addNewAxId().setVal(id);
-		ctDateAx.addNewAxPos();
-		ctDateAx.addNewScaling();
-		ctDateAx.addNewCrosses();
-		ctDateAx.addNewCrossAx();
-		ctDateAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
-		ctDateAx.addNewDelete();
-		ctDateAx.addNewMajorTickMark();
-		ctDateAx.addNewMinorTickMark();
+    private void initializeAxis(CTPlotArea plotArea, AxisPosition position) {
+        final long id = getNextAxId(plotArea);
+        ctDateAx = plotArea.addNewDateAx();
+        ctDateAx.addNewAxId().setVal(id);
+        ctDateAx.addNewAxPos();
+        ctDateAx.addNewScaling();
+        ctDateAx.addNewCrosses();
+        ctDateAx.addNewCrossAx();
+        ctDateAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+        ctDateAx.addNewDelete();
+        ctDateAx.addNewMajorTickMark();
+        ctDateAx.addNewMinorTickMark();
 
-		setPosition(position);
-		setOrientation(AxisOrientation.MIN_MAX);
-		setCrosses(AxisCrosses.AUTO_ZERO);
-		setVisible(true);
-		setMajorTickMark(AxisTickMark.CROSS);
-		setMinorTickMark(AxisTickMark.NONE);
-	}
+        setPosition(position);
+        setOrientation(AxisOrientation.MIN_MAX);
+        setCrosses(AxisCrosses.AUTO_ZERO);
+        setVisible(true);
+        setMajorTickMark(AxisTickMark.CROSS);
+        setMinorTickMark(AxisTickMark.NONE);
+    }
 }

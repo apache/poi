@@ -22,21 +22,22 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrossBetween;
 
 public enum AxisCrossBetween {
-	BETWEEN(STCrossBetween.BETWEEN), MIDPOINT_CATEGORY(STCrossBetween.MID_CAT);
+    BETWEEN(STCrossBetween.BETWEEN),
+    MIDPOINT_CATEGORY(STCrossBetween.MID_CAT);
 
-	final STCrossBetween.Enum underlying;
+    final STCrossBetween.Enum underlying;
 
-	AxisCrossBetween(STCrossBetween.Enum crossBetween) {
-		this.underlying = crossBetween;
-	}
+    AxisCrossBetween(STCrossBetween.Enum crossBetween) {
+        this.underlying = crossBetween;
+    }
 
-	private final static HashMap<STCrossBetween.Enum, AxisCrossBetween> reverse = new HashMap<STCrossBetween.Enum, AxisCrossBetween>();
-	static {
-		reverse.put(STCrossBetween.BETWEEN, AxisCrossBetween.BETWEEN);
-		reverse.put(STCrossBetween.MID_CAT, AxisCrossBetween.MIDPOINT_CATEGORY);
-	}
+    private final static HashMap<STCrossBetween.Enum, AxisCrossBetween> reverse = new HashMap<STCrossBetween.Enum, AxisCrossBetween>();
+    static {
+        reverse.put(STCrossBetween.BETWEEN, AxisCrossBetween.BETWEEN);
+        reverse.put(STCrossBetween.MID_CAT, AxisCrossBetween.MIDPOINT_CATEGORY);
+    }
 
-	static AxisCrossBetween valueOf(STCrossBetween.Enum crossBetween) {
-		return reverse.get(crossBetween);
-	}
+    static AxisCrossBetween valueOf(STCrossBetween.Enum crossBetween) {
+        return reverse.get(crossBetween);
+    }
 }

@@ -22,23 +22,26 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 
 public enum AxisTickLabelPosition {
-	HIGH(STTickLblPos.HIGH), LOW(STTickLblPos.LOW), NEXT_TO(STTickLblPos.NEXT_TO), NONE(STTickLblPos.NONE);
+    HIGH(STTickLblPos.HIGH),
+    LOW(STTickLblPos.LOW),
+    NEXT_TO(STTickLblPos.NEXT_TO),
+    NONE(STTickLblPos.NONE);
 
-	final STTickLblPos.Enum underlying;
+    final STTickLblPos.Enum underlying;
 
-	AxisTickLabelPosition(STTickLblPos.Enum position) {
-		this.underlying = position;
-	}
+    AxisTickLabelPosition(STTickLblPos.Enum position) {
+        this.underlying = position;
+    }
 
-	private final static HashMap<STTickLblPos.Enum, AxisTickLabelPosition> reverse = new HashMap<STTickLblPos.Enum, AxisTickLabelPosition>();
-	static {
-		reverse.put(STTickLblPos.HIGH, AxisTickLabelPosition.HIGH);
-		reverse.put(STTickLblPos.LOW, AxisTickLabelPosition.LOW);
-		reverse.put(STTickLblPos.NEXT_TO, AxisTickLabelPosition.NEXT_TO);
-		reverse.put(STTickLblPos.NONE, AxisTickLabelPosition.NONE);
-	}
+    private final static HashMap<STTickLblPos.Enum, AxisTickLabelPosition> reverse = new HashMap<STTickLblPos.Enum, AxisTickLabelPosition>();
+    static {
+        reverse.put(STTickLblPos.HIGH, AxisTickLabelPosition.HIGH);
+        reverse.put(STTickLblPos.LOW, AxisTickLabelPosition.LOW);
+        reverse.put(STTickLblPos.NEXT_TO, AxisTickLabelPosition.NEXT_TO);
+        reverse.put(STTickLblPos.NONE, AxisTickLabelPosition.NONE);
+    }
 
-	static AxisTickLabelPosition valueOf(STTickLblPos.Enum position) {
-		return reverse.get(position);
-	}
+    static AxisTickLabelPosition valueOf(STTickLblPos.Enum position) {
+        return reverse.get(position);
+    }
 }

@@ -22,22 +22,24 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
 
 public enum AxisCrosses {
-	AUTO_ZERO(STCrosses.AUTO_ZERO), MAX(STCrosses.MAX), MIN(STCrosses.MIN);
+    AUTO_ZERO(STCrosses.AUTO_ZERO),
+    MAX(STCrosses.MAX),
+    MIN(STCrosses.MIN);
 
-	final STCrosses.Enum underlying;
+    final STCrosses.Enum underlying;
 
-	AxisCrosses(STCrosses.Enum crosses) {
-		this.underlying = crosses;
-	}
+    AxisCrosses(STCrosses.Enum crosses) {
+        this.underlying = crosses;
+    }
 
-	private final static HashMap<STCrosses.Enum, AxisCrosses> reverse = new HashMap<STCrosses.Enum, AxisCrosses>();
-	static {
-		reverse.put(STCrosses.AUTO_ZERO, AxisCrosses.AUTO_ZERO);
-		reverse.put(STCrosses.MAX, AxisCrosses.MAX);
-		reverse.put(STCrosses.MIN, AxisCrosses.MIN);
-	}
+    private final static HashMap<STCrosses.Enum, AxisCrosses> reverse = new HashMap<STCrosses.Enum, AxisCrosses>();
+    static {
+        reverse.put(STCrosses.AUTO_ZERO, AxisCrosses.AUTO_ZERO);
+        reverse.put(STCrosses.MAX, AxisCrosses.MAX);
+        reverse.put(STCrosses.MIN, AxisCrosses.MIN);
+    }
 
-	static AxisCrosses valueOf(STCrosses.Enum crosses) {
-		return reverse.get(crosses);
-	}
+    static AxisCrosses valueOf(STCrosses.Enum crosses) {
+        return reverse.get(crosses);
+    }
 }

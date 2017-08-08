@@ -22,21 +22,22 @@ import java.util.HashMap;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;;
 
 public enum LayoutTarget {
-	INNER(STLayoutTarget.INNER), OUTER(STLayoutTarget.OUTER);
+    INNER(STLayoutTarget.INNER),
+    OUTER(STLayoutTarget.OUTER);
 
-	final STLayoutTarget.Enum underlying;
+    final STLayoutTarget.Enum underlying;
 
-	LayoutTarget(STLayoutTarget.Enum layoutTarget) {
-		this.underlying = layoutTarget;
-	}
+    LayoutTarget(STLayoutTarget.Enum layoutTarget) {
+        this.underlying = layoutTarget;
+    }
 
-	private final static HashMap<STLayoutTarget.Enum, LayoutTarget> reverse = new HashMap<STLayoutTarget.Enum, LayoutTarget>();
-	static {
-		reverse.put(STLayoutTarget.INNER, LayoutTarget.INNER);
-		reverse.put(STLayoutTarget.OUTER, LayoutTarget.OUTER);
-	}
+    private final static HashMap<STLayoutTarget.Enum, LayoutTarget> reverse = new HashMap<STLayoutTarget.Enum, LayoutTarget>();
+    static {
+        reverse.put(STLayoutTarget.INNER, LayoutTarget.INNER);
+        reverse.put(STLayoutTarget.OUTER, LayoutTarget.OUTER);
+    }
 
-	static LayoutTarget valueOf(STLayoutTarget.Enum layoutTarget) {
-		return reverse.get(layoutTarget);
-	}
+    static LayoutTarget valueOf(STLayoutTarget.Enum layoutTarget) {
+        return reverse.get(layoutTarget);
+    }
 }

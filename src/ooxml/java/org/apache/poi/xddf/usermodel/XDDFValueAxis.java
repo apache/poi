@@ -33,113 +33,114 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 public class XDDFValueAxis extends XDDFChartAxis {
 
-	private CTValAx ctValAx;
+    private CTValAx ctValAx;
 
-	public XDDFValueAxis(CTPlotArea plotArea, AxisPosition position) {
-		initializeAxis(plotArea, position);
-	}
+    public XDDFValueAxis(CTPlotArea plotArea, AxisPosition position) {
+        initializeAxis(plotArea, position);
+    }
 
-	public XDDFValueAxis(CTValAx ctValAx) {
-		this.ctValAx = ctValAx;
-	}
+    public XDDFValueAxis(CTValAx ctValAx) {
+        this.ctValAx = ctValAx;
+    }
 
-	@Override
-	@Internal
-	public CTChartLines getMajorGridLines() {
-	    return ctValAx.getMajorGridlines();
-	}
+    @Override
+    @Internal
+    public CTChartLines getMajorGridLines() {
+        return ctValAx.getMajorGridlines();
+    }
 
-	@Override
-	@Internal
-	public CTShapeProperties getLine() {
-	    return ctValAx.getSpPr();
-	}
+    @Override
+    @Internal
+    public CTShapeProperties getLine() {
+        return ctValAx.getSpPr();
+    }
 
-	@Override
-	public void crossAxis(ChartAxis axis) {
-		ctValAx.getCrossAx().setVal(axis.getId());
-	}
+    @Override
+    public void crossAxis(XDDFChartAxis axis) {
+        ctValAx.getCrossAx().setVal(axis.getId());
+    }
 
-	@Override
-	protected CTUnsignedInt getCTAxId() {
-		return ctValAx.getAxId();
-	}
+    @Override
+    protected CTUnsignedInt getCTAxId() {
+        return ctValAx.getAxId();
+    }
 
-	@Override
-	protected CTAxPos getCTAxPos() {
-		return ctValAx.getAxPos();
-	}
+    @Override
+    protected CTAxPos getCTAxPos() {
+        return ctValAx.getAxPos();
+    }
 
-	@Override
+    @Override
     public boolean hasNumberFormat() {
         return ctValAx.isSetNumFmt();
     }
 
-	@Override
-	protected CTNumFmt getCTNumFmt() {
-		if (ctValAx.isSetNumFmt()) {
-			return ctValAx.getNumFmt();
-		}
-		return ctValAx.addNewNumFmt();
-	}
+    @Override
+    protected CTNumFmt getCTNumFmt() {
+        if (ctValAx.isSetNumFmt()) {
+            return ctValAx.getNumFmt();
+        }
+        return ctValAx.addNewNumFmt();
+    }
 
-	@Override
-	protected CTScaling getCTScaling() {
-		return ctValAx.getScaling();
-	}
+    @Override
+    protected CTScaling getCTScaling() {
+        return ctValAx.getScaling();
+    }
 
-	@Override
-	protected CTCrosses getCTCrosses() {
-		CTCrosses crosses = ctValAx.getCrosses();
-		if (crosses == null) {
-			return ctValAx.addNewCrosses();
-		} else {
-			return crosses;
-		}
-	}
+    @Override
+    protected CTCrosses getCTCrosses() {
+        CTCrosses crosses = ctValAx.getCrosses();
+        if (crosses == null) {
+            return ctValAx.addNewCrosses();
+        } else {
+            return crosses;
+        }
+    }
 
-	@Override
-	protected CTBoolean getDelete() {
-		return ctValAx.getDelete();
-	}
+    @Override
+    protected CTBoolean getDelete() {
+        return ctValAx.getDelete();
+    }
 
-	@Override
-	protected CTTickMark getMajorCTTickMark() {
-		return ctValAx.getMajorTickMark();
-	}
+    @Override
+    protected CTTickMark getMajorCTTickMark() {
+        return ctValAx.getMajorTickMark();
+    }
 
-	@Override
-	protected CTTickMark getMinorCTTickMark() {
-		return ctValAx.getMinorTickMark();
-	}
+    @Override
+    protected CTTickMark getMinorCTTickMark() {
+        return ctValAx.getMinorTickMark();
+    }
 
-	public AxisCrossBetween getCrossBetween() {
-		return AxisCrossBetween.valueOf(ctValAx.getCrossBetween().getVal());
-	}
-	public void setCrossBetween(AxisCrossBetween crossBetween) {
-		ctValAx.getCrossBetween().setVal(crossBetween.underlying);
-	}
+    public AxisCrossBetween getCrossBetween() {
+        return AxisCrossBetween.valueOf(ctValAx.getCrossBetween().getVal());
+    }
 
-	private void initializeAxis(CTPlotArea plotArea, AxisPosition position) {
-		final long id = getNextAxId(plotArea);
-		ctValAx = plotArea.addNewValAx();
-		ctValAx.addNewAxId().setVal(id);
-		ctValAx.addNewAxPos();
-		ctValAx.addNewScaling();
-		ctValAx.addNewCrossBetween();
-		ctValAx.addNewCrosses();
-		ctValAx.addNewCrossAx();
-		ctValAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
-		ctValAx.addNewDelete();
-		ctValAx.addNewMajorTickMark();
-		ctValAx.addNewMinorTickMark();
+    public void setCrossBetween(AxisCrossBetween crossBetween) {
+        ctValAx.getCrossBetween().setVal(crossBetween.underlying);
+    }
 
-		setPosition(position);
-		setOrientation(AxisOrientation.MIN_MAX);
-		setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
-		setCrosses(AxisCrosses.AUTO_ZERO);
-		setVisible(true);
-		setMajorTickMark(AxisTickMark.CROSS);
-		setMinorTickMark(AxisTickMark.NONE);
-	}
+    private void initializeAxis(CTPlotArea plotArea, AxisPosition position) {
+        final long id = getNextAxId(plotArea);
+        ctValAx = plotArea.addNewValAx();
+        ctValAx.addNewAxId().setVal(id);
+        ctValAx.addNewAxPos();
+        ctValAx.addNewScaling();
+        ctValAx.addNewCrossBetween();
+        ctValAx.addNewCrosses();
+        ctValAx.addNewCrossAx();
+        ctValAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+        ctValAx.addNewDelete();
+        ctValAx.addNewMajorTickMark();
+        ctValAx.addNewMinorTickMark();
+
+        setPosition(position);
+        setOrientation(AxisOrientation.MIN_MAX);
+        setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
+        setCrosses(AxisCrosses.AUTO_ZERO);
+        setVisible(true);
+        setMajorTickMark(AxisTickMark.CROSS);
+        setMinorTickMark(AxisTickMark.NONE);
+    }
 }

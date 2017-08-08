@@ -19,36 +19,8 @@
 
 package org.apache.poi.xddf.usermodel;
 
-import java.util.List;
-import java.util.RandomAccess;
+public interface XDDFNumericalDataSource<T extends Number> extends XDDFDataSource<T> {
+    String getFormatCode();
 
-public class XDDFNumericalDataSource<T extends Number> implements XDDFDataSource<T> {
-	private List<T> data;
-	private String formatCode;
-
-	public XDDFNumericalDataSource(List<T> list) {
-		if (list instanceof RandomAccess) {
-			this.data = list;
-		} else {
-			throw new IllegalArgumentException("List argument should implement RandomAccess, as Vector or ArrayList.");
-		}
-	}
-
-	public String getFormatCode() {
-		return formatCode;
-	}
-
-	public void setFormatCode(String formatCode) {
-		this.formatCode = formatCode;
-	}
-
-	@Override
-	public int getPointCount() {
-		return this.data.size();
-	}
-
-	@Override
-	public T getPointAt(int index) {
-		return this.data.get(index);
-	}
+    void setFormatCode(String formatCode);
 }

@@ -2188,7 +2188,7 @@ under the License.
               <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
            	  <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
               <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
-              <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
+              <exclude name="examples/src/org/apache/poi/xslf/usermodel/*-chart-data.txt" />
               <exclude name="**/*.iml" />
               <exclude name="documentation/resources/images/pb-poi.cdr"/>
                  <exclude name="scratchpad/models/poi-hdf.zargo"/>

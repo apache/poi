@@ -19,30 +19,8 @@
 
 package org.apache.poi.xddf.usermodel;
 
-import java.util.List;
-import java.util.RandomAccess;
-
 import org.apache.poi.util.Beta;
 
 @Beta
-public class XDDFCategoryDataSource implements XDDFDataSource<String> {
-	private List<String> data;
-	
-	public XDDFCategoryDataSource(List<String> list) {
-		if (list instanceof RandomAccess) {
-			this.data = list;
-		} else {
-			throw new IllegalArgumentException("List argument should implement RandomAccess, as Vector or ArrayList.");
-		}
-	}
-
-	@Override
-	public int getPointCount() {
-		return this.data.size();
-	}
-
-	@Override
-	public String getPointAt(int index) {
-		return this.data.get(index);
-	}
+public interface XDDFCategoryDataSource extends XDDFDataSource<String> {
 }

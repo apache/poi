@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -35,18 +34,21 @@ import org.apache.poi.xddf.usermodel.AxisPosition;
 import org.apache.poi.xddf.usermodel.AxisTickMark;
 import org.apache.poi.xddf.usermodel.BarDirection;
 import org.apache.poi.xddf.usermodel.BarGrouping;
+import org.apache.poi.xddf.usermodel.Grouping;
 import org.apache.poi.xddf.usermodel.LayoutMode;
 import org.apache.poi.xddf.usermodel.LayoutTarget;
 import org.apache.poi.xddf.usermodel.LegendPosition;
 import org.apache.poi.xddf.usermodel.RadarStyle;
-import org.apache.poi.xddf.usermodel.XDDFBarChartSeries;
-import org.apache.poi.xddf.usermodel.XDDFCategoryDataSource;
+import org.apache.poi.xddf.usermodel.ScatterStyle;
+import org.apache.poi.xddf.usermodel.XDDFBarChartData;
+import org.apache.poi.xddf.usermodel.XDDFChartData;
 import org.apache.poi.xddf.usermodel.XDDFChartLegend;
-import org.apache.poi.xddf.usermodel.XDDFChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.XDDFLineChartData;
 import org.apache.poi.xddf.usermodel.XDDFManualLayout;
-import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
-import org.apache.poi.xddf.usermodel.XDDFPieChartSeries;
-import org.apache.poi.xddf.usermodel.XDDFRadarChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFPieChartData;
+import org.apache.poi.xddf.usermodel.XDDFRadarChartData;
+import org.apache.poi.xddf.usermodel.XDDFScatterChartData;
 import org.apache.poi.xddf.usermodel.XDDFValueAxis;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
@@ -58,11 +60,12 @@ public class TestXSLFChart {
     @Test
     public void testFillPieChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx");
-        List<XDDFChartSeries> series = findChartSeries(pptx);
+        List<XDDFChartData> data = findChartData(pptx);
 
-        XDDFPieChartSeries pie = (XDDFPieChartSeries) series.get(0);
-        pie.setExplosion(25);
-        assertEquals(25, pie.getExplosion());
+        XDDFPieChartData pie = (XDDFPieChartData) data.get(0);
+        XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries(0);
+        firstSeries.setExplosion(25);
+        assertEquals(25, firstSeries.getExplosion());
 
         fillChartData(pie);
         pptx.close();
@@ -71,9 +74,9 @@ public class TestXSLFChart {
     @Test
     public void testFillBarChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("bar-chart.pptx");
-        List<XDDFChartSeries> series = findChartSeries(pptx);
+        List<XDDFChartData> data = findChartData(pptx);
 
-        XDDFBarChartSeries bar = (XDDFBarChartSeries) series.get(0);
+        XDDFBarChartData bar = (XDDFBarChartData) data.get(0);
         assertEquals(BarDirection.BAR, bar.getBarDirection());
         assertEquals(BarGrouping.CLUSTERED, bar.getBarGrouping());
         assertEquals(100, bar.getGapWidth());
@@ -90,11 +93,25 @@ public class TestXSLFChart {
     }
 
     @Test
+    public void testFillLineChartTemplate() throws IOException {
+        XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("line-chart.pptx");
+        List<XDDFChartData> data = findChartData(pptx);
+
+        XDDFLineChartData line = (XDDFLineChartData) data.get(0);
+        assertEquals(Grouping.STANDARD, line.getGrouping());
+        line.setGrouping(Grouping.PERCENT_STACKED);
+        assertEquals(Grouping.PERCENT_STACKED, line.getGrouping());
+
+        fillChartData(line);
+        pptx.close();
+    }
+
+    @Test
     public void testFillRadarChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("radar-chart.pptx");
-        List<XDDFChartSeries> series = findChartSeries(pptx);
+        List<XDDFChartData> data = findChartData(pptx);
 
-        XDDFRadarChartSeries radar = (XDDFRadarChartSeries) series.get(0);
+        XDDFRadarChartData radar = (XDDFRadarChartData) data.get(0);
         assertEquals(RadarStyle.MARKER, radar.getStyle());
         radar.setStyle(RadarStyle.FILLED);
         assertEquals(RadarStyle.FILLED, radar.getStyle());
@@ -103,27 +120,31 @@ public class TestXSLFChart {
         pptx.close();
     }
 
-	private void fillChartData(XDDFChartSeries series) {
-		series.setTitle("Apache POI");
+    @Test
+    public void testFillScatterChartTemplate() throws IOException {
+        XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("scatter-chart.pptx");
+        List<XDDFChartData> data = findChartData(pptx);
 
-		// Category Axis Data
-        List<String> categories = new ArrayList<String>(3);
-        categories.add("First");
-        categories.add("Second");
-        categories.add("Third");
+        XDDFScatterChartData scatter = (XDDFScatterChartData) data.get(0);
+        assertEquals(ScatterStyle.LINE_MARKER, scatter.getStyle());
+        scatter.setStyle(ScatterStyle.SMOOTH);
+        assertEquals(ScatterStyle.SMOOTH, scatter.getStyle());
 
-        // Values
-        List<Integer> values = new ArrayList<Integer>(3);
-        values.add(1);
-        values.add(3);
-        values.add(4);
+        fillChartData(scatter);
+        pptx.close();
+    }
 
-        series.setCategoryData(new XDDFCategoryDataSource(categories));
-        series.setFirstValues(new XDDFNumericalDataSource<Integer>(values));
-        series.fillChartData();
+	private void fillChartData(XDDFChartData data) {
+        String[] categories = {"First", "Second", "Third"};
+        Integer[] values = {1, 3, 4};
+
+		XDDFChartData.Series series = data.getSeries(0);
+		series.replaceData(XDDFDataSourcesFactory.fromArray(categories), XDDFDataSourcesFactory.fromArray(values));
+        series.setTitle("Apache POI");
+        data.plot();
 	}
 
-    private List<XDDFChartSeries> findChartSeries(XMLSlideShow pptx) {
+    private List<XDDFChartData> findChartData(XMLSlideShow pptx) {
         XSLFSlide slide = pptx.getSlides().get(0);
 
         // find chart in the slide
@@ -135,23 +156,30 @@ public class TestXSLFChart {
             }
         }
 
-        if(chart == null) throw new IllegalStateException("chart not found in the template");
+        if(chart == null) {
+			throw new IllegalStateException("chart not found in the template");
+		}
 
         checkLegendOperations(chart);
 
-        List<XDDFChartSeries> series = chart.getChartSeries();
-        assertNotNull(series);
-        assertEquals(1, series.size());
+        List<XDDFChartData> data = chart.getChartSeries();
+        assertNotNull(data);
+        assertEquals(1, data.size());
 
-        XDDFChartSeries firstSeries = series.get(0);
+        XDDFChartData firstSeries = data.get(0);
 		assertNotNull(firstSeries);
-		if (!(firstSeries instanceof XDDFPieChartSeries)) {
+		if (firstSeries instanceof XDDFScatterChartData) {
+            assertEquals(null, firstSeries.getCategoryAxis());
+            assertEquals(2, firstSeries.getValueAxes().size());
+            checkAxisOperations(firstSeries.getValueAxes().get(0));
+            checkAxisOperations(firstSeries.getValueAxes().get(1));
+		} else if (!(firstSeries instanceof XDDFPieChartData)) {
 			assertNotNull(firstSeries.getCategoryAxis());
 			assertEquals(1, firstSeries.getValueAxes().size());
 			checkAxisOperations(firstSeries.getValueAxes().get(0));
 		}
 
-        return series;
+        return data;
     }
 
 	private void checkLegendOperations(XSLFChart chart) {
