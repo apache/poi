@@ -18,42 +18,112 @@
  */
 package org.apache.poi.xslf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xddf.usermodel.AxisCrossBetween;
+import org.apache.poi.xddf.usermodel.AxisCrosses;
+import org.apache.poi.xddf.usermodel.AxisOrientation;
+import org.apache.poi.xddf.usermodel.AxisPosition;
+import org.apache.poi.xddf.usermodel.AxisTickMark;
+import org.apache.poi.xddf.usermodel.BarDirection;
+import org.apache.poi.xddf.usermodel.BarGrouping;
+import org.apache.poi.xddf.usermodel.LayoutMode;
+import org.apache.poi.xddf.usermodel.LayoutTarget;
+import org.apache.poi.xddf.usermodel.LegendPosition;
+import org.apache.poi.xddf.usermodel.RadarStyle;
+import org.apache.poi.xddf.usermodel.XDDFBarChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFCategoryDataSource;
+import org.apache.poi.xddf.usermodel.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.XDDFChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFManualLayout;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.XDDFPieChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFRadarChartSeries;
+import org.apache.poi.xddf.usermodel.XDDFValueAxis;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 
+/**
+ * a modified version from POI-examples
+ */
 public class TestXSLFChart {
-
-    /**
-     * a modified version from POI-examples
-     */
     @Test
-    public void testFillChartTemplate() throws IOException {
-
-        String chartTitle = "Apache POI";  // first line is chart title
-
+    public void testFillPieChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx");
+        List<XDDFChartSeries> series = findChartSeries(pptx);
+
+        XDDFPieChartSeries pie = (XDDFPieChartSeries) series.get(0);
+        pie.setExplosion(25);
+        assertEquals(25, pie.getExplosion());
+
+        fillChartData(pie);
+        pptx.close();
+    }
+
+    @Test
+    public void testFillBarChartTemplate() throws IOException {
+        XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("bar-chart.pptx");
+        List<XDDFChartSeries> series = findChartSeries(pptx);
+
+        XDDFBarChartSeries bar = (XDDFBarChartSeries) series.get(0);
+        assertEquals(BarDirection.BAR, bar.getBarDirection());
+        assertEquals(BarGrouping.CLUSTERED, bar.getBarGrouping());
+        assertEquals(100, bar.getGapWidth());
+
+        bar.setBarDirection(BarDirection.COL);
+        assertEquals(BarDirection.COL, bar.getBarDirection());
+
+        // additionally, you can adjust the axes
+        bar.getCategoryAxis().setOrientation(AxisOrientation.MIN_MAX);
+        bar.getValueAxes().get(0).setPosition(AxisPosition.BOTTOM);
+
+        fillChartData(bar);
+        pptx.close();
+    }
+
+    @Test
+    public void testFillRadarChartTemplate() throws IOException {
+        XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("radar-chart.pptx");
+        List<XDDFChartSeries> series = findChartSeries(pptx);
+
+        XDDFRadarChartSeries radar = (XDDFRadarChartSeries) series.get(0);
+        assertEquals(RadarStyle.MARKER, radar.getStyle());
+        radar.setStyle(RadarStyle.FILLED);
+        assertEquals(RadarStyle.FILLED, radar.getStyle());
+
+        fillChartData(radar);
+        pptx.close();
+    }
+
+	private void fillChartData(XDDFChartSeries series) {
+		series.setTitle("Apache POI");
+
+		// Category Axis Data
+        List<String> categories = new ArrayList<String>(3);
+        categories.add("First");
+        categories.add("Second");
+        categories.add("Third");
+
+        // Values
+        List<Integer> values = new ArrayList<Integer>(3);
+        values.add(1);
+        values.add(3);
+        values.add(4);
+
+        series.setCategoryData(new XDDFCategoryDataSource(categories));
+        series.setFirstValues(new XDDFNumericalDataSource<Integer>(values));
+        series.fillChartData();
+	}
+
+    private List<XDDFChartSeries> findChartSeries(XMLSlideShow pptx) {
         XSLFSlide slide = pptx.getSlides().get(0);
 
         // find chart in the slide
@@ -67,74 +137,149 @@ public class TestXSLFChart {
 
         if(chart == null) throw new IllegalStateException("chart not found in the template");
 
-        // embedded Excel workbook that holds the chart data
-        POIXMLDocumentPart xlsPart = chart.getRelations().get(0);
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+        checkLegendOperations(chart);
 
-        CTChart ctChart = chart.getCTChart();
-        CTPlotArea plotArea = ctChart.getPlotArea();
+        List<XDDFChartSeries> series = chart.getChartSeries();
+        assertNotNull(series);
+        assertEquals(1, series.size());
 
-        CTPieChart pieChart = plotArea.getPieChartArray(0);
-        //Pie Chart Series
-        CTPieSer ser = pieChart.getSerArray(0);
+        XDDFChartSeries firstSeries = series.get(0);
+		assertNotNull(firstSeries);
+		if (!(firstSeries instanceof XDDFPieChartSeries)) {
+			assertNotNull(firstSeries.getCategoryAxis());
+			assertEquals(1, firstSeries.getValueAxes().size());
+			checkAxisOperations(firstSeries.getValueAxes().get(0));
+		}
 
-        // Series Text
-        CTSerTx tx = ser.getTx();
-        tx.getStrRef().getStrCache().getPtArray(0).setV(chartTitle);
-        sheet.createRow(0).createCell(1).setCellValue(chartTitle);
-        String titleRef = new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
-        tx.getStrRef().setF(titleRef);
-
-
-        // Category Axis Data
-        CTAxDataSource cat = ser.getCat();
-        CTStrData strData = cat.getStrRef().getStrCache();
-
-        // Values
-        CTNumDataSource valSrc = ser.getVal();
-        CTNumData numData = valSrc.getNumRef().getNumCache();
-
-        strData.setPtArray(null);  // unset old axis text
-        numData.setPtArray(null);  // unset old values
-
-        Map<String, Double> pieModel = new LinkedHashMap<String, Double>();
-        pieModel.put("First", 1.0);
-        pieModel.put("Second", 3.0);
-        pieModel.put("Third", 4.0);
-
-        // set model
-        int idx = 0;
-        int rownum = 1;
-        for(String key : pieModel.keySet()){
-            double val = pieModel.get(key);
-
-            CTNumVal numVal = numData.addNewPt();
-            numVal.setIdx(idx);
-            numVal.setV("" + val);
-
-            CTStrVal sVal = strData.addNewPt();
-            sVal.setIdx(idx);
-            sVal.setV(key);
-
-            idx++;
-            XSSFRow row = sheet.createRow(rownum++);
-            row.createCell(0).setCellValue(key);
-            row.createCell(1).setCellValue(val);
-        }
-        numData.getPtCount().setVal(idx);
-        strData.getPtCount().setVal(idx);
-
-        String numDataRange = new CellRangeAddress(1, rownum-1, 1, 1).formatAsString(sheet.getSheetName(), true);
-        valSrc.getNumRef().setF(numDataRange);
-        String axisDataRange = new CellRangeAddress(1, rownum-1, 0, 0).formatAsString(sheet.getSheetName(), true);
-        cat.getStrRef().setF(axisDataRange);
-
-        // updated the embedded workbook with the data
-        OutputStream xlsOut = xlsPart.getPackagePart().getOutputStream();
-        wb.write(xlsOut);
-        xlsOut.close();
-        wb.close();
+        return series;
     }
 
+	private void checkLegendOperations(XSLFChart chart) {
+		XDDFChartLegend legend = chart.getLegend();
+        assertFalse(legend.isOverlay());
+		legend.setOverlay(true);
+        assertTrue(legend.isOverlay());
+		legend.setPosition(LegendPosition.TOP_RIGHT);
+		assertEquals(LegendPosition.TOP_RIGHT, legend.getPosition());
+
+		XDDFManualLayout layout = legend.getManualLayout();
+		assertNotNull(layout.getTarget());
+		assertNotNull(layout.getXMode());
+		assertNotNull(layout.getYMode());
+		assertNotNull(layout.getHeightMode());
+		assertNotNull(layout.getWidthMode());
+		/*
+		 * According to interface, 0.0 should be returned for
+		 * uninitialized double properties.
+		 */
+		assertTrue(layout.getX() == 0.0);
+		assertTrue(layout.getY() == 0.0);
+		assertTrue(layout.getWidthRatio() == 0.0);
+		assertTrue(layout.getHeightRatio() == 0.0);
+
+		final double newRatio = 1.1;
+		final double newCoordinate = 0.3;
+		final LayoutMode nonDefaultMode = LayoutMode.FACTOR;
+		final LayoutTarget nonDefaultTarget = LayoutTarget.OUTER;
+
+		layout.setWidthRatio(newRatio);
+		assertTrue(layout.getWidthRatio() == newRatio);
+
+		layout.setHeightRatio(newRatio);
+		assertTrue(layout.getHeightRatio() == newRatio);
+
+		layout.setX(newCoordinate);
+		assertTrue(layout.getX() == newCoordinate);
+
+		layout.setY(newCoordinate);
+		assertTrue(layout.getY() == newCoordinate);
+
+		layout.setXMode(nonDefaultMode);
+		assertTrue(layout.getXMode() == nonDefaultMode);
+
+		layout.setYMode(nonDefaultMode);
+		assertTrue(layout.getYMode() == nonDefaultMode);
+
+		layout.setWidthMode(nonDefaultMode);
+		assertTrue(layout.getWidthMode() == nonDefaultMode);
+
+		layout.setHeightMode(nonDefaultMode);
+		assertTrue(layout.getHeightMode() == nonDefaultMode);
+
+		layout.setTarget(nonDefaultTarget);
+		assertTrue(layout.getTarget() == nonDefaultTarget);
+	}
+
+	private void checkAxisOperations(XDDFValueAxis axis) {
+		axis.setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
+		assertEquals(AxisCrossBetween.MIDPOINT_CATEGORY, axis.getCrossBetween());
+
+		axis.setCrosses(AxisCrosses.AUTO_ZERO);
+		assertEquals(AxisCrosses.AUTO_ZERO, axis.getCrosses());
+
+		final String numberFormat = "General";
+		axis.setNumberFormat(numberFormat);
+		assertEquals(numberFormat, axis.getNumberFormat());
+
+		axis.setPosition(AxisPosition.BOTTOM);
+		assertEquals(AxisPosition.BOTTOM, axis.getPosition());
+
+		axis.setMajorTickMark(AxisTickMark.NONE);
+		assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
+
+		axis.setMajorTickMark(AxisTickMark.IN);
+		assertEquals(AxisTickMark.IN, axis.getMajorTickMark());
+
+		axis.setMajorTickMark(AxisTickMark.OUT);
+		assertEquals(AxisTickMark.OUT, axis.getMajorTickMark());
+
+		axis.setMajorTickMark(AxisTickMark.CROSS);
+		assertEquals(AxisTickMark.CROSS, axis.getMajorTickMark());
+
+		axis.setMinorTickMark(AxisTickMark.NONE);
+		assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
+
+		axis.setMinorTickMark(AxisTickMark.IN);
+		assertEquals(AxisTickMark.IN, axis.getMinorTickMark());
+
+		axis.setMinorTickMark(AxisTickMark.OUT);
+		assertEquals(AxisTickMark.OUT, axis.getMinorTickMark());
+
+		axis.setMinorTickMark(AxisTickMark.CROSS);
+		assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
+
+		axis.setVisible(true);
+		assertTrue(axis.isVisible());
+
+		axis.setVisible(false);
+		assertFalse(axis.isVisible());
+
+		final double EPSILON = 1E-7;
+		axis.setLogBase(Math.E);
+		assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
+
+		final double newValue = 10.0;
+
+		axis.setMinimum(newValue);
+		assertTrue(Math.abs(axis.getMinimum() - newValue) < EPSILON);
+
+		axis.setMaximum(newValue);
+		assertTrue(Math.abs(axis.getMaximum() - newValue) < EPSILON);
+
+		IllegalArgumentException iae = null;
+		try {
+			axis.setLogBase(0.0);
+		} catch (IllegalArgumentException e) {
+			iae = e;
+		}
+		assertNotNull(iae);
+
+		iae = null;
+		try {
+			axis.setLogBase(30000.0);
+		} catch (IllegalArgumentException e) {
+			iae = e;
+		}
+		assertNotNull(iae);
+	}
 }

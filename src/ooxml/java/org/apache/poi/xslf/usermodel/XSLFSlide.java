@@ -68,7 +68,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      *
      * @param part the package part holding the slide data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.slide+xml</code>
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     XSLFSlide(PackagePart part) throws IOException, XmlException {
@@ -80,12 +80,12 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         } catch (SAXException e) {
             throw new IOException(e);
         }
-        
+
         SldDocument doc = SldDocument.Factory.parse(_doc, DEFAULT_XML_OPTIONS);
         _slide = doc.getSld();
         setCommonSlideData(_slide.getCSld());
     }
-    
+
     private static CTSlide prototype(){
         CTSlide ctSlide = CTSlide.Factory.newInstance();
         CTCommonSlideData cSld = ctSlide.addNewCSld();
@@ -117,15 +117,20 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-	public CTSlide getXmlObject() {
-		return _slide;
-	}
+    public CTSlide getXmlObject() {
+        return _slide;
+    }
 
     @Override
     protected String getRootElementName(){
-        return "sld";        
+        return "sld";
     }
 
+    protected void removeChartRelation(XSLFChart chart) {
+        removeRelation(chart);
+    }
+
+    @Override
     public XSLFSlideLayout getMasterSheet(){
         return getSlideLayout();
     }
@@ -164,6 +169,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
        return _comments;
     }
 
+    @Override
     public XSLFNotes getNotes() {
        if(_notes == null) {
           for (POIXMLDocumentPart p : getRelations()) {
@@ -185,10 +191,10 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         XSLFTextShape txt = getTextShapeByType(Placeholder.TITLE);
         return txt == null ? null : txt.getText();
     }
-    
+
     @Override
     public XSLFTheme getTheme(){
-    	return getSlideLayout().getSlideMaster().getTheme();
+        return getSlideLayout().getSlideMaster().getTheme();
     }
 
     /**
@@ -219,10 +225,12 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
 
+    @Override
     public boolean getFollowMasterObjects() {
         return getFollowMasterGraphics();
     }
-    
+
+    @Override
     public void setFollowMasterObjects(boolean follow) {
         setFollowMasterGraphics(follow);
     }
@@ -239,7 +247,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         if (bgOther == null) {
             return this;
         }
-        
+
         CTBackground bgThis = _slide.getCSld().getBg();
         // remove existing background
         if (bgThis != null) {
@@ -249,33 +257,37 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
             }
             _slide.getCSld().unsetBg();
         }
-            
+
         bgThis = (CTBackground)_slide.getCSld().addNewBg().set(bgOther);
-            
+
         if(bgOther.isSetBgPr() && bgOther.getBgPr().isSetBlipFill()){
             String idOther = bgOther.getBgPr().getBlipFill().getBlip().getEmbed();
             String idThis = importBlip(idOther, src.getPackagePart());
             bgThis.getBgPr().getBlipFill().getBlip().setEmbed(idThis);
-            
+
         }
 
         return this;
     }
 
+    @Override
     public boolean getFollowMasterBackground() {
         return false;
     }
-    
+
+    @Override
     @NotImplemented
     public void setFollowMasterBackground(boolean follow) {
         // not implemented ... also not in the specs
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean getFollowMasterColourScheme() {
         return false;
     }
-    
+
+    @Override
     @NotImplemented
     public void setFollowMasterColourScheme(boolean follow) {
         // not implemented ... only for OLE objects in the specs
@@ -288,7 +300,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         assert(notes instanceof XSLFNotes);
         // TODO Auto-generated method stub
     }
-    
+
     @Override
     public int getSlideNumber() {
         int idx = getSlideShow().getSlides().indexOf(this);
