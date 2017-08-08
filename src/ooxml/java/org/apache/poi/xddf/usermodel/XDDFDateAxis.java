@@ -19,7 +19,6 @@ package org.apache.poi.xddf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
