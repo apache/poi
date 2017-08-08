@@ -37,12 +37,19 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 @Beta
 public abstract class XDDFChartAxis {
     protected abstract CTUnsignedInt getCTAxId();
+
     protected abstract CTAxPos getCTAxPos();
+
     protected abstract CTNumFmt getCTNumFmt();
+
     protected abstract CTScaling getCTScaling();
+
     protected abstract CTCrosses getCTCrosses();
+
     protected abstract CTBoolean getDelete();
+
     protected abstract CTTickMark getMajorCTTickMark();
+
     protected abstract CTTickMark getMinorCTTickMark();
 
     @Internal
@@ -74,8 +81,8 @@ public abstract class XDDFChartAxis {
     }
 
     /**
-     * Use this to check before retrieving a number format, as calling
-     * {@link #getNumberFormat()} may create a default one if none exists.
+     * Use this to check before retrieving a number format, as calling {@link #getNumberFormat()} may create a default
+     * one if none exists.
      *
      * @return true if a number format element is defined, false if not
      */

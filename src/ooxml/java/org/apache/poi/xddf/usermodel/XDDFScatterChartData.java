@@ -20,21 +20,19 @@ package org.apache.poi.xddf.usermodel;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterStyle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 @Beta
 public class XDDFScatterChartData extends XDDFChartData {
     private CTScatterChart chart;
 
-    public XDDFScatterChartData(XSSFSheet sheet, CTScatterChart chart, Map<Long, XDDFCategoryAxis> categories,
+    public XDDFScatterChartData(CTScatterChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
-        super(sheet);
         this.chart = chart;
         for (CTScatterSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getXVal(), series.getYVal()));
@@ -55,6 +53,7 @@ public class XDDFScatterChartData extends XDDFChartData {
         CTScatterStyle scatterStyle = chart.getScatterStyle();
         if (scatterStyle == null) {
             scatterStyle = chart.addNewScatterStyle();
+            scatterStyle.setVal(ScatterStyle.LINE_MARKER.underlying);
         }
         return ScatterStyle.valueOf(scatterStyle.getVal());
     }
@@ -68,29 +67,35 @@ public class XDDFScatterChartData extends XDDFChartData {
     }
 
     @Override
-    public void addSeries(XDDFCategoryDataSource category, XDDFNumericalDataSource<? extends Number> values) {
-        this.series.add(new Series(this.chart.addNewSer(), category, values));
+    public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
+            XDDFNumericalDataSource<? extends Number> values) {
+        final int index = this.series.size();
+        final CTScatterSer ctSer = this.chart.addNewSer();
+        ctSer.addNewXVal();
+        ctSer.addNewYVal();
+        ctSer.addNewIdx().setVal(index);
+        ctSer.addNewOrder().setVal(index);
+        final Series added = new Series(ctSer, category, values);
+        this.series.add(added);
+        return added;
     }
 
     public class Series extends XDDFChartData.Series {
         private CTScatterSer series;
 
-        protected Series(CTScatterSer series, XDDFCategoryDataSource category,
-                XDDFNumericalDataSource<? extends Number> values) {
+        protected Series(CTScatterSer series, XDDFDataSource<?> category, XDDFNumericalDataSource<?> values) {
             super(category, values);
-            series.addNewXVal();
-            series.addNewYVal();
             this.series = series;
         }
 
         protected Series(CTScatterSer series, CTAxDataSource category, CTNumDataSource values) {
-            super(XDDFDataSourcesFactory.fromAxDataSource(category), XDDFDataSourcesFactory.fromNumDataSource(values));
+            super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
         }
 
         @Override
-        protected CTStrRef getSeriesTxStrRef() {
-            return series.getTx().getStrRef();
+        protected CTSerTx getSeriesText() {
+            return series.getTx();
         }
 
         @Override

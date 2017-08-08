@@ -17,24 +17,32 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import org.apache.poi.xddf.usermodel.AxisCrosses;
+import org.apache.poi.xddf.usermodel.AxisPosition;
+import org.apache.poi.xddf.usermodel.XDDFDateAxis;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.usermodel.charts.*;
-import org.apache.poi.xssf.usermodel.*;
-
 public final class TestXSSFDateAxis extends TestCase {
- 
+
 	public void testAccessMethods() throws Exception {
 		XSSFWorkbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet();
 		XSSFDrawing drawing = sheet.createDrawingPatriarch();
 		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
 		XSSFChart chart = drawing.createChart(anchor);
-		XSSFDateAxis axis = chart.getChartAxisFactory().createDateAxis(AxisPosition.BOTTOM);
+		XDDFDateAxis axis = chart.createDateAxis(AxisPosition.BOTTOM);
 
 		axis.setCrosses(AxisCrosses.AUTO_ZERO);
 		assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
 
-		assertEquals(chart.getAxis().size(), 1);
+		assertEquals(chart.getAxes().size(), 1);
+
+		wb.close();
 	}
 }

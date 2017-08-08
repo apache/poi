@@ -20,20 +20,18 @@ package org.apache.poi.xddf.usermodel;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 @Beta
 public class XDDFBarChartData extends XDDFChartData {
     private CTBarChart chart;
 
-    public XDDFBarChartData(XSSFSheet sheet, CTBarChart chart, Map<Long, XDDFCategoryAxis> categories,
+    public XDDFBarChartData(CTBarChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
-        super(sheet);
         this.chart = chart;
         for (CTBarSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
@@ -91,29 +89,36 @@ public class XDDFBarChartData extends XDDFChartData {
     }
 
     @Override
-    public void addSeries(XDDFCategoryDataSource category, XDDFNumericalDataSource<? extends Number> values) {
-        this.series.add(new Series(this.chart.addNewSer(), category, values));
+    public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
+            XDDFNumericalDataSource<? extends Number> values) {
+        final int index = this.series.size();
+        final CTBarSer ctSer = this.chart.addNewSer();
+        ctSer.addNewCat();
+        ctSer.addNewVal();
+        ctSer.addNewIdx().setVal(index);
+        ctSer.addNewOrder().setVal(index);
+        final Series added = new Series(ctSer, category, values);
+        this.series.add(added);
+        return added;
     }
 
     public class Series extends XDDFChartData.Series {
         private CTBarSer series;
 
-        protected Series(CTBarSer series, XDDFCategoryDataSource category,
+        protected Series(CTBarSer series, XDDFDataSource<?> category,
                 XDDFNumericalDataSource<? extends Number> values) {
             super(category, values);
-            series.addNewCat();
-            series.addNewVal();
             this.series = series;
         }
 
         protected Series(CTBarSer series, CTAxDataSource category, CTNumDataSource values) {
-            super(XDDFDataSourcesFactory.fromAxDataSource(category), XDDFDataSourcesFactory.fromNumDataSource(values));
+            super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
         }
 
         @Override
-        protected CTStrRef getSeriesTxStrRef() {
-            return series.getTx().getStrRef();
+        protected CTSerTx getSeriesText() {
+            return series.getTx();
         }
 
         @Override

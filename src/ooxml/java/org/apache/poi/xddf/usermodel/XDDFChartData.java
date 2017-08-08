@@ -22,15 +22,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
@@ -42,28 +41,26 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 @Beta
 public abstract class XDDFChartData {
     protected List<Series> series;
-    protected XSSFSheet sheet;
     private XDDFCategoryAxis categoryAxis;
     private List<XDDFValueAxis> valueAxes;
 
-    protected XDDFChartData(XSSFSheet sheet) {
-        this.sheet = sheet;
+    protected XDDFChartData() {
         this.series = new ArrayList<Series>();
     }
 
-    protected void defineAxes(CTUnsignedInt[] axes, Map<Long, XDDFCategoryAxis> categories,
+    protected void defineAxes(CTUnsignedInt[] axes, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         List<XDDFValueAxis> list = new ArrayList<XDDFValueAxis>(axes.length);
         for (CTUnsignedInt axe : axes) {
             Long axisId = axe.getVal();
-            XDDFCategoryAxis category = categories.get(axisId);
+            XDDFChartAxis category = categories.get(axisId);
             if (category == null) {
                 XDDFValueAxis axis = values.get(axisId);
                 if (axis != null) {
                     list.add(axis);
                 }
-            } else {
-                this.categoryAxis = category;
+            } else if (category instanceof XDDFCategoryAxis) {
+                this.categoryAxis = (XDDFCategoryAxis) category;
             }
         }
         this.valueAxes = Collections.unmodifiableList(list);
@@ -77,86 +74,197 @@ public abstract class XDDFChartData {
         return valueAxes;
     }
 
-    public XDDFChartData.Series getSeries(int index) {
-        return series.get(index);
-    }
-
-    public void plot() {
-        for (Series s : series) {
-            s.plot();
-        }
-    }
-
-    private String setSheetTitle(String title) {
-        sheet.createRow(0).createCell(1).setCellValue(title);
-        return new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
+    public List<Series> getSeries() {
+        return series;
     }
 
     public abstract void setVaryColors(boolean varyColors);
 
-    public abstract void addSeries(XDDFCategoryDataSource category, XDDFNumericalDataSource<? extends Number> values);
+    public abstract XDDFChartData.Series addSeries(XDDFDataSource<?> category,
+            XDDFNumericalDataSource<? extends Number> values);
 
     public abstract class Series {
-        protected abstract CTStrRef getSeriesTxStrRef();
+        protected abstract CTSerTx getSeriesText();
 
         public abstract void setShowLeaderLines(boolean showLeaderLines);
 
-        protected XDDFCategoryDataSource categoryData;
+        protected XDDFDataSource<?> categoryData;
         protected XDDFNumericalDataSource<? extends Number> valuesData;
 
         protected abstract CTAxDataSource getAxDS();
 
         protected abstract CTNumDataSource getNumDS();
 
-        protected Series(XDDFCategoryDataSource category, XDDFNumericalDataSource<? extends Number> values) {
+        protected Series(XDDFDataSource<?> category, XDDFNumericalDataSource<? extends Number> values) {
+            replaceData(category, values);
+        }
+
+        public void replaceData(XDDFDataSource<?> category, XDDFNumericalDataSource<? extends Number> values) {
+            if (category == null || values == null) {
+                throw new IllegalStateException("Category and values must be defined before filling chart data.");
+            }
+            int numOfPoints = category.getPointCount();
+            if (numOfPoints != values.getPointCount()) {
+                throw new IllegalStateException("Category and values must have the same point count.");
+            }
             this.categoryData = category;
             this.valuesData = values;
         }
 
-        public void replaceData(XDDFCategoryDataSource category, XDDFNumericalDataSource<? extends Number> values) {
-            this.categoryData = category;
-            this.valuesData = values;
+        public void setTitle(String title, CellReference titleRef) {
+            if (titleRef == null) {
+                getSeriesText().setV(title);
+            } else {
+                CTStrRef ref;
+                if (getSeriesText().isSetStrRef()) {
+                    ref = getSeriesText().getStrRef();
+                } else {
+                    ref = getSeriesText().addNewStrRef();
+                }
+                CTStrData cache;
+                if (ref.isSetStrCache()) {
+                    cache = ref.getStrCache();
+                } else {
+                    cache = ref.addNewStrCache();
+                }
+                cache.getPtArray(0).setV(title);
+                ref.setF(titleRef.formatAsString());
+            }
         }
 
-        public void setTitle(String title) {
-            String titleRef = setSheetTitle(title);
-            CTStrRef ref = getSeriesTxStrRef();
-            ref.getStrCache().getPtArray(0).setV(title);
-            ref.setF(titleRef);
+        public XDDFDataSource<?> getCategoryData() {
+            return categoryData;
+        }
+
+        public XDDFNumericalDataSource<? extends Number> getValuesData() {
+            return valuesData;
         }
 
         public void plot() {
-            if (categoryData == null || valuesData == null) {
-                throw new IllegalStateException("Category and values must be defined before filling chart data.");
-            }
             int numOfPoints = categoryData.getPointCount();
-            if (numOfPoints != valuesData.getPointCount()) {
-                throw new IllegalStateException("Category and values must have the same point count.");
+            if (categoryData.isNumeric()) {
+                CTNumData cache = retrieveNumCache(getAxDS(), categoryData);
+                fillNumCache(cache, numOfPoints, (XDDFNumericalDataSource<?>) categoryData);
+            } else {
+                CTStrData cache = retrieveStrCache(getAxDS(), categoryData);
+                fillStringCache(cache, numOfPoints, categoryData);
             }
-            fillAxDataSource(getAxDS(), numOfPoints);
-            fillFirstValuesDataSource(getNumDS(), numOfPoints);
-            fillSheet(numOfPoints);
+            CTNumData cache = retrieveNumCache(getNumDS(), valuesData);
+            fillNumCache(cache, numOfPoints, valuesData);
         }
 
-        private void fillAxDataSource(CTAxDataSource ds, int numOfPoints) {
-            CTStrData cache = ds.getStrRef().getStrCache();
-            cache.setPtArray(null); // unset old axis text
-            cache.getPtCount().setVal(numOfPoints);
+        private CTNumData retrieveNumCache(final CTAxDataSource axDataSource, XDDFDataSource<?> data) {
+            CTNumData numCache;
+            if (data.isReference()) {
+                CTNumRef numRef;
+                if (axDataSource.isSetNumRef()) {
+                    numRef = axDataSource.getNumRef();
+                } else {
+                    numRef = axDataSource.addNewNumRef();
+                }
+                if (numRef.isSetNumCache()) {
+                    numCache = numRef.getNumCache();
+                } else {
+                    numCache = numRef.addNewNumCache();
+                }
+                numRef.setF(data.getDataRangeReference());
+                if (axDataSource.isSetNumLit()) {
+                    axDataSource.unsetNumLit();
+                }
+            } else {
+                if (axDataSource.isSetNumLit()) {
+                    numCache = axDataSource.getNumLit();
+                } else {
+                    numCache = axDataSource.addNewNumLit();
+                }
+                if (axDataSource.isSetNumRef()) {
+                    axDataSource.unsetNumRef();
+                }
+            }
+            return numCache;
+        }
+
+        private CTStrData retrieveStrCache(final CTAxDataSource axDataSource, XDDFDataSource<?> data) {
+            CTStrData strCache;
+            if (data.isReference()) {
+                CTStrRef strRef;
+                if (axDataSource.isSetStrRef()) {
+                    strRef = axDataSource.getStrRef();
+                } else {
+                    strRef = axDataSource.addNewStrRef();
+                }
+                if (strRef.isSetStrCache()) {
+                    strCache = strRef.getStrCache();
+                } else {
+                    strCache = strRef.addNewStrCache();
+                }
+                strRef.setF(data.getDataRangeReference());
+                if (axDataSource.isSetStrLit()) {
+                    axDataSource.unsetStrLit();
+                }
+            } else {
+                if (axDataSource.isSetStrLit()) {
+                    strCache = axDataSource.getStrLit();
+                } else {
+                    strCache = axDataSource.addNewStrLit();
+                }
+                if (axDataSource.isSetStrRef()) {
+                    axDataSource.unsetStrRef();
+                }
+            }
+            return strCache;
+        }
+
+        private CTNumData retrieveNumCache(final CTNumDataSource numDataSource, XDDFDataSource<?> data) {
+            CTNumData numCache;
+            if (data.isReference()) {
+                CTNumRef numRef;
+                if (numDataSource.isSetNumRef()) {
+                    numRef = numDataSource.getNumRef();
+                } else {
+                    numRef = numDataSource.addNewNumRef();
+                }
+                if (numRef.isSetNumCache()) {
+                    numCache = numRef.getNumCache();
+                } else {
+                    numCache = numRef.addNewNumCache();
+                }
+                numRef.setF(data.getDataRangeReference());
+                if (numDataSource.isSetNumLit()) {
+                    numDataSource.unsetNumLit();
+                }
+            } else {
+                if (numDataSource.isSetNumLit()) {
+                    numCache = numDataSource.getNumLit();
+                } else {
+                    numCache = numDataSource.addNewNumLit();
+                }
+                if (numDataSource.isSetNumRef()) {
+                    numDataSource.unsetNumRef();
+                }
+            }
+            return numCache;
+        }
+
+        private void fillStringCache(CTStrData cache, int numOfPoints, XDDFDataSource<?> data) {
+            cache.setPtArray(null); // unset old values
+            if (cache.isSetPtCount()) {
+                cache.getPtCount().setVal(numOfPoints);
+            } else {
+                cache.addNewPtCount().setVal(numOfPoints);
+            }
             for (int i = 0; i < numOfPoints; ++i) {
-                String value = categoryData.getPointAt(i);
+                String value = data.getPointAt(i).toString();
                 if (value != null) {
                     CTStrVal ctStrVal = cache.addNewPt();
                     ctStrVal.setIdx(i);
                     ctStrVal.setV(value);
                 }
             }
-            String dataRange = new CellRangeAddress(1, numOfPoints, 0, 0).formatAsString(sheet.getSheetName(), true);
-            ds.getStrRef().setF(dataRange);
         }
 
-        private void fillFirstValuesDataSource(CTNumDataSource ds, int numOfPoints) {
-            CTNumData cache = ds.getNumRef().getNumCache();
-            String formatCode = valuesData.getFormatCode();
+        private void fillNumCache(CTNumData cache, int numOfPoints, XDDFNumericalDataSource<?> data) {
+            String formatCode = data.getFormatCode();
             if (formatCode == null) {
                 if (cache.isSetFormatCode()) {
                     cache.unsetFormatCode();
@@ -165,24 +273,18 @@ public abstract class XDDFChartData {
                 cache.setFormatCode(formatCode);
             }
             cache.setPtArray(null); // unset old values
-            cache.getPtCount().setVal(numOfPoints);
+            if (cache.isSetPtCount()) {
+                cache.getPtCount().setVal(numOfPoints);
+            } else {
+                cache.addNewPtCount().setVal(numOfPoints);
+            }
             for (int i = 0; i < numOfPoints; ++i) {
-                Number value = valuesData.getPointAt(i);
+                Object value = data.getPointAt(i);
                 if (value != null) {
                     CTNumVal ctNumVal = cache.addNewPt();
                     ctNumVal.setIdx(i);
                     ctNumVal.setV(value.toString());
                 }
-            }
-            String dataRange = new CellRangeAddress(1, numOfPoints, 1, 1).formatAsString(sheet.getSheetName(), true);
-            ds.getNumRef().setF(dataRange);
-        }
-
-        private void fillSheet(int numOfPoints) {
-            for (int i = 0; i < numOfPoints; i++) {
-                XSSFRow row = sheet.createRow(i + 1); // first row is for title
-                row.createCell(0).setCellValue(categoryData.getPointAt(i));
-                row.createCell(1).setCellValue(valuesData.getPointAt(i).doubleValue());
             }
         }
     }

@@ -22,19 +22,20 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartDataSource;
-import org.apache.poi.ss.usermodel.charts.DataSources;
-import org.apache.poi.ss.usermodel.charts.LineChartData;
-import org.apache.poi.ss.usermodel.charts.LineChartSeries;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
+import org.apache.poi.xddf.usermodel.AxisPosition;
+import org.apache.poi.xddf.usermodel.ChartTypes;
+import org.apache.poi.xddf.usermodel.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFDataSource;
+import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.XDDFValueAxis;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 
@@ -50,27 +51,26 @@ public class TestXSSFLineChartData {
 
     @Test
     public void testOneSeriePlot() throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        Sheet sheet = new SheetBuilder(wb, plotData).build();
-        Drawing<?> drawing = sheet.createDrawingPatriarch();
-        ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-        Chart chart = drawing.createChart(anchor);
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, plotData).build();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+        XSSFChart chart = drawing.createChart(anchor);
 
-        ChartAxis bottomAxis = chart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
-        ChartAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+        XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
+        XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
 
-        LineChartData lineChartData =
-                chart.getChartDataFactory().createLineChartData();
+        XDDFDataSource<String> xs = XDDFDataSourcesFactory.fromStringCellRange(sheet, CellRangeAddress.valueOf("A1:J1"));
+        XDDFNumericalDataSource<Double> ys = XDDFDataSourcesFactory.fromNumericCellRange(sheet, CellRangeAddress.valueOf("A2:J2"));
 
-        ChartDataSource<String> xs = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf("A1:J1"));
-        ChartDataSource<Number> ys = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf("A2:J2"));
-        LineChartSeries series = lineChartData.addSeries(xs, ys);
+        XDDFChartData lineChartData = chart.createData(ChartTypes.LINE, bottomAxis, leftAxis);
+        XDDFChartData.Series series = lineChartData.addSeries(xs, ys);
 
         assertNotNull(series);
         assertEquals(1, lineChartData.getSeries().size());
         assertTrue(lineChartData.getSeries().contains(series));
 
-        chart.plot(lineChartData, bottomAxis, leftAxis);
+        chart.plot(lineChartData);
         wb.close();
     }
 }

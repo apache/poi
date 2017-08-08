@@ -90,7 +90,7 @@ public class PieChartDemo {
             String[] categories = listCategories.toArray(new String[listCategories.size()]);
             Double[] values = listValues.toArray(new Double[listValues.size()]);
 
-            XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries(0);
+            XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries().get(0);
             firstSeries.replaceData(XDDFDataSourcesFactory.fromArray(categories), XDDFDataSourcesFactory.fromArray(values));
             firstSeries.setTitle(chartTitle);
             firstSeries.setExplosion(25);

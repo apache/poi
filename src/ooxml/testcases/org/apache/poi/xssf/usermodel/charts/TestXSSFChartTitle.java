@@ -26,24 +26,22 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.charts.AxisCrosses;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartDataSource;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.DataSources;
-import org.apache.poi.ss.usermodel.charts.LegendPosition;
-import org.apache.poi.ss.usermodel.charts.LineChartData;
-import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xddf.usermodel.AxisCrosses;
+import org.apache.poi.xddf.usermodel.AxisPosition;
+import org.apache.poi.xddf.usermodel.ChartTypes;
+import org.apache.poi.xddf.usermodel.LegendPosition;
+import org.apache.poi.xddf.usermodel.XDDFChartAxis;
+import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.XDDFDataSource;
+import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.XDDFValueAxis;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -54,9 +52,9 @@ import org.junit.Test;
  * Test get/set chart title.
  */
 public class TestXSSFChartTitle {
-    private Workbook createWorkbookWithChart() {
-        Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("linechart");
+    private XSSFWorkbook createWorkbookWithChart() {
+    	XSSFWorkbook wb = new XSSFWorkbook();
+    	XSSFSheet sheet = wb.createSheet("linechart");
         final int NUM_OF_ROWS = 3;
         final int NUM_OF_COLUMNS = 10;
 
@@ -71,28 +69,26 @@ public class TestXSSFChartTitle {
             }
         }
 
-        Drawing<?> drawing = sheet.createDrawingPatriarch();
-        ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
-        Chart chart = drawing.createChart(anchor);
-        ChartLegend legend = chart.getOrCreateLegend();
+        XSSFChart chart = drawing.createChart(anchor);
+        XDDFChartLegend legend = chart.getOrCreateLegend();
         legend.setPosition(LegendPosition.TOP_RIGHT);
 
-        LineChartData data = chart.getChartDataFactory().createLineChartData();
-
         // Use a category axis for the bottom axis.
-        ChartAxis bottomAxis = chart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
-        ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+        XDDFChartAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
+        XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
-        ChartDataSource<Number> xs = DataSources.fromNumericCellRange(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
-        ChartDataSource<Number> ys1 = DataSources.fromNumericCellRange(sheet, new CellRangeAddress(1, 1, 0, NUM_OF_COLUMNS - 1));
-        ChartDataSource<Number> ys2 = DataSources.fromNumericCellRange(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
+        XDDFDataSource<Double> xs = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
+        XDDFNumericalDataSource<Double> ys1 = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(1, 1, 0, NUM_OF_COLUMNS - 1));
+        XDDFNumericalDataSource<Double> ys2 = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
 
+        XDDFChartData data = chart.createData(ChartTypes.LINE, bottomAxis, leftAxis);
         data.addSeries(xs, ys1);
         data.addSeries(xs, ys2);
-
-        chart.plot(data, bottomAxis, leftAxis);
+        chart.plot(data);
 
         return wb;
     }
@@ -100,16 +96,14 @@ public class TestXSSFChartTitle {
     /**
      * Gets the first chart from the named sheet in the workbook.
      */
-    private XSSFChart getChartFromWorkbook(Workbook wb, String sheetName) {
-        Sheet sheet = wb.getSheet(sheetName);
-        if (sheet instanceof XSSFSheet) {
-            XSSFSheet xsheet = (XSSFSheet) sheet;
-            XSSFDrawing drawing = xsheet.getDrawingPatriarch();
-            if (drawing != null) {
-                List<XSSFChart> charts = drawing.getCharts();
-                if (charts != null && charts.size() > 0) {
-                    return charts.get(0);
-                }
+    private XSSFChart getChartFromWorkbook(XSSFWorkbook wb, String sheetName) {
+        XSSFSheet sheet = wb.getSheet(sheetName);
+        XSSFSheet xsheet = sheet;
+        XSSFDrawing drawing = xsheet.getDrawingPatriarch();
+        if (drawing != null) {
+            List<XSSFChart> charts = drawing.getCharts();
+            if (charts != null && charts.size() > 0) {
+                return charts.get(0);
             }
         }
         return null;
@@ -117,7 +111,7 @@ public class TestXSSFChartTitle {
 
     @Test
     public void testNewChart() throws IOException {
-        Workbook wb = createWorkbookWithChart();
+        XSSFWorkbook wb = createWorkbookWithChart();
         XSSFChart chart = getChartFromWorkbook(wb, "linechart");
         assertNotNull(chart);
         assertNull(chart.getTitleText());
@@ -126,7 +120,7 @@ public class TestXSSFChartTitle {
         XSSFRichTextString queryTitle = chart.getTitleText();
         assertNotNull(queryTitle);
         assertEquals(myTitle, queryTitle.toString());
-        
+
         final String myTitleFormula = "1 & \" and \" & 2";
         chart.setTitleFormula(myTitleFormula);
         // setting formula should unset text, but since there is a formula, returns an empty string
@@ -139,7 +133,7 @@ public class TestXSSFChartTitle {
 
     @Test
     public void testExistingChartWithTitle() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
         XSSFRichTextString originalTitle = chart.getTitleText();
@@ -155,7 +149,7 @@ public class TestXSSFChartTitle {
 
     @Test
     public void testExistingChartNoTitle() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_noTitle.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_noTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
         assertNull(chart.getTitleText());
@@ -169,7 +163,7 @@ public class TestXSSFChartTitle {
 
     @Test
     public void testExistingChartWithFormulaTitle() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitleFormula.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitleFormula.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
         XSSFRichTextString originalTitle = chart.getTitleText();

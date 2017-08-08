@@ -16,12 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xddf.usermodel;
 
-import junit.framework.TestCase;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
-import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for {@link org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory}.
@@ -44,7 +44,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
 
     public void testNumericArrayDataSource() {
         Double[] doubles = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0};
-        XDDFDataSource<Double> doubleDataSource = XDDFDataSourcesFactory.fromArray(doubles);
+        XDDFDataSource<Double> doubleDataSource = XDDFDataSourcesFactory.fromArray(doubles, null);
         assertTrue(doubleDataSource.isNumeric());
         assertFalse(doubleDataSource.isReference());
         assertDataSourceIsEqualToArray(doubleDataSource, doubles);
@@ -52,7 +52,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
 
     public void testStringArrayDataSource() {
         String[] strings = new String[]{"one", "two", "three", "four", "five"};
-        XDDFDataSource<String> stringDataSource = XDDFDataSourcesFactory.fromArray(strings);
+        XDDFDataSource<String> stringDataSource = XDDFDataSourcesFactory.fromArray(strings, null);
         assertFalse(stringDataSource.isNumeric());
         assertFalse(stringDataSource.isReference());
         assertDataSourceIsEqualToArray(stringDataSource, strings);
@@ -62,13 +62,13 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, numericCells).build();
         CellRangeAddress numCellRange = CellRangeAddress.valueOf("A2:E2");
-        XDDFDataSource<Number> numDataSource = XDDFDataSourcesFactory.fromNumericCellRange(sheet, numCellRange);
+        XDDFDataSource<Double> numDataSource = XDDFDataSourcesFactory.fromNumericCellRange(sheet, numCellRange);
         assertTrue(numDataSource.isReference());
         assertTrue(numDataSource.isNumeric());
         assertEquals(numericCells[0].length, numDataSource.getPointCount());
         for (int i = 0; i < numericCells[0].length; ++i) {
-            assertEquals(((Number) numericCells[0][i]).doubleValue() * 2,
-                    numDataSource.getPointAt(i).doubleValue(), 0.00001);
+            assertEquals(((Double) numericCells[0][i]) * 2,
+                    numDataSource.getPointAt(i), 0.00001);
         }
     }
 
@@ -90,12 +90,12 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, mixedCells).build();
         CellRangeAddress mixedCellRange = CellRangeAddress.valueOf("A1:F1");
         XDDFDataSource<String> strDataSource = XDDFDataSourcesFactory.fromStringCellRange(sheet, mixedCellRange);
-        XDDFDataSource<Number> numDataSource = XDDFDataSourcesFactory.fromNumericCellRange(sheet, mixedCellRange);
+        XDDFDataSource<Double> numDataSource = XDDFDataSourcesFactory.fromNumericCellRange(sheet, mixedCellRange);
         for (int i = 0; i < mixedCells[0].length; ++i) {
             if (i % 2 == 0) {
                 assertNull(strDataSource.getPointAt(i));
-                assertEquals(((Number) mixedCells[0][i]).doubleValue(),
-                        numDataSource.getPointAt(i).doubleValue(), 0.00001);
+                assertEquals(((Double) mixedCells[0][i]),
+                        numDataSource.getPointAt(i), 0.00001);
             } else {
                 assertNull(numDataSource.getPointAt(i));
                 assertEquals(mixedCells[0][i], strDataSource.getPointAt(i));
@@ -107,7 +107,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, numericCells).build();
         CellRangeAddress rangeAddress = CellRangeAddress.valueOf("A2:E2");
-        XDDFDataSource<Number> numDataSource = XDDFDataSourcesFactory.fromNumericCellRange(sheet, rangeAddress);
+        XDDFDataSource<Double> numDataSource = XDDFDataSourcesFactory.fromNumericCellRange(sheet, rangeAddress);
         IndexOutOfBoundsException exception = null;
         try {
             numDataSource.getPointAt(-1);

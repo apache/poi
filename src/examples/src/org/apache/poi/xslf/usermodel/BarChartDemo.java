@@ -100,8 +100,8 @@ public class BarChartDemo {
         List<XDDFChartData> series = chart.getChartSeries();
         XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
 
-        bar.getSeries(0).replaceData(XDDFDataSourcesFactory.fromArray(categories), XDDFDataSourcesFactory.fromArray(values));
-        bar.getSeries(0).setTitle(chartTitle);
+        bar.getSeries().get(0).replaceData(XDDFDataSourcesFactory.fromArray(categories), XDDFDataSourcesFactory.fromArray(values));
+        bar.getSeries().get(0).setTitle(chartTitle);
         bar.plot();
     }
 
@@ -109,7 +109,7 @@ public class BarChartDemo {
         // Series Text
         List<XDDFChartData> series = chart.getChartSeries();
         XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
-        bar.getSeries(0).setTitle(chartTitle);
+        bar.getSeries().get(0).setTitle(chartTitle);
 
         // in order to transform a bar chart into a column chart, you just need to change the bar direction
         bar.setBarDirection(BarDirection.COL);

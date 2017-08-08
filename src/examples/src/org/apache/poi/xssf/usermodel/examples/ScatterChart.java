@@ -23,21 +23,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.charts.AxisCrosses;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.ChartDataSource;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.DataSources;
-import org.apache.poi.ss.usermodel.charts.LegendPosition;
-import org.apache.poi.ss.usermodel.charts.ScatterChartData;
-import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xddf.usermodel.AxisCrosses;
+import org.apache.poi.xddf.usermodel.AxisPosition;
+import org.apache.poi.xddf.usermodel.ChartTypes;
+import org.apache.poi.xddf.usermodel.LegendPosition;
+import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.XDDFDataSource;
+import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.XDDFValueAxis;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -46,8 +47,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ScatterChart {
 
     public static void main(String[] args) throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("Sheet 1");
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("Sheet 1");
         final int NUM_OF_ROWS = 3;
         final int NUM_OF_COLUMNS = 10;
 
@@ -62,28 +63,27 @@ public class ScatterChart {
             }
         }
 
-        Drawing<?> drawing = sheet.createDrawingPatriarch();
-        ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
-        Chart chart = drawing.createChart(anchor);
-        ChartLegend legend = chart.getOrCreateLegend();
+        XSSFChart chart = drawing.createChart(anchor);
+        XDDFChartLegend legend = chart.getOrCreateLegend();
         legend.setPosition(LegendPosition.TOP_RIGHT);
 
-        ScatterChartData data = chart.getChartDataFactory().createScatterChartData();
-
-        ValueAxis bottomAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.BOTTOM);
-        ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+        XDDFValueAxis bottomAxis = chart.createValueAxis(AxisPosition.BOTTOM);
+        XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
-        ChartDataSource<Number> xs = DataSources.fromNumericCellRange(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
-        ChartDataSource<Number> ys1 = DataSources.fromNumericCellRange(sheet, new CellRangeAddress(1, 1, 0, NUM_OF_COLUMNS - 1));
-        ChartDataSource<Number> ys2 = DataSources.fromNumericCellRange(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
+        XDDFDataSource<Double> xs = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
+        XDDFNumericalDataSource<Double> ys1 = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(1, 1, 0, NUM_OF_COLUMNS - 1));
+        XDDFNumericalDataSource<Double> ys2 = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
 
 
-        data.addSerie(xs, ys1);
-        data.addSerie(xs, ys2);
+        XDDFChartData data = chart.createData(ChartTypes.SCATTER, bottomAxis, leftAxis);
 
-        chart.plot(data, bottomAxis, leftAxis);
+        data.addSeries(xs, ys1);
+        data.addSeries(xs, ys2);
+        data.plot();
 
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream("ooxml-scatter-chart.xlsx");

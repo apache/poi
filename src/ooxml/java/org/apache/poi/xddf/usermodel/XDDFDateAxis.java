@@ -33,8 +33,8 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
- * Date axis type. Currently only implements the same values as
- * {@link XDDFCategoryAxis}, since the two are nearly identical.
+ * Date axis type. Currently only implements the same values as {@link XDDFCategoryAxis}, since the two are nearly
+ * identical.
  */
 @Beta
 public class XDDFDateAxis extends XDDFChartAxis {

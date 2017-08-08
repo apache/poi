@@ -37,17 +37,23 @@ import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.XDDFCategoryAxis;
-import org.apache.poi.xddf.usermodel.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.XDDFChartAxis;
 import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.XDDFDataSource;
 import org.apache.poi.xddf.usermodel.XDDFLineChartData;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.XDDFPieChartData;
 import org.apache.poi.xddf.usermodel.XDDFRadarChartData;
 import org.apache.poi.xddf.usermodel.XDDFScatterChartData;
 import org.apache.poi.xddf.usermodel.XDDFValueAxis;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
@@ -157,6 +163,26 @@ public final class XSLFChart extends POIXMLDocumentPart {
         }
     }
 
+    public CellReference setSheetTitle(String title) {
+        XSSFSheet sheet = getSheet();
+        sheet.createRow(0).createCell(1).setCellValue(title);
+        return new CellReference(sheet.getSheetName(), 0, 1, true, true);
+    }
+
+    public String formatRange(CellRangeAddress range) {
+        return range.formatAsString(getSheet().getSheetName(), true);
+    }
+
+    private XSSFSheet getSheet() {
+        XSSFSheet sheet = null;
+        try {
+            sheet = getWorkbook().getSheetAt(0);
+        } catch (InvalidFormatException ife) {
+        } catch (IOException ioe) {
+        }
+        return sheet;
+    }
+
     protected PackagePart getWorksheetPart() throws InvalidFormatException {
         for (RelationPart part : getRelationParts()) {
             if (WORKBOOK_RELATIONSHIP.getRelation().equals(part.getRelationship().getRelationshipType())) {
@@ -224,54 +250,59 @@ public final class XSLFChart extends POIXMLDocumentPart {
         chart.getSideWall().getThickness().setVal(thickness);
     }
 
-    public XDDFChartLegend getLegend() {
+    public XDDFChartLegend getOrCreateLegend() {
     	return new XDDFChartLegend(chart);
+    }
+
+    private void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
+        int numOfPoints = categoryData.getPointCount();
+        for (int i = 0; i < numOfPoints; i++) {
+            XSSFRow row = sheet.createRow(i + 1); // first row is for title
+            row.createCell(0).setCellValue(categoryData.getPointAt(i).toString());
+            row.createCell(1).setCellValue(valuesData.getPointAt(i).doubleValue());
+        }
+    }
+
+    public void plot(XDDFChartData data) {
+        XSSFSheet sheet = getSheet();
+        for(XDDFChartData.Series series : data.getSeries()) {
+            series.plot();
+            fillSheet(sheet, series.getCategoryData(), series.getValuesData());
+        }
     }
 
     public List<XDDFChartData> getChartSeries() {
         List<XDDFChartData> series = new LinkedList<XDDFChartData>();
         CTPlotArea plotArea = getCTPlotArea();
-        Map<Long, XDDFCategoryAxis> categories = getCategoryAxes();
+        Map<Long, XDDFChartAxis> categories = getCategoryAxes();
         Map<Long, XDDFValueAxis> values = getValueAxes();
-        try {
-            XSSFSheet sheet = getWorkbook().getSheetAt(0);
 
-            for (int i = 0; i < plotArea.sizeOfBarChartArray(); i++) {
-                CTBarChart barChart = plotArea.getBarChartArray(i);
-                // TODO fill in the data sources from the sheet or from the cache
-                series.add(new XDDFBarChartData(sheet, barChart, categories, values));
-            }
-
-            for (int i = 0; i < plotArea.sizeOfLineChartArray(); i++) {
-                CTLineChart lineChart = plotArea.getLineChartArray(i);
-                // TODO fill in the data sources from the sheet or from the cache
-                series.add(new XDDFLineChartData(sheet, lineChart, categories, values));
-            }
-
-            for (int i = 0; i < plotArea.sizeOfPieChartArray(); i++) {
-                CTPieChart pieChart = plotArea.getPieChartArray(i);
-                // TODO fill in the data sources from the sheet or from the cache
-                series.add(new XDDFPieChartData(sheet, pieChart));
-            }
-
-            for (int i = 0; i < plotArea.sizeOfRadarChartArray(); i++) {
-                CTRadarChart radarChart = plotArea.getRadarChartArray(i);
-                // TODO fill in the data sources from the sheet or from the cache
-                series.add(new XDDFRadarChartData(sheet, radarChart, categories, values));
-            }
-
-            for (int i = 0; i < plotArea.sizeOfScatterChartArray(); i++) {
-                CTScatterChart scatterChart = plotArea.getScatterChartArray(i);
-                // TODO fill in the data sources from the sheet or from the cache
-                series.add(new XDDFScatterChartData(sheet, scatterChart, categories, values));
-            }
-
-            // TODO repeat above code for all kind of charts
-        } catch(IOException e) {
-        } catch(InvalidFormatException e) {
-            System.err.println("No workbook available for chart.");
-        } finally {
+        for (int i = 0; i < plotArea.sizeOfBarChartArray(); i++) {
+            CTBarChart barChart = plotArea.getBarChartArray(i);
+            series.add(new XDDFBarChartData(barChart, categories, values));
         }
+
+        for (int i = 0; i < plotArea.sizeOfLineChartArray(); i++) {
+            CTLineChart lineChart = plotArea.getLineChartArray(i);
+            series.add(new XDDFLineChartData(lineChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfPieChartArray(); i++) {
+            CTPieChart pieChart = plotArea.getPieChartArray(i);
+            series.add(new XDDFPieChartData(pieChart));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfRadarChartArray(); i++) {
+            CTRadarChart radarChart = plotArea.getRadarChartArray(i);
+            series.add(new XDDFRadarChartData(radarChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfScatterChartArray(); i++) {
+            CTScatterChart scatterChart = plotArea.getScatterChartArray(i);
+            series.add(new XDDFScatterChartData(scatterChart, categories, values));
+        }
+
+        // TODO repeat above code for all kind of charts
         return series;
     }
 
@@ -279,10 +310,10 @@ public final class XSLFChart extends POIXMLDocumentPart {
         this.chart.set(other.chart);
     }
 
-    private Map<Long, XDDFCategoryAxis> getCategoryAxes() {
+    private Map<Long, XDDFChartAxis> getCategoryAxes() {
         CTPlotArea plotArea = getCTPlotArea();
         int sizeOfArray = plotArea.sizeOfCatAxArray();
-        Map<Long, XDDFCategoryAxis> axes = new HashMap<Long, XDDFCategoryAxis>(sizeOfArray);
+        Map<Long, XDDFChartAxis> axes = new HashMap<Long, XDDFChartAxis>(sizeOfArray);
         for (int i = 0; i < sizeOfArray; i++) {
             CTCatAx category = plotArea.getCatAxArray(i);
             axes.put(category.getAxId().getVal(), new XDDFCategoryAxis(category));

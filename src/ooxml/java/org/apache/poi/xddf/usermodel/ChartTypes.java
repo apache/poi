@@ -14,15 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.xddf.usermodel;
 
-package org.apache.poi.ss.usermodel.charts;
-
-/**
- * Title types for charts.
- *
- * @author Martin Andersson
- */
-public enum TitleType {
-    STRING,
-    CELL_REFERENCE
+public enum ChartTypes {
+    BAR,
+    LINE,
+    PIE,
+    RADAR,
+    SCATTER;
 }

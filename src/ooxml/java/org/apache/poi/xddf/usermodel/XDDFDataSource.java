@@ -28,5 +28,5 @@ public interface XDDFDataSource<T> {
 
     boolean isNumeric();
 
-    String getFormulaString();
+    String getDataRangeReference();
 }

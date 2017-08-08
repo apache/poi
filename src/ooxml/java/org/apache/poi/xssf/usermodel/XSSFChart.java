@@ -22,26 +22,29 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
-import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
-import org.apache.poi.xssf.usermodel.charts.XSSFDateAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFManualLayout;
-import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
+import org.apache.poi.xddf.usermodel.AxisPosition;
+import org.apache.poi.xddf.usermodel.ChartTypes;
+import org.apache.poi.xddf.usermodel.XDDFBarChartData;
+import org.apache.poi.xddf.usermodel.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.XDDFChartAxis;
+import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.XDDFDateAxis;
+import org.apache.poi.xddf.usermodel.XDDFLineChartData;
+import org.apache.poi.xddf.usermodel.XDDFManualLayout;
+import org.apache.poi.xddf.usermodel.XDDFPieChartData;
+import org.apache.poi.xddf.usermodel.XDDFRadarChartData;
+import org.apache.poi.xddf.usermodel.XDDFScatterChartData;
+import org.apache.poi.xddf.usermodel.XDDFValueAxis;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -68,7 +71,7 @@ import org.w3c.dom.Text;
 /**
  * Represents a SpreadsheetML Chart
  */
-public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartAxisFactory {
+public final class XSSFChart extends POIXMLDocumentPart {
 
 	/**
 	 * Parent graphic frame.
@@ -84,7 +87,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	 */
 	private CTChart chart;
 
-	List<XSSFChartAxis> axis = new ArrayList<XSSFChartAxis>();
+	List<XDDFChartAxis> axes = new ArrayList<XDDFChartAxis>();
 
 	/**
 	 * Create a new SpreadsheetML chart
@@ -99,16 +102,16 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	 *
 	 * @param part the package part holding the chart data,
 	 * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-	 * 
+	 *
 	 * @since POI 3.14-Beta1
 	 */
 	protected XSSFChart(PackagePart part) throws IOException, XmlException {
 		super(part);
 
-		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
+		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace();
 		chart = chartSpace.getChart();
 	}
-	
+
 	/**
 	 * Construct a new CTChartSpace bean.
 	 * By default, it's just an empty placeholder for chart objects.
@@ -132,26 +135,6 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		pageMargins.setHeader(0.30);
 		pageMargins.setFooter(0.30);
 		printSettings.addNewPageSetup();
-	}
-
-	/**
-	 * Return the underlying CTChartSpace bean, the root element of the SpreadsheetML Chart part.
-	 *
-	 * @return the underlying CTChartSpace bean
-	 */
-	@Internal
-	public CTChartSpace getCTChartSpace(){
-		return chartSpace;
-	}
-
-	/**
-	 * Return the underlying CTChart bean, within the Chart Space
-	 *
-	 * @return the underlying CTChart bean
-	 */
-	@Internal
-	public CTChart getCTChart(){
-		return chart;
 	}
 
 	@Override
@@ -188,63 +171,74 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		this.frame = frame;
 	}
 
-	public XSSFChartDataFactory getChartDataFactory() {
-		return XSSFChartDataFactory.getInstance();
-	}
-
-	public XSSFChart getChartAxisFactory() {
-		return this;
-	}
-
-	public void plot(ChartData data, ChartAxis... chartAxis) {
-		data.fillChart(this, chartAxis);
-	}
-
-	public XSSFValueAxis createValueAxis(AxisPosition pos) {
-		long id = axis.size() + 1;
-		XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
-		if (axis.size() == 1) {
-			ChartAxis ax = axis.get(0);
-			ax.crossAxis(valueAxis);
-			valueAxis.crossAxis(ax);
+	public XDDFValueAxis createValueAxis(AxisPosition pos) {
+		XDDFValueAxis valueAxis = new XDDFValueAxis(chart.getPlotArea(), pos);
+		if (axes.size() == 1) {
+			XDDFChartAxis axis = axes.get(0);
+			axis.crossAxis(valueAxis);
+			valueAxis.crossAxis(axis);
 		}
-		axis.add(valueAxis);
+		axes.add(valueAxis);
 		return valueAxis;
 	}
 
-	public XSSFCategoryAxis createCategoryAxis(AxisPosition pos) {
-		long id = axis.size() + 1;
-		XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
-		if (axis.size() == 1) {
-			ChartAxis ax = axis.get(0);
-			ax.crossAxis(categoryAxis);
-			categoryAxis.crossAxis(ax);
+	public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
+		XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(chart.getPlotArea(), pos);
+		if (axes.size() == 1) {
+			XDDFChartAxis axis = axes.get(0);
+			axis.crossAxis(categoryAxis);
+			categoryAxis.crossAxis(axis);
 		}
-		axis.add(categoryAxis);
+		axes.add(categoryAxis);
 		return categoryAxis;
 	}
 
-	public XSSFDateAxis createDateAxis(AxisPosition pos) {
-	    long id = axis.size() + 1;
-	    XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
-	    if (axis.size() == 1) {
-	        ChartAxis ax = axis.get(0);
-	        ax.crossAxis(dateAxis);
-	        dateAxis.crossAxis(ax);
+	public XDDFDateAxis createDateAxis(AxisPosition pos) {
+	    XDDFDateAxis dateAxis = new XDDFDateAxis(chart.getPlotArea(), pos);
+	    if (axes.size() == 1) {
+	        XDDFChartAxis axis = axes.get(0);
+	        axis.crossAxis(dateAxis);
+	        dateAxis.crossAxis(axis);
 	    }
-	    axis.add(dateAxis);
+	    axes.add(dateAxis);
 	    return dateAxis;
 	}
-	
-    public List<? extends XSSFChartAxis> getAxis() {
-        if (axis.isEmpty() && hasAxis()) {
-            parseAxis();
+
+    public List<? extends XDDFChartAxis> getAxes() {
+        if (axes.isEmpty() && hasAxes()) {
+            parseAxes();
         }
-        return axis;
+        return axes;
     }
-	
-	public XSSFManualLayout getManualLayout() {
-		return new XSSFManualLayout(this);
+
+    public XDDFChartData createData(ChartTypes type, XDDFChartAxis category, XDDFValueAxis values) {
+        Map<Long, XDDFChartAxis> categories = Collections.singletonMap(category.getId(), category);
+        Map<Long, XDDFValueAxis> mapValues = Collections.singletonMap(values.getId(), values);
+        final CTPlotArea plotArea = chart.getPlotArea();
+        switch (type) {
+        case BAR:
+            return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
+        case LINE:
+            return new XDDFLineChartData(plotArea.addNewLineChart(), categories, mapValues);
+        case PIE:
+            return new XDDFPieChartData(plotArea.addNewPieChart());
+        case RADAR:
+            return new XDDFRadarChartData(plotArea.addNewRadarChart(), categories, mapValues);
+        case SCATTER:
+            return new XDDFScatterChartData(plotArea.addNewScatterChart(), categories, mapValues);
+        default:
+            return null;
+        }
+    }
+
+    public void plot(XDDFChartData data) {
+        for(XDDFChartData.Series series : data.getSeries()) {
+            series.plot();
+        }
+    }
+
+	public XDDFManualLayout getManualLayout() {
+		return new XDDFManualLayout(chart.getPlotArea());
 	}
 
 	/**
@@ -274,14 +268,14 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	public XSSFRichTextString getTitle() {
 	    return getTitleText();
 	}
-	
+
 	/**
      * Returns the title static text, or null if none is set.
      * Note that a title formula may be set instead.
      * Empty text result is for backward compatibility, and could mean the title text is empty or there is a formula instead.
      * Check for a formula first, falling back on text for cleaner logic.
-     * @return static title text if set, 
-     *         null if there is no title, 
+     * @return static title text if set,
+     *         null if there is no title,
      *         empty string if the title text is empty or the title uses a formula instead
 	 */
 	public XSSFRichTextString getTitleText() {
@@ -295,8 +289,8 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		StringBuffer text = new StringBuffer();
 		XmlObject[] t = title
 			.selectPath("declare namespace a='"+XSSFDrawing.NAMESPACE_A+"' .//a:t");
-		for (int m = 0; m < t.length; m++) {
-			NodeList kids = t[m].getDomNode().getChildNodes();
+		for (XmlObject element : t) {
+			NodeList kids = element.getDomNode().getChildNodes();
 			final int count = kids.getLength();
 			for (int n = 0; n < count; n++) {
 				Node kid = kids.item(n);
@@ -317,9 +311,9 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
     @Deprecated
     @Removal(version="4.0")
 	public void setTitle(String newTitle) {
-	    
+
 	}
-	
+
     /**
      * Sets the title text as a static string.
      * @param newTitle to use
@@ -369,7 +363,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 			run.setT(newTitle);
 		}
 	}
-	
+
 	/**
 	 * Get the chart title formula expression if there is one
 	 * @return formula expression or null
@@ -380,20 +374,20 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	    }
 
 	    CTTitle title = chart.getTitle();
-	    
+
 	    if (! title.isSetTx()) {
 	        return null;
 	    }
-	    
+
 	    CTTx tx = title.getTx();
-	    
+
 	    if (! tx.isSetStrRef()) {
 	        return null;
 	    }
-	    
+
 	    return tx.getStrRef().getF();
 	}
-	
+
 	/**
 	 * Set the formula expression to use for the chart title
 	 * @param formula
@@ -416,19 +410,19 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	    if (tx.isSetRich()) {
 	        tx.unsetRich();
 	    }
-	    
+
 	    CTStrRef strRef;
 	    if (tx.isSetStrRef()) {
 	        strRef = tx.getStrRef();
 	    } else {
 	        strRef = tx.addNewStrRef();
 	    }
-	    
+
 	    strRef.setF(formula);
 	}
 
-	public XSSFChartLegend getOrCreateLegend() {
-		return new XSSFChartLegend(this);
+	public XDDFChartLegend getOrCreateLegend() {
+		return new XDDFChartLegend(chart);
 	}
 
 	public void deleteLegend() {
@@ -437,7 +431,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		}
 	}
 
-	private boolean hasAxis() {
+	private boolean hasAxes() {
 		CTPlotArea ctPlotArea = chart.getPlotArea();
 		int totalAxisCount =
 			ctPlotArea.sizeOfValAxArray()  +
@@ -447,28 +441,28 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return totalAxisCount > 0;
 	}
 
-	private void parseAxis() {
+	private void parseAxes() {
 		// TODO: add other axis types
-		parseCategoryAxis();
-		parseDateAxis();
-		parseValueAxis();
+		parseCategoryAxes();
+		parseDateAxes();
+		parseValueAxes();
 	}
 
-	private void parseCategoryAxis() {
+	private void parseCategoryAxes() {
 		for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
-			axis.add(new XSSFCategoryAxis(this, catAx));
+			axes.add(new XDDFCategoryAxis(catAx));
 		}
 	}
 
-	private void parseDateAxis() {
+	private void parseDateAxes() {
 	    for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
-	        axis.add(new XSSFDateAxis(this, dateAx));
+	        axes.add(new XDDFDateAxis(dateAx));
 	    }
 	}
-	
-	private void parseValueAxis() {
+
+	private void parseValueAxes() {
 		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
-			axis.add(new XSSFValueAxis(this, valAx));
+			axes.add(new XDDFValueAxis(valAx));
 		}
 	}
 

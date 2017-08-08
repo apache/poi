@@ -32,8 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
 
 /**
- * Class {@code XDDFDataSourcesFactory} is a factory for {@link XDDFDataSource}
- * instances.
+ * Class {@code XDDFDataSourcesFactory} is a factory for {@link XDDFDataSource} instances.
  */
 @Beta
 public class XDDFDataSourcesFactory {
@@ -41,7 +40,7 @@ public class XDDFDataSourcesFactory {
     private XDDFDataSourcesFactory() {
     }
 
-    public static XDDFCategoryDataSource fromAxDataSource(final CTAxDataSource categoryDS) {
+    public static XDDFCategoryDataSource fromDataSource(final CTAxDataSource categoryDS) {
         return new XDDFCategoryDataSource() {
             private CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
 
@@ -66,16 +65,16 @@ public class XDDFDataSourcesFactory {
             }
 
             @Override
-            public String getFormulaString() {
+            public String getDataRangeReference() {
                 return categoryDS.getStrRef().getF();
             }
         };
     }
 
-    public static XDDFNumericalDataSource<Double> fromNumDataSource(final CTNumDataSource valuesDS) {
+    public static XDDFNumericalDataSource<Double> fromDataSource(final CTNumDataSource valuesDS) {
         return new XDDFNumericalDataSource<Double>() {
             private CTNumData values = (CTNumData) valuesDS.getNumRef().getNumCache().copy();
-            private String formatCode;
+            private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
 
             @Override
             public String getFormatCode() {
@@ -108,63 +107,36 @@ public class XDDFDataSourcesFactory {
             }
 
             @Override
-            public String getFormulaString() {
+            public String getDataRangeReference() {
                 return valuesDS.getNumRef().getF();
             }
         };
     }
 
-    public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements) {
-        return new NumericalArrayDataSource<T>(elements);
+    public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements, String dataRange) {
+        return new NumericalArrayDataSource<T>(elements, dataRange);
     }
 
-    public static XDDFCategoryDataSource fromArray(String[] elements) {
-        return new StringArrayDataSource(elements);
+    public static XDDFCategoryDataSource fromArray(String[] elements, String dataRange) {
+        return new StringArrayDataSource(elements, dataRange);
     }
 
-    public static XDDFDataSource<Number> fromNumericCellRange(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
-        return new AbstractCellRangeDataSource<Number>(sheet, cellRangeAddress) {
-            @Override
-            public Number getPointAt(int index) {
-                CellValue cellValue = getCellValueAt(index);
-                if (cellValue != null && cellValue.getCellTypeEnum() == CellType.NUMERIC) {
-                    return Double.valueOf(cellValue.getNumberValue());
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public boolean isNumeric() {
-                return true;
-            }
-        };
+    public static XDDFNumericalDataSource<Double> fromNumericCellRange(XSSFSheet sheet,
+            CellRangeAddress cellRangeAddress) {
+        return new NumericalCellRangeDataSource(sheet, cellRangeAddress);
     }
 
-    public static XDDFDataSource<String> fromStringCellRange(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
-        return new AbstractCellRangeDataSource<String>(sheet, cellRangeAddress) {
-            @Override
-            public String getPointAt(int index) {
-                CellValue cellValue = getCellValueAt(index);
-                if (cellValue != null && cellValue.getCellTypeEnum() == CellType.STRING) {
-                    return cellValue.getStringValue();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public boolean isNumeric() {
-                return false;
-            }
-        };
+    public static XDDFCategoryDataSource fromStringCellRange(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
+        return new StringCellRangeDataSource(sheet, cellRangeAddress);
     }
 
-    private static class ArrayDataSource<T> implements XDDFDataSource<T> {
+    private abstract static class AbstractArrayDataSource<T> implements XDDFDataSource<T> {
         private final T[] elements;
+        private final String dataRange;
 
-        public ArrayDataSource(T[] elements) {
+        public AbstractArrayDataSource(T[] elements, String dataRange) {
             this.elements = elements.clone();
+            this.dataRange = dataRange;
         }
 
         @Override
@@ -179,7 +151,7 @@ public class XDDFDataSourcesFactory {
 
         @Override
         public boolean isReference() {
-            return false;
+            return dataRange != null;
         }
 
         @Override
@@ -189,17 +161,21 @@ public class XDDFDataSourcesFactory {
         }
 
         @Override
-        public String getFormulaString() {
-            throw new UnsupportedOperationException("Literal data source can not be expressed by reference.");
+        public String getDataRangeReference() {
+            if (dataRange == null) {
+                throw new UnsupportedOperationException("Literal data source can not be expressed by reference.");
+            } else {
+                return dataRange;
+            }
         }
     }
 
-    private static class NumericalArrayDataSource<T extends Number> extends ArrayDataSource<T>
+    private static class NumericalArrayDataSource<T extends Number> extends AbstractArrayDataSource<T>
             implements XDDFNumericalDataSource<T> {
         private String formatCode;
 
-        public NumericalArrayDataSource(T[] elements) {
-            super(elements);
+        public NumericalArrayDataSource(T[] elements, String dataRange) {
+            super(elements, dataRange);
         }
 
         @Override
@@ -213,9 +189,10 @@ public class XDDFDataSourcesFactory {
         }
     }
 
-    private static class StringArrayDataSource extends ArrayDataSource<String> implements XDDFCategoryDataSource {
-        public StringArrayDataSource(String[] elements) {
-            super(elements);
+    private static class StringArrayDataSource extends AbstractArrayDataSource<String>
+            implements XDDFCategoryDataSource {
+        public StringArrayDataSource(String[] elements, String dataRange) {
+            super(elements, dataRange);
         }
     }
 
@@ -244,7 +221,7 @@ public class XDDFDataSourcesFactory {
         }
 
         @Override
-        public String getFormulaString() {
+        public String getDataRangeReference() {
             return cellRangeAddress.formatAsString(sheet.getSheetName(), true);
         }
 
@@ -261,6 +238,62 @@ public class XDDFDataSourcesFactory {
             int cellIndex = firstCol + index % width;
             XSSFRow row = sheet.getRow(rowIndex);
             return (row == null) ? null : evaluator.evaluate(row.getCell(cellIndex));
+        }
+    }
+
+    private static class NumericalCellRangeDataSource extends AbstractCellRangeDataSource<Double>
+            implements XDDFNumericalDataSource<Double> {
+        protected NumericalCellRangeDataSource(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
+            super(sheet, cellRangeAddress);
+        }
+
+        private String formatCode;
+
+        @Override
+        public String getFormatCode() {
+            return formatCode;
+        }
+
+        @Override
+        public void setFormatCode(String formatCode) {
+            this.formatCode = formatCode;
+        }
+
+        @Override
+        public Double getPointAt(int index) {
+            CellValue cellValue = getCellValueAt(index);
+            if (cellValue != null && cellValue.getCellTypeEnum() == CellType.NUMERIC) {
+                return Double.valueOf(cellValue.getNumberValue());
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+    }
+
+    private static class StringCellRangeDataSource extends AbstractCellRangeDataSource<String>
+            implements XDDFCategoryDataSource {
+        protected StringCellRangeDataSource(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
+            super(sheet, cellRangeAddress);
+        }
+
+        @Override
+        public String getPointAt(int index) {
+            CellValue cellValue = getCellValueAt(index);
+            if (cellValue != null && cellValue.getCellTypeEnum() == CellType.STRING) {
+                return cellValue.getStringValue();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return false;
         }
     }
 }
