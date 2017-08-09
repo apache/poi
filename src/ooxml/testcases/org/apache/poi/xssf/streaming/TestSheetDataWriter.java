@@ -72,4 +72,23 @@ public final class TestSheetDataWriter {
             IOUtils.closeQuietly(writer);
         }
     }
+    @Test
+    public void testWriteNewLines() throws IOException {
+        SheetDataWriter writer = new SheetDataWriter();
+        try {
+            writer.outputQuotedString("\r\n");
+            writer.close();
+            File file = writer.getTempFile();
+            FileInputStream is = new FileInputStream(file);
+            String text;
+            try {
+                text = new String(IOUtils.toByteArray(is), "UTF-8");
+            } finally {
+                is.close();
+            }
+            assertEquals("&#xd;&#xa;", text);
+        } finally {
+            IOUtils.closeQuietly(writer);
+        }
+    }
 }

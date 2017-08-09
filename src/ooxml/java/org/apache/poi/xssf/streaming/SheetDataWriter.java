@@ -361,53 +361,43 @@ public class SheetDataWriter implements Closeable {
             char c = chars[counter];
             switch (c) {
                 case '<':
-                    if (counter > last) {
-                        _out.write(chars, last, counter - last);
-                    }
+                    writeLastChars(_out, chars, last, counter);
                     last = counter + 1;
                     _out.write("&lt;");
                     break;
                 case '>':
-                    if (counter > last) {
-                        _out.write(chars, last, counter - last);
-                    }
+                    writeLastChars(_out, chars, last, counter);
                     last = counter + 1;
                     _out.write("&gt;");
                     break;
                 case '&':
-                    if (counter > last) {
-                        _out.write(chars, last, counter - last);
-                    }
+                    writeLastChars(_out, chars, last, counter);
                     last = counter + 1;
                     _out.write("&amp;");
                     break;
                 case '"':
-                    if (counter > last) {
-                        _out.write(chars, last, counter - last);
-                    }
+                    writeLastChars(_out, chars, last, counter);
                     last = counter + 1;
                     _out.write("&quot;");
                     break;
                 // Special characters
                 case '\n':
-                case '\r':
-                    if (counter > last) {
-                        _out.write(chars, last, counter - last);
-                    }
+                    writeLastChars(_out, chars, last, counter);
                     _out.write("&#xa;");
                     last = counter + 1;
                     break;
+                case '\r':
+                    writeLastChars(_out, chars, last, counter);
+                    _out.write("&#xd;");
+                    last = counter + 1;
+                    break;
                 case '\t':
-                    if (counter > last) {
-                        _out.write(chars, last, counter - last);
-                    }
+                    writeLastChars(_out, chars, last, counter);
                     _out.write("&#x9;");
                     last = counter + 1;
                     break;
                 case 0xa0:
-                    if (counter > last) {
-                        _out.write(chars, last, counter - last);
-                    }
+                    writeLastChars(_out, chars, last, counter);
                     _out.write("&#xa0;");
                     last = counter + 1;
                     break;
@@ -415,23 +405,17 @@ public class SheetDataWriter implements Closeable {
                     // YK: XmlBeans silently replaces all ISO control characters ( < 32) with question marks.
                     // the same rule applies to "not a character" symbols.
                     if (replaceWithQuestionMark(c)) {
-                        if (counter > last) {
-                            _out.write(chars, last, counter - last);
-                        }
+                        writeLastChars(_out, chars, last, counter);
                         _out.write('?');
                         last = counter + 1;
                     }
                     else if (Character.isHighSurrogate(c) || Character.isLowSurrogate(c)) {
-                        if (counter > last) {
-                            _out.write(chars, last, counter - last);
-                        }
+                        writeLastChars(_out, chars, last, counter);
                         _out.write(c);
                         last = counter + 1;
                     }
                     else if (c > 127) {
-                        if (counter > last) {
-                            _out.write(chars, last, counter - last);
-                        }
+                        writeLastChars(_out, chars, last, counter);
                         last = counter + 1;
                         // If the character is outside of ascii, write the
                         // numeric value.
@@ -444,6 +428,12 @@ public class SheetDataWriter implements Closeable {
         }
         if (last < length) {
             _out.write(chars, last, length - last);
+        }
+    }
+
+    private static void writeLastChars(Writer out, char[] chars, int last, int counter) throws IOException {
+        if (counter > last) {
+            out.write(chars, last, counter - last);
         }
     }
 
