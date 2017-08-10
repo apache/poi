@@ -28,8 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFDataSource;
 import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.XDDFPieChartData;
 
 /**
@@ -90,11 +93,17 @@ public class PieChartDemo {
             String[] categories = listCategories.toArray(new String[listCategories.size()]);
             Double[] values = listValues.toArray(new Double[listValues.size()]);
 
+            final int numOfPoints = categories.length;
+            final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
+            final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
+            final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
+            final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
+
             XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries().get(0);
-            firstSeries.replaceData(XDDFDataSourcesFactory.fromArray(categories), XDDFDataSourcesFactory.fromArray(values));
-            firstSeries.setTitle(chartTitle);
+            firstSeries.replaceData(categoriesData, valuesData);
+            firstSeries.setTitle(chartTitle, chart.setSheetTitle(chartTitle));
             firstSeries.setExplosion(25);
-            pie.plot();
+            chart.plot(pie);
 
             // save the result
             OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx");

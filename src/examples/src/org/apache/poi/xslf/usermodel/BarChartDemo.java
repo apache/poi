@@ -28,12 +28,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.AxisOrientation;
 import org.apache.poi.xddf.usermodel.AxisPosition;
 import org.apache.poi.xddf.usermodel.BarDirection;
 import org.apache.poi.xddf.usermodel.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.XDDFDataSource;
 import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
 
 /**
  * Build a bar chart from a template pptx
@@ -96,20 +99,25 @@ public class BarChartDemo {
     }
 
     private static void setBarData(XSLFChart chart, String chartTitle, String[] categories, Double[] values) {
-        // Series Text
-        List<XDDFChartData> series = chart.getChartSeries();
-        XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
+        final List<XDDFChartData> series = chart.getChartSeries();
+        final XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
 
-        bar.getSeries().get(0).replaceData(XDDFDataSourcesFactory.fromArray(categories), XDDFDataSourcesFactory.fromArray(values));
-        bar.getSeries().get(0).setTitle(chartTitle);
-        bar.plot();
+        final int numOfPoints = categories.length;
+        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
+        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
+        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
+        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
+
+        bar.getSeries().get(0).replaceData(categoriesData, valuesData);
+        bar.getSeries().get(0).setTitle(chartTitle, chart.setSheetTitle(chartTitle));
+        chart.plot(bar);
     }
 
     private static void setColumnData(XSLFChart chart, String chartTitle) {
         // Series Text
         List<XDDFChartData> series = chart.getChartSeries();
         XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
-        bar.getSeries().get(0).setTitle(chartTitle);
+        bar.getSeries().get(0).setTitle(chartTitle, chart.setSheetTitle(chartTitle));
 
         // in order to transform a bar chart into a column chart, you just need to change the bar direction
         bar.setBarDirection(BarDirection.COL);
