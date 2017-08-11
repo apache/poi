@@ -17,8 +17,8 @@
 
 package org.apache.poi.poifs.macros;
 
-import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
+import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +37,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.CodePageUtil;
@@ -67,13 +67,12 @@ public class VBAMacroReader implements Closeable {
     private NPOIFSFileSystem fs;
     
     public VBAMacroReader(InputStream rstream) throws IOException {
-        PushbackInputStream stream = new PushbackInputStream(rstream, 8);
-        byte[] header8 = IOUtils.peekFirst8Bytes(stream);
-
-        if (NPOIFSFileSystem.hasPOIFSHeader(header8)) {
-            fs = new NPOIFSFileSystem(stream);
+        InputStream is = FileMagic.prepareToCheckMagic(rstream);
+        FileMagic fm = FileMagic.valueOf(is);
+        if (fm == FileMagic.OLE2) {
+            fs = new NPOIFSFileSystem(is);
         } else {
-            openOOXML(stream);
+            openOOXML(is);
         }
     }
     

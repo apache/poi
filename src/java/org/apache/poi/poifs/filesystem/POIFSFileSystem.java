@@ -115,27 +115,6 @@ public class POIFSFileSystem
     }
     
     /**
-     * Checks that the supplied InputStream (which MUST
-     *  support mark and reset, or be a PushbackInputStream)
-     *  has a POIFS (OLE2) header at the start of it.
-     * If your InputStream does not support mark / reset,
-     *  then wrap it in a PushBackInputStream, then be
-     *  sure to always use that, and not the original!
-     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
-     */
-    public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
-        return NPOIFSFileSystem.hasPOIFSHeader(inp);
-    }
-
-    /**
-     * Checks if the supplied first 8 bytes of a stream / file
-     *  has a POIFS (OLE2) header.
-     */
-    public static boolean hasPOIFSHeader(byte[] header8Bytes) {
-        return NPOIFSFileSystem.hasPOIFSHeader(header8Bytes);
-    }
-    
-    /**
      * Creates a new {@link POIFSFileSystem} in a new {@link File}.
      * Use {@link #POIFSFileSystem(File)} to open an existing File,
      *  this should only be used to create a new empty filesystem.

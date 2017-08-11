@@ -19,68 +19,70 @@
 
 package org.apache.poi;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.util.IOUtils;
+import org.junit.Test;
 
 /**
  * Class to test that HXF correctly detects OOXML
  *  documents
  */
-public class TestDetectAsOOXML extends TestCase
-{
-	public void testOpensProperly() throws Exception
-	{
+public class TestDetectAsOOXML {
+    @Test
+	public void testOpensProperly() throws IOException, InvalidFormatException {
         OPCPackage.open(HSSFTestDataSamples.openSampleFileStream("sample.xlsx"));
 	}
 	
-	public void testDetectAsPOIFS() throws Exception {
-		InputStream in;
-		
-		// ooxml file is
-		in = new PushbackInputStream(
-				HSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"), 10
-		);
-		assertTrue(DocumentFactoryHelper.hasOOXMLHeader(in));
-		in.close();
-		
-		// xls file isn't
-		in = new PushbackInputStream(
-				HSSFTestDataSamples.openSampleFileStream("SampleSS.xls"), 10
-		);
-		assertFalse(DocumentFactoryHelper.hasOOXMLHeader(in));
-		in.close();
-		
-		// text file isn't
-		in = new PushbackInputStream(
-				HSSFTestDataSamples.openSampleFileStream("SampleSS.txt"), 10
-		);
-		assertFalse(DocumentFactoryHelper.hasOOXMLHeader(in));
-		in.close();
+    @Test
+	public void testDetectAsPOIFS() throws IOException {
+	    Object fileAndMagic[][] = {
+            { "SampleSS.xlsx", FileMagic.OOXML },
+            { "SampleSS.xls", FileMagic.OLE2 },
+            { "SampleSS.txt", FileMagic.UNKNOWN }
+	    };
+
+	    for (Object fm[] : fileAndMagic) {
+	        InputStream is = HSSFTestDataSamples.openSampleFileStream((String)fm[0]);
+	        is = FileMagic.prepareToCheckMagic(is);
+	        FileMagic act = FileMagic.valueOf(is);
+	        
+	        if (act == FileMagic.OOXML) {
+	            assertTrue(DocumentFactoryHelper.hasOOXMLHeader(is));
+	        }
+	        
+	        assertEquals("file magic failed for "+fm[0], fm[1], act);
+	        is.close();
+	    }
 	}
     
+    @Test
     public void testFileCorruption() throws Exception {
 	    
 	    // create test InputStream
-	    byte[] testData = { (byte)1, (byte)2, (byte)3 };
+	    byte[] testData = { 1, 2, 3 };
         ByteArrayInputStream testInput = new ByteArrayInputStream(testData);
+        InputStream is = FileMagic.prepareToCheckMagic(testInput);
         
         // detect header
-        InputStream in = new PushbackInputStream(testInput, 10);
-        assertFalse(DocumentFactoryHelper.hasOOXMLHeader(in));
+        assertFalse(DocumentFactoryHelper.hasOOXMLHeader(is));
         
         // check if InputStream is still intact
-        byte[] test = new byte[3];
-        assertEquals(3, in.read(test));
-        assertTrue(Arrays.equals(testData, test));
-        assertEquals(-1, in.read());
-        in.close();
+        byte[] act = IOUtils.toByteArray(is);
+        assertArrayEquals(testData, act);
+        assertEquals(-1, is.read());
+        is.close();
 	}
 }
