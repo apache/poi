@@ -17,29 +17,23 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import org.apache.poi.*;
-import org.apache.poi.extractor.ExtractorFactory;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.openxml4j.exceptions.*;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.FileHelper;
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.*;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.xmlbeans.XmlException;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,7 +46,41 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import static org.junit.Assert.*;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
+import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.UnsupportedFileFormatException;
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.apache.poi.openxml4j.opc.internal.FileHelper;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.xmlbeans.XmlException;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public final class TestPackage {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
@@ -947,20 +975,32 @@ public final class TestPackage {
     }
     
     // bug 60128
-    @Test
+    @Test(expected=NotOfficeXmlFileException.class)
     public void testCorruptFile() throws IOException, InvalidFormatException {
-        OPCPackage pkg = null;
         File file = OpenXML4JTestDataSamples.getSampleFile("invalid.xlsx");
+        OPCPackage.open(file, PackageAccess.READ);
+    }
+
+    // bug 61381
+    @Test
+    public void testTooShortFilterStreams() throws IOException, InvalidFormatException {
+        File xssf = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
+        File hssf = POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls");
+        
+        InputStream isList[] = {
+            new PushbackInputStream(new FileInputStream(xssf), 2),
+            new BufferedInputStream(new FileInputStream(xssf), 2),
+            new PushbackInputStream(new FileInputStream(hssf), 2),
+            new BufferedInputStream(new FileInputStream(hssf), 2),
+        };
+        
         try {
-            pkg = OPCPackage.open(file, PackageAccess.READ);
-        } catch (NotOfficeXmlFileException e) {
-            /*System.out.println(e.getClass().getName());
-            System.out.println(e.getMessage());
-            e.printStackTrace();*/
-            // ignore exception
+            for (InputStream is : isList) {
+                WorkbookFactory.create(is).close();
+            }
         } finally {
-            if (pkg != null) {
-                pkg.close();
+            for (InputStream is : isList) {
+                IOUtils.closeQuietly(is);
             }
         }
     }

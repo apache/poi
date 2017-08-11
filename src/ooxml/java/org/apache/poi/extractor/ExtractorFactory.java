@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -45,8 +44,8 @@ import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
@@ -175,21 +174,20 @@ public class ExtractorFactory {
      }
 
     public static POITextExtractor createExtractor(InputStream inp) throws IOException, OpenXML4JException, XmlException {
-        // Figure out the kind of stream
-        // If clearly doesn't do mark/reset, wrap up
-        if (! inp.markSupported()) {
-            inp = new PushbackInputStream(inp, 8);
-        }
+        InputStream is = FileMagic.prepareToCheckMagic(inp);
 
-        if (NPOIFSFileSystem.hasPOIFSHeader(inp)) {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
+        FileMagic fm = FileMagic.valueOf(is);
+        
+        switch (fm) {
+        case OLE2:
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY); 
             return isEncrypted ? createEncyptedOOXMLExtractor(fs) : createExtractor(fs);
+        case OOXML:
+            return createExtractor(OPCPackage.open(is));
+        default:
+            throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
-        if (DocumentFactoryHelper.hasOOXMLHeader(inp)) {
-            return createExtractor(OPCPackage.open(inp));
-        }
-        throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
     }
 
     /**

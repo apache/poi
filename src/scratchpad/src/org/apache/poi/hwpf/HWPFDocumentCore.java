@@ -20,7 +20,6 @@ package org.apache.poi.hwpf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.security.GeneralSecurityException;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -47,6 +46,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
@@ -116,22 +116,14 @@ public abstract class HWPFDocumentCore extends POIDocument {
      *  POIFSFileSystem from it, and returns that.
      */
     public static POIFSFileSystem verifyAndBuildPOIFS(InputStream istream) throws IOException {
-    	// Open a PushbackInputStream, so we can peek at the first few bytes
-    	PushbackInputStream pis = new PushbackInputStream(istream,6);
-    	byte[] first6 = IOUtils.toByteArray(pis, 6);
+        InputStream is = FileMagic.prepareToCheckMagic(istream);
+        FileMagic fm = FileMagic.valueOf(is);
 
-    	// Does it start with {\rtf ? If so, it's really RTF
-    	if(first6[0] == '{' && first6[1] == '\\' && first6[2] == 'r'
-    		&& first6[3] == 't' && first6[4] == 'f') {
-    		throw new IllegalArgumentException("The document is really a RTF file");
-    	} else if(first6[0] == '%' && first6[1] == 'P' && first6[2] == 'D' && first6[3] == 'F' ) {
-    		throw new IllegalArgumentException("The document is really a PDF file");
-    	}
+        if (fm != FileMagic.OLE2) {
+            throw new IllegalArgumentException("The document is really a "+fm+" file");
+        }
 
-    	// OK, so it's neither RTF nor PDF
-    	// Open a POIFSFileSystem on the (pushed back) stream
-    	pis.unread(first6);
-    	return new POIFSFileSystem(pis);
+        return new POIFSFileSystem(is);
     }
 
     /**
