@@ -67,7 +67,7 @@ public class ScatterChart {
         XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
         XSSFChart chart = drawing.createChart(anchor);
-        XDDFChartLegend legend = chart.getOrCreateLegend();
+        XDDFChartLegend legend = chart.getOrAddLegend();
         legend.setPosition(LegendPosition.TOP_RIGHT);
 
         XDDFValueAxis bottomAxis = chart.createValueAxis(AxisPosition.BOTTOM);

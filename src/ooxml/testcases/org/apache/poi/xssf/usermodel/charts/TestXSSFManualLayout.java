@@ -47,8 +47,8 @@ public final class TestXSSFManualLayout {
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
         XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
         XSSFChart chart = drawing.createChart(anchor);
-        XDDFChartLegend legend = chart.getOrCreateLegend();
-        layout = legend.getManualLayout();
+        XDDFChartLegend legend = chart.getOrAddLegend();
+        layout = legend.getOrAddManualLayout();
     }
 
     @After

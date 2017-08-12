@@ -80,7 +80,7 @@ public final class XDDFChartLegend {
         }
     }
 
-    public XDDFManualLayout getManualLayout() {
+    public XDDFManualLayout getOrAddManualLayout() {
         if (!legend.isSetLayout()) {
             legend.addNewLayout();
         }

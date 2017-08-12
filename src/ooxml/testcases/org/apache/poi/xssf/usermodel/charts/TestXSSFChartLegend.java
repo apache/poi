@@ -43,7 +43,7 @@ public final class TestXSSFChartLegend {
 		XSSFDrawing drawing = sheet.createDrawingPatriarch();
 		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
 		XSSFChart chart = drawing.createChart(anchor);
-		XDDFChartLegend legend = chart.getOrCreateLegend();
+		XDDFChartLegend legend = chart.getOrAddLegend();
 
 		legend.setPosition(LegendPosition.TOP_RIGHT);
 		assertEquals(LegendPosition.TOP_RIGHT, legend.getPosition());
@@ -59,7 +59,7 @@ public final class TestXSSFChartLegend {
     	XSSFDrawing drawing = sheet.createDrawingPatriarch();
     	XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
     	XSSFChart chart = drawing.createChart(anchor);
-        XDDFChartLegend legend = chart.getOrCreateLegend();
+        XDDFChartLegend legend = chart.getOrAddLegend();
 
         // Act
 
@@ -77,7 +77,7 @@ public final class TestXSSFChartLegend {
 		XSSFDrawing drawing = sheet.createDrawingPatriarch();
 		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
 		XSSFChart chart = drawing.createChart(anchor);
-		XDDFChartLegend legend = chart.getOrCreateLegend();
+		XDDFChartLegend legend = chart.getOrAddLegend();
 
         // Act
 		legend.setOverlay(true);

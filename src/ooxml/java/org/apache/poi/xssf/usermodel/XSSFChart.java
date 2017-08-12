@@ -30,6 +30,11 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
+import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
+import org.apache.poi.ss.usermodel.charts.ChartData;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.AxisPosition;
 import org.apache.poi.xddf.usermodel.ChartTypes;
@@ -45,6 +50,13 @@ import org.apache.poi.xddf.usermodel.XDDFPieChartData;
 import org.apache.poi.xddf.usermodel.XDDFRadarChartData;
 import org.apache.poi.xddf.usermodel.XDDFScatterChartData;
 import org.apache.poi.xddf.usermodel.XDDFValueAxis;
+import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
+import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
+import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
+import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
+import org.apache.poi.xssf.usermodel.charts.XSSFDateAxis;
+import org.apache.poi.xssf.usermodel.charts.XSSFManualLayout;
+import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -71,138 +83,223 @@ import org.w3c.dom.Text;
 /**
  * Represents a SpreadsheetML Chart
  */
-public final class XSSFChart extends POIXMLDocumentPart {
+public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartAxisFactory {
 
-	/**
-	 * Parent graphic frame.
-	 */
-	private XSSFGraphicFrame frame;
+    /**
+     * Parent graphic frame.
+     */
+    private XSSFGraphicFrame frame;
 
-	/**
-	 * Root element of the SpreadsheetML Chart part
-	 */
-	private CTChartSpace chartSpace;
-	/**
-	 * The Chart within that
-	 */
-	private CTChart chart;
+    /**
+     * Root element of the SpreadsheetML Chart part
+     */
+    private CTChartSpace chartSpace;
+    /**
+     * The Chart within that
+     */
+    private CTChart chart;
 
-	List<XDDFChartAxis> axes = new ArrayList<XDDFChartAxis>();
+    @Deprecated
+    List<XSSFChartAxis> axis = new ArrayList<XSSFChartAxis>();
 
-	/**
-	 * Create a new SpreadsheetML chart
-	 */
-	protected XSSFChart() {
-		super();
-		createChart();
-	}
+    List<XDDFChartAxis> axes = new ArrayList<XDDFChartAxis>();
 
-	/**
-	 * Construct a SpreadsheetML chart from a package part.
-	 *
-	 * @param part the package part holding the chart data,
-	 * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-	 *
-	 * @since POI 3.14-Beta1
-	 */
-	protected XSSFChart(PackagePart part) throws IOException, XmlException {
-		super(part);
+    /**
+     * Create a new SpreadsheetML chart
+     */
+    protected XSSFChart() {
+        super();
+        createChart();
+    }
 
-		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace();
-		chart = chartSpace.getChart();
-	}
+    /**
+     * Construct a SpreadsheetML chart from a package part.
+     *
+     * @param part
+     *            the package part holding the chart data, the content type must be
+     *            <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     *
+     * @since POI 3.14-Beta1
+     */
+    protected XSSFChart(PackagePart part) throws IOException, XmlException {
+        super(part);
 
-	/**
-	 * Construct a new CTChartSpace bean.
-	 * By default, it's just an empty placeholder for chart objects.
-	 */
-	private void createChart() {
-		chartSpace = CTChartSpace.Factory.newInstance();
-		chart = chartSpace.addNewChart();
-		CTPlotArea plotArea = chart.addNewPlotArea();
+        chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace();
+        chart = chartSpace.getChart();
+    }
 
-		plotArea.addNewLayout();
-		chart.addNewPlotVisOnly().setVal(true);
+    /**
+     * Construct a new CTChartSpace bean. By default, it's just an empty placeholder for chart objects.
+     */
+    private void createChart() {
+        chartSpace = CTChartSpace.Factory.newInstance();
+        chart = chartSpace.addNewChart();
+        CTPlotArea plotArea = chart.addNewPlotArea();
 
-		CTPrintSettings printSettings = chartSpace.addNewPrintSettings();
-		printSettings.addNewHeaderFooter();
+        plotArea.addNewLayout();
+        chart.addNewPlotVisOnly().setVal(true);
 
-		CTPageMargins pageMargins = printSettings.addNewPageMargins();
-		pageMargins.setB(0.75);
-		pageMargins.setL(0.70);
-		pageMargins.setR(0.70);
-		pageMargins.setT(0.75);
-		pageMargins.setHeader(0.30);
-		pageMargins.setFooter(0.30);
-		printSettings.addNewPageSetup();
-	}
+        CTPrintSettings printSettings = chartSpace.addNewPrintSettings();
+        printSettings.addNewHeaderFooter();
 
-	@Override
-	protected void commit() throws IOException {
-		XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        CTPageMargins pageMargins = printSettings.addNewPageMargins();
+        pageMargins.setB(0.75);
+        pageMargins.setL(0.70);
+        pageMargins.setR(0.70);
+        pageMargins.setT(0.75);
+        pageMargins.setHeader(0.30);
+        pageMargins.setFooter(0.30);
+        printSettings.addNewPageSetup();
+    }
 
-		/*
-		   Saved chart space must have the following namespaces set:
-		   <c:chartSpace
-		      xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart"
-		      xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
-		      xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-		 */
-		xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
+    /**
+     * Return the underlying CTChartSpace bean, the root element of the SpreadsheetML Chart part.
+     *
+     * @return the underlying CTChartSpace bean
+     */
+    @Internal
+    public CTChartSpace getCTChartSpace() {
+        return chartSpace;
+    }
 
-		PackagePart part = getPackagePart();
-		OutputStream out = part.getOutputStream();
-		chartSpace.save(out, xmlOptions);
-		out.close();
-	}
+    /**
+     * Return the underlying CTChart bean, within the Chart Space
+     *
+     * @return the underlying CTChart bean
+     */
+    @Internal
+    public CTChart getCTChart() {
+        return chart;
+    }
 
-	/**
-	 * Returns the parent graphic frame.
-	 * @return the graphic frame this chart belongs to
-	 */
-	public XSSFGraphicFrame getGraphicFrame() {
-		return frame;
-	}
+    @Override
+    protected void commit() throws IOException {
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
 
-	/**
-	 * Sets the parent graphic frame.
-	 */
-	protected void setGraphicFrame(XSSFGraphicFrame frame) {
-		this.frame = frame;
-	}
+        /*
+         * Saved chart space must have the following namespaces set: <c:chartSpace
+         * xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart"
+         * xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r=
+         * "http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+         */
+        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
 
-	public XDDFValueAxis createValueAxis(AxisPosition pos) {
-		XDDFValueAxis valueAxis = new XDDFValueAxis(chart.getPlotArea(), pos);
-		if (axes.size() == 1) {
-			XDDFChartAxis axis = axes.get(0);
-			axis.crossAxis(valueAxis);
-			valueAxis.crossAxis(axis);
-		}
-		axes.add(valueAxis);
-		return valueAxis;
-	}
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        chartSpace.save(out, xmlOptions);
+        out.close();
+    }
 
-	public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
-		XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(chart.getPlotArea(), pos);
-		if (axes.size() == 1) {
-			XDDFChartAxis axis = axes.get(0);
-			axis.crossAxis(categoryAxis);
-			categoryAxis.crossAxis(axis);
-		}
-		axes.add(categoryAxis);
-		return categoryAxis;
-	}
+    /**
+     * Returns the parent graphic frame.
+     *
+     * @return the graphic frame this chart belongs to
+     */
+    public XSSFGraphicFrame getGraphicFrame() {
+        return frame;
+    }
 
-	public XDDFDateAxis createDateAxis(AxisPosition pos) {
-	    XDDFDateAxis dateAxis = new XDDFDateAxis(chart.getPlotArea(), pos);
-	    if (axes.size() == 1) {
-	        XDDFChartAxis axis = axes.get(0);
-	        axis.crossAxis(dateAxis);
-	        dateAxis.crossAxis(axis);
-	    }
-	    axes.add(dateAxis);
-	    return dateAxis;
-	}
+    /**
+     * Sets the parent graphic frame.
+     */
+    protected void setGraphicFrame(XSSFGraphicFrame frame) {
+        this.frame = frame;
+    }
+
+    @Deprecated
+    public XSSFChartDataFactory getChartDataFactory() {
+        return XSSFChartDataFactory.getInstance();
+    }
+
+    @Deprecated
+    public XSSFChart getChartAxisFactory() {
+        return this;
+    }
+
+    @Deprecated
+    public void plot(ChartData data, ChartAxis... chartAxis) {
+        data.fillChart(this, chartAxis);
+    }
+
+    @Deprecated
+    public XSSFValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
+        long id = axis.size() + 1;
+        XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
+        if (axis.size() == 1) {
+            ChartAxis ax = axis.get(0);
+            ax.crossAxis(valueAxis);
+            valueAxis.crossAxis(ax);
+        }
+        axis.add(valueAxis);
+        return valueAxis;
+    }
+
+    @Deprecated
+    public XSSFCategoryAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
+        long id = axis.size() + 1;
+        XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
+        if (axis.size() == 1) {
+            ChartAxis ax = axis.get(0);
+            ax.crossAxis(categoryAxis);
+            categoryAxis.crossAxis(ax);
+        }
+        axis.add(categoryAxis);
+        return categoryAxis;
+    }
+
+    @Deprecated
+    public XSSFDateAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
+        long id = axis.size() + 1;
+        XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
+        if (axis.size() == 1) {
+            ChartAxis ax = axis.get(0);
+            ax.crossAxis(dateAxis);
+            dateAxis.crossAxis(ax);
+        }
+        axis.add(dateAxis);
+        return dateAxis;
+    }
+
+    @Deprecated
+    public List<? extends XSSFChartAxis> getAxis() {
+        if (axis.isEmpty() && hasAxis()) {
+            parseAxis();
+        }
+        return axis;
+    }
+
+    public XDDFValueAxis createValueAxis(AxisPosition pos) {
+        XDDFValueAxis valueAxis = new XDDFValueAxis(chart.getPlotArea(), pos);
+        if (axes.size() == 1) {
+            XDDFChartAxis axis = axes.get(0);
+            axis.crossAxis(valueAxis);
+            valueAxis.crossAxis(axis);
+        }
+        axes.add(valueAxis);
+        return valueAxis;
+    }
+
+    public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
+        XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(chart.getPlotArea(), pos);
+        if (axes.size() == 1) {
+            XDDFChartAxis axis = axes.get(0);
+            axis.crossAxis(categoryAxis);
+            categoryAxis.crossAxis(axis);
+        }
+        axes.add(categoryAxis);
+        return categoryAxis;
+    }
+
+    public XDDFDateAxis createDateAxis(AxisPosition pos) {
+        XDDFDateAxis dateAxis = new XDDFDateAxis(chart.getPlotArea(), pos);
+        if (axes.size() == 1) {
+            XDDFChartAxis axis = axes.get(0);
+            axis.crossAxis(dateAxis);
+            dateAxis.crossAxis(axis);
+        }
+        axes.add(dateAxis);
+        return dateAxis;
+    }
 
     public List<? extends XDDFChartAxis> getAxes() {
         if (axes.isEmpty() && hasAxes()) {
@@ -232,238 +329,274 @@ public final class XSSFChart extends POIXMLDocumentPart {
     }
 
     public void plot(XDDFChartData data) {
-        for(XDDFChartData.Series series : data.getSeries()) {
+        for (XDDFChartData.Series series : data.getSeries()) {
             series.plot();
         }
     }
 
-	public XDDFManualLayout getManualLayout() {
-		return new XDDFManualLayout(chart.getPlotArea());
-	}
+    public XDDFManualLayout getOrAddManualLayout() {
+        return new XDDFManualLayout(chart.getPlotArea());
+    }
 
-	/**
-	 * @return true if only visible cells will be present on the chart,
-	 *         false otherwise
-	 */
-	public boolean isPlotOnlyVisibleCells() {
-		return chart.getPlotVisOnly().getVal();
-	}
-
-	/**
-	 * @param plotVisOnly a flag specifying if only visible cells should be
-	 *        present on the chart
-	 */
-	public void setPlotOnlyVisibleCells(boolean plotVisOnly) {
-		chart.getPlotVisOnly().setVal(plotVisOnly);
-	}
-
-	/**
-	 * Returns the title static text, or null if none is set.
-	 * Note that a title formula may be set instead.
-	 * @return static title text, if set
-	 * @deprecated POI 3.16, use {@link #getTitleText()} instead.
-	 */
     @Deprecated
-    @Removal(version="4.0")
-	public XSSFRichTextString getTitle() {
-	    return getTitleText();
-	}
+    public XSSFManualLayout getManualLayout() {
+        return new XSSFManualLayout(this);
+    }
 
-	/**
-     * Returns the title static text, or null if none is set.
-     * Note that a title formula may be set instead.
-     * Empty text result is for backward compatibility, and could mean the title text is empty or there is a formula instead.
-     * Check for a formula first, falling back on text for cleaner logic.
-     * @return static title text if set,
-     *         null if there is no title,
-     *         empty string if the title text is empty or the title uses a formula instead
-	 */
-	public XSSFRichTextString getTitleText() {
-		if(! chart.isSetTitle()) {
-			return null;
-		}
+    /**
+     * @return true if only visible cells will be present on the chart, false otherwise
+     */
+    public boolean isPlotOnlyVisibleCells() {
+        return chart.getPlotVisOnly().getVal();
+    }
 
-		// TODO Do properly
-		CTTitle title = chart.getTitle();
+    /**
+     * @param plotVisOnly
+     *            a flag specifying if only visible cells should be present on the chart
+     */
+    public void setPlotOnlyVisibleCells(boolean plotVisOnly) {
+        chart.getPlotVisOnly().setVal(plotVisOnly);
+    }
 
-		StringBuffer text = new StringBuffer();
-		XmlObject[] t = title
-			.selectPath("declare namespace a='"+XSSFDrawing.NAMESPACE_A+"' .//a:t");
-		for (XmlObject element : t) {
-			NodeList kids = element.getDomNode().getChildNodes();
-			final int count = kids.getLength();
-			for (int n = 0; n < count; n++) {
-				Node kid = kids.item(n);
-				if (kid instanceof Text) {
-					text.append(kid.getNodeValue());
-				}
-			}
-		}
-
-		return new XSSFRichTextString(text.toString());
-	}
-
-	/**
-	 * Sets the title text as a static string.
-	 * @param newTitle to use
-	 * @deprecated POI 3.16, use {@link #setTitleText(String)} instead.
-	 */
+    /**
+     * Returns the title static text, or null if none is set. Note that a title formula may be set instead.
+     *
+     * @return static title text, if set
+     * @deprecated POI 3.16, use {@link #getTitleText()} instead.
+     */
     @Deprecated
-    @Removal(version="4.0")
-	public void setTitle(String newTitle) {
+    @Removal(version = "4.0")
+    public XSSFRichTextString getTitle() {
+        return getTitleText();
+    }
 
-	}
+    /**
+     * Returns the title static text, or null if none is set. Note that a title formula may be set instead. Empty text
+     * result is for backward compatibility, and could mean the title text is empty or there is a formula instead. Check
+     * for a formula first, falling back on text for cleaner logic.
+     *
+     * @return static title text if set, null if there is no title, empty string if the title text is empty or the title
+     *         uses a formula instead
+     */
+    public XSSFRichTextString getTitleText() {
+        if (!chart.isSetTitle()) {
+            return null;
+        }
+
+        // TODO Do properly
+        CTTitle title = chart.getTitle();
+
+        StringBuffer text = new StringBuffer();
+        XmlObject[] t = title.selectPath("declare namespace a='" + XSSFDrawing.NAMESPACE_A + "' .//a:t");
+        for (XmlObject element : t) {
+            NodeList kids = element.getDomNode().getChildNodes();
+            final int count = kids.getLength();
+            for (int n = 0; n < count; n++) {
+                Node kid = kids.item(n);
+                if (kid instanceof Text) {
+                    text.append(kid.getNodeValue());
+                }
+            }
+        }
+
+        return new XSSFRichTextString(text.toString());
+    }
 
     /**
      * Sets the title text as a static string.
-     * @param newTitle to use
+     *
+     * @param newTitle
+     *            to use
+     * @deprecated POI 3.16, use {@link #setTitleText(String)} instead.
      */
-	public void setTitleText(String newTitle) {
-		CTTitle ctTitle;
-		if (chart.isSetTitle()) {
-			ctTitle = chart.getTitle();
-		} else {
-			ctTitle = chart.addNewTitle();
-		}
+    @Deprecated
+    @Removal(version = "4.0")
+    public void setTitle(String newTitle) {
 
-		CTTx tx;
-		if (ctTitle.isSetTx()) {
-			tx = ctTitle.getTx();
-		} else {
-			tx = ctTitle.addNewTx();
-		}
+    }
 
-		if (tx.isSetStrRef()) {
-			tx.unsetStrRef();
-		}
+    /**
+     * Sets the title text as a static string.
+     *
+     * @param newTitle
+     *            to use
+     */
+    public void setTitleText(String newTitle) {
+        CTTitle ctTitle;
+        if (chart.isSetTitle()) {
+            ctTitle = chart.getTitle();
+        } else {
+            ctTitle = chart.addNewTitle();
+        }
 
-		CTTextBody rich;
-		if (tx.isSetRich()) {
-			rich = tx.getRich();
-		} else {
-			rich = tx.addNewRich();
-			rich.addNewBodyPr();  // body properties must exist (but can be empty)
-		}
+        CTTx tx;
+        if (ctTitle.isSetTx()) {
+            tx = ctTitle.getTx();
+        } else {
+            tx = ctTitle.addNewTx();
+        }
 
-		CTTextParagraph para;
-		if (rich.sizeOfPArray() > 0) {
-			para = rich.getPArray(0);
-		} else {
-			para = rich.addNewP();
-		}
+        if (tx.isSetStrRef()) {
+            tx.unsetStrRef();
+        }
 
-		if (para.sizeOfRArray() > 0) {
-			CTRegularTextRun run = para.getRArray(0);
-			run.setT(newTitle);
-		} else if (para.sizeOfFldArray() > 0) {
-			CTTextField fld = para.getFldArray(0);
-			fld.setT(newTitle);
-		} else {
-			CTRegularTextRun run = para.addNewR();
-			run.setT(newTitle);
-		}
-	}
+        CTTextBody rich;
+        if (tx.isSetRich()) {
+            rich = tx.getRich();
+        } else {
+            rich = tx.addNewRich();
+            rich.addNewBodyPr(); // body properties must exist (but can be
+                                 // empty)
+        }
 
-	/**
-	 * Get the chart title formula expression if there is one
-	 * @return formula expression or null
-	 */
-	public String getTitleFormula() {
-	    if(! chart.isSetTitle()) {
-	        return null;
-	    }
+        CTTextParagraph para;
+        if (rich.sizeOfPArray() > 0) {
+            para = rich.getPArray(0);
+        } else {
+            para = rich.addNewP();
+        }
 
-	    CTTitle title = chart.getTitle();
+        if (para.sizeOfRArray() > 0) {
+            CTRegularTextRun run = para.getRArray(0);
+            run.setT(newTitle);
+        } else if (para.sizeOfFldArray() > 0) {
+            CTTextField fld = para.getFldArray(0);
+            fld.setT(newTitle);
+        } else {
+            CTRegularTextRun run = para.addNewR();
+            run.setT(newTitle);
+        }
+    }
 
-	    if (! title.isSetTx()) {
-	        return null;
-	    }
+    /**
+     * Get the chart title formula expression if there is one
+     *
+     * @return formula expression or null
+     */
+    public String getTitleFormula() {
+        if (!chart.isSetTitle()) {
+            return null;
+        }
 
-	    CTTx tx = title.getTx();
+        CTTitle title = chart.getTitle();
 
-	    if (! tx.isSetStrRef()) {
-	        return null;
-	    }
+        if (!title.isSetTx()) {
+            return null;
+        }
 
-	    return tx.getStrRef().getF();
-	}
+        CTTx tx = title.getTx();
 
-	/**
-	 * Set the formula expression to use for the chart title
-	 * @param formula
-	 */
-	public void setTitleFormula(String formula) {
-	    CTTitle ctTitle;
-	    if (chart.isSetTitle()) {
-	        ctTitle = chart.getTitle();
-	    } else {
-	        ctTitle = chart.addNewTitle();
-	    }
+        if (!tx.isSetStrRef()) {
+            return null;
+        }
 
-	    CTTx tx;
-	    if (ctTitle.isSetTx()) {
-	        tx = ctTitle.getTx();
-	    } else {
-	        tx = ctTitle.addNewTx();
-	    }
+        return tx.getStrRef().getF();
+    }
 
-	    if (tx.isSetRich()) {
-	        tx.unsetRich();
-	    }
+    /**
+     * Set the formula expression to use for the chart title
+     *
+     * @param formula
+     */
+    public void setTitleFormula(String formula) {
+        CTTitle ctTitle;
+        if (chart.isSetTitle()) {
+            ctTitle = chart.getTitle();
+        } else {
+            ctTitle = chart.addNewTitle();
+        }
 
-	    CTStrRef strRef;
-	    if (tx.isSetStrRef()) {
-	        strRef = tx.getStrRef();
-	    } else {
-	        strRef = tx.addNewStrRef();
-	    }
+        CTTx tx;
+        if (ctTitle.isSetTx()) {
+            tx = ctTitle.getTx();
+        } else {
+            tx = ctTitle.addNewTx();
+        }
 
-	    strRef.setF(formula);
-	}
+        if (tx.isSetRich()) {
+            tx.unsetRich();
+        }
 
-	public XDDFChartLegend getOrCreateLegend() {
-		return new XDDFChartLegend(chart);
-	}
+        CTStrRef strRef;
+        if (tx.isSetStrRef()) {
+            strRef = tx.getStrRef();
+        } else {
+            strRef = tx.addNewStrRef();
+        }
 
-	public void deleteLegend() {
-		if (chart.isSetLegend()) {
-			chart.unsetLegend();
-		}
-	}
+        strRef.setF(formula);
+    }
 
-	private boolean hasAxes() {
-		CTPlotArea ctPlotArea = chart.getPlotArea();
-		int totalAxisCount =
-			ctPlotArea.sizeOfValAxArray()  +
-			ctPlotArea.sizeOfCatAxArray()  +
-			ctPlotArea.sizeOfDateAxArray() +
-			ctPlotArea.sizeOfSerAxArray();
-		return totalAxisCount > 0;
-	}
+    @Deprecated
+    public XSSFChartLegend getOrCreateLegend() {
+        return new XSSFChartLegend(this);
+    }
 
-	private void parseAxes() {
-		// TODO: add other axis types
-		parseCategoryAxes();
-		parseDateAxes();
-		parseValueAxes();
-	}
+    public XDDFChartLegend getOrAddLegend() {
+        return new XDDFChartLegend(chart);
+    }
 
-	private void parseCategoryAxes() {
-		for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
-			axes.add(new XDDFCategoryAxis(catAx));
-		}
-	}
+    public void deleteLegend() {
+        if (chart.isSetLegend()) {
+            chart.unsetLegend();
+        }
+    }
 
-	private void parseDateAxes() {
-	    for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
-	        axes.add(new XDDFDateAxis(dateAx));
-	    }
-	}
+    /**
+     * @deprecated use {@link hasAxes} instead
+     * @return hasAxes()
+     */
+    @Deprecated
+    private boolean hasAxis() {
+        return hasAxes();
+    }
 
-	private void parseValueAxes() {
-		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
-			axes.add(new XDDFValueAxis(valAx));
-		}
-	}
+    private boolean hasAxes() {
+        CTPlotArea ctPlotArea = chart.getPlotArea();
+        int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea.sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
+        return totalAxisCount > 0;
+    }
+
+    private void parseAxes() {
+        // TODO: add other axis types
+        for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
+            axes.add(new XDDFCategoryAxis(catAx));
+        }
+        for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
+            axes.add(new XDDFDateAxis(dateAx));
+        }
+        for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
+            axes.add(new XDDFValueAxis(valAx));
+        }
+    }
+
+    @Deprecated
+    private void parseAxis() {
+        // TODO: add other axis types
+        parseCategoryAxis();
+        parseDateAxis();
+        parseValueAxis();
+    }
+
+    @Deprecated
+    private void parseCategoryAxis() {
+        for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
+            axis.add(new XSSFCategoryAxis(this, catAx));
+        }
+    }
+
+    @Deprecated
+    private void parseDateAxis() {
+        for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
+            axis.add(new XSSFDateAxis(this, dateAx));
+        }
+    }
+
+    @Deprecated
+    private void parseValueAxis() {
+        for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
+            axis.add(new XSSFValueAxis(this, valAx));
+        }
+    }
 
 }

@@ -208,7 +208,7 @@ public class TestXSLFChart {
 		legend.setPosition(LegendPosition.TOP_RIGHT);
 		assertEquals(LegendPosition.TOP_RIGHT, legend.getPosition());
 
-		XDDFManualLayout layout = legend.getManualLayout();
+		XDDFManualLayout layout = legend.getOrAddManualLayout();
 		assertNotNull(layout.getTarget());
 		assertNotNull(layout.getXMode());
 		assertNotNull(layout.getYMode());
