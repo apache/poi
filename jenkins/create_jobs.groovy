@@ -68,7 +68,7 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
     ],
-    [ name: 'POI-DSL-SonarQube', jdk: '1.8', trigger: 'H 9 * * *', maven: true, sonar: true
+    [ name: 'POI-DSL-SonarQube', jdk: '1.8', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
     ],
     [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
     ],
@@ -87,8 +87,8 @@ def defaultJdk = '1.6'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9.9'
-// currently a lot of H?? slaves don't have Ant installed ...
-def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4'
+// currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
+def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
 
 def jdkMapping = [
     '1.6': 'JDK 1.6 (latest)',
