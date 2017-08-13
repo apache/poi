@@ -394,7 +394,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
 
         /*
          * The shape id of the ole object seems to be a legacy shape id.
-         *
+         * 
          * see 5.3.2.1 legacyDrawing (Legacy Drawing Object):
          * Legacy Shape ID that is unique throughout the entire document.
          * Legacy shape IDs should be assigned based on which portion of the document the
@@ -444,7 +444,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         cur1.insertAttributeWithValue("moveWithCells", "1");
 
         CTTwoCellAnchor ctAnchor = createTwoCellAnchor((XSSFClientAnchor)anchor);
-
+        
         XmlCursor cur2 = ctAnchor.newCursor();
         cur2.copyXmlContents(cur1);
         cur2.dispose();
@@ -461,12 +461,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         CTShape ctShape = ctAnchor.addNewSp();
         ctShape.set(XSSFObjectData.prototype());
         ctShape.getSpPr().setXfrm(createXfrm((XSSFClientAnchor)anchor));
-
+        
         // workaround for not having the vmlDrawing filled
         CTBlipFillProperties blipFill = ctShape.getSpPr().addNewBlipFill();
         blipFill.addNewBlip().setEmbed(imgDrawPR.getId());
         blipFill.addNewStretch().addNewFillRect();
-
+        
         CTNonVisualDrawingProps cNvPr = ctShape.getNvSpPr().getCNvPr();
         cNvPr.setId(shapeId);
         cNvPr.setName("Object "+shapeId);
