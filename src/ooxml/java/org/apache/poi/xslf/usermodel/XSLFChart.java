@@ -132,12 +132,32 @@ public final class XSLFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * Return the underlying CTPlotArea bean, within the Chart Space
+     * Return the underlying CTChartSpace bean, the root element of the Chart part.
+     *
+     * @return the underlying CTChartSpace bean
+     */
+    @Internal
+    public CTChartSpace getCTChartSpace(){
+        return chartSpace;
+    }
+
+    /**
+     * Return the underlying CTChart bean, within the Chart Space
+     *
+     * @return the underlying CTChart bean
+     */
+    @Internal
+    public CTChart getCTChart(){
+        return chart;
+
+    }
+
+    /**
+     * Return the underlying CTPlotArea bean, within the Chart
      *
      * @return the underlying CTPlotArea bean
      */
-    @Internal
-    protected CTPlotArea getCTPlotArea() {
+    private CTPlotArea getCTPlotArea() {
         return chart.getPlotArea();
     }
 
