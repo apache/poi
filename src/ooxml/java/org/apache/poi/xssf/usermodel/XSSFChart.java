@@ -28,24 +28,21 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
 import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.AxisPosition;
 import org.apache.poi.xddf.usermodel.ChartTypes;
 import org.apache.poi.xddf.usermodel.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.XDDFChart;
 import org.apache.poi.xddf.usermodel.XDDFChartAxis;
 import org.apache.poi.xddf.usermodel.XDDFChartData;
-import org.apache.poi.xddf.usermodel.XDDFChartLegend;
 import org.apache.poi.xddf.usermodel.XDDFDateAxis;
 import org.apache.poi.xddf.usermodel.XDDFLineChartData;
-import org.apache.poi.xddf.usermodel.XDDFManualLayout;
 import org.apache.poi.xddf.usermodel.XDDFPieChartData;
 import org.apache.poi.xddf.usermodel.XDDFRadarChartData;
 import org.apache.poi.xddf.usermodel.XDDFScatterChartData;
@@ -61,7 +58,6 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
@@ -71,7 +67,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
@@ -83,21 +78,12 @@ import org.w3c.dom.Text;
 /**
  * Represents a SpreadsheetML Chart
  */
-public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartAxisFactory {
+public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactory {
 
 	/**
 	 * Parent graphic frame.
 	 */
 	private XSSFGraphicFrame frame;
-
-	/**
-	 * Root element of the SpreadsheetML Chart part
-	 */
-	private CTChartSpace chartSpace;
-	/**
-	 * The Chart within that
-	 */
-	private CTChart chart;
 
 	@Deprecated
 	List<XSSFChartAxis> axis = new ArrayList<XSSFChartAxis>();
@@ -123,18 +109,13 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	 */
 	protected XSSFChart(PackagePart part) throws IOException, XmlException {
 		super(part);
-
-		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace();
-		chart = chartSpace.getChart();
 	}
 
 	/**
 	 * Construct a new CTChartSpace bean. By default, it's just an empty placeholder for chart objects.
 	 */
 	private void createChart() {
-		chartSpace = CTChartSpace.Factory.newInstance();
-		chart = chartSpace.addNewChart();
-		CTPlotArea plotArea = chart.addNewPlotArea();
+		CTPlotArea plotArea = getCTPlotArea();
 
 		plotArea.addNewLayout();
 		chart.addNewPlotVisOnly().setVal(true);
@@ -150,26 +131,6 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		pageMargins.setHeader(0.30);
 		pageMargins.setFooter(0.30);
 		printSettings.addNewPageSetup();
-	}
-
-	/**
-	 * Return the underlying CTChartSpace bean, the root element of the SpreadsheetML Chart part.
-	 *
-	 * @return the underlying CTChartSpace bean
-	 */
-	@Internal
-	public CTChartSpace getCTChartSpace() {
-		return chartSpace;
-	}
-
-	/**
-	 * Return the underlying CTChart bean, within the Chart Space
-	 *
-	 * @return the underlying CTChart bean
-	 */
-	@Internal
-	public CTChart getCTChart() {
-		return chart;
 	}
 
 	@Override
@@ -206,22 +167,26 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		this.frame = frame;
 	}
 
-	@Deprecated
+	@Override
+    @Deprecated
 	public XSSFChartDataFactory getChartDataFactory() {
 		return XSSFChartDataFactory.getInstance();
 	}
 
-	@Deprecated
+	@Override
+    @Deprecated
 	public XSSFChart getChartAxisFactory() {
 		return this;
 	}
 
-	@Deprecated
+	@Override
+    @Deprecated
 	public void plot(ChartData data, ChartAxis... chartAxis) {
 		data.fillChart(this, chartAxis);
 	}
 
-	@Deprecated
+	@Override
+    @Deprecated
 	public XSSFValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
 		long id = axis.size() + 1;
 		XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
@@ -234,7 +199,8 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return valueAxis;
 	}
 
-	@Deprecated
+	@Override
+    @Deprecated
 	public XSSFCategoryAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
 		long id = axis.size() + 1;
 		XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
@@ -247,7 +213,8 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return categoryAxis;
 	}
 
-	@Deprecated
+	@Override
+    @Deprecated
 	public XSSFDateAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
 		long id = axis.size() + 1;
 		XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
@@ -260,6 +227,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return dateAxis;
 	}
 
+    @Override
     @Deprecated
     public List<? extends XSSFChartAxis> getAxis() {
         if (axis.isEmpty() && hasAxis()) {
@@ -311,7 +279,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
     public XDDFChartData createData(ChartTypes type, XDDFChartAxis category, XDDFValueAxis values) {
         Map<Long, XDDFChartAxis> categories = Collections.singletonMap(category.getId(), category);
         Map<Long, XDDFValueAxis> mapValues = Collections.singletonMap(values.getId(), values);
-        final CTPlotArea plotArea = chart.getPlotArea();
+        final CTPlotArea plotArea = getCTPlotArea();
         switch (type) {
         case BAR:
             return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
@@ -328,35 +296,10 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
         }
     }
 
-    public void plot(XDDFChartData data) {
-        for (XDDFChartData.Series series : data.getSeries()) {
-            series.plot();
-        }
-    }
-
-    public XDDFManualLayout getOrAddManualLayout() {
-        return new XDDFManualLayout(chart.getPlotArea());
-    }
-
-	@Deprecated
+	@Override
+    @Deprecated
 	public XSSFManualLayout getManualLayout() {
 		return new XSSFManualLayout(this);
-	}
-
-	/**
-	 * @return true if only visible cells will be present on the chart,
-	 *         false otherwise
-	 */
-	public boolean isPlotOnlyVisibleCells() {
-		return chart.getPlotVisOnly().getVal();
-	}
-
-	/**
-	 * @param plotVisOnly a flag specifying if only visible cells should be
-	 *        present on the chart
-	 */
-	public void setPlotOnlyVisibleCells(boolean plotVisOnly) {
-		chart.getPlotVisOnly().setVal(plotVisOnly);
 	}
 
 	/**
@@ -391,8 +334,8 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		StringBuffer text = new StringBuffer();
 		XmlObject[] t = title
 			.selectPath("declare namespace a='"+XSSFDrawing.NAMESPACE_A+"' .//a:t");
-		for (int m = 0; m < t.length; m++) {
-			NodeList kids = t[m].getDomNode().getChildNodes();
+		for (XmlObject element : t) {
+			NodeList kids = element.getDomNode().getChildNodes();
 			final int count = kids.getLength();
 			for (int n = 0; n < count; n++) {
 				Node kid = kids.item(n);
@@ -524,19 +467,10 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	    strRef.setF(formula);
 	}
 
-	@Deprecated
+	@Override
+    @Deprecated
 	public XSSFChartLegend getOrCreateLegend() {
 		return new XSSFChartLegend(this);
-	}
-
-    public XDDFChartLegend getOrAddLegend() {
-        return new XDDFChartLegend(chart);
-    }
-
-	public void deleteLegend() {
-		if (chart.isSetLegend()) {
-			chart.unsetLegend();
-		}
 	}
 
 	/**

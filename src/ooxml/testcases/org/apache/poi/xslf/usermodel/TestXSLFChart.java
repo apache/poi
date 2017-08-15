@@ -201,7 +201,7 @@ public class TestXSLFChart {
     }
 
 	private void checkLegendOperations(XSLFChart chart) {
-		XDDFChartLegend legend = chart.getOrCreateLegend();
+		XDDFChartLegend legend = chart.getOrAddLegend();
         assertFalse(legend.isOverlay());
 		legend.setOverlay(true);
         assertTrue(legend.isOverlay());

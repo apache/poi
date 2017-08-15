@@ -40,12 +40,11 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.XDDFChart;
 import org.apache.poi.xddf.usermodel.XDDFChartAxis;
 import org.apache.poi.xddf.usermodel.XDDFChartData;
-import org.apache.poi.xddf.usermodel.XDDFChartLegend;
 import org.apache.poi.xddf.usermodel.XDDFDataSource;
 import org.apache.poi.xddf.usermodel.XDDFLineChartData;
 import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
@@ -59,19 +58,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTRadarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
 /**
@@ -80,7 +75,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
  *
  */
 @Beta
-public final class XSLFChart extends POIXMLDocumentPart {
+public final class XSLFChart extends XDDFChart {
     protected static final POIXMLRelation WORKBOOK_RELATIONSHIP = new POIXMLRelation(
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             POIXMLDocument.PACK_OBJECT_REL_TYPE,
@@ -90,34 +85,20 @@ public final class XSLFChart extends POIXMLDocumentPart {
 
 
     /**
-     * Root element of the Chart part
-     */
-    private final CTChartSpace chartSpace;
-
-    /**
-     * Chart element in the chart space
-     */
-    private final CTChart chart;
-
-    /**
      * Underlying workbook
      */
     private XSSFWorkbook workbook;
 
 
     /**
-     * Construct a chart.
+     * Construct a PresentationML chart.
      */
-    protected XSLFChart() throws IOException, XmlException {
+    protected XSLFChart() {
         super();
-
-        chartSpace = CTChartSpace.Factory.newInstance();
-        chart = chartSpace.addNewChart();
-        chart.addNewPlotArea();
     }
 
     /**
-     * Construct a chart from a package part.
+     * Construct a PresentationML chart from a package part.
      *
      * @param part the package part holding the chart data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
@@ -126,39 +107,6 @@ public final class XSLFChart extends POIXMLDocumentPart {
      */
     protected XSLFChart(PackagePart part) throws IOException, XmlException {
         super(part);
-
-        chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace();
-        chart = chartSpace.getChart();
-    }
-
-    /**
-     * Return the underlying CTChartSpace bean, the root element of the Chart part.
-     *
-     * @return the underlying CTChartSpace bean
-     */
-    @Internal
-    public CTChartSpace getCTChartSpace(){
-        return chartSpace;
-    }
-
-    /**
-     * Return the underlying CTChart bean, within the Chart Space
-     *
-     * @return the underlying CTChart bean
-     */
-    @Internal
-    public CTChart getCTChart(){
-        return chart;
-
-    }
-
-    /**
-     * Return the underlying CTPlotArea bean, within the Chart
-     *
-     * @return the underlying CTPlotArea bean
-     */
-    private CTPlotArea getCTPlotArea() {
-        return chart.getPlotArea();
     }
 
     public XSLFTextShape getTitle() {
@@ -235,45 +183,6 @@ public final class XSLFChart extends POIXMLDocumentPart {
         }
     }
 
-    public void setAutoTitleDeleted(boolean deleted) {
-        if (!chart.isSetAutoTitleDeleted()) {
-            chart.setAutoTitleDeleted(CTBoolean.Factory.newInstance());
-        }
-        chart.getAutoTitleDeleted().setVal(deleted);
-    }
-
-    public void setPlotVisualisationOnly(boolean only) {
-        if (!chart.isSetPlotVisOnly()) {
-            chart.setPlotVisOnly(CTBoolean.Factory.newInstance());
-        }
-        chart.getPlotVisOnly().setVal(only);
-    }
-
-    public void setFloor(int thickness) {
-        if (!chart.isSetFloor()) {
-            chart.setFloor(CTSurface.Factory.newInstance());
-        }
-        chart.getFloor().getThickness().setVal(thickness);
-    }
-
-    public void setBackWall(int thickness) {
-        if (!chart.isSetBackWall()) {
-            chart.setBackWall(CTSurface.Factory.newInstance());
-        }
-        chart.getBackWall().getThickness().setVal(thickness);
-    }
-
-    public void setSideWall(int thickness) {
-        if (!chart.isSetSideWall()) {
-            chart.setSideWall(CTSurface.Factory.newInstance());
-        }
-        chart.getSideWall().getThickness().setVal(thickness);
-    }
-
-    public XDDFChartLegend getOrCreateLegend() {
-    	return new XDDFChartLegend(chart);
-    }
-
     private void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
         int numOfPoints = categoryData.getPointCount();
         for (int i = 0; i < numOfPoints; i++) {
@@ -283,10 +192,11 @@ public final class XSLFChart extends POIXMLDocumentPart {
         }
     }
 
+    @Override
     public void plot(XDDFChartData data) {
+        super.plot(data);
         XSSFSheet sheet = getSheet();
         for(XDDFChartData.Series series : data.getSeries()) {
-            series.plot();
             fillSheet(sheet, series.getCategoryData(), series.getValuesData());
         }
     }
