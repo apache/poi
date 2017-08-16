@@ -117,6 +117,18 @@ public class ConditionalFormattingEvalTest {
         assertEquals("wrong # of rules for " + ref, 1, rules.size());
         
     }
+
+    @Test
+    public void testFormattingOnUndefinedCell() throws Exception {
+        wb = XSSFTestDataSamples.openSampleWorkbook("conditional_formatting_with_formula_on_second_sheet.xlsx");
+        formulaEval = new XSSFFormulaEvaluator(wb);
+        cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
+
+        sheet = wb.getSheet("Sales Plan");
+        getRulesFor(9,2);
+        assertNotEquals("No rules for " + ref, 0, rules.size());
+        assertEquals("wrong bg color for " + ref, "FFFFFF00", getColor(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()));
+    }
     
     private List<EvaluationConditionalFormatRule> getRulesFor(int row, int col) {
         ref = new CellReference(sheet.getSheetName(), row, col, false, false);
