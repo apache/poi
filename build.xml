@@ -2118,7 +2118,7 @@ under the License.
         <antcall target="maven-poms"/>
 
         <echo>Distribution located in ${dist.dir}</echo>
-        <echo>Use "ant dist-checksum" to create md5/sha1 checksums and GPG signatures</echo>
+        <echo>Use "ant dist-checksum" to create md5/sha1/sha512 checksums and GPG signatures</echo>
     </target>
 
     <target name="osgi" depends="mvn-install">
@@ -2356,6 +2356,9 @@ under the License.
     <target name="dist-checksum" depends="load-maven-server-settings">
         <fileset id="dist-archives" dir="${dist.dir}" includes="**/*.jar,**/*.pom,**/*.zip,**/*.tar.gz"/>
 
+        <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
+            <fileset refid="dist-archives"/>
+        </checksum>
         <checksum algorithm="sha1" format="MD5SUM">
             <fileset refid="dist-archives"/>
         </checksum>
@@ -2363,7 +2366,7 @@ under the License.
             <fileset refid="dist-archives"/>
         </checksum>
 
-        <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1" eol="unix"/>
+        <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1,**/*.sha512" eol="unix"/>
 
         <downloadfile src="${dist.bouncycastle-prov.url}" dest="${dist.bouncycastle-prov.jar}"/>
         <downloadfile src="${dist.bouncycastle-bcpg.url}" dest="${dist.bouncycastle-bcpg.jar}"/>
@@ -2432,6 +2435,9 @@ under the License.
   </versioning>
 </metadata>]]></echo>
             <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />
+            <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
+                <fileset dir="${metadir}" includes="maven-metadata.xml"/>
+            </checksum>
             <checksum algorithm="sha1" format="MD5SUM">
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
             </checksum>
@@ -2439,7 +2445,7 @@ under the License.
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
             </checksum>
 
-            <fixcrlf srcDir="${metadir}" includes="*.md5,*.sha1" eol="unix"/>
+            <fixcrlf srcDir="${metadir}" includes="*.md5,*.sha1,*.sha512" eol="unix"/>
 
             <downloadfile src="${dist.nexus-staging.url}" dest="${dist.nexus-staging.jar}"/>
             <taskdef uri="antlib:org.sonatype.nexus.ant.staging" resource="org/sonatype/nexus/ant/staging/antlib.xml">
@@ -2736,12 +2742,16 @@ under the License.
 
         <loadChecksum property="bin-tar-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5"/>
         <loadChecksum property="bin-tar-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1"/>
+        <loadChecksum property="bin-tar-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512"/>
         <loadChecksum property="bin-zip-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.md5"/>
         <loadChecksum property="bin-zip-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha1"/>
+        <loadChecksum property="bin-zip-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha512"/>
         <loadChecksum property="src-tar-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.md5"/>
         <loadChecksum property="src-tar-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1"/>
+        <loadChecksum property="src-tar-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512"/>
         <loadChecksum property="src-zip-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.md5"/>
         <loadChecksum property="src-zip-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha1"/>
+        <loadChecksum property="src-zip-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha512"/>
 
         <loadFilesize property="bin-tar-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz"/>
         <loadFilesize property="bin-zip-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip"/>
@@ -2773,6 +2783,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1">
           ${bin-tar-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512">
+          ${bin-tar-sha512}</link>
         </li>
         <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</link>
           (${bin-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
@@ -2782,6 +2795,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha1">
           ${bin-zip-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha512">
+          ${bin-zip-sha512}</link>
         </li>
       </ul>
       </section>
@@ -2795,6 +2811,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1">
           ${src-tar-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512">
+          ${src-tar-sha512}</link>
         </li>
         <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
           (${src-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
@@ -2804,6 +2823,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha1">
           ${src-zip-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha512">
+          ${src-zip-sha512}</link>
         </li>
       </ul>
       </section>
