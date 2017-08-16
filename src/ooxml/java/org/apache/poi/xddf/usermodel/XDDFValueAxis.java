@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -31,6 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
+@Beta
 public class XDDFValueAxis extends XDDFChartAxis {
 
     private CTValAx ctValAx;

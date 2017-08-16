@@ -19,6 +19,9 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.util.Beta;
+
+@Beta
 public interface XDDFNumericalDataSource<T extends Number> extends XDDFDataSource<T> {
     String getFormatCode();
 

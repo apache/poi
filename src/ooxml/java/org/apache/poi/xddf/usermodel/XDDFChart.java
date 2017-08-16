@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -34,6 +35,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 
+@Beta
 public abstract class XDDFChart extends POIXMLDocumentPart {
 
     /**
