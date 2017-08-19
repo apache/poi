@@ -502,8 +502,6 @@ public abstract class BaseTestSheetShiftRows {
      * Unified test for:
      * bug 46742: XSSFSheet.shiftRows should shift hyperlinks
      * bug 52903: HSSFSheet.shiftRows should shift hyperlinks
-     *
-     * @throws IOException
      */
     @Test
     public void testBug46742_52903_shiftHyperlinks() throws IOException {
@@ -642,7 +640,7 @@ public abstract class BaseTestSheetShiftRows {
     public void shiftMergedRowsToMergedRowsUp() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
-        populateSheetCells(sheet);
+        populateSheetCells(sheet, 2);
 
 
         CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
@@ -661,9 +659,55 @@ public abstract class BaseTestSheetShiftRows {
         wb.close();
     }
 
-    private void populateSheetCells(Sheet sheet) {
+    @Test
+    public void shiftMergedRowsToMergedRowsOverlappingMergedRegion() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        populateSheetCells(sheet, 10);
+
+        CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
+        CellRangeAddress A2_C2 = new CellRangeAddress(1, 7, 0, 2);
+
+        sheet.addMergedRegion(A1_E1);
+        sheet.addMergedRegion(A2_C2);
+
+        // A1:E1 should move to A5:E5
+        // A2:C2 should be removed
+        sheet.shiftRows(0, 0, 4);
+
+        assertEquals(1, sheet.getNumMergedRegions());
+        assertEquals(CellRangeAddress.valueOf("A5:E5"), sheet.getMergedRegion(0));
+
+        wb.close();
+    }
+
+    @Test
+    public void bug60384ShiftMergedRegion() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        populateSheetCells(sheet, 9);
+
+
+        CellRangeAddress A8_E8 = new CellRangeAddress(7, 7, 0, 4);
+        CellRangeAddress A9_C9 = new CellRangeAddress(8, 8, 0, 2);
+
+        sheet.addMergedRegion(A8_E8);
+        sheet.addMergedRegion(A9_C9);
+
+        // A1:E1 should be removed
+        // A2:C2 will be A1:C1
+        sheet.shiftRows(3, sheet.getLastRowNum(), 1);
+
+        assertEquals(2, sheet.getNumMergedRegions());
+        assertEquals(CellRangeAddress.valueOf("A9:E9"), sheet.getMergedRegion(0));
+        assertEquals(CellRangeAddress.valueOf("A10:C10"), sheet.getMergedRegion(1));
+
+        wb.close();
+    }
+
+    private void populateSheetCells(Sheet sheet, int rowCount) {
         // populate sheet cells
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < rowCount; i++) {
             Row row = sheet.createRow(i);
             for (int j = 0; j < 5; j++) {
                 Cell cell = row.createCell(j);
@@ -678,7 +722,7 @@ public abstract class BaseTestSheetShiftRows {
         Sheet sheet = wb.createSheet("test");
 
         // populate sheet cells
-        populateSheetCells(sheet);
+        populateSheetCells(sheet, 2);
 
         CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
         CellRangeAddress A2_C2 = new CellRangeAddress(1, 1, 0, 2);
