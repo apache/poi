@@ -119,7 +119,19 @@ public final class OOXMLLite {
                 "TestFormulaEvaluatorOnXSSF\\$SS",
                 "TestMultiSheetFormulaEvaluatorOnXSSF\\$Result",
                 "TestMultiSheetFormulaEvaluatorOnXSSF\\$SS",
-                "TestXSSFBugs\\$\\d"
+                "TestXSSFBugs\\$\\d",
+                "AddImageBench",
+                "AddImageBench_jmhType_B\\d",
+                "AddImageBench_benchCreatePicture_jmhTest",
+                "TestEvilUnclosedBRFixingInputStream\\$EvilUnclosedBRFixingInputStream",
+                "TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource\\$TempFileRecordingSheetDataWriterWithDecorator",
+                "TestXSSFBReader\\$1",
+                "TestXSSFBReader\\$TestSheetHandler",
+                "TestFormulaEvaluatorOnXSSF\\$1",
+                "TestMultiSheetFormulaEvaluatorOnXSSF\\$1",
+                "TestZipPackagePropertiesMarshaller\\$1",
+                "SLCommonUtils",
+                "TestPPTX2PNG\\$1"
         );
         System.out.println("Collecting unit tests from " + _testDir);
         collectTests(_testDir, _testDir, lst, ".+.class$", ".+(" + exclude + ").class");
