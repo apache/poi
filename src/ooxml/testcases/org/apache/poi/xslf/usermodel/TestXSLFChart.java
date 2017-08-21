@@ -63,7 +63,7 @@ public class TestXSLFChart {
     @Test
     public void testFillPieChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx");
-        XSLFChart chart = findChart(pptx);
+        XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);
 
         XDDFPieChartData pie = (XDDFPieChartData) data.get(0);
@@ -78,29 +78,32 @@ public class TestXSLFChart {
     @Test
     public void testFillBarChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("bar-chart.pptx");
-        XSLFChart chart = findChart(pptx);
-        List<XDDFChartData> data = findChartData(chart);
+        XSLFSlide slide = pptx.getSlides().get(0);
+        // duplicate slide and chart before applying "destructive" tests to it
+        XSLFChart chart2 = findChart(pptx.createSlide().importContent(slide));
+        XSLFChart chart = findChart(slide);
 
+        List<XDDFChartData> data = findChartData(chart);
         XDDFBarChartData bar = (XDDFBarChartData) data.get(0);
         assertEquals(BarDirection.BAR, bar.getBarDirection());
         assertEquals(BarGrouping.CLUSTERED, bar.getBarGrouping());
         assertEquals(100, bar.getGapWidth());
-
-        bar.setBarDirection(BarDirection.COL);
-        assertEquals(BarDirection.COL, bar.getBarDirection());
-
-        // additionally, you can adjust the axes
-        bar.getCategoryAxis().setOrientation(AxisOrientation.MIN_MAX);
-        bar.getValueAxes().get(0).setPosition(AxisPosition.BOTTOM);
-
         fillChartData(chart, bar);
+
+        XDDFBarChartData column = (XDDFBarChartData) findChartData(chart2).get(0);
+        column.setBarDirection(BarDirection.COL);
+        assertEquals(BarDirection.COL, column.getBarDirection());
+        column.getCategoryAxis().setOrientation(AxisOrientation.MIN_MAX);
+        column.getValueAxes().get(0).setPosition(AxisPosition.BOTTOM);
+        fillChartData(chart2, column);
+
         pptx.close();
     }
 
     @Test
     public void testFillLineChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("line-chart.pptx");
-        XSLFChart chart = findChart(pptx);
+        XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);
 
         XDDFLineChartData line = (XDDFLineChartData) data.get(0);
@@ -115,7 +118,7 @@ public class TestXSLFChart {
     @Test
     public void testFillRadarChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("radar-chart.pptx");
-        XSLFChart chart = findChart(pptx);
+        XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);
 
         XDDFRadarChartData radar = (XDDFRadarChartData) data.get(0);
@@ -130,7 +133,7 @@ public class TestXSLFChart {
     @Test
     public void testFillScatterChartTemplate() throws IOException {
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("scatter-chart.pptx");
-        XSLFChart chart = findChart(pptx);
+        XSLFChart chart = findChart(pptx.getSlides().get(0));
         List<XDDFChartData> data = findChartData(chart);
 
         XDDFScatterChartData scatter = (XDDFScatterChartData) data.get(0);
@@ -159,9 +162,7 @@ public class TestXSLFChart {
         chart.plot(data);
 	}
 
-    private XSLFChart findChart(XMLSlideShow pptx) {
-        XSLFSlide slide = pptx.getSlides().get(0);
-
+    private XSLFChart findChart(XSLFSlide slide) {
         // find chart in the slide
         XSLFChart chart = null;
         for(POIXMLDocumentPart part : slide.getRelations()){

@@ -151,12 +151,16 @@ public final class XSLFChart extends XDDFChart {
         return sheet;
     }
 
-    protected PackagePart getWorksheetPart() throws InvalidFormatException {
+    private PackagePart getWorksheetPart() throws InvalidFormatException {
         for (RelationPart part : getRelationParts()) {
             if (WORKBOOK_RELATIONSHIP.getRelation().equals(part.getRelationship().getRelationshipType())) {
                 return getTargetPart(part.getRelationship());
             }
         }
+        return null;
+    }
+
+    private PackagePart createWorksheetPart() throws InvalidFormatException {
         Integer chartIdx = XSLFRelation.CHART.getFileNameIndex(this);
         POIXMLDocumentPart worksheet = getParent().createRelationship(XSLFChart.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx);
         return getTargetPart(this.addRelation(null, XSLFChart.WORKBOOK_RELATIONSHIP, worksheet).getRelationship());
@@ -165,7 +169,13 @@ public final class XSLFChart extends XDDFChart {
     protected XSSFWorkbook getWorkbook() throws IOException, InvalidFormatException {
         if (workbook == null) {
             try {
-                workbook = new XSSFWorkbook(getWorksheetPart().getInputStream());
+                PackagePart worksheetPart = getWorksheetPart();
+                if (worksheetPart == null) {
+                    workbook = new XSSFWorkbook();
+                    workbook.createSheet();
+                } else {
+                    workbook = new XSSFWorkbook(worksheetPart.getInputStream());
+                }
             } catch (NotOfficeXmlFileException e) {
                 workbook = new XSSFWorkbook();
                 workbook.createSheet();
@@ -175,7 +185,11 @@ public final class XSLFChart extends XDDFChart {
     }
 
     protected void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
-        OutputStream xlsOut = getWorksheetPart().getOutputStream();
+        PackagePart worksheetPart = getWorksheetPart();
+        if (worksheetPart == null) {
+            worksheetPart = createWorksheetPart();
+        }
+        OutputStream xlsOut = worksheetPart.getOutputStream();
         try {
             workbook.write(xlsOut);
         } finally {
