@@ -71,7 +71,9 @@ public class POIXMLTypeLoader {
         // DEFAULT_XML_OPTIONS.setLoadEntityBytesLimit(4096);
         
         // POI is not thread-safe - so we can switch to unsynchronized xmlbeans mode - see #61350
-        DEFAULT_XML_OPTIONS.setUnsynchronized();
+        // Update: disabled again for now as it caused strange NPEs and other problems
+        // when reading properties in separate workbooks in multiple threads
+        // DEFAULT_XML_OPTIONS.setUnsynchronized();
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
