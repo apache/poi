@@ -17,6 +17,7 @@
 
 package org.apache.poi.util;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -27,8 +28,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
+import org.apache.poi.EmptyFileException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,7 +59,55 @@ public final class TestIOUtils {
 
     @AfterClass
     public static void tearDown() throws IOException {
+        //noinspection ResultOfMethodCallIgnored
         TMP.delete();
+    }
+
+    @Test
+    public void testPeekFirst8Bytes() throws Exception {
+        assertArrayEquals("01234567".getBytes("UTF-8"),
+                IOUtils.peekFirst8Bytes(new ByteArrayInputStream("0123456789".getBytes("UTF-8"))));
+    }
+
+    @Test
+    public void testPeekFirst8BytesWithPushbackInputStream() throws Exception {
+        assertArrayEquals("01234567".getBytes("UTF-8"),
+                IOUtils.peekFirst8Bytes(new PushbackInputStream(new ByteArrayInputStream("0123456789".getBytes("UTF-8")), 8)));
+    }
+
+    @Test
+    public void testPeekFirst8BytesTooLessAvailable() throws Exception {
+        assertArrayEquals(new byte[] { 1, 2, 3, 0, 0, 0, 0, 0},
+                IOUtils.peekFirst8Bytes(new ByteArrayInputStream(new byte[] { 1, 2, 3})));
+    }
+
+    @Test(expected = EmptyFileException.class)
+    public void testPeekFirst8BytesEmpty() throws Exception {
+        IOUtils.peekFirst8Bytes(new ByteArrayInputStream(new byte[] {}));
+    }
+
+    @Test
+    public void testToByteArray() throws Exception {
+        assertArrayEquals(new byte[] { 1, 2, 3},
+                IOUtils.toByteArray(new ByteArrayInputStream(new byte[] { 1, 2, 3})));
+    }
+
+    @Test(expected = IOException.class)
+    public void testToByteArrayToSmall() throws Exception {
+        assertArrayEquals(new byte[] { 1, 2, 3},
+                IOUtils.toByteArray(new ByteArrayInputStream(new byte[] { 1, 2, 3}), 10));
+    }
+
+    @Test
+    public void testToByteArrayByteBuffer() throws Exception {
+        assertArrayEquals(new byte[] { 1, 2, 3},
+                IOUtils.toByteArray(ByteBuffer.wrap(new byte[]{1, 2, 3}), 10));
+    }
+
+    @Test
+    public void testToByteArrayByteBufferToSmall() throws Exception {
+        assertArrayEquals(new byte[] { 1, 2, 3, 4, 5, 6, 7},
+                IOUtils.toByteArray(ByteBuffer.wrap(new byte[]{1, 2, 3, 4, 5, 6, 7}), 3));
     }
 
     @Test
@@ -91,6 +143,11 @@ public final class TestIOUtils {
     }
 
     @Test
+    public void testSkipFullyBug61294() throws IOException {
+        IOUtils.skipFully(new ByteArrayInputStream(new byte[0]), 1);
+    }
+
+    @Test
     public void testZeroByte() throws IOException {
         long skipped = IOUtils.skipFully((new ByteArrayInputStream(new byte[0])), 100);
         assertEquals("zero byte", -1L, skipped);
@@ -105,7 +162,7 @@ public final class TestIOUtils {
     @Test(expected = IllegalArgumentException.class)
     public void testSkipNegative() throws IOException {
         InputStream is =  new FileInputStream(TMP);
-        long skipped = IOUtils.skipFully(is, -1);
+        IOUtils.skipFully(is, -1);
     }
 
     @Test
