@@ -206,7 +206,7 @@ public final class IOUtils {
      *
      * @param doc  a writeable document to write to the output stream
      * @param out  the output stream that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
      */
     public static void write(POIDocument doc, OutputStream out) throws IOException {
         try {
@@ -225,7 +225,7 @@ public final class IOUtils {
      *
      * @param doc  a writeable document to write to the output stream
      * @param out  the output stream that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
      */
     public static void write(Workbook doc, OutputStream out) throws IOException {
         try {
@@ -245,7 +245,7 @@ public final class IOUtils {
      *
      * @param doc  a writeable and closeable document to write to the output stream, then close
      * @param out  the output stream that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
      */
     public static void writeAndClose(POIDocument doc, OutputStream out) throws IOException {
         try {
@@ -264,7 +264,7 @@ public final class IOUtils {
      *
      * @param doc  a writeable and closeable document to write to the output file, then close
      * @param out  the output file that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
      */
     public static void writeAndClose(POIDocument doc, File out) throws IOException {
         try {
@@ -282,7 +282,7 @@ public final class IOUtils {
      * This function exists for Java 6 code.
      *
      * @param doc  a writeable document to write in-place
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the file
      */
     public static void writeAndClose(POIDocument doc) throws IOException {
         try {
