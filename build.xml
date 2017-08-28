@@ -2408,7 +2408,8 @@ under the License.
 
             <copy todir="${repo}">
                 <mappedresources>
-                    <fileset dir="build/dist/maven" includes="@{artifactId}/**"/>
+                	<!-- add sha-512 when nexus rules are updated (1/2) -->
+                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512"/>
                     <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
                 </mappedresources>
             </copy>
@@ -2434,10 +2435,11 @@ under the License.
     <lastUpdated>${lastUpdated}</lastUpdated>
   </versioning>
 </metadata>]]></echo>
-            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />
-            <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
+            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />                	<!-- add sha-512 when nexus rules are updated -->
+            <!-- add sha-512 when nexus rules are updated (2/2) -->
+            <!--checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
-            </checksum>
+            </checksum-->
             <checksum algorithm="sha1" format="MD5SUM">
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
             </checksum>
