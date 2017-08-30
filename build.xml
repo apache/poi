@@ -178,6 +178,9 @@ under the License.
     <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.1.jar"/>
     <property name="main.commons-collections4.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
+    <property name="main.commons-math3.jar" location="${main.lib}/commons-math3-3.6.1.jar"/>
+    <property name="main.commons-math3.url"
+              value="${repository.m2}/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
 
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.6.jar"/>
@@ -326,6 +329,7 @@ under the License.
         <pathelement location="${main.commons-logging.jar}"/>
         <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.commons-collections4.jar}"/>
+        <pathelement location="${main.commons-math3.jar}"/>
     </path>
 
     <!-- some libraries should only be required for compiling/running tests -->
@@ -631,6 +635,7 @@ under the License.
                     <available file="${dsig.xmlsec.jar}"/>
                     <available file="${dsig.sl4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
+                    <available file="${main.commons-math3.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -652,6 +657,7 @@ under the License.
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
+        <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
         <unzip src="${jacoco.zip}" dest=".">
             <patternset>
                 <include name="lib/*.jar"/>
@@ -2043,6 +2049,7 @@ under the License.
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
+                    <include name="commons-math3-*.jar"/>
                     <include name="junit-*.jar"/>
                     <include name="log4j-*.jar"/>
                 </fileset>
@@ -2305,6 +2312,7 @@ under the License.
             <auxClasspath path="${ooxml.curvesapi.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-collections4.jar}" />
+            <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.junit.jar}" />
