@@ -421,4 +421,16 @@ public class TestXWPFWordExtractor extends TestCase {
                 extractor.getText());
         extractor.close();
     }
+
+    public void testPhonetic() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61470.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        //expect: baseText (phoneticText)
+        assertEquals("\u6771\u4EAC (\u3068\u3046\u304D\u3087\u3046)", extractor.getText().trim());
+        extractor.close();
+        extractor = new XWPFWordExtractor(doc);
+        extractor.setConcatenatePhoneticRuns(false);
+        assertEquals("\u6771\u4EAC", extractor.getText().trim());
+    }
+
 }
