@@ -27,6 +27,8 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.util.CellRangeAddress;
+
 
 /**
  * Represents a cell being used for forked evaluation that has had a value set different from the
@@ -153,6 +155,16 @@ final class ForkedEvaluationCell implements EvaluationCell {
 	@Override
 	public int getColumnIndex() {
 		return _masterCell.getColumnIndex();
+	}
+	
+	@Override
+	public CellRangeAddress getArrayFormulaRange() {
+		return _masterCell.getArrayFormulaRange();
+	}
+	
+	@Override
+	public boolean isPartOfArrayFormulaGroup() {
+		return _masterCell.isPartOfArrayFormulaGroup();
 	}
 	/**
 	 * Will return {@link CellType} in a future version of POI.

@@ -483,9 +483,12 @@ public final class XSSFCell implements Cell {
         }
 
         CTCellFormula f = _cell.getF();
-        if (isPartOfArrayFormulaGroup() && f == null) {
-            XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
-            return cell.getCellFormula(fpb);
+        if (isPartOfArrayFormulaGroup()) {
+            /* In an excel generated array formula, the formula property might be set, but the string is empty in slave cells */
+            if (f == null || f.getStringValue().isEmpty()) {
+                XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
+                return cell.getCellFormula(fpb);
+            }
         }
         if (f.getT() == STCellFormulaType.SHARED) {
             return convertSharedFormula((int)f.getSi(), fpb == null ? XSSFEvaluationWorkbook.create(getSheet().getWorkbook()) : fpb);
