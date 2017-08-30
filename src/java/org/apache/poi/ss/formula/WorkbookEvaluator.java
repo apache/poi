@@ -579,7 +579,14 @@ public final class WorkbookEvaluator {
      */
     private static ValueEval dereferenceResult(ValueEval evaluationResult, OperationEvaluationContext ec) {
         ValueEval value;
-        
+
+        if (ec == null) {
+            throw new IllegalArgumentException("OperationEvaluationContext ec is null");
+        }
+        if (ec.getWorkbook() == null) {
+            throw new IllegalArgumentException("OperationEvaluationContext ec.getWorkbook() is null");
+        }
+
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
  
