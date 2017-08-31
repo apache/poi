@@ -1098,7 +1098,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
         // Any picture text?
         if (pictureText != null && pictureText.length() > 0) {
-            text.append("\n").append(pictureText);
+            text.append("\n").append(pictureText).append("\n");
         }
         c.dispose();
         return text.toString();
