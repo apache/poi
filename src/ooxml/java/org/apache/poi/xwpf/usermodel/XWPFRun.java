@@ -1096,6 +1096,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 handleRuby(o, text, true);
             }
         }
+        // Any picture text?
+        if (pictureText != null && pictureText.length() > 0) {
+            text.append("\n").append(pictureText);
+        }
         c.dispose();
         return text.toString();
     }
@@ -1194,13 +1198,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                     "[footnoteRef:" + ftn.getId().intValue() + "]" : "[endnoteRef:" + ftn.getId().intValue() + "]";
             text.append(footnoteRef);
         }
-
-
-        // Any picture text?
-        if (pictureText != null && pictureText.length() > 0) {
-            text.append("\n").append(pictureText);
-        }
-
     }
 
     /**
