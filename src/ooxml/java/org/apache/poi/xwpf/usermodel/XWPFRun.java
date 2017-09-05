@@ -68,6 +68,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRuby;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyContent;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedHpsMeasure;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedTwipsMeasure;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
@@ -1042,10 +1044,15 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Returns the string version of the text
+     * Returns the string version of the text and the phonetic string
      */
     public String toString() {
-        return text();
+        String phonetic = getPhonetic();
+        if (phonetic.length() > 0) {
+            return text() +" ("+phonetic.toString()+")";
+        } else {
+            return text();
+        }
     }
 
     /**
@@ -1061,71 +1068,136 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         c.selectPath("./*");
         while (c.toNextSelection()) {
             XmlObject o = c.getObject();
-            if (o instanceof CTText) {
+            if (o instanceof CTRuby) {
+                handleRuby(o, text, false);
+                continue;
+            }
+            _getText(o, text);
+        }
+        c.dispose();
+        return text.toString();
+
+    }
+
+    /**
+     *
+     * @return the phonetic (ruby) string associated with this run or an empty String if none exists
+     */
+    public String getPhonetic() {
+        StringBuffer text = new StringBuffer();
+
+        // Grab the text and tabs of the text run
+        // Do so in a way that preserves the ordering
+        XmlCursor c = run.newCursor();
+        c.selectPath("./*");
+        while (c.toNextSelection()) {
+            XmlObject o = c.getObject();
+            if (o instanceof CTRuby) {
+                handleRuby(o, text, true);
+            }
+        }
+        // Any picture text?
+        if (pictureText != null && pictureText.length() > 0) {
+            text.append("\n").append(pictureText).append("\n");
+        }
+        c.dispose();
+        return text.toString();
+    }
+
+    /**
+     *
+     * @param rubyObj rubyobject
+     * @param text buffer to which to append the content
+     * @param extractPhonetic extract the phonetic (rt) component or the base component
+     */
+    private void handleRuby(XmlObject rubyObj, StringBuffer text, boolean extractPhonetic) {
+        XmlCursor c = rubyObj.newCursor();
+
+        //according to the spec, a ruby object
+        //has the phonetic (rt) first, then the actual text (base)
+        //second.
+
+        c.selectPath(".//*");
+        boolean inRT = false;
+        boolean inBase = false;
+        while (c.toNextSelection()) {
+            XmlObject o = c.getObject();
+            if (o instanceof CTRubyContent) {
                 String tagName = o.getDomNode().getNodeName();
-                // Field Codes (w:instrText, defined in spec sec. 17.16.23)
-                //  come up as instances of CTText, but we don't want them
-                //  in the normal text output
-                if (!"w:instrText".equals(tagName)) {
-                    text.append(((CTText) o).getStringValue());
+                if ("w:rt".equals(tagName)) {
+                    inRT = true;
+                } else if ("w:rubyBase".equals(tagName)) {
+                    inRT = false;
+                    inBase = true;
+                }
+            } else {
+                if (extractPhonetic && inRT) {
+                    _getText(o, text);
+                } else if (! extractPhonetic && inBase) {
+                    _getText(o, text);
                 }
             }
+        }
+        c.dispose();
+    }
 
-            // Complex type evaluation (currently only for extraction of check boxes)
-            if (o instanceof CTFldChar) {
-                CTFldChar ctfldChar = ((CTFldChar) o);
-                if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
-                    if (ctfldChar.getFfData() != null) {
-                        for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
-                            if (checkBox.getDefault() != null && checkBox.getDefault().getVal() == STOnOff.X_1) {
-                                text.append("|X|");
-                            } else {
-                                text.append("|_|");
-                            }
+    private void _getText(XmlObject o, StringBuffer text) {
+
+        if (o instanceof CTText) {
+            String tagName = o.getDomNode().getNodeName();
+            // Field Codes (w:instrText, defined in spec sec. 17.16.23)
+            //  come up as instances of CTText, but we don't want them
+            //  in the normal text output
+            if (!"w:instrText".equals(tagName)) {
+                text.append(((CTText) o).getStringValue());
+            }
+        }
+
+        // Complex type evaluation (currently only for extraction of check boxes)
+        if (o instanceof CTFldChar) {
+            CTFldChar ctfldChar = ((CTFldChar) o);
+            if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
+                if (ctfldChar.getFfData() != null) {
+                    for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
+                        if (checkBox.getDefault() != null && checkBox.getDefault().getVal() == STOnOff.X_1) {
+                            text.append("|X|");
+                        } else {
+                            text.append("|_|");
                         }
                     }
                 }
             }
+        }
 
-            if (o instanceof CTPTab) {
+        if (o instanceof CTPTab) {
+            text.append("\t");
+        }
+        if (o instanceof CTBr) {
+            text.append("\n");
+        }
+        if (o instanceof CTEmpty) {
+            // Some inline text elements get returned not as
+            //  themselves, but as CTEmpty, owing to some odd
+            //  definitions around line 5642 of the XSDs
+            // This bit works around it, and replicates the above
+            //  rules for that case
+            String tagName = o.getDomNode().getNodeName();
+            if ("w:tab".equals(tagName) || "tab".equals(tagName)) {
                 text.append("\t");
             }
-            if (o instanceof CTBr) {
+            if ("w:br".equals(tagName) || "br".equals(tagName)) {
                 text.append("\n");
             }
-            if (o instanceof CTEmpty) {
-                // Some inline text elements get returned not as
-                //  themselves, but as CTEmpty, owing to some odd
-                //  definitions around line 5642 of the XSDs
-                // This bit works around it, and replicates the above
-                //  rules for that case
-                String tagName = o.getDomNode().getNodeName();
-                if ("w:tab".equals(tagName) || "tab".equals(tagName)) {
-                    text.append("\t");
-                }
-                if ("w:br".equals(tagName) || "br".equals(tagName)) {
-                    text.append("\n");
-                }
-                if ("w:cr".equals(tagName) || "cr".equals(tagName)) {
-                    text.append("\n");
-                }
-            }
-            if (o instanceof CTFtnEdnRef) {
-                CTFtnEdnRef ftn = (CTFtnEdnRef) o;
-                String footnoteRef = ftn.getDomNode().getLocalName().equals("footnoteReference") ?
-                        "[footnoteRef:" + ftn.getId().intValue() + "]" : "[endnoteRef:" + ftn.getId().intValue() + "]";
-                text.append(footnoteRef);
+            if ("w:cr".equals(tagName) || "cr".equals(tagName)) {
+                text.append("\n");
             }
         }
-
-        c.dispose();
-
-        // Any picture text?
-        if (pictureText != null && pictureText.length() > 0) {
-            text.append("\n").append(pictureText);
+        if (o instanceof CTFtnEdnRef) {
+            CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+            String footnoteRef = ftn.getDomNode().getLocalName().equals("footnoteReference") ?
+                    "[footnoteRef:" + ftn.getId().intValue() + "]" : "[endnoteRef:" + ftn.getId().intValue() + "]";
+            text.append(footnoteRef);
         }
-
-        return text.toString();
     }
 
     /**
