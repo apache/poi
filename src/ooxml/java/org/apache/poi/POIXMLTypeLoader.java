@@ -33,6 +33,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeLoader;
 import org.apache.xmlbeans.XmlBeans;
@@ -49,7 +50,7 @@ import org.xml.sax.SAXException;
 @SuppressWarnings("deprecation")
 public class POIXMLTypeLoader {
 
-    private static ThreadLocal<ClassLoader> classLoader = new ThreadLocal<ClassLoader>();
+    private static ThreadLocal<SchemaTypeLoader> typeLoader = new ThreadLocal<SchemaTypeLoader>();
 
     // TODO: Do these have a good home like o.a.p.openxml4j.opc.PackageNamespaces and PackageRelationshipTypes?
     // These constants should be common to all of POI and easy to use by other applications such as Tika
@@ -109,20 +110,26 @@ public class POIXMLTypeLoader {
      * when the user code is finalized.
      * 
      * @param cl the classloader to be used when XmlBeans classes and definitions are looked up
+     * @deprecated in POI 3.17 - setting a classloader from the outside is now obsolete,
+     *  the classloader of the SchemaType will be used
      */
+    @Deprecated
+    @Removal(version="4.0")
     public static void setClassLoader(ClassLoader cl) {
-        classLoader.set(cl);
     }
     
-    private static SchemaTypeLoader getTypeLoader() {
-        ClassLoader cl = classLoader.get();
-        return (cl == null)
-            ? XmlBeans.getContextTypeLoader()
-            : XmlBeans.typeLoaderForClassLoader(cl);
+    private static SchemaTypeLoader getTypeLoader(SchemaType type) {
+        SchemaTypeLoader tl = typeLoader.get();
+        if (tl == null) {
+            ClassLoader cl = type.getClass().getClassLoader();
+            tl = XmlBeans.typeLoaderForClassLoader(cl);
+            typeLoader.set(tl);
+        }
+        return tl;
     }
     
     public static XmlObject newInstance(SchemaType type, XmlOptions options) {
-        return getTypeLoader().newInstance(type, getXmlOptions(options));
+        return getTypeLoader(type).newInstance(type, getXmlOptions(options));
     }
 
     public static XmlObject parse(String xmlText, SchemaType type, XmlOptions options) throws XmlException {
@@ -154,34 +161,34 @@ public class POIXMLTypeLoader {
     public static XmlObject parse(InputStream jiois, SchemaType type, XmlOptions options) throws XmlException, IOException {
         try {
             Document doc = DocumentHelper.readDocument(jiois);
-            return getTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+            return getTypeLoader(type).parse(doc.getDocumentElement(), type, getXmlOptions(options));
         } catch (SAXException e) {
             throw new IOException("Unable to parse xml bean", e);
         }
     }
 
     public static XmlObject parse(XMLStreamReader xsr, SchemaType type, XmlOptions options) throws XmlException {
-        return getTypeLoader().parse(xsr, type, getXmlOptions(options));
+        return getTypeLoader(type).parse(xsr, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(Reader jior, SchemaType type, XmlOptions options) throws XmlException, IOException {
         try {
             Document doc = DocumentHelper.readDocument(new InputSource(jior));
-            return getTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+            return getTypeLoader(type).parse(doc.getDocumentElement(), type, getXmlOptions(options));
         } catch (SAXException e) {
             throw new XmlException("Unable to parse xml bean", e);
         }
     }
 
     public static XmlObject parse(Node node, SchemaType type, XmlOptions options) throws XmlException {
-        return getTypeLoader().parse(node, type, getXmlOptions(options));
+        return getTypeLoader(type).parse(node, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(XMLInputStream xis, SchemaType type, XmlOptions options) throws XmlException, XMLStreamException {
-        return getTypeLoader().parse(xis, type, getXmlOptions(options));
+        return getTypeLoader(type).parse(xis, type, getXmlOptions(options));
     }
     
     public static XMLInputStream newValidatingXMLInputStream ( XMLInputStream xis, SchemaType type, XmlOptions options ) throws XmlException, XMLStreamException {
-        return getTypeLoader().newValidatingXMLInputStream(xis, type, getXmlOptions(options));
+        return getTypeLoader(type).newValidatingXMLInputStream(xis, type, getXmlOptions(options));
     }
 }
