@@ -33,6 +33,7 @@ import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.poi.xwpf.usermodel.XWPFSDTCell;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
@@ -53,6 +54,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 
     private XWPFDocument document;
     private boolean fetchHyperlinks = false;
+    private boolean concatenatePhoneticRuns = true;
 
     public XWPFWordExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
         this(new XWPFDocument(container));
@@ -84,6 +86,14 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
      */
     public void setFetchHyperlinks(boolean fetch) {
         fetchHyperlinks = fetch;
+    }
+
+    /**
+     * Should we concatenate phonetic runs in extraction.  Default is <code>true</code>
+     * @param concatenatePhoneticRuns
+     */
+    public void setConcatenatePhoneticRuns(boolean concatenatePhoneticRuns) {
+        this.concatenatePhoneticRuns = concatenatePhoneticRuns;
     }
 
     public String getText() {
@@ -130,7 +140,11 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 
 
         for (IRunElement run : paragraph.getRuns()) {
-            text.append(run);
+            if (! concatenatePhoneticRuns && run instanceof XWPFRun) {
+                text.append(((XWPFRun)run).text());
+            } else {
+                text.append(run);
+            }
             if (run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
                 XWPFHyperlink link = ((XWPFHyperlinkRun) run).getHyperlink(document);
                 if (link != null)
