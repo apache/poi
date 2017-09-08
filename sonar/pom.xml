@@ -230,6 +230,7 @@
                         <include name="org/apache/poi/util/POILogger.java"/>
                         <include name="org/apache/poi/util/NullLogger.java"/>
                         <include name="org/apache/poi/util/Internal.java"/>
+                        <include name="org/apache/poi/util/Removal.java"/>
                       </fileset>
                     </copy>
                     <copy todir="${basedir}/target/schemas">
