@@ -1,4 +1,4 @@
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,9 +19,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,9 +29,9 @@ import org.junit.runners.Parameterized.Parameters;
 import junit.framework.AssertionFailedError;
 
 @RunWith(Parameterized.class)
-public final class TestMatrixFormulasFromSpreadsheet {
+public final class TestMatrixFormulasFromBinarySpreadsheet {
     
-    private static XSSFWorkbook workbook;
+    private static HSSFWorkbook workbook;
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
     private static Locale userLocale;
@@ -52,7 +49,7 @@ public final class TestMatrixFormulasFromSpreadsheet {
         /**
          * Name of the test spreadsheet (found in the standard test data folder)
          */
-        String FILENAME = "MatrixFormulaEvalTestData.xlsx";
+        String FILENAME = "MatrixFormulaEvalTestData.xls";
         /**
          * Row (zero-based) in the spreadsheet where operations start
          */
@@ -101,9 +98,9 @@ public final class TestMatrixFormulasFromSpreadsheet {
         userLocale = LocaleUtil.getUserLocale();
         LocaleUtil.setUserLocale(Locale.ROOT);
         
-        workbook = XSSFTestDataSamples.openSampleWorkbook(Navigator.FILENAME);
+        workbook = HSSFTestDataSamples.openSampleWorkbook(Navigator.FILENAME);
         sheet = workbook.getSheetAt(0);
-        evaluator = new XSSFFormulaEvaluator(workbook);
+        evaluator = new HSSFFormulaEvaluator(workbook);
         
         List<Object[]> data = new ArrayList<Object[]>();
         

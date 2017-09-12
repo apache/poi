@@ -530,7 +530,14 @@ public final class WorkbookEvaluator {
             throw new IllegalStateException("evaluation stack not empty");
         }
         
-        ValueEval result = dereferenceResult(value, ec);
+        ValueEval result;
+        
+        if (ec.isSingleValue()) {
+            result = dereferenceResult(value, ec);
+        }
+        else {
+            result = value;
+        }
 
         if (dbgEvaluationOutputIndent > 0) {
             EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "finshed eval of "
