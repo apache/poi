@@ -38,6 +38,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
@@ -92,7 +93,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
         try {
             if(getCorePart().getContentType().equals(XSLFRelation.THEME_MANAGER.getContentType())) {
-               rebase(getPackage());
+                rebase(getPackage());
             }
 
             //build a tree of POIXMLDocumentParts, this presentation being the root
@@ -135,9 +136,9 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 if (p instanceof XSLFSlide) {
                     shIdMap.put(rp.getRelationship().getId(), (XSLFSlide) p);
                     for (POIXMLDocumentPart c : p.getRelations()) {
-                    	if (c instanceof XSLFChart) {
-                    		chartMap.put(c.getPackagePart().getPartName().getName(), (XSLFChart) c);
-                    	}
+                        if (c instanceof XSLFChart) {
+                            chartMap.put(c.getPackagePart().getPartName().getName(), (XSLFChart) c);
+                        }
                     }
                 } else if (p instanceof XSLFSlideMaster) {
                     masterMap.put(getRelationId(p), (XSLFSlideMaster) p);
@@ -152,7 +153,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
             _charts = new ArrayList<XSLFChart>(chartMap.size());
             for(XSLFChart chart : chartMap.values()) {
-            	_charts.add(chart);
+                _charts.add(chart);
             }
 
             _masters = new ArrayList<XSLFSlideMaster>(masterMap.size());
@@ -246,34 +247,34 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         return slide;
     }
 
-	private int findNextAvailableFileNameIndex(XSLFRelation relationType, int idx) {
-		// Bug 55791: We also need to check that the resulting file name is not already taken
-		// this can happen when removing/adding slides, notes or charts
-		while(true) {
-		    String fileName = relationType.getFileName(idx);
-		    boolean found = false;
-		    for (POIXMLDocumentPart relation : getRelations()) {
-		        if (relation.getPackagePart() != null &&
-		                fileName.equals(relation.getPackagePart().getPartName().getName())) {
-		            // name is taken => try next one
-		            found = true;
-		            break;
-		        }
-		    }
+    private int findNextAvailableFileNameIndex(XSLFRelation relationType, int idx) {
+        // Bug 55791: We also need to check that the resulting file name is not already taken
+        // this can happen when removing/adding slides, notes or charts
+        while(true) {
+            String fileName = relationType.getFileName(idx);
+            boolean found = false;
+            for (POIXMLDocumentPart relation : getRelations()) {
+                if (relation.getPackagePart() != null &&
+                        fileName.equals(relation.getPackagePart().getPartName().getName())) {
+                    // name is taken => try next one
+                    found = true;
+                    break;
+                }
+            }
 
-		    if(!found &&
-		            getPackage().getPartsByName(Pattern.compile(Pattern.quote(fileName))).size() > 0) {
-		        // name is taken => try next one
-		        found = true;
-		    }
+            if(!found &&
+                    getPackage().getPartsByName(Pattern.compile(Pattern.quote(fileName))).size() > 0) {
+                // name is taken => try next one
+                found = true;
+            }
 
-		    if (!found) {
-		        break;
-		    }
-		    idx++;
-		}
-		return idx;
-	}
+            if (!found) {
+                break;
+            }
+            idx++;
+        }
+        return idx;
+    }
 
     /**
      * Create a blank slide using the default (first) master.
@@ -298,13 +299,17 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      * Create a blank chart on the given slide.
      */
     public XSLFChart createChart(XSLFSlide slide) {
-    	int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART, _charts.size() + 1);
-        XSLFChart chart = (XSLFChart) createRelationship(XSLFRelation.CHART, XSLFFactory.getInstance(), chartIdx);
+        int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART, _charts.size() + 1);
+        XSLFChart chart = (XSLFChart) createRelationship(XSLFRelation.CHART, XSLFFactory.getInstance(), chartIdx, true).getDocumentPart();
         slide.addRelation(null, XSLFRelation.CHART, chart);
-        POIXMLDocumentPart worksheet = createRelationship(XSLFChart.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx);
-        chart.addRelation(null, XSLFChart.WORKBOOK_RELATIONSHIP, worksheet);
+        createWorkbookRelationship(chart, chartIdx);
         _charts.add(chart);
         return chart;
+    }
+
+    protected PackageRelationship createWorkbookRelationship(XSLFChart chart, int chartIdx) {
+        POIXMLDocumentPart worksheet = createRelationship(XSLFChart.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx, true).getDocumentPart();
+        return chart.addRelation(null, XSLFChart.WORKBOOK_RELATIONSHIP, worksheet).getRelationship();
     }
 
     /**
@@ -458,11 +463,14 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         removeRelation(slide);
         _presentation.getSldIdLst().removeSldId(index);
         for (POIXMLDocumentPart p : slide.getRelations()) {
-        	if (p instanceof XSLFChart) {
-        		XSLFChart chart = (XSLFChart) p;
-        		slide.removeChartRelation(chart);
-        		_charts.remove(chart);
-        	}
+            if (p instanceof XSLFChart) {
+                XSLFChart chart = (XSLFChart) p;
+                slide.removeChartRelation(chart);
+                _charts.remove(chart);
+            } else if (p instanceof XSLFSlideLayout) {
+                XSLFSlideLayout layout = (XSLFSlideLayout) p;
+                slide.removeLayoutRelation(layout);
+            }
         }
         return slide;
     }

@@ -49,10 +49,10 @@ import org.xml.sax.SAXException;
 @Beta
 public final class XSLFSlide extends XSLFSheet
 implements Slide<XSLFShape,XSLFTextParagraph> {
-   private final CTSlide _slide;
-   private XSLFSlideLayout _layout;
-   private XSLFComments _comments;
-   private XSLFNotes _notes;
+    private final CTSlide _slide;
+    private XSLFSlideLayout _layout;
+    private XSLFComments _comments;
+    private XSLFNotes _notes;
 
     /**
      * Create a new slide
@@ -130,6 +130,10 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         removeRelation(chart);
     }
 
+    protected void removeLayoutRelation(XSLFSlideLayout layout) {
+        removeRelation(layout, false);
+    }
+
     @Override
     public XSLFSlideLayout getMasterSheet(){
         return getSlideLayout();
@@ -137,9 +141,9 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
     public XSLFSlideLayout getSlideLayout(){
         if(_layout == null){
-             for (POIXMLDocumentPart p : getRelations()) {
+            for (POIXMLDocumentPart p : getRelations()) {
                 if (p instanceof XSLFSlideLayout){
-                   _layout = (XSLFSlideLayout)p;
+                    _layout = (XSLFSlideLayout)p;
                 }
             }
         }
@@ -154,36 +158,36 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     public XSLFComments getComments() {
-       if(_comments == null) {
-          for (POIXMLDocumentPart p : getRelations()) {
-             if (p instanceof XSLFComments) {
-                _comments = (XSLFComments)p;
-             }
-          }
-       }
-       if(_comments == null) {
-          // This slide lacks comments
-          // Not all have them, sorry...
-          return null;
-       }
-       return _comments;
+        if(_comments == null) {
+            for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFComments) {
+                    _comments = (XSLFComments)p;
+                }
+            }
+        }
+        if(_comments == null) {
+            // This slide lacks comments
+            // Not all have them, sorry...
+            return null;
+        }
+        return _comments;
     }
 
     @Override
     public XSLFNotes getNotes() {
-       if(_notes == null) {
-          for (POIXMLDocumentPart p : getRelations()) {
-             if (p instanceof XSLFNotes){
-                _notes = (XSLFNotes)p;
-             }
-          }
-       }
-       if(_notes == null) {
-          // This slide lacks notes
-          // Not all have them, sorry...
-          return null;
-       }
-       return _notes;
+        if(_notes == null) {
+            for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFNotes){
+                    _notes = (XSLFNotes)p;
+                }
+            }
+        }
+        if(_notes == null) {
+            // This slide lacks notes
+            // Not all have them, sorry...
+            return null;
+        }
+        return _notes;
     }
 
     @Override

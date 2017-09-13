@@ -160,12 +160,6 @@ public final class XSLFChart extends XDDFChart {
         return null;
     }
 
-    private PackagePart createWorksheetPart() throws InvalidFormatException {
-        Integer chartIdx = XSLFRelation.CHART.getFileNameIndex(this);
-        POIXMLDocumentPart worksheet = getParent().createRelationship(XSLFChart.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx);
-        return getTargetPart(this.addRelation(null, XSLFChart.WORKBOOK_RELATIONSHIP, worksheet).getRelationship());
-    }
-
     protected XSSFWorkbook getWorkbook() throws IOException, InvalidFormatException {
         if (workbook == null) {
             try {
@@ -182,6 +176,22 @@ public final class XSLFChart extends XDDFChart {
             }
         }
         return workbook;
+    }
+
+    private XMLSlideShow getSlideShow() {
+        POIXMLDocumentPart p = getParent();
+        while(p != null) {
+            if(p instanceof XMLSlideShow){
+                return (XMLSlideShow)p;
+            }
+            p = p.getParent();
+        }
+        throw new IllegalStateException("SlideShow was not found");
+    }
+
+    private PackagePart createWorksheetPart() throws InvalidFormatException {
+        Integer chartIdx = XSLFRelation.CHART.getFileNameIndex(this);
+        return getTargetPart(getSlideShow().createWorkbookRelationship(this, chartIdx));
     }
 
     protected void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
