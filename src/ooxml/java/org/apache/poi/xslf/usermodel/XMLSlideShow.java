@@ -251,6 +251,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         slideId.setId2(rp.getRelationship().getId());
 
         layout.copyLayout(slide);
+        slide.getPackagePart().clearRelationships();
         slide.addRelation(null, XSLFRelation.SLIDE_LAYOUT, layout);
 
         _slides.add(slide);
