@@ -145,6 +145,7 @@ public final class FunctionEval {
 
         retval[82] = TextFunction.SEARCH;
         // 83: TRANSPOSE
+        retval[83] = MatrixFunction.TRANSPOSE;
 
         // 86: TYPE
 
@@ -182,6 +183,10 @@ public final class FunctionEval {
         retval[FunctionID.INDIRECT] = null; // Indirect.evaluate has different signature
 
         retval[162] = TextFunction.CLEAN;
+        
+        retval[163] = MatrixFunction.MDETERM;
+        retval[164] = MatrixFunction.MINVERSE;
+        retval[165] = MatrixFunction.MMULT;
 
         retval[167] = new IPMT();
         retval[168] = new PPMT();

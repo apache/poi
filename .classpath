@@ -34,5 +34,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-collections4-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math3-3.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
