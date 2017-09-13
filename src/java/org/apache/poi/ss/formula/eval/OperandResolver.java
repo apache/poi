@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import java.util.regex.Pattern;
 
 /**
@@ -69,6 +72,40 @@ public final class OperandResolver {
             throw new EvaluationException((ErrorEval) result);
         }
         return result;
+    }
+    
+    /**
+     * Retrieves a single value from an area evaluation utilizing the 2D indices of the cell
+     * within its own area reference to index the value in the area evaluation.
+     *
+     * @param ae area reference after evaluation
+     * @param cell the source cell of the formula that contains its 2D indices
+     * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt> or <tt>BlankEval</tt>. or <tt>ErrorEval<tt>
+     * Never <code>null</code>.
+     */
+
+    public static ValueEval getElementFromArray(AreaEval ae, EvaluationCell cell) {
+        CellRangeAddress range =  cell.getArrayFormulaRange();
+        int relativeRowIndex = cell.getRowIndex() - range.getFirstRow();
+        int relativeColIndex = cell.getColumnIndex() - range.getFirstColumn();
+        //System.out.println("Row: " + relativeRowIndex + " Col: " + relativeColIndex);
+        
+        if (ae.isColumn()) {
+            if (ae.isRow()) {
+                return ae.getRelativeValue(0, 0);
+            }
+            else if(relativeRowIndex < ae.getHeight()) {
+                return ae.getRelativeValue(relativeRowIndex, 0);
+            }
+        }
+        else if (!ae.isRow() && relativeRowIndex < ae.getHeight() && relativeColIndex < ae.getWidth()) {
+            return ae.getRelativeValue(relativeRowIndex, relativeColIndex);
+        }
+        else if (ae.isRow() && relativeColIndex < ae.getWidth()) {
+            return ae.getRelativeValue(0, relativeColIndex);
+        }
+        
+        return ErrorEval.NA;
     }
 
     /**
