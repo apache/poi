@@ -126,8 +126,8 @@ public final class TestOutlook30FileRead extends TestCase {
      * @throws Exception
      */
     public void testReadMessageClass() throws Exception {
-        String obtained = mapiMessage.getMessageClass();
-        TestCase.assertEquals("IPM.Note", obtained);
+        MAPIMessage.MESSAGE_CLASS obtained = mapiMessage.getMessageClassEnum();
+        TestCase.assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
     }
 
     /**
