@@ -21,12 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hpsf.MutableProperty;
-import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.MutableSection;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.Variant;
-import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -61,10 +56,10 @@ public class WriteTitle
 
         /* Create a mutable property set. Initially it contains a single section
          * with no properties. */
-        final MutablePropertySet mps = new MutablePropertySet();
+        final PropertySet mps = new PropertySet();
 
         /* Retrieve the section the property set already contains. */
-        final MutableSection ms = (MutableSection) mps.getSections().get(0);
+        final Section ms = mps.getSections().get(0);
 
         /* Turn the property set into a summary information property. This is
          * done by setting the format ID of its first section to
@@ -72,7 +67,7 @@ public class WriteTitle
         ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
 
         /* Create an empty property. */    
-        final MutableProperty p = new MutableProperty();
+        final Property p = new Property();
 
         /* Fill the property with appropriate settings so that it specifies the
          * document's title. */

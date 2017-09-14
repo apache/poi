@@ -23,7 +23,7 @@ package org.apache.poi.hpsf;
  * properties have an optional name. If the name is not {@code null} it
  * will be maintained in the section's dictionary.
  */
-public class CustomProperty extends MutableProperty
+public class CustomProperty extends Property
 {
 
     private String name;

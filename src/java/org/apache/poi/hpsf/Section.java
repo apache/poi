@@ -99,7 +99,7 @@ public class Section {
         this._offset = -1;
         setFormatID(s.getFormatID());
         for (Property p : s.properties.values()) {
-            properties.put(p.getID(), new MutableProperty(p));
+            properties.put(p.getID(), new Property(p));
         }
         setDictionary(s.getDictionary());
     }
@@ -228,13 +228,13 @@ public class Section {
                     try {
                         // fix id
                         id = Math.max(PropertyIDMap.PID_MAX, offset2Id.inverseBidiMap().lastKey())+1;
-                        setProperty(new MutableProperty(id, leis, pLen, codepage));
+                        setProperty(new Property(id, leis, pLen, codepage));
                     } catch (RuntimeException e) {
                         LOG.log(POILogger.INFO, "Dictionary fallback failed - ignoring property");
                     }
                 };
             } else {
-                setProperty(new MutableProperty(id, leis, pLen, codepage));
+                setProperty(new Property(id, leis, pLen, codepage));
             }
         }
         
@@ -424,7 +424,7 @@ public class Section {
      */
     @SuppressWarnings("deprecation")
     public void setProperty(final int id, final long variantType, final Object value) {
-        setProperty(new MutableProperty(id, variantType, value));
+        setProperty(new Property(id, variantType, value));
     }
 
 

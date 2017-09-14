@@ -42,24 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hpsf.ClassID;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.HPSFException;
-import org.apache.poi.hpsf.IllegalPropertySetDataException;
-import org.apache.poi.hpsf.MutableProperty;
-import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.MutableSection;
-import org.apache.poi.hpsf.NoFormatIDException;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.ReadingNotSupportedException;
-import org.apache.poi.hpsf.Section;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.UnsupportedVariantTypeException;
-import org.apache.poi.hpsf.Variant;
-import org.apache.poi.hpsf.VariantSupport;
-import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
@@ -125,9 +108,9 @@ public class TestWrite {
          * formatID set: */
         final OutputStream out = new FileOutputStream(filename);
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final MutablePropertySet ps = new MutablePropertySet();
+        final PropertySet ps = new PropertySet();
         ps.clearSections();
-        ps.addSection(new MutableSection());
+        ps.addSection(new Section());
 
         /* Write it to a POIFS and the latter to disk: */
         try {
@@ -162,8 +145,8 @@ public class TestWrite {
         /* Create a mutable property set and write it to a POIFS: */
         final OutputStream out = new FileOutputStream(filename);
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final MutablePropertySet ps = new MutablePropertySet();
-        final MutableSection s = (MutableSection) ps.getSections().get(0);
+        final PropertySet ps = new PropertySet();
+        final Section s = ps.getSections().get(0);
         s.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
 
         final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
@@ -209,13 +192,13 @@ public class TestWrite {
         final OutputStream out = new FileOutputStream(filename);
         final POIFSFileSystem poiFs = new POIFSFileSystem();
 
-        final MutablePropertySet ps = new MutablePropertySet();
-        final MutableSection si = new MutableSection();
+        final PropertySet ps = new PropertySet();
+        final Section si = new Section();
         si.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
         ps.clearSections();
         ps.addSection(si);
 
-        final MutableProperty p = new MutableProperty();
+        final Property p = new Property();
         p.setID(PropertyIDMap.PID_AUTHOR);
         p.setType(Variant.VT_LPWSTR);
         p.setValue(AUTHOR);
@@ -281,18 +264,18 @@ public class TestWrite {
         final OutputStream out = new FileOutputStream(filename);
 
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final MutablePropertySet ps = new MutablePropertySet();
+        final PropertySet ps = new PropertySet();
         ps.clearSections();
 
         final ClassID formatID = new ClassID();
         formatID.setBytes(new byte[]{0, 1,  2,  3,  4,  5,  6,  7,
                                      8, 9, 10, 11, 12, 13, 14, 15});
-        final MutableSection s1 = new MutableSection();
+        final Section s1 = new Section();
         s1.setFormatID(formatID);
         s1.setProperty(2, SECTION1);
         ps.addSection(s1);
 
-        final MutableSection s2 = new MutableSection();
+        final Section s2 = new Section();
         s2.setFormatID(formatID);
         s2.setProperty(2, SECTION2);
         ps.addSection(s2);
@@ -429,10 +412,10 @@ public class TestWrite {
     @Test
     public void unicodeWrite8Bit() throws WritingNotSupportedException, IOException, NoPropertySetStreamException {
         final String TITLE = "This is a sample title";
-        final MutablePropertySet mps = new MutablePropertySet();
-        final MutableSection ms = (MutableSection) mps.getSections().get(0);
+        final PropertySet mps = new PropertySet();
+        final Section ms = mps.getSections().get(0);
         ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
-        final MutableProperty p = new MutableProperty();
+        final Property p = new Property();
         p.setID(PropertyIDMap.PID_TITLE);
         p.setType(Variant.VT_LPSTR);
         p.setValue(TITLE);
@@ -495,8 +478,8 @@ public class TestWrite {
         /* Write: */
         final OutputStream out = new FileOutputStream(copy);
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final MutablePropertySet ps1 = new MutablePropertySet();
-        final MutableSection s = (MutableSection) ps1.getSections().get(0);
+        final PropertySet ps1 = new PropertySet();
+        final Section s = ps1.getSections().get(0);
         final Map<Long,String> m = new HashMap<Long,String>(3, 1.0f);
         m.put(Long.valueOf(1), "String 1");
         m.put(Long.valueOf(2), "String 2");
@@ -759,8 +742,8 @@ public class TestWrite {
         final OutputStream out = new FileOutputStream(copy);
         
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final MutablePropertySet ps1 = new MutablePropertySet();
-        final MutableSection s = (MutableSection) ps1.getSections().get(0);
+        final PropertySet ps1 = new PropertySet();
+        final Section s = ps1.getSections().get(0);
         final Map<Long,String> m = new HashMap<Long, String>(3, 1.0f);
         m.put(Long.valueOf(1), "String 1");
         m.put(Long.valueOf(2), "String 2");

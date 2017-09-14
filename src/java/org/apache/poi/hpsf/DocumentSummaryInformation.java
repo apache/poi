@@ -33,7 +33,7 @@ import org.apache.poi.hpsf.wellknown.SectionIDMap;
  *
  * @see SummaryInformation
  */
-public class DocumentSummaryInformation extends SpecialPropertySet {
+public class DocumentSummaryInformation extends PropertySet {
     /**
      * The document name a document summary information stream
      * usually has in a POIFS filesystem.
@@ -811,7 +811,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet {
      */
     private void ensureSection2() {
         if (getSectionCount() < 2) {
-            Section s2 = new MutableSection();
+            Section s2 = new Section();
             s2.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[1]);
             addSection(s2);
         }

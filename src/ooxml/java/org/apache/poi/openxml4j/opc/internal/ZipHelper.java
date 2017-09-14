@@ -50,17 +50,6 @@ public final class ZipHelper {
     private final static String FORWARD_SLASH = "/";
 
     /**
-     * Buffer to read data from file. Use big buffer to improve performaces. the
-     * InputStream class is reading only 8192 bytes per read call (default value
-     * set by sun)
-     * 
-     * @deprecated in POI 3.16-beta3, not used anymore
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    public static final int READ_WRITE_FILE_BUFFER_SIZE = 8192;
-
-    /**
      * Prevent this class to be instancied.
      */
     private ZipHelper() {

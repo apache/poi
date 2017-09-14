@@ -31,7 +31,7 @@ import org.apache.poi.hpsf.wellknown.SectionIDMap;
  *
  * @see DocumentSummaryInformation
  */
-public final class SummaryInformation extends SpecialPropertySet {
+public final class SummaryInformation extends PropertySet {
 
     /**
      * The document name a summary information stream usually has in a POIFS filesystem.
