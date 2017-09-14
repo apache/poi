@@ -118,7 +118,6 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -767,26 +766,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
-    @Removal(version="3.18")
-    @Deprecated
-    @Override
-    public void setSheetHidden(int sheetIx, int hidden) {
-        switch (hidden) {
-            case Workbook.SHEET_STATE_VISIBLE:
-                setSheetVisibility(sheetIx, SheetVisibility.VISIBLE);
-                break;
-            case Workbook.SHEET_STATE_HIDDEN:
-                setSheetVisibility(sheetIx, SheetVisibility.HIDDEN);
-                break;
-            case Workbook.SHEET_STATE_VERY_HIDDEN:
-                setSheetVisibility(sheetIx, SheetVisibility.VERY_HIDDEN);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid sheet state : " + hidden + "\n" +
-                        "Sheet state must beone of the Workbook.SHEET_STATE_* constants");
-        }
-    }
-    
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
@@ -2256,15 +2235,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 	 */
     public boolean changeExternalReference(String oldUrl, String newUrl) {
     	return workbook.changeExternalReference(oldUrl, newUrl);
-    }
-
-    /** 
-     * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    public DirectoryNode getRootDirectory(){
-        return getDirectory();
     }
     
     @Internal

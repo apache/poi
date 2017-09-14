@@ -45,24 +45,13 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Sheet;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
+import org.apache.poi.util.*;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart
@@ -156,21 +145,12 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @deprecated POI 3.16 beta 1. use {@link XSLFTable} instead
      */
     @Removal(version="3.18")
-    @Internal
-    public XSLFCommonSlideData getCommonSlideData() {
-       return _commonSlideData;
-    }
-
-    /*
-     * @deprecated POI 3.16 beta 1. use {@link XSLFTable} instead
-     */
-    @Removal(version="3.18")
     protected void setCommonSlideData(CTCommonSlideData data) {
-       if(data == null) {
-          _commonSlideData = null;
-       } else {
-          _commonSlideData = new XSLFCommonSlideData(data);
-       }
+        if(data == null) {
+            _commonSlideData = null;
+        } else {
+            _commonSlideData = new XSLFCommonSlideData(data);
+        }
     }
 
     private XSLFDrawing getDrawing(){

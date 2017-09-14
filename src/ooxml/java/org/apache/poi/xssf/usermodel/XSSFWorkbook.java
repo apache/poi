@@ -1906,14 +1906,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
-    @Deprecated
-    @Removal(version="3.18")
-    @Override
-    public void setSheetHidden(int sheetIx, int state) {
-        WorkbookUtil.validateSheetState(state);
-        setSheetVisibility(sheetIx, SheetVisibility.values()[state]);
-    }
-    
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
