@@ -17,10 +17,6 @@
 
 package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.Removal;
-
-
 /**
  * Helper methods for when working with Usermodel Workbooks
  */
@@ -161,26 +157,4 @@ public class WorkbookUtil {
         }
     }
 
-
-    /**
-     * Validates sheet state
-     *
-     * @param state the state to validate
-     * @throws IllegalArgumentException if state is not one of
-     *      {@link Workbook#SHEET_STATE_VISIBLE},
-     *      {@link Workbook#SHEET_STATE_HIDDEN} or
-     *      {@link Workbook#SHEET_STATE_VERY_HIDDEN}
-     * @deprecated POI 3.16 beta 2. Use {@link org.apache.poi.ss.usermodel.SheetVisibility} instead.
-     */
-    @Removal(version="3.18")
-    @Deprecated
-    public static void validateSheetState(int state) {
-        switch(state){
-            case Workbook.SHEET_STATE_VISIBLE: break;
-            case Workbook.SHEET_STATE_HIDDEN: break;
-            case Workbook.SHEET_STATE_VERY_HIDDEN: break;
-            default: throw new IllegalArgumentException("Invalid sheet state : " + state + "\n" +
-                            "Sheet state must be one of the Workbook.SHEET_STATE_* constants");
-        }
-    }
 }
