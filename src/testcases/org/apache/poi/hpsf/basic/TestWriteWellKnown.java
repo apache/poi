@@ -34,20 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hpsf.CustomProperties;
-import org.apache.poi.hpsf.CustomProperty;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.MutableProperty;
-import org.apache.poi.hpsf.MutableSection;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
-import org.apache.poi.hpsf.Variant;
-import org.apache.poi.hpsf.VariantSupport;
-import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -567,14 +554,14 @@ public class TestWriteWellKnown {
 
         DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
         CustomProperties cps;
-        MutableSection s;
+        Section s;
 
         /* A document summary information set stream by default does have custom properties. */
         cps = dsi.getCustomProperties();
         assertNull(cps);
 
         /* Test an empty custom properties set. */
-        s = new MutableSection();
+        s = new Section();
         s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[1]);
         // s.setCodepage(CodePageUtil.CP_UNICODE);
         dsi.addSection(s);
@@ -582,7 +569,7 @@ public class TestWriteWellKnown {
         assertEquals(0, cps.size());
 
         /* Add a custom property. */
-        MutableProperty p = new MutableProperty();
+        Property p = new Property();
         p.setID(ID_1);
         p.setType(Variant.VT_LPWSTR);
         p.setValue(VALUE_1);
