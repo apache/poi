@@ -52,7 +52,6 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
@@ -534,21 +533,6 @@ public class MAPIMessage extends POIReadOnlyDocument {
     */
    public String getConversationTopic() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getConversationTopic());
-   }
-
-   /**
-    * Gets the message class of the parsed Outlook Message.
-    * (Yes, you can use this to determine if a message is a calendar 
-    *  item, note, or actual outlook Message)
-    * For emails the class will be IPM.Note
-    *
-    * @throws ChunkNotFoundException
-    * @deprecated 3.16 beta 3. Use {@link #getMessageClassEnum()} instead.
-    */
-   @Deprecated
-   @Removal(version="3.18")
-   public String getMessageClass() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.getMessageClass());
    }
 
    /**
