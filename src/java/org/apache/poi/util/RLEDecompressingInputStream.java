@@ -156,7 +156,7 @@ public class RLEDecompressingInputStream extends InputStream {
     private int readChunk() throws IOException {
         pos = 0;
         int w = readShort(in);
-        if (w == -1) {
+        if (w == -1 || w == 0) {
             return -1;
         }
         int chunkSize = (w & 0x0FFF) + 1; // plus 3 bytes minus 2 for the length
