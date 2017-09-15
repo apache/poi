@@ -27,7 +27,6 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Escher container records store other escher records as children.
@@ -150,17 +149,6 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     @Override
     public List<EscherRecord> getChildRecords() {
         return new ArrayList<EscherRecord>(_childRecords);
-    }
-
-    /**
-     * @return an iterator over the child records
-     * @deprecated POI 3.16 beta 1. use iterator() or loop over the container record instead,
-     *     e.g. "for (EscherRecord r : container) ..."
-     */
-    @Removal(version="3.18")
-    @Deprecated
-    public Iterator<EscherRecord> getChildIterator() {
-        return iterator();
     }
 
     /**
