@@ -153,15 +153,4 @@ public class TestWorkdayCalculator {
         assertEquals("Expected 1 non-weekend-holiday for " + start + " to " + end + " and " + holiday1 + " and " + holiday2,
                 1, count);
     }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testIsNonWorkday() throws Exception {
-        final double weekend = DateUtil.getExcelDate(d(2016, 12, 25));
-        final double holiday = DateUtil.getExcelDate(d(2016, 12, 26));
-        final double workday = DateUtil.getExcelDate(d(2016, 12, 27));
-        assertEquals(1, WorkdayCalculator.instance.isNonWorkday(weekend, new double[]{holiday}));
-        assertEquals(1, WorkdayCalculator.instance.isNonWorkday(holiday, new double[]{holiday}));
-        assertEquals(0, WorkdayCalculator.instance.isNonWorkday(workday, new double[]{holiday}));
-    }
 }
