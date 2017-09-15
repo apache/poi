@@ -90,9 +90,9 @@ Before running this, you should execute the "assemble" target in the main build.
             <sort>
                 <resources>
                     <fileset dir="${dist}">
-                        <include name="**/poi-3.*.jar"/>
-                        <include name="**/poi-ooxml-3.*.jar"/>
-                        <include name="**/poi-ooxml-schemas-3.*.jar"/>
+                        <include name="**/poi-4.*.jar"/>
+                        <include name="**/poi-ooxml-4.*.jar"/>
+                        <include name="**/poi-ooxml-schemas-4.*.jar"/>
                         <exclude name="**/*-javadoc*"/>
                         <exclude name="**/*-sources*"/>
                     </fileset>
@@ -125,7 +125,7 @@ Before running this, you should execute the "assemble" target in the main build.
 
         <echo message="Compiling examples without linking to scratchpad.jar to ensure that only some specific ones require this jar"/>
         <javac srcdir="../examples/src" destdir="${build}" 
-               target="1.6" source="1.6" debug="true" 
+               target="1.8" source="1.8" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false" 
                excludes="org/apache/poi/hslf/**,org/apache/poi/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
                classpath="${jarpackage}" classpathref="libs">
@@ -136,10 +136,10 @@ Before running this, you should execute the "assemble" target in the main build.
             <sort>
                 <resources>
                     <fileset dir="${dist}">
-                        <include name="**/poi-3.*.jar"/>
-                        <include name="**/poi-ooxml-3.*.jar"/>
-                        <include name="**/poi-ooxml-schemas-3.*.jar"/>
-                        <include name="**/poi-scratchpad-3.*.jar"/>
+                        <include name="**/poi-4.*.jar"/>
+                        <include name="**/poi-ooxml-4.*.jar"/>
+                        <include name="**/poi-ooxml-schemas-4.*.jar"/>
+                        <include name="**/poi-scratchpad-4.*.jar"/>
                         <exclude name="**/*-javadoc*"/>
                         <exclude name="**/*-sources*"/>
                     </fileset>
@@ -149,7 +149,7 @@ Before running this, you should execute the "assemble" target in the main build.
 
         <echo message="Compiling all examples with the additional scratchpad.jar"/>
         <javac srcdir="../examples/src" destdir="${build}" 
-               target="1.6" source="1.6" debug="true" 
+               target="1.8" source="1.8" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false" 
                classpath="${jarpackagescratchpad}" classpathref="libs">
         </javac>
