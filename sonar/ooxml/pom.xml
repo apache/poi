@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>3.18-beta1-SNAPSHOT</version>
+        <version>4.0-beta1-SNAPSHOT</version>
     </parent>
     <artifactId>poi-ooxml</artifactId>
     <packaging>jar</packaging>
@@ -142,17 +142,17 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.54</version>
+			<version>1.58</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.santuario</groupId>
 			<artifactId>xmlsec</artifactId>
-			<version>2.0.5</version>
+			<version>2.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.virtuald</groupId>
 			<artifactId>curvesapi</artifactId>
-			<version>1.04</version>
+			<version>1.05</version>
 		</dependency>
   
 		<!-- non-test dependency for OOXMLLite -->
@@ -162,17 +162,16 @@
             <version>${junit.version}</version>
         </dependency>
 
-        <!-- Keep using 1.15 until we switch to Java 7 -->
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>1.15</version>
+            <version>1.19</version>
 			<scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.15</version>
+            <version>1.19</version>
 			<scope>test</scope>
         </dependency>
     </dependencies>
