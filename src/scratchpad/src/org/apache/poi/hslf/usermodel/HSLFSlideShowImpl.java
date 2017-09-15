@@ -57,7 +57,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * This class contains the main functionality for the Powerpoint file
@@ -83,18 +82,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private HSLFObjectData[] _objects;
-
-    /**
-     * Returns the directory in the underlying POIFSFileSystem for the
-     * document that is open.
-     * 
-     * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    protected DirectoryNode getPOIFSDirectory() {
-        return getDirectory();
-    }
 
     /**
      * Constructs a Powerpoint document from fileName. Parses the document

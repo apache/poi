@@ -17,7 +17,6 @@
 package org.apache.poi.poifs.crypt;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.util.Removal;
 
 /**
  * Reads and processes OOXML Encryption Headers
@@ -93,15 +92,7 @@ public abstract class EncryptionHeader implements Cloneable {
     public HashAlgorithm getHashAlgorithm() {
         return hashAlgorithm;
     }
-    
-    /**
-     * @deprecated POI 3.16 beta 1. use {@link #getHashAlgorithm()}
-     */
-    @Removal(version="3.18")
-    public HashAlgorithm getHashAlgorithmEx() {
-        return hashAlgorithm;
-    }
-    
+
     protected void setHashAlgorithm(HashAlgorithm hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }

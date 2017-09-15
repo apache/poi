@@ -147,18 +147,6 @@ public class WorkdayCalculator {
     }
 
     /**
-     * @param aDate a given date.
-     * @param holidays an array of holidays.
-     * @return <code>1</code> is not a workday, <code>0</code> otherwise.
-     *
-     * @deprecated POI 3.16 - will be removed, not used in POI itself
-     */
-    @Removal(version="3.18")
-    protected int isNonWorkday(double aDate, double[] holidays) {
-        return isWeekend(aDate) || isHoliday(aDate, holidays) ? 1 : 0;
-    }
-
-    /**
      * @param start start date.
      * @param end end date.
      * @param aDate a date to be analyzed.
