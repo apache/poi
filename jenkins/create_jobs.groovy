@@ -21,7 +21,8 @@ def poijobs = [
     [ name: 'POI-DSL-1.6',
             // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
             // as part of the Ant build
-            addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}"
+            addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}",
+            disabled: true
     ],
     [ name: 'POI-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *'
     ],
@@ -60,9 +61,9 @@ def poijobs = [
     ],
     [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
     ],
-    [ name: 'POI-DSL-API-Check', jdk: '1.7', trigger: '@daily', apicheck: true
+    [ name: 'POI-DSL-API-Check', jdk: '1.8', trigger: '@daily', apicheck: true
     ],
-    [ name: 'POI-DSL-Gradle', jdk: '1.7', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
+    [ name: 'POI-DSL-Gradle', jdk: '1.8', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
         // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
         addShell: 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml'
     ],
@@ -73,10 +74,12 @@ def poijobs = [
     [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
     ],
     [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
-    	addShell: "@if not exist ${findbugs2Lib} powershell -Command wget -Uri \"${findbugs2Url}\" -OutFile ${findbugs2Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
+    	addShell: "@if not exist ${findbugs2Lib} powershell -Command wget -Uri \"${findbugs2Url}\" -OutFile ${findbugs2Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
+        disabled: true
     ],
     [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
-    	addShell: "@if not exist ${findbugs3Lib} powershell -Command wget -Uri \"${findbugs3Url}\" -OutFile ${findbugs3Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome"
+    	addShell: "@if not exist ${findbugs3Lib} powershell -Command wget -Uri \"${findbugs3Url}\" -OutFile ${findbugs3Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
+        disabled: true
     ],
     [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
     ],
