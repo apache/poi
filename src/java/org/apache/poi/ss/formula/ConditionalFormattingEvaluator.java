@@ -36,12 +36,12 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SheetUtil;
 
 /**
- * Evaluates Conditional Formatting constraints.<p/>
+ * Evaluates Conditional Formatting constraints.<p>
  *
  * For performance reasons, this class keeps a cache of all previously evaluated rules and cells.  
  * Be sure to call {@link #clearAllCachedFormats()} if any conditional formats are modified, added, or deleted,
  * and {@link #clearAllCachedValues()} whenever cell values change.
- * <p/>
+ * <p>
  * 
  */
 public class ConditionalFormattingEvaluator {
@@ -53,9 +53,9 @@ public class ConditionalFormattingEvaluator {
      * All the underlying structures, for both HSSF and XSSF, repeatedly go to the raw bytes/XML for the
      * different pieces used in the ConditionalFormatting* structures.  That's highly inefficient,
      * and can cause significant lag when checking formats for large workbooks.
-     * <p/>
+     * <p>
      * Instead we need a cached version that is discarded when definitions change.
-     * <p/>
+     * <p>
      * Sheets don't implement equals, and since its an interface, 
      * there's no guarantee instances won't be recreated on the fly by some implementation.
      * So we use sheet name.
@@ -65,9 +65,9 @@ public class ConditionalFormattingEvaluator {
     /**
      * Evaluating rules for cells in their region(s) is expensive, so we want to cache them,
      * and empty/reevaluate the cache when values change.
-     * <p/>
+     * <p>
      * Rule lists are in priority order, as evaluated by Excel (smallest priority # for XSSF, definition order for HSSF)
-     * <p/>
+     * <p>
      * CellReference implements equals().
      */
     private final Map<CellReference, List<EvaluationConditionalFormatRule>> values = new HashMap<CellReference, List<EvaluationConditionalFormatRule>>();
@@ -92,7 +92,7 @@ public class ConditionalFormattingEvaluator {
     /**
      * Call this whenever cell values change in the workbook, so condional formats are re-evaluated 
      * for all cells.
-     * <p/>
+     * <p>
      * TODO: eventually this should work like {@link EvaluationCache#notifyUpdateCell(int, int, EvaluationCell)}
      * and only clear values that need recalculation based on the formula dependency tree.
      */
@@ -136,10 +136,10 @@ public class ConditionalFormattingEvaluator {
      * This checks all applicable {@link ConditionalFormattingRule}s for the cell's sheet, 
      * in defined "priority" order, returning the matches if any.  This is a property currently
      * not exposed from <code>CTCfRule</code> in <code>XSSFConditionalFormattingRule</code>.  
-     * <p/>
+     * <p>
      * Most cells will have zero or one applied rule, but it is possible to define multiple rules
      * that apply at the same time to the same cell, thus the List result.
-     * <p/>
+     * <p>
      * Note that to properly apply conditional rules, care must be taken to offset the base 
      * formula by the relative position of the current cell, or the wrong value is checked.
      * This is handled by {@link WorkbookEvaluator#evaluate(String, CellReference, CellRangeAddressBase)}.
@@ -150,31 +150,49 @@ public class ConditionalFormattingEvaluator {
      *         or null if none apply
      */
     public List<EvaluationConditionalFormatRule> getConditionalFormattingForCell(final CellReference cellRef) {
-        String sheetName = cellRef.getSheetName();
-        Sheet sheet = null;
-        if (sheetName == null) {
-            sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
-        } else {
-            sheet = workbook.getSheet(sheetName);
+        List<EvaluationConditionalFormatRule> rules = values.get(cellRef);
+        
+        if (rules == null) {
+            // compute and cache them
+            rules = new ArrayList<EvaluationConditionalFormatRule>();
+            
+            Sheet sheet = null;
+            if (cellRef.getSheetName() != null) sheet = workbook.getSheet(cellRef.getSheetName());
+            else sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
+            
+            /*
+             * Per Excel help:
+             * https://support.office.com/en-us/article/Manage-conditional-formatting-rule-precedence-e09711a3-48df-4bcb-b82c-9d8b8b22463d#__toc269129417
+             * stopIfTrue is true for all rules from HSSF files, and an explicit value for XSSF files.
+             * thus the explicit ordering of the rule lists in #getFormattingRulesForSheet(Sheet)
+             */
+            boolean stopIfTrue = false;
+            for (EvaluationConditionalFormatRule rule : getRules(sheet)) {
+                
+                if (stopIfTrue) {
+                    continue; // a previous rule matched and wants no more evaluations
+                }
+
+                if (rule.matches(cellRef)) {
+                    rules.add(rule);
+                    stopIfTrue = rule.getRule().getStopIfTrue();
+                }
+            }
+            Collections.sort(rules);
+            values.put(cellRef, rules);
         }
         
-        final Cell cell = SheetUtil.getCell(sheet, cellRef.getRow(), cellRef.getCol());
-        
-        if (cell == null) {
-            return Collections.emptyList();
-        }
-        
-        return getConditionalFormattingForCell(cell, cellRef);
+        return Collections.unmodifiableList(rules);
     }
     
     /**
      * This checks all applicable {@link ConditionalFormattingRule}s for the cell's sheet, 
      * in defined "priority" order, returning the matches if any.  This is a property currently
      * not exposed from <code>CTCfRule</code> in <code>XSSFConditionalFormattingRule</code>.  
-     * <p/>
+     * <p>
      * Most cells will have zero or one applied rule, but it is possible to define multiple rules
      * that apply at the same time to the same cell, thus the List result.
-     * <p/>
+     * <p>
      * Note that to properly apply conditional rules, care must be taken to offset the base 
      * formula by the relative position of the current cell, or the wrong value is checked.
      * This is handled by {@link WorkbookEvaluator#evaluate(String, CellReference, CellRangeAddressBase)}.
@@ -185,45 +203,7 @@ public class ConditionalFormattingEvaluator {
      *         or null if none apply
      */
     public List<EvaluationConditionalFormatRule> getConditionalFormattingForCell(Cell cell) {
-        return getConditionalFormattingForCell(cell, getRef(cell));
-    }
-    
-    /**
-     * We need both, and can derive one from the other, but this is to avoid duplicate work
-     * 
-     * @param cell
-     * @param ref
-     * @return unmodifiable list of matching rules
-     */
-    private List<EvaluationConditionalFormatRule> getConditionalFormattingForCell(Cell cell, CellReference ref) {
-        List<EvaluationConditionalFormatRule> rules = values.get(ref);
-        
-        if (rules == null) {
-            // compute and cache them
-            rules = new ArrayList<EvaluationConditionalFormatRule>();
-            /*
-             * Per Excel help:
-             * https://support.office.com/en-us/article/Manage-conditional-formatting-rule-precedence-e09711a3-48df-4bcb-b82c-9d8b8b22463d#__toc269129417
-             * stopIfTrue is true for all rules from HSSF files, and an explicit value for XSSF files.
-             * thus the explicit ordering of the rule lists in #getFormattingRulesForSheet(Sheet)
-             */
-            boolean stopIfTrue = false;
-            for (EvaluationConditionalFormatRule rule : getRules(cell.getSheet())) {
-                
-                if (stopIfTrue) {
-                    continue; // a previous rule matched and wants no more evaluations
-                }
-
-                if (rule.matches(cell)) {
-                    rules.add(rule);
-                    stopIfTrue = rule.getRule().getStopIfTrue();
-                }
-            }
-            Collections.sort(rules);
-            values.put(ref, rules);
-        }
-        
-        return Collections.unmodifiableList(rules);
+        return getConditionalFormattingForCell(getRef(cell));
     }
     
     public static CellReference getRef(Cell cell) {
@@ -249,9 +229,9 @@ public class ConditionalFormattingEvaluator {
     /**
      * Conditional formatting rules can apply only to cells in the sheet to which they are attached.
      * The POI data model does not have a back-reference to the owning sheet, so it must be passed in separately.
-     * <p/>
+     * <p>
      * We could overload this with convenience methods taking a sheet name and sheet index as well.
-     * <p/>
+     * <p>
      * @param sheet containing the rule
      * @param conditionalFormattingIndex of the {@link ConditionalFormatting} instance in the sheet's array
      * @param ruleIndex of the {@link ConditionalFormattingRule} instance within the {@link ConditionalFormatting}

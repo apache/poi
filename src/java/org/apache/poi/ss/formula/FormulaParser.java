@@ -87,9 +87,9 @@ import org.apache.poi.util.POILogger;
  * <term> ::= <factor>  [ <mulop> <factor> ]*
  * <factor> ::= <number> | (<expression>) | <cellRef> | <function>
  * <function> ::= <functionName> ([expression [, expression]*])
- * <p/>
+ * <p>
  * For POI internal use only
- * <p/>
+ * <p>
  */
 @Internal
 public final class FormulaParser {
@@ -736,7 +736,7 @@ public final class FormulaParser {
         // Done reading from input stream
         // Ok to return now
 
-        if (isTotalsSpec && !tbl.isHasTotalsRow()) {
+        if (isTotalsSpec && tbl.getTotalsRowCount() == 0) {
             return new ParseNode(ErrPtg.REF_INVALID);
         }
         if ((isThisRow || isThisRowSpec) && (_rowIndex < startRow || endRow < _rowIndex)) {
@@ -759,14 +759,14 @@ public final class FormulaParser {
             if (nSpecQuantifiers == 1 && isAllSpec) {
                 //do nothing
             } else if (isDataSpec && isHeadersSpec) {
-                if (tbl.isHasTotalsRow()) {
+                if (tbl.getTotalsRowCount() > 0) {
                     actualEndRow = endRow - 1;
                 }
             } else if (isDataSpec && isTotalsSpec) {
                 actualStartRow = startRow + 1;
             } else if (nSpecQuantifiers == 1 && isDataSpec) {
                 actualStartRow = startRow + 1;
-                if (tbl.isHasTotalsRow()) {
+                if (tbl.getTotalsRowCount() > 0) {
                     actualEndRow = endRow - 1;
                 }
             } else if (nSpecQuantifiers == 1 && isHeadersSpec) {
@@ -785,7 +785,7 @@ public final class FormulaParser {
                 actualEndRow = _rowIndex; 
             } else { // Really no special quantifiers
                 actualStartRow++;
-                if (tbl.isHasTotalsRow()) actualEndRow--;
+                if (tbl.getTotalsRowCount() > 0) actualEndRow--;
             }
         }
 

@@ -23,7 +23,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * An implementation of the SUBSTITUTE function:<P/>
+ * An implementation of the SUBSTITUTE function:<p>
  * Substitutes text in a text string with new text, some number of times.
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */

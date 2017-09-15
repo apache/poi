@@ -27,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -81,6 +82,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.SystemProperties;
 import org.apache.xmlbeans.XmlObject;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.ocsp.OCSPResp;
@@ -183,9 +185,31 @@ public class TestSignatureInfo {
         OPCPackage pkg2 = wb2.getPackage();
         signatureConfig.setOpcPackage(pkg2);
         assertTrue(si.verifySignature());
-        String signExp =
-            "HDdvgXblLMiE6gZSoRSQUof6+aedrhK9i51we1n+4Q/ioqrQCeh5UkfQ8lD63nV4ZDbM4/pIVFi6VpMpN/HMnA"+
-            "UHeVdVUCVTgpn3Iz21Ymcd9/aerNov2BjHLhS8X3oUE+XTu2TbJLNmms0I9G4lfg6HWP9t7ZCXBXy6vyCMArc=";
+        
+        // xmlbeans adds line-breaks depending on the system setting, so we get different
+        // test results on Unix/Mac/Windows
+        // if the xml documents eventually change, this test needs to be run with the
+        // separator set to the various system configurations
+        String sep = SystemProperties.getProperty( "line.separator" );
+        String signExp;
+        assumeTrue("Hashes only known for Windows/Unix/Mac", sep == null || "\n".equals(sep) || "\r\n".equals(sep) || "\r".equals(sep));
+        if (sep == null || "\n".equals(sep)) {
+            // Unix
+            signExp =
+                "HDdvgXblLMiE6gZSoRSQUof6+aedrhK9i51we1n+4Q/ioqrQCeh5UkfQ8lD63nV4ZDbM4/pIVFi6VpMpN/HMnA"+
+                "UHeVdVUCVTgpn3Iz21Ymcd9/aerNov2BjHLhS8X3oUE+XTu2TbJLNmms0I9G4lfg6HWP9t7ZCXBXy6vyCMArc=";
+        } else if ("\r\n".equals(sep)){
+            // Windows
+            signExp =
+                "jVW6EPMywZ8jr4+I4alDosXzqrVuDG4wTdrr+la8QVbXfLm6HOh9AUFlo5yUZuWo/1gXrrkc34UTYNzuslyrOx"+
+                "KqadPOIRKUssJzdCh/hKeTxs/YtyWkpGHggrUjrF/vUUIeIXRHo+1DCAh6ptoicviH/I/Dtoa5NgkEHVuOHk8=";
+        } else {
+            // Mac
+            signExp =
+                "GSaOQp2eVRkQl2GJgWxoxFdCadJJnmmKeoQtIwGrP3zzk+BnLeytGLN3bqmwCTjvtG7DyxENS+92e2xq/MiC9b"+
+                "CtNUfXfCdM0M8fzAny/Ewn9HckIsxjBztmsryt/OZQaKu52VU0ohQu7bG+cGPzcM+qTEss+GUbD0sVAoC34HM=";
+        }
+        
         String signAct = si.getSignatureParts().iterator().next().
             getSignatureDocument().getSignature().getSignatureValue().getStringValue();
         assertEquals(signExp, signAct);

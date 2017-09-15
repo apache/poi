@@ -18,10 +18,11 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
- * and non-formula cells.<br/>
+ * and non-formula cells.<br>
  * 
  * For POI internal use only
  * 
@@ -56,6 +57,8 @@ public interface EvaluationCell {
 	String getStringCellValue();
 	boolean getBooleanCellValue();
 	int getErrorCellValue();
+	CellRangeAddress getArrayFormulaRange();
+	boolean isPartOfArrayFormulaGroup();
 
 	/**
 	 * Will return {@link CellType} in a future version of POI.

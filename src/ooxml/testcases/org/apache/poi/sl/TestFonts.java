@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
@@ -47,10 +48,8 @@ import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 
 
 /**
@@ -71,12 +70,19 @@ public class TestFonts {
         "\u9451\u3092\u4E00\u7DD2\u306B\u898B\u3066\u305F\u306E\u601D\u3044\u51FA\u3059\u301C\u3068\u3044";
 
     private static final String INIT_FONTS[] = { "mona.ttf" };
-    
+
     // currently linux and mac return quite different values
-    private static final int[] expected_sizes = { 311, 312, 313,
-            362, //Windows 10, 13.3" 1080p high-dpi
-            398, 399 };
-    
+    private static final int[] expected_sizes = {
+            304, // windows 10, 1080p, MS Office 2016, system text scaling 100% instead of default 125%
+            306, // Windows 10, 15.6" 3840x2160
+            311, 312, 313, 318,
+            348, // Windows 10, 15.6" 3840x2160
+            362, // Windows 10, 13.3" 1080p high-dpi
+            372, // Ubuntu Xenial, 15", 1680x1050
+            377, 398, 399, // Mac
+            406  // Ubuntu Xenial, 15", 1680x1050
+    };
+
     @BeforeClass
     public static void initGE() throws FontFormatException, IOException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -85,81 +91,65 @@ public class TestFonts {
             ge.registerFont(font);
         }
     }
-    
+
     @Test
     public void resizeToFitTextHSLF() throws IOException {
         assumeFalse(xslfOnly());
         SlideShow<?,?> ppt = new HSLFSlideShow();
-        TextBox<?,?> tb = resizeToFitText(ppt);
-        Rectangle2D anc = tb.getAnchor();
-        // ignore font metrics differences on windows / linux (... hopefully ...)
-        boolean found = Arrays.binarySearch(expected_sizes, (int)anc.getHeight()) > -1;
-        assertTrue(found);
-//        setFont(tb, "Mona");
-//        FileOutputStream fos = new FileOutputStream("bla-hslf.ppt");
-//        ppt.write(fos);
-//        fos.close();
+        resizeToFitText(ppt);
         ppt.close();
     }
 
     @Test
     public void resizeToFitTextXSLF() throws IOException {
         SlideShow<?,?> ppt = new XMLSlideShow();
-        TextBox<?,?> tb = resizeToFitText(ppt);
-        Rectangle2D anc = tb.getAnchor();
-        // ignore font metrics differences on windows / linux (... hopefully ...)
-        boolean found = Arrays.binarySearch(expected_sizes, (int)anc.getHeight()) > -1;
-        assertTrue((int)anc.getHeight() + " not found in list of exepcted values", found);
-//        setFont(tb, "Mona");
-//        FileOutputStream fos = new FileOutputStream("bla-xslf.ppt");
-//        ppt.write(fos);
-//        fos.close();
+        resizeToFitText(ppt);
         ppt.close();
     }
 
-    private TextBox<?,?> resizeToFitText(SlideShow<?,?> slideshow) throws IOException {
+    private void resizeToFitText(SlideShow<?,?> slideshow) throws IOException {
         Slide<?,?> sld = slideshow.createSlide();
         TextBox<?,?> tb = sld.createTextBox();
         tb.setAnchor(new Rectangle(50, 50, 200, 50));
         tb.setStrokeStyle(Color.black, LineDash.SOLID, 3);
         tb.setText(JPTEXT);
-        
-        setFont(tb, "NoSuchFont");
+
+        setFont(tb, "NoSuchFont", FontGroup.LATIN);
 
         Dimension pgsize = slideshow.getPageSize();
         int width = (int)pgsize.getWidth();
         int height = (int)pgsize.getHeight();
-        
+
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = img.createGraphics();
 
         Map<String,String> fallbackMap = new HashMap<String,String>();
         fallbackMap.put("NoSuchFont", "Mona");
+        // in XSLF the fonts default to the theme fonts (Calibri), if the font group is not overridden
+        // see XSLFTextRun.XSLFTextInfo.getCTTextFont
+        fallbackMap.put("Calibri", "Mona");
         graphics.setRenderingHint(Drawable.FONT_FALLBACK, fallbackMap);
         graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        
+
         DrawFactory.getInstance(graphics).fixFonts(graphics);
-        
+
         tb.resizeToFitText(graphics);
         graphics.dispose();
-        
-        return tb;
+
+        Rectangle2D anc = tb.getAnchor();
+        // ignore font metrics differences on windows / linux (... hopefully ...)
+        int tbHeight = (int)anc.getHeight();
+        boolean found = Arrays.binarySearch(expected_sizes, tbHeight) > -1;
+        assertTrue(tbHeight+" wasn't within the expected sizes: "+Arrays.toString(expected_sizes), found);
     }
-    
-    private void setFont(TextBox<?,?> tb, String fontFamily) {
+
+    private void setFont(TextBox<?,?> tb, String fontFamily, FontGroup fontGroup) {
         // TODO: set east asian font family - MS Office uses "MS Mincho" or "MS Gothic" as a fallback
         // see https://stackoverflow.com/questions/26063828 for good explanation about the font metrics
         // differences on different environments
         for (TextParagraph<?,?,?> p : tb.getTextParagraphs()) {
             for (TextRun r : p.getTextRuns()) {
-                r.setFontFamily(fontFamily);
-                if (r instanceof XSLFTextRun) {
-                    // TODO: provide API for HSLF
-                    XSLFTextRun xr = (XSLFTextRun)r;
-                    CTRegularTextRun tr = (CTRegularTextRun)xr.getXmlObject();
-                    tr.getRPr().addNewEa().setTypeface(fontFamily);
-     
-                }
+                r.setFontFamily(fontFamily, fontGroup);
             }
         }
     }

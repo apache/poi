@@ -24,12 +24,12 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * A SlideShowSlideInfo Atom (type 1017).<br/>
- * <br/>
+ * A SlideShowSlideInfo Atom (type 1017).<br>
+ * <br>
  *  
  * An atom record that specifies which transition effects to perform
- * during a slide show, and how to advance to the next presentation slide.<br/>
- * <br/>
+ * during a slide show, and how to advance to the next presentation slide.<br>
+ * <br>
  *
  * Combination of effectType and effectDirection:
  * <table>

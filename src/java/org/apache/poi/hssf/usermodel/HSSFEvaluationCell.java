@@ -20,6 +20,8 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.util.CellRangeAddress;
+
 /**
  * HSSF wrapper for a cell under evaluation
  */
@@ -93,6 +95,17 @@ final class HSSFEvaluationCell implements EvaluationCell {
 	public String getStringCellValue() {
 		return _cell.getRichStringCellValue().getString();
 	}
+	
+	@Override
+	public CellRangeAddress getArrayFormulaRange() {
+		return _cell.getArrayFormulaRange();
+	}
+	
+	@Override
+	public boolean isPartOfArrayFormulaGroup() {
+		return _cell.isPartOfArrayFormulaGroup();
+	}
+	
 	/**
 	 * Will return {@link CellType} in a future version of POI.
 	 * For forwards compatibility, do not hard-code cell type literals in your code.

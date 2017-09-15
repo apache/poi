@@ -17,22 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.POITestCase.skipTest;
-import static org.apache.poi.POITestCase.testPassesNow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
-import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.IOUtils;
@@ -40,6 +25,12 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.apache.poi.POITestCase.skipTest;
+import static org.apache.poi.POITestCase.testPassesNow;
+import static org.junit.Assert.*;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
@@ -413,7 +404,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             skipTest(e);
         }
         
-
         workbook.close();
     }
 
@@ -485,5 +475,63 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         XSSFSheet sheet = wb.getSheetAt(0);
         sheet.shiftRows(1, 2, 3);
         IOUtils.closeQuietly(wb);
+    }
+
+    @Test
+    public void test60384() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60384.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        assertEquals(2, sheet.getMergedRegions().size());
+        assertEquals(7, sheet.getMergedRegion(0).getFirstRow());
+        assertEquals(7, sheet.getMergedRegion(0).getLastRow());
+        assertEquals(8, sheet.getMergedRegion(1).getFirstRow());
+        assertEquals(8, sheet.getMergedRegion(1).getLastRow());
+
+        sheet.shiftRows(3, 8, 1);
+
+        // after shifting, the two named regions should still be there as they
+        // are fully inside the shifted area
+        assertEquals(2, sheet.getMergedRegions().size());
+        assertEquals(8, sheet.getMergedRegion(0).getFirstRow());
+        assertEquals(8, sheet.getMergedRegion(0).getLastRow());
+        assertEquals(9, sheet.getMergedRegion(1).getFirstRow());
+        assertEquals(9, sheet.getMergedRegion(1).getLastRow());
+
+        /*OutputStream out = new FileOutputStream("/tmp/60384.xlsx");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
+
+        wb.close();
+    }
+
+    @Test
+    public void test60709() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60709.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        assertEquals(1, sheet.getMergedRegions().size());
+        assertEquals(2, sheet.getMergedRegion(0).getFirstRow());
+        assertEquals(2, sheet.getMergedRegion(0).getLastRow());
+
+        sheet.shiftRows(1, sheet.getLastRowNum()+1, -1, true, false);
+
+        // after shifting, the two named regions should still be there as they
+        // are fully inside the shifted area
+        assertEquals(1, sheet.getMergedRegions().size());
+        assertEquals(1, sheet.getMergedRegion(0).getFirstRow());
+        assertEquals(1, sheet.getMergedRegion(0).getLastRow());
+
+        /*OutputStream out = new FileOutputStream("/tmp/60709.xlsx");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
+
+        wb.close();
     }
 }

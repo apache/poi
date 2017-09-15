@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -58,7 +59,10 @@ public class TestWorkbookEvaluator {
     private static final double EPSILON = 0.0000001;
 
     private static ValueEval evaluateFormula(Ptg[] ptgs) {
-        OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
+        HSSFWorkbook wb = new HSSFWorkbook();
+        wb.createSheet().createRow(0).createCell(0);
+        EvaluationWorkbook ewb = HSSFEvaluationWorkbook.create(wb);
+        OperationEvaluationContext ec = new OperationEvaluationContext(null, ewb, 0, 0, 0, null);
         return new WorkbookEvaluator(null, null, null).evaluateFormula(ec, ptgs);
     }
 

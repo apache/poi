@@ -28,7 +28,6 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.SpecialPropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;

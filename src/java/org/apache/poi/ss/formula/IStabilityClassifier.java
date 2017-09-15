@@ -19,12 +19,12 @@ package org.apache.poi.ss.formula;
 
 /**
  * Used to help optimise cell evaluation result caching by allowing applications to specify which
- * parts of a workbook are <em>final</em>.<br/>
+ * parts of a workbook are <em>final</em>.<br>
  * The term <b>final</b> is introduced here to denote immutability or 'having constant definition'.
  * This classification refers to potential actions (on the evaluated workbook) by the evaluating
  * application.  It does not refer to operations performed by the evaluator ({@link 
- * WorkbookEvaluator}).<br/>
- * <br/>
+ * WorkbookEvaluator}).<br>
+ * <br>
  * <b>General guidelines</b>:
  * <ul>
  * <li>a plain value cell can be marked as 'final' if it will not be changed after the first call

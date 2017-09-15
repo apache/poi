@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Implementation of Excel T() function
- * <p/>
+ * <p>
  * If the argument is a text or error value it is returned unmodified.  All other argument types
  * cause an empty string result.  If the argument is an area, the first (top-left) cell is used
  * (regardless of the coordinates of the evaluating formula cell).

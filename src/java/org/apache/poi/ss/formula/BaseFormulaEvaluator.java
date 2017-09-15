@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
- * Common functionality across file formats for evaluating formula cells.<p/>
+ * Common functionality across file formats for evaluating formula cells.<p>
  */
 public abstract class BaseFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluatorProvider {
     protected final WorkbookEvaluator _bookEvaluator;

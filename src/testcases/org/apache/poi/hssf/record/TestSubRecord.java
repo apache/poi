@@ -120,7 +120,7 @@ public final class TestSubRecord extends TestCase {
 	 * record 8224 bytes long instead of 70.  
 	 * (An aside: It seems more than a coincidence that this problem creates a record of exactly
 	 * {@link RecordInputStream#MAX_RECORD_DATA_SIZE} but not enough is understood about 
-	 * subrecords to explain this.)<br/>
+	 * subrecords to explain this.)<br>
 	 * 
 	 * Excel reads files with this excessive padding OK.  It also truncates the over-sized
 	 * ObjRecord back to the proper size.  POI should do the same.

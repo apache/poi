@@ -120,7 +120,6 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         read(getPackagePart().getInputStream());
     }
 
-    @SuppressWarnings("resource")
     protected void read(InputStream is) throws IOException, XmlException {
         Document doc;
         try {

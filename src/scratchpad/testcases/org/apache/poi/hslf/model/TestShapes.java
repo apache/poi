@@ -445,9 +445,9 @@ public final class TestShapes {
             assertEquals(dgShapesUsed + 1, dg.getNumShapes());
 
             //check that EscherDggRecord is updated
-            assertEquals(shape.getShapeId() + 1, dgg.getShapeIdMax());
-            assertEquals(dggMaxId + 1, dgg.getShapeIdMax());
-            assertEquals(dggShapesUsed + 1, dgg.getNumShapesSaved());
+            assertEquals("mismatch @"+i, shape.getShapeId() + 1, dgg.getShapeIdMax());
+            assertEquals("mismatch @"+i, dggMaxId + 1, dgg.getShapeIdMax());
+            assertEquals("mismatch @"+i, dggShapesUsed + 1, dgg.getNumShapesSaved());
 
             dggShapesUsed = dgg.getNumShapesSaved();
             dggMaxId = dgg.getShapeIdMax();

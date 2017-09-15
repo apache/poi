@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -30,6 +29,7 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
@@ -94,9 +94,7 @@ public class SlideShowFactory {
      * Creates the appropriate HSLFSlideShow / XMLSlideShow from
      *  the given InputStream.
      *
-     * <p>Your input stream MUST either support mark/reset, or
-     *  be wrapped as a {@link PushbackInputStream}! Note that
-     *  using an {@link InputStream} has a higher memory footprint
+     * <p>Note that using an {@link InputStream} has a higher memory footprint
      *  than using a {@link File}.</p>
      *
      * <p>Note that in order to properly release resources the
@@ -118,9 +116,8 @@ public class SlideShowFactory {
     /**
      * Creates the appropriate HSLFSlideShow / XMLSlideShow from
      *  the given InputStream, which may be password protected.
-     * <p>Your input stream MUST either support mark/reset, or
-     *  be wrapped as a {@link PushbackInputStream}! Note that
-     *  using an {@link InputStream} has a higher memory footprint
+     *  
+     * <p>Note that using an {@link InputStream} has a higher memory footprint
      *  than using a {@link File}.</p>
      *
      * <p>Note that in order to properly release resources the
@@ -137,23 +134,18 @@ public class SlideShowFactory {
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
     public static SlideShow<?,?> create(InputStream inp, String password) throws IOException, EncryptedDocumentException {
-        // If clearly doesn't do mark/reset, wrap up
-        if (! inp.markSupported()) {
-            inp = new PushbackInputStream(inp, 8);
-        }
-
-        // Ensure that there is at least some data there
-        byte[] header8 = IOUtils.peekFirst8Bytes(inp);
-
-        // Try to create
-        if (NPOIFSFileSystem.hasPOIFSHeader(header8)) {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
+        InputStream is = FileMagic.prepareToCheckMagic(inp);
+        FileMagic fm = FileMagic.valueOf(is);
+        
+        switch (fm) {
+        case OLE2:
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             return create(fs, password);
+        case OOXML:
+            return createXSLFSlideShow(is);
+        default:
+            throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
-        if (DocumentFactoryHelper.hasOOXMLHeader(inp)) {
-            return createXSLFSlideShow(inp);
-        }
-        throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
     }
 
     /**

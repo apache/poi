@@ -166,7 +166,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     }
 
     /** Returns the number of row blocks.
-     * <p/>The row blocks are goupings of rows that contain the DBCell record
+     * <p>The row blocks are goupings of rows that contain the DBCell record
      * after them
      */
     public int getRowBlockCount() {

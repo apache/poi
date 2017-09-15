@@ -802,7 +802,7 @@ public class DataFormatter implements Observer {
      * Returns the formatted value of an Excel date as a <tt>String</tt> based
      * on the cell's <code>DataFormat</code>. i.e. "Thursday, January 02, 2003"
      * , "01/02/2003" , "02-Jan" , etc.
-     * <p/>
+     * <p>
      * If any conditional format rules apply, the highest priority with a number format is used.
      * If no rules contain a number format, or no rules apply, the cell's style format is used.
      * If the style does not have a format, the default date format is applied.
@@ -828,7 +828,7 @@ public class DataFormatter implements Observer {
      * based on the cell's <code>DataFormat</code>. Supported formats include
      * currency, percents, decimals, phone number, SSN, etc.:
      * "61.54%", "$100.00", "(800) 555-1234".
-     * <p/>
+     * <p>
      * Format comes from either the highest priority conditional format rule with a
      * specified format, or from the cell style.
      * 

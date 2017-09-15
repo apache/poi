@@ -163,7 +163,7 @@ public final class TestXSSFTable {
     public void isHasTotalsRow() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
         XSSFTable table = wb.getTable("\\_Prime.1");
-        assertFalse(table.isHasTotalsRow());
+        assertFalse(table.getTotalsRowCount() > 0);
         wb.close(); 
     }
 

@@ -39,4 +39,18 @@ public class RecordFormatException
     public RecordFormatException(Throwable thr) {
       super(thr);
     }
+
+    /**
+     * Syntactic sugar to check whether a RecordFormatException should
+     * be thrown.  If assertTrue is <code>false</code>, this will throw this
+     * exception with the message.
+     *
+     * @param assertTrue
+     * @param message
+     */
+    public static void check(boolean assertTrue, String message) {
+        if (! assertTrue) {
+            throw new RecordFormatException(message);
+        }
+    }
 }

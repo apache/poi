@@ -1315,11 +1315,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * Removes sheet at the given index.<p/>
+     * Removes sheet at the given index.<p>
      *
      * Care must be taken if the removed sheet is the currently active or only selected sheet in
      * the workbook. There are a few situations when Excel must have a selection and/or active
-     * sheet. (For example when printing - see Bug 40414).<br/>
+     * sheet. (For example when printing - see Bug 40414).<br>
      *
      * This method makes sure that if the removed sheet was active, another sheet will become
      * active in its place.  Furthermore, if the removed sheet was the only selected sheet, another
@@ -1366,6 +1366,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param index the 0-based index of the sheet to delete
      */
     private void onSheetDelete(int index) {
+        // remove all sheet relations
+        final XSSFSheet sheet = getSheetAt(index);
+
+        sheet.onSheetDelete();
+        
         //delete the CTSheet reference from workbook.xml
         workbook.getSheets().removeSheet(index);
 
@@ -1901,14 +1906,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
-    @Deprecated
-    @Removal(version="3.18")
-    @Override
-    public void setSheetHidden(int sheetIx, int state) {
-        WorkbookUtil.validateSheetState(state);
-        setSheetVisibility(sheetIx, SheetVisibility.values()[state]);
-    }
-    
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
@@ -2013,10 +2010,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * Specifies a boolean value that indicates whether structure of workbook is locked. <br/>
+     * Specifies a boolean value that indicates whether structure of workbook is locked. <br>
      * A value true indicates the structure of the workbook is locked. Worksheets in the workbook can't be moved,
-     * deleted, hidden, unhidden, or renamed, and new worksheets can't be inserted.<br/>
-     * A value of false indicates the structure of the workbook is not locked.<br/>
+     * deleted, hidden, unhidden, or renamed, and new worksheets can't be inserted.<br>
+     * A value of false indicates the structure of the workbook is not locked.<br>
      *
      * @return true if structure of workbook is locked
      */
@@ -2025,9 +2022,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * Specifies a boolean value that indicates whether the windows that comprise the workbook are locked. <br/>
+     * Specifies a boolean value that indicates whether the windows that comprise the workbook are locked. <br>
      * A value of true indicates the workbook windows are locked. Windows are the same size and position each time the
-     * workbook is opened.<br/>
+     * workbook is opened.<br>
      * A value of false indicates the workbook windows are not locked.
      *
      * @return true if windows that comprise the workbook are locked

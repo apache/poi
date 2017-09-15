@@ -48,3 +48,4 @@ dist
 gradle
 gradlew.bat
 gradlew
+lib/

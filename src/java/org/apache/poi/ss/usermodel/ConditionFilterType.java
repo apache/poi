@@ -23,7 +23,7 @@ package org.apache.poi.ss.usermodel;
  * Used primarily for XSSF conditions, which defines a multitude of additional "filter" types
  * for conditional formatting.  HSSF rules will always be null (not a filter type) or #FILTER.
  * XSSF conditions will be null (not a filter type) or any value other than #FILTER.
- * <p/>
+ * <p>
  * Instance names match the constants from <code>STCfType</code> for convenience.
  */
 public enum ConditionFilterType {

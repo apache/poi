@@ -42,16 +42,14 @@ import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.BlockList;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
 import org.apache.poi.util.CloseIgnoringInputStream;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LongField;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * <p>This is the main class of the POIFS system; it manages the entire
@@ -96,7 +94,7 @@ public class OPOIFSFileSystem
 
     /**
      * Create a OPOIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
-     * EOF.  The stream is always closed.<p/>
+     * EOF.  The stream is always closed.<p>
      *
      * Some streams are usable after reaching EOF (typically those that return <code>true</code>
      * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream
@@ -200,27 +198,34 @@ public class OPOIFSFileSystem
 
     /**
      * Checks that the supplied InputStream (which MUST
-     *  support mark and reset, or be a PushbackInputStream)
-     *  has a POIFS (OLE2) header at the start of it.
-     * If your InputStream does not support mark / reset,
-     *  then wrap it in a PushBackInputStream, then be
+     *  support mark and reset) has a POIFS (OLE2) header at the start of it.
+     * If unsure if your InputStream does support mark / reset,
+     *  use {@link FileMagic#prepareToCheckMagic(InputStream)} to wrap it and make
      *  sure to always use that, and not the original!
-     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
+     *  
+     *  After the method call, the InputStream is at the
+     *  same position as of the time of entering the method.
+     *  
+     * @param inp An InputStream which supports either mark/reset
+     * 
+     * @deprecated in 3.17-beta2, use {@link FileMagic#valueOf(InputStream)} == {@link FileMagic#OLE2} instead
      */
+    @Deprecated
+    @Removal(version="4.0")
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
-        // We want to peek at the first 8 bytes
-        byte[] header = IOUtils.peekFirst8Bytes(inp);
-        return hasPOIFSHeader(header);
+        return NPOIFSFileSystem.hasPOIFSHeader(inp);
     }
+
     /**
      * Checks if the supplied first 8 bytes of a stream / file
      *  has a POIFS (OLE2) header.
+     * 
+     * @deprecated in 3.17-beta2, use {@link FileMagic#valueOf(InputStream)} == {@link FileMagic#OLE2} instead
      */
+    @Deprecated
+    @Removal(version="4.0")
     public static boolean hasPOIFSHeader(byte[] header8Bytes) {
-        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header8Bytes);
-
-        // Did it match the signature?
-        return (signature.get() == HeaderBlockConstants._signature);
+        return NPOIFSFileSystem.hasPOIFSHeader(header8Bytes);
     }
 
     /**

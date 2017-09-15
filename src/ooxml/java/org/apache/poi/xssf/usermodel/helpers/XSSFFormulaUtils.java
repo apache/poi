@@ -52,7 +52,7 @@ public final class XSSFFormulaUtils {
     /**
      * Update sheet name in all formulas and named ranges.
      * Called from {@link XSSFWorkbook#setSheetName(int, String)}
-     * <p/>
+     * <p>
      * <p>
      * The idea is to parse every formula and render it back to string
      * with the updated sheet name. This is done by parsing into Ptgs,

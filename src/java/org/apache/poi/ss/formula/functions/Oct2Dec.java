@@ -23,18 +23,18 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * <p>Implementation for Excel Oct2Dec() function.<p/>
+ * <p>Implementation for Excel Oct2Dec() function.<p>
  * <p>
  * Converts an octal number to decimal.
  * </p>
  * <p>
- * <b>Syntax</b>:<br/> <b>Oct2Dec  </b>(<b>number</b> )
+ * <b>Syntax</b>:<br> <b>Oct2Dec  </b>(<b>number</b> )
  * </p>
- * <p/>
+ * <p>
  * Number     is the octal number you want to convert. Number may not contain more than 10 octal characters (30 bits).
  * The most significant bit of number is the sign bit. The remaining 29 bits are magnitude bits.
  * Negative numbers are represented using two's-complement notation..
- * <p/>
+ * <p>
  * If number is not a valid octal number, OCT2DEC returns the #NUM! error value.
  *
  * @author cedric dot walter @ gmail dot com

@@ -411,4 +411,26 @@ public class TestXWPFWordExtractor extends TestCase {
                 "In Sequence:\n|X||_||X|\n", extractor.getText());
         extractor.close();
     }
+    
+    public void testMultipleBodyBug() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("MultipleBodyBug.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        assertEquals("START BODY 1 The quick, brown fox jumps over a lazy dog. END BODY 1.\n"
+                        + "START BODY 2 The quick, brown fox jumps over a lazy dog. END BODY 2.\n"
+                        + "START BODY 3 The quick, brown fox jumps over a lazy dog. END BODY 3.\n",
+                extractor.getText());
+        extractor.close();
+    }
+
+    public void testPhonetic() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61470.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        //expect: baseText (phoneticText)
+        assertEquals("\u6771\u4EAC (\u3068\u3046\u304D\u3087\u3046)", extractor.getText().trim());
+        extractor.close();
+        extractor = new XWPFWordExtractor(doc);
+        extractor.setConcatenatePhoneticRuns(false);
+        assertEquals("\u6771\u4EAC", extractor.getText().trim());
+    }
+
 }

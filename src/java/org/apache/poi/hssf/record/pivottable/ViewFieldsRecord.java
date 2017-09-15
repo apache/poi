@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * SXVD - View Fields (0x00B1)<br/>
+ * SXVD - View Fields (0x00B1)<br>
  * 
  * @author Patrick Cheng
  */

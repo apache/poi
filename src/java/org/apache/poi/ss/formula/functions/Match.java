@@ -31,13 +31,13 @@ import org.apache.poi.ss.formula.functions.LookupUtils.LookupValueComparer;
 import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
 
 /**
- * Implementation for the MATCH() Excel function.<p/>
+ * Implementation for the MATCH() Excel function.<p>
  *
- * <b>Syntax:</b><br/>
- * <b>MATCH</b>(<b>lookup_value</b>, <b>lookup_array</b>, match_type)<p/>
+ * <b>Syntax:</b><br>
+ * <b>MATCH</b>(<b>lookup_value</b>, <b>lookup_array</b>, match_type)<p>
  *
  * Returns a 1-based index specifying at what position in the <b>lookup_array</b> the specified
- * <b>lookup_value</b> is found.<p/>
+ * <b>lookup_value</b> is found.<p>
  *
  * Specific matching behaviour can be modified with the optional <b>match_type</b> parameter.
  *
@@ -55,8 +55,8 @@ import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
  *  be ordered, MATCH() can produce incorrect results if this requirement is not met.  Observed
  *  behaviour in Excel is to return the lowest index value for which every item after that index
  *  breaks the match rule.<br>
- *  The (ascending) sort order expected by MATCH() is:<br/>
- *  numbers (low to high), strings (A to Z), boolean (FALSE to TRUE)<br/>
+ *  The (ascending) sort order expected by MATCH() is:<br>
+ *  numbers (low to high), strings (A to Z), boolean (FALSE to TRUE)<br>
  *  MATCH() ignores all elements in the lookup_array with a different type to the lookup_value.
  *  Type conversion of the lookup_array elements is never performed.
  */

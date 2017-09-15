@@ -228,12 +228,28 @@ public class DrawFactory {
             graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);
         }
         
-        String fonts[][] = { { "Calibri", "Lucida Sans" }, { "Cambria", "Lucida Bright" } };
+        String fonts[][] = {
+            { "Calibri", "Lucida Sans" },
+            { "Cambria", "Lucida Bright" },
+            { "Times New Roman", "Lucida Bright" },
+            { "serif", "Lucida Bright" }
+        };
 
         for (String f[] : fonts) {
             if (!fontMap.containsKey(f[0])) {
                 fontMap.put(f[0], f[1]);
             }
         }
+    }
+    
+    /**
+     * Return a FontManager, either registered beforehand or a default implementation
+     *
+     * @param graphics the graphics context holding potentially a font manager
+     * @return the font manager
+     */
+    public DrawFontManager getFontManager(Graphics2D graphics) {
+        DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
+        return (fontHandler != null) ? fontHandler : new DrawFontManagerDefault();
     }
 }

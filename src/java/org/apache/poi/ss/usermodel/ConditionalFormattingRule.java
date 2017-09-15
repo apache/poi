@@ -92,11 +92,11 @@ public interface ConditionalFormattingRule extends DifferentialStyleProvider {
     
     /**
      * This is null if 
-     * <p/>
+     * <p>
      * <code>{@link #getConditionType()} != {@link ConditionType#FILTER}</code>
-     * <p/>
+     * <p>
      * This is always {@link ConditionFilterType#FILTER} for HSSF rules of type {@link ConditionType#FILTER}.
-     * <p/>
+     * <p>
      * For XSSF filter rules, this will indicate the specific type of filter.
      * 
      * @return filter type for filter rules, or null if not a filter rule.
@@ -105,11 +105,11 @@ public interface ConditionalFormattingRule extends DifferentialStyleProvider {
     
     /**
      * This is null if 
-     * <p/>
+     * <p>
      * <code>{@link #getConditionFilterType()} == null</code>
-     * <p/>
+     * <p>
      * This means it is always null for HSSF, which does not define the extended condition types.
-     * <p/>
+     * <p>
      * This object contains the additional configuration information for XSSF filter conditions.
      * 
      * @return the Filter Configuration Data, or null if there isn't any
@@ -154,13 +154,13 @@ public interface ConditionalFormattingRule extends DifferentialStyleProvider {
 
     /**
      * The priority of the rule, if defined, otherwise 0.
-     * <p/>
+     * <p>
      * If priority is 0, just use definition order, as that's how older HSSF rules 
      *  are evaluated.
-     * <p/>
+     * <p>
      * For XSSF, this should always be set. For HSSF, only newer style rules
      *  have this set, older ones will return 0.
-     * <p/>
+     * <p>
      * If a rule is created but not yet added to a sheet, this value may not be valid.
      * @return rule priority
      */

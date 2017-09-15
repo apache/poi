@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The area format record is used to define the colours and patterns for an area.<p/>
+ * The area format record is used to define the colours and patterns for an area.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import java.util.regex.Pattern;
 
 /**
@@ -70,6 +73,40 @@ public final class OperandResolver {
         }
         return result;
     }
+    
+    /**
+     * Retrieves a single value from an area evaluation utilizing the 2D indices of the cell
+     * within its own area reference to index the value in the area evaluation.
+     *
+     * @param ae area reference after evaluation
+     * @param cell the source cell of the formula that contains its 2D indices
+     * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt> or <tt>BlankEval</tt>. or <tt>ErrorEval<tt>
+     * Never <code>null</code>.
+     */
+
+    public static ValueEval getElementFromArray(AreaEval ae, EvaluationCell cell) {
+        CellRangeAddress range =  cell.getArrayFormulaRange();
+        int relativeRowIndex = cell.getRowIndex() - range.getFirstRow();
+        int relativeColIndex = cell.getColumnIndex() - range.getFirstColumn();
+        //System.out.println("Row: " + relativeRowIndex + " Col: " + relativeColIndex);
+        
+        if (ae.isColumn()) {
+            if (ae.isRow()) {
+                return ae.getRelativeValue(0, 0);
+            }
+            else if(relativeRowIndex < ae.getHeight()) {
+                return ae.getRelativeValue(relativeRowIndex, 0);
+            }
+        }
+        else if (!ae.isRow() && relativeRowIndex < ae.getHeight() && relativeColIndex < ae.getWidth()) {
+            return ae.getRelativeValue(relativeRowIndex, relativeColIndex);
+        }
+        else if (ae.isRow() && relativeColIndex < ae.getWidth()) {
+            return ae.getRelativeValue(0, relativeColIndex);
+        }
+        
+        return ErrorEval.NA;
+    }
 
     /**
      * Implements (some perhaps not well known) Excel functionality to select a single cell from an
@@ -97,10 +134,10 @@ public final class OperandResolver {
      *
      * Note that the row area (A1:B1) does not include column C and the column area (D2:D3) does
      * not include row 4, so the values in C1(=25) and D4(=400) are not accessible to the formula
-     * as written, but in the 4 cells A2:B3, the row and column selection works ok.<p/>
+     * as written, but in the 4 cells A2:B3, the row and column selection works ok.<p>
      *
      * The same concept is extended to references across sheets, such that even multi-row,
-     * multi-column areas can be useful.<p/>
+     * multi-column areas can be useful.<p>
      *
      * Of course with carefully (or carelessly) chosen parameters, cyclic references can occur and
      * hence this method <b>can</b> throw a 'circular reference' EvaluationException.  Note that
@@ -180,14 +217,14 @@ public final class OperandResolver {
     }
 
     /**
-     * Applies some conversion rules if the supplied value is not already an integer.<br/>
+     * Applies some conversion rules if the supplied value is not already an integer.<br>
      * Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).
-     * Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p/>
+     * Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p>
      *
-     * Excel typically converts doubles to integers by truncating toward negative infinity.<br/>
-     * The equivalent java code is:<br/>
-     * &nbsp;&nbsp;<code>return (int)Math.floor(d);</code><br/>
-     * <b>not</b>:<br/>
+     * Excel typically converts doubles to integers by truncating toward negative infinity.<br>
+     * The equivalent java code is:<br>
+     * &nbsp;&nbsp;<code>return (int)Math.floor(d);</code><br>
+     * <b>not</b>:<br>
      * &nbsp;&nbsp;<code>return (int)d; // wrong - rounds toward zero</code>
      *
      */
@@ -232,21 +269,21 @@ public final class OperandResolver {
     }
 
     /**
-     * Converts a string to a double using standard rules that Excel would use.<br/>
-     * Tolerates leading and trailing spaces, <p/>
+     * Converts a string to a double using standard rules that Excel would use.<br>
+     * Tolerates leading and trailing spaces, <p>
      * 
      * Doesn't support currency prefixes, commas, percentage signs or arithmetic operations strings.  
      *
-     *  Some examples:<br/>
-     *  " 123 " -&gt; 123.0<br/>
-     *  ".123" -&gt; 0.123<br/>
-     *  "1E4" -&gt; 1000<br/>
-     *  "-123" -&gt; -123.0<br/>
-     *  These not supported yet:<br/>
-     *  " $ 1,000.00 " -&gt; 1000.0<br/>
-     *  "$1.25E4" -&gt; 12500.0<br/>
-     *  "5**2" -&gt; 500<br/>
-     *  "250%" -&gt; 2.5<br/>
+     *  Some examples:<br>
+     *  " 123 " -&gt; 123.0<br>
+     *  ".123" -&gt; 0.123<br>
+     *  "1E4" -&gt; 1000<br>
+     *  "-123" -&gt; -123.0<br>
+     *  These not supported yet:<br>
+     *  " $ 1,000.00 " -&gt; 1000.0<br>
+     *  "$1.25E4" -&gt; 12500.0<br>
+     *  "5**2" -&gt; 500<br>
+     *  "250%" -&gt; 2.5<br>
      *
      * @return <code>null</code> if the specified text cannot be parsed as a number
      */

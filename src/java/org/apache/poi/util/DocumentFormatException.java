@@ -1,3 +1,4 @@
+
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,32 +16,38 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpsf;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.poi.util.Removal;
+package org.apache.poi.util;
 
 /**
- * dds writing support to the {@link PropertySet} class.<p>
- *
- * Please be aware that this class' functionality will be merged into the
- * {@link PropertySet} class at a later time, so the API will change.
- *
- * @deprecated POI 3.16 - use PropertySet as base class instead
+ * This is similar to {@link RecordFormatException}, except this is thrown
+ * when there's a higher order problem with parsing a document beyond individual records.
  */
-@Removal(version="3.18")
-public class MutablePropertySet extends PropertySet {
-    public MutablePropertySet() {}
-	
-	public MutablePropertySet(final PropertySet ps) {
-        super(ps);
+public class DocumentFormatException extends RuntimeException {
+
+    public DocumentFormatException(String exception) {
+        super(exception);
     }
 
-    /* package */ MutablePropertySet(final InputStream stream)
-    throws NoPropertySetStreamException, MarkUnsupportedException, IOException, UnsupportedEncodingException {
-        super(stream);
+    public DocumentFormatException(String exception, Throwable thr) {
+        super(exception, thr);
+    }
+
+    public DocumentFormatException(Throwable thr) {
+        super(thr);
+    }
+
+    /**
+     * Syntactic sugar to check whether a DocumentFormatException should
+     * be thrown.  If assertTrue is <code>false</code>, this will throw this
+     * exception with the message.
+     *
+     * @param assertTrue
+     * @param message
+     */
+    public static void check(boolean assertTrue, String message) {
+        if (!assertTrue) {
+            throw new DocumentFormatException(message);
+        }
     }
 }

@@ -29,7 +29,7 @@ public final class BoolEval implements NumericValueEval, StringValueEval {
 	public static final BoolEval TRUE = new BoolEval(true);
 
 	/**
-	 * Convenience method for the following:<br/>
+	 * Convenience method for the following:<br>
 	 * <code>(b ? BoolEval.TRUE : BoolEval.FALSE)</code>
 	 *
 	 * @return the <tt>BoolEval</tt> instance representing <tt>b</tt>.

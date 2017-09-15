@@ -22,7 +22,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 /**
  * Experimental class to offer rudimentary read-only processing of
  * of StructuredDocumentTags/ContentControl
- * <p/>
+ * <p>
  * WARNING - APIs expected to change rapidly
  */
 public class XWPFSDT extends AbstractXWPFSDT

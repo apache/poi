@@ -34,31 +34,31 @@ import org.apache.poi.util.LocaleUtil;
  * {@code DAYS360(start_date,end_date,[method])}
  * 
  * <ul>
- * <li>Start_date, end_date (required):<br/>
- * The two dates between which you want to know the number of days.<br/>
+ * <li>Start_date, end_date (required):<br>
+ * The two dates between which you want to know the number of days.<br>
  * If start_date occurs after end_date, the DAYS360 function returns a negative number.</li>
  * 
- * <li>Method (optional):<br/>
+ * <li>Method (optional):<br>
  * A logical value that specifies whether to use the U.S. or European method in the calculation</li>
  * 
- * <li>Method set to false or omitted:<br/>
+ * <li>Method set to false or omitted:<br>
  * the DAYS360 function uses the U.S. (NASD) method. If the starting date is the 31st of a month,
  * it becomes equal to the 30th of the same month. If the ending date is the 31st of a month and
  * the starting date is earlier than the 30th of a month, the ending date becomes equal to the
  * 1st of the next month, otherwise the ending date becomes equal to the 30th of the same month.
- * The month February and leap years are handled in the following way:<br/>
+ * The month February and leap years are handled in the following way:<br>
  * On a non-leap year the function {@code =DAYS360("2/28/93", "3/1/93", FALSE)} returns 1 day
- * because the DAYS360 function ignores the extra days added to February.<br/>
+ * because the DAYS360 function ignores the extra days added to February.<br>
  * On a leap year the function {@code =DAYS360("2/29/96","3/1/96", FALSE)} returns 1 day for
  * the same reason.</li>
  * 
- * <li>Method Set to true:<br/>
+ * <li>Method Set to true:<br>
  * When you set the method parameter to TRUE, the DAYS360 function uses the European method.
  * Starting dates or ending dates that occur on the 31st of a month become equal to the 30th of
- * the same month. The month February and leap years are handled in the following way:<br/>
+ * the same month. The month February and leap years are handled in the following way:<br>
  * On a non-leap year the function {@code =DAYS360("2/28/93", "3/1/93", TRUE)} returns
  * 3 days because the DAYS360 function is counting the extra days added to February to give
- * February 30 days.<br/>
+ * February 30 days.<br>
  * On a leap year the function {@code =DAYS360("2/29/96", "3/1/96", TRUE)} returns
  * 2 days for the same reason.</li>
  * </ul>

@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The axis options record provides unit information and other various tidbits about the axis.<p/>
+ * The axis options record provides unit information and other various tidbits about the axis.<p>
  * 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */

@@ -515,8 +515,8 @@ public abstract class BaseTestCell {
     }
     
     /**
-     * similar to {@link #testConvertStringFormulaCell()} but  checks at a
-     * lower level that {#link {@link Cell#setCellType(int)} works properly
+     * similar to {@link #testConvertStringFormulaCell()} but checks at a
+     * lower level that {#link {@link Cell#setCellType(CellType)} works properly
      */
     @Test
     public void testSetTypeStringOnFormulaCell() throws IOException {

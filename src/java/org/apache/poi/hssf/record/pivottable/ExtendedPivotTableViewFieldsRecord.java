@@ -25,7 +25,7 @@ import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 /**
- * SXVDEX - Extended PivotTable View Fields (0x0100)<br/>
+ * SXVDEX - Extended PivotTable View Fields (0x0100)<br>
  * 
  * @author Patrick Cheng
  */

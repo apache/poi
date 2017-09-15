@@ -40,7 +40,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="3.17-beta2"/>
+    <property name="version.id" value="3.18-beta1"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -178,6 +178,9 @@ under the License.
     <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.1.jar"/>
     <property name="main.commons-collections4.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
+    <property name="main.commons-math3.jar" location="${main.lib}/commons-math3-3.6.1.jar"/>
+    <property name="main.commons-math3.url"
+              value="${repository.m2}/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
 
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.6.jar"/>
@@ -326,6 +329,7 @@ under the License.
         <pathelement location="${main.commons-logging.jar}"/>
         <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.commons-collections4.jar}"/>
+        <pathelement location="${main.commons-math3.jar}"/>
     </path>
 
     <!-- some libraries should only be required for compiling/running tests -->
@@ -631,6 +635,7 @@ under the License.
                     <available file="${dsig.xmlsec.jar}"/>
                     <available file="${dsig.sl4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
+                    <available file="${main.commons-math3.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -652,6 +657,7 @@ under the License.
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
+        <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
         <unzip src="${jacoco.zip}" dest=".">
             <patternset>
                 <include name="lib/*.jar"/>
@@ -845,12 +851,14 @@ under the License.
                     <include name="org/apache/poi/POIXMLTypeLoader.java"/>
                     <include name="org/apache/poi/util/DocumentHelper.java"/>
                     <include name="org/apache/poi/util/SAXHelper.java"/>
+                    <include name="org/apache/poi/openxml4j/opc/PackageNamespaces.java"/>
                 </fileset>
                 <fileset dir="${main.src}">
                     <include name="org/apache/poi/util/POILogFactory.java"/>
                     <include name="org/apache/poi/util/POILogger.java"/>
                     <include name="org/apache/poi/util/NullLogger.java"/>
                     <include name="org/apache/poi/util/Internal.java"/>
+                	<include name="org/apache/poi/util/Removal.java"/>
                 </fileset>
             </copy>
         	
@@ -2042,6 +2050,7 @@ under the License.
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
+                    <include name="commons-math3-*.jar"/>
                     <include name="junit-*.jar"/>
                     <include name="log4j-*.jar"/>
                 </fileset>
@@ -2117,7 +2126,7 @@ under the License.
         <antcall target="maven-poms"/>
 
         <echo>Distribution located in ${dist.dir}</echo>
-        <echo>Use "ant dist-checksum" to create md5/sha1 checksums and GPG signatures</echo>
+        <echo>Use "ant dist-checksum" to create md5/sha1/sha512 checksums and GPG signatures</echo>
     </target>
 
     <target name="osgi" depends="mvn-install">
@@ -2304,6 +2313,7 @@ under the License.
             <auxClasspath path="${ooxml.curvesapi.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-collections4.jar}" />
+            <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.junit.jar}" />
@@ -2355,6 +2365,9 @@ under the License.
     <target name="dist-checksum" depends="load-maven-server-settings">
         <fileset id="dist-archives" dir="${dist.dir}" includes="**/*.jar,**/*.pom,**/*.zip,**/*.tar.gz"/>
 
+        <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
+            <fileset refid="dist-archives"/>
+        </checksum>
         <checksum algorithm="sha1" format="MD5SUM">
             <fileset refid="dist-archives"/>
         </checksum>
@@ -2362,7 +2375,7 @@ under the License.
             <fileset refid="dist-archives"/>
         </checksum>
 
-        <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1" eol="unix"/>
+        <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1,**/*.sha512" eol="unix"/>
 
         <downloadfile src="${dist.bouncycastle-prov.url}" dest="${dist.bouncycastle-prov.jar}"/>
         <downloadfile src="${dist.bouncycastle-bcpg.url}" dest="${dist.bouncycastle-bcpg.jar}"/>
@@ -2404,7 +2417,8 @@ under the License.
 
             <copy todir="${repo}">
                 <mappedresources>
-                    <fileset dir="build/dist/maven" includes="@{artifactId}/**"/>
+                	<!-- add sha-512 when nexus rules are updated (1/2) -->
+                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512"/>
                     <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
                 </mappedresources>
             </copy>
@@ -2430,7 +2444,11 @@ under the License.
     <lastUpdated>${lastUpdated}</lastUpdated>
   </versioning>
 </metadata>]]></echo>
-            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />
+            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />                	<!-- add sha-512 when nexus rules are updated -->
+            <!-- add sha-512 when nexus rules are updated (2/2) -->
+            <!--checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
+                <fileset dir="${metadir}" includes="maven-metadata.xml"/>
+            </checksum-->
             <checksum algorithm="sha1" format="MD5SUM">
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
             </checksum>
@@ -2438,7 +2456,7 @@ under the License.
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
             </checksum>
 
-            <fixcrlf srcDir="${metadir}" includes="*.md5,*.sha1" eol="unix"/>
+            <fixcrlf srcDir="${metadir}" includes="*.md5,*.sha1,*.sha512" eol="unix"/>
 
             <downloadfile src="${dist.nexus-staging.url}" dest="${dist.nexus-staging.jar}"/>
             <taskdef uri="antlib:org.sonatype.nexus.ant.staging" resource="org/sonatype/nexus/ant/staging/antlib.xml">
@@ -2735,12 +2753,16 @@ under the License.
 
         <loadChecksum property="bin-tar-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5"/>
         <loadChecksum property="bin-tar-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1"/>
+        <loadChecksum property="bin-tar-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512"/>
         <loadChecksum property="bin-zip-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.md5"/>
         <loadChecksum property="bin-zip-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha1"/>
+        <loadChecksum property="bin-zip-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha512"/>
         <loadChecksum property="src-tar-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.md5"/>
         <loadChecksum property="src-tar-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1"/>
+        <loadChecksum property="src-tar-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512"/>
         <loadChecksum property="src-zip-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.md5"/>
         <loadChecksum property="src-zip-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha1"/>
+        <loadChecksum property="src-zip-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha512"/>
 
         <loadFilesize property="bin-tar-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz"/>
         <loadFilesize property="bin-zip-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip"/>
@@ -2772,6 +2794,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1">
           ${bin-tar-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512">
+          ${bin-tar-sha512}</link>
         </li>
         <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</link>
           (${bin-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
@@ -2781,6 +2806,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha1">
           ${bin-zip-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha512">
+          ${bin-zip-sha512}</link>
         </li>
       </ul>
       </section>
@@ -2794,6 +2822,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1">
           ${src-tar-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512">
+          ${src-tar-sha512}</link>
         </li>
         <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
           (${src-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
@@ -2803,6 +2834,9 @@ under the License.
           <br/>
           SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha1">
           ${src-zip-sha1}</link>
+          <br/>
+          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha512">
+          ${src-zip-sha512}</link>
         </li>
       </ul>
       </section>

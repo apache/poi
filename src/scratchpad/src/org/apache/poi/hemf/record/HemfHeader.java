@@ -32,6 +32,9 @@ import org.apache.poi.util.LittleEndianInputStream;
 @Internal
 public class HemfHeader implements HemfRecord {
 
+    private static final int MAX_RECORD_LENGTH = 1000000;
+
+
     private Rectangle boundsRectangle;
     private Rectangle frameRectangle;
     private long bytes;
@@ -140,7 +143,7 @@ public class HemfHeader implements HemfRecord {
             throw new IOException("Not a valid EMF header. Record type:"+recordId);
         }
         //read the record--id and size (2 bytes) have already been read
-        byte[] data = new byte[(int)recordSize];
+        byte[] data = IOUtils.safelyAllocate(recordSize, MAX_RECORD_LENGTH);
         IOUtils.readFully(leis, data);
 
         int offset = 0;

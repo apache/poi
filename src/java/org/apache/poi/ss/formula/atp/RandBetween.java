@@ -25,15 +25,15 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 
 /**
- * Implementation of Excel 'Analysis ToolPak' function RANDBETWEEN()<br/>
+ * Implementation of Excel 'Analysis ToolPak' function RANDBETWEEN()<br>
  *
- * Returns a random integer number between the numbers you specify.<p/>
+ * Returns a random integer number between the numbers you specify.<p>
  *
- * <b>Syntax</b><br/>
- * <b>RANDBETWEEN</b>(<b>bottom</b>, <b>top</b>)<p/>
+ * <b>Syntax</b><br>
+ * <b>RANDBETWEEN</b>(<b>bottom</b>, <b>top</b>)<p>
  *
- * <b>bottom</b> is the smallest integer RANDBETWEEN will return.<br/>
- * <b>top</b> is the largest integer RANDBETWEEN will return.<br/>
+ * <b>bottom</b> is the smallest integer RANDBETWEEN will return.<br>
+ * <b>top</b> is the largest integer RANDBETWEEN will return.<br>
 
  * @author Brendan Nolan
  */

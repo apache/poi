@@ -354,10 +354,10 @@ public class SheetUtil {
 
     /**
      * Return the cell, without taking account of merged regions.
-     * <p/>
+     * <p>
      * Use {@link #getCellWithMerges(Sheet, int, int)} if you want the top left
      * cell from merged regions instead when the reference is a merged cell.
-     * <p/>
+     * <p>
      * Use this where you want to know if the given cell is explicitly defined
      * or not.
      *

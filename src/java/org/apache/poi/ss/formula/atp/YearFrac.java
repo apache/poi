@@ -29,12 +29,12 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.usermodel.DateUtil;
 /**
- * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br/>
+ * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br>
  *
- * Returns the fraction of the year spanned by two dates.<p/>
+ * Returns the fraction of the year spanned by two dates.<p>
  *
- * <b>Syntax</b><br/>
- * <b>YEARFRAC</b>(<b>startDate</b>, <b>endDate</b>, basis)<p/>
+ * <b>Syntax</b><br>
+ * <b>YEARFRAC</b>(<b>startDate</b>, <b>endDate</b>, basis)<p>
  *
  * The <b>basis</b> optionally specifies the behaviour of YEARFRAC as follows:
  *

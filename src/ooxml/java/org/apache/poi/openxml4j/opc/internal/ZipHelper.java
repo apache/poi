@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -38,29 +37,17 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.storage.HeaderBlockConstants;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
+@Internal
 public final class ZipHelper {
     /**
      * Forward slash use to convert part name between OPC and zip item naming
      * conventions.
      */
     private final static String FORWARD_SLASH = "/";
-
-    /**
-     * Buffer to read data from file. Use big buffer to improve performaces. the
-     * InputStream class is reading only 8192 bytes per read call (default value
-     * set by sun)
-     * 
-     * @deprecated in POI 3.16-beta3, not used anymore
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    public static final int READ_WRITE_FILE_BUFFER_SIZE = 8192;
 
     /**
      * Prevent this class to be instancied.
@@ -172,59 +159,29 @@ public final class ZipHelper {
      * Warning - this will consume the first few bytes of the stream,
      *  you should push-back or reset the stream after use!
      */
-    public static void verifyZipHeader(InputStream stream) 
-            throws NotOfficeXmlFileException, IOException {
-        // Grab the first 8 bytes
-        byte[] data = new byte[8];
-        IOUtils.readFully(stream, data);
-        
-        // OLE2?
-        long signature = LittleEndian.getLong(data);
-        if (signature == HeaderBlockConstants._signature) {
+    public static void verifyZipHeader(InputStream stream) throws NotOfficeXmlFileException, IOException {
+        InputStream is = FileMagic.prepareToCheckMagic(stream);
+        FileMagic fm = FileMagic.valueOf(is);
+
+        switch (fm) {
+        case OLE2:
             throw new OLE2NotOfficeXmlFileException(
                 "The supplied data appears to be in the OLE2 Format. " +
                 "You are calling the part of POI that deals with OOXML "+
                 "(Office Open XML) Documents. You need to call a different " +
                 "part of POI to process this data (eg HSSF instead of XSSF)");
-        }
-        
-        // Raw XML?
-        byte[] RAW_XML_FILE_HEADER = POIFSConstants.RAW_XML_FILE_HEADER;
-        if (data[0] == RAW_XML_FILE_HEADER[0] &&
-            data[1] == RAW_XML_FILE_HEADER[1] &&
-            data[2] == RAW_XML_FILE_HEADER[2] &&
-            data[3] == RAW_XML_FILE_HEADER[3] &&
-            data[4] == RAW_XML_FILE_HEADER[4]) {
+        case XML:
             throw new NotOfficeXmlFileException(
                 "The supplied data appears to be a raw XML file. " +
                 "Formats such as Office 2003 XML are not supported");
+        default:
+        case OOXML:
+        case UNKNOWN:
+            // Don't check for a Zip header, as to maintain backwards
+            //  compatibility we need to let them seek over junk at the
+            //  start before beginning processing.
+            break;
         }
-
-        // Don't check for a Zip header, as to maintain backwards
-        //  compatibility we need to let them seek over junk at the
-        //  start before beginning processing.
-        
-        // Put things back
-        if (stream instanceof PushbackInputStream) {
-            ((PushbackInputStream)stream).unread(data);
-        } else if (stream.markSupported()) {
-            stream.reset();
-        } else if (stream instanceof FileInputStream) {
-            // File open check, about to be closed, nothing to do
-        } else {
-            // Oh dear... I hope you know what you're doing!
-        }
-    }
-    
-    private static InputStream prepareToCheckHeader(InputStream stream) {
-        if (stream instanceof PushbackInputStream) {
-            return stream;
-        }
-        if (stream.markSupported()) {
-            stream.mark(8);
-            return stream;
-        }
-        return new PushbackInputStream(stream, 8);
     }
 
     /**
@@ -237,7 +194,7 @@ public final class ZipHelper {
     @SuppressWarnings("resource")
     public static ThresholdInputStream openZipStream(InputStream stream) throws IOException {
         // Peek at the first few bytes to sanity check
-        InputStream checkedStream = prepareToCheckHeader(stream);
+        InputStream checkedStream = FileMagic.prepareToCheckMagic(stream);
         verifyZipHeader(checkedStream);
         
         // Open as a proper zip stream

@@ -36,6 +36,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfCommentRecord implements HemfRecord {
+    private static final int MAX_RECORD_LENGTH = 1000000;
 
     public final static long COMMENT_EMFSPOOL = 0x00000000;
     public final static long COMMENT_EMFPLUS = 0x2B464D45;
@@ -87,24 +88,38 @@ public class HemfCommentRecord implements HemfRecord {
 
         int dataSize = (int)remainingDataSize;
         int recordSize = (int)remainingRecordSize;
-        byte[] arr = new byte[dataSize+initialBytes.length];
+        byte[] arr = IOUtils.safelyAllocate(dataSize+initialBytes.length, MAX_RECORD_LENGTH);
         System.arraycopy(initialBytes,0,arr, 0, initialBytes.length);
-        IOUtils.readFully(leis, arr, initialBytes.length, dataSize);
-        IOUtils.skipFully(leis, recordSize-dataSize);
+        long read = IOUtils.readFully(leis, arr, initialBytes.length, dataSize);
+        if (read != dataSize) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
+        long toSkip = recordSize-dataSize;
+        long skipped = IOUtils.skipFully(leis, toSkip);
+        if (toSkip != skipped) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
 
         return arr;
     }
 
     private byte[] readToByteArray(LittleEndianInputStream leis, long dataSize, long recordSize) throws IOException {
-        assert dataSize < Integer.MAX_VALUE;
 
         if (recordSize == 0) {
             return new byte[0];
         }
 
-        byte[] arr = new byte[(int)dataSize];
-        IOUtils.readFully(leis, arr);
-        IOUtils.skipFully(leis, recordSize-dataSize);
+        byte[] arr = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
+
+        long read = IOUtils.readFully(leis, arr);
+        if (read != dataSize) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
+        long toSkip = recordSize-dataSize;
+        long skipped = IOUtils.skipFully(leis, recordSize-dataSize);
+        if (toSkip != skipped) {
+            throw new RecordFormatException("InputStream ended before full record could be read");
+        }
         return arr;
     }
 

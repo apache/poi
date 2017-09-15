@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The number of axes used on a chart.<p/>
+ * The number of axes used on a chart.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

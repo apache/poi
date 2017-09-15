@@ -23,7 +23,7 @@ package org.apache.poi.ss.formula.functions;
  *
  * This class is a functon library for common fiscal functions.
  * <b>Glossary of terms/abbreviations:</b>
- * <br/>
+ * <br>
  * <ul>
  * <li><em>FV:</em> Future Value</li>
  * <li><em>PV:</em> Present Value</li>
@@ -40,7 +40,7 @@ package org.apache.poi.ss.formula.functions;
  * <li>MS Excel function reference: http://office.microsoft.com/en-us/assistance/CH062528251033.aspx</li>
  * </ol>
  * <h3>Implementation Notes:</h3>
- * Symbols used in the formulae that follow:<br/>
+ * Symbols used in the formulae that follow:<br>
  * <ul>
  * <li>p: present value</li>
  * <li>f: future value</li>

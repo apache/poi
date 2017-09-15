@@ -17,22 +17,22 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.crypt.Decryptor;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.util.IOUtils;
-
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.security.GeneralSecurityException;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * A small base class for the various factories, e.g. WorkbookFactory,
  * SlideShowFactory to combine common code here.
  */
+@Internal
 public class DocumentFactoryHelper {
     /**
      * Wrap the OLE2 data in the NPOIFSFileSystem into a decrypted stream by using
@@ -81,36 +81,19 @@ public class DocumentFactoryHelper {
 
     /**
      * Checks that the supplied InputStream (which MUST
-     *  support mark and reset, or be a PushbackInputStream)
-     *  has a OOXML (zip) header at the start of it.
-     * If your InputStream does not support mark / reset,
-     *  then wrap it in a PushBackInputStream, then be
+     *  support mark and reset) has a OOXML (zip) header at the start of it.<p>
+     *  
+     * If unsure if your InputStream does support mark / reset,
+     *  use {@link FileMagic#prepareToCheckMagic(InputStream)} to wrap it and make
      *  sure to always use that, and not the original!
-     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
+     *  
+     * @param inp An InputStream which supports either mark/reset
+     *
+     * @deprecated in 3.17-beta2, use {@link FileMagic#valueOf(InputStream)} == FileMagic.OOXML instead
      */
+    @Deprecated
+    @Removal(version="4.0")
     public static boolean hasOOXMLHeader(InputStream inp) throws IOException {
-        // We want to peek at the first 4 bytes
-        inp.mark(4);
-
-        byte[] header = new byte[4];
-        int bytesRead = IOUtils.readFully(inp, header);
-
-        // Wind back those 4 bytes
-        if(inp instanceof PushbackInputStream) {
-            PushbackInputStream pin = (PushbackInputStream)inp;
-            pin.unread(header, 0, bytesRead);
-        } else {
-            inp.reset();
-        }
-
-        // Did it match the ooxml zip signature?
-        return (
-                bytesRead == 4 &&
-                        header[0] == POIFSConstants.OOXML_FILE_HEADER[0] &&
-                        header[1] == POIFSConstants.OOXML_FILE_HEADER[1] &&
-                        header[2] == POIFSConstants.OOXML_FILE_HEADER[2] &&
-                        header[3] == POIFSConstants.OOXML_FILE_HEADER[3]
-        );
+        return FileMagic.valueOf(inp) == FileMagic.OOXML;
     }
-
 }

@@ -39,7 +39,8 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfText {
 
-    private final static Charset UTF16LE = Charset.forName("UTF-16LE");
+    private static final Charset UTF16LE = Charset.forName("UTF-16LE");
+    private static final int MAX_RECORD_LENGTH = 1000000;
 
     public static class ExtCreateFontIndirectW extends UnimplementedHemfRecord {
     }
@@ -80,7 +81,7 @@ public class HemfText {
             }
             //guarantee to read the rest of the EMRTextObjectRecord
             //emrtextbytes start after 7*4 bytes read above
-            byte[] emrTextBytes = new byte[recordSizeInt-(7*LittleEndian.INT_SIZE)];
+            byte[] emrTextBytes = IOUtils.safelyAllocate(recordSizeInt-(7*LittleEndian.INT_SIZE), MAX_RECORD_LENGTH);
             IOUtils.readFully(leis, emrTextBytes);
             textObject = new EmrTextObject(emrTextBytes, getEncodingHint(), 20);//should be 28, but recordSizeInt has already subtracted 8
             return recordSize;
@@ -218,9 +219,12 @@ public class HemfText {
             }
             if (numCharsLong > Integer.MAX_VALUE) {
                 throw new RecordFormatException("Number of characters can't be > Integer.MAX_VALUE");
+            } else if (numCharsLong < 0) {
+                throw new RecordFormatException("Number of characters can't be < 0");
             }
+
             numChars = (int)numCharsLong;
-            rawTextBytes = new byte[emrTextObjBytes.length-start];
+            rawTextBytes = IOUtils.safelyAllocate(emrTextObjBytes.length-start, MAX_RECORD_LENGTH);
             System.arraycopy(emrTextObjBytes, start, rawTextBytes, 0, emrTextObjBytes.length-start);
         }
 

@@ -19,13 +19,9 @@ package org.apache.poi.hwpf;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-import org.apache.poi.hpsf.CustomProperties;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.Section;
-import org.apache.poi.hwmf.record.HwmfFont;
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hwpf.model.ComplexFileTable;
 import org.apache.poi.hwpf.model.FontTable;
 import org.apache.poi.hwpf.model.OldCHPBinTable;
@@ -200,11 +196,11 @@ public class HWPFOldDocument extends HWPFDocumentCore {
     private Charset guessCodePage(OldFontTable fontTable) {
         // pick the first non-default, non-symbol charset
         for (OldFfn oldFfn : fontTable.getFontNames()) {
-            HwmfFont.WmfCharset wmfCharset = HwmfFont.WmfCharset.valueOf(oldFfn.getChs()& 0xff);
+            FontCharset wmfCharset = FontCharset.valueOf(oldFfn.getChs()& 0xff);
             if (wmfCharset != null &&
-                    wmfCharset != HwmfFont.WmfCharset.ANSI_CHARSET &&
-                    wmfCharset != HwmfFont.WmfCharset.DEFAULT_CHARSET &&
-                    wmfCharset != HwmfFont.WmfCharset.SYMBOL_CHARSET ) {
+                    wmfCharset != FontCharset.ANSI &&
+                    wmfCharset != FontCharset.DEFAULT &&
+                    wmfCharset != FontCharset.SYMBOL ) {
                 return wmfCharset.getCharset();
             }
         }

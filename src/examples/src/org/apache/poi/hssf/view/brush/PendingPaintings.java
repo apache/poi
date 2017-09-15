@@ -29,7 +29,7 @@ import java.util.List;
  * initial paint of the component, and then executed at the appropriate time,
  * such as at the end of the containing object's {@link
  * JComponent#paintChildren(Graphics)} method.
- * <p/>
+ * <p>
  * It is up to the parent component to invoke the {@link #paint(Graphics2D)}
  * method of this objet at that appropriate time.
  *
@@ -153,7 +153,7 @@ public class PendingPaintings {
      * is retrieved from the first object found that has a {@link
      * #PENDING_PAINTINGS} client property, starting with this component and
      * looking up its ancestors (parent, parent's parent, etc.)
-     * <p/>
+     * <p>
      * This allows any descendant of a component that has a {@link
      * PendingPaintings} property to add its own pending paintings.
      *

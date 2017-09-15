@@ -44,7 +44,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 
     /**
      * A factory method allowing to create a conditional formatting rule
-     * with a cell comparison operator<p/>
+     * with a cell comparison operator<p>
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from
@@ -83,7 +83,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
     /**
      * A factory method allowing to create a conditional formatting rule with a formula.<br>
      *
-     * The formatting rules are applied by Excel when the value of the formula not equal to 0.<p/>
+     * The formatting rules are applied by Excel when the value of the formula not equal to 0.<p>
      * TODO - formulas containing cell references are currently not parsed properly
      * @param formula - formula for the valued, compared with the cell
      */

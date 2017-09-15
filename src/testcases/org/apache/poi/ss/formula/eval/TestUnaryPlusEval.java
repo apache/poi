@@ -31,7 +31,7 @@ import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
 public final class TestUnaryPlusEval extends TestCase {
 
 	/**
-	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
+	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br>
 	 * The code for handling column operands had been copy-pasted from the row handling code.
 	 */
 	public void testColumnOperand() {

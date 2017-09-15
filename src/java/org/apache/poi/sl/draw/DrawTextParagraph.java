@@ -32,8 +32,11 @@ import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
+import org.apache.poi.common.usermodel.fonts.FontGroup;
+import org.apache.poi.common.usermodel.fonts.FontGroup.FontGroupRange;
+import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Insets2D;
@@ -50,11 +53,14 @@ import org.apache.poi.sl.usermodel.TextRun.FieldType;
 import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
-import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 
 public class DrawTextParagraph implements Drawable {
+    private static final POILogger LOG = POILogFactory.getLogger(DrawTextParagraph.class);
+    
     /** Keys for passing hyperlinks to the graphics context */
     public static final XlinkAttribute HYPERLINK_HREF = new XlinkAttribute("href");
     public static final XlinkAttribute HYPERLINK_LABEL = new XlinkAttribute("label");
@@ -200,7 +206,7 @@ public class DrawTextParagraph implements Drawable {
 
             line.setPosition(penX, penY);
             line.draw(graphics);
-
+            
             if(spacing > 0) {
                 // If linespacing >= 0, then linespacing is a percentage of normal line height.
                 penY += spacing*0.01* line.getHeight();
@@ -248,6 +254,7 @@ public class DrawTextParagraph implements Drawable {
         lines.clear();
 
         DrawFactory fact = DrawFactory.getInstance(graphics);
+        fact.fixFonts(graphics);
         StringBuilder text = new StringBuilder();
         AttributedString at = getAttributedString(graphics, text);
         boolean emptyParagraph = ("".equals(text.toString().trim()));
@@ -325,12 +332,6 @@ public class DrawTextParagraph implements Drawable {
             return null;
         }
 
-        String buFont = bulletStyle.getBulletFont();
-        if (buFont == null) {
-            buFont = paragraph.getDefaultFontFamily();
-        }
-        assert(buFont != null);
-
         PlaceableShape<?,?> ps = getParagraphShape();
         PaintStyle fgPaintStyle = bulletStyle.getBulletFontColor();
         Paint fgPaint;
@@ -351,10 +352,21 @@ public class DrawTextParagraph implements Drawable {
             fontSize = (float)-buSz;
         }
 
+        String buFontStr = bulletStyle.getBulletFont();
+        if (buFontStr == null) {
+            buFontStr = paragraph.getDefaultFontFamily();
+        }
+        assert(buFontStr != null);
+        FontInfo buFont = new DrawFontInfo(buFontStr);
 
-        AttributedString str = new AttributedString(mapFontCharset(buCharacter,buFont));
+
+        DrawFontManager dfm = DrawFactory.getInstance(graphics).getFontManager(graphics);
+        // TODO: check font group defaulting to Symbol
+        buFont = dfm.getMappedFont(graphics, buFont);
+
+        AttributedString str = new AttributedString(dfm.mapFontCharset(graphics,buFont,buCharacter));
         str.addAttribute(TextAttribute.FOREGROUND, fgPaint);
-        str.addAttribute(TextAttribute.FAMILY, buFont);
+        str.addAttribute(TextAttribute.FAMILY, buFont.getTypeface());
         str.addAttribute(TextAttribute.SIZE, fontSize);
 
         TextLayout layout = new TextLayout(str.getIterator(), graphics.getFontRenderContext());
@@ -365,7 +377,7 @@ public class DrawTextParagraph implements Drawable {
     protected String getRenderableText(Graphics2D graphics, TextRun tr) {
         if (tr.getFieldType() == FieldType.SLIDE_NUMBER) {
             Slide<?,?> slide = (Slide<?,?>)graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
-            return (slide == null) ? "" : Integer.toString(slide.getSlideNumber()); 
+            return (slide == null) ? "" : Integer.toString(slide.getSlideNumber());
         }
         StringBuilder buf = new StringBuilder();
         TextCap cap = tr.getTextCap();
@@ -557,11 +569,8 @@ public class DrawTextParagraph implements Drawable {
         }
 
         PlaceableShape<?,?> ps = getParagraphShape();
-        DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
-        @SuppressWarnings("unchecked")
-        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
-        @SuppressWarnings("unchecked")
-        Map<String,String> fallbackMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_FALLBACK);
+        DrawFontManager dfm = DrawFactory.getInstance(graphics).getFontManager(graphics);
+        assert(dfm != null);
 
         for (TextRun run : paragraph){
             String runText = getRenderableText(graphics, run);
@@ -571,35 +580,11 @@ public class DrawTextParagraph implements Drawable {
             }
 
             // user can pass an custom object to convert fonts
-            String mappedFont = run.getFontFamily();
-            String fallbackFont = Font.SANS_SERIF;
 
-            if (mappedFont == null) {
-                mappedFont = paragraph.getDefaultFontFamily();
-            }
-            if (mappedFont == null) {
-                mappedFont = Font.SANS_SERIF;
-            }            
-            if (fontHandler != null) {
-                String font = fontHandler.getRendererableFont(mappedFont, run.getPitchAndFamily());
-                if (font != null) {
-                    mappedFont = font;
-                }
-                font = fontHandler.getFallbackFont(mappedFont, run.getPitchAndFamily());
-                if (font != null) {
-                    fallbackFont = font;
-                }
-            } else {
-                mappedFont = getFontWithFallback(fontMap, mappedFont);
-                fallbackFont = getFontWithFallback(fallbackMap, mappedFont);
-            }
-            
-            runText = mapFontCharset(runText,mappedFont);
+            runText = dfm.mapFontCharset(graphics, run.getFontInfo(null), runText);
             int beginIndex = text.length();
             text.append(runText);
             int endIndex = text.length();
-
-            attList.add(new AttributedStringData(TextAttribute.FAMILY, mappedFont, beginIndex, endIndex));
 
             PaintStyle fgPaintStyle = run.getFontColor();
             Paint fgPaint = new DrawPaint(ps).getPaint(graphics, fgPaintStyle);
@@ -630,39 +615,14 @@ public class DrawTextParagraph implements Drawable {
             if(run.isSuperscript()) {
                 attList.add(new AttributedStringData(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER, beginIndex, endIndex));
             }
-            
+
             Hyperlink<?,?> hl = run.getHyperlink();
             if (hl != null) {
                 attList.add(new AttributedStringData(HYPERLINK_HREF, hl.getAddress(), beginIndex, endIndex));
                 attList.add(new AttributedStringData(HYPERLINK_LABEL, hl.getLabel(), beginIndex, endIndex));
             }
-            
-            int style = (run.isBold() ? Font.BOLD : 0) | (run.isItalic() ? Font.ITALIC : 0);
-            Font f = new Font(mappedFont, style, (int)Math.rint(fontSz));
-            
-            // check for unsupported characters and add a fallback font for these
-            char textChr[] = runText.toCharArray();
-            int nextEnd = canDisplayUpTo(f, textChr, 0, textChr.length);
-            int last = nextEnd;
-            boolean isNextValid = (nextEnd == 0);
-            while ( nextEnd != -1 && nextEnd <= textChr.length ) {
-                if (isNextValid) {
-                    nextEnd = canDisplayUpTo(f, textChr, nextEnd, textChr.length);
-                    isNextValid = false;
-                } else {
-                    if (nextEnd >= textChr.length || f.canDisplay(Character.codePointAt(textChr, nextEnd, textChr.length)) ) {
-                        attList.add(new AttributedStringData(TextAttribute.FAMILY, fallbackFont, beginIndex+last, beginIndex+Math.min(nextEnd,textChr.length)));
-                        if (nextEnd >= textChr.length) {
-                            break;
-                        }
-                        last = nextEnd;
-                        isNextValid = true;
-                    } else {
-                        boolean isHS = Character.isHighSurrogate(textChr[nextEnd]);
-                        nextEnd+=(isHS?2:1);
-                    }
-                }
-            } 
+
+            processGlyphs(graphics, dfm, attList, beginIndex, run, runText);
         }
 
         // ensure that the paragraph contains at least one character
@@ -681,15 +641,91 @@ public class DrawTextParagraph implements Drawable {
         return string;
     }
 
-    private String getFontWithFallback(Map<String, String> fontMap, String mappedFont) {
-        if (fontMap != null) {
-            if (fontMap.containsKey(mappedFont)) {
-                mappedFont = fontMap.get(mappedFont);
-            } else if (fontMap.containsKey("*")) {
-                mappedFont = fontMap.get("*");
+    /**
+     * Processing the glyphs is done in two steps.
+     * <li>determine the font group - a text run can have different font groups. Depending on the chars,
+     * the correct font group needs to be used
+     *
+     * @param graphics
+     * @param dfm
+     * @param attList
+     * @param beginIndex
+     * @param run
+     * @param runText
+     *
+     * @see <a href="https://blogs.msdn.microsoft.com/officeinteroperability/2013/04/22/office-open-xml-themes-schemes-and-fonts/">Office Open XML Themes, Schemes, and Fonts</a>
+     */
+    private void processGlyphs(Graphics2D graphics, DrawFontManager dfm, List<AttributedStringData> attList, final int beginIndex, TextRun run, String runText) {
+        // determine font group ranges of the textrun to focus the fallback handling only on that font group
+        List<FontGroupRange> ttrList = FontGroup.getFontGroupRanges(runText);
+        int rangeBegin = 0;
+        for (FontGroupRange ttr : ttrList) {
+            FontInfo fiRun = run.getFontInfo(ttr.getFontGroup());
+            if (fiRun == null) {
+                // if the font group specific font wasn't defined, fallback to LATIN
+                fiRun = run.getFontInfo(FontGroup.LATIN);
             }
+            FontInfo fiMapped = dfm.getMappedFont(graphics, fiRun);
+            FontInfo fiFallback = dfm.getFallbackFont(graphics, fiRun);
+            assert(fiFallback != null);
+            if (fiMapped == null) {
+                fiMapped = dfm.getMappedFont(graphics, new DrawFontInfo(paragraph.getDefaultFontFamily()));
+            }
+            if (fiMapped == null) {
+                fiMapped = fiFallback;
+            }
+
+            Font fontMapped = dfm.createAWTFont(graphics, fiMapped, 10, run.isBold(), run.isItalic());
+            Font fontFallback = dfm.createAWTFont(graphics, fiFallback, 10, run.isBold(), run.isItalic());
+
+            // check for unsupported characters and add a fallback font for these
+            final int rangeLen = ttr.getLength();
+            int partEnd = rangeBegin;
+            while (partEnd<rangeBegin+rangeLen) {
+                // start with the assumption that the font is able to display the chars
+                int partBegin = partEnd;
+                partEnd = nextPart(fontMapped, runText, partBegin, rangeBegin+rangeLen, true);
+
+                // Now we have 3 cases:
+                // (a) the first part couldn't be displayed,
+                // (b) only part of the text run could be displayed
+                // (c) or all chars can be displayed (default)
+
+                if (partBegin < partEnd) {
+                    // handle (b) and (c)
+                    attList.add(new AttributedStringData(TextAttribute.FAMILY, fontMapped.getFontName(Locale.ROOT), beginIndex+partBegin, beginIndex+partEnd));
+                    if (LOG.check(POILogger.DEBUG)) {
+                        LOG.log(POILogger.DEBUG, "mapped: ",fontMapped.getFontName(Locale.ROOT)," ",(beginIndex+partBegin)," ",(beginIndex+partEnd)," - ",runText.substring(beginIndex+partBegin, beginIndex+partEnd));
+                    }
+                }
+
+                // fallback for unsupported glyphs
+                partBegin = partEnd;
+                partEnd = nextPart(fontMapped, runText, partBegin, rangeBegin+rangeLen, false);
+                
+                if (partBegin < partEnd) {
+                    // handle (a) and (b)
+                    attList.add(new AttributedStringData(TextAttribute.FAMILY, fontFallback.getFontName(Locale.ROOT), beginIndex+partBegin, beginIndex+partEnd));
+                    if (LOG.check(POILogger.DEBUG)) {
+                        LOG.log(POILogger.DEBUG, "fallback: ",fontFallback.getFontName(Locale.ROOT)," ",(beginIndex+partBegin)," ",(beginIndex+partEnd)," - ",runText.substring(beginIndex+partBegin, beginIndex+partEnd));
+                    }
+                }
+            }
+            
+            rangeBegin += rangeLen;
         }
-        return mappedFont;
+    }
+    
+    private static int nextPart(Font fontMapped, String runText, int beginPart, int endPart, boolean isDisplayed) {
+        int rIdx = beginPart;
+        while (rIdx < endPart) {
+            int codepoint = runText.codePointAt(rIdx);
+            if (fontMapped.canDisplay(codepoint) != isDisplayed) {
+                break;
+            }
+            rIdx += Character.charCount(codepoint);
+        }
+        return rIdx;
     }
 
     /**
@@ -697,78 +733,5 @@ public class DrawTextParagraph implements Drawable {
      */
     protected boolean isHSLF() {
         return DrawShape.isHSLF(paragraph.getParentShape());
-    }
-
-    /**
-     * Map text charset depending on font family.
-     * Currently this only maps for wingdings font (into unicode private use area)
-     *
-     * @param text the raw text
-     * @param fontFamily the font family
-     * @return AttributedString with mapped codepoints
-     *
-     * @see <a href="http://stackoverflow.com/questions/8692095">Drawing exotic fonts in a java applet</a>
-     * @see StringUtil#mapMsCodepointString(String)
-     */
-    protected String mapFontCharset(String text, String fontFamily) {
-        // TODO: find a real charset mapping solution instead of hard coding for Wingdings
-        String attStr = text;
-        if ("Wingdings".equalsIgnoreCase(fontFamily)) {
-            // wingdings doesn't contain high-surrogates, so chars are ok
-            boolean changed = false;
-            char chrs[] = attStr.toCharArray();
-            for (int i=0; i<chrs.length; i++) {
-                // only change valid chars
-                if ((0x20 <= chrs[i] && chrs[i] <= 0x7f) ||
-                    (0xa0 <= chrs[i] && chrs[i] <= 0xff)) {
-                    chrs[i] |= 0xf000;
-                    changed = true;
-                }
-            }
-
-            if (changed) {
-                attStr = new String(chrs);
-            }
-        }
-        return attStr;
-    }
-    
-    /**
-     * Indicates whether or not this {@code Font} can display the characters in the specified {@code text}
-     * starting at {@code start} and ending at {@code limit}.<p>
-     * 
-     * This is a workaround for the Java 6 implementation of {@link Font#canDisplayUpTo(char[], int, int)}
-     *
-     * @param font the font to inspect
-     * @param text the specified array of {@code char} values
-     * @param start the specified starting offset (in
-     *              {@code char}s) into the specified array of
-     *              {@code char} values
-     * @param limit the specified ending offset (in
-     *              {@code char}s) into the specified array of
-     *              {@code char} values
-     * @return an offset into {@code text} that points
-     *          to the first character in {@code text} that this
-     *          {@code Font} cannot display; or {@code -1} if
-     *          this {@code Font} can display all characters in
-     *          {@code text}.
-     * 
-     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-6623219">Font.canDisplayUpTo does not work with supplementary characters</a>
-     */
-    protected static int canDisplayUpTo(Font font, char[] text, int start, int limit) {
-        for (int i = start; i < limit; i++) {
-            char c = text[i];
-            if (font.canDisplay(c)) {
-                continue;
-            }
-            if (!Character.isHighSurrogate(c)) {
-                return i;
-            }
-            if (!font.canDisplay(Character.codePointAt(text, i, limit))) {
-                return i;
-            }
-            i++;
-        }
-        return -1;
     }
 }

@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The axis size and location<p/>
+ * The axis size and location<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

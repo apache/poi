@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * SXIDSTM - Stream ID (0x00D5)<br/>
+ * SXIDSTM - Stream ID (0x00D5)<br>
  * 
  * @author Patrick Cheng
  */

@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * '<b>p</b>arse <b>t</b>hin<b>g</b>'.  Originally, the name referred to the single
  * byte identifier at the start of the token, but in POI, <tt>Ptg</tt> encapsulates
  * the whole formula token (initial byte + value data).
- * <p/>
+ * <p>
  *
  * <tt>Ptg</tt>s are logically arranged in a tree representing the structure of the
  * parsed formula.  However, in BIFF files <tt>Ptg</tt>s are written/read in
@@ -192,7 +192,7 @@ public abstract class Ptg {
 	/**
 	 * Writes the ptgs to the data buffer, starting at the specified offset.
 	 *
-	 * <br/>
+	 * <br>
 	 * The 2 byte encode length field is <b>not</b> written by this method.
 	 * @return number of bytes written
 	 */

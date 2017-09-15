@@ -24,18 +24,18 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel Bin2Dec() function.<p/>
- * <p/>
- * <b>Syntax</b>:<br/> <b>Bin2Dec  </b>(<b>number</b>,<b>[places]</b> )<br/>
- * <p/>
+ * Implementation for Excel Bin2Dec() function.<p>
+ * <p>
+ * <b>Syntax</b>:<br> <b>Bin2Dec  </b>(<b>number</b>,<b>[places]</b> )<br>
+ * <p>
  * Converts a decimal number to binary.
- * <p/>
+ * <p>
  * The DEC2BIN function syntax has the following arguments:
  * <ul>
  * <li>Number    Required. The decimal integer you want to convert. If number is negative, valid place values are ignored and DEC2BIN returns a 10-character (10-bit) binary number in which the most significant bit is the sign bit. The remaining 9 bits are magnitude bits. Negative numbers are represented using two's-complement notation.</li>
  * <li>Places    Optional. The number of characters to use. If places is omitted, DEC2BIN uses the minimum number of characters necessary. Places is useful for padding the return value with leading 0s (zeros).</li>
  * </ul>
- * <p/>
+ * <p>
  * Remarks
  * <ul>
  * <li>If number < -512 or if number > 511, DEC2BIN returns the #NUM! error value.</li>

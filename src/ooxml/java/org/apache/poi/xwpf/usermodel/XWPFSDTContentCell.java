@@ -27,7 +27,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentCell;
 /**
  * Experimental class to offer rudimentary read-only processing of
  * of the XWPFSDTCellContent.
- * <p/>
+ * <p>
  * WARNING - APIs expected to change rapidly
  */
 public class XWPFSDTContentCell implements ISDTContent {

@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.util.Internal;
 
 /**
- * Abstracts a sheet for the purpose of formula evaluation.<br/>
+ * Abstracts a sheet for the purpose of formula evaluation.<br>
  * 
  * For POI internal use only
  * 

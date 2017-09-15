@@ -18,77 +18,101 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.hpsf.MarkUnsupportedException;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.HexDump;
 import org.junit.Test;
 
 /**
  * Old-style setting of POIFS properties doesn't work with POI 3.0.2
  */
 public class TestPOIFSProperties {
-
     private static final String title = "Testing POIFS properties";
 
     @Test
     public void testFail() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        { // read the workbook, adjust the SummaryInformation and write the data to a byte array
+            POIFSFileSystem fs = openFileSystem();
+
+            HSSFWorkbook wb = new HSSFWorkbook(fs);
+
+            //set POIFS properties after constructing HSSFWorkbook
+            //(a piece of code that used to work up to POI 3.0.2)
+            setTitle(fs);
+
+            //save the workbook and read the property
+            wb.write(out);
+            out.close();
+            wb.close();
+        }
+
+        // process the byte array
+        checkFromByteArray(out.toByteArray());
+    }
+
+    @Test
+    public void testOK() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        { // read the workbook, adjust the SummaryInformation and write the data to a byte array
+            POIFSFileSystem fs = openFileSystem();
+
+            //set POIFS properties before constructing HSSFWorkbook
+            setTitle(fs);
+
+            HSSFWorkbook wb = new HSSFWorkbook(fs);
+
+            wb.write(out);
+            out.close();
+            wb.close();
+        }
+
+        // process the byte array
+        checkFromByteArray(out.toByteArray());
+    }
+
+    private POIFSFileSystem openFileSystem() throws IOException {
         InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls");
         POIFSFileSystem fs = new POIFSFileSystem(is);
         is.close();
+        return fs;
+    }
 
-        HSSFWorkbook wb = new HSSFWorkbook(fs);
+    private void setTitle(POIFSFileSystem fs) throws NoPropertySetStreamException, MarkUnsupportedException, IOException, WritingNotSupportedException {
+        SummaryInformation summary1 = (SummaryInformation) PropertySetFactory.create(fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
+        assertNotNull(summary1);
 
-        //set POIFS properties after constructing HSSFWorkbook
-        //(a piece of code that used to work up to POI 3.0.2)
-        SummaryInformation summary1 = (SummaryInformation)PropertySetFactory.create(fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
         summary1.setTitle(title);
         //write the modified property back to POIFS
         fs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
         fs.createDocument(summary1.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
 
-        //save the workbook and read the property
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wb.write(out);
-        out.close();
-        wb.close();
-
-        POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
-        SummaryInformation summary2 = (SummaryInformation)PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
-
-        //failing assertion
-        assertEquals(title, summary2.getTitle());
-        fs2.close();
+        // check that the information was added successfully to the filesystem object
+        SummaryInformation summaryCheck = (SummaryInformation) PropertySetFactory.create(fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
+        assertNotNull(summaryCheck);
     }
 
-    @Test
-    public void testOK() throws Exception {
-        InputStream is = HSSFTestDataSamples.openSampleFileStream("Simple.xls");
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
+    private void checkFromByteArray(byte[] bytes) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
+        // on some environments in CI we see strange failures, let's verify that the size is exactly right
+        // this can be removed again after the problem is identified
+        assertEquals("Had: " + HexDump.toHex(bytes), 5120, bytes.length);
 
-        //set POIFS properties before constructing HSSFWorkbook
-        SummaryInformation summary1 = (SummaryInformation)PropertySetFactory.create(fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
-        summary1.setTitle(title);
+        POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes));
+        SummaryInformation summary2 = (SummaryInformation) PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
+        assertNotNull(summary2);
 
-        fs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
-        fs.createDocument(summary1.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
-
-        HSSFWorkbook wb = new HSSFWorkbook(fs);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wb.write(out);
-        out.close();
-        wb.close();
-
-        //read the property
-        POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
-        SummaryInformation summary2 = (SummaryInformation)PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
         assertEquals(title, summary2.getTitle());
         fs2.close();
     }

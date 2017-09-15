@@ -22,9 +22,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 
 /**
  * Experimental abstract class that is a base for XWPFSDT and XWPFSDTCell
- * <p/>
+ * <p>
  * WARNING - APIs expected to change rapidly.
- * <p/>
+ * <p>
  * These classes have so far been built only for read-only processing.
  */
 public abstract class AbstractXWPFSDT implements ISDTContents {

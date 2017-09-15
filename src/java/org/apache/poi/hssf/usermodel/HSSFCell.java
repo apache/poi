@@ -806,7 +806,7 @@ public class HSSFCell implements Cell {
 
 
     /**
-     * Chooses a new boolean value for the cell when its type is changing.<p/>
+     * Chooses a new boolean value for the cell when its type is changing.<p>
      *
      * Usually the caller is calling setCellType() with the intention of calling
      * setCellValue(boolean) straight afterwards.  This method only exists to give

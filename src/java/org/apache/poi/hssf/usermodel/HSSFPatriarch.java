@@ -429,8 +429,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         DrawingManager2 dm = _sheet.getWorkbook().getWorkbook().getDrawingManager();
         EscherDgRecord dg =
                 _boundAggregate.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
-        short drawingGroupId = dg.getDrawingGroupId();
-        return dm.allocateShapeId(drawingGroupId, dg);
+        return dm.allocateShapeId(dg);
     }
 
     /**

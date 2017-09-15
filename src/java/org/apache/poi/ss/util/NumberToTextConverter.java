@@ -120,7 +120,7 @@ public final class NumberToTextConverter {
 
 	/**
 	 * Converts the supplied <tt>value</tt> to the text representation that Excel would give if
-	 * the value were to appear in an unformatted cell, or as a literal number in a formula.<br/>
+	 * the value were to appear in an unformatted cell, or as a literal number in a formula.<br>
 	 * Note - the results from this method differ slightly from those of <tt>Double.toString()</tt>
 	 * In some special cases Excel behaves quite differently.  This function attempts to reproduce
 	 * those results.

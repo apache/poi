@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwmf.record.HwmfHatchStyle;
@@ -48,7 +48,6 @@ import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
-import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.LocaleUtil;
 
 public class HwmfGraphics {
@@ -330,9 +329,8 @@ public class HwmfGraphics {
         // TODO: another approx. ...
         double fontW = fontH/1.8;
         
-        int len = text.length;
-        Charset charset = (font.getCharSet().getCharset() == null)?
-                DEFAULT_CHARSET : font.getCharSet().getCharset();
+        Charset charset = (font.getCharset().getCharset() == null)?
+                DEFAULT_CHARSET : font.getCharset().getCharset();
         String textString = new String(text, charset);
         AttributedString as = new AttributedString(textString);
         if (dx == null || dx.length == 0) {
@@ -401,21 +399,10 @@ public class HwmfGraphics {
     }
     
     private void addAttributes(AttributedString as, HwmfFont font) {
-        DrawFontManager fontHandler = (DrawFontManager)graphicsCtx.getRenderingHint(Drawable.FONT_HANDLER);
-        String fontFamily = null;
-        @SuppressWarnings("unchecked")
-        Map<String,String> fontMap = (Map<String,String>)graphicsCtx.getRenderingHint(Drawable.FONT_MAP);
-        if (fontMap != null && fontMap.containsKey(font.getFacename())) {
-            fontFamily = fontMap.get(font.getFacename());
-        }
-        if (fontHandler != null) {
-            fontFamily = fontHandler.getRendererableFont(font.getFacename(), font.getPitchAndFamily());
-        }
-        if (fontFamily == null) {
-            fontFamily = font.getFacename();
-        }
+        DrawFontManager fontHandler = DrawFactory.getInstance(graphicsCtx).getFontManager(graphicsCtx);
+        FontInfo fontInfo = fontHandler.getMappedFont(graphicsCtx, font);
         
-        as.addAttribute(TextAttribute.FAMILY, fontFamily);
+        as.addAttribute(TextAttribute.FAMILY, fontInfo.getTypeface());
         as.addAttribute(TextAttribute.SIZE, getFontHeight(font));
         as.addAttribute(TextAttribute.STRIKETHROUGH, font.isStrikeOut());
         if (font.isUnderline()) {

@@ -22,7 +22,7 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
+ * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p>
  *
  * Implements a CellRangeAddress with 8-but column fields.
  */

@@ -33,9 +33,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * Tests for the INDEX() function.</p>
  *
  * This class contains just a few specific cases that directly invoke {@link Index},
- * with minimum overhead.<br/>
+ * with minimum overhead.<br>
  * Another test: {@link TestIndexFunctionFromSpreadsheet} operates from a higher level
- * and has far greater coverage of input permutations.<br/>
+ * and has far greater coverage of input permutations.<br>
  *
  * @author Josh Micich
  */
@@ -99,7 +99,7 @@ public final class TestIndex extends TestCase {
 	}
 
 	/**
-	 * Tests expressions like "INDEX(A1:C1,,2)".<br/>
+	 * Tests expressions like "INDEX(A1:C1,,2)".<br>
 	 * This problem was found while fixing bug 47048 and is observable up to svn r773441.
 	 */
 	public void testMissingArg() {

@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Tests should extend this class if they need to track the internal working of the {@link WorkbookEvaluator}.<br/>
+ * Tests should extend this class if they need to track the internal working of the {@link WorkbookEvaluator}.<br>
  *
  * Default method implementations all do nothing
  *

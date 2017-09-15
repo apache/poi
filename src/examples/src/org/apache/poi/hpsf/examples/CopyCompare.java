@@ -32,7 +32,6 @@ import java.util.Map;
 
 import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -55,9 +54,8 @@ import org.apache.poi.util.TempFile;
  * 
  * <p>Property set streams are copied logically, i.e. the application
  * establishes a {@link org.apache.poi.hpsf.PropertySet} of an original property
- * set, creates a {@link org.apache.poi.hpsf.MutablePropertySet} from the
- * {@link org.apache.poi.hpsf.PropertySet} and writes the
- * {@link org.apache.poi.hpsf.MutablePropertySet} to the destination POI file
+ * set, creates a {@link org.apache.poi.hpsf.PropertySet} and writes the
+ * {@link org.apache.poi.hpsf.PropertySet} to the destination POI file
  * system. - Streams which are no property set streams are copied bit by
  * bit.</p>
  * 
@@ -283,7 +281,7 @@ public class CopyCompare
      * everything unmodified to the destination POI filesystem. Property set
      * streams are copied by creating a new {@link PropertySet} from the
      * original property set by using the {@link
-     * MutablePropertySet#MutablePropertySet(PropertySet)} constructor.</p>
+     * PropertySet#PropertySet(PropertySet)} constructor.</p>
      */
     static class CopyFile implements POIFSReaderListener {
         private String dstName;
@@ -377,7 +375,7 @@ public class CopyCompare
                          final PropertySet ps)
         throws WritingNotSupportedException, IOException {
             final DirectoryEntry de = getPath(poiFs, path);
-            final MutablePropertySet mps = new MutablePropertySet(ps);
+            final PropertySet mps = new PropertySet(ps);
             de.createDocument(name, mps.toInputStream());
         }
 

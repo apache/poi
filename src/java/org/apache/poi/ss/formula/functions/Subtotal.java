@@ -35,12 +35,12 @@ import java.util.List;
 /**
  * Implementation for the Excel function SUBTOTAL<p>
  *
- * <b>Syntax :</b> <br/>
- *  SUBTOTAL ( <b>functionCode</b>, <b>ref1</b>, ref2 ... ) <br/>
+ * <b>Syntax :</b> <br>
+ *  SUBTOTAL ( <b>functionCode</b>, <b>ref1</b>, ref2 ... ) <br>
  *    <table border="1" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
  *      <tr><td><b>functionCode</b></td><td>(1-11) Selects the underlying aggregate function to be used (see table below)</td></tr>
  *      <tr><td><b>ref1</b>, ref2 ...</td><td>Arguments to be passed to the underlying aggregate function</td></tr>
- *    </table><br/>
+ *    </table><br>
  * </p>
  *
  *  <table border="1" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
@@ -57,10 +57,10 @@ import java.util.List;
  *      <tr align='center'><td>10</td><td>VAR *</td></tr>
  *      <tr align='center'><td>11</td><td>VARP *</td></tr>
  *      <tr align='center'><td>101-111</td><td>*</td></tr>
- *  </table><br/>
+ *  </table><br>
  * * Not implemented in POI yet. Functions 101-111 are the same as functions 1-11 but with
  * the option 'ignore hidden values'.
- * <p/>
+ * <p>
  *
  * @author Paul Tomlin &lt; pault at bulk sms dot com &gt;
  */

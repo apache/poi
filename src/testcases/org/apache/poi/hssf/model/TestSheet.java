@@ -474,7 +474,7 @@ public final class TestSheet {
 	}
 	/**
 	 * Prior to bug 45066, POI would get the estimated sheet size wrong
-	 * when an <tt>UncalcedRecord</tt> was present.<p/>
+	 * when an <tt>UncalcedRecord</tt> was present.<p>
 	 */
     @Test
 	public void testUncalcSize_bug45066() {
@@ -498,7 +498,7 @@ public final class TestSheet {
 	/**
 	 * Prior to bug 45145 <tt>RowRecordsAggregate</tt> and <tt>ValueRecordsAggregate</tt> could
 	 * sometimes occur in reverse order.  This test reproduces one of those situations and makes
-	 * sure that RRA comes before VRA.<br/>
+	 * sure that RRA comes before VRA.<br>
 	 *
 	 * The code here represents a normal POI use case where a spreadsheet is created from scratch.
 	 */

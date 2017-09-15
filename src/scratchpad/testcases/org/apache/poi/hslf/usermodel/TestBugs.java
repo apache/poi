@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherColorRef;
@@ -848,7 +849,7 @@ public final class TestBugs {
         for (List<HSLFTextParagraph> paraList : sl.getTextParagraphs()) {
             for (HSLFTextParagraph htp : paraList) {
                 for (HSLFTextRun htr : htp) {
-                    String actFamily = htr.getFontFamily();
+                    String actFamily = htr.getFontFamily(FontGroup.EAST_ASIAN);
                     assertEquals(expFamily, actFamily);
                 }
             }

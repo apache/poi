@@ -562,7 +562,7 @@ public abstract class BaseTestNamedRange {
      * It is easy enough to re-create the the same data (by not setting the formula). Excel
      * seems to gracefully remove this uninitialized name record.  It would be nice if POI
      * could do the same, but that would involve adjusting subsequent name indexes across
-     * all formulas. <p/>
+     * all formulas. <p>
      *
      * For the moment, POI has been made to behave more sensibly with uninitialized name
      * records.

@@ -17,9 +17,8 @@
 
 package org.apache.poi.hwmf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
 
 import javax.imageio.ImageIO;
 import java.awt.Dimension;
@@ -52,6 +51,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -66,7 +66,19 @@ public class TestHwmfParsing {
         List<HwmfRecord> records = wmf.getRecords();
         assertEquals(581, records.size());
     }
-    
+
+    @Test(expected = RecordFormatException.class)
+    public void testInfiniteLoop() throws Exception {
+        File f = POIDataSamples.getSlideShowInstance().getFile("61338.wmf");
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(f);
+            HwmfPicture wmf = new HwmfPicture(fis);
+        } finally {
+            fis.close();
+        }
+    }
+
     @Test
     @Ignore("This is work-in-progress and not a real unit test ...")
     public void paint() throws IOException {
@@ -118,7 +130,9 @@ public class TestHwmfParsing {
                 SlideShow<?,?> ss = SlideShowFactory.create(fis);
                 int wmfIdx = 1;
                 for (PictureData pd : ss.getPictureData()) {
-                    if (pd.getType() != PictureType.WMF) continue;
+                    if (pd.getType() != PictureType.WMF) {
+                        continue;
+                    }
                     byte wmfData[] = pd.getData();
                     String filename = String.format(Locale.ROOT, "%s-%04d.wmf", basename, wmfIdx);
                     FileOutputStream fos = new FileOutputStream(new File(outdir, filename));
@@ -211,7 +225,7 @@ public class TestHwmfParsing {
         for (HwmfRecord r : wmf.getRecords()) {
             if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
                 HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
-                charset = (font.getCharSet().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharSet().getCharset();
+                charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
             if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
@@ -239,7 +253,7 @@ public class TestHwmfParsing {
         for (HwmfRecord r : wmf.getRecords()) {
             if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
                 HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
-                charset = (font.getCharSet().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharSet().getCharset();
+                charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
             if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;

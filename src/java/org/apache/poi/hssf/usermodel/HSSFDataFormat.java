@@ -28,10 +28,10 @@ import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormat;
 
 /**
- * Identifies both built-in and user defined formats within a workbook.<p/>
- * See {@link BuiltinFormats} for a list of supported built-in formats.<p/>
+ * Identifies both built-in and user defined formats within a workbook.<p>
+ * See {@link BuiltinFormats} for a list of supported built-in formats.<p>
  *
- * <b>International Formats</b><br/>
+ * <b>International Formats</b><br>
  * Since version 2003 Excel has supported international formats.  These are denoted
  * with a prefix "[$-xxx]" (where xxx is a 1-7 digit hexadecimal number).
  * See the Microsoft article

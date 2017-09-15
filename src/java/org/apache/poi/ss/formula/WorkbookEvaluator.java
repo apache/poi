@@ -529,7 +529,16 @@ public final class WorkbookEvaluator {
         if (!stack.isEmpty()) {
             throw new IllegalStateException("evaluation stack not empty");
         }
-        ValueEval result = dereferenceResult(value, ec.getRowIndex(), ec.getColumnIndex());
+        
+        ValueEval result;
+        
+        if (ec.isSingleValue()) {
+            result = dereferenceResult(value, ec);
+        }
+        else {
+            result = value;
+        }
+
         if (dbgEvaluationOutputIndent > 0) {
             EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "finshed eval of "
                             + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
@@ -564,6 +573,38 @@ public final class WorkbookEvaluator {
             }
         }
         return index-startIndex;
+    }
+    
+    /**
+     * Dereferences a single value from any AreaEval or RefEval evaluation
+     * result. If the supplied evaluationResult is just a plain value, it is
+     * returned as-is.
+     *
+     * @return a {@link NumberEval}, {@link StringEval}, {@link BoolEval}, or
+     *         {@link ErrorEval}. Never <code>null</code>. {@link BlankEval} is
+     *         converted to {@link NumberEval#ZERO}
+     */
+    private static ValueEval dereferenceResult(ValueEval evaluationResult, OperationEvaluationContext ec) {
+        ValueEval value;
+
+        if (ec == null) {
+            throw new IllegalArgumentException("OperationEvaluationContext ec is null");
+        }
+        if (ec.getWorkbook() == null) {
+            throw new IllegalArgumentException("OperationEvaluationContext ec.getWorkbook() is null");
+        }
+
+        EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
+        EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
+ 
+        if (evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
+            value = OperandResolver.getElementFromArray((AreaEval) evaluationResult, evalCell);
+        }
+        else {
+            value = dereferenceResult(evaluationResult, ec.getRowIndex(), ec.getColumnIndex());
+        }
+        
+        return value;
     }
 
     /**
@@ -658,6 +699,11 @@ public final class WorkbookEvaluator {
            AreaPtg aptg = (AreaPtg) ptg;
            return ec.getAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
         }
+        
+        if (ptg instanceof ArrayPtg) {
+           ArrayPtg aptg = (ArrayPtg) ptg;
+           return ec.getAreaValueEval(0, 0, aptg.getRowCount() - 1, aptg.getColumnCount() - 1, aptg.getTokenArrayValues());
+        }
 
         if (ptg instanceof UnknownPtg) {
             // POI uses UnknownPtg when the encoded Ptg array seems to be corrupted.
@@ -721,16 +767,28 @@ public final class WorkbookEvaluator {
      * Evaluate a formula outside a cell value, e.g. conditional format rules or data validation expressions
      * 
      * @param formula to evaluate
-     * @param ref defines the sheet and optionally row/column base for the formula, if it is relative
+     * @param ref defines the optional sheet and row/column base for the formula, if it is relative
      * @return value
-     * @throws IllegalArgumentException if ref does not define a sheet name to evaluate the formula on.
      */
     public ValueEval evaluate(String formula, CellReference ref) {
         final String sheetName = ref == null ? null : ref.getSheetName();
-        if (sheetName == null) throw new IllegalArgumentException("Sheet name is required");
-        final int sheetIndex = getWorkbook().getSheetIndex(sheetName);
-        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, ref.getRow(), ref.getCol(), new EvaluationTracker(_cache));
-        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, ref.getRow());
+        int sheetIndex;
+        if (sheetName == null) {
+            sheetIndex = -1; // workbook scope only
+        } else {
+            sheetIndex = getWorkbook().getSheetIndex(sheetName);
+        }
+        int rowIndex = ref == null ? -1 : ref.getRow();
+        short colIndex = ref == null ? -1 : ref.getCol();
+        final OperationEvaluationContext ec = new OperationEvaluationContext(
+                this, 
+                getWorkbook(), 
+                sheetIndex, 
+                rowIndex, 
+                colIndex, 
+                new EvaluationTracker(_cache)
+            );
+        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, rowIndex);
         return evaluateNameFormula(ptgs, ec);
     }
     
@@ -739,6 +797,8 @@ public final class WorkbookEvaluator {
      * such as some data validation and conditional format expressions, when those constraints apply
      * to contiguous cells.  When a relative formula is used, it must be evaluated by shifting by the target
      * offset position relative to the top left of the range.
+     * <p>
+     * Returns a single value e.g. a cell formula result or boolean value for conditional formatting.
      * 
      * @param formula
      * @param target cell context for the operation
@@ -747,15 +807,37 @@ public final class WorkbookEvaluator {
      * @throws IllegalArgumentException if target does not define a sheet name to evaluate the formula on.
      */
     public ValueEval evaluate(String formula, CellReference target, CellRangeAddressBase region) {
+        return evaluate(formula, target, region, FormulaType.CELL);
+    }
+    
+    /**
+     * Some expressions need to be evaluated in terms of an offset from the top left corner of a region,
+     * such as some data validation and conditional format expressions, when those constraints apply
+     * to contiguous cells.  When a relative formula is used, it must be evaluated by shifting by the target
+     * offset position relative to the top left of the range.
+     * <p>
+     * Returns a ValueEval that may be one or more values, such as the allowed values for a data validation constraint.
+     * 
+     * @param formula
+     * @param target cell context for the operation
+     * @param region containing the cell
+     * @return ValueEval for one or more values
+     * @throws IllegalArgumentException if target does not define a sheet name to evaluate the formula on.
+     */
+    public ValueEval evaluateList(String formula, CellReference target, CellRangeAddressBase region) {
+        return evaluate(formula, target, region, FormulaType.DATAVALIDATION_LIST);
+    }
+    
+    private ValueEval evaluate(String formula, CellReference target, CellRangeAddressBase region, FormulaType formulaType) {
         final String sheetName = target == null ? null : target.getSheetName();
         if (sheetName == null) throw new IllegalArgumentException("Sheet name is required");
         
         final int sheetIndex = getWorkbook().getSheetIndex(sheetName);
-        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, target.getRow());
+        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), formulaType, sheetIndex, target.getRow());
 
         adjustRegionRelativeReference(ptgs, target, region);
         
-        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, target.getRow(), target.getCol(), new EvaluationTracker(_cache));
+        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, target.getRow(), target.getCol(), new EvaluationTracker(_cache), formulaType.isSingleValue());
         return evaluateNameFormula(ptgs, ec);
     }
     

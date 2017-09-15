@@ -18,6 +18,11 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.common.usermodel.fonts.FontCharset;
+import org.apache.poi.common.usermodel.fonts.FontFamily;
+import org.apache.poi.common.usermodel.fonts.FontGroup;
+import org.apache.poi.common.usermodel.fonts.FontInfo;
+import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
@@ -28,6 +33,8 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontCollection;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
@@ -85,8 +92,8 @@ public class XSLFTextRun implements TextRun {
         } else if (_r instanceof CTTextLineBreak) {
             return "\n";
         }
-        
-        
+
+
         String txt = ((CTRegularTextRun)_r).getT();
         TextCap cap = getTextCap();
         StringBuffer buf = new StringBuffer();
@@ -139,7 +146,7 @@ public class XSLFTextRun implements TextRun {
     public void setFontColor(Color color) {
         setFontColor(DrawPaint.createSolidPaint(color));
     }
-    
+
     @Override
     public void setFontColor(PaintStyle color) {
         if (!(color instanceof SolidPaint)) {
@@ -147,10 +154,10 @@ public class XSLFTextRun implements TextRun {
         }
         SolidPaint sp = (SolidPaint)color;
         Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
-        
+
         CTTextCharacterProperties rPr = getRPr(true);
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
-        
+
         XSLFColor col = new XSLFColor(fill, getParentParagraph().getParentShape().getSheet().getTheme(), fill.getSchemeClr());
         col.setColor(c);
     }
@@ -164,7 +171,7 @@ public class XSLFTextRun implements TextRun {
                 if (props == null) {
                     return false;
                 }
-                
+
                 XSLFShape shape = _p.getParentShape();
                 CTShapeStyle style = shape.getSpStyle();
                 CTSchemeColor phClr = null;
@@ -177,12 +184,12 @@ public class XSLFTextRun implements TextRun {
                 PackagePart pp = sheet.getPackagePart();
                 XSLFTheme theme = sheet.getTheme();
                 PaintStyle ps = XSLFShape.selectPaint(fp, phClr, pp, theme, hasPlaceholder);
-                
+
                 if (ps != null)  {
                     setValue(ps);
                     return true;
                 }
-                
+
                 return false;
             }
         };
@@ -270,88 +277,51 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public void setFontFamily(String typeface){
-        setFontFamily(typeface, (byte)-1, (byte)-1, false);
-    }
-
-    public void setFontFamily(String typeface, byte charset, byte pictAndFamily, boolean isSymbol){
-        CTTextCharacterProperties rPr = getRPr(true);
-
-        if(typeface == null){
-            if(rPr.isSetLatin()) {
-                rPr.unsetLatin();
-            }
-            if(rPr.isSetCs()) {
-                rPr.unsetCs();
-            }
-            if(rPr.isSetSym()) {
-                rPr.unsetSym();
-            }
-        } else {
-            if(isSymbol){
-                CTTextFont font = rPr.isSetSym() ? rPr.getSym() : rPr.addNewSym();
-                font.setTypeface(typeface);
-            } else {
-                CTTextFont latin = rPr.isSetLatin() ? rPr.getLatin() : rPr.addNewLatin();
-                latin.setTypeface(typeface);
-                if(charset != -1) {
-                    latin.setCharset(charset);
-                }
-                if(pictAndFamily != -1) {
-                    latin.setPitchFamily(pictAndFamily);
-                }
-            }
-        }
+    public void setFontFamily(String typeface) {
+        FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
+        new XSLFFontInfo(fg).setTypeface(typeface);
     }
 
     @Override
-    public String getFontFamily(){
-        final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
+    public void setFontFamily(String typeface, FontGroup fontGroup) {
+        new XSLFFontInfo(fontGroup).setTypeface(typeface);
+    }
 
-        CharacterPropertyFetcher<String> visitor = new CharacterPropertyFetcher<String>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null) {
-                    CTTextFont font = props.getLatin();
-                    if (font != null) {
-                        String typeface = font.getTypeface();
-                        if("+mj-lt".equals(typeface)) {
-                            typeface = theme.getMajorFont();
-                        } else if ("+mn-lt".equals(typeface)){
-                            typeface = theme.getMinorFont();
-                        }
-                        setValue(typeface);
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-        fetchCharacterProperty(visitor);
+    @Override
+    public void setFontInfo(FontInfo fontInfo, FontGroup fontGroup) {
+        new XSLFFontInfo(fontGroup).copyFrom(fontInfo);
+    }
 
-        return  visitor.getValue();
+    @Override
+    public String getFontFamily() {
+        FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
+        return new XSLFFontInfo(fg).getTypeface();
+    }
+
+    @Override
+    public String getFontFamily(FontGroup fontGroup) {
+        return new XSLFFontInfo(fontGroup).getTypeface();
+    }
+
+    @Override
+    public FontInfo getFontInfo(FontGroup fontGroup) {
+        XSLFFontInfo fontInfo = new XSLFFontInfo(fontGroup);
+        return (fontInfo.getTypeface() != null) ? fontInfo : null;
     }
 
     @Override
     public byte getPitchAndFamily(){
-        // final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
-
-        CharacterPropertyFetcher<Byte> visitor = new CharacterPropertyFetcher<Byte>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null) {
-                    CTTextFont font = props.getLatin();
-                    if (font != null) {
-                        setValue(font.getPitchFamily());
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-        fetchCharacterProperty(visitor);
-
-        return  visitor.getValue() == null ? 0 : visitor.getValue();
+        FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
+        XSLFFontInfo fontInfo = new XSLFFontInfo(fg);
+        FontPitch pitch = fontInfo.getPitch();
+        if (pitch == null) {
+            pitch = FontPitch.VARIABLE;
+        }
+        FontFamily family = fontInfo.getFamily();
+        if (family == null) {
+            family = FontFamily.FF_SWISS;
+        }
+        return FontPitch.getNativeId(pitch, family);
     }
 
     @Override
@@ -574,7 +544,7 @@ public class XSLFTextRun implements TextRun {
     @Override
     public XSLFHyperlink getHyperlink(){
         CTTextCharacterProperties rPr = getRPr(false);
-        if (rPr == null) { 
+        if (rPr == null) {
             return null;
         }
         CTHyperlink hl = rPr.getHlinkClick();
@@ -592,11 +562,11 @@ public class XSLFTextRun implements TextRun {
         if (rPr != null && fetcher.fetch(rPr)) {
             return true;
         }
-        
+
         if (shape.fetchShapeProperty(fetcher)) {
             return true;
         }
-        
+
         CTPlaceholder ph = shape.getCTPlaceholder();
         if (ph == null){
             // if it is a plain text box then take defaults from presentation.xml
@@ -654,8 +624,8 @@ public class XSLFTextRun implements TextRun {
             setStrikethrough(strike);
         }
     }
-    
-    
+
+
     @Override
     public FieldType getFieldType() {
         if (_r instanceof CTTextField) {
@@ -665,5 +635,225 @@ public class XSLFTextRun implements TextRun {
             }
         }
         return null;
+    }
+
+
+    private class XSLFFontInfo implements FontInfo {
+        private final FontGroup fontGroup;
+
+        private XSLFFontInfo(FontGroup fontGroup) {
+            this.fontGroup = (fontGroup != null) ? fontGroup : FontGroup.getFontGroupFirst(getRawText());
+        }
+
+        public void copyFrom(FontInfo fontInfo) {
+            CTTextFont tf = getXmlObject(true);
+            setTypeface(fontInfo.getTypeface());
+            setCharset(fontInfo.getCharset());
+            FontPitch pitch = fontInfo.getPitch();
+            FontFamily family = fontInfo.getFamily();
+            if (pitch == null && family == null) {
+                if (tf.isSetPitchFamily()) {
+                    tf.unsetPitchFamily();
+                }
+            } else {
+                setPitch(pitch);
+                setFamily(family);
+            }
+        }
+
+        @Override
+        public Integer getIndex() {
+            return null;
+        }
+
+        @Override
+        public void setIndex(int index) {
+            throw new UnsupportedOperationException("setIndex not supported by XSLFFontInfo.");
+        }
+
+        @Override
+        public String getTypeface() {
+            CTTextFont tf = getXmlObject(false);
+            return (tf != null && tf.isSetTypeface()) ? tf.getTypeface() : null;
+        }
+
+        @Override
+        public void setTypeface(String typeface) {
+            if (typeface != null) {
+                getXmlObject(true).setTypeface(typeface);
+                return;
+            }
+            
+            CTTextCharacterProperties props = getRPr(false);
+            if (props == null) {
+                return;
+            }
+            FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
+            switch (fg) {
+            default:
+            case LATIN:
+                if (props.isSetLatin()) {
+                    props.unsetLatin();
+                }
+                break;
+            case EAST_ASIAN:
+                if (props.isSetEa()) {
+                    props.unsetEa();
+                }
+                break;
+            case COMPLEX_SCRIPT:
+                if (props.isSetCs()) {
+                    props.unsetCs();
+                }
+                break;
+            case SYMBOL:
+                if (props.isSetSym()) {
+                    props.unsetSym();
+                }
+                break;
+            }
+        }
+
+        @Override
+        public FontCharset getCharset() {
+            CTTextFont tf = getXmlObject(false);
+            return (tf != null && tf.isSetCharset()) ? FontCharset.valueOf(tf.getCharset()&0xFF) : null;
+        }
+
+        @Override
+        public void setCharset(FontCharset charset) {
+            CTTextFont tf = getXmlObject(true);
+            if (charset != null) {
+                tf.setCharset((byte)charset.getNativeId());
+            } else {
+                if (tf.isSetCharset()) {
+                    tf.unsetCharset();
+                }
+            }
+        }
+
+        @Override
+        public FontFamily getFamily() {
+            CTTextFont tf = getXmlObject(false);
+            return (tf != null && tf.isSetPitchFamily()) ? FontFamily.valueOfPitchFamily(tf.getPitchFamily()) : null;
+        }
+
+        @Override
+        public void setFamily(FontFamily family) {
+            CTTextFont tf = getXmlObject(true);
+            if (family == null && !tf.isSetPitchFamily()) {
+                return;
+            }
+            FontPitch pitch = (tf.isSetPitchFamily())
+                ? FontPitch.valueOfPitchFamily(tf.getPitchFamily())
+                : FontPitch.VARIABLE;
+            byte pitchFamily = FontPitch.getNativeId(pitch, family != null ? family : FontFamily.FF_SWISS);
+            tf.setPitchFamily(pitchFamily);
+        }
+
+        @Override
+        public FontPitch getPitch() {
+            CTTextFont tf = getXmlObject(false);
+            return (tf != null && tf.isSetPitchFamily()) ? FontPitch.valueOfPitchFamily(tf.getPitchFamily()) : null;
+        }
+
+        @Override
+        public void setPitch(FontPitch pitch) {
+            CTTextFont tf = getXmlObject(true);
+            if (pitch == null && !tf.isSetPitchFamily()) {
+                return;
+            }
+            FontFamily family = (tf.isSetPitchFamily())
+                ? FontFamily.valueOfPitchFamily(tf.getPitchFamily())
+                : FontFamily.FF_SWISS;
+            byte pitchFamily = FontPitch.getNativeId(pitch != null ? pitch : FontPitch.VARIABLE, family);
+            tf.setPitchFamily(pitchFamily);
+        }
+
+        private CTTextFont getXmlObject(boolean create) {
+            if (create) {
+                return getCTTextFont(getRPr(true), true);
+            }
+
+            CharacterPropertyFetcher<CTTextFont> visitor = new CharacterPropertyFetcher<CTTextFont>(_p.getIndentLevel()){
+                @Override
+                public boolean fetch(CTTextCharacterProperties props){
+                    CTTextFont font = getCTTextFont(props, false);
+                    if (font == null) {
+                        return false;
+                    }
+                    setValue(font);
+                    return true;
+                }
+            };
+            fetchCharacterProperty(visitor);
+
+            return  visitor.getValue();
+        }
+
+        private CTTextFont getCTTextFont(CTTextCharacterProperties props, boolean create) {
+            if (props == null) {
+                return null;
+            }
+
+            CTTextFont font;
+            switch (fontGroup) {
+            default:
+            case LATIN:
+                font = props.getLatin();
+                if (font == null && create) {
+                    font = props.addNewLatin();
+                }
+                break;
+            case EAST_ASIAN:
+                font = props.getEa();
+                if (font == null && create) {
+                    font = props.addNewEa();
+                }
+                break;
+            case COMPLEX_SCRIPT:
+                font = props.getCs();
+                if (font == null && create) {
+                    font = props.addNewCs();
+                }
+                break;
+            case SYMBOL:
+                font = props.getSym();
+                if (font == null && create) {
+                    font = props.addNewSym();
+                }
+                break;
+            }
+
+            if (font == null) {
+                return null;
+            }
+
+            String typeface = font.isSetTypeface() ? font.getTypeface() : "";
+            if (typeface.startsWith("+mj-") || typeface.startsWith("+mn-")) {
+                //  "+mj-lt".equals(typeface) || "+mn-lt".equals(typeface)
+                final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
+                CTFontScheme fontTheme = theme.getXmlObject().getThemeElements().getFontScheme();
+                CTFontCollection coll = typeface.startsWith("+mj-")
+                    ? fontTheme.getMajorFont() : fontTheme.getMinorFont();
+                // TODO: handle LCID codes
+                // see https://blogs.msdn.microsoft.com/officeinteroperability/2013/04/22/office-open-xml-themes-schemes-and-fonts/
+                String fgStr = typeface.substring(4);
+                if ("ea".equals(fgStr)) {
+                    font = coll.getEa();
+                } else if ("cs".equals(fgStr)) {
+                    font = coll.getCs();
+                } else {
+                    font = coll.getLatin();
+                }
+                // SYMBOL is missing
+                
+                if (font == null || !font.isSetTypeface() || "".equals(font.getTypeface())) {
+                    font = coll.getLatin();
+                }
+            }
+
+            return font;
+        }
     }
 }

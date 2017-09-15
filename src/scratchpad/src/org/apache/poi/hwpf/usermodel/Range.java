@@ -32,6 +32,7 @@ import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.DocumentFormatException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -192,7 +193,7 @@ public class Range { // TODO -instantiable superclass
 		_parent = new WeakReference<Range>(parent);
 
 		sanityCheckStartEnd();
-		assert sanityCheck();
+		sanityCheck();
 	}
 
 
@@ -328,7 +329,7 @@ public class Range { // TODO -instantiable superclass
         // update the FIB.CCPText + friends fields
         adjustFIB( text.length() );
 
-        assert sanityCheck();
+		sanityCheck();
 
         return getCharacterRun( 0 );
     }
@@ -356,7 +357,7 @@ public class Range { // TODO -instantiable superclass
         }
         adjustForInsert( text.length() );
 
-        assert sanityCheck();
+        sanityCheck();
         return getCharacterRun( numCharacterRuns() - 1 );
     }
 
@@ -965,8 +966,9 @@ public class Range { // TODO -instantiable superclass
 
         if ( startIndex < 0 || startIndex >= rpl.size()
                 || startIndex > endIndex || endIndex < 0
-                || endIndex >= rpl.size() )
-            throw new AssertionError();
+                || endIndex >= rpl.size() ) {
+        	throw new DocumentFormatException("problem finding range");
+		}
 
         return new int[] { startIndex, endIndex + 1 };
     }
@@ -1050,7 +1052,9 @@ public class Range { // TODO -instantiable superclass
      */
     protected void adjustFIB( int adjustment )
     {
-        assert ( _doc instanceof HWPFDocument );
+        if (!( _doc instanceof HWPFDocument)) {
+        	throw new IllegalArgumentException("doc must be instance of HWPFDocument");
+		}
 
         // update the FIB.CCPText field (this should happen once per adjustment,
         // so we don't want it in
@@ -1148,20 +1152,19 @@ public class Range { // TODO -instantiable superclass
 
     /**
      * Method for debug purposes. Checks that all resolved elements are inside
-     * of current range.
+     * of current range.  Throws {@link IllegalArgumentException} if checks fail.
      */
     public boolean sanityCheck()
     {
-        if ( _start < 0 )
-            throw new AssertionError();
-        if ( _start > _text.length() )
-            throw new AssertionError();
-        if ( _end < 0 )
-            throw new AssertionError();
-        if ( _end > _text.length() )
-            throw new AssertionError();
-        if ( _start > _end )
-            throw new AssertionError();
+    	DocumentFormatException.check(_start >= 0,
+				"start can't be < 0");
+		DocumentFormatException.check( _start <= _text.length(),
+				"start can't be > text length");
+        DocumentFormatException.check( _end >= 0,
+				"end can't be < 0");
+        DocumentFormatException.check( _end <= _text.length(),
+				"end can't be > text length");
+        DocumentFormatException.check( _start <= _end,"start can't be > end");
 
         if ( _charRangeFound )
         {
@@ -1171,9 +1174,7 @@ public class Range { // TODO -instantiable superclass
 
                 int left = Math.max( this._start, chpx.getStart() );
                 int right = Math.min( this._end, chpx.getEnd() );
-
-                if ( left >= right )
-                    throw new AssertionError();
+                DocumentFormatException.check(left < right, "left must be < right");
             }
         }
         if ( _parRangeFound )
@@ -1185,11 +1186,10 @@ public class Range { // TODO -instantiable superclass
                 int left = Math.max( this._start, papx.getStart() );
                 int right = Math.min( this._end, papx.getEnd() );
 
-                if ( left >= right )
-                    throw new AssertionError();
+                DocumentFormatException.check( left < right,
+						"left must be < right");
             }
         }
-
         return true;
     }
 }

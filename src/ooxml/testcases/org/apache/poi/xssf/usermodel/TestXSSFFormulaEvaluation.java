@@ -694,4 +694,15 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertSame(cell, same);
         wb.close();
     }
+    
+    @Test
+    public void testBug61468() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("simple-monthly-budget.xlsx");
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        Cell cell = wb.getSheetAt(0).getRow(8).getCell(4);
+        assertEquals(3750, cell.getNumericCellValue(), 0.001);
+
+        CellValue value = evaluator.evaluate(cell);
+        assertEquals(3750, value.getNumberValue(), 0.001);
+    }
 }

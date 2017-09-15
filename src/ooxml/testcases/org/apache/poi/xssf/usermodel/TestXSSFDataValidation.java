@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.poi.ss.formula.DataValidationEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.BaseTestDataValidation;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -340,5 +343,14 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
         DataValidationConstraint constraint = dataValidationHelper.createCustomConstraint("true");
         final XSSFDataValidation validation = (XSSFDataValidation) dataValidationHelper.createValidation(constraint, new CellRangeAddressList(0, 0, 0, 0));
         return validation;
+    }
+    
+    @Test
+    public void testTableBasedValidationList() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("dataValidationTableRange.xlsx");
+        XSSFFormulaEvaluator fEval = wb.getCreationHelper().createFormulaEvaluator();
+        DataValidationEvaluator dve = new DataValidationEvaluator(wb, fEval);
+        List<ValueEval> values = dve.getValidationValuesForCell(new CellReference("County Ranking", 8, 6, false, false));
+        assertEquals("wrong # of valid values", 32, values.size());
     }
 }

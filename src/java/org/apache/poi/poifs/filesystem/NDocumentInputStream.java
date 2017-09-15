@@ -70,6 +70,9 @@ public final class NDocumentInputStream extends DocumentInputStream {
         _document_size = document.getSize();
         _closed = false;
 
+        if (_document_size < 0) {
+            //throw new RecordFormatException("Document size can't be < 0");
+        }
         DocumentNode doc = (DocumentNode)document;
         DocumentProperty property = (DocumentProperty)doc.getProperty();
         _document = new NPOIFSDocument(
@@ -248,6 +251,10 @@ public final class NDocumentInputStream extends DocumentInputStream {
 
    @Override
 	public void readFully(byte[] buf, int off, int len) {
+        if (len < 0) {
+           throw new RuntimeException("Can't read negative number of bytes");
+        }
+
 		checkAvaliable(len);
 
 		int read = 0;

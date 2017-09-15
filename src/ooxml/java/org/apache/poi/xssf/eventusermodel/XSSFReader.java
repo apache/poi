@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -225,7 +224,7 @@ public class XSSFReader {
          */
         SheetIterator(PackagePart wb) throws IOException {
 
-            /**
+            /*
              * The order of sheets is defined by the order of CTSheet elements in workbook.xml
              */
             try {
@@ -251,7 +250,7 @@ public class XSSFReader {
         Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
 
             XMLSheetRefReader xmlSheetRefReader = new XMLSheetRefReader();
-            XMLReader xmlReader = null;
+            XMLReader xmlReader;
             try {
                 xmlReader = SAXHelper.newXMLReader();
             } catch (ParserConfigurationException e) {
@@ -371,9 +370,7 @@ public class XSSFReader {
                       continue;
                   }
                   XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
-                  for (XSSFShape shape : drawing.getShapes()){
-                      shapes.add(shape);
-                  }
+                  shapes.addAll(drawing.getShapes());
               }
            } catch (XmlException e){
                return null;
@@ -424,7 +421,7 @@ public class XSSFReader {
         private static final String ID = "id";
         private static final String NAME = "name";
 
-        private final List<XSSFSheetRef> sheetRefs = new LinkedList();
+        private final List<XSSFSheetRef> sheetRefs = new LinkedList<XSSFSheetRef>();
 
         // read <sheet name="Sheet6" sheetId="4" r:id="rId6"/>
         // and add XSSFSheetRef(id="rId6", name="Sheet6") to sheetRefs

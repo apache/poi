@@ -25,8 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.fonts.FontGroup;
+import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.PPFont;
 import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
 import org.apache.poi.hslf.model.textproperties.FontAlignmentProp;
 import org.apache.poi.hslf.model.textproperties.IndentProp;
@@ -38,7 +39,6 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.FontCollection;
 import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.MasterTextPropAtom;
 import org.apache.poi.hslf.record.OutlineTextRefAtom;
@@ -159,7 +159,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public void setParagraphStyle(TextPropCollection paragraphStyle) {
         _paragraphStyle.copy(paragraphStyle);
     }
-    
+
     /**
      * Setting a master style reference
      *
@@ -376,11 +376,20 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public String getDefaultFontFamily() {
-        String typeface = null;
+        FontInfo fontInfo = null;
         if (!_runs.isEmpty()) {
-            typeface = _runs.get(0).getFontFamily();
+            HSLFTextRun tr = _runs.get(0);
+            fontInfo = tr.getFontInfo(null);
+            // fallback to LATIN if the font for the font group wasn't defined
+            if (fontInfo == null) {
+                fontInfo = tr.getFontInfo(FontGroup.LATIN);
+            }
         }
-        return (typeface != null) ? typeface : "Arial";
+        if (fontInfo == null) {
+            fontInfo = HSLFFontInfoPredefined.ARIAL;
+        }
+        
+        return fontInfo.getTypeface();
     }
 
     @Override
@@ -657,10 +666,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             return;
         }
 
-        FontCollection fc = getSheet().getSlideShow().getFontCollection();
-        int idx = fc.addFont(typeface);
+        HSLFFontInfo fi = new HSLFFontInfo(typeface);
+        fi = getSheet().getSlideShow().addFont(fi);
 
-        setParagraphTextPropVal("bullet.font", idx);
+        setParagraphTextPropVal("bullet.font", fi.getIndex());
         setFlag(ParagraphFlagsTextProp.BULLET_HARDFONT_IDX, true);
     }
 
@@ -673,9 +682,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (tp == null || !hasFont) {
             return getDefaultFontFamily();
         }
-        PPFont ppFont = getSheet().getSlideShow().getFont(tp.getValue());
+        HSLFFontInfo ppFont = getSheet().getSlideShow().getFont(tp.getValue());
         assert(ppFont != null);
-        return ppFont.getFontName();
+        return ppFont.getTypeface();
     }
 
     @Override
@@ -754,22 +763,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         String propNames[] = propName.split(",");
         for (String pn : propNames) {
             TextProp prop = props.findByName(pn);
-            if (prop == null) {
-                continue;
+            if (isValidProp(prop)) {
+                return prop;
             }
-
-            // Font properties (maybe other too???) can have an index of -1
-            // so we check the master for this font index then
-            if (pn.contains("font") && prop.getValue() == -1) {
-                return getMasterPropVal(props, masterProps, pn);
-            }
-            
-            return prop;
         }
-        
+
         return getMasterPropVal(props, masterProps, propName);
     }
-    
+
     private TextProp getMasterPropVal(TextPropCollection props, TextPropCollection masterProps, String propName) {
         boolean isChar = props.getTextPropType() == TextPropType.character;
 
@@ -783,7 +784,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         String propNames[] = propName.split(",");
-        if (masterProps == null) { 
+        if (masterProps == null) {
             HSLFSheet sheet = getSheet();
             int txtype = getRunType();
             HSLFMasterSheet master = sheet.getMasterSheet();
@@ -794,20 +795,27 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
             for (String pn : propNames) {
                 TextProp prop = master.getStyleAttribute(txtype, getIndentLevel(), pn, isChar);
-                if (prop != null) {
+                if (isValidProp(prop)) {
                     return prop;
                 }
             }
         } else {
             for (String pn : propNames) {
                 TextProp prop = masterProps.findByName(pn);
-                if (prop != null) {
+                if (isValidProp(prop)) {
                     return prop;
                 }
             }
         }
-        
+
+
         return null;
+    }
+
+    private static boolean isValidProp(TextProp prop) {
+        // Font properties (maybe other too???) can have an index of -1
+        // so we check the master for this font index then
+        return prop != null && (!prop.getName().contains("font") || prop.getValue() != -1);
     }
 
     /**
@@ -823,7 +831,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (getSheet() instanceof MasterSheet && masterProps != null) {
             pc = masterProps;
         }
-        
+
         if (val == null) {
             pc.removeByName(name);
             return;
@@ -1020,7 +1028,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (lastPTPC == null || lastRTPC == null || ptpc == null || rtpc == null) { // NOSONAR
             throw new HSLFException("Not all TextPropCollection could be determined.");
         }
-        
+
         ptpc.updateTextSize(ptpc.getCharactersCovered() + 1);
         rtpc.updateTextSize(rtpc.getCharactersCovered() + 1);
         lastPTPC.updateTextSize(lastPTPC.getCharactersCovered() + 1);
@@ -1075,11 +1083,11 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             assert(info != null && txinfo != null);
             _txtbox.appendChildRecord(info);
             _txtbox.appendChildRecord(txinfo);
-        }    
+        }
     }
-    
+
     /**
-     * Writes the textbox records back to the document record 
+     * Writes the textbox records back to the document record
      */
     private static void refreshRecords(List<HSLFTextParagraph> paragraphs) {
         TextHeaderAtom headerAtom = paragraphs.get(0)._headerAtom;
@@ -1624,7 +1632,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RoundTripHFPlaceholder12
      */
     @Override

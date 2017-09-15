@@ -26,7 +26,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
 
 /**
- * Stores the parameters that identify the evaluation of one cell.<br/>
+ * Stores the parameters that identify the evaluation of one cell.<br>
  */
 abstract class CellCacheEntry implements ICacheEntry {
 	public static final CellCacheEntry[] EMPTY_ARRAY = { };

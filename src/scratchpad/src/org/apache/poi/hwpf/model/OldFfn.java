@@ -19,7 +19,7 @@ package org.apache.poi.hwpf.model;
 
 import java.nio.charset.Charset;
 
-import org.apache.poi.hwmf.record.HwmfFont;
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -56,7 +56,7 @@ public final class OldFfn {
             return null;
         }
         //first byte
-        short fontDescriptionLength = (short) buf[offset];
+        short fontDescriptionLength = buf[offset];
         offset += 1;
         if (offset + fontDescriptionLength > fontTableEnd) {
             logger.log(POILogger.WARN, "Asked to read beyond font table end. Skipping font");
@@ -67,7 +67,7 @@ public final class OldFfn {
         offset += 3;
         byte chs = buf[offset];
         Charset charset = null;
-        HwmfFont.WmfCharset wmfCharset = HwmfFont.WmfCharset.valueOf(chs & 0xff);
+        FontCharset wmfCharset = FontCharset.valueOf(chs & 0xff);
         if (wmfCharset == null) {
             logger.log(POILogger.WARN, "Couldn't find font for type: " + (chs & 0xff));
         } else {

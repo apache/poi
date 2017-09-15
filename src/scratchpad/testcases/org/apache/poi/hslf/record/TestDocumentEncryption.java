@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -72,7 +73,7 @@ public class TestDocumentEncryption {
             "Password_Protected-hello.ppt",
             "Password_Protected-np-hello.ppt",
         };
-        
+
         for (String pptFile : encPpts) {
             try {
                 NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
@@ -83,6 +84,7 @@ public class TestDocumentEncryption {
                 fail(pptFile+" can't be decrypted");
             }
         }
+        // password is reset in @After
     }
 
     @Test
@@ -94,24 +96,27 @@ public class TestDocumentEncryption {
         // need to cache data (i.e. read all data) before changing the key size
         List<HSLFPictureData> picsExpected = hss.getPictureData();
         hss.getDocumentSummaryInformation();
-        EncryptionInfo ei = hss.getDocumentEncryptionAtom().getEncryptionInfo();
-        ((CryptoAPIEncryptionHeader)ei.getHeader()).setKeySize(0x78);
-        
+        DocumentEncryptionAtom documentEncryptionAtom = hss.getDocumentEncryptionAtom();
+        assertNotNull(documentEncryptionAtom);
+        EncryptionInfo ei = documentEncryptionAtom.getEncryptionInfo();
+        ((CryptoAPIEncryptionHeader) ei.getHeader()).setKeySize(0x78);
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         hss.write(bos);
         hss.close();
         fs.close();
-        
+
         fs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
         hss = new HSLFSlideShowImpl(fs);
         List<HSLFPictureData> picsActual = hss.getPictureData();
-        
+
         assertEquals(picsExpected.size(), picsActual.size());
-        for (int i=0; i<picsExpected.size(); i++) {
+        for (int i = 0; i < picsExpected.size(); i++) {
             assertArrayEquals(picsExpected.get(i).getRawData(), picsActual.get(i).getRawData());
         }
         hss.close();
         fs.close();
+        // password is reset in @After
     }
 
     @Test
@@ -154,21 +159,21 @@ public class TestDocumentEncryption {
         NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile("cryptoapi-proc2356.ppt"));
         HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
         HSLFSlideShow ss = new HSLFSlideShow(hss);
-        
+
         HSLFSlide slide = ss.getSlides().get(0);
         String rawText = HSLFTextParagraph.getRawText(slide.getTextParagraphs().get(0));
         assertEquals("Dominic Salemno", rawText);
 
         String picCmp[][] = {
-            {"0","nKsDTKqxTCR8LFkVVWlP9GSTvZ0="},
-            {"95163","SuNOR+9V1UVYZIoeD65l3VTaLoc="},
-            {"100864","Ql3IGrr4bNq07ZTp5iPg7b+pva8="},
-            {"714114","8pdst9NjBGSfWezSZE8+aVhIRe0="},
-            {"723752","go6xqW7lvkCtlOO5tYLiMfb4oxw="},
-            {"770128","gZUM8YqRNL5kGNfyyYvEEernvCc="},
-            {"957958","CNU2iiqUFAnk3TDXsXV1ihH9eRM="},                
+                {"0", "nKsDTKqxTCR8LFkVVWlP9GSTvZ0="},
+                {"95163", "SuNOR+9V1UVYZIoeD65l3VTaLoc="},
+                {"100864", "Ql3IGrr4bNq07ZTp5iPg7b+pva8="},
+                {"714114", "8pdst9NjBGSfWezSZE8+aVhIRe0="},
+                {"723752", "go6xqW7lvkCtlOO5tYLiMfb4oxw="},
+                {"770128", "gZUM8YqRNL5kGNfyyYvEEernvCc="},
+                {"957958", "CNU2iiqUFAnk3TDXsXV1ihH9eRM="},
         };
-        
+
         MessageDigest md = CryptoFunctions.getMessageDigest(HashAlgorithm.sha1);
         List<HSLFPictureData> pd = hss.getPictureData();
         int i = 0;
@@ -178,18 +183,22 @@ public class TestDocumentEncryption {
             assertEquals(picCmp[i][1], Base64.encodeBase64String(hash));
             i++;
         }
-        
+
         DocumentEncryptionAtom dea = hss.getDocumentEncryptionAtom();
-        
-        POIFSFileSystem fs2 = ((CryptoAPIDecryptor)dea.getEncryptionInfo().getDecryptor()).getSummaryEntries(fs.getRoot(), "EncryptedSummary");
+        assertNotNull(dea);
+
+        POIFSFileSystem fs2 = ((CryptoAPIDecryptor) dea.getEncryptionInfo().getDecryptor()).getSummaryEntries(fs.getRoot(), "EncryptedSummary");
         PropertySet ps = PropertySetFactory.create(fs2.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
+        assertNotNull(ps);
         assertTrue(ps.isSummaryInformation());
         assertEquals("RC4 CryptoAPI Encryption", ps.getProperties()[1].getValue());
         ps = PropertySetFactory.create(fs2.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        assertNotNull(ps);
         assertTrue(ps.isDocumentSummaryInformation());
         assertEquals("On-screen Show (4:3)", ps.getProperties()[1].getValue());
         ss.close();
         fs.close();
         fs2.close();
+        // password is reset in @After
     }
 }

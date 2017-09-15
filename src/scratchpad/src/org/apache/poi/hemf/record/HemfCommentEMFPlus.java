@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.poi.hemf.hemfplus.record.HemfPlusRecord;
 import org.apache.poi.hemf.hemfplus.record.HemfPlusRecordType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
@@ -32,6 +33,9 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfCommentEMFPlus extends AbstractHemfComment {
+
+    private static final int MAX_RECORD_LENGTH = 1000000;
+
 
     long dataSize;
     public HemfCommentEMFPlus(byte[] rawBytes) {
@@ -93,7 +97,7 @@ public class HemfCommentEMFPlus extends AbstractHemfComment {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            byte[] dataBytes = new byte[size];
+            byte[] dataBytes = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
             System.arraycopy(bytes, offset, dataBytes, 0, size);
             try {
                 record.init(dataBytes, recordId, flags);

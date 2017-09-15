@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The area record is used to define a area chart.<p/>
+ * The area record is used to define a area chart.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

@@ -33,7 +33,7 @@ public enum BreakClear {
      * line in the WordprocessingML document, regardless of its position left to
      * right or the presence of any floating objects which intersect with the
      * line,
-     * <p/>
+     * <p>
      * This is the setting for a typical line break in a document.
      */
 

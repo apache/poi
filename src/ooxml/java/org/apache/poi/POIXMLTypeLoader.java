@@ -31,7 +31,9 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeLoader;
 import org.apache.xmlbeans.XmlBeans;
@@ -48,7 +50,14 @@ import org.xml.sax.SAXException;
 @SuppressWarnings("deprecation")
 public class POIXMLTypeLoader {
 
-    private static ThreadLocal<ClassLoader> classLoader = new ThreadLocal<ClassLoader>();
+    private static ThreadLocal<SchemaTypeLoader> typeLoader = new ThreadLocal<SchemaTypeLoader>();
+
+    // TODO: Do these have a good home like o.a.p.openxml4j.opc.PackageNamespaces and PackageRelationshipTypes?
+    // These constants should be common to all of POI and easy to use by other applications such as Tika
+    private static final String MS_OFFICE_URN = "urn:schemas-microsoft-com:office:office";
+    private static final String MS_EXCEL_URN = "urn:schemas-microsoft-com:office:excel";
+    private static final String MS_WORD_URN = "urn:schemas-microsoft-com:office:word";
+    private static final String MS_VML_URN = "urn:schemas-microsoft-com:vml";
     
     public static final XmlOptions DEFAULT_XML_OPTIONS;
     static {
@@ -61,22 +70,27 @@ public class POIXMLTypeLoader {
         // so only user code using XmlObject/XmlToken.Factory.parse
         // directly can bypass the entity check, which is probably unlikely (... and not within our responsibility :)) 
         // DEFAULT_XML_OPTIONS.setLoadEntityBytesLimit(4096);
+        
+        // POI is not thread-safe - so we can switch to unsynchronized xmlbeans mode - see #61350
+        // Update: disabled again for now as it caused strange NPEs and other problems
+        // when reading properties in separate workbooks in multiple threads
+        // DEFAULT_XML_OPTIONS.setUnsynchronized();
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/chart", "c");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing", "wp");
-        map.put("http://schemas.openxmlformats.org/markup-compatibility/2006", "ve");
+        map.put(PackageNamespaces.MARKUP_COMPATIBILITY, "ve");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/math", "m");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes", "vt");
         map.put("http://schemas.openxmlformats.org/presentationml/2006/main", "p");
         map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
         map.put("http://schemas.microsoft.com/office/word/2006/wordml", "wne");
-        map.put("urn:schemas-microsoft-com:office:office", "o");
-        map.put("urn:schemas-microsoft-com:office:excel", "x");
-        map.put("urn:schemas-microsoft-com:office:word", "w10");
-        map.put("urn:schemas-microsoft-com:vml", "v");
+        map.put(MS_OFFICE_URN, "o");
+        map.put(MS_EXCEL_URN, "x");
+        map.put(MS_WORD_URN, "w10");
+        map.put(MS_VML_URN, "v");
         DEFAULT_XML_OPTIONS.setSaveSuggestedPrefixes(Collections.unmodifiableMap(map));
     }
     
@@ -96,20 +110,26 @@ public class POIXMLTypeLoader {
      * when the user code is finalized.
      * 
      * @param cl the classloader to be used when XmlBeans classes and definitions are looked up
+     * @deprecated in POI 3.17 - setting a classloader from the outside is now obsolete,
+     *  the classloader of the SchemaType will be used
      */
+    @Deprecated
+    @Removal(version="4.0")
     public static void setClassLoader(ClassLoader cl) {
-        classLoader.set(cl);
     }
     
-    private static SchemaTypeLoader getTypeLoader() {
-        ClassLoader cl = classLoader.get();
-        return (cl == null)
-            ? XmlBeans.getContextTypeLoader()
-            : XmlBeans.typeLoaderForClassLoader(cl);
+    private static SchemaTypeLoader getTypeLoader(SchemaType type) {
+        SchemaTypeLoader tl = typeLoader.get();
+        if (tl == null) {
+            ClassLoader cl = type.getClass().getClassLoader();
+            tl = XmlBeans.typeLoaderForClassLoader(cl);
+            typeLoader.set(tl);
+        }
+        return tl;
     }
     
     public static XmlObject newInstance(SchemaType type, XmlOptions options) {
-        return getTypeLoader().newInstance(type, getXmlOptions(options));
+        return getTypeLoader(type).newInstance(type, getXmlOptions(options));
     }
 
     public static XmlObject parse(String xmlText, SchemaType type, XmlOptions options) throws XmlException {
@@ -141,34 +161,34 @@ public class POIXMLTypeLoader {
     public static XmlObject parse(InputStream jiois, SchemaType type, XmlOptions options) throws XmlException, IOException {
         try {
             Document doc = DocumentHelper.readDocument(jiois);
-            return getTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+            return getTypeLoader(type).parse(doc.getDocumentElement(), type, getXmlOptions(options));
         } catch (SAXException e) {
             throw new IOException("Unable to parse xml bean", e);
         }
     }
 
     public static XmlObject parse(XMLStreamReader xsr, SchemaType type, XmlOptions options) throws XmlException {
-        return getTypeLoader().parse(xsr, type, getXmlOptions(options));
+        return getTypeLoader(type).parse(xsr, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(Reader jior, SchemaType type, XmlOptions options) throws XmlException, IOException {
         try {
             Document doc = DocumentHelper.readDocument(new InputSource(jior));
-            return getTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+            return getTypeLoader(type).parse(doc.getDocumentElement(), type, getXmlOptions(options));
         } catch (SAXException e) {
             throw new XmlException("Unable to parse xml bean", e);
         }
     }
 
     public static XmlObject parse(Node node, SchemaType type, XmlOptions options) throws XmlException {
-        return getTypeLoader().parse(node, type, getXmlOptions(options));
+        return getTypeLoader(type).parse(node, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(XMLInputStream xis, SchemaType type, XmlOptions options) throws XmlException, XMLStreamException {
-        return getTypeLoader().parse(xis, type, getXmlOptions(options));
+        return getTypeLoader(type).parse(xis, type, getXmlOptions(options));
     }
     
     public static XMLInputStream newValidatingXMLInputStream ( XMLInputStream xis, SchemaType type, XmlOptions options ) throws XmlException, XMLStreamException {
-        return getTypeLoader().newValidatingXMLInputStream(xis, type, getXmlOptions(options));
+        return getTypeLoader(type).newValidatingXMLInputStream(xis, type, getXmlOptions(options));
     }
 }

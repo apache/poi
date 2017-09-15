@@ -102,9 +102,9 @@ final class MathX {
 
     /**
      * If d < 0, returns short -1
-     * <br/>
+     * <br>
      * If d > 0, returns short 1
-     * <br/>
+     * <br>
      * If d == 0, returns short 0
      * <p> If d is NaN, then 1 will be returned. It is the responsibility
      * of caller to check for d isNaN if some other value is desired.
@@ -203,7 +203,7 @@ final class MathX {
      * Note: this function is different from java.lang.Math.floor(..).
      * <p>
      * When n and s are "valid" arguments, the returned value is: Math.floor(n/s) * s;
-     * <br/>
+     * <br>
      * n and s are invalid if any of following conditions are true:
      * <ul>
      * <li>s is zero</li>
@@ -231,7 +231,7 @@ final class MathX {
      * Note: this function is different from java.lang.Math.ceil(..).
      * <p>
      * When n and s are "valid" arguments, the returned value is: Math.ceiling(n/s) * s;
-     * <br/>
+     * <br>
      * n and s are invalid if any of following conditions are true:
      * <ul>
      * <li>s is zero</li>
@@ -256,10 +256,10 @@ final class MathX {
     }
 
     /**
-     * <br/> for all n >= 1; factorial n = n * (n-1) * (n-2) * ... * 1
-     * <br/> else if n == 0; factorial n = 1
-     * <br/> else if n < 0; factorial n = Double.NaN
-     * <br/> Loss of precision can occur if n is large enough.
+     * <br> for all n >= 1; factorial n = n * (n-1) * (n-2) * ... * 1
+     * <br> else if n == 0; factorial n = 1
+     * <br> else if n < 0; factorial n = Double.NaN
+     * <br> Loss of precision can occur if n is large enough.
      * If n is large so that the resulting value would be greater
      * than Double.MAX_VALUE; Double.POSITIVE_INFINITY is returned.
      * If n < 0, Double.NaN is returned.
@@ -288,8 +288,8 @@ final class MathX {
     /**
      * returns the remainder resulting from operation:
      * n / d.
-     * <br/> The result has the sign of the divisor.
-     * <br/> Examples:
+     * <br> The result has the sign of the divisor.
+     * <br> Examples:
      * <ul>
      * <li>mod(3.4, 2) = 1.4</li>
      * <li>mod(-3.4, 2) = 0.6</li>

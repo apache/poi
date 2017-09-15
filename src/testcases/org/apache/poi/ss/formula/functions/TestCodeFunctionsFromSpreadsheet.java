@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests CODE() as loaded from a test data spreadsheet.<p/>
+ * Tests CODE() as loaded from a test data spreadsheet.<p>
  */
 public class TestCodeFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     @Parameters(name="{0}")

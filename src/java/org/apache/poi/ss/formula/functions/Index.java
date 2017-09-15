@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.TwoDEval;
  * Implementation for the Excel function INDEX
  * <p>
  *
- * Syntax : <br/>
+ * Syntax : <br>
  *  INDEX ( reference, row_num[, column_num [, area_num]])</br>
  *  INDEX ( array, row_num[, column_num])
  *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">

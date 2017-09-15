@@ -105,13 +105,13 @@ public class XSSFCellAlignment {
 
     /**
      * Get the degree of rotation for the text in the cell
-     * <p/>
+     * <p>
      * Expressed in degrees. Values range from 0 to 180. The first letter of
      * the text is considered the center-point of the arc.
-     * <br/>
+     * <br>
      * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
      * horizon is calculated as:
-     * <br/>
+     * <br>
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *
@@ -123,13 +123,13 @@ public class XSSFCellAlignment {
 
     /**
      * Set the degree of rotation for the text in the cell
-     * <p/>
+     * <p>
      * Expressed in degrees. Values range from 0 to 180. The first letter of
      * the text is considered the center-point of the arc.
-     * <br/>
+     * <br>
      * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
      * horizon is calculated as:
-     * <br/>
+     * <br>
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *

@@ -212,40 +212,10 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
      *
      * @return a new shape id.
      */
-    public int allocateShapeId()
-    {
+    public int allocateShapeId() {
         EscherDggRecord dgg = _slideShow.getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
         EscherDgRecord dg = _container.getPPDrawing().getEscherDgRecord();
-
-        dgg.setNumShapesSaved( dgg.getNumShapesSaved() + 1 );
-
-        // Add to existing cluster if space available
-        for (int i = 0; i < dgg.getFileIdClusters().length; i++)
-        {
-            EscherDggRecord.FileIdCluster c = dgg.getFileIdClusters()[i];
-            if (c.getDrawingGroupId() == dg.getDrawingGroupId() && c.getNumShapeIdsUsed() != 1024)
-            {
-                int result = c.getNumShapeIdsUsed() + (1024 * (i+1));
-                c.incrementShapeId();
-                dg.setNumShapes( dg.getNumShapes() + 1 );
-                dg.setLastMSOSPID( result );
-                if (result >= dgg.getShapeIdMax()) {
-                    dgg.setShapeIdMax( result + 1 );
-                }
-                return result;
-            }
-        }
-
-        // Create new cluster
-        dgg.addCluster( dg.getDrawingGroupId(), 0, false );
-        dgg.getFileIdClusters()[dgg.getFileIdClusters().length-1].incrementShapeId();
-        dg.setNumShapes( dg.getNumShapes() + 1 );
-        int result = (1024 * dgg.getFileIdClusters().length);
-        dg.setLastMSOSPID( result );
-        if (result >= dgg.getShapeIdMax()) {
-            dgg.setShapeIdMax( result + 1 );
-        }
-        return result;
+        return dgg.allocateShapeId(dg, false);
     }
 
     /**

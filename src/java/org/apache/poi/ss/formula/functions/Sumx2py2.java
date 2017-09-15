@@ -19,11 +19,11 @@ package org.apache.poi.ss.formula.functions;
 
 
 /**
- * Implementation of Excel function SUMX2PY2()<p/>
+ * Implementation of Excel function SUMX2PY2()<p>
  *
- * Calculates the sum of squares in two arrays of the same size.<br/>
- * <b>Syntax</b>:<br/>
- * <b>SUMX2PY2</b>(<b>arrayX</b>, <b>arrayY</b>)<p/>
+ * Calculates the sum of squares in two arrays of the same size.<br>
+ * <b>Syntax</b>:<br>
+ * <b>SUMX2PY2</b>(<b>arrayX</b>, <b>arrayY</b>)<p>
  *
  * result = &Sigma;<sub>i: 0..n</sub>(x<sub>i</sub><sup>2</sup>+y<sub>i</sub><sup>2</sup>)
  *

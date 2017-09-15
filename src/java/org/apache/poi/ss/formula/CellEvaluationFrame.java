@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Stores details about the current evaluation of a cell.<br/>
+ * Stores details about the current evaluation of a cell.<br>
  */
 final class CellEvaluationFrame {
 

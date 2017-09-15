@@ -86,7 +86,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * <p>
      * Note, that this call might be expensive since all the picture data is copied into a temporary byte array.
      * You can grab the picture data directly from the underlying package part as follows:
-     * <br/>
+     * <br>
      * <code>
      * InputStream is = getPackagePart().getInputStream();
      * </code>

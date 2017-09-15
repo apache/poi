@@ -37,7 +37,7 @@ import org.apache.tools.ant.ProjectHelper;
 /**
  * A BuildFileTest is a TestCase which executes targets from an Ant buildfile
  * for testing.
- * <p/>
+ * <p>
  * This class provides a number of utility methods for particular build file
  * tests which extend this class.
  *
@@ -73,7 +73,7 @@ public abstract class BuildFileTest extends TestCase {
     /**
      * Automatically calls the target called "tearDown"
      * from the build file tested if it exits.
-     * <p/>
+     * <p>
      * This allows to use Ant tasks directly in the build file
      * to clean up after each test. Note that no "setUp" target
      * is automatically called, since it's trivial to have a
@@ -215,7 +215,7 @@ public abstract class BuildFileTest extends TestCase {
 
     /**
      * Gets the log the BuildFileTest object.
-     * <p/>
+     * <p>
      * Only valid if configureProject() has been called.
      *
      * @return The log value

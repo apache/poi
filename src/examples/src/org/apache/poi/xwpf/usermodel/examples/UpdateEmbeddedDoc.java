@@ -144,14 +144,14 @@ public class UpdateEmbeddedDoc {
      * Called to test whether or not the embedded workbook was correctly
      * updated. This method simply recovers the first cell from the first row
      * of the first workbook and tests the value it contains.
-     * <p/>
+     * <p>
      * Note that execution will not continue up to the assertion as the
      * embedded workbook is now corrupted and causes an IllegalArgumentException
      * with the following message
-     * <p/>
+     * <p>
      * <em>java.lang.IllegalArgumentException: Your InputStream was neither an
      * OLE2 stream, nor an OOXML stream</em>
-     * <p/>
+     * <p>
      * to be thrown when the WorkbookFactory.createWorkbook(InputStream) method
      * is executed.
      *

@@ -20,7 +20,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'
+		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'	// 2.x requires Gradle >=4
 		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
 	}
 }
@@ -73,7 +73,7 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin 
 	apply plugin: 'me.champeau.gradle.japicmp'
         
-	version = '3.16-beta3'
+	version = '3.18-beta1'
 	ext {
 		japicmpversion = '3.15'
 	}
@@ -150,7 +150,8 @@ project('main') {
 		compile 'commons-codec:commons-codec:1.10'
 		compile 'commons-logging:commons-logging:1.2'
 		compile 'org.apache.commons:commons-collections4:4.1'
-		
+		compile 'org.apache.commons:commons-math3:3.6.1'
+
 		testCompile 'junit:junit:4.12'
 	}
 	
@@ -196,6 +197,7 @@ project('ooxml') {
 	dependencies {
 		compile 'org.apache.xmlbeans:xmlbeans:2.6.0'
 		compile 'org.apache.commons:commons-collections4:4.1'
+		compile 'org.apache.commons:commons-math3:3.6.1'
 		compile 'org.apache.santuario:xmlsec:2.0.6'
 		compile 'org.bouncycastle:bcpkix-jdk15on:1.54'
 		compile 'com.github.virtuald:curvesapi:1.04'

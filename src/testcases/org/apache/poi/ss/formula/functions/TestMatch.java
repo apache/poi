@@ -229,7 +229,7 @@ public final class TestMatch extends TestCase {
 
 
 	/**
-	 * Ensures that the match_type argument can be an <tt>AreaEval</tt>.<br/>
+	 * Ensures that the match_type argument can be an <tt>AreaEval</tt>.<br>
 	 * Bugzilla 44421
 	 */
 	public void testMatchArgTypeArea() {

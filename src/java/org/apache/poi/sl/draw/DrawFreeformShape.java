@@ -26,10 +26,7 @@ import java.util.List;
 
 import org.apache.poi.sl.draw.geom.Outline;
 import org.apache.poi.sl.draw.geom.Path;
-import org.apache.poi.sl.usermodel.FillStyle;
-import org.apache.poi.sl.usermodel.FreeformShape;
-import org.apache.poi.sl.usermodel.StrokeStyle;
-import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.sl.usermodel.*;
 
 public class DrawFreeformShape extends DrawAutoShape {
     public DrawFreeformShape(FreeformShape<?,?> shape) {
@@ -56,7 +53,7 @@ public class DrawFreeformShape extends DrawAutoShape {
     }
 
     @Override
-    protected TextShape<?,?> getShape() {
-        return (TextShape<?,?>)shape;
+    protected TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> getShape() {
+        return (TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>)shape;
     }
 }

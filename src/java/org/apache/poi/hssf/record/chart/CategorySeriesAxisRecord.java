@@ -25,7 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * This record refers to a category or series axis and is used to specify label/tickmark frequency.<p/>
+ * This record refers to a category or series axis and is used to specify label/tickmark frequency.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

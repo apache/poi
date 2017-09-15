@@ -37,6 +37,9 @@ public final class WriteProtectRecord extends StandardRecord {
      */
     public WriteProtectRecord(RecordInputStream in)
     {
+        if (in.remaining() == 2) {
+            in.readShort();
+        }
     }
 
     public String toString()

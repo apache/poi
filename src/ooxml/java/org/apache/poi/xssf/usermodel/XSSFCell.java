@@ -483,9 +483,12 @@ public final class XSSFCell implements Cell {
         }
 
         CTCellFormula f = _cell.getF();
-        if (isPartOfArrayFormulaGroup() && f == null) {
-            XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
-            return cell.getCellFormula(fpb);
+        if (isPartOfArrayFormulaGroup()) {
+            /* In an excel generated array formula, the formula property might be set, but the string is empty in slave cells */
+            if (f == null || f.getStringValue().isEmpty()) {
+                XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
+                return cell.getCellFormula(fpb);
+            }
         }
         if (f.getT() == STCellFormulaType.SHARED) {
             return convertSharedFormula((int)f.getSi(), fpb == null ? XSSFEvaluationWorkbook.create(getSheet().getWorkbook()) : fpb);
@@ -692,7 +695,7 @@ public final class XSSFCell implements Cell {
      * Return the cell type.  Tables in an array formula return 
      * {@link CellType#FORMULA} for all cells, even though the formula is only defined
      * in the OOXML file for the top left cell of the array. 
-     * <p/>
+     * <p>
      * NOTE: POI does not support data table formulas.
      * Cells in a data table appear to POI as plain cells typed from their cached value.
      *
@@ -1192,7 +1195,7 @@ public final class XSSFCell implements Cell {
     }
 
     /**
-     * Chooses a new boolean value for the cell when its type is changing.<p/>
+     * Chooses a new boolean value for the cell when its type is changing.<p>
      *
      * Usually the caller is calling setCellType() with the intention of calling
      * setCellValue(boolean) straight afterwards.  This method only exists to give

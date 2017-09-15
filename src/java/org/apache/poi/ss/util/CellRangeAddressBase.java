@@ -25,7 +25,7 @@ import org.apache.poi.ss.usermodel.Cell;
 
 
 /**
- * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
+ * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p>
  *
  * Common superclass of 8-bit and 16-bit versions
  */
@@ -149,7 +149,7 @@ public abstract class CellRangeAddressBase {
     /**
      * Determines if the given {@link CellReference} lies within the bounds 
      * of this range.  
-     * <p/>NOTE: It is up to the caller to ensure the reference is 
+     * <p>NOTE: It is up to the caller to ensure the reference is 
      * for the correct sheet, since this instance doesn't have a sheet reference.
      *
      * @param ref the CellReference to check
@@ -163,7 +163,7 @@ public abstract class CellRangeAddressBase {
 	/**
 	 * Determines if the given {@link Cell} lies within the bounds 
 	 * of this range.  
-	 * <p/>NOTE: It is up to the caller to ensure the reference is 
+	 * <p>NOTE: It is up to the caller to ensure the reference is 
 	 * for the correct sheet, since this instance doesn't have a sheet reference.
 	 *
 	 * @param cell the Cell to check

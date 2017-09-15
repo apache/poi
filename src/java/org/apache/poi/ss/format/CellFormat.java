@@ -37,13 +37,12 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
  * not explicitly documented by Microsoft, so the behavior is determined by
  * experimentation; see the tests.
- * <p/>
+ * <p>
  * An Excel format has up to four parts, separated by semicolons.  Each part
  * specifies what to do with particular kinds of values, depending on the number
  * of parts given:
@@ -75,12 +74,12 @@ import org.apache.poi.util.Removal;
  * fourth part (example: text in the cell's usual color, with the text value
  * surround by brackets).</dd>
  * </dl>
- * <p/>
+ * <p>
  * A given format part may specify a given Locale, by including something
  *  like <tt>[$$-409]</tt> or <tt>[$&pound;-809]</tt> or <tt>[$-40C]</tt>. These
  *  are (currently) largely ignored. You can use {@link DateFormatConverter}
  *  to look these up into Java Locales if desired.
- * <p/>
+ * <p>
  * In addition to these, there is a general format that is used when no format
  * is specified.  This formatting is presented by the {@link #GENERAL_FORMAT}
  * object.
@@ -118,15 +117,6 @@ public class CellFormat {
             "###################################################";
 
     private static String QUOTE = "\"";
-
-    /**
-     * Format a value as it would be were no format specified.  This is also
-     * used when the format specified is <tt>General</tt>.
-     * @deprecated use {@link #getInstance(Locale, String)} instead
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    public static final CellFormat GENERAL_FORMAT = createGeneralFormat(LocaleUtil.getUserLocale());
             
     private static CellFormat createGeneralFormat(final Locale locale) {
         return new CellFormat(locale, "General") {

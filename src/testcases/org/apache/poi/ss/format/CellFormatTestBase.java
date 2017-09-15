@@ -52,7 +52,7 @@ import org.apache.poi.util.POILogger;
  * This class is a base class for spreadsheet-based tests, such as are used for
  * cell formatting.  This reads tests from the spreadsheet, as well as reading
  * flags that can be used to paramterize these tests.
- * <p/>
+ * <p>
  * Each test has four parts: The expected result (column A), the format string
  * (column B), the value to format (column C), and a comma-separated list of
  * categores that this test falls in. Normally all tests are run, but if the

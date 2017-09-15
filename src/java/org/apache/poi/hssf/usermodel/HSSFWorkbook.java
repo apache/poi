@@ -118,7 +118,6 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -767,26 +766,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
-    @Removal(version="3.18")
-    @Deprecated
-    @Override
-    public void setSheetHidden(int sheetIx, int hidden) {
-        switch (hidden) {
-            case Workbook.SHEET_STATE_VISIBLE:
-                setSheetVisibility(sheetIx, SheetVisibility.VISIBLE);
-                break;
-            case Workbook.SHEET_STATE_HIDDEN:
-                setSheetVisibility(sheetIx, SheetVisibility.HIDDEN);
-                break;
-            case Workbook.SHEET_STATE_VERY_HIDDEN:
-                setSheetVisibility(sheetIx, SheetVisibility.VERY_HIDDEN);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid sheet state : " + hidden + "\n" +
-                        "Sheet state must beone of the Workbook.SHEET_STATE_* constants");
-        }
-    }
-    
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
@@ -1025,7 +1004,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     /**
      * Get the HSSFSheet object at the given index.
-     * @param index of the sheet number (0-based physical & logical)
+     * @param index of the sheet number (0-based physical &amp; logical)
      * @return HSSFSheet at the provided index
      * @throws IllegalArgumentException if the index is out of range (index
      *            &lt; 0 || index &gt;= getNumberOfSheets()).
@@ -1061,11 +1040,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     /**
-     * Removes sheet at the given index.<p/>
+     * Removes sheet at the given index.<p>
      *
      * Care must be taken if the removed sheet is the currently active or only selected sheet in
      * the workbook. There are a few situations when Excel must have a selection and/or active
-     * sheet. (For example when printing - see Bug 40414).<br/>
+     * sheet. (For example when printing - see Bug 40414).<br>
      *
      * This method makes sure that if the removed sheet was active, another sheet will become
      * active in its place.  Furthermore, if the removed sheet was the only selected sheet, another
@@ -2256,15 +2235,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 	 */
     public boolean changeExternalReference(String oldUrl, String newUrl) {
     	return workbook.changeExternalReference(oldUrl, newUrl);
-    }
-
-    /** 
-     * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    public DirectoryNode getRootDirectory(){
-        return getDirectory();
     }
     
     @Internal

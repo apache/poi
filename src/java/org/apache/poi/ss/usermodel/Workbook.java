@@ -53,42 +53,6 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     /** Device independent bitmap */
     int PICTURE_TYPE_DIB = 7;
 
-
-    /**
-     * Indicates the sheet is visible.
-     *
-     * @see #setSheetHidden(int, int)
-     * @deprecated POI 3.16 beta 2. Use {@link SheetVisibility#VISIBLE} instead.
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    int SHEET_STATE_VISIBLE = 0;
-
-    /**
-     * Indicates the book window is hidden, but can be shown by the user via the user interface.
-     *
-     * @see #setSheetHidden(int, int)
-     * @deprecated POI 3.16 beta 2. Use {@link SheetVisibility#HIDDEN} instead.
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    int SHEET_STATE_HIDDEN = 1;
-
-    /**
-     * Indicates the sheet is hidden and cannot be shown in the user interface (UI).
-     *
-     * <p>
-     * In Excel this state is only available programmatically in VBA:
-     * <code>ThisWorkbook.Sheets("MySheetName").Visible = xlSheetVeryHidden </code>
-     * </p>
-     *
-     * @see #setSheetHidden(int, int)
-     * @deprecated POI 3.16 beta 2. Use {@link SheetVisibility#VERY_HIDDEN} instead.
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    int SHEET_STATE_VERY_HIDDEN = 2;
-
     /**
      * Convenience method to get the active sheet.  The active sheet is is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
@@ -384,7 +348,10 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @param nameIndex position of the named range (0-based)
      * @return the defined name at the specified index
      * @throws IllegalArgumentException if the supplied index is invalid
+     * @deprecated 3.18. New projects should avoid accessing named ranges by index.
      */
+    @Deprecated
+    @Removal(version="3.20")
     Name getNameAt(int nameIndex);
 
     /**
@@ -395,33 +362,44 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     Name createName();
 
     /**
-     * Gets the defined name index by name<br/>
+     * Gets the defined name index by name<br>
      * <i>Note:</i> Excel defined names are case-insensitive and
      * this method performs a case-insensitive search.
      *
      * @param name the name of the defined name
      * @return zero based index of the defined name. <tt>-1</tt> if not found.
+     * @deprecated 3.18. New projects should avoid accessing named ranges by index.
+     * Use {@link #getName(String)} instead.
      */
+    @Deprecated
+    @Removal(version="3.20")
     int getNameIndex(String name);
 
     /**
      * Remove the defined name at the specified index
      *
      * @param index named range index (0 based)
+     *
+     * @deprecated 3.18. New projects should use {@link #removeName(Name)}.
      */
+    @Deprecated
+    @Removal(version="3.20")
     void removeName(int index);
 
     /**
      * Remove a defined name by name
      *
-      * @param name the name of the defined name
+     * @param name the name of the defined name
+     * @deprecated 3.18. New projects should use {@link #removeName(Name)}.
      */
+    @Deprecated
+    @Removal(version="3.20")
     void removeName(String name);
 
     /**
      * Remove a defined name
      *
-      * @param name the name of the defined name
+     * @param name the name of the defined name
      */
     void removeName(Name name);
 
@@ -579,29 +557,6 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      */
     void setSheetHidden(int sheetIx, boolean hidden);
 
-    /**
-     * Hide or unhide a sheet.
-     *
-     * <ul>
-     *  <li>0 - visible. </li>
-     *  <li>1 - hidden. </li>
-     *  <li>2 - very hidden.</li>
-     * </ul>
-     * 
-     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
-     * created workbook or the one set via setActiveSheet()) cannot be hidden.
-     *  
-     * @param sheetIx the sheet index (0-based)
-     * @param hidden one of the following <code>Workbook</code> constants:
-     *        <code>Workbook.SHEET_STATE_VISIBLE</code>,
-     *        <code>Workbook.SHEET_STATE_HIDDEN</code>, or
-     *        <code>Workbook.SHEET_STATE_VERY_HIDDEN</code>.
-     * @throws IllegalArgumentException if the supplied sheet index or state is invalid
-     * @deprecated POI 3.16 beta 2. Use {@link #setSheetVisibility(int, SheetVisibility)} instead.
-     */
-    @Removal(version="3.18")
-    void setSheetHidden(int sheetIx, int hidden);
-    
     /**
      * Get the visibility (visible, hidden, very hidden) of a sheet in this workbook
      *

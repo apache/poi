@@ -521,7 +521,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * <code>
      * Truncate([numChars*7+5]/7*256)/256 = 8;
      * </code>
-     * <p/>
+     * <p>
      * which gives <code>7.29</code>.
      *
      * @param columnIndex - the column to set (0-based)

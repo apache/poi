@@ -23,7 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The axis record defines the type of an axis.<p/>
+ * The axis record defines the type of an axis.<p>
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */

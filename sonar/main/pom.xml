@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>3.17-beta2-SNAPSHOT</version>
+        <version>3.18-beta1-SNAPSHOT</version>
     </parent>
     <artifactId>poi-main</artifactId>
     <packaging>jar</packaging>
@@ -114,6 +114,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>

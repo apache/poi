@@ -20,13 +20,13 @@ package org.apache.poi.poifs.storage;
 /**
  * Wraps a <tt>byte</tt> array and provides simple data input access.
  * Internally, this class maintains a buffer read index, so that for the most part, primitive
- * data can be read in a data-input-stream-like manner.<p/>
+ * data can be read in a data-input-stream-like manner.<p>
  *
  * Note - the calling class should call the {@link #available()} method to detect end-of-buffer
  * and move to the next data block when the current is exhausted.
  * For optimisation reasons, no error handling is performed in this class.  Thus, mistakes in
  * calling code ran may raise ugly exceptions here, like {@link ArrayIndexOutOfBoundsException},
- * etc .<p/>
+ * etc .<p>
  *
  * The multi-byte primitive input methods ({@link #readUShortLE()}, {@link #readIntLE()} and
  * {@link #readLongLE()}) have corresponding 'spanning read' methods which (when required) perform

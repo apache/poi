@@ -65,7 +65,6 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -82,7 +81,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
@@ -93,7 +91,51 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredErrors;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObject;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObjects;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -1344,7 +1386,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Answer whether protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     @Override
     public boolean getProtect() {
@@ -1548,7 +1590,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * A flag indicating whether scenarios are locked when the sheet is protected.
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     @Override
     public boolean getScenarioProtect() {
@@ -2448,7 +2490,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Character width is defined as the maximum digit width
      * of the numbers <code>0, 1, 2, ... 9</code> as rendered
      * using the default font (first font in the workbook).
-     * <br/>
+     * <br>
      * Unless you are using a very special font, the default character is '0' (zero),
      * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)
      * </p>
@@ -2477,7 +2519,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
-     * @throws IllegalArgumentException if width > 255*256 (the maximum column width in Excel is 255 characters)
+     * @throws IllegalArgumentException if width &gt; 255*256 (the maximum column width in Excel is 255 characters)
      */
     @Override
     public void setColumnWidth(int columnIndex, int width) {
@@ -2768,7 +2810,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     /**
      * Window zoom magnification for current view representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     * Valid values range from 10 to 400. Horizontal &amp; Vertical scale together.
      *
      * For example:
      * <pre>
@@ -3264,20 +3306,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             return null;
         }
         return new CellAddress(address);
-    }
-
-    /**
-     * Sets location of the active cell
-     *
-     * @param cellRef the location of the active cell, e.g. <code>A1</code>..
-     * @deprecated 3.14beta2 (circa 2015-12-05). Use {@link #setActiveCell(CellAddress)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.16")
-    public void setActiveCell(String cellRef) {
-        CTSelection ctsel = getSheetTypeSelection();
-        ctsel.setActiveCell(cellRef);
-        ctsel.setSqref(Arrays.asList(cellRef));
     }
 
     /**
@@ -3899,7 +3927,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     }
 
-    @SuppressWarnings("resource")
     @Override
     public XSSFAutoFilter setAutoFilter(CellRangeAddress range) {
         CTAutoFilter af = worksheet.getAutoFilter();
@@ -3959,6 +3986,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         return new ArrayList<XSSFTable>(tables.values());
     }
 
+    /**
+     * Remove table references and relations
+     * @param t table to remove
+     */
+    public void removeTable(XSSFTable t) {
+        long id = t.getCTTable().getId();
+        Map.Entry<String, XSSFTable> toDelete = null;
+        
+        for (Map.Entry<String, XSSFTable> entry : tables.entrySet()) {
+            if (entry.getValue().getCTTable().getId() == id) toDelete = entry;
+        }
+        if (toDelete != null) {
+            removeRelation(getRelationById(toDelete.getKey()), true);
+            tables.remove(toDelete.getKey());
+            toDelete.getValue().onTableDelete();
+        }
+    }
+    
     @Override
     public XSSFSheetConditionalFormatting getSheetConditionalFormatting(){
         return new XSSFSheetConditionalFormatting(this);
@@ -4159,7 +4204,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * including: pivotCacheDefinition, pivotCacheRecords
      * @return returns a pivotTable
      */
-    @SuppressWarnings("resource")
     @Beta
     private XSSFPivotTable createPivotTable() {
         XSSFWorkbook wb = getWorkbook();
@@ -4399,6 +4443,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         XSSFIgnoredErrorHelper.addIgnoredErrors(ctIgnoredError, ref, ignoredErrorTypes);
     }
 
+    /**
+     * called when a sheet is being deleted/removed from a workbook, to clean up relations and other document pieces tied to the sheet
+     */
+    protected void onSheetDelete() {
+        for (RelationPart part : getRelationParts()) {
+            if (part.getDocumentPart() instanceof XSSFTable) {
+                // call table delete
+                removeTable((XSSFTable) part.getDocumentPart());
+                continue;
+            }
+            removeRelation(part.getDocumentPart(), true);
+        }
+    }
+    
     /**
      * Determine the OleObject which links shapes with embedded resources
      *

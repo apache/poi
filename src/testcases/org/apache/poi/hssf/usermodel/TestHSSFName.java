@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 public final class TestHSSFName extends BaseTestNamedRange {
 
     /**
-     * For manipulating the internals of {@link HSSFName} during testing.<br/>
+     * For manipulating the internals of {@link HSSFName} during testing.<br>
      * Some tests need a {@link NameRecord} with unusual state, not normally producible by POI.
      * This method achieves the aims at low cost without augmenting the POI usermodel api.
      * @return a reference to the wrapped {@link NameRecord}

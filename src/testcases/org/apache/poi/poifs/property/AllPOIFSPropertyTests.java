@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Tests for org.apache.poi.poifs.property<br/>
+ * Tests for org.apache.poi.poifs.property<br>
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

@@ -151,7 +151,7 @@ public class CustomProperties implements Map<String,Object> {
         } else {
             throw new IllegalStateException("unsupported datatype - currently String,Short,Integer,Long,Float,Double,Boolean,BigInteger(unsigned long),Date can be processed.");
         }
-        final Property p = new MutableProperty(-1, variantType, value);
+        final Property p = new Property(-1, variantType, value);
         return put(new CustomProperty(p, key));
     }
     

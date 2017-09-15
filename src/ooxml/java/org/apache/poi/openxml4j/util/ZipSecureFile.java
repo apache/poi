@@ -198,10 +198,11 @@ public class ZipSecureFile extends ZipFile {
 
     public static class ThresholdInputStream extends PushbackInputStream {
         long counter = 0;
+        long markPos = 0;
         ThresholdInputStream cis;
 
         public ThresholdInputStream(InputStream is, ThresholdInputStream cis) {
-            super(is,1);
+            super(is);
             this.cis = cis;
         }
 
@@ -225,14 +226,15 @@ public class ZipSecureFile extends ZipFile {
 
         @Override
         public long skip(long n) throws IOException {
-            counter = 0;
-            return in.skip(n);
+            long s = in.skip(n);
+            counter += s;
+            return s;
         }
 
         @Override
         public synchronized void reset() throws IOException {
-            counter = 0;
-            in.reset();
+            counter = markPos;
+            super.reset();
         }
 
         public void advance(int advance) throws IOException {
@@ -263,10 +265,10 @@ public class ZipSecureFile extends ZipFile {
             }
 
             // one of the limits was reached, report it
-            throw new IOException("Zip bomb detected! The file would exceed the max. ratio of compressed file size to the size of the expanded data. "
-                    + "This may indicate that the file is used to inflate memory usage and thus could pose a security risk. "
-                    + "You can adjust this limit via ZipSecureFile.setMinInflateRatio() if you need to work with files which exceed this limit. "
-                    + "Counter: " + counter + ", cis.counter: " + cis.counter + ", ratio: " + (((double)cis.counter)/counter)
+            throw new IOException("Zip bomb detected! The file would exceed the max. ratio of compressed file size to the size of the expanded data.\n"
+                    + "This may indicate that the file is used to inflate memory usage and thus could pose a security risk.\n"
+                    + "You can adjust this limit via ZipSecureFile.setMinInflateRatio() if you need to work with files which exceed this limit.\n"
+                    + "Counter: " + counter + ", cis.counter: " + cis.counter + ", ratio: " + ratio + "\n"
                     + "Limits: MIN_INFLATE_RATIO: " + MIN_INFLATE_RATIO);
         }
 
@@ -322,6 +324,7 @@ public class ZipSecureFile extends ZipFile {
 
         @Override
         public synchronized void mark(int readlimit) {
+            markPos = counter;
             in.mark(readlimit);
         }
     }

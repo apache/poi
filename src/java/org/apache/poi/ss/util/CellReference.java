@@ -185,10 +185,10 @@ public class CellReference {
     /**
      * takes in a column reference portion of a CellRef and converts it from
      * ALPHA-26 number format to 0-based base 10.
-     * 'A' -> 0
-     * 'Z' -> 25
-     * 'AA' -> 26
-     * 'IV' -> 255
+     * 'A' -&gt; 0
+     * 'Z' -&gt; 25
+     * 'AA' -&gt; 26
+     * 'IV' -&gt; 255
      * @return zero based column index
      */
     public static int convertColStringToIndex(String ref) {
@@ -283,9 +283,9 @@ public class CellReference {
      * interpreted as a cell reference.  Names of that form can be also used for sheets and/or
      * named ranges, and in those circumstances, the question of whether the potential cell
      * reference is valid (in range) becomes important.
-     * <p/>
+     * <p>
      * Note - that the maximum sheet size varies across Excel versions:
-     * <p/>
+     * <p>
      * <blockquote><table border="0" cellpadding="1" cellspacing="0"
      *                 summary="Notable cases.">
      *   <tr><th>Version&nbsp;&nbsp;</th><th>File Format&nbsp;&nbsp;</th>
@@ -474,7 +474,7 @@ public class CellReference {
 
     /**
      * Returns a text representation of this cell reference.
-     * <p/>
+     * <p>
      *  Example return values:
      *	<table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
      *	  <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>

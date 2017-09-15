@@ -70,7 +70,7 @@ public class DrawTextFragment implements Drawable  {
      * @return full height of this text run which is sum of ascent, descent and leading
      */
     public float getHeight(){ 
-        double h = Math.ceil(layout.getAscent()) + Math.ceil(layout.getDescent()) + getLeading();
+        double h = layout.getAscent() + layout.getDescent() + getLeading();
         return (float)h;
     }
 
@@ -78,9 +78,14 @@ public class DrawTextFragment implements Drawable  {
      * @return the leading height before/after a text line
      */
     public float getLeading() {
-        // fix invalid leadings (leading == 0) by fallback to descent
+        // fix invalid leadings (leading == 0)
         double l = layout.getLeading();
-        return (float)(l == 0 ? layout.getDescent() : l);
+        if (l == 0) {
+            // see https://stackoverflow.com/questions/925147
+            // we use a 115% value instead of the 120% proposed one, as this seems to be closer to LO/OO
+            l = (layout.getAscent()+layout.getDescent())*0.15;
+        }
+        return (float)l;
     }
     
     /**
