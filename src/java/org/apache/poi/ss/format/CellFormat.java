@@ -81,8 +81,7 @@ import org.apache.poi.util.LocaleUtil;
  *  to look these up into Java Locales if desired.
  * <p>
  * In addition to these, there is a general format that is used when no format
- * is specified.  This formatting is presented by the {@link #GENERAL_FORMAT}
- * object.
+ * is specified.
  * 
  * TODO Merge this with {@link DataFormatter} so we only have one set of
  *  code for formatting numbers.
