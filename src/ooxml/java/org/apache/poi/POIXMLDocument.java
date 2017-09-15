@@ -39,7 +39,6 @@ import org.apache.xmlbeans.impl.common.SystemCache;
 /**
  * This holds the common functionality for all POI OOXML Document classes.
  */
-// TODO: implements AutoCloseable in Java 7+ when POI drops support for Java 6.
 public abstract class POIXMLDocument extends POIXMLDocumentPart implements Closeable {
     public static final String DOCUMENT_CREATOR = "Apache POI";
 

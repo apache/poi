@@ -24,7 +24,7 @@ under the License.
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.  Forrest 0.5.1 required.
 
-    Since POI 3.11 you will need JDK 1.6 or newer to build POI.
+    Since POI 4.0 you will need JDK 1.8 or newer to build and run POI.
 
     Some people may find the tests hang when run through Ant. If this
     happens to you, try giving Ant some more memory when you run it, eg:
@@ -40,7 +40,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="3.18-beta1"/>
+    <property name="version.id" value="4.0-beta1"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -54,8 +54,8 @@ under the License.
     <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
     <!-- compiler options options -->
-    <property name="jdk.version.source" value="1.6" description="JDK version of source code"/>
-    <property name="jdk.version.class" value="1.6" description="JDK version of generated class files"/>
+    <property name="jdk.version.source" value="1.8" description="JDK version of source code"/>
+    <property name="jdk.version.class" value="1.8" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
     <!--
@@ -163,18 +163,17 @@ under the License.
     <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
     <property name="main.junit.jar" location="${main.lib}/junit-4.12.jar"/>
     <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/4.12/junit-4.12.jar"/>
-    <!-- Keep using 1.15 until we switch to Java 7 -->
-    <property name="main.jmh.jar" location="${main.lib}/jmh-core-1.15.jar"/>
-    <property name="main.jmh.url" value="${repository.m2}/maven2/org/openjdk/jmh/jmh-core/1.15/jmh-core-1.15.jar"/>
-    <property name="main.jmhAnnotation.jar" location="${main.lib}/jmh-generator-annprocess-1.15.jar"/>
-    <property name="main.jmhAnnotation.url" value="${repository.m2}/maven2/org/openjdk/jmh/jmh-generator-annprocess/1.15/jmh-generator-annprocess-1.15.jar"/>
+    <property name="main.jmh.jar" location="${main.lib}/jmh-core-1.19.jar"/>
+    <property name="main.jmh.url" value="${repository.m2}/maven2/org/openjdk/jmh/jmh-core/1.19/jmh-core-1.19.jar"/>
+    <property name="main.jmhAnnotation.jar" location="${main.lib}/jmh-generator-annprocess-1.19.jar"/>
+    <property name="main.jmhAnnotation.url" value="${repository.m2}/maven2/org/openjdk/jmh/jmh-generator-annprocess/1.19/jmh-generator-annprocess-1.19.jar"/>
 
     <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
-    <property name="main.ant.jar" location="${main.lib}/ant-1.9.4.jar"/>
-    <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.9.4/ant-1.9.4.jar"/>
-    <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
-    <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
+    <property name="main.ant.jar" location="${main.lib}/ant-1.10.1.jar"/>
+    <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.10.1/ant-1.10.1.jar"/>
+    <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.10.1.jar"/>
+    <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.10.1/ant-launcher-1.10.1.jar"/>
     <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.1.jar"/>
     <property name="main.commons-collections4.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
@@ -183,19 +182,19 @@ under the License.
               value="${repository.m2}/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
 
     <!-- xml signature libs -->
-    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.6.jar"/>
-    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.6/xmlsec-2.0.6.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.54.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.54/bcprov-ext-jdk15on-1.54.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.54.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.54/bcpkix-jdk15on-1.54.jar"/>
-    <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.12.jar"/>
-    <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.12/slf4j-api-1.7.12.jar"/>
+    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.0.jar"/>
+    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.0/xmlsec-2.1.0.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.58.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.58/bcprov-ext-jdk15on-1.58.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.58.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.58/bcpkix-jdk15on-1.58.jar"/>
+    <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.25.jar"/>
+    <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
-    <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.04.jar"/>
+    <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
-              value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.04/curvesapi-1.04.jar"/>
+              value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans23.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
@@ -204,10 +203,10 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.8.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.8/jacoco-0.7.8.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.9.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.9/jacoco-0.7.9.zip"/>
+    <property name="asm.jar" location="${main.lib}/asm-all-5.2.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar"/>
 
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
@@ -265,10 +264,10 @@ under the License.
     <property name="halt.on.test.failure" value="true"/>
 
     <!-- helper jars for pgp signing, building and nexus staging -->
-    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.51.jar"/>
-    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.51/bcpg-jdk15on-1.51.jar"/>
+    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.58.jar"/>
+    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.58/bcprov-ext-jdk15on-1.58.jar"/>
+    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.58.jar"/>
+    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.58/bcpg-jdk15on-1.58.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
     <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
@@ -289,16 +288,8 @@ under the License.
     <property name="dist.sequence-library.jar" location="${compile.lib}/svnant/sequence-library-1.0.3.jar"/>
     <property name="dist.sequence-library.url" value="${repository.m2}/maven2/de/regnis/q/sequence/sequence-library/1.0.3/sequence-library-1.0.3.jar"/>
 
-
-    <!-- ===========================================================================================================
-         NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently
-         ===========================================================================================================
-    -->
-    <condition property="findbugs.version" value="2.0.3" else="3.0.1">
-        <contains string="${java.version}" substring="1.6"/>
-    </condition>
-    <property name="findbugs.url" value="http://downloads.sourceforge.net/project/findbugs/findbugs/${findbugs.version}/findbugs-noUpdateChecks-${findbugs.version}.zip?download="/>
-    <property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
+    <property name="findbugs.url" value="http://downloads.sourceforge.net/project/findbugs/findbugs/3.0.1/findbugs-noUpdateChecks-3.0.1.zip?download="/>
+    <property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-3.0.1.zip"/>
 
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
@@ -314,8 +305,9 @@ under the License.
         <propertyref name="version.id"/>    <!-- to detect if we are running on slow Gump VM -->
     </propertyset>
 
-    <!-- this can be overwriten to empty when running with Java 9 -->
+    <!-- this needs to be overwriten to empty when running with Java 9 -->
     <property name="maxpermsize" value="-XX:MaxPermSize=256m"/>
+    <!-- these need to be set differently when running with Java 9 -->
     <property name="java9addmods" value="-Dthis.is.a.dummy=true"/>
     <property name="javadoc9addmods" value="-J-Dthis.is.a.dummy=true"/>
     <property name="java9addmodsvalue" value="-Dthis.is.a.dummy=true"/>
@@ -467,7 +459,7 @@ under the License.
         <exclude name="**/TestExtractorFactory.java"/>
         <exclude name="**/OutlookTextExtactor.java"/>
         <exclude name="**/TestEmbedOLEPackage.java"/>
-    	<exclude name="**/TestHxxFEncryption.java"/>
+        <exclude name="**/TestHxxFEncryption.java"/>
     </patternset>
 
     <!-- Prints POI's Ant usage help -->
@@ -515,7 +507,6 @@ under the License.
 
         <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
-        <echo message="Using Findbugs: ${findbugs.version} for Java ${java.version}"/>
 
         <scriptdef name="release_tag" language="javascript">
             var rel = ("REL_"+project.getProperty("version.id")).toUpperCase().replace(/\W/g,"_");
@@ -562,10 +553,14 @@ under the License.
         <delete verbose="true">
             <fileset dir="${main.lib}">
                 <include name="ant-1.8*"/>
+                <include name="ant-1.9.4*"/>
+                <include name="ant-launcher-1.9.4*"/>
                 <include name="asm-all-4*"/>
+                <include name="asm-all-5.0.3*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-logging-1.1*.jar"/>
+                <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
                 <include name="jacoco-0.7.1*"/>
                 <include name="jacoco-0.7.2*"/>
@@ -573,6 +568,9 @@ under the License.
                 <include name="jacoco-0.7.4*"/>
                 <include name="jacoco-0.7.6*"/>
                 <include name="jacoco-0.7.7*"/>
+                <include name="jacoco-0.7.8*"/>
+                <include name="jmh-core-1.15*"/>
+                <include name="jmh-generator-annprocess-1.15*"/>
                 <include name="log4j-1.2.13*"/>
                 <include name="org.jacoco.*-0.6.*"/>
                 <include name="org.jacoco.*-0.7.1*"/>
@@ -581,6 +579,7 @@ under the License.
                 <include name="org.jacoco.*-0.7.4*"/>
                 <include name="org.jacoco.*-0.7.6*"/>
                 <include name="org.jacoco.*-0.7.7*"/>
+                <include name="org.jacoco.*-0.7.8*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
@@ -601,17 +600,22 @@ under the License.
                 <include name="ooxml-security-1.0-sources.jar"/>
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>
+                <include name="curvesapi-1.04.jar"/>
             </fileset>
-         <fileset dir="${compile.lib}">
-            <include name="xercesImpl-*.jar"/>
-            <include name="xmlsec-2.0.1.jar"/>
-            <include name="xmlsec-2.0.5.jar"/>
-            <include name="bcprov-ext-jdk15on-1.51.jar"/>
-            <include name="bcprov-ext-jdk15on-1.53.jar"/>
-            <include name="bcpkix-jdk15on-1.51.jar"/>
-            <include name="bcpkix-jdk15on-1.53.jar"/>
-            <include name="slf4j-api-1.7.7.jar"/>
-         </fileset>
+            <fileset dir="${compile.lib}">
+                <include name="xercesImpl-*.jar"/>
+                <include name="xmlsec-2.0.1.jar"/>
+                <include name="xmlsec-2.0.5.jar"/>
+                <include name="xmlsec-2.0.6.jar"/>
+                <include name="bcprov-ext-jdk15on-1.51.jar"/>
+                <include name="bcprov-ext-jdk15on-1.53.jar"/>
+                <include name="bcprov-ext-jdk15on-1.54.jar"/>
+                <include name="bcpkix-jdk15on-1.51.jar"/>
+                <include name="bcpkix-jdk15on-1.53.jar"/>
+                <include name="bcpkix-jdk15on-1.54.jar"/>
+                <include name="slf4j-api-1.7.7.jar"/>
+                <include name="slf4j-api-1.7.12.jar"/>
+            </fileset>
         </delete>
 
         <condition property="jars.present">
@@ -861,8 +865,8 @@ under the License.
                 	<include name="org/apache/poi/util/Removal.java"/>
                 </fileset>
             </copy>
-        	
-        	<echo>Forking javac with max heap size ${ooxml.memory}</echo>
+
+            <echo>Forking javac with max heap size ${ooxml.memory}</echo>
 
             <javac target="${jdk.version.class}"
                    source="${jdk.version.source}"
@@ -1521,7 +1525,7 @@ under the License.
                   <jvmarg value="${java9addmodsvalue}" />
                   <jvmarg value="${java9addopens1}" />
                   <jvmarg value="${java9addopens2}" />
-				  <jvmarg value="${java9addopens3}" />
+                  <jvmarg value="${java9addopens3}" />
                   <jvmarg value="${java9addopens4}" />
                   <jvmarg value="${java9addopens5}" />
                   <formatter type="plain"/>
@@ -2194,7 +2198,7 @@ under the License.
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
               <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
-           	  <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
+                 <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
               <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
               <exclude name="**/*.iml" />
@@ -2417,7 +2421,7 @@ under the License.
 
             <copy todir="${repo}">
                 <mappedresources>
-                	<!-- add sha-512 when nexus rules are updated (1/2) -->
+                    <!-- add sha-512 when nexus rules are updated (1/2) -->
                     <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512"/>
                     <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
                 </mappedresources>
@@ -2444,7 +2448,7 @@ under the License.
     <lastUpdated>${lastUpdated}</lastUpdated>
   </versioning>
 </metadata>]]></echo>
-            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />                	<!-- add sha-512 when nexus rules are updated -->
+            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />                    <!-- add sha-512 when nexus rules are updated -->
             <!-- add sha-512 when nexus rules are updated (2/2) -->
             <!--checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
@@ -2482,9 +2486,10 @@ under the License.
 
     <target name="-init-svn" depends="init,fetch-svn-jars,load-maven-server-settings">
         <!-- JAVA_HOME needs to point to a JRE/JDK7+, otherwise the svn/https connection throws a "Could not generate DH keypair"-->
-        <fail message="Environment needs to point to a java 7+">
+        <fail message="Environment needs to point to Java 8+">
             <condition>
                 <or>
+                    <equals arg1="${ant.java.version}" arg2="1.7"/>
                     <equals arg1="${ant.java.version}" arg2="1.6"/>
                     <equals arg1="${ant.java.version}" arg2="1.5"/>
                 </or>
@@ -2615,9 +2620,9 @@ under the License.
 
     <target name="release-prep2" depends="init" description="compile the freshly checked out svn tag and upload it to the nexus - needs a JDK6">
         <!-- JAVA_HOME needs to point to a JDK6, otherwise the ant invocation is failing on a missing javac -->
-        <fail message="Environment needs to point to a java 6 jdk">
+        <fail message="Environment needs to point to a Java 8 JDK">
             <condition>
-                <not><equals arg1="${ant.java.version}" arg2="1.6"/></not>
+                <not><equals arg1="${ant.java.version}" arg2="1.8"/></not>
             </condition>
         </fail>
 
