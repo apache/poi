@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.junit.Test;
 public final class TestHSSFColor {
     @Test
     public void testBasics() {
-		assertNotNull(HSSFColor.YELLOW.class);
 		assertTrue(HSSFColorPredefined.YELLOW.getIndex() > 0);
 		assertTrue(HSSFColorPredefined.YELLOW.getIndex2() > 0);
 	}
@@ -46,16 +44,16 @@ public final class TestHSSFColor {
 	}
 	
     @Test
-	public void testTrippletHash() {
-		Map<String, HSSFColor> tripplets = HSSFColor.getTripletHash();
+	public void testTripletHash() {
+		Map<String, HSSFColor> triplets = HSSFColor.getTripletHash();
 		
 		assertEquals(
-				HSSFColor.MAROON.class,
-				tripplets.get(HSSFColorPredefined.MAROON.getHexString()).getClass()
+				HSSFColorPredefined.MAROON.getColor(),
+				triplets.get(HSSFColorPredefined.MAROON.getHexString())
 		);
 		assertEquals(
-				HSSFColor.YELLOW.class,
-				tripplets.get(HSSFColorPredefined.YELLOW.getHexString()).getClass()
+				HSSFColorPredefined.YELLOW.getColor(),
+				triplets.get(HSSFColorPredefined.YELLOW.getHexString())
 		);
 	}
 }
