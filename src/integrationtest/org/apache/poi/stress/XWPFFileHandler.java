@@ -16,38 +16,37 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.Test;
 
 public class XWPFFileHandler extends AbstractFileHandler {
-	@Override
+    @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
         XWPFDocument doc = new XWPFDocument(stream);
-		
-		new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
-	}
+        
+        new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
+    }
 
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Test
-	public void test() throws Exception {
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void test() throws Exception {
         File file = new File("test-data/document/51921-Word-Crash067.docx");
 
-        InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000);
-		try {
-			handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
-		}
-		
-		handleExtracting(file);
-	}
-	
+        InputStream stream = new BufferedInputStream(new FileInputStream(file));
+        try {
+            handleFile(stream, file.getPath());
+        } finally {
+            stream.close();
+        }
+
+        handleExtracting(file);
+    }
 }
