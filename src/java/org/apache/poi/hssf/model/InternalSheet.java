@@ -66,9 +66,9 @@ public final class InternalSheet {
     private static POILogger            log              = POILogFactory.getLogger(InternalSheet.class);
 
     private List<RecordBase>             _records;
-    protected PrintGridlinesRecord       printGridlines    =     null;
-    protected PrintHeadersRecord         printHeaders      =     null;
-    protected GridsetRecord              gridset           =     null;
+    protected PrintGridlinesRecord       printGridlines;
+    protected PrintHeadersRecord         printHeaders;
+    protected GridsetRecord              gridset;
     private   GutsRecord                 _gutsRecord;
     protected DefaultColWidthRecord      defaultcolwidth   =     new DefaultColWidthRecord();
     protected DefaultRowHeightRecord     defaultrowheight  =     new DefaultRowHeightRecord();
@@ -80,8 +80,8 @@ public final class InternalSheet {
      */
     private final WorksheetProtectionBlock _protectionBlock = new WorksheetProtectionBlock();
 
-    protected WindowTwoRecord            windowTwo         =     null;
-    protected SelectionRecord            _selection         =     null;
+    protected WindowTwoRecord            windowTwo;
+    protected SelectionRecord            _selection;
     /** java object always present, but if empty no BIFF records are written */
     private final MergedCellsTable       _mergedCellsTable;
     /** always present in this POI object, not always written to Excel file */
@@ -90,13 +90,13 @@ public final class InternalSheet {
     private DimensionsRecord             _dimensions;
     /** always present */
     protected final RowRecordsAggregate  _rowsAggregate;
-    private   DataValidityTable          _dataValidityTable=     null;
+    private   DataValidityTable          _dataValidityTable;
     private   ConditionalFormattingTable condFormatting;
 
-    private   Iterator<RowRecord>        rowRecIterator    =     null;
+    private   Iterator<RowRecord>        rowRecIterator;
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
-    protected boolean _isUncalced = false;
+    protected boolean _isUncalced;
 
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;

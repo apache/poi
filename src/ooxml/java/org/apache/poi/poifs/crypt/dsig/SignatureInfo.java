@@ -171,7 +171,7 @@ import org.xml.sax.SAXException;
 public class SignatureInfo implements SignatureConfigurable {
 
     private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
-    private static boolean isInitialized = false;
+    private static boolean isInitialized;
     
     private SignatureConfig signatureConfig;
 
@@ -376,8 +376,8 @@ public class SignatureInfo implements SignatureConfigurable {
                     OPCPackage pkg = signatureConfig.getOpcPackage();
                     Iterator<PackageRelationship> sigOrigRels = 
                         pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN).iterator();
-                    Iterator<PackageRelationship> sigRels = null;
-                    PackagePart sigPart = null;
+                    Iterator<PackageRelationship> sigRels;
+                    PackagePart sigPart;
                     
                     public boolean hasNext() {
                         while (sigRels == null || !sigRels.hasNext()) {

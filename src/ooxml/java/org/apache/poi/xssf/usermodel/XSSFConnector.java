@@ -42,7 +42,7 @@ import org.apache.poi.util.Internal;
  */
 public final class XSSFConnector extends XSSFShape {
 
-    private static CTConnector prototype = null;
+    private static CTConnector prototype;
 
     private CTConnector ctShape;
 

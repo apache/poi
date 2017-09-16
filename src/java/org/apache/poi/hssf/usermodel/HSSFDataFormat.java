@@ -44,7 +44,7 @@ public final class HSSFDataFormat implements DataFormat {
 
 	private final Vector<String> _formats = new Vector<String>();
 	private final InternalWorkbook _workbook;
-	private boolean _movedBuiltins = false;  // Flag to see if need to
+	private boolean _movedBuiltins;  // Flag to see if need to
 	// check the built in list
 	// or if the regular list
 	// has all entries.

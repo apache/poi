@@ -32,9 +32,9 @@ public class EscherPlaceholder extends EscherRecord {
     public static final String RECORD_DESCRIPTION = "msofbtClientTextboxPlaceholder";
 
     private int position = -1;
-    private byte placementId = 0;
-    private byte size = 0;
-    private short unused = 0;
+    private byte placementId;
+    private byte size;
+    private short unused;
 
     public EscherPlaceholder() {}
 

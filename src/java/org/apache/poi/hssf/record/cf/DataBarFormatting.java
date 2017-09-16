@@ -31,9 +31,9 @@ import org.apache.poi.util.POILogger;
 public final class DataBarFormatting implements Cloneable {
     private static POILogger log = POILogFactory.getLogger(DataBarFormatting.class);
 
-    private byte options = 0;
-    private byte percentMin = 0;
-    private byte percentMax = 0;
+    private byte options;
+    private byte percentMin;
+    private byte percentMax;
     private ExtendedColor color;
     private DataBarThreshold thresholdMin;
     private DataBarThreshold thresholdMax;

@@ -59,7 +59,7 @@ import org.apache.poi.util.Internal;
     // untrackedColumns stores columns have been explicitly untracked so they aren't implicitly re-tracked by trackAllColumns
     // Using a HashSet instead of a TreeSet because we don't care about order.
     private final Set<Integer> untrackedColumns = new HashSet<Integer>();
-    private boolean trackAllColumns = false;
+    private boolean trackAllColumns;
 
     /**
      * Tuple to store the column widths considering and not considering merged cells

@@ -158,9 +158,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         return doc;
     }
 
-    private String cssClassContainerCell = null;
+    private String cssClassContainerCell;
 
-    private String cssClassContainerDiv = null;
+    private String cssClassContainerDiv;
 
     private String cssClassPrefixCell = "c";
 
@@ -174,7 +174,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
 
     private final HtmlDocumentFacade htmlDocumentFacade;
 
-    private boolean useDivsToSpan = false;
+    private boolean useDivsToSpan;
 
     public ExcelToHtmlConverter( Document doc )
     {

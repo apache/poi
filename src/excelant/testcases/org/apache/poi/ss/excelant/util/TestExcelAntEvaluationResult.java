@@ -26,8 +26,8 @@ import org.junit.Test;
 public class TestExcelAntEvaluationResult {
 	private ExcelAntEvaluationResult fixture;
 	
-	private boolean completedWithError = false;
-    private boolean passed = false;
+	private boolean completedWithError;
+    private boolean passed;
     private double retValue  = 1.1; 
     private String errMessage = "error message";  
     private double delta = 2.2; 

@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndian;
 public final class TestPlexOfCps
   extends TestCase
 {
-  private PlexOfCps _plexOfCps = null;
+  private PlexOfCps _plexOfCps;
   private HWPFDocFixture _hWPFDocFixture;
 
   public void testWriteRead() {

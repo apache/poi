@@ -63,7 +63,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
     private DirectoryNode _dir;
     boolean _includeSheetNames = true;
-    boolean _formulasNotResults = false;
+    boolean _formulasNotResults;
 
     public EventBasedExcelExtractor( DirectoryNode dir )
     {
@@ -167,7 +167,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
        private int sheetNum = -1;
        private int rowNum;
 
-       private boolean outputNextStringValue = false;
+       private boolean outputNextStringValue;
        private int nextRow = -1;
 
        public TextListener() {

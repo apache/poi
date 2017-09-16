@@ -27,7 +27,7 @@ import org.apache.poi.hwpf.HWPFTestDataSamples;
  */
 public final class TestBorderCode extends TestCase {
 
-    private int pos = 0;
+    private int pos;
     private Range range;
 
     public void test() {

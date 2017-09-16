@@ -116,7 +116,7 @@ public class EventWorkbookBuilder {
 		private final HSSFListener childListener;
 		private final List<BoundSheetRecord> boundSheetRecords = new ArrayList<BoundSheetRecord>();
 		private final List<ExternSheetRecord> externSheetRecords = new ArrayList<ExternSheetRecord>();
-		private SSTRecord sstRecord = null;
+		private SSTRecord sstRecord;
 
 		public SheetRecordCollectingListener(HSSFListener childListener) {
 			this.childListener = childListener;

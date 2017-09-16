@@ -30,8 +30,8 @@ import com.microsoft.schemas.office.visio.x2012.main.SectionType;
 
 public class CharacterSection extends XDGFSection {
 
-    Double _fontSize = null;
-    Color _fontColor = null;
+    Double _fontSize;
+    Color _fontColor;
 
     Map<String, XDGFCell> _characterCells = new HashMap<String, XDGFCell>();
 

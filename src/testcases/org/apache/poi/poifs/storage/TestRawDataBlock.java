@@ -193,7 +193,7 @@ public final class TestRawDataBlock extends TestCase {
 		private final Random rnd = new Random();
 		private final byte[] data;
 		private final int chunkSize;
-		private int pos = 0;
+		private int pos;
 
 		public SlowInputStream(byte[] data, int chunkSize) {
 			this.chunkSize = chunkSize;

@@ -52,7 +52,7 @@ public abstract class XDGFSheet {
     protected SortedMap<Long, GeometrySection> _geometry = new TreeMap<Long, GeometrySection>();
 
     // special: character section
-    protected CharacterSection _character = null;
+    protected CharacterSection _character;
 
     public XDGFSheet(SheetType sheet, XDGFDocument document) {
         try {

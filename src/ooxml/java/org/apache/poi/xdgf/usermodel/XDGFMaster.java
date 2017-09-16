@@ -29,7 +29,7 @@ public class XDGFMaster {
 
     private MasterType _master;
     protected XDGFMasterContents _content;
-    protected XDGFSheet _pageSheet = null;
+    protected XDGFSheet _pageSheet;
 
     public XDGFMaster(MasterType master, XDGFMasterContents content,
             XDGFDocument document) {

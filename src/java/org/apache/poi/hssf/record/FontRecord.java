@@ -58,7 +58,7 @@ public final class FontRecord extends StandardRecord {
 	private byte                  field_6_underline;          // 00none/01single/02double/21singleaccounting/22doubleaccounting
 	private byte                  field_7_family;             // ?? defined by windows api logfont structure?
 	private byte                  field_8_charset;            // ?? defined by windows api logfont structure?
-	private byte                  field_9_zero = 0;           // must be 0
+	private byte                  field_9_zero;           // must be 0
 	/** possibly empty string never <code>null</code> */
 	private String                field_11_font_name;
 

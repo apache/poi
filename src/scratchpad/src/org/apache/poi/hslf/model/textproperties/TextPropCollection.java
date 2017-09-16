@@ -93,9 +93,9 @@ public class TextPropCollection {
 	
     // indentLevel is only valid for paragraph collection
     // if it's set to -1, it must be omitted - see 2.9.36 TextMasterStyleLevel
-    private short indentLevel = 0;
+    private short indentLevel;
 	private final Map<String,TextProp> textProps = new HashMap<String,TextProp>();
-    private int maskSpecial = 0;
+    private int maskSpecial;
     private final TextPropType textPropType;
     
     /**

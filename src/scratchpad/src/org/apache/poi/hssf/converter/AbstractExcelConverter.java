@@ -57,9 +57,9 @@ public abstract class AbstractExcelConverter
 
     private boolean outputColumnHeaders = true;
 
-    private boolean outputHiddenColumns = false;
+    private boolean outputHiddenColumns;
 
-    private boolean outputHiddenRows = false;
+    private boolean outputHiddenRows;
 
     private boolean outputLeadingSpacesAsNonBreaking = true;
 

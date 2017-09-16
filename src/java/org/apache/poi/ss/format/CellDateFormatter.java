@@ -41,7 +41,7 @@ public class CellDateFormatter extends CellFormatter {
     private final Calendar EXCEL_EPOCH_CAL =
         LocaleUtil.getLocaleCalendar(1904, 0, 1);
 
-    private static /* final */ CellDateFormatter SIMPLE_DATE = null;
+    private static /* final */ CellDateFormatter SIMPLE_DATE;
 
     private class DatePartHandler implements CellFormatPart.PartHandler {
         private int mStart = -1;

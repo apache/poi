@@ -35,9 +35,9 @@ public class ReplacingInputStream extends FilterInputStream {
 
     // while matching, this is where the bytes go.
     final int[] buf;
-    private int matchedIndex=0;
-    private int unbufferIndex=0;
-    private int replacedIndex=0;
+    private int matchedIndex;
+    private int unbufferIndex;
+    private int replacedIndex;
 
     private final byte[] pattern;
     private final byte[] replacement;

@@ -49,8 +49,8 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
    
 	private XMLSlideShow slideshow;
 	private boolean slidesByDefault = true;
-	private boolean notesByDefault = false;
-   private boolean masterByDefault = false;
+	private boolean notesByDefault;
+   private boolean masterByDefault;
 	
 	public XSLFPowerPointExtractor(XMLSlideShow slideshow) {
 		super(slideshow);

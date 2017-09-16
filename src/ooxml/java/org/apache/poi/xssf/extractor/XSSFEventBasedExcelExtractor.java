@@ -65,9 +65,9 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     private Locale locale;
     private boolean includeTextBoxes = true;
     private boolean includeSheetNames = true;
-    private boolean includeCellComments = false;
+    private boolean includeCellComments;
     private boolean includeHeadersFooters = true;
-    private boolean formulasNotResults = false;
+    private boolean formulasNotResults;
     private boolean concatenatePhoneticRuns = true;
 
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {

@@ -122,9 +122,9 @@ public class BookmarksImpl implements Bookmarks
 
     private final BookmarksTables bookmarksTables;
 
-    private Map<Integer, List<GenericPropertyNode>> sortedDescriptors = null;
+    private Map<Integer, List<GenericPropertyNode>> sortedDescriptors;
 
-    private int[] sortedStartPositions = null;
+    private int[] sortedStartPositions;
 
     public BookmarksImpl( BookmarksTables bookmarksTables )
     {

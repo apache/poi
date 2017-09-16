@@ -35,8 +35,8 @@ public class SheetBuilder {
 
     private final Workbook workbook;
     private final Object[][] cells;
-    private boolean shouldCreateEmptyCells = false;
-    private String sheetName = null;
+    private boolean shouldCreateEmptyCells;
+    private String sheetName;
 
     public SheetBuilder(Workbook workbook, Object[][] cells) {
         this.workbook = workbook;

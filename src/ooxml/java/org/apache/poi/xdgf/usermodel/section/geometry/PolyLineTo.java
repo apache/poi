@@ -27,18 +27,18 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class PolyLineTo implements GeometryRow {
 
-    PolyLineTo _master = null;
+    PolyLineTo _master;
 
     // The x-coordinate of the ending vertex of a polyline.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of the ending vertex of a polyline.
-    Double y = null;
+    Double y;
 
     // The polyline formula
-    String a = null;
+    String a;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

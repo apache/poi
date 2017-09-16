@@ -101,8 +101,8 @@ public class TestSignatureInfo {
     private static final POIDataSamples testdata = POIDataSamples.getXmlDSignInstance();
 
     private static Calendar cal;
-    private KeyPair keyPair = null;
-    private X509Certificate x509 = null;
+    private KeyPair keyPair;
+    private X509Certificate x509;
 
     @AfterClass
     public static void removeUserLocale() {

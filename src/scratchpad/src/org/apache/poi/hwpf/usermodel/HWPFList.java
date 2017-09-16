@@ -48,7 +48,7 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
  */
 public final class HWPFList
 {
-    private boolean _ignoreLogicalLeftIdentation = false;
+    private boolean _ignoreLogicalLeftIdentation;
     private LFO _lfo;
     private LFOData _lfoData;
     private ListData _listData;

@@ -33,7 +33,7 @@ import org.apache.poi.util.POILogger;
 public final class ColorGradientFormatting implements Cloneable {
     private static POILogger log = POILogFactory.getLogger(ColorGradientFormatting.class);
 
-    private byte options = 0;
+    private byte options;
     private ColorGradientThreshold[] thresholds;
     private ExtendedColor[] colors;
     

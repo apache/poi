@@ -29,7 +29,7 @@ import org.junit.Test;
  */
 public final class TestPOILogger extends POILogger {
     private String lastLog = "";
-    private Throwable lastEx = null;
+    private Throwable lastEx;
     
     /**
      * Test different types of log output.

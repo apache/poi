@@ -66,7 +66,7 @@ public abstract class Metafile extends HSLFPictureData {
         /**
          * Reserved. Always 0.
          */
-        private int compression = 0;
+        private int compression;
 
         /**
          * Reserved. Always 254.

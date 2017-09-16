@@ -83,12 +83,12 @@ public class SignatureConfig {
      * the optional signature policy service used for XAdES-EPES.
      */
     private SignaturePolicyService signaturePolicyService;
-    private URIDereferencer uriDereferencer = null;
+    private URIDereferencer uriDereferencer;
     private String canonicalizationMethod = CanonicalizationMethod.INCLUSIVE;
     
     private boolean includeEntireCertificateChain = true;
-    private boolean includeIssuerSerial = false;
-    private boolean includeKeyValue = false;
+    private boolean includeIssuerSerial;
+    private boolean includeKeyValue;
     
     /**
      * the time-stamp service used for XAdES-T and XAdES-X.
@@ -98,11 +98,11 @@ public class SignatureConfig {
      * timestamp service provider URL
      */
     private String tspUrl;
-    private boolean tspOldProtocol = false;
+    private boolean tspOldProtocol;
     /**
      * if not defined, it's the same as the main digest
      */
-    private HashAlgorithm tspDigestAlgo = null;
+    private HashAlgorithm tspDigestAlgo;
     private String tspUser;
     private String tspPass;
     private TimeStampServiceValidator tspValidator;
@@ -121,8 +121,8 @@ public class SignatureConfig {
     /**
      * if not defined, it's the same as the main digest
      */
-    private HashAlgorithm xadesDigestAlgo = null;
-    private String xadesRole = null;
+    private HashAlgorithm xadesDigestAlgo;
+    private String xadesRole;
     private String xadesSignatureId = "idSignedProperties";
     private boolean xadesSignaturePolicyImplied = true;
     private String xadesCanonicalizationMethod = CanonicalizationMethod.EXCLUSIVE;
@@ -150,7 +150,7 @@ public class SignatureConfig {
      * with certain namespaces, so this EventListener is used to interfere
      * with the marshalling process.
      */
-    EventListener signatureMarshalListener = null;
+    EventListener signatureMarshalListener;
 
     /**
      * Map of namespace uris to prefix

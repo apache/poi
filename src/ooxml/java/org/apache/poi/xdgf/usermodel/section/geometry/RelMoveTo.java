@@ -26,12 +26,12 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class RelMoveTo implements GeometryRow {
 
-    RelMoveTo _master = null;
+    RelMoveTo _master;
 
-    Double x = null;
-    Double y = null;
+    Double x;
+    Double y;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

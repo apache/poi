@@ -40,8 +40,8 @@ public class XSSFBStylesTable extends XSSFBParser {
     private final SortedMap<Short, String> numberFormats = new TreeMap<Short,String>();
     private final List<Short> styleIds = new ArrayList<Short>();
 
-    private boolean inCellXFS = false;
-    private boolean inFmts = false;
+    private boolean inCellXFS;
+    private boolean inFmts;
     public XSSFBStylesTable(InputStream is) throws IOException {
         super(is);
         parse();

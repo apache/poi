@@ -42,14 +42,14 @@ public class ExcelAntEvaluateCell extends Task {
 	private double precision ;
 	private double precisionToUse ;
 	private double globalPrecision ;
-	private boolean requiredToPass = false ;
+	private boolean requiredToPass;
 	
 	
 	private ExcelAntEvaluationResult result  ;
 	
 	private ExcelAntWorkbookUtil wbUtil ;
 	
-	private boolean showDelta = false ;
+	private boolean showDelta;
 	
 	
 	public ExcelAntEvaluateCell() {}

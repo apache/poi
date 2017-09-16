@@ -39,7 +39,7 @@ public final class TableRow extends Range
     private final static char TABLE_CELL_MARK = '\u0007';
 
     private TableCell[] _cells;
-    private boolean _cellsFound = false;
+    private boolean _cellsFound;
 
     int _levelNum;
     private SprmBuffer _papx;

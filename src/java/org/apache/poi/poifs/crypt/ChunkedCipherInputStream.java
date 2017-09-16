@@ -41,7 +41,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     private int lastIndex;
     private long pos;
-    private boolean chunkIsValid = false;
+    private boolean chunkIsValid;
 
     public ChunkedCipherInputStream(InputStream stream, long size, int chunkSize)
     throws GeneralSecurityException {

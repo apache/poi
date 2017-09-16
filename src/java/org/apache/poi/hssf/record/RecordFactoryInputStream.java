@@ -163,7 +163,7 @@ public final class RecordFactoryInputStream {
 	/**
 	 * The most recent record that we gave to the user
 	 */
-	private Record _lastRecord = null;
+	private Record _lastRecord;
 	/**
 	 * The most recent DrawingRecord seen
 	 */

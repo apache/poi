@@ -40,8 +40,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public class SViewer extends JApplet {
   private SViewerPanel panel;
-  boolean isStandalone = false;
-  String filename = null;
+  boolean isStandalone;
+  String filename;
 
   /**Get a parameter value*/
   public String getParameter(String key, String def) {

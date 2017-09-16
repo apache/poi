@@ -42,7 +42,7 @@ import org.junit.Test;
  */
 public final class TestIOUtils {
 
-    static File TMP = null;
+    static File TMP;
     static final long LENGTH = new Random().nextInt(10000);
 
     @BeforeClass
@@ -176,8 +176,8 @@ public final class TestIOUtils {
      * as requested.  This tests that the fallback to read() works.
      */
     private static class WonkyInputStream extends InputStream {
-        int skipCalled = 0;
-        int readCalled = 0;
+        int skipCalled;
+        int readCalled;
 
         @Override
         public int read() throws IOException {

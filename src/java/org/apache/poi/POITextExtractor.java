@@ -32,7 +32,7 @@ import java.io.IOException;
  * @see org.apache.poi.hwpf.extractor.WordExtractor
  */
 public abstract class POITextExtractor implements Closeable {
-    private Closeable fsToClose = null;
+    private Closeable fsToClose;
     
 	/**
 	 * Retrieves all the text from the document.

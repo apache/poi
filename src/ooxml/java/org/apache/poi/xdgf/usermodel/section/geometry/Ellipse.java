@@ -30,24 +30,24 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class Ellipse implements GeometryRow {
 
-    Ellipse _master = null;
+    Ellipse _master;
 
     // x coordinate of center point
-    Double x = null;
+    Double x;
     // y coordinate of center point
-    Double y = null;
+    Double y;
 
     // x coordinate of first point on ellipse
-    Double a = null;
+    Double a;
     // y coordinate of first point on ellipse
-    Double b = null;
+    Double b;
 
     // x coordinate of second point on ellipse
-    Double c = null;
+    Double c;
     // y coordinate of second point on ellipse
-    Double d = null;
+    Double d;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

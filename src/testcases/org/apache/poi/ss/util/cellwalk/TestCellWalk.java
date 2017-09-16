@@ -54,8 +54,8 @@ public class TestCellWalk extends TestCase {
 
     private static class CountCellHandler implements CellHandler {
 
-	private int cellsVisited = 0;
-	private long ordinalNumberSum = 0L;
+	private int cellsVisited;
+	private long ordinalNumberSum;
 
 	@Override
     public void onCell(Cell cell, CellWalkContext ctx) {

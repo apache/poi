@@ -861,7 +861,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     private static class CountingOS extends OutputStream {
-        int count = 0;
+        int count;
 
         @Override
         public void write(int b) throws IOException {

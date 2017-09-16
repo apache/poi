@@ -34,8 +34,8 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
  */
 
 public class SVTableModel extends AbstractTableModel {
-  private HSSFSheet st = null;
-  int maxcol = 0;
+  private HSSFSheet st;
+  int maxcol;
 
   public SVTableModel(HSSFSheet st, int maxcol) {
     this.st = st;

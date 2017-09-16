@@ -69,14 +69,14 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
  * Represents a cell of a table in a .pptx presentation
  */
 public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,XSLFTextParagraph> {
-    private CTTableCellProperties _tcPr = null;
+    private CTTableCellProperties _tcPr;
     private final XSLFTable table;
-    private int row = 0, col = 0;
+    private int row, col;
 
     /**
      * Volatile/temporary anchor - e.g. for rendering
      */
-    private Rectangle2D anchor = null;
+    private Rectangle2D anchor;
 
     /*package*/ XSLFTableCell(CTTableCell cell, XSLFTable table){
         super(cell, table.getSheet());

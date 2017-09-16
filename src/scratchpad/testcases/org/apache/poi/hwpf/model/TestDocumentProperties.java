@@ -28,7 +28,7 @@ import org.junit.Test;
 // TODO: Add DocumentProperties#equals ???
 
 public final class TestDocumentProperties {
-    private DocumentProperties _documentProperties = null;
+    private DocumentProperties _documentProperties;
     private HWPFDocFixture _hWPFDocFixture;
 
     @Test

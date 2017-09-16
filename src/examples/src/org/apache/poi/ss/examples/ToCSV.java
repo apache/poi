@@ -132,13 +132,13 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 public class ToCSV {
 
-    private Workbook workbook = null;
-    private ArrayList<ArrayList<String>> csvData = null;
-    private int maxRowWidth = 0;
-    private int formattingConvention = 0;
-    private DataFormatter formatter = null;
-    private FormulaEvaluator evaluator = null;
-    private String separator = null;
+    private Workbook workbook;
+    private ArrayList<ArrayList<String>> csvData;
+    private int maxRowWidth;
+    private int formattingConvention;
+    private DataFormatter formatter;
+    private FormulaEvaluator evaluator;
+    private String separator;
 
     private static final String CSV_FILE_EXTENSION = ".csv";
     private static final String DEFAULT_SEPARATOR = ",";

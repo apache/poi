@@ -28,7 +28,7 @@ import org.apache.poi.hwpf.model.NotesTables;
  */
 public class NotesImpl implements Notes
 {
-    private Map<Integer, Integer> anchorToIndexMap = null;
+    private Map<Integer, Integer> anchorToIndexMap;
 
     private final NotesTables notesTables;
 

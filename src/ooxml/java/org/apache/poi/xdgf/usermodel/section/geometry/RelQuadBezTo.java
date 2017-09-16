@@ -31,26 +31,26 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
  */
 public class RelQuadBezTo implements GeometryRow {
 
-    RelQuadBezTo _master = null;
+    RelQuadBezTo _master;
 
     // The x-coordinate of the ending vertex of a quadratic Bezier curve
     // relative to the width of the shape.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of the ending vertex of a quadratic Bezier curve
     // relative to the height of the shape.
-    Double y = null;
+    Double y;
 
     // The x-coordinate of the curve's control point relative to the shape's
     // width; a point on the arc. The control point is best located about
     // halfway between the beginning and ending vertices of the arc.
-    Double a = null;
+    Double a;
 
     // The y-coordinate of a curve's control point relative to the shape's
     // height.
-    Double b = null;
+    Double b;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

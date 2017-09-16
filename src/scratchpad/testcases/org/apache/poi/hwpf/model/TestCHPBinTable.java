@@ -28,7 +28,7 @@ import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 public final class TestCHPBinTable
   extends TestCase
 {
-  private CHPBinTable _cHPBinTable = null;
+  private CHPBinTable _cHPBinTable;
   private HWPFDocFixture _hWPFDocFixture;
 
   private final TextPieceTable fakeTPT = new TextPieceTable() {

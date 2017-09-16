@@ -39,7 +39,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     private final EncryptionInfo info;
     private ChunkedCipherInputStream ccis;
     private final byte buffer[] = new byte[LittleEndianConsts.LONG_SIZE];
-    private boolean shouldSkipEncryptionOnCurrentRecord = false;
+    private boolean shouldSkipEncryptionOnCurrentRecord;
 
 	public Biff8DecryptingStream(InputStream in, int initialOffset, EncryptionInfo info) throws RecordFormatException {
         try {

@@ -53,7 +53,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
     };
 
     private XWPFDocument document;
-    private boolean fetchHyperlinks = false;
+    private boolean fetchHyperlinks;
     private boolean concatenatePhoneticRuns = true;
 
     public XWPFWordExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {

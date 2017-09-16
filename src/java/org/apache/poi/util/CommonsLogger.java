@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 public class CommonsLogger extends POILogger
 {
     private static final LogFactory   _creator = LogFactory.getFactory();
-    private Log             log   = null;
+    private Log             log;
 
     @Override
     public void initialize(final String cat)

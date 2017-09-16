@@ -29,27 +29,27 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
  */
 public class SplineStart implements GeometryRow {
 
-    SplineStart _master = null;
+    SplineStart _master;
 
     // The x-coordinate of a spline's second control point.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of a spline's second control point.
-    Double y = null;
+    Double y;
 
     // The second knot of the spline.
-    Double a = null;
+    Double a;
 
     // The first knot of a spline.
-    Double b = null;
+    Double b;
 
     // The last knot of a spline.
-    Double c = null;
+    Double c;
 
     // The degree of a spline (an integer from 1 to 25).
-    Integer d = null;
+    Integer d;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

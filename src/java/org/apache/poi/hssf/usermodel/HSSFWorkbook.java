@@ -960,7 +960,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {
         final private Iterator<T> it;
-        private T cursor = null;
+        private T cursor;
         @SuppressWarnings("unchecked")
         public SheetIterator() {
             it = (Iterator<T>) _sheets.iterator();

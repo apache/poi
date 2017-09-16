@@ -31,18 +31,18 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class ArcTo implements GeometryRow {
 
-    ArcTo _master = null;
+    ArcTo _master;
 
     // The x-coordinate of the ending vertex of an arc.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of the ending vertex of an arc.
-    Double y = null;
+    Double y;
 
     // The distance from the arc's midpoint to the midpoint of its chord.
-    Double a = null;
+    Double a;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

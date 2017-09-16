@@ -183,7 +183,7 @@ public class XSSFBReader extends XSSFReader {
         static {
             RECORDS.set(XSSFBRecordType.BrtAbsPath15.getId());
         }
-        private String path = null;
+        private String path;
         public PathExtractor(InputStream is) {
             super(is, RECORDS);
         }

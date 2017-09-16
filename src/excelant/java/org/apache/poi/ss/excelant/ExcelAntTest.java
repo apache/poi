@@ -44,9 +44,9 @@ public class ExcelAntTest extends Task{
 	
 	private double globalPrecision;
 	
-	private boolean showSuccessDetails = false;
+	private boolean showSuccessDetails;
 	
-	private boolean showFailureDetail = false;
+	private boolean showFailureDetail;
 	LinkedList<String> failureMessages;
 	
 

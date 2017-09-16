@@ -70,9 +70,9 @@ public class SXSSFSheet implements Sheet
     private final SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     private final AutoSizeColumnTracker _autoSizeColumnTracker;
-    private int outlineLevelRow = 0;
+    private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
-    private boolean allFlushed = false;
+    private boolean allFlushed;
 
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         _workbook = workbook;

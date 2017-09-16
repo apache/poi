@@ -116,7 +116,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Flag if a modification is done to the document.
 	 */
-	protected boolean isDirty = false;
+	protected boolean isDirty;
 
 	/**
 	 * File path of this package.

@@ -43,10 +43,10 @@ import org.apache.poi.util.Units;
  */
 @Beta
 public final class XSLFPictureData extends POIXMLDocumentPart implements PictureData {
-    private Long checksum = null;
+    private Long checksum;
 
     // original image dimensions (for formats supported by BufferedImage)
-    private Dimension origSize = null;
+    private Dimension origSize;
     private int index = -1;
 
     /**

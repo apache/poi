@@ -64,12 +64,12 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     private final CTTc ctTc;
-    protected List<XWPFParagraph> paragraphs = null;
-    protected List<XWPFTable> tables = null;
-    protected List<IBodyElement> bodyElements = null;
+    protected List<XWPFParagraph> paragraphs;
+    protected List<XWPFTable> tables;
+    protected List<IBodyElement> bodyElements;
 
     protected IBody part;
-    private XWPFTableRow tableRow = null;
+    private XWPFTableRow tableRow;
 
     /**
      * If a table cell does not include at least one block-level element, then this document shall be considered corrupt
