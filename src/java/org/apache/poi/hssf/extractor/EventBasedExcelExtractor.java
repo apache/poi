@@ -203,7 +203,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
                thisRow = frec.getRow();
 
                if(_formulasNotResults) {
-                   thisText = HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, frec.getParsedExpression());
+                   thisText = HSSFFormulaParser.toFormulaString(null, frec.getParsedExpression());
                } else {
                    if(frec.hasCachedResultString()) {
                        // Formula result is a string

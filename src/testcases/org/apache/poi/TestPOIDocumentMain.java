@@ -137,14 +137,14 @@ public final class TestPOIDocumentMain {
         doc.write(baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
-        ((HSSFWorkbook)doc).close();
+        doc.close();
 
         doc = new HSSFWorkbook(bais);
 
         assertNotNull(doc.getSummaryInformation());
         assertNotNull(doc.getDocumentSummaryInformation());
         
-        ((HSSFWorkbook)doc).close();
+        doc.close();
     }
 
     @Test
@@ -159,7 +159,7 @@ public final class TestPOIDocumentMain {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         doc.write(baos);
         
-        ((HSSFWorkbook)doc).close();
+        doc.close();
         
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         doc = new HSSFWorkbook(bais);
@@ -176,7 +176,7 @@ public final class TestPOIDocumentMain {
         baos = new ByteArrayOutputStream();
         doc.write(baos);
         
-        ((HSSFWorkbook)doc).close();
+        doc.close();
 
         bais = new ByteArrayInputStream(baos.toByteArray());
         doc = new HSSFWorkbook(bais);
@@ -194,6 +194,6 @@ public final class TestPOIDocumentMain {
         assertEquals("POI Testing", doc.getSummaryInformation().getAuthor());
         assertEquals("ASF", doc.getDocumentSummaryInformation().getCompany());
 
-        ((HSSFWorkbook)doc).close();
+        doc.close();
     }
 }

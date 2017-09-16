@@ -637,7 +637,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
              * in the body. Otherwise, take the previous paragraph and calculate
              * the new index for the new paragraph.
              */
-            if ((!(o instanceof CTP)) || (CTP) o == p) {
+            if ((!(o instanceof CTP)) || o == p) {
                 paragraphs.add(0, newP);
             } else {
                 int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;

@@ -400,7 +400,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if ((!(o instanceof CTP)) || (CTP) o == p) {
+            if ((!(o instanceof CTP)) || o == p) {
                 paragraphs.add(0, newP);
             } else {
                 int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;

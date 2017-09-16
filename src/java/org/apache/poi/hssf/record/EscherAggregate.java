@@ -522,7 +522,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         }
 
         for (NoteRecord noteRecord : tailRec.values()) {
-            Record rec = (Record) noteRecord;
+            Record rec = noteRecord;
             pos += rec.serialize(pos, data);
         }
         int bytesWritten = pos - offset;
@@ -747,9 +747,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      */
     public void setMainSpRecordId(int shapeId) {
         EscherContainerRecord dgContainer = getEscherContainer();
-        EscherContainerRecord spgrConatiner = (EscherContainerRecord) dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER);
+        EscherContainerRecord spgrConatiner = dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER);
         EscherContainerRecord spContainer = (EscherContainerRecord) spgrConatiner.getChild(0);
-        EscherSpRecord sp = (EscherSpRecord) spContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord sp = spContainer.getChildById(EscherSpRecord.RECORD_ID);
         sp.setShapeId(shapeId);
     }
 

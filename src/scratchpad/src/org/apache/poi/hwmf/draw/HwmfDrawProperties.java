@@ -93,7 +93,7 @@ public class HwmfDrawProperties {
         this.bkMode = other.bkMode;
         this.polyfillMode = other.polyfillMode;
         if (other.region instanceof Rectangle2D) {
-            this.region = ((Rectangle2D)other.region).getBounds2D();
+            this.region = other.region.getBounds2D();
         } else if (other.region instanceof Area) {
             this.region = new Area(other.region);
         }

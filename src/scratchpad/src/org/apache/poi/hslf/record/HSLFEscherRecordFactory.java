@@ -59,7 +59,7 @@ public class HSLFEscherRecordFactory extends DefaultEscherRecordFactory {
         escherRecord.setRecordId(recordId);
         escherRecord.setOptions(options);
         if (escherRecord instanceof EscherContainerRecord) {
-            ((EscherContainerRecord)escherRecord).fillFields(data, offset, this);
+            escherRecord.fillFields(data, offset, this);
         }
         
         return escherRecord;

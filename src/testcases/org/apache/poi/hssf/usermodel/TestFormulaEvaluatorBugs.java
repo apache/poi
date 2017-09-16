@@ -579,6 +579,6 @@ public final class TestFormulaEvaluatorBugs {
         assertEquals(RefPtg.class, ptg.getClass());
         assertEquals(0,  ((RefPtg)ptg).getRow());
         assertEquals(0,  ((RefPtg)ptg).getColumn());
-        assertEquals(rv, ((RefPtg)ptg).getRVAType());
+        assertEquals(rv, ptg.getRVAType());
     }
 }

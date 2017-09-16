@@ -1035,7 +1035,7 @@ public final class TestBugs {
     public void bug60294() throws IOException {
         HSLFSlideShow ppt = open("60294.ppt");
         List<HSLFShape> shList = ppt.getSlides().get(0).getShapes();
-        assertEquals(ShapeType.NOT_PRIMITIVE, ((HSLFAutoShape)shList.get(2)).getShapeType());
+        assertEquals(ShapeType.NOT_PRIMITIVE, shList.get(2).getShapeType());
         ppt.close();
     }
 }

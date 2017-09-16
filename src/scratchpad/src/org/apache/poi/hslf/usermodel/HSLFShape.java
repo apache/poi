@@ -192,13 +192,13 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
-            EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(EscherChildAnchorRecord.RECORD_ID);
+            EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
             rec.setDx1(x);
             rec.setDy1(y);
             rec.setDx2(w);
             rec.setDy2(h);
         } else {
-            EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(EscherClientAnchorRecord.RECORD_ID);
+            EscherClientAnchorRecord rec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
             rec.setCol1((short)x);
             rec.setFlag((short)y);
             rec.setDx1((short)w);

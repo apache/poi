@@ -33,7 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public final class TestOperandClassTransformer extends TestCase {
 
 	private static Ptg[] parseFormula(String formula) {
-		Ptg[] result = HSSFFormulaParser.parse(formula, (HSSFWorkbook)null);
+		Ptg[] result = HSSFFormulaParser.parse(formula, null);
 		assertNotNull("Ptg array should not be null", result);
 		return result;
 	}

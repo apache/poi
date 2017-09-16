@@ -275,7 +275,7 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 
 		short[] xfs = new short[nBlank];
 		for (int i = 0; i < xfs.length; i++) {
-			xfs[i] = ((BlankRecord)cellValues[startIx + i]).getXFIndex();
+			xfs[i] = cellValues[startIx + i].getXFIndex();
 		}
 		int rowIx = cellValues[startIx].getRow();
 		return new MulBlankRecord(rowIx, startIx, xfs);

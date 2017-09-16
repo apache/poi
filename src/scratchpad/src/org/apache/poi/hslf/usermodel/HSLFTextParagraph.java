@@ -1094,7 +1094,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         RecordContainer _txtbox = headerAtom.getParentRecord();
         if (_txtbox instanceof EscherTextboxWrapper) {
             try {
-                ((EscherTextboxWrapper) _txtbox).writeOut(null);
+                _txtbox.writeOut(null);
             } catch (IOException e) {
                 throw new HSLFException("failed dummy write", e);
             }

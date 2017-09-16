@@ -95,7 +95,7 @@ public class XWPFSDTContent implements ISDTContent {
                 text.append(((XWPFSDT) o).getContent().getText());
                 addNewLine = true;
             } else if (o instanceof XWPFRun) {
-                text.append(((XWPFRun) o));
+                text.append(o);
                 addNewLine = false;
             }
             if (addNewLine == true && i < bodyElements.size() - 1) {

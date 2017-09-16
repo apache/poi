@@ -487,7 +487,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    public boolean has7BitEncodingStrings() {
       for(Chunk c : mainChunks.getChunks()) {
          if(c instanceof StringChunk) {
-            if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+            if( c.getType() == Types.ASCII_STRING ) {
                return true;
             }
          }
@@ -496,7 +496,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       if (nameIdChunks!=null) {
          for(Chunk c : nameIdChunks.getChunks()) {
             if(c instanceof StringChunk) {
-               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               if( c.getType() == Types.ASCII_STRING ) {
                   return true;
                }
             }
@@ -506,7 +506,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       for(RecipientChunks rc : recipientChunks) {
          for(Chunk c : rc.getAll()) {
             if(c instanceof StringChunk) {
-               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               if( c.getType() == Types.ASCII_STRING ) {
                   return true;
                }
             }

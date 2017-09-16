@@ -42,7 +42,7 @@ public final class TestHSSFPictureData extends TestCase{
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
         @SuppressWarnings("unchecked") // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
-        List<HSSFPictureData> lst = (List<HSSFPictureData>)(List<?>)wb.getAllPictures();
+        List<HSSFPictureData> lst = wb.getAllPictures();
         //assertEquals(2, lst.size());
 
         for (final HSSFPictureData pict : lst) {
@@ -74,7 +74,7 @@ public final class TestHSSFPictureData extends TestCase{
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("53446.xls");
 
         @SuppressWarnings("unchecked")
-        List<HSSFPictureData> lst = (List<HSSFPictureData>)(List<?>)wb.getAllPictures();
+        List<HSSFPictureData> lst = wb.getAllPictures();
         assertEquals(1, lst.size());
 
         HSSFPictureData pict = lst.get(0);
@@ -98,7 +98,7 @@ public final class TestHSSFPictureData extends TestCase{
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
 
         @SuppressWarnings("unchecked") // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
-        List<HSSFPictureData> lst = (List<HSSFPictureData>)(List<?>)wb.getAllPictures();
+        List<HSSFPictureData> lst = wb.getAllPictures();
         for(HSSFPictureData pict : lst){
             assertNotNull(pict);
         }

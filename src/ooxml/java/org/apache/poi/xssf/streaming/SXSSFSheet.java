@@ -1383,7 +1383,7 @@ public class SXSSFSheet implements Sheet
     private int findStartOfRowOutlineGroup(int rowIndex) {
         // Find the start of the group.
         Row row = getRow(rowIndex);
-        int level = ((SXSSFRow) row).getOutlineLevel();
+        int level = row.getOutlineLevel();
         if(level == 0) {
             throw new IllegalArgumentException("Outline level is zero for the row (" + rowIndex + ").");
         }

@@ -262,7 +262,7 @@ public final class HSLFFill {
 
         // NOFILLHITTEST can be in the normal escher opt record but also in the tertiary record
         // the extended bit fields seem to be in the second
-        opt = (AbstractEscherOptRecord)shape.getEscherChild(RecordTypes.EscherUserDefined);
+        opt = shape.getEscherChild(RecordTypes.EscherUserDefined);
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
         final boolean rotateWithShape = FILL_USE_USE_SHAPE_ANCHOR.isSet(propVal) && FILL_USE_SHAPE_ANCHOR.isSet(propVal);
