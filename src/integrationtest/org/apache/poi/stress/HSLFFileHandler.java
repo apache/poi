@@ -24,78 +24,81 @@ import java.io.*;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SystemOutLogger;
 import org.junit.Test;
 
 public class HSLFFileHandler extends SlideShowHandler {
-	@Override
-	public void handleFile(InputStream stream, String path) throws Exception {
-		HSLFSlideShowImpl slide = new HSLFSlideShowImpl(stream);
-		assertNotNull(slide.getCurrentUserAtom());
-		assertNotNull(slide.getEmbeddedObjects());
-		assertNotNull(slide.getUnderlyingBytes());
-		assertNotNull(slide.getPictureData());
-		Record[] records = slide.getRecords();
-		assertNotNull(records);
-		for(Record record : records) {
-		    assertNotNull("Found a record which was null", record);
-			assertTrue(record.getRecordType() >= 0);
-		}
-		
-		handlePOIDocument(slide);
-		
-		HSLFSlideShow ss = new HSLFSlideShow(slide);
-		handleSlideShow(ss);
-	}
-	
-	@Test
-	public void testOne() throws Exception {
-		testOneFile(new File("test-data/slideshow/54880_chinese.ppt"));
-	}
-
-	// a test-case to test this locally without executing the full TestAllFiles
-	@Override
+    @Override
+    public void handleFile(InputStream stream, String path) throws Exception {
+        HSLFSlideShowImpl slide = new HSLFSlideShowImpl(stream);
+        assertNotNull(slide.getCurrentUserAtom());
+        assertNotNull(slide.getEmbeddedObjects());
+        assertNotNull(slide.getUnderlyingBytes());
+        assertNotNull(slide.getPictureData());
+        Record[] records = slide.getRecords();
+        assertNotNull(records);
+        for(Record record : records) {
+            assertNotNull("Found a record which was null", record);
+            assertTrue(record.getRecordType() >= 0);
+        }
+        
+        handlePOIDocument(slide);
+        
+        HSLFSlideShow ss = new HSLFSlideShow(slide);
+        handleSlideShow(ss);
+    }
+    
     @Test
-	public void test() throws Exception {
-		File[] files = new File("test-data/slideshow/").listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".ppt");
-			}
-		});
-		assertNotNull(files);
+    public void testOne() throws Exception {
+        testOneFile(new File("test-data/slideshow/54880_chinese.ppt"));
+    }
 
-		System.out.println("Testing " + files.length + " files");
+    // a test-case to test all .ppt files without executing the full TestAllFiles
+    @Override
+    @Test
+    public void test() throws Exception {
+        File[] files = new File("test-data/slideshow/").listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".ppt");
+            }
+        });
+        assertNotNull(files);
 
-		for(File file : files) {
-			try {
-				testOneFile(file);
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		}
-   }
+        System.out.println("Testing " + files.length + " files");
 
-	private void testOneFile(File file) throws Exception {
-		System.out.println(file);
+        POILogger logger = new SystemOutLogger();
+        for(File file : files) {
+            try {
+                testOneFile(file);
+            } catch (Throwable e) {
+                logger.log(POILogger.WARN, "Failed to handle file " + file, e);
+            }
+        }
+    }
 
-		//System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
-		InputStream stream = new FileInputStream(file);
-		try {
+    private void testOneFile(File file) throws Exception {
+        System.out.println(file);
+
+        //System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
+        InputStream stream = new FileInputStream(file);
+        try {
             handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
-		}
+        } finally {
+            stream.close();
+        }
 
-		handleExtracting(file);
-	}
+        handleExtracting(file);
+    }
 
-	public static void main(String[] args) throws Exception {
-	   System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
-	   InputStream stream = new FileInputStream(args[0]);
-	   try {
-		   new HSLFFileHandler().handleFile(stream, args[0]);
-	   } finally {
-		   stream.close();
-	   }
-   }
+    public static void main(String[] args) throws Exception {
+        System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
+        InputStream stream = new FileInputStream(args[0]);
+        try {
+            new HSLFFileHandler().handleFile(stream, args[0]);
+        } finally {
+            stream.close();
+        }
+    }
 }
