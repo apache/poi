@@ -4450,7 +4450,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         for (RelationPart part : getRelationParts()) {
             if (part.getDocumentPart() instanceof XSSFTable) {
                 // call table delete
-                removeTable((XSSFTable) part.getDocumentPart());
+                removeTable(part.getDocumentPart());
                 continue;
             }
             removeRelation(part.getDocumentPart(), true);

@@ -455,7 +455,7 @@ public class Property {
         } else if (type == Variant.VT_EMPTY || type == Variant.VT_NULL || value == null) {
             b.append("null");
         } else {
-            b.append(value.toString());
+            b.append(value);
             
             String decoded = decodeValueFromID();
             if (decoded != null) {

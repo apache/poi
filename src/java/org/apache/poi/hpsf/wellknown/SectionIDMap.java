@@ -107,7 +107,7 @@ public class SectionIDMap {
         if (m == null) {
             return UNDEFINED;
         }
-        final String s = (String) m.get(pid);
+        final String s = m.get(pid);
         if (s == null) {
             return UNDEFINED;
         }

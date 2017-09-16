@@ -335,7 +335,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         XSSFWorkbook wb = new XSSFWorkbook();
 
         CreationHelper createHelper = wb.getCreationHelper();
-        XSSFCellStyle hlinkStyle = (XSSFCellStyle) wb.createCellStyle();
+        XSSFCellStyle hlinkStyle = wb.createCellStyle();
         Font hlinkFont = wb.createFont();
 
         Sheet sheet = wb.createSheet("test");

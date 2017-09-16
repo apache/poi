@@ -89,7 +89,7 @@ public class HwmfPicture {
             }
             
             consumedSize += wr.init(leis, recordSize, recordFunction);
-            int remainingSize = (int)(recordSize - consumedSize);
+            int remainingSize = recordSize - consumedSize;
             if (remainingSize < 0) {
                 throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; comsumed size: "+consumedSize);
             } else if(remainingSize > 0) {
