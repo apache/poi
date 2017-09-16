@@ -250,17 +250,23 @@ public final class TestCellReference {
         try {
             new CellReference("Sheet1!#REF!");
             fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException expected) {}
+        } catch(IllegalArgumentException expected) {
+            // expected here
+        }
 
         try {
             new CellReference("'MySheetName'!#REF!");
             fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException expected) {}
+        } catch(IllegalArgumentException expected) {
+            // expected here
+        }
 
         try {
             new CellReference("#REF!");
             fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException expected) {}
+        } catch(IllegalArgumentException expected) {
+            // expected here
+        }
     }
 
     private static void confirmCrInRange(boolean expResult, String colStr, String rowStr,
@@ -339,9 +345,11 @@ public final class TestCellReference {
         CellReference ref2 = new CellReference("Sheet 1", 4, 0, false, false);
         assertEquals("equals", ref1, ref2);
         assertEquals("hash code", ref1.hashCode(), ref2.hashCode());
-        
+
+        //noinspection ObjectEqualsNull
         assertFalse("null", ref1.equals(null));
         assertFalse("3D vs 2D", ref1.equals(new CellReference("A5")));
+        //noinspection EqualsBetweenInconvertibleTypes
         assertFalse("type", ref1.equals(new Integer(0)));
     }
     

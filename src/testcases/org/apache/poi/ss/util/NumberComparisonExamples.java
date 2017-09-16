@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -115,7 +116,7 @@ final class NumberComparisonExamples {
 		addStepTransition(temp, 0x001000000000001BL);
 		addStepTransition(temp, 0x001000000000002FL);
 
-		for(ComparisonExample ce : new ComparisonExample[] {
+		Collections.addAll(temp, new ComparisonExample[]{
 				// negative, and exponents differ by more than 1
 				ce(0xBF30000000000000L, 0xBE60000000000000L, -1),
 
@@ -137,9 +138,7 @@ final class NumberComparisonExamples {
 				ce(0x000FFFFFFFFFFFF9L, 0x0010000000000007L, -1),
 				ce(0x000FFFFFFFFFFFFAL, 0x0010000000000008L, -1),
 				ce(0x000FFFFFFFFFFFFBL, 0x0010000000000008L, -1),
-		}) {
-			temp.add(ce);
-		}
+		});
 
 		ComparisonExample[] result = new ComparisonExample[temp.size()];
 		temp.toArray(result);
@@ -151,13 +150,11 @@ final class NumberComparisonExamples {
 	}
 
 	private static void addStepTransition(List<ComparisonExample> temp, long rawBits) {
-		for(ComparisonExample ce : new ComparisonExample[] {
-				ce(rawBits-1, rawBits+0, 0),
-				ce(rawBits+0, rawBits+1, -1),
-				ce(rawBits+1, rawBits+2, 0),
-		}) {
-			temp.add(ce);
-		}
+		Collections.addAll(temp, new ComparisonExample[]{
+				ce(rawBits - 1, rawBits + 0, 0),
+				ce(rawBits + 0, rawBits + 1, -1),
+				ce(rawBits + 1, rawBits + 2, 0),
+		});
 
 	}
 
