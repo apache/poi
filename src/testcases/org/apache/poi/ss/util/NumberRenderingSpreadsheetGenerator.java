@@ -136,9 +136,7 @@ public class NumberRenderingSpreadsheetGenerator {
 	}
 	
 	private static String formatLongAsHex(long l) {
-		StringBuilder sb = new StringBuilder(20);
-		sb.append(HexDump.longToHex(l)).append('L');
-		return sb.toString();
+		return HexDump.longToHex(l) + 'L';
 	}
 
 	public static void main(String[] args) {

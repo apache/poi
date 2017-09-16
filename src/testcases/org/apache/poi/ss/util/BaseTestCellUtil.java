@@ -77,16 +77,13 @@ public class BaseTestCellUtil {
     
     @Test(expected=RuntimeException.class)
     public void setCellStylePropertyWithInvalidValue() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
             Cell c = r.createCell(0);
 
             // An invalid BorderStyle constant
             CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, 42);
-        } finally {
-            wb.close();
         }
     }
     
@@ -213,9 +210,6 @@ public class BaseTestCellUtil {
 
     /**
      * @deprecated by {@link #setAlignmentEnum()}
-     *
-     * @throws IOException
-     * 
      */
     @Deprecated
     @SuppressWarnings("deprecated")
