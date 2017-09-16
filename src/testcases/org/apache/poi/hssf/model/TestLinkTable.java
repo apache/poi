@@ -150,7 +150,7 @@ public final class TestLinkTable extends TestCase {
 		
 		LinkTable lt;
 		try {
-			lt = new LinkTable(recList, 0, wrl, Collections.<String, NameCommentRecord>emptyMap());
+			lt = new LinkTable(recList, 0, wrl, Collections.emptyMap());
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)")) {
 				throw new AssertionFailedError("Identified bug 47001b");

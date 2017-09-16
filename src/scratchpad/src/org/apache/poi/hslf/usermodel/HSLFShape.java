@@ -254,7 +254,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @return escher property or <code>null</code> if not found.
      */
      public static <T extends EscherProperty> T getEscherProperty(AbstractEscherOptRecord opt, int propId){
-         return (opt == null) ? null : opt.<T>lookup(propId);
+         return (opt == null) ? null : opt.lookup(propId);
      }
 
     /**
