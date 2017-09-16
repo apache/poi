@@ -18,71 +18,71 @@ def xercesUrl = 'http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImp
 def xercesLib = 'compile-lib/xercesImpl-2.6.1.jar'
 
 def poijobs = [
-    [ name: 'POI-DSL-1.6',
-            // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
-            // as part of the Ant build
-            addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}",
-            disabled: true
-    ],
-    [ name: 'POI-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *'
-    ],
-    [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
-        // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
-        slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!H12&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!H21&&!H22&&!H23&&!H24&&!H25&&!H26&&!H27&&!qnode1&&!qnode2&&!qnode3&&!ubuntu-eu2&&!ubuntu-eu3&&!ubuntu-us1',
-        // the JDK is missing on some slaves so builds are unstable
-        skipcigame: true
-    ],
-    [ name: 'POI-DSL-1.9', jdk: '1.9', trigger: triggerSundays,
-        properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true',
-                     '-Djava9addmods=--add-modules=java.xml.bind',
-                     '-Djavadoc9addmods=--add-modules=java.xml.bind',
-                     '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                     '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                     '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                     '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                     '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                     '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                     '-Djava.locale.providers=JRE,CLDR'],
-        skipcigame: true
-    ],
-    [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays,
-        // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
-        disabled: true, skipcigame: true
-    ],
-    [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
-        shell: "mkdir -p compile-lib && test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
-        // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
-        properties: ["-Dadditionaljar=${xercesLib}"],
-        // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
-        // as part of the Ant build
-        addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}"
-    ],
-    [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
-    ],
-    [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
-    ],
-    [ name: 'POI-DSL-API-Check', jdk: '1.8', trigger: '@daily', apicheck: true
-    ],
-    [ name: 'POI-DSL-Gradle', jdk: '1.8', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
-        // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
-        addShell: 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml'
-    ],
-    [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
-    ],
-    [ name: 'POI-DSL-SonarQube', jdk: '1.8', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
-    ],
-    [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
-    ],
-    [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
-    	addShell: "@if not exist ${findbugs2Lib} powershell -Command wget -Uri \"${findbugs2Url}\" -OutFile ${findbugs2Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
-        disabled: true
-    ],
-    [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
-    	addShell: "@if not exist ${findbugs3Lib} powershell -Command wget -Uri \"${findbugs3Url}\" -OutFile ${findbugs3Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
-        disabled: true
-    ],
-    [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
-    ],
+        [ name: 'POI-DSL-1.6',
+          // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
+          // as part of the Ant build
+          addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}",
+          disabled: true
+        ],
+        [ name: 'POI-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *'
+        ],
+        [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
+          // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!H12&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!H21&&!H22&&!H23&&!H24&&!H25&&!H26&&!H27&&!qnode1&&!qnode2&&!qnode3&&!ubuntu-eu2&&!ubuntu-eu3&&!ubuntu-us1',
+          // the JDK is missing on some slaves so builds are unstable
+          skipcigame: true
+        ],
+        [ name: 'POI-DSL-1.9', jdk: '1.9', trigger: triggerSundays,
+          properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true',
+                       '-Djava9addmods=--add-modules=java.xml.bind',
+                       '-Djavadoc9addmods=--add-modules=java.xml.bind',
+                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
+                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
+                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
+                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava.locale.providers=JRE,CLDR'],
+          skipcigame: true
+        ],
+        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays,
+          // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
+          disabled: true, skipcigame: true
+        ],
+        [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
+          shell: "mkdir -p compile-lib && test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
+          // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
+          properties: ["-Dadditionaljar=${xercesLib}"],
+          // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
+          // as part of the Ant build
+          addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}"
+        ],
+        [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
+        ],
+        [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
+        ],
+        [ name: 'POI-DSL-API-Check', jdk: '1.8', trigger: '@daily', apicheck: true
+        ],
+        [ name: 'POI-DSL-Gradle', jdk: '1.8', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
+          // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
+          addShell: 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml'
+        ],
+        [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
+        ],
+        [ name: 'POI-DSL-SonarQube', jdk: '1.8', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
+        ],
+        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
+        ],
+        [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
+          addShell: "@if not exist ${findbugs2Lib} powershell -Command wget -Uri \"${findbugs2Url}\" -OutFile ${findbugs2Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
+          disabled: true
+        ],
+        [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
+          addShell: "@if not exist ${findbugs3Lib} powershell -Command wget -Uri \"${findbugs3Url}\" -OutFile ${findbugs3Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
+          disabled: true
+        ],
+        [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
+        ],
 ]
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
@@ -94,20 +94,20 @@ def defaultAnt = 'Ant 1.9.9'
 def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
 
 def jdkMapping = [
-    '1.6': 'JDK 1.6 (latest)',
-    '1.7': 'JDK 1.7 (latest)',
-    '1.8': 'JDK 1.8 (latest)',
-    '1.9': 'JDK 1.9 (latest)',
-    'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
-    'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
+        '1.6': 'JDK 1.6 (latest)',
+        '1.7': 'JDK 1.7 (latest)',
+        '1.8': 'JDK 1.8 (latest)',
+        '1.9': 'JDK 1.9 (latest)',
+        'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
+        'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
 
-def shellEx(def context, String cmd, def poijob) {
-	if (poijob.windows) {
-		context.batchFile(cmd) 
-	} else {
-		context.shell(cmd) 
-	} 
+static def shellEx(def context, String cmd, def poijob) {
+    if (poijob.windows) {
+        context.batchFile(cmd)
+    } else {
+        context.shell(cmd)
+    }
 }
 
 def defaultDesc = '''
@@ -143,7 +143,7 @@ def sonarDesc = '''
 '''
 
 def shellCmdsUnix =
-'''# show which files are currently modified in the working copy
+        '''# show which files are currently modified in the working copy
 svn status
 
 # print out information about which exact version of java we are using
@@ -157,7 +157,7 @@ POIJOBSHELL
 exit 0'''
 
 def shellCmdsWin =
-'''@echo off
+        '''@echo off
 :: show which files are currently modified in the working copy
 svn status
 
@@ -211,10 +211,12 @@ poijobs.each { poijob ->
         jdk(jdkMapping.get(jdkKey))
         scm {
             svn(svnBase) { svnNode ->
-                        svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
-                            url << 'http://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
-                    }
+                svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
+                        url << 'http://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
+            }
         }
+        checkoutRetryCount(3)
+
         triggers {
             scm(trigger)
         }
@@ -387,6 +389,63 @@ poijobs.each { poijob ->
     }
 }
 
+matrixJob('POI-DSL-Test-Environment') {
+    description(
+            '''
+Check installed version of Java/Ant on all build-nodes
+
+This job is used to verify which machines actually have the required programs installed.
+
+Unfortunately we often see builds break because of changes/new machines...'''
+    )
+
+    /*throttleConcurrentBuilds {
+        maxPerNode(1)
+        maxTotal(1)
+    }*/
+    logRotator {
+        numToKeep(5)
+        artifactNumToKeep(1)
+    }
+    axes {
+        jdk(
+                'JDK 1.8 (latest)',
+                'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
+                'IBM 1.8 64-bit (on Ubuntu only)',
+
+                'JDK 1.9 (latest)',
+                'JDK 9 b181',
+                'JDK 9 b181 (unlimited security)'
+        )
+        label(
+                'beam1,beam2,beam3,beam4,beam5,beam6,beam7,beam8,' +
+                'freebsd1,' +
+                'H0,H1,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H2,H20,H21,H22,H23,H24,H25,H26,H27,H3,H4,H5,H6,H7,H8,H9,' +
+                'qnode1,qnode2,qnode3,' +
+                'ubuntu-1,ubuntu-2,ubuntu-4,ubuntu-5,ubuntu-6,ubuntu-eu2,ubuntu-eu3,ubuntu-ppc64le,ubuntu-us1,' +
+                'windows-2012-1,windows-2012-2,windows-2012-3'
+        )
+    }
+    steps {
+        /*if (poijob.windows) {
+            context.batchFile(cmd)
+        } else {*/
+        shell('''
+which javac
+javac -version
+echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name="test"><echo>Using Ant: ${ant.version} from ${ant.home}</echo></target></project>' > build.xml
+''')
+        //}
+        ant {
+            antInstallation(defaultAnt)
+        }
+    }
+
+    publishers {
+        mailer('centic@poi.apache.org' /* defaultEmail */, false, false)
+    }
+}
+
 /* I tried to put the view into a sub-folder/sub-view, but failed, there are multiple related
  plugins so this is all a bit confusing :(, see also https://issues.apache.org/jira/browse/INFRA-14002
 dashboardView("P/POI-new") {
@@ -410,23 +469,23 @@ dashboardView("P/POI-new") {
 
     // Job selection
     jobs {*/
-        //regex(/.*POI.*/)
-    /*}
+//regex(/.*POI.*/)
+/*}
 
-    // Layout
-    topPortlets {
-        jenkinsJobsList {
-            displayName('POI jobs')
-        }
+// Layout
+topPortlets {
+    jenkinsJobsList {
+        displayName('POI jobs')
     }
-    leftPortlets {
-        testStatisticsChart()
-    }
-    rightPortlets {
-        testTrendChart()
-    }
-    bottomPortlets {
-        testStatisticsGrid()
-        buildStatistics()
-    }
+}
+leftPortlets {
+    testStatisticsChart()
+}
+rightPortlets {
+    testTrendChart()
+}
+bottomPortlets {
+    testStatisticsGrid()
+    buildStatistics()
+}
 }*/
