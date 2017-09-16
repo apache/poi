@@ -107,11 +107,10 @@ public final class StyleDescription implements HDFType
       _name = StringUtil.getFromUnicodeLE(std, nameStart, (nameLength*multiplier)/2);
 
       //length then null terminator.
-      int grupxStart = ((nameLength + 1) * multiplier) + nameStart;
 
       // the spec only refers to two possible upxs but it mentions
       // that more may be added in the future
-      int varOffset = grupxStart;
+      int varOffset = ((nameLength + 1) * multiplier) + nameStart;
       int countOfUPX = _stdfBase.getCupx();
       _upxs = new UPX[countOfUPX];
       for(int x = 0; x < countOfUPX; x++)

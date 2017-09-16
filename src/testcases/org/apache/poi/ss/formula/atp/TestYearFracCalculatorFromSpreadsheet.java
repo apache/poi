@@ -110,7 +110,6 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 	private static double getDoubleCell(HSSFRow row, int colIx) {
 		HSSFCell cell = row.getCell(colIx);
 		assertNotNull("No cell found at column " + colIx, cell);
-		double dVal = cell.getNumericCellValue();
-		return dVal;
+        return cell.getNumericCellValue();
 	}
 }

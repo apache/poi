@@ -73,12 +73,11 @@ public class TextPiece extends PropertyNode<TextPiece> {
      * Create the StringBuilder from the text and unicode flag
      */
     private static StringBuilder buildInitSB(byte[] text, PieceDescriptor pd) {
-        byte[] textBuffer = text;
         if (StringUtil.BIG5.equals(pd.getCharset())) {
             return new StringBuilder(CodePageUtil.cp950ToString(text, 0, text.length));
         }
 
-        String str = new String(textBuffer, 0, textBuffer.length, (pd.isUnicode()) ? StringUtil.UTF16LE : pd.getCharset());
+        String str = new String(text, 0, text.length, (pd.isUnicode()) ? StringUtil.UTF16LE : pd.getCharset());
         return new StringBuilder(str);
     }
 

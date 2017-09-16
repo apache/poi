@@ -187,11 +187,10 @@ public class FieldsImpl implements Fields
             {
             case FieldDescriptor.FIELD_SEPARATOR_MARK:
             {
-                PlexOfField separatorPlexOfField = nextPlexOfField;
 
                 int endNodePositionInList = binarySearch( plexOfFields,
                         nextNodePositionInList, endOffsetExclusive,
-                        separatorPlexOfField.getFcEnd() );
+                        nextPlexOfField.getFcEnd() );
                 if ( endNodePositionInList < 0 )
                 {
                     /*
@@ -212,17 +211,17 @@ public class FieldsImpl implements Fields
                 }
 
                 FieldImpl field = new FieldImpl( startPlexOfField,
-                        separatorPlexOfField, endPlexOfField );
+                        nextPlexOfField, endPlexOfField );
                 result.add( field );
 
                 // adding included fields
-                if ( startPlexOfField.getFcStart() + 1 < separatorPlexOfField
+                if ( startPlexOfField.getFcStart() + 1 < nextPlexOfField
                         .getFcStart() - 1 )
                 {
                     parseFieldStructureImpl( plexOfFields, next + 1,
                             nextNodePositionInList, result );
                 }
-                if ( separatorPlexOfField.getFcStart() + 1 < endPlexOfField
+                if ( nextPlexOfField.getFcStart() + 1 < endPlexOfField
                         .getFcStart() - 1 )
                 {
                     parseFieldStructureImpl( plexOfFields,

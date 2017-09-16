@@ -136,8 +136,7 @@ public final class HWPFList
                     + " is more than number of level for list ("
                     + _listData.numLevels() + ")" );
         }
-        ListLevel lvl = _listData.getLevels()[level];
-        return lvl;
+        return _listData.getLevels()[level];
     }
 
     /**

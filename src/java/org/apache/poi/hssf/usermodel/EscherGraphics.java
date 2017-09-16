@@ -151,9 +151,8 @@ public class EscherGraphics extends Graphics
     @Override
     public Graphics create()
     {
-        EscherGraphics g = new EscherGraphics(escherGroup, workbook,
+        return new EscherGraphics(escherGroup, workbook,
                 foreground, font, verticalPointsPerPixel );
-        return g;
     }
 
     @Override

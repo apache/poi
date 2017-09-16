@@ -108,8 +108,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     private UnicodeString cloneStringIfRequired() {
       if (_book == null)
         return _string;
-      UnicodeString s = (UnicodeString)_string.clone();
-      return s;
+        return (UnicodeString)_string.clone();
     }
 
     private void addToSSTIfRequired() {

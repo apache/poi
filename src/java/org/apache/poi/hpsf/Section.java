@@ -955,8 +955,7 @@ public class Section {
         for (int i = 0; i < pa.length; i++) {
             hashCode += pa[i].hashCode();
         }
-        final int returnHashCode = (int) (hashCode & 0x0ffffffffL);
-        return returnHashCode;
+        return (int) (hashCode & 0x0ffffffffL);
     }
 
 

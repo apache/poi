@@ -422,8 +422,7 @@ public final class BiffViewer {
             } else {
                 boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
                 boolean dumpHex = cmdArgs.shouldDumpBiffHex();
-                boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
-                runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
+                runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, dumpInterpretedRecords,
                         cmdArgs.suppressHeader());
             }
         } finally {

@@ -139,8 +139,7 @@ public String[][] getParameterInfo() {
       System.out.println(field);
       field = uc.getHeaderField(i);
   }
-    BufferedInputStream is = new BufferedInputStream(uc.getInputStream());
-    return is;
+      return new BufferedInputStream(uc.getInputStream());
   }
 
 

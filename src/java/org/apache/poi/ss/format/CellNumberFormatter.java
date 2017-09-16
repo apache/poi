@@ -245,13 +245,12 @@ public class CellNumberFormatter extends CellFormatter {
         } else {
             StringBuffer fmtBuf = new StringBuffer();
             boolean first = true;
-            List<Special> specialList = integerSpecials;
             if (integerSpecials.size() == 1) {
                 // If we don't do this, we get ".6e5" instead of "6e4"
                 fmtBuf.append("0");
                 first = false;
             } else
-                for (Special s : specialList) {
+                for (Special s : integerSpecials) {
                     if (isDigitFmt(s)) {
                         fmtBuf.append(first ? '#' : '0');
                         first = false;

@@ -194,8 +194,7 @@ public abstract class AbstractWordConverter
         original.bold = characterRun.isBold();
         original.italic = characterRun.isItalic();
         original.fontName = characterRun.getFontName();
-        Triplet updated = getFontReplacer().update( original );
-        return updated;
+        return getFontReplacer().update( original );
     }
 
     public abstract Document getDocument();

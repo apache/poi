@@ -1378,9 +1378,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * a new instance.
      */
     private CTPPr getCTPPr() {
-        CTPPr pr = paragraph.getPPr() == null ? paragraph.addNewPPr()
+        return paragraph.getPPr() == null ? paragraph.addNewPPr()
                 : paragraph.getPPr();
-        return pr;
     }
 
 

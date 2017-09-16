@@ -151,8 +151,7 @@ public final class PAPX extends BytePropertyNode<PAPX> {
             
         short istd = getIstd();
         ParagraphProperties baseStyle = ss.getParagraphStyle(istd);
-        ParagraphProperties props = ParagraphSprmUncompressor.uncompressPAP(baseStyle, getGrpprl(), 2);
-        return props;
+        return ParagraphSprmUncompressor.uncompressPAP(baseStyle, getGrpprl(), 2);
     }
 
     @Override

@@ -491,10 +491,8 @@ public final class InternalWorkbook {
             "There are only " + numfonts
             + " font records, you asked for " + idx);
         }
-        FontRecord retval =
-        ( FontRecord ) records.get((records.getFontpos() - (numfonts - 1)) + index);
 
-        return retval;
+        return ( FontRecord ) records.get((records.getFontpos() - (numfonts - 1)) + index);
     }
 
     /**
@@ -867,10 +865,8 @@ public final class InternalWorkbook {
         int xfptr = records.getXfpos() - (numxfs - 1);
 
         xfptr += index;
-        ExtendedFormatRecord retval =
-        ( ExtendedFormatRecord ) records.get(xfptr);
 
-        return retval;
+        return ( ExtendedFormatRecord ) records.get(xfptr);
     }
 
     /**

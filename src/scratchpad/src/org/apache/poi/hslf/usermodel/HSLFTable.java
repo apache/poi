@@ -402,8 +402,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         }
         
         // TODO: check for merged cols
-        double width = cells[0][col].getAnchor().getWidth();
-        return width;
+        return cells[0][col].getAnchor().getWidth();
     }
 
     @Override

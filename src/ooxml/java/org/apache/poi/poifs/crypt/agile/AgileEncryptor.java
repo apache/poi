@@ -220,8 +220,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
     public OutputStream getDataStream(DirectoryNode dir)
             throws IOException, GeneralSecurityException {
         // TODO: initialize headers
-        AgileCipherOutputStream countStream = new AgileCipherOutputStream(dir);
-    	return countStream;
+        return new AgileCipherOutputStream(dir);
     }
 
     /**

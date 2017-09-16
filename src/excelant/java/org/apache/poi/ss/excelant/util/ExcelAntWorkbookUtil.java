@@ -154,9 +154,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
         }
 
         UDFFinder udff1 = new DefaultUDFFinder(names, functions);
-        UDFFinder udff = new AggregatingUDFFinder(udff1);
 
-        return udff;
+        return new AggregatingUDFFinder(udff1);
 
     }
 

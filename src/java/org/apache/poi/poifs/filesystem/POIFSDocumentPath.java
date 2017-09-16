@@ -256,9 +256,8 @@ public class POIFSDocumentPath
         }
         String[] parentComponents = new String[ length ];
         System.arraycopy(components, 0, parentComponents, 0, length);
-        POIFSDocumentPath parent = new POIFSDocumentPath(parentComponents);
-        
-        return parent;
+
+        return new POIFSDocumentPath(parentComponents);
     }
     
     /**

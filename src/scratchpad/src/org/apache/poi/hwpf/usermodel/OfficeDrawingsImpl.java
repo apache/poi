@@ -237,9 +237,8 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                         .lookup( propertyId );
                 if ( escherProperty == null )
                     return defaultValue;
-                int value = escherProperty.getPropertyValue();
 
-                return value;
+                return escherProperty.getPropertyValue();
             }
 
             public VerticalPositioning getVerticalPositioning()

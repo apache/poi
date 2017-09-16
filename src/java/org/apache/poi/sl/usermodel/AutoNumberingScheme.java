@@ -174,8 +174,7 @@ public enum AutoNumberingScheme {
     public String format(int value) {
         String index = formatIndex(value);
         String cased = formatCase(index);
-        String seperated = formatSeperator(cased);
-        return seperated;
+        return formatSeperator(cased);
     }
 
     private String formatSeperator(String cased) {

@@ -723,8 +723,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public Insets2D getInsets() {
-        Insets2D insets = new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
-        return insets;
+        return new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
     }
 
     @Override

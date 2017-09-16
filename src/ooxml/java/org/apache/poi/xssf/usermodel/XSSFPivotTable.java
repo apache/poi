@@ -225,8 +225,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     protected AreaReference getPivotArea() {
         final Workbook wb = getDataSheet().getWorkbook();
-        AreaReference pivotArea = getPivotCacheDefinition().getPivotArea(wb);
-        return pivotArea;
+        return getPivotCacheDefinition().getPivotArea(wb);
     }
     
     /**

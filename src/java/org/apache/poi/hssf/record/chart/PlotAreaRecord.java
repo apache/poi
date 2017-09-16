@@ -64,8 +64,6 @@ public final class PlotAreaRecord extends StandardRecord {
     }
 
     public Object clone() {
-        PlotAreaRecord rec = new PlotAreaRecord();
-    
-        return rec;
+        return new PlotAreaRecord();
     }
 }

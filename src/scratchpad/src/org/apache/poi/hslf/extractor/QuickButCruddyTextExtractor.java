@@ -144,8 +144,7 @@ public final class QuickButCruddyTextExtractor {
 
 		// Start walking the file, looking for the records
 		while(walkPos != -1) {
-			int newPos = findTextRecords(walkPos,textV);
-			walkPos = newPos;
+            walkPos = findTextRecords(walkPos,textV);
 		}
 
 		// Return what we find

@@ -128,8 +128,7 @@ public final class FormatRecord extends StandardRecord implements Cloneable {
             throw new IllegalArgumentException("Bad requested string length (" + requestedLength + ")");
         }
         char[] buf = null;
-        boolean isCompressedEncoding = pIsCompressedEncoding;
-        int availableChars = isCompressedEncoding ? ris.remaining() : ris.remaining() / LittleEndianConsts.SHORT_SIZE;
+        int availableChars = pIsCompressedEncoding ? ris.remaining() : ris.remaining() / LittleEndianConsts.SHORT_SIZE;
         //everything worked out.  Great!
         int remaining = ris.remaining();
         if (requestedLength == availableChars) {
@@ -142,7 +141,7 @@ public final class FormatRecord extends StandardRecord implements Cloneable {
         }
         for (int i = 0; i < buf.length; i++) {
             char ch;
-            if (isCompressedEncoding) {
+            if (pIsCompressedEncoding) {
                 ch = (char) ris.readUByte();
             } else {
                 ch = (char) ris.readShort();

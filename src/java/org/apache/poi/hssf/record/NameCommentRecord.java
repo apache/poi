@@ -84,22 +84,21 @@ public final class NameCommentRecord extends StandardRecord {
    * @param ris the RecordInputstream to read the record from
    */
   public NameCommentRecord(final RecordInputStream ris) {
-    final LittleEndianInput in = ris;
-    field_1_record_type = in.readShort();
-    field_2_frt_cell_ref_flag = in.readShort();
-    field_3_reserved = in.readLong();
-    final int field_4_name_length = in.readShort();
-    final int field_5_comment_length = in.readShort();
+      field_1_record_type = ris.readShort();
+    field_2_frt_cell_ref_flag = ris.readShort();
+    field_3_reserved = ris.readLong();
+    final int field_4_name_length = ris.readShort();
+    final int field_5_comment_length = ris.readShort();
 
-    if (in.readByte() == 0) {
-        field_6_name_text = StringUtil.readCompressedUnicode(in, field_4_name_length);
+    if (ris.readByte() == 0) {
+        field_6_name_text = StringUtil.readCompressedUnicode(ris, field_4_name_length);
     } else {
-        field_6_name_text = StringUtil.readUnicodeLE(in, field_4_name_length);
+        field_6_name_text = StringUtil.readUnicodeLE(ris, field_4_name_length);
     }
-    if (in.readByte() == 0) {
-        field_7_comment_text = StringUtil.readCompressedUnicode(in, field_5_comment_length);
+    if (ris.readByte() == 0) {
+        field_7_comment_text = StringUtil.readCompressedUnicode(ris, field_5_comment_length);
     } else {
-        field_7_comment_text = StringUtil.readUnicodeLE(in, field_5_comment_length);
+        field_7_comment_text = StringUtil.readUnicodeLE(ris, field_5_comment_length);
     }    
   }
 
