@@ -42,17 +42,17 @@ public final class TestPOILogger extends POILogger {
             POILogger log = POILogFactory.getLogger( "foo" );
             assertTrue(log instanceof TestPOILogger);
             
-            TestPOILogger tlog = (TestPOILogger)log;
+            TestPOILogger tLog = (TestPOILogger)log;
     
             log.log(POILogger.WARN, "Test = ", 1);
-            assertEquals("Test = 1", tlog.lastLog);
+            assertEquals("Test = 1", tLog.lastLog);
             
             log.log(POILogger.ERROR, "Test ", 1,2,new Exception("bla"));
-            assertEquals("Test 12", tlog.lastLog);
-            assertNotNull(tlog.lastEx);
+            assertEquals("Test 12", tLog.lastLog);
+            assertNotNull(tLog.lastEx);
             
             log.log(POILogger.ERROR, "log\nforging", "\nevil","\nlog");
-            assertEquals("log forging evil log", tlog.lastLog);
+            assertEquals("log forging evil log", tLog.lastLog);
         } finally {
             POILogFactory._loggerClassName = oldLCN;
         }
