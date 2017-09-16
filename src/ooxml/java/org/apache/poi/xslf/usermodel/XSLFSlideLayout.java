@@ -51,7 +51,6 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
         SldLayoutDocument doc =
                 SldLayoutDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _layout = doc.getSldLayout();
-        setCommonSlideData(_layout.getCSld());
     }
 
     public String getName() {
