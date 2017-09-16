@@ -97,8 +97,8 @@ def jdkMapping = [
     '1.6': 'JDK 1.6 (latest)',
     '1.7': 'JDK 1.7 (latest)',
     '1.8': 'JDK 1.8 (latest)',
-    '1.9': 'JDK 9 b179 (early access build)',
-    'OpenJDK': 'OpenJDK 6 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
+    '1.9': 'JDK 1.9 (latest)',
+    'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
     'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
 
