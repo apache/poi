@@ -118,7 +118,6 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -218,8 +217,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     private HSSFWorkbook(InternalWorkbook book) {
         super((DirectoryNode)null);
         workbook = book;
-        _sheets = new ArrayList<HSSFSheet>(INITIAL_CAPACITY);
-        names = new ArrayList<HSSFName>(INITIAL_CAPACITY);
+        _sheets = new ArrayList<>(INITIAL_CAPACITY);
+        names = new ArrayList<>(INITIAL_CAPACITY);
     }
 
     /**
@@ -346,8 +345,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             clearDirectory();
         }
 
-        _sheets = new ArrayList<HSSFSheet>(INITIAL_CAPACITY);
-        names  = new ArrayList<HSSFName>(INITIAL_CAPACITY);
+        _sheets = new ArrayList<>(INITIAL_CAPACITY);
+        names  = new ArrayList<>(INITIAL_CAPACITY);
 
         // Grab the data from the workbook stream, however
         //  it happens to be spelled.
@@ -607,7 +606,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param indexes Array of sheets to select, the index is 0-based.
      */
     public void setSelectedTabs(int[] indexes) {
-        Collection<Integer> list = new ArrayList<Integer>(indexes.length);
+        Collection<Integer> list = new ArrayList<>(indexes.length);
         for (int index : indexes) {
             list.add(index);
         }
@@ -627,7 +626,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             validateSheetIndex(index);
         }
         // ignore duplicates
-        Set<Integer> set = new HashSet<Integer>(indexes);
+        Set<Integer> set = new HashSet<>(indexes);
         int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
             boolean bSelect = set.contains(i);
@@ -644,7 +643,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @return indices of selected sheets
      */
     public Collection<Integer> getSelectedTabs() {
-        Collection<Integer> indexes = new ArrayList<Integer>();
+        Collection<Integer> indexes = new ArrayList<>();
         int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
             HSSFSheet sheet = getSheetAt(i);
@@ -767,26 +766,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
-    @Removal(version="3.18")
-    @Deprecated
-    @Override
-    public void setSheetHidden(int sheetIx, int hidden) {
-        switch (hidden) {
-            case Workbook.SHEET_STATE_VISIBLE:
-                setSheetVisibility(sheetIx, SheetVisibility.VISIBLE);
-                break;
-            case Workbook.SHEET_STATE_HIDDEN:
-                setSheetVisibility(sheetIx, SheetVisibility.HIDDEN);
-                break;
-            case Workbook.SHEET_STATE_VERY_HIDDEN:
-                setSheetVisibility(sheetIx, SheetVisibility.VERY_HIDDEN);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid sheet state : " + hidden + "\n" +
-                        "Sheet state must beone of the Workbook.SHEET_STATE_* constants");
-        }
-    }
-    
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
@@ -967,7 +946,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public Iterator<Sheet> sheetIterator() {
-        return new SheetIterator<Sheet>();
+        return new SheetIterator<>();
     }
 
     /**
@@ -981,7 +960,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {
         final private Iterator<T> it;
-        private T cursor = null;
+        private T cursor;
         @SuppressWarnings("unchecked")
         public SheetIterator() {
             it = (Iterator<T>) _sheets.iterator();
@@ -1256,7 +1235,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     @Override
     public HSSFFont getFontAt(short idx) {
         if(fonts == null) {
-            fonts = new HashMap<Short, HSSFFont>();
+            fonts = new HashMap<>();
         }
 
         // So we don't confuse users, give them back
@@ -1281,7 +1260,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *  and that's not something you should normally do
      */
     protected void resetFontCache() {
-        fonts = new HashMap<Short, HSSFFont>();
+        fonts = new HashMap<>();
     }
 
     /**
@@ -1422,7 +1401,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     private void write(NPOIFSFileSystem fs) throws IOException {
         // For tracking what we've written out, used if we're
         //  going to be preserving nodes
-        List<String> excepts = new ArrayList<String>(1);
+        List<String> excepts = new ArrayList<>(1);
 
         // Write out the Workbook stream
         fs.createDocument(new ByteArrayInputStream(getBytes()), "Workbook");
@@ -1466,7 +1445,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         public SheetRecordCollector() {
             _totalSize = 0;
-            _list = new ArrayList<Record>(128);
+            _list = new ArrayList<>(128);
         }
         public int getTotalSize() {
             return _totalSize;
@@ -1618,7 +1597,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     @Override
     public List<HSSFName> getNames(String name) {
-        List<HSSFName> nameList = new ArrayList<HSSFName>();
+        List<HSSFName> nameList = new ArrayList<>();
         for(HSSFName nr : names) {
             if(nr.getNameName().equals(name)) {
                 nameList.add(nr);
@@ -1991,7 +1970,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public List<HSSFPictureData> getAllPictures()
     {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
-        List<HSSFPictureData> pictures = new ArrayList<HSSFPictureData>();
+        List<HSSFPictureData> pictures = new ArrayList<>();
         for (Record r : workbook.getRecords()) {
             if (r instanceof AbstractEscherHolderRecord) {
                 ((AbstractEscherHolderRecord) r).decode();
@@ -2032,7 +2011,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     protected static Map<String,ClassID> getOleMap() {
-    	Map<String,ClassID> olemap = new HashMap<String,ClassID>();
+    	Map<String,ClassID> olemap = new HashMap<>();
     	olemap.put("PowerPoint Document", ClassID.PPT_SHOW);
     	for (String str : WORKBOOK_DIR_ENTRY_NAMES) {
     		olemap.put(str, ClassID.XLS_WORKBOOK);
@@ -2144,7 +2123,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     public List<HSSFObjectData> getAllEmbeddedObjects()
     {
-        List<HSSFObjectData> objects = new ArrayList<HSSFObjectData>();
+        List<HSSFObjectData> objects = new ArrayList<>();
         for (HSSFSheet sheet : _sheets)
         {
             getAllEmbeddedObjects(sheet, objects);
@@ -2256,15 +2235,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 	 */
     public boolean changeExternalReference(String oldUrl, String newUrl) {
     	return workbook.changeExternalReference(oldUrl, newUrl);
-    }
-
-    /** 
-     * @deprecated POI 3.16 beta 1. use {@link POIDocument#getDirectory()} instead
-     */
-    @Deprecated
-    @Removal(version="3.18")
-    public DirectoryNode getRootDirectory(){
-        return getDirectory();
     }
     
     @Internal

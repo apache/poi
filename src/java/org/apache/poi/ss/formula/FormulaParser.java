@@ -736,7 +736,7 @@ public final class FormulaParser {
         // Done reading from input stream
         // Ok to return now
 
-        if (isTotalsSpec && !tbl.isHasTotalsRow()) {
+        if (isTotalsSpec && tbl.getTotalsRowCount() == 0) {
             return new ParseNode(ErrPtg.REF_INVALID);
         }
         if ((isThisRow || isThisRowSpec) && (_rowIndex < startRow || endRow < _rowIndex)) {
@@ -759,14 +759,14 @@ public final class FormulaParser {
             if (nSpecQuantifiers == 1 && isAllSpec) {
                 //do nothing
             } else if (isDataSpec && isHeadersSpec) {
-                if (tbl.isHasTotalsRow()) {
+                if (tbl.getTotalsRowCount() > 0) {
                     actualEndRow = endRow - 1;
                 }
             } else if (isDataSpec && isTotalsSpec) {
                 actualStartRow = startRow + 1;
             } else if (nSpecQuantifiers == 1 && isDataSpec) {
                 actualStartRow = startRow + 1;
-                if (tbl.isHasTotalsRow()) {
+                if (tbl.getTotalsRowCount() > 0) {
                     actualEndRow = endRow - 1;
                 }
             } else if (nSpecQuantifiers == 1 && isHeadersSpec) {
@@ -785,7 +785,7 @@ public final class FormulaParser {
                 actualEndRow = _rowIndex; 
             } else { // Really no special quantifiers
                 actualStartRow++;
-                if (tbl.isHasTotalsRow()) actualEndRow--;
+                if (tbl.getTotalsRowCount() > 0) actualEndRow--;
             }
         }
 
@@ -1448,7 +1448,7 @@ public final class FormulaParser {
     /** get arguments to a function */
     private ParseNode[] Arguments() {
         //average 2 args per function
-        List<ParseNode> temp = new ArrayList<ParseNode>(2);
+        List<ParseNode> temp = new ArrayList<>(2);
         SkipWhite();
         if(look == ')') {
             return ParseNode.EMPTY_ARRAY;
@@ -1576,7 +1576,7 @@ public final class FormulaParser {
     }
 
     private ParseNode parseArray() {
-        List<Object[]> rowsData = new ArrayList<Object[]>();
+        List<Object[]> rowsData = new ArrayList<>();
         while(true) {
             Object[] singleRowData = parseArrayRow();
             rowsData.add(singleRowData);
@@ -1607,7 +1607,7 @@ public final class FormulaParser {
     }
 
     private Object[] parseArrayRow() {
-        List<Object> temp = new ArrayList<Object>();
+        List<Object> temp = new ArrayList<>();
         while (true) {
             temp.add(parseArrayItem());
             SkipWhite();

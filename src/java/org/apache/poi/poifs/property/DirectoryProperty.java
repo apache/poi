@@ -46,8 +46,8 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
     public DirectoryProperty(String name)
     {
         super();
-        _children       = new ArrayList<Property>();
-        _children_names = new HashSet<String>();
+        _children       = new ArrayList<>();
+        _children_names = new HashSet<>();
         setName(name);
         setSize(0);
         setPropertyType(PropertyConstants.DIRECTORY_TYPE);
@@ -66,8 +66,8 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
                                 final int offset)
     {
         super(index, array, offset);
-        _children       = new ArrayList<Property>();
-        _children_names = new HashSet<String>();
+        _children       = new ArrayList<>();
+        _children_names = new HashSet<>();
     }
 
     /**

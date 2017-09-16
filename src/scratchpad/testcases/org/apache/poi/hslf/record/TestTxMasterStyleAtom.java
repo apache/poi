@@ -201,7 +201,7 @@ public final class TestTxMasterStyleAtom extends TestCase {
      * There must be a TxMasterStyleAtom per each type of text defined in TextHeaderAtom
      */
     protected TxMasterStyleAtom[] getMasterStyles(){
-        List<TxMasterStyleAtom> lst = new ArrayList<TxMasterStyleAtom>();
+        List<TxMasterStyleAtom> lst = new ArrayList<>();
 
         Record[] coreRecs = _ppt.getMostRecentCoreRecords();
         for (final Record coreRec : coreRecs) {

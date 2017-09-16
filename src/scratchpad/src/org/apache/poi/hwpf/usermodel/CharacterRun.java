@@ -657,8 +657,7 @@ public final class CharacterRun extends Range
                         getPicOffset() );
                 FFData ffData = new FFData( data.getBinData(), 0 );
 
-                String[] values = ffData.getDropList();
-                return values;
+                return ffData.getDropList();
             }
         }
         return null;

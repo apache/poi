@@ -39,7 +39,7 @@ public final class EscherDggRecord extends EscherRecord {
     // private int field_2_numIdClusters;
     private int field_3_numShapesSaved;
     private int field_4_drawingsSaved;
-    private final List<FileIdCluster> field_5_fileIdClusters = new ArrayList<FileIdCluster>();
+    private final List<FileIdCluster> field_5_fileIdClusters = new ArrayList<>();
     private int maxDgId;
 
     public static class FileIdCluster {
@@ -329,7 +329,7 @@ public final class EscherDggRecord extends EscherRecord {
     
     @Override
     protected Object[][] getAttributeMap() {
-        List<Object> fldIds = new ArrayList<Object>();
+        List<Object> fldIds = new ArrayList<>();
         fldIds.add("FileId Clusters");
         fldIds.add(field_5_fileIdClusters.size());
         for (FileIdCluster fic : field_5_fileIdClusters) {

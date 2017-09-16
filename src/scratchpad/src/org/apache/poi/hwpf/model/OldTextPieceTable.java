@@ -98,7 +98,7 @@ public class OldTextPieceTable extends TextPieceTable {
         // In the interest of our sanity, now sort the text pieces
         // into order, if they're not already
         Collections.sort(_textPieces);
-        _textPiecesFCOrder = new ArrayList<TextPiece>(_textPieces);
+        _textPiecesFCOrder = new ArrayList<>(_textPieces);
         Collections.sort(_textPiecesFCOrder, new FCComparator());
 
     }

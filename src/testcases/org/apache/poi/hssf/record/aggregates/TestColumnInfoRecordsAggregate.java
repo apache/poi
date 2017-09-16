@@ -64,7 +64,7 @@ public final class TestColumnInfoRecordsAggregate {
 
 	private static final class CIRCollector implements RecordVisitor {
 
-		private final List<Record> _list = new ArrayList<Record>();
+		private final List<Record> _list = new ArrayList<>();
 
 		@Override
         public void visitRecord(Record r) {
@@ -74,9 +74,7 @@ public final class TestColumnInfoRecordsAggregate {
 		public static ColumnInfoRecord[] getRecords(ColumnInfoRecordsAggregate agg) {
 			CIRCollector circ = new CIRCollector();
 			agg.visitContainedRecords(circ);
-			ColumnInfoRecord[] result =
-	            circ._list.toArray(new ColumnInfoRecord[circ._list.size()]);
-			return result;
+            return circ._list.toArray(new ColumnInfoRecord[circ._list.size()]);
 		}
 	}
 

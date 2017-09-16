@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
  */
 public final class XSSFGraphicFrame extends XSSFShape {
 
-	private static CTGraphicalObjectFrame prototype = null;
+	private static CTGraphicalObjectFrame prototype;
 
 	private CTGraphicalObjectFrame graphicFrame;
 

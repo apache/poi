@@ -168,8 +168,8 @@ public class TestHxxFEncryption {
         EncryptionInfo ei = doc.getEncryptionInfo();
         assertNotNull(ei);
         assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
-        assertEquals(0x28, ((CryptoAPIEncryptionHeader)ei.getHeader()).getKeySize());
-        ((CryptoAPIEncryptionHeader)ei.getHeader()).setKeySize(0x78);
+        assertEquals(0x28, ei.getHeader().getKeySize());
+        ei.getHeader().setKeySize(0x78);
         bos.reset();
         doc.write(bos);
         doc.close();
@@ -180,7 +180,7 @@ public class TestHxxFEncryption {
         ei = doc.getEncryptionInfo();
         assertNotNull(ei);
         assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
-        assertEquals(0x78, ((CryptoAPIEncryptionHeader)ei.getHeader()).getKeySize());
+        assertEquals(0x78, ei.getHeader().getKeySize());
         doc.close();
         te4.close();
     }

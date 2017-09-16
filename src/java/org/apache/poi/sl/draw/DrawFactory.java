@@ -43,7 +43,7 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.JvmBugs;
 
 public class DrawFactory {
-    protected static final ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<DrawFactory>();
+    protected static final ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<>();
 
     /**
      * Set a custom draw factory for the current thread.
@@ -224,7 +224,7 @@ public class DrawFactory {
         @SuppressWarnings("unchecked")
         Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
         if (fontMap == null) {
-            fontMap = new HashMap<String,String>();
+            fontMap = new HashMap<>();
             graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);
         }
         

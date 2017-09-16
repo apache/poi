@@ -42,7 +42,6 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
     XSLFNotes() {
         super();
         _notes = prototype();
-        setCommonSlideData(_notes.getCSld());
     }
 
     /**
@@ -61,7 +60,6 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
         NotesDocument doc =
             NotesDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _notes = doc.getNotes();
-        setCommonSlideData(_notes.getCSld());
     }
 
     private static CTNotesSlide prototype(){
@@ -99,7 +97,7 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public List<List<XSLFTextParagraph>> getTextParagraphs() {
-        List<List<XSLFTextParagraph>> tp = new ArrayList<List<XSLFTextParagraph>>();
+        List<List<XSLFTextParagraph>> tp = new ArrayList<>();
         for (XSLFShape sh : super.getShapes()) {
             if (sh instanceof XSLFTextShape) {
                 XSLFTextShape txt = (XSLFTextShape)sh;

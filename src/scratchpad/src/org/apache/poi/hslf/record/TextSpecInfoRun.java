@@ -120,7 +120,7 @@ public class TextSpecInfoRun {
     private short bidi = -1;
     
     private int pp10extMask = -1;
-    private byte[] smartTagsBytes = null;
+    private byte[] smartTagsBytes;
 
     /**
      * Inits a TextSpecInfoRun with default values

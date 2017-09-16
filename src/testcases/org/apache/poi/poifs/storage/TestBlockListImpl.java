@@ -174,7 +174,7 @@ public final class TestBlockListImpl {
         // that includes a reserved (XBAT) block, and one that
         // points off into space somewhere
         BlockListImpl list       = create();
-        List<RawDataBlock>  raw_blocks = new ArrayList<RawDataBlock>();
+        List<RawDataBlock>  raw_blocks = new ArrayList<>();
         byte[]        data       = new byte[ 512 ];
         int           offset     = 0;
 

@@ -42,7 +42,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 public class FormulaViewer
 {
     private String file;
-    private boolean list=false;
+    private boolean list;
 
     /** Creates new FormulaViewer */
 
@@ -185,7 +185,7 @@ public class FormulaViewer
     
     private static String composeFormula(FormulaRecord record)
     {
-       return  HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, record.getParsedExpression());
+       return  HSSFFormulaParser.toFormulaString(null, record.getParsedExpression());
     }
 
     /**

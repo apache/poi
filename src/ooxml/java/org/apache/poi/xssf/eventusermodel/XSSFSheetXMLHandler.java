@@ -162,7 +162,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    
    private void init() {
        if (commentsTable != null) {
-           commentCellRefs = new LinkedList<CellAddress>();
+           commentCellRefs = new LinkedList<>();
            //noinspection deprecation
            for (CTComment comment : commentsTable.getCTComments().getCommentList().getCommentArray()) {
                commentCellRefs.add(new CellAddress(comment.getRef()));

@@ -44,9 +44,9 @@ public class ExcelAntTest extends Task{
 	
 	private double globalPrecision;
 	
-	private boolean showSuccessDetails = false;
+	private boolean showSuccessDetails;
 	
-	private boolean showFailureDetail = false;
+	private boolean showFailureDetail;
 	LinkedList<String> failureMessages;
 	
 
@@ -56,9 +56,9 @@ public class ExcelAntTest extends Task{
 
 	
 	public ExcelAntTest() {
-		evaluators = new LinkedList<ExcelAntEvaluateCell>();
-		failureMessages = new LinkedList<String>();
-		testTasks = new LinkedList<Task>();
+		evaluators = new LinkedList<>();
+		failureMessages = new LinkedList<>();
+		testTasks = new LinkedList<>();
 	}
 	
 	public void setPrecision( double precision ) {

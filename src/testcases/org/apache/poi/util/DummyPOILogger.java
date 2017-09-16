@@ -25,10 +25,10 @@ import java.util.List;
  */
 @Internal
 public class DummyPOILogger extends POILogger {
-	public List<String>logged = new ArrayList<String>(); 
+	public List<String>logged = new ArrayList<>();
 
 	public void reset() {
-		logged = new ArrayList<String>();
+		logged = new ArrayList<>();
 	}
 	
     @Override

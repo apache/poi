@@ -57,8 +57,7 @@ public class TestWordToFoConverter
                 new DOMSource( wordToFoConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
 
-        String result = stringWriter.toString();
-        return result;
+        return stringWriter.toString();
     }
 
     @Test

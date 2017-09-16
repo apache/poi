@@ -40,7 +40,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
         _row = row;
         _table = table;
         CTTableCell[] tcArray = _row.getTcArray();
-        _cells = new ArrayList<XSLFTableCell>(tcArray.length);
+        _cells = new ArrayList<>(tcArray.length);
         for(CTTableCell cell : tcArray) {
             _cells.add(new XSLFTableCell(cell, table));
         }

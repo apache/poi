@@ -95,8 +95,8 @@ public final class WorkbookEvaluator {
         _workbook = workbook;
         _evaluationListener = evaluationListener;
         _cache = new EvaluationCache(evaluationListener);
-        _sheetIndexesBySheet = new IdentityHashMap<EvaluationSheet, Integer>();
-        _sheetIndexesByName = new IdentityHashMap<String, Integer>();
+        _sheetIndexesBySheet = new IdentityHashMap<>();
+        _sheetIndexesByName = new IdentityHashMap<>();
         _collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
         _workbookIx = 0;
         _stabilityClassifier = stabilityClassifier;
@@ -125,8 +125,7 @@ public final class WorkbookEvaluator {
     }
 
     /* package */ EvaluationName getName(String name, int sheetIndex) {
-        EvaluationName evalName = _workbook.getName(name, sheetIndex);
-        return evalName;
+        return _workbook.getName(name, sheetIndex);
     }
 
     private static boolean isDebugLogEnabled() {
@@ -401,7 +400,7 @@ public final class WorkbookEvaluator {
             dbgEvaluationOutputIndent++;
         }
 
-        Stack<ValueEval> stack = new Stack<ValueEval>();
+        Stack<ValueEval> stack = new Stack<>();
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
@@ -530,14 +529,15 @@ public final class WorkbookEvaluator {
             throw new IllegalStateException("evaluation stack not empty");
         }
         
-        // "unwrap" result to just the value relevant for the source cell if needed
         ValueEval result;
+        
         if (ec.isSingleValue()) {
-            result = dereferenceResult(value, ec.getRowIndex(), ec.getColumnIndex());
-        } else {
+            result = dereferenceResult(value, ec);
+        }
+        else {
             result = value;
         }
-        
+
         if (dbgEvaluationOutputIndent > 0) {
             EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "finshed eval of "
                             + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
@@ -572,6 +572,38 @@ public final class WorkbookEvaluator {
             }
         }
         return index-startIndex;
+    }
+    
+    /**
+     * Dereferences a single value from any AreaEval or RefEval evaluation
+     * result. If the supplied evaluationResult is just a plain value, it is
+     * returned as-is.
+     *
+     * @return a {@link NumberEval}, {@link StringEval}, {@link BoolEval}, or
+     *         {@link ErrorEval}. Never <code>null</code>. {@link BlankEval} is
+     *         converted to {@link NumberEval#ZERO}
+     */
+    private static ValueEval dereferenceResult(ValueEval evaluationResult, OperationEvaluationContext ec) {
+        ValueEval value;
+
+        if (ec == null) {
+            throw new IllegalArgumentException("OperationEvaluationContext ec is null");
+        }
+        if (ec.getWorkbook() == null) {
+            throw new IllegalArgumentException("OperationEvaluationContext ec.getWorkbook() is null");
+        }
+
+        EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
+        EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
+ 
+        if (evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
+            value = OperandResolver.getElementFromArray((AreaEval) evaluationResult, evalCell);
+        }
+        else {
+            value = dereferenceResult(evaluationResult, ec.getRowIndex(), ec.getColumnIndex());
+        }
+        
+        return value;
     }
 
     /**
@@ -665,6 +697,11 @@ public final class WorkbookEvaluator {
         if (ptg instanceof AreaPtg) {
            AreaPtg aptg = (AreaPtg) ptg;
            return ec.getAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
+        }
+        
+        if (ptg instanceof ArrayPtg) {
+           ArrayPtg aptg = (ArrayPtg) ptg;
+           return ec.getAreaValueEval(0, 0, aptg.getRowCount() - 1, aptg.getColumnCount() - 1, aptg.getTokenArrayValues());
         }
 
         if (ptg instanceof UnknownPtg) {
@@ -890,7 +927,7 @@ public final class WorkbookEvaluator {
      * @return names of functions supported by POI
      */
     public static Collection<String> getSupportedFunctionNames(){
-        Collection<String> lst = new TreeSet<String>();
+        Collection<String> lst = new TreeSet<>();
         lst.addAll(FunctionEval.getSupportedFunctionNames());
         lst.addAll(AnalysisToolPak.getSupportedFunctionNames());
         return Collections.unmodifiableCollection(lst);
@@ -902,7 +939,7 @@ public final class WorkbookEvaluator {
      * @return names of functions NOT supported by POI
      */
     public static Collection<String> getNotSupportedFunctionNames(){
-        Collection<String> lst = new TreeSet<String>();
+        Collection<String> lst = new TreeSet<>();
         lst.addAll(FunctionEval.getNotSupportedFunctionNames());
         lst.addAll(AnalysisToolPak.getNotSupportedFunctionNames());
         return Collections.unmodifiableCollection(lst);

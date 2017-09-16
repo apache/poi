@@ -47,7 +47,7 @@ class Vector {
         //of allocating array of length "length".
         //If the length is corrupted and crazily big but < Integer.MAX_VALUE,
         //this will trigger a RuntimeException "Buffer overrun" in lei.checkPosition
-        List<TypedPropertyValue> values = new ArrayList<TypedPropertyValue>();
+        List<TypedPropertyValue> values = new ArrayList<>();
         int paddedType = (_type == Variant.VT_VARIANT) ? 0 : _type;
         for ( int i = 0; i < length; i++ ) {
             TypedPropertyValue value = new TypedPropertyValue(paddedType, null);

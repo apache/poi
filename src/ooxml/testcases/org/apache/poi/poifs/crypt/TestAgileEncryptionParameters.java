@@ -58,7 +58,7 @@ public class TestAgileEncryptionParameters {
         HashAlgorithm haList[] = { HashAlgorithm.sha1, HashAlgorithm.sha256, HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.md5 };
         ChainingMode cmList[] = { ChainingMode.cbc, ChainingMode.cfb };
 
-        List<Object[]> data = new ArrayList<Object[]>();
+        List<Object[]> data = new ArrayList<>();
         for (CipherAlgorithm ca : caList) {
             for (HashAlgorithm ha : haList) {
                 for (ChainingMode cm : cmList) {

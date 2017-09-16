@@ -196,18 +196,21 @@ public final class IOUtils {
             }
         }
     }
-    
+
     /**
      * Write a POI Document ({@link org.apache.poi.ss.usermodel.Workbook}, {@link org.apache.poi.sl.usermodel.SlideShow}, etc) to an output stream and close the output stream.
      * This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
-     * 
+     *
      * If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
      * This function exists for Java 6 code.
      *
      * @param doc  a writeable document to write to the output stream
      * @param out  the output stream that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
+     *
+     * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
+    @Deprecated
     public static void write(POIDocument doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
@@ -215,18 +218,21 @@ public final class IOUtils {
             closeQuietly(out);
         }
     }
-    
+
     /**
      * Write a ({@link org.apache.poi.ss.usermodel.Workbook}) to an output stream and close the output stream.
      * This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
-     * 
+     *
      * If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
      * This function exists for Java 6 code.
      *
      * @param doc  a writeable document to write to the output stream
      * @param out  the output stream that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
+     *
+     * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
+    @Deprecated
     public static void write(Workbook doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
@@ -234,19 +240,22 @@ public final class IOUtils {
             closeQuietly(out);
         }
     }
-    
+
     /**
      * Write a POI Document ({@link org.apache.poi.ss.usermodel.Workbook}, {@link org.apache.poi.sl.usermodel.SlideShow}, etc) to an output stream and close the output stream.
      * This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
      * This will also attempt to close the document, even if an error occurred while writing the document or closing the output stream.
-     * 
+     *
      * If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
      * This function exists for Java 6 code.
      *
      * @param doc  a writeable and closeable document to write to the output stream, then close
      * @param out  the output stream that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
+     *
+     * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
+    @Deprecated
     public static void writeAndClose(POIDocument doc, OutputStream out) throws IOException {
         try {
             write(doc, out);
@@ -254,18 +263,21 @@ public final class IOUtils {
             closeQuietly(doc);
         }
     }
-    
+
     /**
      * Like {@link #writeAndClose(POIDocument, OutputStream)}, but for writing to a File instead of an OutputStream.
      * This will attempt to close the document, even if an error occurred while writing the document.
-     * 
+     *
      * If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
      * This function exists for Java 6 code.
      *
      * @param doc  a writeable and closeable document to write to the output file, then close
      * @param out  the output file that the document is written to
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the stream
+     *
+     * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
+    @Deprecated
     public static void writeAndClose(POIDocument doc, File out) throws IOException {
         try {
             doc.write(out);
@@ -273,17 +285,20 @@ public final class IOUtils {
             closeQuietly(doc);
         }
     }
-    
+
     /**
      * Like {@link #writeAndClose(POIDocument, File)}, but for writing a POI Document in place (to the same file that it was opened from).
      * This will attempt to close the document, even if an error occurred while writing the document.
-     * 
+     *
      * If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
      * This function exists for Java 6 code.
      *
      * @param doc  a writeable document to write in-place
-     * @throws IOException 
+     * @throws IOException thrown on errors writing to the file
+     *
+     * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
+    @Deprecated
     public static void writeAndClose(POIDocument doc) throws IOException {
         try {
             doc.write();
@@ -291,9 +306,14 @@ public final class IOUtils {
             closeQuietly(doc);
         }
     }
-    
+
     // Since the Workbook interface doesn't derive from POIDocument
     // We'll likely need one of these for each document container interface
+    /**
+     *
+     * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
+     */
+    @Deprecated
     public static void writeAndClose(Workbook doc, OutputStream out) throws IOException {
         try {
             doc.write(out);

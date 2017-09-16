@@ -162,7 +162,7 @@ public final class ContentType {
 			this.subType = mMediaType.group(2);
 			
 			// Parameters
-			this.parameters = new HashMap<String, String>();
+			this.parameters = new HashMap<>();
 			// Java RegExps are unhelpful, and won't do multiple group captures
 			// See http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html#cg
 			if (mMediaType.groupCount() >= 5) {

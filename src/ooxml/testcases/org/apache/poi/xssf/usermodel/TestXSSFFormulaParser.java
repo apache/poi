@@ -182,7 +182,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(0,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
-        assertEquals("[0]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+        assertEquals("[0]!NR_Global_B2", ptgs[0].toFormulaString());
 
         wb.close();
     }
@@ -200,7 +200,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(Ref3DPxg.class, ptgs[0].getClass());
         assertEquals(-1,   ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
-        assertEquals("Uses!A1", ((Ref3DPxg)ptgs[0]).toFormulaString());
+        assertEquals("Uses!A1", ptgs[0].toFormulaString());
         
         // Reference to a single cell in a different sheet, which needs quoting
         ptgs = parse(fpb, "'Testing 47100'!A1");
@@ -209,7 +209,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(-1,   ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Testing 47100", ((Ref3DPxg)ptgs[0]).getSheetName());
         assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
-        assertEquals("'Testing 47100'!A1", ((Ref3DPxg)ptgs[0]).toFormulaString());
+        assertEquals("'Testing 47100'!A1", ptgs[0].toFormulaString());
         
         // Reference to a sheet scoped named range from another sheet
         ptgs = parse(fpb, "Defines!NR_To_A1");
@@ -218,7 +218,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(-1,        ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Defines", ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_To_A1",((NameXPxg)ptgs[0]).getNameName());
-        assertEquals("Defines!NR_To_A1",((NameXPxg)ptgs[0]).toFormulaString());
+        assertEquals("Defines!NR_To_A1", ptgs[0].toFormulaString());
         
         // Reference to a workbook scoped named range
         ptgs = parse(fpb, "NR_Global_B2");
@@ -243,7 +243,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(1,     ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Uses",((Ref3DPxg)ptgs[0]).getSheetName());
         assertEquals("$A$1",((Ref3DPxg)ptgs[0]).format2DRefAsString());
-        assertEquals("[1]Uses!$A$1",((Ref3DPxg)ptgs[0]).toFormulaString());
+        assertEquals("[1]Uses!$A$1", ptgs[0].toFormulaString());
         
         // Reference to a sheet-scoped named range in a different workbook
         ptgs = parse(fpb, "[1]Defines!NR_To_A1");
@@ -252,7 +252,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(1,         ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Defines", ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_To_A1",((NameXPxg)ptgs[0]).getNameName());
-        assertEquals("[1]Defines!NR_To_A1",((NameXPxg)ptgs[0]).toFormulaString());
+        assertEquals("[1]Defines!NR_To_A1", ptgs[0].toFormulaString());
         
         // Reference to a global named range in a different workbook
         ptgs = parse(fpb, "[1]!NR_Global_B2");
@@ -261,7 +261,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(1,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
-        assertEquals("[1]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+        assertEquals("[1]!NR_Global_B2", ptgs[0].toFormulaString());
 
         wb.close();
     }

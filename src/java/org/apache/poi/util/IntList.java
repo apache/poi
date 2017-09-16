@@ -47,7 +47,7 @@ public class IntList
 {
     private int[]            _array;
     private int              _limit;
-    private int              fillval = 0;
+    private int              fillval;
     private static final int _default_size = 128;
 
     /**

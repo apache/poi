@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.TempFile;
@@ -96,7 +98,7 @@ public final class TestPOIXMLDocument {
     }
 
     private static void traverse(POIXMLDocument doc) throws IOException{
-        HashMap<String,POIXMLDocumentPart> context = new HashMap<String,POIXMLDocumentPart>();
+        HashMap<String,POIXMLDocumentPart> context = new HashMap<>();
         for (RelationPart p : doc.getRelationParts()){
             traverse(p, context);
         }
@@ -273,7 +275,7 @@ public final class TestPOIXMLDocument {
         POIXMLDocumentPart part = new POIXMLDocumentPart();
         part.prepareForCommit();
         part.commit();
-        part.onSave(new HashSet<PackagePart>());
+        part.onSave(new HashSet<>());
 
         assertNull(part.getRelationById(null));
         assertNull(part.getRelationId(null));
@@ -321,38 +323,61 @@ public final class TestPOIXMLDocument {
         }
     }
     
-    @Test(expected=IllegalStateException.class)
-    public void testOSGIClassLoadingAsIs() throws IOException {
+    @Test
+    public void testOSGIClassLoading() {
+        // the schema type loader is cached per thread in POIXMLTypeLoader.
+        // So create a new Thread and change the context class loader (which would normally be used)
+        // to not contain the OOXML classes
+        Runnable run = new Runnable() {
+            public void run() {
+                InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
+                XMLSlideShow ppt = null;
+                try {
+                    ppt = new XMLSlideShow(is);
+                    ppt.getSlides().get(0).getShapes();
+                } catch (IOException e) {
+                    fail("failed to load XMLSlideShow");
+                } finally {
+                    IOUtils.closeQuietly(ppt);
+                    IOUtils.closeQuietly(is);
+                }
+            }
+        };
+
         Thread thread = Thread.currentThread();
         ClassLoader cl = thread.getContextClassLoader();
-        InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
-        try {
-            thread.setContextClassLoader(cl.getParent());
-            XMLSlideShow ppt = new XMLSlideShow(is);
-            ppt.getSlides().get(0).getShapes();
-            ppt.close();
-        } finally {
-            thread.setContextClassLoader(cl);
-            is.close();
+        UncaughtHandler uh = new UncaughtHandler();
+        
+        // check schema type loading and check if we could run in an OOM
+        Thread ta[] = new Thread[30];
+        for (int j=0; j<10; j++) {
+            for (int i=0; i<ta.length; i++) {
+                ta[i] = new Thread(run);
+                ta[i].setContextClassLoader(cl.getParent());
+                ta[i].setUncaughtExceptionHandler(uh);
+                ta[i].start();
+            }
+            for (int i=0; i<ta.length; i++) {
+                try {
+                    ta[i].join();
+                } catch (InterruptedException e) {
+                    fail("failed to join thread");
+                }
+            }
         }
+        assertFalse(uh.hasException());
     }
 
-
-    @Test
-    public void testOSGIClassLoadingFixed() throws IOException {
-        Thread thread = Thread.currentThread();
-        ClassLoader cl = thread.getContextClassLoader();
-        InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
-        try {
-            thread.setContextClassLoader(cl.getParent());
-            POIXMLTypeLoader.setClassLoader(cl);
-            XMLSlideShow ppt = new XMLSlideShow(is);
-            ppt.getSlides().get(0).getShapes();
-            ppt.close();
-        } finally {
-            thread.setContextClassLoader(cl);
-            POIXMLTypeLoader.setClassLoader(null);
-            is.close();
+    private static class UncaughtHandler implements UncaughtExceptionHandler {
+        Throwable e;
+        
+        public synchronized void uncaughtException(Thread t, Throwable e) {
+            this.e = e;
+            
+        }
+        
+        public synchronized boolean hasException() {
+            return e != null;
         }
     }
 

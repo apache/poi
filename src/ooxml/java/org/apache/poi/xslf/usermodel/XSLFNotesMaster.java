@@ -66,7 +66,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
         NotesMasterDocument doc =
             NotesMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getNotesMaster();
-        setCommonSlideData(_slide.getCSld());
     }
     
     private static CTNotesMaster prototype() {
@@ -78,8 +77,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
         try {
             try {
                 NotesMasterDocument doc = NotesMasterDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
-                CTNotesMaster slide =  doc.getNotesMaster();
-                return slide;
+                return doc.getNotesMaster();
             } finally {
                 is.close();
             }            

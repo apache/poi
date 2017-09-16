@@ -60,7 +60,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     /**
      * A default instance of CTShape used for creating new shapes.
      */
-    private static CTPicture prototype = null;
+    private static CTPicture prototype;
 
     /**
      * This object specifies a picture object and all its properties

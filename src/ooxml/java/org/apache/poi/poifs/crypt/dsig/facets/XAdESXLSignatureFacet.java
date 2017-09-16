@@ -249,7 +249,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         // marshal XAdES-C
         
         // XAdES-X Type 1 timestamp
-        List<Node> timeStampNodesXadesX1 = new ArrayList<Node>();
+        List<Node> timeStampNodesXadesX1 = new ArrayList<>();
         timeStampNodesXadesX1.add(nlSigVal.item(0));
         timeStampNodesXadesX1.add(signatureTimeStamp.getDomNode());
         timeStampNodesXadesX1.add(completeCertificateRefs.getDomNode());

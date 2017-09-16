@@ -70,7 +70,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     protected XSSFRow(CTRow row, XSSFSheet sheet) {
         _row = row;
         _sheet = sheet;
-        _cells = new TreeMap<Integer, XSSFCell>();
+        _cells = new TreeMap<>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
             // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
@@ -617,7 +617,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
                 // Remove MergedRegions in dest row
                 final int destRowNum = getRowNum();
                 int index = 0;
-                final Set<Integer> indices = new HashSet<Integer>();
+                final Set<Integer> indices = new HashSet<>();
                 for (CellRangeAddress destRegion : getSheet().getMergedRegions()) {
                     if (destRowNum == destRegion.getFirstRow() && destRowNum == destRegion.getLastRow()) {
                         indices.add(index);

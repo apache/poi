@@ -163,15 +163,15 @@ import org.xml.sax.SAXException;
  * <p>To use SignatureInfo and its sibling classes, you'll need to have the following libs
  * in the classpath:</p>
  * <ul>
- * <li>BouncyCastle bcpkix and bcprov (tested against 1.54)</li>
- * <li>Apache Santuario "xmlsec" (tested against 2.0.5)</li>
- * <li>and slf4j-api (tested against 1.7.12)</li>
+ * <li>BouncyCastle bcpkix and bcprov (tested against 1.58)</li>
+ * <li>Apache Santuario "xmlsec" (tested against 2.1.0)</li>
+ * <li>and slf4j-api (tested against 1.7.25)</li>
  * </ul>
  */
 public class SignatureInfo implements SignatureConfigurable {
 
     private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
-    private static boolean isInitialized = false;
+    private static boolean isInitialized;
     
     private SignatureConfig signatureConfig;
 
@@ -357,8 +357,7 @@ public class SignatureInfo implements SignatureConfigurable {
             digestInfoValueBuf.write(signatureConfig.getHashMagic());
             digestInfoValueBuf.write(digest);
             byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
-            byte[] signatureValue = cipher.doFinal(digestInfoValue);
-            return signatureValue;
+            return cipher.doFinal(digestInfoValue);
         } catch (Exception e) {
             throw new EncryptedDocumentException(e);
         }
@@ -376,8 +375,8 @@ public class SignatureInfo implements SignatureConfigurable {
                     OPCPackage pkg = signatureConfig.getOpcPackage();
                     Iterator<PackageRelationship> sigOrigRels = 
                         pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN).iterator();
-                    Iterator<PackageRelationship> sigRels = null;
-                    PackagePart sigPart = null;
+                    Iterator<PackageRelationship> sigRels;
+                    PackagePart sigPart;
                     
                     public boolean hasNext() {
                         while (sigRels == null || !sigRels.hasNext()) {
@@ -473,7 +472,7 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * Add ds:References that come from signing client local files.
          */
-        List<Reference> references = new ArrayList<Reference>();
+        List<Reference> references = new ArrayList<>();
         for (DigestInfo digestInfo : safe(digestInfos)) {
             byte[] documentDigestValue = digestInfo.digestValue;
 
@@ -486,7 +485,7 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * Invoke the signature facets.
          */
-        List<XMLObject> objects = new ArrayList<XMLObject>();
+        List<XMLObject> objects = new ArrayList<>();
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
             LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
             signatureFacet.preSign(document, references, objects);
@@ -618,7 +617,7 @@ public class SignatureInfo implements SignatureConfigurable {
      */
     protected void writeDocument(Document document) throws MarshalException {
         XmlOptions xo = new XmlOptions();
-        Map<String,String> namespaceMap = new HashMap<String,String>();
+        Map<String,String> namespaceMap = new HashMap<>();
         for(Map.Entry<String,String> entry : signatureConfig.getNamespacePrefixes().entrySet()){
             namespaceMap.put(entry.getValue(), entry.getKey());
         }        

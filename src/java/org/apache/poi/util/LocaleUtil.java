@@ -52,8 +52,8 @@ public final class LocaleUtil {
      */
     public static final Charset CHARSET_1252 = Charset.forName("CP1252");
 
-    private static final ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<TimeZone>();
-    private static final ThreadLocal<Locale> userLocale = new ThreadLocal<Locale>();
+    private static final ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<>();
+    private static final ThreadLocal<Locale> userLocale = new ThreadLocal<>();
     
     /**
      * As time zone information is not stored in any format, it can be

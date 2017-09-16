@@ -43,16 +43,16 @@ public abstract class XDGFSheet {
     protected SheetType _sheet;
 
     // cells
-    protected Map<String, XDGFCell> _cells = new HashMap<String, XDGFCell>();
+    protected Map<String, XDGFCell> _cells = new HashMap<>();
 
     // sections
-    protected Map<String, XDGFSection> _sections = new HashMap<String, XDGFSection>();
+    protected Map<String, XDGFSection> _sections = new HashMap<>();
 
     // special: geometry sections (key: index, value: section)
-    protected SortedMap<Long, GeometrySection> _geometry = new TreeMap<Long, GeometrySection>();
+    protected SortedMap<Long, GeometrySection> _geometry = new TreeMap<>();
 
     // special: character section
-    protected CharacterSection _character = null;
+    protected CharacterSection _character;
 
     public XDGFSheet(SheetType sheet, XDGFDocument document) {
         try {

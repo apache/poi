@@ -35,7 +35,7 @@ import org.apache.poi.util.POILogger;
 public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTextParagraph> {
     protected static final POILogger logger = POILogFactory.getLogger(HSLFNotes.class);
     
-    private List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
+    private List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
 
     /**
      * Constructs a Notes Sheet from the given Notes record.

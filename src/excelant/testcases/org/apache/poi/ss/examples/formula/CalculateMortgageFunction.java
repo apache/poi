@@ -77,11 +77,8 @@ public class CalculateMortgageFunction implements FreeRefFunction {
     public double calculateMortgagePayment( double p, double r, double y ) {
         double i = r / 12 ;
         double n = y * 12 ;
-        
-        double principalAndInterest = 
-             p * (( i * Math.pow((1 + i),n ) ) / ( Math.pow((1 + i),n) - 1))  ;
-        
-        return principalAndInterest ;
+
+        return p * (( i * Math.pow((1 + i),n ) ) / ( Math.pow((1 + i),n) - 1));
     }
     /**
      * Excel does not support infinities and NaNs, rather, it gives a #NUM! error in these cases

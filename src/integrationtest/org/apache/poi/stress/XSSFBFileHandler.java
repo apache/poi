@@ -16,11 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -28,6 +24,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 
 public class XSSFBFileHandler extends AbstractFileHandler {
 
@@ -84,5 +81,17 @@ public class XSSFBFileHandler extends AbstractFileHandler {
         if (txt.length() < 1) {
             throw new RuntimeException("Should have gotten some text.");
         }
+    }
+
+    @Test
+    public void testLocal() throws Exception {
+        File file = new File("test-data/spreadsheet/Simple.xlsb");
+        FileInputStream stream = new FileInputStream(file);
+        try {
+            handleFile(stream, file.getPath());
+        } finally {
+            stream.close();
+        }
+        handleExtracting(file);
     }
 }

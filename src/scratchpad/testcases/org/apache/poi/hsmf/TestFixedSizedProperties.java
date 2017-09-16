@@ -114,8 +114,8 @@ public final class TestFixedSizedProperties {
        
        // Ask to have the values looked up
        Map<MAPIProperty,List<PropertyValue>> props = mainChunks.getProperties();
-       HashSet<Class<? extends PropertyValue>> seenTypes = 
-               new HashSet<Class<? extends PropertyValue>>();
+       HashSet<Class<? extends PropertyValue>> seenTypes =
+               new HashSet<>();
        for (List<PropertyValue> pvs : props.values()) {
            for (PropertyValue pv : pvs) {
                seenTypes.add(pv.getClass());

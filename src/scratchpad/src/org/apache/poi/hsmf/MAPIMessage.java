@@ -52,7 +52,6 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
@@ -86,7 +85,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    private RecipientChunks[] recipientChunks;
    private AttachmentChunks[] attachmentChunks;
 
-   private boolean returnNullOnMissingChunk = false;
+   private boolean returnNullOnMissingChunk;
 
    /**
     * Constructor for creating new files.
@@ -150,8 +149,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
       ChunkGroup[] chunkGroups = POIFSChunkParser.parse(poifsDir);
 
       // Grab interesting bits
-      ArrayList<AttachmentChunks> attachments = new ArrayList<AttachmentChunks>();
-      ArrayList<RecipientChunks>  recipients  = new ArrayList<RecipientChunks>();
+      ArrayList<AttachmentChunks> attachments = new ArrayList<>();
+      ArrayList<RecipientChunks>  recipients  = new ArrayList<>();
       for(ChunkGroup group : chunkGroups) {
          // Should only ever be one of each of these
          if(group instanceof Chunks) {
@@ -488,7 +487,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    public boolean has7BitEncodingStrings() {
       for(Chunk c : mainChunks.getChunks()) {
          if(c instanceof StringChunk) {
-            if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+            if( c.getType() == Types.ASCII_STRING ) {
                return true;
             }
          }
@@ -497,7 +496,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       if (nameIdChunks!=null) {
          for(Chunk c : nameIdChunks.getChunks()) {
             if(c instanceof StringChunk) {
-               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               if( c.getType() == Types.ASCII_STRING ) {
                   return true;
                }
             }
@@ -507,7 +506,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       for(RecipientChunks rc : recipientChunks) {
          for(Chunk c : rc.getAll()) {
             if(c instanceof StringChunk) {
-               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               if( c.getType() == Types.ASCII_STRING ) {
                   return true;
                }
             }
@@ -534,21 +533,6 @@ public class MAPIMessage extends POIReadOnlyDocument {
     */
    public String getConversationTopic() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getConversationTopic());
-   }
-
-   /**
-    * Gets the message class of the parsed Outlook Message.
-    * (Yes, you can use this to determine if a message is a calendar 
-    *  item, note, or actual outlook Message)
-    * For emails the class will be IPM.Note
-    *
-    * @throws ChunkNotFoundException
-    * @deprecated 3.16 beta 3. Use {@link #getMessageClassEnum()} instead.
-    */
-   @Deprecated
-   @Removal(version="3.18")
-   public String getMessageClass() throws ChunkNotFoundException {
-      return getStringFromChunk(mainChunks.getMessageClass());
    }
 
    /**

@@ -70,7 +70,7 @@ public class XLSX2CSV {
      *  as a (basic) CSV.
      */
     private class SheetToCSV implements SheetContentsHandler {
-        private boolean firstCellOfRow = false;
+        private boolean firstCellOfRow;
         private int currentRow = -1;
         private int currentCol = -1;
         

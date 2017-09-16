@@ -147,9 +147,9 @@ public enum FormulaError {
         return repr;
     }
 
-    private static final Map<String, FormulaError> smap = new HashMap<String, FormulaError>();
-    private static final Map<Byte, FormulaError> bmap = new HashMap<Byte, FormulaError>();
-    private static final Map<Integer, FormulaError> imap = new HashMap<Integer, FormulaError>();
+    private static final Map<String, FormulaError> smap = new HashMap<>();
+    private static final Map<Byte, FormulaError> bmap = new HashMap<>();
+    private static final Map<Integer, FormulaError> imap = new HashMap<>();
     static{
         for (FormulaError error : values()) {
             bmap.put(error.getCode(), error);

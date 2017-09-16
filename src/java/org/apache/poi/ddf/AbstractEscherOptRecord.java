@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public abstract class AbstractEscherOptRecord extends EscherRecord
 {
-    private List<EscherProperty> properties = new ArrayList<EscherProperty>();
+    private List<EscherProperty> properties = new ArrayList<>();
 
     /**
      * Add a property to this record.
@@ -142,7 +142,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
             {
                 short s1 = p1.getPropertyNumber();
                 short s2 = p2.getPropertyNumber();
-                return s1 < s2 ? -1 : s1 == s2 ? 0 : 1;
+                return Short.compare(s1, s2);
             }
         } );
     }
@@ -176,7 +176,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
 
     @Override
     protected Object[][] getAttributeMap() {
-        List<Object> attrList = new ArrayList<Object>(properties.size()*2+2);
+        List<Object> attrList = new ArrayList<>(properties.size() * 2 + 2);
         attrList.add("properties");
         attrList.add(properties.size());
         for ( EscherProperty property : properties ) {

@@ -90,8 +90,7 @@ public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextPa
     public Color getFillColor() {
         SolidPaint ps = getFillStyle();
         if (ps == null) return null;
-        Color col = DrawPaint.applyColorTransform(ps.getSolidColor());
-        return col;
+        return DrawPaint.applyColorTransform(ps.getSolidColor());
     }
 
     @Override

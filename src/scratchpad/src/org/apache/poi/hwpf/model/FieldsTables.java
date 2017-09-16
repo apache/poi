@@ -79,10 +79,10 @@ public class FieldsTables
     private static ArrayList<PlexOfField> toArrayList( PlexOfCps plexOfCps )
     {
         if ( plexOfCps == null )
-            return new ArrayList<PlexOfField>();
+            return new ArrayList<>();
 
-        ArrayList<PlexOfField> fields = new ArrayList<PlexOfField>(
-                plexOfCps.length() );
+        ArrayList<PlexOfField> fields = new ArrayList<>(
+                plexOfCps.length());
         for ( int i = 0; i < plexOfCps.length(); i++ )
         {
             GenericPropertyNode propNode = plexOfCps.getProperty( i );
@@ -97,8 +97,8 @@ public class FieldsTables
 
     public FieldsTables( byte[] tableStream, FileInformationBlock fib )
     {
-        _tables = new HashMap<FieldsDocumentPart, PlexOfCps>(
-                FieldsDocumentPart.values().length );
+        _tables = new HashMap<>(
+                FieldsDocumentPart.values().length);
 
         for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
         {

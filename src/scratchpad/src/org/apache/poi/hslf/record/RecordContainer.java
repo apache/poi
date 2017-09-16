@@ -139,7 +139,7 @@ public abstract class RecordContainer extends Record
      */
     public Record removeChild(Record ch) {
         Record rm = null;
-        ArrayList<Record> lst = new ArrayList<Record>();
+        ArrayList<Record> lst = new ArrayList<>();
         for(Record r : _children) {
             if(r != ch) {
                 lst.add(r);

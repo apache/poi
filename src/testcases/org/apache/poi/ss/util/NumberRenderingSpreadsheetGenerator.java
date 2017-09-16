@@ -58,7 +58,7 @@ public class NumberRenderingSpreadsheetGenerator {
 			writeHeaderRow(wb, sheet);
 			_sheet = sheet;
 			_rowIndex = 1;
-			_replacementNaNs = new ArrayList<Long>();
+			_replacementNaNs = new ArrayList<>();
 		}
 
 		public void addTestRow(long rawBits, String expectedExcelRendering) {
@@ -136,9 +136,7 @@ public class NumberRenderingSpreadsheetGenerator {
 	}
 	
 	private static String formatLongAsHex(long l) {
-		StringBuilder sb = new StringBuilder(20);
-		sb.append(HexDump.longToHex(l)).append('L');
-		return sb.toString();
+		return HexDump.longToHex(l) + 'L';
 	}
 
 	public static void main(String[] args) {

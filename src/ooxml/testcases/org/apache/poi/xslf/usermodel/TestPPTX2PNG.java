@@ -43,7 +43,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class TestPPTX2PNG {
-    private static boolean xslfOnly = false;
+    private static boolean xslfOnly;
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
     private static final File basedir = null;
     private static final String files =
@@ -66,7 +66,7 @@ public class TestPPTX2PNG {
     
     @Parameters(name="{0}")
     public static Collection<String> data() {
-        final Set<String> data = new TreeSet<String>();
+        final Set<String> data = new TreeSet<>();
         for (String f : files.split(", ?")) {
             if (basedir == null) {
                 data.add(f);

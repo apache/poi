@@ -171,7 +171,7 @@ public class XSSFImportFromXML {
         private Set<STXmlDataType.Enum> xmlDataTypes;
 
         private DataType(STXmlDataType.Enum... xmlDataTypes) {
-            this.xmlDataTypes = new HashSet<STXmlDataType.Enum>(Arrays.asList(xmlDataTypes));
+            this.xmlDataTypes = new HashSet<>(Arrays.asList(xmlDataTypes));
         }
 
         public static DataType getDataType(STXmlDataType.Enum xmlDataType) {

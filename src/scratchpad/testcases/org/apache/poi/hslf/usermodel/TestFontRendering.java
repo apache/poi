@@ -67,8 +67,8 @@ public class TestFontRendering {
         
         // setup fonts (especially needed, when run under *nix systems)
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        Map<String,String> fontMap = new HashMap<String,String>();
-        Map<String,String> fallbackMap = new HashMap<String,String>();
+        Map<String,String> fontMap = new HashMap<>();
+        Map<String,String> fallbackMap = new HashMap<>();
         
         for (String fontFile[] : fontFiles) {
             File f = new File(fontFile[0]);

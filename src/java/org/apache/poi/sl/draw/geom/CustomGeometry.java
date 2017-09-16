@@ -34,9 +34,9 @@ import org.apache.poi.sl.draw.binding.CTPath2DList;
  * Definition of a custom geometric shape
  */
 public class CustomGeometry implements Iterable<Path>{
-    final List<Guide> adjusts = new ArrayList<Guide>();
-    final List<Guide> guides = new ArrayList<Guide>();
-    final List<Path> paths = new ArrayList<Path>();
+    final List<Guide> adjusts = new ArrayList<>();
+    final List<Guide> guides = new ArrayList<>();
+    final List<Path> paths = new ArrayList<>();
     Path textBounds;
 
     public CustomGeometry(CTCustomGeometry2D geom) {

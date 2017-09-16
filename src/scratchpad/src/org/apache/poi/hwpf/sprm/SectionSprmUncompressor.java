@@ -225,19 +225,19 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         break;
       case 0x3F:
         // [MS-DOC], v20140721, 2.6.4, sprmSNFtn
-        newSEP.setNFtn((int) sprm.getOperand());
+        newSEP.setNFtn(sprm.getOperand());
         break;
       case 0x40:
         // [MS-DOC], v20140721, 2.6.4, sprmSNFtnRef
-        newSEP.setNfcFtnRef((int) sprm.getOperand());
+        newSEP.setNfcFtnRef(sprm.getOperand());
         break;
       case 0x41:
         // [MS-DOC], v20140721, 2.6.4, sprmSNEdn
-        newSEP.setNEdn((int) sprm.getOperand());
+        newSEP.setNEdn(sprm.getOperand());
         break;
       case 0x42:
         // [MS-DOC], v20140721, 2.6.4, sprmSNEdnRef
-        newSEP.setNfcEdnRef((int) sprm.getOperand());
+        newSEP.setNfcEdnRef(sprm.getOperand());
         break;
       default:
         logger.log(POILogger.INFO, "Unsupported Sprm operation: " + operation + " (" + HexDump.byteToHex(operation) + ")");

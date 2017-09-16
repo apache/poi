@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
-import org.apache.poi.xssf.usermodel.TextAlign;
 import org.apache.poi.xssf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
@@ -42,7 +41,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     XSSFTextParagraph(CTTextParagraph p, CTShape ctShape){
         _p = p;
         _shape = ctShape;
-        _runs = new ArrayList<XSSFTextRun>();
+        _runs = new ArrayList<>();
 
         for(XmlObject ch : _p.selectPath("*")){
             if(ch instanceof CTRegularTextRun){
@@ -613,8 +612,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         };
         fetchParagraphProperty(fetcher);
 
-        double spcBef = fetcher.getValue() == null ? 0 : fetcher.getValue();
-        return spcBef;
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**

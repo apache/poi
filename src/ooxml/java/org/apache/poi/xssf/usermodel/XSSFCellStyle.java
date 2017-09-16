@@ -550,10 +550,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public boolean getHidden() {
-        if (!_cellXf.isSetProtection() || !_cellXf.getProtection().isSetHidden()) {
-            return false;
-        }
-        return _cellXf.getProtection().getHidden();
+        return _cellXf.isSetProtection() && _cellXf.getProtection().isSetHidden() && _cellXf.getProtection().getHidden();
     }
 
     /**
@@ -622,10 +619,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public boolean getLocked() {
-        if (!_cellXf.isSetProtection() || !_cellXf.getProtection().isSetLocked()) {
-            return true;
-        }
-        return _cellXf.getProtection().getLocked();
+        return !_cellXf.isSetProtection() || !_cellXf.getProtection().isSetLocked() || _cellXf.getProtection().getLocked();
     }
 
     /**

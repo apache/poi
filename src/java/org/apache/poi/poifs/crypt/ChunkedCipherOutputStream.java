@@ -64,7 +64,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     // the cipher can't be final, because for the last chunk we change the padding
     // and therefore need to change the cipher too
     private Cipher cipher;
-    private boolean isClosed = false;
+    private boolean isClosed;
 
     public ChunkedCipherOutputStream(DirectoryNode dir, int chunkSize) throws IOException, GeneralSecurityException {
         super(null);

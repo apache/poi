@@ -74,12 +74,13 @@ public class TestFonts {
     // currently linux and mac return quite different values
     private static final int[] expected_sizes = {
             304, // windows 10, 1080p, MS Office 2016, system text scaling 100% instead of default 125%
-            306, //Windows 10, 15.6" 3840x2160
+            306, // Windows 10, 15.6" 3840x2160
             311, 312, 313, 318,
-            348, //Windows 10, 15.6" 3840x2160
+            348, // Windows 10, 15.6" 3840x2160
             362, // Windows 10, 13.3" 1080p high-dpi
-            398, 399,
-            406  // Ubuntu Trusty, 15", 1680x1050
+            372, // Ubuntu Xenial, 15", 1680x1050
+            377, 398, 399, // Mac
+            406  // Ubuntu Xenial, 15", 1680x1050
     };
 
     @BeforeClass
@@ -122,7 +123,7 @@ public class TestFonts {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = img.createGraphics();
 
-        Map<String,String> fallbackMap = new HashMap<String,String>();
+        Map<String,String> fallbackMap = new HashMap<>();
         fallbackMap.put("NoSuchFont", "Mona");
         // in XSLF the fonts default to the theme fonts (Calibri), if the font group is not overridden
         // see XSLFTextRun.XSLFTextInfo.getCTTextFont

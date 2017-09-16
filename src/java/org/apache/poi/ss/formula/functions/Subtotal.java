@@ -102,7 +102,7 @@ public class Subtotal implements Function {
 		}
 
 		// ignore the first arg, this is the function-type, we check for the length above
-		final List<ValueEval> list = new ArrayList<ValueEval>(Arrays.asList(args).subList(1, args.length));
+		final List<ValueEval> list = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
 
 		Iterator<ValueEval> it = list.iterator();
 

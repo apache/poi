@@ -206,7 +206,7 @@ public final class Document extends PositionDependentRecordContainer
 	}
 
     public void removeSlideListWithText(SlideListWithText slwt) {
-        ArrayList<SlideListWithText> lst = new ArrayList<SlideListWithText>();
+        ArrayList<SlideListWithText> lst = new ArrayList<>();
         for(SlideListWithText s : slwts) {
             if(s != slwt) lst.add(s);
             else {

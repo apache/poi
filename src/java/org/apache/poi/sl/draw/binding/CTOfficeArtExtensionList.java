@@ -77,7 +77,7 @@ public class CTOfficeArtExtensionList {
      */
     public List<CTOfficeArtExtension> getExt() {
         if (ext == null) {
-            ext = new ArrayList<CTOfficeArtExtension>();
+            ext = new ArrayList<>();
         }
         return this.ext;
     }

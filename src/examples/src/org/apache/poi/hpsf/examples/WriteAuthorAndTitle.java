@@ -28,16 +28,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hpsf.HPSFRuntimeException;
-import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.MutableSection;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.Variant;
-import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
@@ -240,12 +231,11 @@ public class WriteAuthorAndTitle
 
             /* Create a mutable property set as a copy of the original read-only
              * property set. */
-            final MutablePropertySet mps = new MutablePropertySet(si);
+            final PropertySet mps = new PropertySet(si);
             
             /* Retrieve the section containing the properties to modify. A
              * summary information property set contains exactly one section. */
-            final MutableSection s =
-                (MutableSection) mps.getSections().get(0);
+            final Section s = mps.getSections().get(0);
 
             /* Set the properties. */
             s.setProperty(PropertyIDMap.PID_AUTHOR, Variant.VT_LPSTR,
@@ -281,7 +271,7 @@ public class WriteAuthorAndTitle
             throws WritingNotSupportedException, IOException
         {
             final DirectoryEntry de = getPath(poiFs, path);
-            final MutablePropertySet mps = new MutablePropertySet(ps);
+            final PropertySet mps = new PropertySet(ps);
             de.createDocument(name, mps.toInputStream());
         }
 
@@ -333,7 +323,7 @@ public class WriteAuthorAndTitle
         /** Contains the directory paths that have already been created in the
          * output POI filesystem and maps them to their corresponding
          * {@link org.apache.poi.poifs.filesystem.DirectoryNode}s. */
-        private final Map<String, DirectoryEntry> paths = new HashMap<String, DirectoryEntry>();
+        private final Map<String, DirectoryEntry> paths = new HashMap<>();
 
 
 

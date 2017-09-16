@@ -110,9 +110,9 @@ public class CellWalk {
      * @author Roman Kashitsyn
      */
     private static class SimpleCellWalkContext implements CellWalkContext {
-        public long ordinalNumber = 0;
-        public int rowNumber = 0;
-        public int colNumber = 0;
+        public long ordinalNumber;
+        public int rowNumber;
+        public int colNumber;
 
         public long getOrdinalNumber() {
             return ordinalNumber;

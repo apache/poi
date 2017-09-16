@@ -160,9 +160,8 @@ public final class TestOLE2Embeding {
     	ByteArrayOutputStream bos = new ByteArrayOutputStream();
     	wb.write(bos);
     	wb.close();
-    	POIFSFileSystem poifs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
-        
-        return poifs;
+
+        return new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
     }
     
     static byte[] getSampleTXT() {

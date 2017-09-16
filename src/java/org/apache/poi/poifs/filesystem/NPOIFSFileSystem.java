@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -51,14 +51,13 @@ import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
 import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LongField;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * <p>This is the main class of the POIFS system; it manages the entire
@@ -98,9 +97,9 @@ public class NPOIFSFileSystem extends BlockStore
     {
         _header         = new HeaderBlock(bigBlockSize);
         _property_table = new NPropertyTable(_header);
-        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
-        _xbat_blocks    = new ArrayList<BATBlock>();
-        _bat_blocks     = new ArrayList<BATBlock>();
+        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<>(), _header);
+        _xbat_blocks    = new ArrayList<>();
+        _bat_blocks     = new ArrayList<>();
         _root           = null;
         
         if(newFS) {
@@ -233,23 +232,15 @@ public class NPOIFSFileSystem extends BlockStore
           
           // Now process the various entries
           readCoreContents();
-       } catch(IOException e) {
-          // Until we upgrade to Java 7, and can do a MultiCatch, we 
-          //  need to keep these two catch blocks in sync on their cleanup
-          if (closeChannelOnError && channel != null) {
-              channel.close();
-              channel = null;
-          }
-          throw e;
-       } catch(RuntimeException e) {
-          // Comes from Iterators etc.
-          // TODO Decide if we can handle these better whilst
-          //  still sticking to the iterator contract
+       } catch(IOException | RuntimeException e) {
+           // Comes from Iterators etc.
+           // TODO Decide if we can handle these better whilst
+           //  still sticking to the iterator contract
            if (closeChannelOnError && channel != null) {
                channel.close();
                channel = null;
            }
-          throw e;
+           throw e;
        }
     }
     
@@ -353,44 +344,38 @@ public class NPOIFSFileSystem extends BlockStore
 
     /**
      * Checks that the supplied InputStream (which MUST
-     *  support mark and reset, or be a PushbackInputStream)
-     *  has a POIFS (OLE2) header at the start of it.
-     * If your InputStream does not support mark / reset,
-     *  then wrap it in a PushBackInputStream, then be
-     *  sure to always use that and not the original!
+     *  support mark and reset) has a POIFS (OLE2) header at the start of it.
+     * If unsure if your InputStream does support mark / reset,
+     *  use {@link FileMagic#prepareToCheckMagic(InputStream)} to wrap it and make
+     *  sure to always use that, and not the original!
      *  
      *  After the method call, the InputStream is at the
      *  same position as of the time of entering the method.
      *  
-     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
+     * @param inp An InputStream which supports mark/reset
+     * 
+     * @deprecated in 3.17-beta2, use {@link FileMagic#valueOf(InputStream)} == {@link FileMagic#OLE2} instead
      */
+    @Deprecated
+    @Removal(version="4.0")
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
-        // We want to peek at the first 8 bytes
-        inp.mark(8);
-
-        byte[] header = new byte[8];
-        int bytesRead = IOUtils.readFully(inp, header);
-        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header);
-
-        // Wind back those 8 bytes
-        if(inp instanceof PushbackInputStream) {
-            PushbackInputStream pin = (PushbackInputStream)inp;
-            pin.unread(header, 0, bytesRead);
-        } else {
-            inp.reset();
-        }
-
-        // Did it match the signature?
-        return (signature.get() == HeaderBlockConstants._signature);
+        return FileMagic.valueOf(inp) == FileMagic.OLE2;
     }
     
     /**
      * Checks if the supplied first 8 bytes of a stream / file
      *  has a POIFS (OLE2) header.
+     * 
+     * @deprecated in 3.17-beta2, use {@link FileMagic#valueOf(InputStream)} == {@link FileMagic#OLE2} instead
      */
+    @Deprecated
+    @Removal(version="4.0")
     public static boolean hasPOIFSHeader(byte[] header8Bytes) {
-        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header8Bytes);
-        return (signature.get() == HeaderBlockConstants._signature);
+        try {
+            return hasPOIFSHeader(new ByteArrayInputStream(header8Bytes));
+        } catch (IOException e) {
+            throw new RuntimeException("invalid header check", e);
+        }
     }
     
     /**
@@ -441,7 +426,7 @@ public class NPOIFSFileSystem extends BlockStore
        
        // Finally read the Small Stream FAT (SBAT) blocks
        BATBlock sfat;
-       List<BATBlock> sbats = new ArrayList<BATBlock>();
+       List<BATBlock> sbats = new ArrayList<>();
        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), sbats, _header);
        nextAt = _header.getSBATStart();
        for(int i=0; i<_header.getSBATCount() && nextAt != POIFSConstants.END_OF_CHAIN; i++) {
@@ -942,7 +927,7 @@ public class NPOIFSFileSystem extends BlockStore
     {
         if (preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableArray();
+            return getRoot().getViewableArray();
         }
         return new Object[ 0 ];
     }
@@ -959,7 +944,7 @@ public class NPOIFSFileSystem extends BlockStore
     {
         if (!preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableIterator();
+            return getRoot().getViewableIterator();
         }
         return Collections.emptyList().iterator();
     }
@@ -974,7 +959,7 @@ public class NPOIFSFileSystem extends BlockStore
 
     public boolean preferArray()
     {
-        return (( POIFSViewable ) getRoot()).preferArray();
+        return getRoot().preferArray();
     }
 
     /**

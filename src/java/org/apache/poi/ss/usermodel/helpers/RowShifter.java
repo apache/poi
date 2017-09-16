@@ -27,8 +27,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Helper for shifting rows up or down
@@ -52,15 +50,16 @@ public abstract class RowShifter {
      * @return an array of affected merged regions, doesn't contain deleted ones
      */
     public List<CellRangeAddress> shiftMergedRegions(int startRow, int endRow, int n) {
-        List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
-        Set<Integer> removedIndices = new HashSet<Integer>();
+        List<CellRangeAddress> shiftedRegions = new ArrayList<>();
+        Set<Integer> removedIndices = new HashSet<>();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
         int size = sheet.getNumMergedRegions();
         for (int i = 0; i < size; i++) {
             CellRangeAddress merged = sheet.getMergedRegion(i);
 
-            // remove merged region that overlaps shifting
-            if (startRow + n <= merged.getFirstRow() && endRow + n >= merged.getLastRow()) {
+            // remove merged region that are replaced by the shifting,
+            // i.e. where the area includes something in the overwritten area
+            if(removalNeeded(merged, startRow, endRow, n)) {
                 removedIndices.add(i);
                 continue;
             }
@@ -92,6 +91,24 @@ public abstract class RowShifter {
             sheet.addMergedRegion(region);
         }
         return shiftedRegions;
+    }
+
+    private boolean removalNeeded(CellRangeAddress merged, int startRow, int endRow, int n) {
+        final int movedRows = endRow - startRow + 1;
+
+        // build a range of the rows that are overwritten, i.e. the target-area, but without
+        // rows that are moved along
+        final CellRangeAddress overwrite;
+        if(n > 0) {
+            // area is moved down => overwritten area is [endRow + n - movedRows, endRow + n]
+            overwrite = new CellRangeAddress(Math.max(endRow + 1, endRow + n - movedRows), endRow + n, 0, 0);
+        } else {
+            // area is moved up => overwritten area is [startRow + n, startRow + n + movedRows]
+            overwrite = new CellRangeAddress(startRow + n, Math.min(startRow - 1, startRow + n + movedRows), 0, 0);
+        }
+
+        // if the merged-region and the overwritten area intersect, we need to remove it
+        return merged.intersects(overwrite);
     }
 
     /**

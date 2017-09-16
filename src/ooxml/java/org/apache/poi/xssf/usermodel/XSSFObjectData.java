@@ -20,7 +20,6 @@ package org.apache.poi.xssf.usermodel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 
 import javax.xml.namespace.QName;
 
@@ -29,7 +28,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.ObjectData;
 import org.apache.poi.util.IOUtils;
@@ -58,7 +57,7 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
     /**
      * A default instance of CTShape used for creating new shapes.
      */
-    private static CTShape prototype = null;
+    private static CTShape prototype;
 
     private CTOleObject oleObject;
 
@@ -161,17 +160,8 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
         InputStream is = null;
         try {
             is = getObjectPart().getInputStream();
-
-            // If clearly doesn't do mark/reset, wrap up
-            if (! is.markSupported()) {
-                is = new PushbackInputStream(is, 8);
-            }
-
-            // Ensure that there is at least some data there
-            byte[] header8 = IOUtils.peekFirst8Bytes(is);
-
-            // Try to create
-            return NPOIFSFileSystem.hasPOIFSHeader(header8);
+            is = FileMagic.prepareToCheckMagic(is);
+            return FileMagic.valueOf(is) == FileMagic.OLE2;
         } catch (IOException e) {
             LOG.log(POILogger.WARN, "can't determine if directory entry exists", e);
             return false;

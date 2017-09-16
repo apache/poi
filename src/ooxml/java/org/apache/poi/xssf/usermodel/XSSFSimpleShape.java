@@ -46,7 +46,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     /**
      * A default instance of CTShape used for creating new shapes.
      */
-    private static CTShape prototype = null;
+    private static CTShape prototype;
 
     /**
      *  Xml bean that stores properties of this shape
@@ -57,7 +57,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         this.drawing = drawing;
         this.ctShape = ctShape;
         
-        _paragraphs = new ArrayList<XSSFTextParagraph>();
+        _paragraphs = new ArrayList<>();
         
         // initialize any existing paragraphs - this will be the default body paragraph in a new shape, 
         // or existing paragraphs that have been loaded from the file
@@ -132,7 +132,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public String getText() {
         final int MAX_LEVELS = 9;
         StringBuilder out = new StringBuilder();
-        List<Integer> levelCount = new ArrayList<Integer>(MAX_LEVELS);	// maximum 9 levels
+        List<Integer> levelCount = new ArrayList<>(MAX_LEVELS);	// maximum 9 levels
         XSSFTextParagraph p = null;
         
         // initialise the levelCount array - this maintains a record of the numbering to be used at each level

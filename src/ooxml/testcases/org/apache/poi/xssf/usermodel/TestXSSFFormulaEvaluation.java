@@ -159,7 +159,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         }
         
         // Setup the environment
-        Map<String,FormulaEvaluator> evaluators = new HashMap<String, FormulaEvaluator>();
+        Map<String,FormulaEvaluator> evaluators = new HashMap<>();
         evaluators.put("ref2-56737.xlsx", evaluator);
         evaluators.put("56737.xlsx", 
                 _testDataProvider.openSampleWorkbook("56737.xlsx").getCreationHelper().createFormulaEvaluator());
@@ -693,5 +693,16 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         XSSFCell same = evaluator.evaluateInCell(cell);
         assertSame(cell, same);
         wb.close();
+    }
+    
+    @Test
+    public void testBug61468() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("simple-monthly-budget.xlsx");
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        Cell cell = wb.getSheetAt(0).getRow(8).getCell(4);
+        assertEquals(3750, cell.getNumericCellValue(), 0.001);
+
+        CellValue value = evaluator.evaluate(cell);
+        assertEquals(3750, value.getNumberValue(), 0.001);
     }
 }

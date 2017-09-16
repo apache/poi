@@ -60,15 +60,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * Table of styles shared across all sheets in a workbook.
  */
 public class StylesTable extends POIXMLDocumentPart {
-    private final SortedMap<Short, String> numberFormats = new TreeMap<Short,String>();
-    private final List<XSSFFont> fonts = new ArrayList<XSSFFont>();
-    private final List<XSSFCellFill> fills = new ArrayList<XSSFCellFill>();
-    private final List<XSSFCellBorder> borders = new ArrayList<XSSFCellBorder>();
-    private final List<CTXf> styleXfs = new ArrayList<CTXf>();
-    private final List<CTXf> xfs = new ArrayList<CTXf>();
+    private final SortedMap<Short, String> numberFormats = new TreeMap<>();
+    private final List<XSSFFont> fonts = new ArrayList<>();
+    private final List<XSSFCellFill> fills = new ArrayList<>();
+    private final List<XSSFCellBorder> borders = new ArrayList<>();
+    private final List<CTXf> styleXfs = new ArrayList<>();
+    private final List<CTXf> xfs = new ArrayList<>();
 
-    private final List<CTDxf> dxfs = new ArrayList<CTDxf>();
-    private final Map<String, TableStyle> tableStyles = new HashMap<String, TableStyle>();
+    private final List<CTDxf> dxfs = new ArrayList<>();
+    private final Map<String, TableStyle> tableStyles = new HashMap<>();
     
     private IndexedColorMap indexedColors = new DefaultIndexedColorMap();
     

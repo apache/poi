@@ -397,8 +397,7 @@ public class CellReference {
         String col = matcher.group(1);
         String row = matcher.group(2);
 
-        CellRefParts cellRefParts = new CellRefParts(sheetName, row, col);
-        return cellRefParts;
+        return new CellRefParts(sheetName, row, col);
     }
 
     private static String parseSheetName(String reference, int indexOfSheetNameDelimiter) {

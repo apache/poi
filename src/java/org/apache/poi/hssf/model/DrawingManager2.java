@@ -30,7 +30,7 @@ import org.apache.poi.util.Removal;
  */
 public class DrawingManager2 {
     private final EscherDggRecord dgg;
-    private final List<EscherDgRecord> drawingGroups = new ArrayList<EscherDgRecord>();
+    private final List<EscherDgRecord> drawingGroups = new ArrayList<>();
 
 
     public DrawingManager2( EscherDggRecord dgg ) {

@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public final class TestFileInformationBlock {
-    private FileInformationBlock _fileInformationBlock = null;
+    private FileInformationBlock _fileInformationBlock;
     private HWPFDocFixture _hWPFDocFixture;
 
     @Test

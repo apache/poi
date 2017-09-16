@@ -221,14 +221,13 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             x2 = clientAnchor.getDx1();
             y2 = clientAnchor.getRow1();
         }
-        Rectangle2D anchor= new Rectangle2D.Double(
+
+        return new Rectangle2D.Double(
             (x1 == -1 ? -1 : Units.masterToPoints(x1)),
             (y1 == -1 ? -1 : Units.masterToPoints(y1)),
             (x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
             (y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
         );
-
-        return anchor;
     }
 
     /**
@@ -274,7 +273,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     public List<HSLFShape> getShapes() {
         // Our escher container record should contain several
         // SpContainers, the first of which is the group shape itself
-        List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
+        List<HSLFShape> shapeList = new ArrayList<>();
         boolean isFirst = true;
         for (EscherRecord r : getSpContainer()) {
             if (isFirst) {

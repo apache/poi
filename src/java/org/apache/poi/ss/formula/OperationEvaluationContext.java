@@ -22,11 +22,15 @@ import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFo
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
+import org.apache.poi.ss.formula.constant.ErrorConstant;
 import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ExternalNameEval;
 import org.apache.poi.ss.formula.eval.FunctionNameEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -205,14 +209,14 @@ public final class OperationEvaluationContext {
         SheetRangeEvaluator sre = new SheetRangeEvaluator(_sheetIndex, se);
         
         // ugly typecast - TODO - make spreadsheet version more easily accessible
-        SpreadsheetVersion ssVersion = ((FormulaParsingWorkbook)_workbook).getSpreadsheetVersion();
+        SpreadsheetVersion ssVersion = _workbook.getSpreadsheetVersion();
 
         NameType part1refType = classifyCellReference(refStrPart1, ssVersion);
         switch (part1refType) {
             case BAD_CELL_OR_NAMED_RANGE:
                 return ErrorEval.REF_INVALID;
             case NAMED_RANGE:
-                EvaluationName nm = ((FormulaParsingWorkbook)_workbook).getName(refStrPart1, _sheetIndex);
+                EvaluationName nm = _workbook.getName(refStrPart1, _sheetIndex);
                 if(!nm.isRange()){
                     throw new RuntimeException("Specified name '" + refStrPart1 + "' is not a range as expected.");
                 }
@@ -338,6 +342,42 @@ public final class OperationEvaluationContext {
         return new LazyAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(),
                 aptg.getLastRow(), aptg.getLastColumn(), sre);
     }
+
+    public ValueEval getAreaValueEval(int firstRowIndex, int firstColumnIndex,
+            int lastRowIndex, int lastColumnIndex, Object[][] tokens) {
+        
+        ValueEval values[] = new ValueEval[tokens.length * tokens[0].length];
+        
+        int index = 0;
+        for (int jdx = 0; jdx < tokens.length; jdx++) {
+            for (int idx = 0; idx < tokens[0].length; idx++) {
+                values[index++] = convertObjectEval(tokens[jdx][idx]);
+            }
+        }
+        
+        return new CacheAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex,
+                                 lastColumnIndex, values);
+    }
+    
+    private ValueEval convertObjectEval(Object token) {
+        if (token == null) {
+            throw new RuntimeException("Array item cannot be null");
+        }
+        if (token instanceof String) {
+            return new StringEval((String)token);
+        }
+        if (token instanceof Double) {
+            return new NumberEval(((Double)token).doubleValue());
+        }
+        if (token instanceof Boolean) {
+            return BoolEval.valueOf(((Boolean)token).booleanValue());
+        }
+        if (token instanceof ErrorConstant) {
+            return ErrorEval.valueOf(((ErrorConstant)token).getErrorCode());
+        }
+        throw new IllegalArgumentException("Unexpected constant class (" + token.getClass().getName() + ")");            
+    }
+    
     
     public ValueEval getNameXEval(NameXPtg nameXPtg) {
         // Is the name actually on our workbook?

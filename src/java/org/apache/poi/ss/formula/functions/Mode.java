@@ -76,7 +76,7 @@ public final class Mode implements Function {
 	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		double result;
 		try {
-			List<Double> temp = new ArrayList<Double>();
+			List<Double> temp = new ArrayList<>();
 			for (int i = 0; i < args.length; i++) {
 				collectValues(args[i], temp);
 			}

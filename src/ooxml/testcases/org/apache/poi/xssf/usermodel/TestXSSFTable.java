@@ -50,7 +50,7 @@ public final class TestXSSFTable {
 
         // read the original sheet header order
         XSSFRow row = wb1.getSheetAt(0).getRow(0);
-        List<String> headers = new ArrayList<String>();
+        List<String> headers = new ArrayList<>();
         for (Cell cell : row) {
             headers.add(cell.getStringCellValue());
         }
@@ -163,7 +163,7 @@ public final class TestXSSFTable {
     public void isHasTotalsRow() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
         XSSFTable table = wb.getTable("\\_Prime.1");
-        assertFalse(table.isHasTotalsRow());
+        assertFalse(table.getTotalsRowCount() > 0);
         wb.close(); 
     }
 

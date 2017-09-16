@@ -40,8 +40,7 @@ public final class Word2Forrest
   @SuppressWarnings("unused")
   public Word2Forrest(HWPFDocument doc, OutputStream stream) throws IOException
   {
-    OutputStreamWriter out = new OutputStreamWriter (stream, Charset.forName("UTF-8"));
-    _out = out;
+      _out = new OutputStreamWriter (stream, Charset.forName("UTF-8"));
     _doc = doc;
 
     init ();

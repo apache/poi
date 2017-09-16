@@ -101,8 +101,8 @@ public class XORDecryptor extends Decryptor implements Cloneable {
 
     private class XORCipherInputStream extends ChunkedCipherInputStream {
         private final int initialOffset;
-        private int recordStart = 0;
-        private int recordEnd = 0;
+        private int recordStart;
+        private int recordEnd;
         
         public XORCipherInputStream(InputStream stream, int initialPos)
                 throws GeneralSecurityException {

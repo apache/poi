@@ -134,7 +134,7 @@ public class PropertySet {
     /**
      * The sections in this {@link PropertySet}.
      */
-    private final List<Section> sections = new ArrayList<Section>();
+    private final List<Section> sections = new ArrayList<>();
 
     
     /**
@@ -158,7 +158,7 @@ public class PropertySet {
 
         /* Initialize the sections. Since property set must have at least
          * one section it is added right here. */
-        addSection(new MutableSection());
+        addSection(new Section());
     }
 
 
@@ -250,7 +250,7 @@ public class PropertySet {
         setOSVersion(ps.getOSVersion());
         setClassID(ps.getClassID());
         for (final Section section : ps.getSections()) {
-            sections.add(new MutableSection(section));
+            sections.add(new Section(section));
         }
     }
 
@@ -391,8 +391,7 @@ public class PropertySet {
          */
         try {
             final byte[] buffer = IOUtils.peekFirstNBytes(stream, BUFFER_SIZE);
-            final boolean isPropertySetStream = isPropertySetStream(buffer, 0, buffer.length);
-            return isPropertySetStream;
+            return isPropertySetStream(buffer, 0, buffer.length);
         } catch (EmptyFileException e) {
             return false;
         }
@@ -491,7 +490,7 @@ public class PropertySet {
          * "offset" accordingly.
          */
         for (int i = 0; i < sectionCount; i++) {
-            final Section s = new MutableSection(src, o);
+            final Section s = new Section(src, o);
             o += ClassID.LENGTH + LittleEndianConsts.INT_SIZE;
             sections.add(s);
         }
@@ -580,7 +579,7 @@ public class PropertySet {
      * document. The input stream represents a snapshot of the property set.
      * If the latter is modified while the input stream is still being
      * read, the modifications will not be reflected in the input stream but in
-     * the {@link MutablePropertySet} only.
+     * the {@link PropertySet} only.
      *
      * @return the contents of this property set stream
      *

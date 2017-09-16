@@ -163,7 +163,7 @@ public class TimesheetDemo {
      * Create a library of cell styles
      */
     private static Map<String, CellStyle> createStyles(Workbook wb){
-        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+        Map<String, CellStyle> styles = new HashMap<>();
         CellStyle style;
         Font titleFont = wb.createFont();
         titleFont.setFontHeightInPoints((short)18);

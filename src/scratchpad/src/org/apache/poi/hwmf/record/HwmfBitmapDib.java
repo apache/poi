@@ -210,7 +210,7 @@ public class HwmfBitmapDib {
     private long headerColorImportant = -1;
     private Color colorTable[];
     @SuppressWarnings("unused")
-    private int colorMaskR=0,colorMaskG=0,colorMaskB=0;
+    private int colorMaskR,colorMaskG,colorMaskB;
 
     // size of header and color table, for start of image data calculation
     private int introSize;

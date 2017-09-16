@@ -80,7 +80,7 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
 	PackagePropertiesPart propsPart;
 
 	// The document
-	Document xmlDoc = null;
+	Document xmlDoc;
 
 	/**
 	 * Marshall package core properties to an XML document. Always return

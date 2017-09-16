@@ -22,7 +22,6 @@ import static org.apache.poi.POITestCase.assertContains;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -86,8 +85,9 @@ public class TestOfficeXMLException extends TestCase {
 		// text file isn't
 		confirmIsPOIFS("SampleSS.txt", false);
 	}
+	
 	private void confirmIsPOIFS(String sampleFileName, boolean expectedResult) throws IOException {
-		InputStream in  = new PushbackInputStream(openSampleStream(sampleFileName), 10);
+		InputStream in  = FileMagic.prepareToCheckMagic(openSampleStream(sampleFileName));
 		try {
     		boolean actualResult;
     		try {
@@ -108,7 +108,7 @@ public class TestOfficeXMLException extends TestCase {
         InputStream testInput = new ByteArrayInputStream(testData);
         
         // detect header
-        InputStream in = new PushbackInputStream(testInput, 10);
+        InputStream in = FileMagic.prepareToCheckMagic(testInput);
         assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
         
         // check if InputStream is still intact
@@ -126,7 +126,7 @@ public class TestOfficeXMLException extends TestCase {
         InputStream testInput = new ByteArrayInputStream(testData);
         
         // detect header
-        InputStream in = new PushbackInputStream(testInput, 10);
+        InputStream in = FileMagic.prepareToCheckMagic(testInput);
         assertFalse(OPOIFSFileSystem.hasPOIFSHeader(in));
 
         // check if InputStream is still intact

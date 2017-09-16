@@ -53,7 +53,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
     private int placementId;
     private int placeholderId;
     private int placeholderSize;
-    private short unusedShort = 0;
+    private short unusedShort;
 
 
     /**

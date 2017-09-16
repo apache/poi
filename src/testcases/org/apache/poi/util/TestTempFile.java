@@ -54,10 +54,12 @@ public class TestTempFile {
     @After
     public void tearDown() throws IOException {
         String[] files = tempDir.list();
+        assertNotNull(files);
         // can have the "poifiles" subdir
         if(files.length == 1) {
             assertEquals("Had: " + Arrays.toString(files), DefaultTempFileCreationStrategy.POIFILES, files[0]);
             files = new File(tempDir, files[0]).list();
+            assertNotNull(files);
             assertEquals("Had: " + Arrays.toString(files), 0, files.length);
         } else {
             assertEquals("Had: " + Arrays.toString(files), 0, files.length);

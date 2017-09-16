@@ -26,35 +26,35 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class RelCubBezTo implements GeometryRow {
 
-    RelCubBezTo _master = null;
+    RelCubBezTo _master;
 
     // The x-coordinate of the ending vertex of a cubic Bezier curve relative to
     // the width of the shape.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of the ending vertex of a cubic Bezier curve relative to
     // the height of the shape.
-    Double y = null;
+    Double y;
 
     // The x-coordinate of the curve's beginning control point relative to the
     // shape's width; a point on the arc. The control point is best located
     // between the beginning and ending vertices of the arc.
-    Double a = null;
+    Double a;
 
     // The y-coordinate of a curve's beginning control point relative to the
     // shape's height.
-    Double b = null;
+    Double b;
 
     // The x-coordinate of the curve's ending control point relative to the
     // shape's width; a point on the arc. The control point is best located
     // between the beginning control point and ending vertices of the arc.
-    Double c = null;
+    Double c;
 
     // The y-coordinate of a curve's ending control point relative to the
     // shape's height.
-    Double d = null;
+    Double d;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

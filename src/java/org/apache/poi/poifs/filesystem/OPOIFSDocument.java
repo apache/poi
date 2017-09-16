@@ -149,7 +149,7 @@ public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSVie
 	 * @param stream the InputStream we read data from
 	 */
 	public OPOIFSDocument(String name, POIFSBigBlockSize bigBlockSize, InputStream stream) throws IOException {
-		List<DocumentBlock> blocks = new ArrayList<DocumentBlock>();
+		List<DocumentBlock> blocks = new ArrayList<>();
 
 		_size = 0;
 		_bigBigBlockSize = bigBlockSize;

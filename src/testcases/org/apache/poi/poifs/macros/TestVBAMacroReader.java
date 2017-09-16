@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
@@ -63,7 +64,7 @@ public class TestVBAMacroReader {
     }
 
     static {
-        final Map<POIDataSamples, String> _expectedMacroContents = new HashMap<POIDataSamples, String>();
+        final Map<POIDataSamples, String> _expectedMacroContents = new HashMap<>();
         final POIDataSamples[] dataSamples = {
                 POIDataSamples.getSpreadSheetInstance(),
                 POIDataSamples.getSlideShowInstance(),
@@ -251,6 +252,7 @@ public class TestVBAMacroReader {
         File f = POIDataSamples.getSpreadSheetInstance().getFile("59830.xls");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
+        assertEquals(29, macros.size());
         assertNotNull(macros.get("Module20"));
         assertContains(macros.get("Module20"), "here start of superscripting");
         r.close();
@@ -261,6 +263,7 @@ public class TestVBAMacroReader {
         File f = POIDataSamples.getSpreadSheetInstance().getFile("59858.xls");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
+        assertEquals(11, macros.size());
         assertNotNull(macros.get("Sheet4"));
         assertContains(macros.get("Sheet4"), "intentional constituent");
         r.close();
@@ -271,6 +274,7 @@ public class TestVBAMacroReader {
         File f = POIDataSamples.getDocumentInstance().getFile("60158.docm");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
+        assertEquals(2, macros.size());
         assertNotNull(macros.get("NewMacros"));
         assertContains(macros.get("NewMacros"), "' dirty");
         r.close();
@@ -282,8 +286,24 @@ public class TestVBAMacroReader {
         File f = POIDataSamples.getSpreadSheetInstance().getFile("60273.xls");
         VBAMacroReader r = new VBAMacroReader(f);
         Map<String, String> macros = r.readMacros();
+        assertEquals(2, macros.size());
         assertNotNull(macros.get("Module1"));
         assertContains(macros.get("Module1"), "9/8/2004");
         r.close();
     }
+
+
+    @Test
+    public void bug60279() throws IOException {
+        File f = POIDataSamples.getDocumentInstance().getFile("60279.doc");
+        VBAMacroReader r = new VBAMacroReader(f);
+        Map<String, String> macros = r.readMacros();
+        assertEquals(1, macros.size());
+        String content = macros.get("ThisDocument");
+        assertContains(content, "Attribute VB_Base = \"1Normal.ThisDocument\"");
+        assertContains(content, "Attribute VB_Customizable = True");
+        r.close();
+    }
+
+
 }

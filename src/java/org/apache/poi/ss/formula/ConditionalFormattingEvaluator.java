@@ -60,7 +60,7 @@ public class ConditionalFormattingEvaluator {
      * there's no guarantee instances won't be recreated on the fly by some implementation.
      * So we use sheet name.
      */
-    private final Map<String, List<EvaluationConditionalFormatRule>> formats = new HashMap<String, List<EvaluationConditionalFormatRule>>();
+    private final Map<String, List<EvaluationConditionalFormatRule>> formats = new HashMap<>();
     
     /**
      * Evaluating rules for cells in their region(s) is expensive, so we want to cache them,
@@ -70,7 +70,7 @@ public class ConditionalFormattingEvaluator {
      * <p>
      * CellReference implements equals().
      */
-    private final Map<CellReference, List<EvaluationConditionalFormatRule>> values = new HashMap<CellReference, List<EvaluationConditionalFormatRule>>();
+    private final Map<CellReference, List<EvaluationConditionalFormatRule>> values = new HashMap<>();
 
     public ConditionalFormattingEvaluator(Workbook wb, WorkbookEvaluatorProvider provider) {
         this.workbook = wb;
@@ -115,7 +115,7 @@ public class ConditionalFormattingEvaluator {
             }
             final SheetConditionalFormatting scf = sheet.getSheetConditionalFormatting();
             final int count = scf.getNumConditionalFormattings();
-            rules = new ArrayList<EvaluationConditionalFormatRule>(count);
+            rules = new ArrayList<>(count);
             formats.put(sheetName, rules);
             for (int i=0; i < count; i++) {
                 ConditionalFormatting f = scf.getConditionalFormattingAt(i);
@@ -150,21 +150,39 @@ public class ConditionalFormattingEvaluator {
      *         or null if none apply
      */
     public List<EvaluationConditionalFormatRule> getConditionalFormattingForCell(final CellReference cellRef) {
-        String sheetName = cellRef.getSheetName();
-        Sheet sheet = null;
-        if (sheetName == null) {
-            sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
-        } else {
-            sheet = workbook.getSheet(sheetName);
+        List<EvaluationConditionalFormatRule> rules = values.get(cellRef);
+        
+        if (rules == null) {
+            // compute and cache them
+            rules = new ArrayList<>();
+            
+            Sheet sheet = null;
+            if (cellRef.getSheetName() != null) sheet = workbook.getSheet(cellRef.getSheetName());
+            else sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
+            
+            /*
+             * Per Excel help:
+             * https://support.office.com/en-us/article/Manage-conditional-formatting-rule-precedence-e09711a3-48df-4bcb-b82c-9d8b8b22463d#__toc269129417
+             * stopIfTrue is true for all rules from HSSF files, and an explicit value for XSSF files.
+             * thus the explicit ordering of the rule lists in #getFormattingRulesForSheet(Sheet)
+             */
+            boolean stopIfTrue = false;
+            for (EvaluationConditionalFormatRule rule : getRules(sheet)) {
+                
+                if (stopIfTrue) {
+                    continue; // a previous rule matched and wants no more evaluations
+                }
+
+                if (rule.matches(cellRef)) {
+                    rules.add(rule);
+                    stopIfTrue = rule.getRule().getStopIfTrue();
+                }
+            }
+            Collections.sort(rules);
+            values.put(cellRef, rules);
         }
         
-        final Cell cell = SheetUtil.getCell(sheet, cellRef.getRow(), cellRef.getCol());
-        
-        if (cell == null) {
-            return Collections.emptyList();
-        }
-        
-        return getConditionalFormattingForCell(cell, cellRef);
+        return Collections.unmodifiableList(rules);
     }
     
     /**
@@ -185,45 +203,7 @@ public class ConditionalFormattingEvaluator {
      *         or null if none apply
      */
     public List<EvaluationConditionalFormatRule> getConditionalFormattingForCell(Cell cell) {
-        return getConditionalFormattingForCell(cell, getRef(cell));
-    }
-    
-    /**
-     * We need both, and can derive one from the other, but this is to avoid duplicate work
-     * 
-     * @param cell
-     * @param ref
-     * @return unmodifiable list of matching rules
-     */
-    private List<EvaluationConditionalFormatRule> getConditionalFormattingForCell(Cell cell, CellReference ref) {
-        List<EvaluationConditionalFormatRule> rules = values.get(ref);
-        
-        if (rules == null) {
-            // compute and cache them
-            rules = new ArrayList<EvaluationConditionalFormatRule>();
-            /*
-             * Per Excel help:
-             * https://support.office.com/en-us/article/Manage-conditional-formatting-rule-precedence-e09711a3-48df-4bcb-b82c-9d8b8b22463d#__toc269129417
-             * stopIfTrue is true for all rules from HSSF files, and an explicit value for XSSF files.
-             * thus the explicit ordering of the rule lists in #getFormattingRulesForSheet(Sheet)
-             */
-            boolean stopIfTrue = false;
-            for (EvaluationConditionalFormatRule rule : getRules(cell.getSheet())) {
-                
-                if (stopIfTrue) {
-                    continue; // a previous rule matched and wants no more evaluations
-                }
-
-                if (rule.matches(cell)) {
-                    rules.add(rule);
-                    stopIfTrue = rule.getRule().getStopIfTrue();
-                }
-            }
-            Collections.sort(rules);
-            values.put(ref, rules);
-        }
-        
-        return Collections.unmodifiableList(rules);
+        return getConditionalFormattingForCell(getRef(cell));
     }
     
     public static CellReference getRef(Cell cell) {
@@ -272,7 +252,7 @@ public class ConditionalFormattingEvaluator {
      * @return unmodifiable List of all cells in the rule's region matching the rule's condition
      */
     public List<Cell> getMatchingCells(EvaluationConditionalFormatRule rule) {
-        final List<Cell> cells = new ArrayList<Cell>();
+        final List<Cell> cells = new ArrayList<>();
         final Sheet sheet = rule.getSheet();
         
         for (CellRangeAddress region : rule.getRegions()) {

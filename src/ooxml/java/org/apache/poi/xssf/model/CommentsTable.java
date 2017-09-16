@@ -157,7 +157,7 @@ public class CommentsTable extends POIXMLDocumentPart {
      */
     public Map<CellAddress, XSSFComment> getCellComments() {
         prepareCTCommentCache();
-        final TreeMap<CellAddress, XSSFComment> map = new TreeMap<CellAddress, XSSFComment>();
+        final TreeMap<CellAddress, XSSFComment> map = new TreeMap<>();
         
         for (final Entry<CellAddress, CTComment> e: commentRefs.entrySet()) {
             map.put(e.getKey(), new XSSFComment(this, e.getValue(), null));
@@ -174,7 +174,7 @@ public class CommentsTable extends POIXMLDocumentPart {
     private void prepareCTCommentCache() {
         // Create the cache if needed
         if(commentRefs == null) {
-           commentRefs = new HashMap<CellAddress, CTComment>();
+           commentRefs = new HashMap<>();
            for (CTComment comment : comments.getCommentList().getCommentArray()) {
               commentRefs.put(new CellAddress(comment.getRef()), comment);
            }

@@ -46,7 +46,7 @@ public class ExtendableTreeCellRenderer implements TreeCellRenderer
 
     public ExtendableTreeCellRenderer()
     {
-        renderers = new HashMap<Class<?>,TreeCellRenderer>();
+        renderers = new HashMap<>();
         register(Object.class, new DefaultTreeCellRenderer()
             {
                 @Override

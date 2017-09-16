@@ -19,7 +19,6 @@ package org.apache.poi.hsmf;
 
 import java.io.IOException;
 
-import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.POIDataSamples;
 

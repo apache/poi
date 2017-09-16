@@ -83,7 +83,7 @@ public final class FtPioGrbitSubRecord extends SubRecord implements Cloneable {
     public static final int AUTO_LOAD_BIT    = 1 << 9;
 
     
-    private short flags = 0;
+    private short flags;
 
     /**
      * Construct a new <code>FtPioGrbitSubRecord</code> and

@@ -260,7 +260,7 @@ public enum PresetColor {
     private static final Map<String,PresetColor> lookupOoxmlId;
 
     static {
-        lookupOoxmlId = new HashMap<String,PresetColor>();
+        lookupOoxmlId = new HashMap<>();
         for(PresetColor pc : PresetColor.values()) {
             if (pc.ooxmlId != null) {
                 lookupOoxmlId.put(pc.ooxmlId, pc);

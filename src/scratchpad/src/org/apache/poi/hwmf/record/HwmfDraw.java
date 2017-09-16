@@ -293,7 +293,7 @@ public class HwmfDraw {
      */
     public static class WmfPolyPolygon implements HwmfRecord {
 
-        private List<Path2D> polyList = new ArrayList<Path2D>();
+        private List<Path2D> polyList = new ArrayList<>();
         
         @Override
         public HwmfRecordType getRecordType() {

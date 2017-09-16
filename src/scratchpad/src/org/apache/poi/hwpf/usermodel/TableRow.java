@@ -39,7 +39,7 @@ public final class TableRow extends Range
     private final static char TABLE_CELL_MARK = '\u0007';
 
     private TableCell[] _cells;
-    private boolean _cellsFound = false;
+    private boolean _cellsFound;
 
     int _levelNum;
     private SprmBuffer _papx;
@@ -126,8 +126,8 @@ public final class TableRow extends Range
         final short expectedCellsCount = _tprops.getItcMac();
 
         int lastCellStart = 0;
-        List<TableCell> cells = new ArrayList<TableCell>(
-                expectedCellsCount + 1 );
+        List<TableCell> cells = new ArrayList<>(
+                expectedCellsCount + 1);
         for ( int p = 0; p < numParagraphs(); p++ )
         {
             Paragraph paragraph = getParagraph( p );

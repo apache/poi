@@ -27,7 +27,7 @@ import org.apache.poi.util.Internal;
 @Internal
 public final class HWPFFileSystem
 {
-  private Map<String, ByteArrayOutputStream> _streams = new HashMap<String, ByteArrayOutputStream>();
+  private Map<String, ByteArrayOutputStream> _streams = new HashMap<>();
 
   public HWPFFileSystem()
   {

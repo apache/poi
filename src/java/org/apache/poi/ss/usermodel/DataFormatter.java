@@ -202,7 +202,7 @@ public class DataFormatter implements Observer {
      * A map to cache formats.
      *  Map<String,Format> formats
      */
-    private final Map<String,Format> formats = new HashMap<String,Format>();
+    private final Map<String,Format> formats = new HashMap<>();
 
     private final boolean emulateCSV;
 
@@ -508,7 +508,7 @@ public class DataFormatter implements Observer {
         StringBuilder sb = new StringBuilder();
         char[] chars = formatStr.toCharArray();
         boolean mIsMonth = true;
-        List<Integer> ms = new ArrayList<Integer>();
+        List<Integer> ms = new ArrayList<>();
         boolean isElapsed = false;
         for(int j=0; j<chars.length; j++) {
             char c = chars[j];

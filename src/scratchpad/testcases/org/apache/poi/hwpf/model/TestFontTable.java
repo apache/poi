@@ -29,7 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public final class TestFontTable {
-  private FontTable _fontTable = null;
+  private FontTable _fontTable;
   private HWPFDocFixture _hWPFDocFixture;
 
   @Test

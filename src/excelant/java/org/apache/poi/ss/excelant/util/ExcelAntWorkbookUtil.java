@@ -59,7 +59,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     private Workbook workbook;
 
-    private final Map<String, FreeRefFunction> xlsMacroList = new HashMap<String, FreeRefFunction>();
+    private final Map<String, FreeRefFunction> xlsMacroList = new HashMap<>();
 
     /**
      * Constructs an instance using a String that contains the fully qualified
@@ -154,9 +154,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
         }
 
         UDFFinder udff1 = new DefaultUDFFinder(names, functions);
-        UDFFinder udff = new AggregatingUDFFinder(udff1);
 
-        return udff;
+        return new AggregatingUDFFinder(udff1);
 
     }
 
@@ -215,7 +214,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @return
      */
     public List<String> getSheets() {
-    	ArrayList<String> sheets = new ArrayList<String>();
+    	ArrayList<String> sheets = new ArrayList<>();
 
     	int sheetCount = workbook.getNumberOfSheets();
 

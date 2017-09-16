@@ -29,7 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public final class TestStyleSheet {
-  private StyleSheet _styleSheet = null;
+  private StyleSheet _styleSheet;
   private HWPFDocFixture _hWPFDocFixture;
 
   @Test

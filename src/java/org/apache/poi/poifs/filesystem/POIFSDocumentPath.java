@@ -36,7 +36,7 @@ public class POIFSDocumentPath
     private static final POILogger log = POILogFactory.getLogger(POIFSDocumentPath.class);
           
     private final String[] components;
-    private int hashcode = 0; //lazy-compute hashCode
+    private int hashcode; //lazy-compute hashCode
 
     /**
      * constructor for the path of a document that is not in the root
@@ -256,9 +256,8 @@ public class POIFSDocumentPath
         }
         String[] parentComponents = new String[ length ];
         System.arraycopy(components, 0, parentComponents, 0, length);
-        POIFSDocumentPath parent = new POIFSDocumentPath(parentComponents);
-        
-        return parent;
+
+        return new POIFSDocumentPath(parentComponents);
     }
     
     /**

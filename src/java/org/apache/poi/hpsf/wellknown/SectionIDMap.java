@@ -45,7 +45,7 @@ public class SectionIDMap {
      * The default section ID map. It maps section format IDs to {@link PropertyIDMap PropertyIDMaps}
      */
     private static ThreadLocal<Map<ClassID,PropertyIDMap>> defaultMap =
-        new ThreadLocal<Map<ClassID,PropertyIDMap>>();
+            new ThreadLocal<>();
     
     /**
      * <p>The SummaryInformation's section's format ID.</p>
@@ -79,7 +79,7 @@ public class SectionIDMap {
     public static SectionIDMap getInstance() {
         Map<ClassID,PropertyIDMap> m = defaultMap.get();
         if (m == null) {
-            m = new HashMap<ClassID,PropertyIDMap>();
+            m = new HashMap<>();
             m.put(SUMMARY_INFORMATION_ID, PropertyIDMap.getSummaryInformationProperties());
             m.put(DOCUMENT_SUMMARY_INFORMATION_ID[0], PropertyIDMap.getDocumentSummaryInformationProperties());
             defaultMap.set(m);
@@ -107,7 +107,7 @@ public class SectionIDMap {
         if (m == null) {
             return UNDEFINED;
         }
-        final String s = (String) m.get(pid);
+        final String s = m.get(pid);
         if (s == null) {
             return UNDEFINED;
         }

@@ -101,8 +101,8 @@ public class FieldsImpl implements Fields
 
     public FieldsImpl( FieldsTables fieldsTables )
     {
-        _fieldsByOffset = new HashMap<FieldsDocumentPart, Map<Integer, FieldImpl>>(
-                FieldsDocumentPart.values().length );
+        _fieldsByOffset = new HashMap<>(
+                FieldsDocumentPart.values().length);
 
         for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
         {
@@ -117,7 +117,7 @@ public class FieldsImpl implements Fields
         if ( map == null || map.isEmpty() )
             return Collections.emptySet();
 
-        return Collections.<Field> unmodifiableCollection( map.values() );
+        return Collections.unmodifiableCollection( map.values() );
     }
 
     public FieldImpl getFieldByStartOffset( FieldsDocumentPart documentPart,
@@ -134,15 +134,15 @@ public class FieldsImpl implements Fields
             List<PlexOfField> plexOfFields )
     {
         if ( plexOfFields == null || plexOfFields.isEmpty() )
-            return new HashMap<Integer, FieldImpl>();
+            return new HashMap<>();
 
         Collections.sort( plexOfFields, comparator );
-        List<FieldImpl> fields = new ArrayList<FieldImpl>(
-                plexOfFields.size() / 3 + 1 );
+        List<FieldImpl> fields = new ArrayList<>(
+                plexOfFields.size() / 3 + 1);
         parseFieldStructureImpl( plexOfFields, 0, plexOfFields.size(), fields );
 
-        HashMap<Integer, FieldImpl> result = new HashMap<Integer, FieldImpl>(
-                fields.size() );
+        HashMap<Integer, FieldImpl> result = new HashMap<>(
+                fields.size());
         for ( FieldImpl field : fields )
         {
             result.put( Integer.valueOf( field.getFieldStartOffset() ), field );
@@ -187,11 +187,10 @@ public class FieldsImpl implements Fields
             {
             case FieldDescriptor.FIELD_SEPARATOR_MARK:
             {
-                PlexOfField separatorPlexOfField = nextPlexOfField;
 
                 int endNodePositionInList = binarySearch( plexOfFields,
                         nextNodePositionInList, endOffsetExclusive,
-                        separatorPlexOfField.getFcEnd() );
+                        nextPlexOfField.getFcEnd() );
                 if ( endNodePositionInList < 0 )
                 {
                     /*
@@ -212,17 +211,17 @@ public class FieldsImpl implements Fields
                 }
 
                 FieldImpl field = new FieldImpl( startPlexOfField,
-                        separatorPlexOfField, endPlexOfField );
+                        nextPlexOfField, endPlexOfField );
                 result.add( field );
 
                 // adding included fields
-                if ( startPlexOfField.getFcStart() + 1 < separatorPlexOfField
+                if ( startPlexOfField.getFcStart() + 1 < nextPlexOfField
                         .getFcStart() - 1 )
                 {
                     parseFieldStructureImpl( plexOfFields, next + 1,
                             nextNodePositionInList, result );
                 }
-                if ( separatorPlexOfField.getFcStart() + 1 < endPlexOfField
+                if ( nextPlexOfField.getFcStart() + 1 < endPlexOfField
                         .getFcStart() - 1 )
                 {
                     parseFieldStructureImpl( plexOfFields,
@@ -268,7 +267,7 @@ public class FieldsImpl implements Fields
         {
             int thisVal = o1.getFcStart();
             int anotherVal = o2.getFcStart();
-            return thisVal < anotherVal ? -1 : thisVal == anotherVal ? 0 : 1;
+            return Integer.compare(thisVal, anotherVal);
         }
     }
 

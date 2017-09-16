@@ -117,7 +117,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
         sheet = workbook.getSheet( SS.TEST_SHEET_NAME );
         evaluator = new XSSFFormulaEvaluator(workbook);
 
-        List<Object[]> data = new ArrayList<Object[]>();
+        List<Object[]> data = new ArrayList<>();
 
         processFunctionGroup(data, SS.START_FUNCTIONS_ROW_INDEX, null);
 

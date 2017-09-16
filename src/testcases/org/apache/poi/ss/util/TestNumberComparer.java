@@ -73,6 +73,7 @@ public final class TestNumberComparer {
 	public void testSpecificExampleA() {
 		double a = 0.06-0.01;
 		double b = 0.05;
+		//noinspection ConstantConditions
 		assertFalse(a == b);
 		assertEquals(0, NumberComparer.compare(a, b));
 	}
@@ -84,6 +85,7 @@ public final class TestNumberComparer {
 	public void testSpecificExampleB() {
 		double a = 1+1.0028-0.9973;
 		double b = 1.0055;
+		//noinspection ConstantConditions
 		assertFalse(a == b);
 		assertEquals(0, NumberComparer.compare(a, b));
 	}
@@ -91,7 +93,7 @@ public final class TestNumberComparer {
 	private static boolean confirm(int i, double a, double b, int expRes) {
 		int actRes = NumberComparer.compare(a, b);
 
-		int sgnActRes = actRes < 0 ? -1 : actRes > 0 ? +1 : 0;
+		int sgnActRes = Integer.compare(actRes, 0);
 		if (sgnActRes != expRes) {
 			System.err.println("Mismatch example[" + i + "] ("
 					+ formatDoubleAsHex(a) + ", " + formatDoubleAsHex(b) + ") expected "

@@ -70,12 +70,12 @@ public class CustomProperties implements Map<String,Object> {
     /**
      * The custom properties
      */
-    private final HashMap<Long,CustomProperty> props = new HashMap<Long,CustomProperty>();
+    private final HashMap<Long,CustomProperty> props = new HashMap<>();
     
     /**
      * Maps property IDs to property names and vice versa.
      */
-    private final TreeBidiMap<Long,String> dictionary = new TreeBidiMap<Long,String>();
+    private final TreeBidiMap<Long,String> dictionary = new TreeBidiMap<>();
 
     /**
      * Tells whether this object is pure or not.
@@ -151,7 +151,7 @@ public class CustomProperties implements Map<String,Object> {
         } else {
             throw new IllegalStateException("unsupported datatype - currently String,Short,Integer,Long,Float,Double,Boolean,BigInteger(unsigned long),Date can be processed.");
         }
-        final Property p = new MutableProperty(-1, variantType, value);
+        final Property p = new Property(-1, variantType, value);
         return put(new CustomProperty(p, key));
     }
     
@@ -219,7 +219,7 @@ public class CustomProperties implements Map<String,Object> {
      * @return the list of properties
      */
     public List<CustomProperty> properties() {
-        List<CustomProperty> list = new ArrayList<CustomProperty>(props.size());
+        List<CustomProperty> list = new ArrayList<>(props.size());
         for (Long l : dictionary.keySet()) {
             list.add(props.get(l));
         }
@@ -231,7 +231,7 @@ public class CustomProperties implements Map<String,Object> {
      */
     @Override
     public Collection<Object> values() {
-        List<Object> list = new ArrayList<Object>(props.size());
+        List<Object> list = new ArrayList<>(props.size());
         for (Long l : dictionary.keySet()) {
             list.add(props.get(l).getValue());
         }
@@ -240,7 +240,7 @@ public class CustomProperties implements Map<String,Object> {
 
     @Override
     public Set<Entry<String, Object>> entrySet() {
-        Map<String,Object> set = new LinkedHashMap<String,Object>(props.size());
+        Map<String,Object> set = new LinkedHashMap<>(props.size());
         for (Entry<Long,String> se : dictionary.entrySet()) {
             set.put(se.getValue(), props.get(se.getKey()).getValue());
         }

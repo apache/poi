@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>3.17-beta2-SNAPSHOT</version>
+        <version>4.0-beta1-SNAPSHOT</version>
     </parent>
     <artifactId>poi-excelant</artifactId>
     <packaging>jar</packaging>
@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant</artifactId>
-			<version>1.8.2</version>
+			<version>1.10.1</version>
         </dependency>
     </dependencies>
 </project>

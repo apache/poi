@@ -43,8 +43,7 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
         public int compare(PropertyNode<?> o1, PropertyNode<?> o2) {
             int thisVal = o1.getEnd();
             int anotherVal = o2.getEnd();
-            return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0
-                    : 1));
+            return (Integer.compare(thisVal, anotherVal));
         }
     }
 
@@ -55,8 +54,7 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
         public int compare(PropertyNode<?> o1, PropertyNode<?> o2) {
             int thisVal = o1.getStart();
             int anotherVal = o2.getStart();
-            return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0
-                    : 1));
+            return (Integer.compare(thisVal, anotherVal));
         }
     }
 
@@ -175,12 +173,6 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
      */
     public int compareTo(T o) {
         int cpEnd = o.getEnd();
-        if (_cpEnd == cpEnd) {
-            return 0;
-        } else if (_cpEnd < cpEnd) {
-            return -1;
-        } else {
-            return 1;
-        }
+        return Integer.compare(_cpEnd, cpEnd);
     }
 }

@@ -35,7 +35,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
     private List<EscherRecord> _childRecords;
 
     public UnknownEscherRecord() {
-        _childRecords = new ArrayList<EscherRecord>();
+        _childRecords = new ArrayList<>();
     }
 
     @Override
@@ -139,7 +139,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
     @Override
     protected Object[][] getAttributeMap() {
         int numCh = getChildRecords().size();
-        List<Object> chLst = new ArrayList<Object>(numCh*2+2);
+        List<Object> chLst = new ArrayList<>(numCh * 2 + 2);
         chLst.add("children");
         chLst.add(numCh);
         for (EscherRecord er : _childRecords) {

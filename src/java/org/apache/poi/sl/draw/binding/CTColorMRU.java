@@ -90,7 +90,7 @@ public class CTColorMRU {
      */
     public List<Object> getEGColorChoice() {
         if (egColorChoice == null) {
-            egColorChoice = new ArrayList<Object>();
+            egColorChoice = new ArrayList<>();
         }
         return this.egColorChoice;
     }

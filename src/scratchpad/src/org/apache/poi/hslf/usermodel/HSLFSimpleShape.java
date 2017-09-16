@@ -131,8 +131,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public double getLineWidth(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
-        double width = (prop == null) ? DEFAULT_LINE_WIDTH : Units.toPoints(prop.getPropertyValue());
-        return width;
+        return (prop == null) ? DEFAULT_LINE_WIDTH : Units.toPoints(prop.getPropertyValue());
     }
 
     /**

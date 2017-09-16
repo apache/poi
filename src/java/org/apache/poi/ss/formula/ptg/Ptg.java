@@ -44,7 +44,7 @@ public abstract class Ptg {
 	 * Extra data (beyond <tt>size</tt>) may be read if and <tt>ArrayPtg</tt>s are present.
 	 */
 	public static Ptg[] readTokens(int size, LittleEndianInput in) {
-		List<Ptg> temp = new ArrayList<Ptg>(4 + size / 2);
+		List<Ptg> temp = new ArrayList<>(4 + size / 2);
 		int pos = 0;
 		boolean hasArrayPtgs = false;
 		while (pos < size) {
@@ -205,7 +205,7 @@ public abstract class Ptg {
 			ptg.write(out);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
-					arrayPtgs = new ArrayList<Ptg>(5);
+					arrayPtgs = new ArrayList<>(5);
 				}
 				arrayPtgs.add(ptg);
 			}

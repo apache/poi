@@ -21,7 +21,6 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.Removal;
 
 /**
  * Various utility functions that make working with a region of cells easier.
@@ -57,27 +56,6 @@ public final class RegionUtil {
         }
     }
 
-    /**
-     * Sets the left border style for a region of cells by manipulating the cell style of the individual
-     * cells on the left
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
-     * @deprecated 3.16 beta 1. Use {@link #setBorderLeft(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.18")
-    public static void setBorderLeft(int border, CellRangeAddress region, Sheet sheet) {
-        int rowStart = region.getFirstRow();
-        int rowEnd = region.getLastRow();
-        int column = region.getFirstColumn();
-
-        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_LEFT, border);
-        for (int i = rowStart; i <= rowEnd; i++) {
-            cps.setProperty(CellUtil.getRow(i, sheet), column);
-        }
-    }
     /**
      * Sets the left border style for a region of cells by manipulating the cell style of the individual
      * cells on the left
@@ -125,27 +103,6 @@ public final class RegionUtil {
      * @param border The new border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
-     * @deprecated POI 3.16 beta 1. Use {@link #setBorderRight(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.18")
-    public static void setBorderRight(int border, CellRangeAddress region, Sheet sheet) {
-        int rowStart = region.getFirstRow();
-        int rowEnd = region.getLastRow();
-        int column = region.getLastColumn();
-
-        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_RIGHT, border);
-        for (int i = rowStart; i <= rowEnd; i++) {
-            cps.setProperty(CellUtil.getRow(i, sheet), column);
-        }
-    }
-    /**
-     * Sets the right border style for a region of cells by manipulating the cell style of the individual
-     * cells on the right
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param sheet The sheet that the region is on.
      * @since POI 3.16 beta 1
      */
     public static void setBorderRight(BorderStyle border, CellRangeAddress region, Sheet sheet) {
@@ -186,27 +143,6 @@ public final class RegionUtil {
      * @param border The new border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
-     * @deprecated POI 3.16 beta 1. Use {@link #setBorderBottom(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.18")
-    public static void setBorderBottom(int border, CellRangeAddress region, Sheet sheet) {
-        int colStart = region.getFirstColumn();
-        int colEnd = region.getLastColumn();
-        int rowIndex = region.getLastRow();
-        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_BOTTOM, border);
-        Row row = CellUtil.getRow(rowIndex, sheet);
-        for (int i = colStart; i <= colEnd; i++) {
-            cps.setProperty(row, i);
-        }
-    }
-    /**
-     * Sets the bottom border style for a region of cells by manipulating the cell style of the individual
-     * cells on the bottom
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param sheet The sheet that the region is on.
      * @since POI 3.16 beta 1
      */
     public static void setBorderBottom(BorderStyle border, CellRangeAddress region, Sheet sheet) {
@@ -240,27 +176,6 @@ public final class RegionUtil {
         }
     }
 
-    /**
-     * Sets the top border style for a region of cells by manipulating the cell style of the individual
-     * cells on the top
-     * 
-     * @param border The new border
-     * @param region The region that should have the border
-     * @param sheet The sheet that the region is on.
-     * @since POI 3.15 beta 2
-     * @deprecated 3.16 beta 1. Use {@link #setBorderTop(BorderStyle, CellRangeAddress, Sheet)}.
-     */
-    @Removal(version="3.18")
-    public static void setBorderTop(int border, CellRangeAddress region, Sheet sheet) {
-        int colStart = region.getFirstColumn();
-        int colEnd = region.getLastColumn();
-        int rowIndex = region.getFirstRow();
-        CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_TOP, border);
-        Row row = CellUtil.getRow(rowIndex, sheet);
-        for (int i = colStart; i <= colEnd; i++) {
-            cps.setProperty(row, i);
-        }
-    }
     /**
      * Sets the top border style for a region of cells by manipulating the cell style of the individual
      * cells on the top

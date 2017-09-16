@@ -45,8 +45,8 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	private final HSSFListener _childListener;
 	private final HSSFDataFormatter _formatter;
 	private final NumberFormat _defaultFormat;
-	private final Map<Integer, FormatRecord> _customFormatRecords = new HashMap<Integer, FormatRecord>();
-	private final List<ExtendedFormatRecord> _xfRecords = new ArrayList<ExtendedFormatRecord>();
+	private final Map<Integer, FormatRecord> _customFormatRecords = new HashMap<>();
+	private final List<ExtendedFormatRecord> _xfRecords = new ArrayList<>();
 
 	/**
 	 * Creates a format tracking wrapper around the given listener, using

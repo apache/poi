@@ -56,7 +56,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
     DocumentEncryptionAtom dea;
     EncryptionInfo _encryptionInfo;
 //    Cipher cipher = null;
-    ChunkedCipherOutputStream cyos = null;
+    ChunkedCipherOutputStream cyos;
 
     private static final BitField fieldRecInst = new BitField(0xFFF0);
 
@@ -409,9 +409,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
         UserEditAtom uea = null;
         PersistPtrHolder pph = null;
-        TreeMap<Integer,Integer> slideLocations = new TreeMap<Integer,Integer>();
-        TreeMap<Integer,Record> recordMap = new TreeMap<Integer,Record>();
-        List<Integer> obsoleteOffsets = new ArrayList<Integer>();
+        TreeMap<Integer,Integer> slideLocations = new TreeMap<>();
+        TreeMap<Integer,Record> recordMap = new TreeMap<>();
+        List<Integer> obsoleteOffsets = new ArrayList<>();
         int duplicatedCount = 0;
         for (Record r : records) {
             assert(r instanceof PositionDependentRecord);
@@ -468,7 +468,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         int deaOffset = -1;
         PersistPtrHolder ptr = null;
         UserEditAtom uea = null;
-        List<Record> recordList = new ArrayList<Record>();
+        List<Record> recordList = new ArrayList<>();
         for (Record r : records) {
             if (r instanceof DocumentEncryptionAtom) {
                 deaOffset = ((DocumentEncryptionAtom)r).getLastOnDiskOffset();
@@ -490,7 +490,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             return records;
         }
 
-        TreeMap<Integer,Integer> tm = new TreeMap<Integer,Integer>(ptr.getSlideLocationsLookup());
+        TreeMap<Integer,Integer> tm = new TreeMap<>(ptr.getSlideLocationsLookup());
         ptr.clear();
         int maxSlideId = -1;
         for (Map.Entry<Integer,Integer> me : tm.entrySet()) {

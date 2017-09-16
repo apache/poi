@@ -168,14 +168,13 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         }
 
         // TODO: find out where this -1 value comes from at #57820 (link to ms docs?)
-        Rectangle2D anchor = new Rectangle2D.Double(
+
+        return new Rectangle2D.Double(
             (x1 == -1 ? -1 : Units.masterToPoints(x1)),
             (y1 == -1 ? -1 : Units.masterToPoints(y1)),
             (x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
             (y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
         );
-        
-        return anchor;
     }
 
     /**
@@ -192,13 +191,13 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
-            EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(EscherChildAnchorRecord.RECORD_ID);
+            EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
             rec.setDx1(x);
             rec.setDy1(y);
             rec.setDx2(w);
             rec.setDy2(h);
         } else {
-            EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(EscherClientAnchorRecord.RECORD_ID);
+            EscherClientAnchorRecord rec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
             rec.setCol1((short)x);
             rec.setFlag((short)y);
             rec.setDx1((short)w);
@@ -254,7 +253,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @return escher property or <code>null</code> if not found.
      */
      public static <T extends EscherProperty> T getEscherProperty(AbstractEscherOptRecord opt, int propId){
-         return (opt == null) ? null : opt.<T>lookup(propId);
+         return (opt == null) ? null : opt.lookup(propId);
      }
 
     /**

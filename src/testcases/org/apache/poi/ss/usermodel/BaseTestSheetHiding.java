@@ -20,12 +20,10 @@ package org.apache.poi.ss.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.util.Removal;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,49 +58,6 @@ public abstract class BaseTestSheetHiding {
 	    wbU.close();
 	}
 	
-	/**
-	 * @deprecated 3.16 beta 2. Use {@link #testSheetVisibility()} instead.
-	 *
-	 * @throws IOException
-	 */
-	@Removal(version="3.18")
-	@Deprecated
-	@Test
-    public final void testSheetHiddenOld() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        wb.createSheet("MySheet");
-
-        assertFalse(wb.isSheetHidden(0));
-        assertFalse(wb.isSheetVeryHidden(0));
-
-        wb.setSheetHidden(0, Workbook.SHEET_STATE_HIDDEN);
-        assertTrue(wb.isSheetHidden(0));
-        assertFalse(wb.isSheetVeryHidden(0));
-
-        wb.setSheetHidden(0, Workbook.SHEET_STATE_VERY_HIDDEN);
-        assertFalse(wb.isSheetHidden(0));
-        assertTrue(wb.isSheetVeryHidden(0));
-
-        wb.setSheetHidden(0, Workbook.SHEET_STATE_VISIBLE);
-        assertFalse(wb.isSheetHidden(0));
-        assertFalse(wb.isSheetVeryHidden(0));
-
-        try {
-            wb.setSheetHidden(0, -1);
-            fail("expectd exception");
-        } catch (IllegalArgumentException e){
-            // ok
-        }
-        try {
-            wb.setSheetHidden(0, 3);
-            fail("expectd exception");
-        } catch (IllegalArgumentException e){
-            // ok
-        }
-
-        wb.close();
-    }
-    
     @Test
     public final void testSheetVisibility() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();

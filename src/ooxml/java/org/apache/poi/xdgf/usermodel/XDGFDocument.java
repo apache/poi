@@ -37,13 +37,13 @@ public class XDGFDocument {
 
     protected VisioDocumentType _document;
 
-    Map<Long, XDGFStyleSheet> _styleSheets = new HashMap<Long, XDGFStyleSheet>();
+    Map<Long, XDGFStyleSheet> _styleSheets = new HashMap<>();
 
     // defaults
-    long _defaultFillStyle = 0;
-    long _defaultGuideStyle = 0;
-    long _defaultLineStyle = 0;
-    long _defaultTextStyle = 0;
+    long _defaultFillStyle;
+    long _defaultGuideStyle;
+    long _defaultLineStyle;
+    long _defaultTextStyle;
 
 
     public XDGFDocument(VisioDocumentType document) {

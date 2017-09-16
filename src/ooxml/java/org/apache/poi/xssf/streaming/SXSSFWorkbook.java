@@ -49,13 +49,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.*;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -100,8 +94,8 @@ public class SXSSFWorkbook implements Workbook {
 
     private final XSSFWorkbook _wb;
 
-    private final Map<SXSSFSheet,XSSFSheet> _sxFromXHash = new HashMap<SXSSFSheet,XSSFSheet>();
-    private final Map<XSSFSheet,SXSSFSheet> _xFromSxHash = new HashMap<XSSFSheet,SXSSFSheet>();
+    private final Map<SXSSFSheet,XSSFSheet> _sxFromXHash = new HashMap<>();
+    private final Map<XSSFSheet,SXSSFSheet> _xFromSxHash = new HashMap<>();
 
     private int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
 
@@ -713,7 +707,7 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     public Iterator<Sheet> sheetIterator() {
-        return new SheetIterator<Sheet>();
+        return new SheetIterator<>();
     }
     
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {
@@ -1011,20 +1005,6 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * @param nameIndex position of the named range (0-based)
-     * @return the defined name at the specified index
-     * @throws IllegalArgumentException if the supplied index is invalid
-     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.18")
-    public Name getNameAt(int nameIndex) {
-        //noinspection deprecation
-        return _wb.getNameAt(nameIndex);
-    }
-
-    /**
      * Creates a new (uninitialised) defined name in this workbook
      *
      * @return new defined name object
@@ -1033,56 +1013,6 @@ public class SXSSFWorkbook implements Workbook {
     public Name createName()
     {
         return _wb.createName();
-    }
-
-    /**
-     * Gets the defined name index by name
-     * 
-     * <i>Note:</i> Excel defined names are case-insensitive and
-     * this method performs a case-insensitive search.
-     *
-     * @param name the name of the defined name
-     * @return zero based index of the defined name. <code>-1</code> if not found.
-     *
-     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
-     * Use {@link #getName(String)} instead.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.18")
-    public int getNameIndex(String name) {
-        //noinspection deprecation
-        return _wb.getNameIndex(name);
-    }
-
-    /**
-     * Remove the defined name at the specified index
-     *
-     * @param index named range index (0 based)
-     *
-     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.18")
-    public void removeName(int index) {
-        //noinspection deprecation
-        _wb.removeName(index);
-    }
-
-    /**
-     * Remove a defined name by name
-     *
-     * @param name the name of the defined name
-     *
-     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.18")
-    public void removeName(String name) {
-        //noinspection deprecation
-        _wb.removeName(name);
     }
 
     /**
@@ -1269,17 +1199,72 @@ public class SXSSFWorkbook implements Workbook {
         _wb.setSheetHidden(sheetIx,hidden);
     }
 
-    @Removal(version="3.18")
-    @Deprecated
-    @Override
-    public void setSheetHidden(int sheetIx, int hidden)
-    {
-        _wb.setSheetHidden(sheetIx,hidden);
-    }
-    
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         _wb.setSheetVisibility(sheetIx, visibility);
+    }
+
+    /**
+     * @param nameIndex position of the named range (0-based)
+     * @return the defined name at the specified index
+     * @throws IllegalArgumentException if the supplied index is invalid
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
+     */
+    @Override
+    @Deprecated
+    @Removal(version="3.20")
+    public Name getNameAt(int nameIndex) {
+        //noinspection deprecation
+        return _wb.getNameAt(nameIndex);
+    }
+
+    /**
+     * Gets the defined name index by name
+     *
+     * <i>Note:</i> Excel defined names are case-insensitive and
+     * this method performs a case-insensitive search.
+     *
+     * @param name the name of the defined name
+     * @return zero based index of the defined name. <code>-1</code> if not found.
+     *
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
+     * Use {@link #getName(String)} instead.
+     */
+    @Override
+    @Deprecated
+    @Removal(version="3.20")
+    public int getNameIndex(String name) {
+        //noinspection deprecation
+        return _wb.getNameIndex(name);
+    }
+
+    /**
+     * Remove the defined name at the specified index
+     * @param index named range index (0 based)
+     *
+     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
+     */
+    @Override
+    @Deprecated
+    @Removal(version="3.20")
+    public void removeName(int index) {
+        //noinspection deprecation
+        _wb.removeName(index);
+    }
+
+    /**
+     * Remove a defined name by name
+     *
+     * @param name the name of the defined name
+     *
+     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
+     */
+    @Override
+    @Deprecated
+    @Removal(version="3.20")
+    public void removeName(String name) {
+        //noinspection deprecation
+        _wb.removeName(name);
     }
     
     /**

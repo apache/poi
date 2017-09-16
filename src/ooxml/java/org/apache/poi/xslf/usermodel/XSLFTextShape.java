@@ -59,7 +59,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     /*package*/ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
         super(shape, sheet);
 
-        _paragraphs = new ArrayList<XSLFTextParagraph>();
+        _paragraphs = new ArrayList<>();
         CTTextBody txBody = getTextBody(false);
         if (txBody != null) {
             for (CTTextParagraph p : txBody.getPArray()) {
@@ -485,8 +485,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     @Override
     public Insets2D getInsets() {
-        Insets2D insets = new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
-        return insets;
+        return new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
     }
 
     @Override

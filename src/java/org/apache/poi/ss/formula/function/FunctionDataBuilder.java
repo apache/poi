@@ -37,9 +37,9 @@ final class FunctionDataBuilder {
 
 	public FunctionDataBuilder(int sizeEstimate) {
 		_maxFunctionIndex = -1;
-		_functionDataByName = new HashMap<String,FunctionMetadata>(sizeEstimate * 3 / 2);
-		_functionDataByIndex = new HashMap<Integer,FunctionMetadata>(sizeEstimate * 3 / 2);
-		_mutatingFunctionIndexes = new HashSet<Integer>();
+		_functionDataByName = new HashMap<>(sizeEstimate * 3 / 2);
+		_functionDataByIndex = new HashMap<>(sizeEstimate * 3 / 2);
+		_mutatingFunctionIndexes = new HashSet<>();
 	}
 
 	public void add(int functionIndex, String functionName, int minParams, int maxParams,

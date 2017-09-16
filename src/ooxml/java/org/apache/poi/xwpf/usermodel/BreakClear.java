@@ -83,7 +83,7 @@ public enum BreakClear {
      */
     ALL(4);
 
-    private static Map<Integer, BreakClear> imap = new HashMap<Integer, BreakClear>();
+    private static Map<Integer, BreakClear> imap = new HashMap<>();
 
     static {
         for (BreakClear p : values()) {

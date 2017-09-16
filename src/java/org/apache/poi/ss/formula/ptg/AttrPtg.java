@@ -78,8 +78,7 @@ public final class AttrPtg extends ControlPtg {
         _options = in.readByte();
         _data    = in.readShort();
         if (isOptimizedChoose()) {
-            int nCases = _data;
-            int[] jumpTable = new int[nCases];
+            int[] jumpTable = new int[(int) _data];
             for (int i = 0; i < jumpTable.length; i++) {
                 jumpTable[i] = in.readUShort();
             }

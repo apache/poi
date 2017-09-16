@@ -34,7 +34,7 @@ public abstract class XDGFSection {
     static final ObjectFactory<XDGFSection, SectionType> _sectionTypes;
 
     static {
-        _sectionTypes = new ObjectFactory<XDGFSection, SectionType>();
+        _sectionTypes = new ObjectFactory<>();
         try {
             _sectionTypes.put("LineGradient", 	GenericSection.class, SectionType.class, XDGFSheet.class);
             _sectionTypes.put("FillGradient", 	GenericSection.class, SectionType.class, XDGFSheet.class);
@@ -71,7 +71,7 @@ public abstract class XDGFSection {
     protected SectionType _section;
     protected XDGFSheet _containingSheet;
 
-    protected Map<String, XDGFCell> _cells = new HashMap<String, XDGFCell>();
+    protected Map<String, XDGFCell> _cells = new HashMap<>();
 
 
     public XDGFSection(SectionType section, XDGFSheet containingSheet) {

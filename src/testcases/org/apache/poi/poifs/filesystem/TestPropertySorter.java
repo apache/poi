@@ -123,7 +123,7 @@ public final class TestPropertySorter extends TestCase {
         DirectoryNode vba = (DirectoryNode)vba_project.getEntry(VBA);
         DirectoryProperty  p = (DirectoryProperty)vba.getProperty();
 
-        List<Property> lst = new ArrayList<Property>();
+        List<Property> lst = new ArrayList<>();
         for (Iterator<Property> it = p.getChildren(); it.hasNext();){
             Property ch = it.next();
             lst.add(ch);

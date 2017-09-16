@@ -77,7 +77,7 @@ public class CTConnectionSiteList {
      */
     public List<CTConnectionSite> getCxn() {
         if (cxn == null) {
-            cxn = new ArrayList<CTConnectionSite>();
+            cxn = new ArrayList<>();
         }
         return this.cxn;
     }

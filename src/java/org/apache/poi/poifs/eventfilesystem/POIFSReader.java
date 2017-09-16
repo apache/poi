@@ -51,7 +51,7 @@ public class POIFSReader
 {
     private final POIFSReaderRegistry registry;
     private boolean registryClosed;
-    private boolean notifyEmptyDirectories = false;
+    private boolean notifyEmptyDirectories;
 
     /**
      * Create a POIFSReader

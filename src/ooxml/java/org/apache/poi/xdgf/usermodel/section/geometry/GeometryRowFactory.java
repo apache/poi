@@ -27,7 +27,7 @@ public class GeometryRowFactory {
     static final ObjectFactory<GeometryRow, RowType> _rowTypes;
 
     static {
-        _rowTypes = new ObjectFactory<GeometryRow, RowType>();
+        _rowTypes = new ObjectFactory<>();
         try {
             _rowTypes.put("ArcTo", ArcTo.class, RowType.class);
             _rowTypes.put("Ellipse", Ellipse.class, RowType.class);

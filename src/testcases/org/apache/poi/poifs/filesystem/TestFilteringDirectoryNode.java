@@ -51,7 +51,7 @@ public final class TestFilteringDirectoryNode extends TestCase {
     }
     
     public void testNoFiltering() throws Exception {
-       FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), new HashSet<String>());
+       FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), new HashSet<>());
        assertEquals(3, d.getEntryCount());
        assertEquals(dirA.getName(), d.getEntry(dirA.getName()).getName());
        

@@ -86,9 +86,9 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	private XSSFGraphicFrame frame;
 
 	@Deprecated
-	List<XSSFChartAxis> axis = new ArrayList<XSSFChartAxis>();
+	List<XSSFChartAxis> axis = new ArrayList<>();
 
-	List<XDDFChartAxis> axes = new ArrayList<XDDFChartAxis>();
+	List<XDDFChartAxis> axes = new ArrayList<>();
 
 	/**
 	 * Create a new SpreadsheetML chart

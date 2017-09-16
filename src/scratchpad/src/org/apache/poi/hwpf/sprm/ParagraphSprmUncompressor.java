@@ -439,7 +439,7 @@ public final class ParagraphSprmUncompressor
     int[] tabPositions = pap.getRgdxaTab();
     TabDescriptor[] tabDescriptors = pap.getRgtbd();
 
-    Map<Integer, TabDescriptor> tabMap = new HashMap<Integer, TabDescriptor>();
+    Map<Integer, TabDescriptor> tabMap = new HashMap<>();
     for (int x = 0; x < tabPositions.length; x++)
     {
       tabMap.put(Integer.valueOf(tabPositions[x]), tabDescriptors[x]);
@@ -464,7 +464,7 @@ public final class ParagraphSprmUncompressor
     tabPositions = new int[tabMap.size()];
     tabDescriptors = new TabDescriptor[tabPositions.length];
     
-    List<Integer> list = new ArrayList<Integer>(tabMap.keySet());
+    List<Integer> list = new ArrayList<>(tabMap.keySet());
     Collections.sort(list);
 
     for (int x = 0; x < tabPositions.length; x++)

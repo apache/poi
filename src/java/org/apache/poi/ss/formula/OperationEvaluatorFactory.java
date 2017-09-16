@@ -52,6 +52,7 @@ import org.apache.poi.ss.formula.eval.UnaryMinusEval;
 import org.apache.poi.ss.formula.eval.UnaryPlusEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.Indirect;
 
@@ -70,7 +71,7 @@ final class OperationEvaluatorFactory {
 	}
 
 	private static Map<OperationPtg, Function> initialiseInstancesMap() {
-		Map<OperationPtg, Function> m = new HashMap<OperationPtg, Function>(32);
+		Map<OperationPtg, Function> m = new HashMap<>(32);
 
 		put(m, EqualPtg.instance, RelationalOperationEval.EqualEval);
 		put(m, GreaterEqualPtg.instance, RelationalOperationEval.GreaterEqualEval);
@@ -116,6 +117,12 @@ final class OperationEvaluatorFactory {
 		Function result = _instancesByPtgClass.get(ptg);
 
 		if (result != null) {
+			EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
+		    EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
+		    
+		    if (evalCell.isPartOfArrayFormulaGroup() && result instanceof ArrayFunction)
+		        return ((ArrayFunction) result).evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
+		                
 			return  result.evaluate(args, ec.getRowIndex(), (short) ec.getColumnIndex());
 		}
 

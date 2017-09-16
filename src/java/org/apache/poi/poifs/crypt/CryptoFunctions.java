@@ -570,7 +570,6 @@ public class CryptoFunctions {
         /*
          *  SET Intermediate3 TO Intermediate1 BITWISE OR Intermediate2
          */
-        short intermediate3 = (short)(intermediate1 | intermediate2);
-        return intermediate3;
+        return (short)(intermediate1 | intermediate2);
     }
 }

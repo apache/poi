@@ -88,7 +88,7 @@ public final class TestBoundSheetRecord extends TestCase {
 		bs2.setPositionOfBof(33);
 		bs3.setPositionOfBof(22);
 
-		List<BoundSheetRecord> l = new ArrayList<BoundSheetRecord>();
+		List<BoundSheetRecord> l = new ArrayList<>();
 		l.add(bs1);
 		l.add(bs2);
 		l.add(bs3);

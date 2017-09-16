@@ -2463,7 +2463,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * .xlsx supports 64000 cell styles, the style indexes after
      * 32,767 must not be -32,768, then -32,767, -32,766
      */
-    @SuppressWarnings("resource")
     @Test
     public void bug57880() throws IOException {
         int numStyles = 33000;
@@ -2475,7 +2474,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
         assertEquals(numStyles, wb.getNumCellStyles());
 
-        // avoid OOM in gump run
+        // avoid OOM in Gump run
         File file = XSSFTestDataSamples.writeOutAndClose(wb, "bug57880");
         //noinspection UnusedAssignment
         wb = null;
@@ -2513,7 +2512,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertNotNull(sheet);
 
         Map<String, Object[]> data;
-        data = new TreeMap<String, Object[]>();
+        data = new TreeMap<>();
         data.put("1", new Object[]{"ID", "NAME", "LASTNAME"});
         data.put("2", new Object[]{2, "Amit", "Shukla"});
         data.put("3", new Object[]{1, "Lokesh", "Gupta"});
@@ -2773,7 +2772,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void test51998() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51998.xlsx");
 
-        Set<String> sheetNames = new HashSet<String>();
+        Set<String> sheetNames = new HashSet<>();
 
         for (int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
             sheetNames.add(wb.getSheetName(sheetNum));
@@ -2983,7 +2982,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Everything is fine at this point, cell is red
 
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         CellUtil.setCellStyleProperties(cell, properties);
 

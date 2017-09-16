@@ -25,7 +25,7 @@ package org.apache.poi.xwpf.usermodel;
  * 3rd CharacterPosition
  */
 public class PositionInParagraph {
-    private int posRun = 0, posText = 0, posChar = 0;
+    private int posRun, posText, posChar;
 
     public PositionInParagraph() {
     }

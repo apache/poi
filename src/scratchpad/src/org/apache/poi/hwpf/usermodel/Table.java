@@ -23,7 +23,7 @@ public final class Table extends Range
 {
     private ArrayList<TableRow> _rows;
 
-    private boolean _rowsFound = false;
+    private boolean _rowsFound;
 
     private int _tableLevel;
 
@@ -51,7 +51,7 @@ public final class Table extends Range
         if ( _rowsFound )
             return;
 
-        _rows = new ArrayList<TableRow>();
+        _rows = new ArrayList<>();
         int rowStart = 0;
         int rowEnd = 0;
 

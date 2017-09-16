@@ -49,7 +49,7 @@ public class Path {
     }
 
     public Path(boolean fill, boolean stroke){
-        commands = new ArrayList<PathCommand>();
+        commands = new ArrayList<>();
         _w = -1;
         _h = -1;
         _fill = (fill) ? PaintModifier.NORM : PaintModifier.NONE;
@@ -70,7 +70,7 @@ public class Path {
         _w = spPath.isSetW() ? spPath.getW() : -1;
         _h = spPath.isSetH() ? spPath.getH() : -1;
 
-        commands = new ArrayList<PathCommand>();
+        commands = new ArrayList<>();
 
         for(Object ch : spPath.getCloseOrMoveToOrLnTo()){
             if(ch instanceof CTPath2DMoveTo){

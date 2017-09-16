@@ -66,8 +66,7 @@ public final class BeginRecord extends StandardRecord implements Cloneable {
     
     @Override
     public BeginRecord clone() {
-       BeginRecord br = new BeginRecord();
-       // No data so nothing to copy
-       return br;
+        // No data so nothing to copy
+       return new BeginRecord();
     }
 }

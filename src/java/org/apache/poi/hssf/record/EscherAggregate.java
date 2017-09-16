@@ -295,12 +295,12 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * Maps shape container objects to their {@link TextObjectRecord} or {@link ObjRecord}
      */
-    private final Map<EscherRecord, Record> shapeToObj = new HashMap<EscherRecord, Record>();
+    private final Map<EscherRecord, Record> shapeToObj = new HashMap<>();
 
     /**
      * list of "tail" records that need to be serialized after all drawing group records
      */
-    private final Map<Integer, NoteRecord> tailRec = new LinkedHashMap<Integer, NoteRecord>();
+    private final Map<Integer, NoteRecord> tailRec = new LinkedHashMap<>();
 
     /**
      * create new EscherAggregate
@@ -376,7 +376,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     public static EscherAggregate createAggregate(List<RecordBase> records, int locFirstDrawingRecord) {
         // Keep track of any shape records created so we can match them back to the object id's.
         // Textbox objects are also treated as shape objects.
-        final List<EscherRecord> shapeRecords = new ArrayList<EscherRecord>();
+        final List<EscherRecord> shapeRecords = new ArrayList<>();
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory() {
             public EscherRecord createRecord(byte[] data, int offset) {
                 EscherRecord r = super.createRecord(data, offset);
@@ -466,8 +466,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         byte[] buffer = new byte[size];
 
         // Serialize escher records into one big data structure and keep note of ending offsets.
-        final List <Integer>spEndingOffsets = new ArrayList<Integer>();
-        final List <EscherRecord> shapes = new ArrayList<EscherRecord>();
+        final List <Integer>spEndingOffsets = new ArrayList<>();
+        final List <EscherRecord> shapes = new ArrayList<>();
         int pos = 0;
         for (Object record : records) {
             EscherRecord e = (EscherRecord) record;
@@ -522,8 +522,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         }
 
         for (NoteRecord noteRecord : tailRec.values()) {
-            Record rec = (Record) noteRecord;
-            pos += rec.serialize(pos, data);
+            pos += noteRecord.serialize(pos, data);
         }
         int bytesWritten = pos - offset;
         if (bytesWritten != getRecordSize())
@@ -594,7 +593,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         List<EscherRecord> records = getEscherRecords();
         int rawEscherSize = getEscherRecordSize(records);
         byte[] buffer = new byte[rawEscherSize];
-        final List<Integer> spEndingOffsets = new ArrayList<Integer>();
+        final List<Integer> spEndingOffsets = new ArrayList<>();
         int pos = 0;
         for (EscherRecord e : records) {
             pos += e.serialize(pos, buffer, new EscherSerializationListener() {
@@ -747,9 +746,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      */
     public void setMainSpRecordId(int shapeId) {
         EscherContainerRecord dgContainer = getEscherContainer();
-        EscherContainerRecord spgrConatiner = (EscherContainerRecord) dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER);
+        EscherContainerRecord spgrConatiner = dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER);
         EscherContainerRecord spContainer = (EscherContainerRecord) spgrConatiner.getChild(0);
-        EscherSpRecord sp = (EscherSpRecord) spContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord sp = spContainer.getChildById(EscherSpRecord.RECORD_ID);
         sp.setShapeId(shapeId);
     }
 

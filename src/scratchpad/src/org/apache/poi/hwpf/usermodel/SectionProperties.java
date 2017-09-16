@@ -24,6 +24,7 @@ public final class SectionProperties extends SEPAbstractType implements Cloneabl
     private short field_60_rncftn;
     private short field_61_rncedn;
     private int field_62_nftn;
+    @SuppressWarnings("RedundantFieldInitialization")
     private int field_63_nfcftnref = 0x00; // initialize with default value; msonfcArabic
     private int field_64_nedn;
     private int field_65_nfcednref = 0x02; // initialize with default value; msonfcLCRoman

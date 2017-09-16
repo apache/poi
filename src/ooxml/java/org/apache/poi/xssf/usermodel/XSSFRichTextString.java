@@ -559,7 +559,7 @@ public class XSSFRichTextString implements RichTextString {
 
     TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
         int length = 0;
-        TreeMap<Integer, CTRPrElt> formats = new TreeMap<Integer, CTRPrElt>();
+        TreeMap<Integer, CTRPrElt> formats = new TreeMap<>();
         //noinspection deprecation - for performance reasons!
         for (CTRElt r : entry.getRArray()) {
             String txt = r.getT();

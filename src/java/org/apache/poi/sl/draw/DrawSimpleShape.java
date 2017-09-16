@@ -119,7 +119,7 @@ public class DrawSimpleShape extends DrawShape {
         }
         graphics.setPaint(line);
 
-        List<Outline> lst = new ArrayList<Outline>();
+        List<Outline> lst = new ArrayList<>();
         LineDecoration deco = getShape().getLineDecoration();
         Outline head = getHeadDecoration(graphics, deco, stroke);
         if (head != null) {
@@ -347,7 +347,7 @@ public class DrawSimpleShape extends DrawShape {
             : (Map<String, CustomGeometry>)graphics.getRenderingHint(Drawable.PRESET_GEOMETRY_CACHE);
 
         if (presets == null) {
-            presets = new HashMap<String,CustomGeometry>();
+            presets = new HashMap<>();
             if (graphics != null) {
                 graphics.setRenderingHint(Drawable.PRESET_GEOMETRY_CACHE, presets);
             }
@@ -398,7 +398,7 @@ public class DrawSimpleShape extends DrawShape {
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
         final SimpleShape<?,?> sh = getShape();
 
-        List<Outline> lst = new ArrayList<Outline>();
+        List<Outline> lst = new ArrayList<>();
         CustomGeometry geom = sh.getGeometry();
         if(geom == null) {
             return lst;

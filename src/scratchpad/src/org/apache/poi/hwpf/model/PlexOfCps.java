@@ -37,7 +37,7 @@ public final class PlexOfCps {
     private List<GenericPropertyNode> _props;
 
     public PlexOfCps(int sizeOfStruct) {
-        _props = new ArrayList<GenericPropertyNode>();
+        _props = new ArrayList<>();
         _cbStruct = sizeOfStruct;
     }
 
@@ -52,7 +52,7 @@ public final class PlexOfCps {
         _iMac = (cb - 4) / (4 + cbStruct);
 
         _cbStruct = cbStruct;
-        _props = new ArrayList<GenericPropertyNode>(_iMac);
+        _props = new ArrayList<>(_iMac);
 
         for (int x = 0; x < _iMac; x++) {
             _props.add(getProperty(x, buf, start));

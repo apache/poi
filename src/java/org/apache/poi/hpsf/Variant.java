@@ -387,8 +387,8 @@ public class Variant
 
     /* Initialize the number-to-name and number-to-length map: */
     static {
-        Map<Long,String> number2Name = new HashMap<Long,String>(NUMBER_TO_NAME_LIST.length, 1.0F);
-        Map<Long,Integer> number2Len = new HashMap<Long,Integer>(NUMBER_TO_NAME_LIST.length, 1.0F);
+        Map<Long,String> number2Name = new HashMap<>(NUMBER_TO_NAME_LIST.length, 1.0F);
+        Map<Long,Integer> number2Len = new HashMap<>(NUMBER_TO_NAME_LIST.length, 1.0F);
 
         for (Object[] nn : NUMBER_TO_NAME_LIST) {
             number2Name.put((Long)nn[0], (String)nn[1]);

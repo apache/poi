@@ -35,7 +35,7 @@ final class FormulaCellCache {
 
 	public FormulaCellCache() {
 		// assumes the object returned by EvaluationCell.getIdentityKey() has a well behaved hashCode+equals
-		_formulaEntriesByCell = new HashMap<Object, FormulaCellCacheEntry>();
+		_formulaEntriesByCell = new HashMap<>();
 	}
 
 	public CellCacheEntry[] getCacheEntries() {

@@ -66,13 +66,13 @@ public class SXSSFSheet implements Sheet
 {
     /*package*/ final XSSFSheet _sh;
     private final SXSSFWorkbook _workbook;
-    private final TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
+    private final TreeMap<Integer,SXSSFRow> _rows= new TreeMap<>();
     private final SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     private final AutoSizeColumnTracker _autoSizeColumnTracker;
-    private int outlineLevelRow = 0;
+    private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
-    private boolean allFlushed = false;
+    private boolean allFlushed;
 
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         _workbook = workbook;
@@ -1383,7 +1383,7 @@ public class SXSSFSheet implements Sheet
     private int findStartOfRowOutlineGroup(int rowIndex) {
         // Find the start of the group.
         Row row = getRow(rowIndex);
-        int level = ((SXSSFRow) row).getOutlineLevel();
+        int level = row.getOutlineLevel();
         if(level == 0) {
             throw new IllegalArgumentException("Outline level is zero for the row (" + rowIndex + ").");
         }

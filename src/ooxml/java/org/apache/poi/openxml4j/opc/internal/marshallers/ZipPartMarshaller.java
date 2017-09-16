@@ -47,6 +47,7 @@ import org.w3c.dom.Element;
  */
 public final class ZipPartMarshaller implements PartMarshaller {
 	private final static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
+	private final static int READ_WRITE_FILE_BUFFER_SIZE = 8192;
 
 	/**
 	 * Save the specified part.
@@ -80,7 +81,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 
 			// Saving data in the ZIP file
 			InputStream ins = part.getInputStream();
-			byte[] buff = new byte[ZipHelper.READ_WRITE_FILE_BUFFER_SIZE];
+			byte[] buff = new byte[READ_WRITE_FILE_BUFFER_SIZE];
 			while (ins.available() > 0) {
 				int resultRead = ins.read(buff);
 				if (resultRead == -1) {

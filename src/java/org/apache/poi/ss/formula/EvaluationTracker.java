@@ -43,8 +43,8 @@ final class EvaluationTracker {
 
 	public EvaluationTracker(EvaluationCache cache) {
 		_cache = cache;
-		_evaluationFrames = new ArrayList<CellEvaluationFrame>();
-		_currentlyEvaluatingCells = new HashSet<FormulaCellCacheEntry>();
+		_evaluationFrames = new ArrayList<>();
+		_currentlyEvaluatingCells = new HashSet<>();
 	}
 
 	/**

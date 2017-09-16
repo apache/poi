@@ -203,9 +203,9 @@ public class DataSpaceMapUtils {
         int transformType;
         String transformerId;
         String transformerName;
-        int readerVersionMajor = 1, readerVersionMinor = 0;
-        int updaterVersionMajor = 1, updaterVersionMinor = 0;
-        int writerVersionMajor = 1, writerVersionMinor = 0;
+        int readerVersionMajor = 1, readerVersionMinor;
+        int updaterVersionMajor = 1, updaterVersionMinor;
+        int writerVersionMajor = 1, writerVersionMinor;
 
         public TransformInfoHeader(
             int transformType,
@@ -257,9 +257,9 @@ public class DataSpaceMapUtils {
     
     public static class DataSpaceVersionInfo implements EncryptionRecord {
         String featureIdentifier;
-        int readerVersionMajor = 1, readerVersionMinor = 0;
-        int updaterVersionMajor = 1, updaterVersionMinor = 0;
-        int writerVersionMajor = 1, writerVersionMinor = 0;
+        int readerVersionMajor = 1, readerVersionMinor;
+        int updaterVersionMajor = 1, updaterVersionMinor;
+        int writerVersionMajor = 1, writerVersionMinor;
         
         public DataSpaceVersionInfo(LittleEndianInput is) {
             featureIdentifier = readUnicodeLPP4(is);

@@ -58,8 +58,8 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	private final HSSFDataFormatter _formatter;
 	private boolean _includeSheetNames = true;
 	private boolean _shouldEvaluateFormulas = true;
-	private boolean _includeCellComments = false;
-	private boolean _includeBlankCells = false;
+	private boolean _includeCellComments;
+	private boolean _includeBlankCells;
 	private boolean _includeHeadersFooters = true;
 
 	public ExcelExtractor(HSSFWorkbook wb) {

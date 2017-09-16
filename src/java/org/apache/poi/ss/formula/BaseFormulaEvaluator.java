@@ -132,13 +132,12 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         if (cell == null) {
             return null;
         }
-        Cell result = cell;
         if (cell.getCellTypeEnum() == CellType.FORMULA) {
             CellValue cv = evaluateFormulaCellValue(cell);
             setCellValue(cell, cv);
             setCellType(cell, cv); // cell will no longer be a formula cell
         }
-        return result;
+        return cell;
     }
 
     protected abstract CellValue evaluateFormulaCellValue(Cell cell);

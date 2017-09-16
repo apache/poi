@@ -24,7 +24,7 @@ import java.util.List;
  * Handling of a list of values, e.g. the 2nd argument in RANK(A1,(B1,B2,B3),1)
  */
 public class RefListEval implements ValueEval {
-    private final List<ValueEval> list = new ArrayList<ValueEval>();
+    private final List<ValueEval> list = new ArrayList<>();
 
     public RefListEval(ValueEval v1, ValueEval v2) {
         add(v1);

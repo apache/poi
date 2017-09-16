@@ -117,7 +117,7 @@ public class TestMissingWorkbook extends TestCase {
 
 		FormulaEvaluator lMainWorkbookEvaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
 		FormulaEvaluator lSourceEvaluator = sourceWorkbook.getCreationHelper().createFormulaEvaluator();
-		Map<String,FormulaEvaluator> workbooks = new HashMap<String, FormulaEvaluator>();
+		Map<String,FormulaEvaluator> workbooks = new HashMap<>();
 		workbooks.put(MAIN_WORKBOOK_FILENAME, lMainWorkbookEvaluator);
 		workbooks.put(SOURCE_DUMMY_WORKBOOK_FILENAME, lSourceEvaluator);
 		lMainWorkbookEvaluator.setupReferencedWorkbooks(workbooks);

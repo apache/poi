@@ -42,7 +42,7 @@ public final class OldFontTable {
         //and it is recorded in the first short.
 
 
-        List<OldFfn> ffns = new ArrayList<OldFfn>();
+        List<OldFfn> ffns = new ArrayList<>();
         int fontTableLength = LittleEndian.getShort(buf, offset);
 
         int endOfTableOffset = offset + length;

@@ -36,8 +36,7 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
     protected CFHeaderBase() {
     }
     protected CFHeaderBase(CellRangeAddress[] regions, int nRules) {
-        CellRangeAddress[] unmergedRanges = regions;
-        CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(unmergedRanges);
+        CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(regions);
         setCellRanges(mergeCellRanges);
         field_1_numcf = nRules;
     }

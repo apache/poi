@@ -20,7 +20,6 @@ package org.apache.poi.ss.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -53,8 +52,9 @@ public final class TestCellRangeAddress {
     @Test
     public void testLoadInvalid() {
         try {
-            assertNotNull(new CellRangeAddress(
-                TestcaseRecordInputStream.create(0x000, new byte[] { (byte)0x02 })));
+            new CellRangeAddress(
+                TestcaseRecordInputStream.create(0x000, new byte[] { (byte)0x02 }));
+            fail();
         } catch (RuntimeException e) {
             assertTrue("Had: " + e, e.getMessage().contains("Ran out of data"));
         }
@@ -66,8 +66,7 @@ public final class TestCellRangeAddress {
 
         byte[] recordBytes;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
-        try {
+        try (LittleEndianOutputStream out = new LittleEndianOutputStream(baos)) {
             // With nothing set
             ref.serialize(out);
             recordBytes = baos.toByteArray();
@@ -91,8 +90,6 @@ public final class TestCellRangeAddress {
             for (int i = 0; i < data.length; i++) {
                 assertEquals("At offset " + i, data[i], recordBytes[i]);
             }
-        } finally {
-            out.close();
         }
     }
     
@@ -100,13 +97,13 @@ public final class TestCellRangeAddress {
     public void testCreateIllegal() throws IOException {
         // for some combinations we expected exceptions
         try {
-            assertNotNull(new CellRangeAddress(1, 0, 0, 0));
+            new CellRangeAddress(1, 0, 0, 0);
             fail("Expect to catch an exception");
         } catch (IllegalArgumentException e) {
             // expected here
         }
         try {
-            assertNotNull(new CellRangeAddress(0, 0, 1, 0));
+            new CellRangeAddress(0, 0, 1, 0);
             fail("Expect to catch an exception");
         } catch (IllegalArgumentException e) {
             // expected here

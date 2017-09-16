@@ -54,15 +54,14 @@ public final class DateAndTime
   
   public Calendar getDate() {
      // TODO Discover if the timezone is stored somewhere else or not
-     Calendar cal = LocaleUtil.getLocaleCalendar(
-           _years.getValue(_info2)+1900, 
-           _months.getValue(_info2)-1, 
-           _dom.getValue(_info), 
-           _hours.getValue(_info), 
-           _minutes.getValue(_info),
-           0
-     );
-     return cal;
+      return LocaleUtil.getLocaleCalendar(
+            _years.getValue(_info2)+1900,
+            _months.getValue(_info2)-1,
+            _dom.getValue(_info),
+            _hours.getValue(_info),
+            _minutes.getValue(_info),
+            0
+      );
   }
 
   public void serialize(byte[] buf, int offset)

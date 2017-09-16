@@ -46,7 +46,7 @@ public final class FtCfSubRecord extends SubRecord implements Cloneable {
      */
     public static final short UNSPECIFIED_BIT = (short)0xFFFF;
     
-    private short flags = 0;
+    private short flags;
 
     /**
      * Construct a new <code>FtPioGrbitSubRecord</code> and

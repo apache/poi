@@ -55,7 +55,7 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         // cache for performance: ~30% speedup due to caching
         if (_cellCache == null) {
-            _cellCache = new HashMap<CellKey, EvaluationCell>(_xs.getLastRowNum()*3);
+            _cellCache = new HashMap<>(_xs.getLastRowNum() * 3);
             for (final Row row : _xs) {
                 final int rowNum = row.getRowNum();
                 for (final Cell cell : row) {

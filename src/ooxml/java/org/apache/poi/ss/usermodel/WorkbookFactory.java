@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
@@ -32,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -127,7 +128,7 @@ public class WorkbookFactory {
      *  the given InputStream.
      *
      * <p>Your input stream MUST either support mark/reset, or
-     *  be wrapped as a {@link PushbackInputStream}! Note that
+     *  be wrapped as a {@link BufferedInputStream}! Note that
      *  using an {@link InputStream} has a higher memory footprint
      *  than using a {@link File}.</p>
      *
@@ -150,16 +151,15 @@ public class WorkbookFactory {
 
     /**
      * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
-     *  the given InputStream, which may be password protected.
-     * <p>Your input stream MUST either support mark/reset, or
-     *  be wrapped as a {@link PushbackInputStream}! Note that
-     *  using an {@link InputStream} has a higher memory footprint
-     *  than using a {@link File}.</p>
+     *  the given InputStream, which may be password protected.<p>
+     *  
+     * Note that using an {@link InputStream} has a higher memory footprint
+     *  than using a {@link File}.<p>
      *
-     * <p>Note that in order to properly release resources the
+     * Note that in order to properly release resources the
      *  Workbook should be closed after use. Note also that loading
      *  from an InputStream requires more memory than loading
-     *  from a File, so prefer {@link #create(File)} where possible.</p>
+     *  from a File, so prefer {@link #create(File)} where possible.
      *
      *  @param inp The {@link InputStream} to read data from.
      *  @param password The password that should be used or null if no password is necessary.
@@ -172,23 +172,19 @@ public class WorkbookFactory {
      *  @throws EmptyFileException If an empty stream is given
      */
     public static Workbook create(InputStream inp, String password) throws IOException, InvalidFormatException, EncryptedDocumentException {
-        // If clearly doesn't do mark/reset, wrap up
-        if (! inp.markSupported()) {
-            inp = new PushbackInputStream(inp, 8);
-        }
-
-        // Ensure that there is at least some data there
-        byte[] header8 = IOUtils.peekFirst8Bytes(inp);
-
-        // Try to create
-        if (NPOIFSFileSystem.hasPOIFSHeader(header8)) {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
+        InputStream is = FileMagic.prepareToCheckMagic(inp);
+        
+        FileMagic fm = FileMagic.valueOf(is);
+        
+        switch (fm) {
+        case OLE2:
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             return create(fs, password);
+        case OOXML:
+            return new XSSFWorkbook(OPCPackage.open(is));
+        default:
+            throw new InvalidFormatException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
-        if (DocumentFactoryHelper.hasOOXMLHeader(inp)) {
-            return new XSSFWorkbook(OPCPackage.open(inp));
-        }
-        throw new InvalidFormatException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
     }
 
     /**

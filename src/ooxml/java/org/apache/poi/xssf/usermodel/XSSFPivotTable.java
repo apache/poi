@@ -225,8 +225,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     protected AreaReference getPivotArea() {
         final Workbook wb = getDataSheet().getWorkbook();
-        AreaReference pivotArea = getPivotCacheDefinition().getPivotArea(wb);
-        return pivotArea;
+        return getPivotCacheDefinition().getPivotArea(wb);
     }
     
     /**
@@ -283,7 +282,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     @Beta
     public List<Integer> getRowLabelColumns() {
         if (pivotTableDefinition.getRowFields() != null) {
-            List<Integer> columnIndexes = new ArrayList<Integer>();
+            List<Integer> columnIndexes = new ArrayList<>();
             for (CTField f : pivotTableDefinition.getRowFields().getFieldArray()) {
                 columnIndexes.add(f.getX());
             }

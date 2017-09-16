@@ -347,8 +347,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
 
         // Create arrays for parts attached to the workbook itself
-        pivotTables = new ArrayList<XSSFPivotTable>();
-        pivotCaches = new ArrayList<CTPivotCache>();
+        pivotTables = new ArrayList<>();
+        pivotCaches = new ArrayList<>();
     }
 
     @Override
@@ -358,8 +358,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             this.workbook = doc.getWorkbook();
 
             ThemesTable theme = null;
-            Map<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
-            Map<String, ExternalLinksTable> elIdMap = new HashMap<String, ExternalLinksTable>();
+            Map<String, XSSFSheet> shIdMap = new HashMap<>();
+            Map<String, ExternalLinksTable> elIdMap = new HashMap<>();
             for(RelationPart rp : getRelationParts()){
                 POIXMLDocumentPart p = rp.getDocumentPart();
                 if(p instanceof SharedStringsTable) {
@@ -402,7 +402,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             
             // Load individual sheets. The order of sheets is defined by the order
             //  of CTSheet elements in the workbook
-            sheets = new ArrayList<XSSFSheet>(shIdMap.size());
+            sheets = new ArrayList<>(shIdMap.size());
             //noinspection deprecation
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 parseSheet(shIdMap, ctSheet);
@@ -410,7 +410,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             
             // Load the external links tables. Their order is defined by the order 
             //  of CTExternalReference elements in the workbook
-            externalLinks = new ArrayList<ExternalLinksTable>(elIdMap.size());
+            externalLinks = new ArrayList<>(elIdMap.size());
             if (this.workbook.isSetExternalReferences()) {
                 for (CTExternalReference er : this.workbook.getExternalReferences().getExternalReferenceArray()) {
                     ExternalLinksTable el = elIdMap.get(er.getId());
@@ -466,10 +466,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
         stylesSource.setWorkbook(this);
 
-        namedRanges = new ArrayList<XSSFName>();
-        namedRangesByName = new ArrayListValuedHashMap<String, XSSFName>();
-        sheets = new ArrayList<XSSFSheet>();
-        pivotTables = new ArrayList<XSSFPivotTable>();
+        namedRanges = new ArrayList<>();
+        namedRangesByName = new ArrayListValuedHashMap<>();
+        sheets = new ArrayList<>();
+        pivotTables = new ArrayList<>();
     }
 
     /**
@@ -521,7 +521,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     @Override
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
         try {
             OutputStream out = img.getPackagePart().getOutputStream();
             out.write(pictureData);
@@ -932,7 +932,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public List<XSSFPictureData> getAllPictures() {
         if(pictures == null){
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/xl/media/.*?"));
-            pictures = new ArrayList<XSSFPictureData>(mediaParts.size());
+            pictures = new ArrayList<>(mediaParts.size());
             for(PackagePart part : mediaParts){
                 pictures.add(new XSSFPictureData(part));
             }
@@ -1189,7 +1189,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public Iterator<Sheet> sheetIterator() {
-        return new SheetIterator<Sheet>();
+        return new SheetIterator<>();
     }
     
     /**
@@ -1381,7 +1381,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
 
         //adjust indices of names ranges
-        List<XSSFName> toRemove = new ArrayList<XSSFName>();
+        List<XSSFName> toRemove = new ArrayList<>();
         for (XSSFName nm : namedRanges) {
             CTDefinedName ct = nm.getCTName();
             if(!ct.isSetLocalSheetId()) {
@@ -1722,8 +1722,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
     
     private void reprocessNamedRanges() {
-        namedRangesByName = new ArrayListValuedHashMap<String, XSSFName>();
-        namedRanges = new ArrayList<XSSFName>();
+        namedRangesByName = new ArrayListValuedHashMap<>();
+        namedRanges = new ArrayList<>();
         if(workbook.isSetDefinedNames()) {
             for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
                 createAndStoreName(ctName);
@@ -1843,7 +1843,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
-        List<PackagePart> embedds = new LinkedList<PackagePart>();
+        List<PackagePart> embedds = new LinkedList<>();
 
         for(XSSFSheet sheet : sheets){
             // Get the embeddings for the workbook
@@ -1906,14 +1906,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         setSheetVisibility(sheetIx, hidden ? SheetVisibility.HIDDEN : SheetVisibility.VISIBLE);
     }
 
-    @Deprecated
-    @Removal(version="3.18")
-    @Override
-    public void setSheetHidden(int sheetIx, int state) {
-        WorkbookUtil.validateSheetState(state);
-        setSheetVisibility(sheetIx, SheetVisibility.values()[state]);
-    }
-    
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
@@ -1986,7 +1978,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @return a collection of custom XML mappings defined in this workbook
      */
     public Collection<XSSFMap> getCustomXMLMappings(){
-        return mapInfo == null ? new ArrayList<XSSFMap>() : mapInfo.getAllXSSFMaps();
+        return mapInfo == null ? new ArrayList<>() : mapInfo.getAllXSSFMaps();
     }
 
     /**
@@ -2252,7 +2244,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         cache.setCacheId(tableId);
         cache.setId(rId);
         if(pivotCaches == null) {
-            pivotCaches = new ArrayList<CTPivotCache>();
+            pivotCaches = new ArrayList<>();
         }
         pivotCaches.add(cache);
         return cache;

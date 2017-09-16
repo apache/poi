@@ -287,7 +287,7 @@ public final class TestXSSFReader extends TestCase {
         OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("61034.xlsx");
         XSSFReader reader = new XSSFReader(pkg);
         XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
-        Set<String> seen = new HashSet<String>();
+        Set<String> seen = new HashSet<>();
         while (iter.hasNext()) {
             InputStream stream = iter.next();
             String sheetName = iter.getSheetName();

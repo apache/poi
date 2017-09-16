@@ -88,8 +88,8 @@ public class XOREncryptor extends Encryptor implements Cloneable {
     }
 
     private class XORCipherOutputStream extends ChunkedCipherOutputStream {
-        private int recordStart = 0;
-        private int recordEnd = 0;
+        private int recordStart;
+        private int recordEnd;
 
         public XORCipherOutputStream(OutputStream stream, int initialPos) throws IOException, GeneralSecurityException {
             super(stream, -1);

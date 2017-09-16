@@ -56,7 +56,7 @@ public enum BreakType {
      */
     TEXT_WRAPPING(3);
 
-    private static Map<Integer, BreakType> imap = new HashMap<Integer, BreakType>();
+    private static Map<Integer, BreakType> imap = new HashMap<>();
 
     static {
         for (BreakType p : values()) {

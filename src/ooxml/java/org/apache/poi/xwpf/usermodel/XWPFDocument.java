@@ -80,17 +80,17 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     private static final POILogger LOG = POILogFactory.getLogger(XWPFDocument.class);
     
-    protected List<XWPFFooter> footers = new ArrayList<XWPFFooter>();
-    protected List<XWPFHeader> headers = new ArrayList<XWPFHeader>();
-    protected List<XWPFComment> comments = new ArrayList<XWPFComment>();
-    protected List<XWPFHyperlink> hyperlinks = new ArrayList<XWPFHyperlink>();
-    protected List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
-    protected List<XWPFTable> tables = new ArrayList<XWPFTable>();
-    protected List<XWPFSDT> contentControls = new ArrayList<XWPFSDT>();
-    protected List<IBodyElement> bodyElements = new ArrayList<IBodyElement>();
-    protected List<XWPFPictureData> pictures = new ArrayList<XWPFPictureData>();
-    protected Map<Long, List<XWPFPictureData>> packagePictures = new HashMap<Long, List<XWPFPictureData>>();
-    protected Map<Integer, XWPFFootnote> endnotes = new HashMap<Integer, XWPFFootnote>();
+    protected List<XWPFFooter> footers = new ArrayList<>();
+    protected List<XWPFHeader> headers = new ArrayList<>();
+    protected List<XWPFComment> comments = new ArrayList<>();
+    protected List<XWPFHyperlink> hyperlinks = new ArrayList<>();
+    protected List<XWPFParagraph> paragraphs = new ArrayList<>();
+    protected List<XWPFTable> tables = new ArrayList<>();
+    protected List<XWPFSDT> contentControls = new ArrayList<>();
+    protected List<IBodyElement> bodyElements = new ArrayList<>();
+    protected List<XWPFPictureData> pictures = new ArrayList<>();
+    protected Map<Long, List<XWPFPictureData>> packagePictures = new HashMap<>();
+    protected Map<Integer, XWPFFootnote> endnotes = new HashMap<>();
     protected XWPFNumbering numbering;
     protected XWPFStyles styles;
     protected XWPFFootnotes footnotes;
@@ -522,7 +522,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     @Override
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
-        List<PackagePart> embedds = new LinkedList<PackagePart>();
+        List<PackagePart> embedds = new LinkedList<>();
 
         // Get the embeddings for the workbook
         PackagePart part = getPackagePart();
@@ -637,7 +637,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
              * in the body. Otherwise, take the previous paragraph and calculate
              * the new index for the new paragraph.
              */
-            if ((!(o instanceof CTP)) || (CTP) o == p) {
+            if ((!(o instanceof CTP)) || o == p) {
                 paragraphs.add(0, newP);
             } else {
                 int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
@@ -1312,7 +1312,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return all Pictures in this package
      */
     public List<XWPFPictureData> getAllPackagePictures() {
-        List<XWPFPictureData> result = new ArrayList<XWPFPictureData>();
+        List<XWPFPictureData> result = new ArrayList<>();
         Collection<List<XWPFPictureData>> values = packagePictures.values();
         for (List<XWPFPictureData> list : values) {
             result.addAll(list);
@@ -1323,7 +1323,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     void registerPackagePictureData(XWPFPictureData picData) {
         List<XWPFPictureData> list = packagePictures.get(picData.getChecksum());
         if (list == null) {
-            list = new ArrayList<XWPFPictureData>(1);
+            list = new ArrayList<>(1);
             packagePictures.put(picData.getChecksum(), list);
         }
         if (!list.contains(picData)) {
@@ -1431,8 +1431,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFPictureData getPictureDataByID(String blipID) {
         POIXMLDocumentPart relatedPart = getRelationById(blipID);
         if (relatedPart instanceof XWPFPictureData) {
-            XWPFPictureData xwpfPicData = (XWPFPictureData) relatedPart;
-            return xwpfPicData;
+            return (XWPFPictureData) relatedPart;
         }
         return null;
     }

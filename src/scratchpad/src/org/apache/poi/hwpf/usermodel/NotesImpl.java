@@ -28,7 +28,7 @@ import org.apache.poi.hwpf.model.NotesTables;
  */
 public class NotesImpl implements Notes
 {
-    private Map<Integer, Integer> anchorToIndexMap = null;
+    private Map<Integer, Integer> anchorToIndexMap;
 
     private final NotesTables notesTables;
 
@@ -74,7 +74,7 @@ public class NotesImpl implements Notes
         if ( anchorToIndexMap != null )
             return;
 
-        Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> result = new HashMap<>();
         for ( int n = 0; n < notesTables.getDescriptorsCount(); n++ )
         {
             int anchorPosition = notesTables.getDescriptor( n ).getStart();

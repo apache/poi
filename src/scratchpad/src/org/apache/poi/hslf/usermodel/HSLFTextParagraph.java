@@ -96,14 +96,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private TextPropCollection _masterStyle;
 
     protected TextRulerAtom _ruler;
-    protected final List<HSLFTextRun> _runs = new ArrayList<HSLFTextRun>();
+    protected final List<HSLFTextRun> _runs = new ArrayList<>();
     protected HSLFTextShape _parentShape;
     private HSLFSheet _sheet;
     private int shapeId;
 
     private StyleTextProp9Atom styleTextProp9Atom;
 
-    private boolean _dirty = false;
+    private boolean _dirty;
 
     private final List<HSLFTextParagraph> parentList;
 
@@ -1094,7 +1094,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         RecordContainer _txtbox = headerAtom.getParentRecord();
         if (_txtbox instanceof EscherTextboxWrapper) {
             try {
-                ((EscherTextboxWrapper) _txtbox).writeOut(null);
+                _txtbox.writeOut(null);
             } catch (IOException e) {
                 throw new HSLFException("failed dummy write", e);
             }
@@ -1212,8 +1212,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * representation
      */
     protected static String toInternalString(String s) {
-        String ns = s.replaceAll("\\r?\\n", "\r");
-        return ns;
+        return s.replaceAll("\\r?\\n", "\r");
     }
 
     /**
@@ -1251,7 +1250,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * For a given PPDrawing, grab all the TextRuns
      */
    public static List<List<HSLFTextParagraph>> findTextParagraphs(PPDrawing ppdrawing, HSLFSheet sheet) {
-        List<List<HSLFTextParagraph>> runsV = new ArrayList<List<HSLFTextParagraph>>();
+        List<List<HSLFTextParagraph>> runsV = new ArrayList<>();
         for (EscherTextboxWrapper wrapper : ppdrawing.getTextboxWrappers()) {
             List<HSLFTextParagraph> p = findTextParagraphs(wrapper, sheet);
             if (p != null) {
@@ -1299,7 +1298,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                     } else {
                         // create a new container
                         // TODO: ... is this case really happening?
-                        rv = new ArrayList<HSLFTextParagraph>(rv);
+                        rv = new ArrayList<>(rv);
                         rv.addAll(r);
                     }
                 }
@@ -1352,7 +1351,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * @param records the records to build from
      */
     protected static List<List<HSLFTextParagraph>> findTextParagraphs(Record[] records) {
-        List<List<HSLFTextParagraph>> paragraphCollection = new ArrayList<List<HSLFTextParagraph>>();
+        List<List<HSLFTextParagraph>> paragraphCollection = new ArrayList<>();
 
         int[] recordIdx = { 0 };
 
@@ -1397,7 +1396,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             String rawText = (tchars != null) ? tchars.getText() : tbytes.getText();
             StyleTextPropAtom styles = findStyleAtomPresent(header, rawText.length());
 
-            List<HSLFTextParagraph> paragraphs = new ArrayList<HSLFTextParagraph>();
+            List<HSLFTextParagraph> paragraphs = new ArrayList<>();
             paragraphCollection.add(paragraphs);
 
             // split, but keep delimiter

@@ -237,7 +237,7 @@ public interface Row extends Iterable<Cell> {
     public enum MissingCellPolicy {
         RETURN_NULL_AND_BLANK,
         RETURN_BLANK_AS_NULL,
-        CREATE_NULL_AS_BLANK;
+        CREATE_NULL_AS_BLANK
     }
     
     /**

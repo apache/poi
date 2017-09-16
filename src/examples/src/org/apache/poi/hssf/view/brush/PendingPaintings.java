@@ -89,7 +89,7 @@ public class PendingPaintings {
      * @param parent
      */
     public PendingPaintings(JComponent parent) {
-        paintings = new ArrayList<Painting>();
+        paintings = new ArrayList<>();
         parent.putClientProperty(PENDING_PAINTINGS, this);
     }
 

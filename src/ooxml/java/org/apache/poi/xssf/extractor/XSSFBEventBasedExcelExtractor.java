@@ -51,7 +51,7 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
             XSSFRelation.XLSB_BINARY_WORKBOOK
     };
 
-    private boolean handleHyperlinksInCells = false;
+    private boolean handleHyperlinksInCells;
 
     public XSSFBEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
         super(path);

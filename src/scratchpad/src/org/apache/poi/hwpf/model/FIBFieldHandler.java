@@ -148,7 +148,7 @@ public final class FIBFieldHandler
 
   private static final int FIELD_SIZE = LittleEndian.INT_SIZE * 2;
 
-  private Map<Integer, UnhandledDataStructure> _unknownMap = new HashMap<Integer, UnhandledDataStructure>();
+  private Map<Integer, UnhandledDataStructure> _unknownMap = new HashMap<>();
   private int[] _fields;
 
 

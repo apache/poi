@@ -37,7 +37,7 @@ public final class HeaderStories {
 	private Range headerStories;
 	private PlexOfCps plcfHdd;
 
-	private boolean stripFields = false;
+	private boolean stripFields;
 
 	public HeaderStories(HWPFDocument doc) {
 		this.headerStories = doc.getHeaderStoryRange();

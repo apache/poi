@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndian;
 public class EscherColorRef {
     @SuppressWarnings("unused")
     private int opid = -1;
-    private int colorRef = 0;
+    private int colorRef;
 
     public enum SysIndexSource {
         /** Use the fill color of the shape. */
@@ -218,12 +218,11 @@ public class EscherColorRef {
     }
 
     public int[] getRGB() {
-        int rgb[] = {
+        return new int[]{
             FLAG_RED.getValue(colorRef),
             FLAG_GREEN.getValue(colorRef),
             FLAG_BLUE.getValue(colorRef)
         };
-        return rgb;
     }
     
     /**

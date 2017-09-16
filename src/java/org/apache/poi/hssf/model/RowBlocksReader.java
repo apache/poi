@@ -47,12 +47,12 @@ public final class RowBlocksReader {
 	 * @param  rs the record stream
 	 */
 	public RowBlocksReader(RecordStream rs) {
-		List<Record> plainRecords = new ArrayList<Record>();
-		List<Record> shFrmRecords = new ArrayList<Record>();
-		List<CellReference> firstCellRefs = new ArrayList<CellReference>();
-		List<Record> arrayRecords = new ArrayList<Record>();
-		List<Record> tableRecords = new ArrayList<Record>();
-		List<Record> mergeCellRecords = new ArrayList<Record>();
+		List<Record> plainRecords = new ArrayList<>();
+		List<Record> shFrmRecords = new ArrayList<>();
+		List<CellReference> firstCellRefs = new ArrayList<>();
+		List<Record> arrayRecords = new ArrayList<>();
+		List<Record> tableRecords = new ArrayList<>();
+		List<Record> mergeCellRecords = new ArrayList<>();
 
 		Record prevRec = null;
 		while(!RecordOrderer.isEndOfRowBlock(rs.peekNextSid())) {

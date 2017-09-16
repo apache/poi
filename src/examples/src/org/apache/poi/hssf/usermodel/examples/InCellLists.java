@@ -81,7 +81,7 @@ public class InCellLists {
             // whose items are neither bulleted or numbered - into that cell.
             row = sheet.createRow(1);
             cell = row.createCell(0);
-            ArrayList<String> listItems = new ArrayList<String>();
+            ArrayList<String> listItems = new ArrayList<>();
             listItems.add("List Item One.");
             listItems.add("List Item Two.");
             listItems.add("List Item Three.");
@@ -125,8 +125,8 @@ public class InCellLists {
             // to preserve order.
             row = sheet.createRow(4);
             cell = row.createCell(0);
-            ArrayList<MultiLevelListItem> multiLevelListItems = new ArrayList<MultiLevelListItem>();
-            listItems = new ArrayList<String>();
+            ArrayList<MultiLevelListItem> multiLevelListItems = new ArrayList<>();
+            listItems = new ArrayList<>();
             listItems.add("ML List Item One - Sub Item One.");
             listItems.add("ML List Item One - Sub Item Two.");
             listItems.add("ML List Item One - Sub Item Three.");
@@ -137,7 +137,7 @@ public class InCellLists {
             // item
             multiLevelListItems.add(new MultiLevelListItem("List Item Two.", null));
             multiLevelListItems.add(new MultiLevelListItem("List Item Three.", null));
-            listItems = new ArrayList<String>();
+            listItems = new ArrayList<>();
             listItems.add("ML List Item Four - Sub Item One.");
             listItems.add("ML List Item Four - Sub Item Two.");
             listItems.add("ML List Item Four - Sub Item Three.");
@@ -512,8 +512,8 @@ public class InCellLists {
      */
     public final class MultiLevelListItem {
 
-        private String itemText = null;
-        private ArrayList<String> lowerLevelItems = null;
+        private String itemText;
+        private ArrayList<String> lowerLevelItems;
 
         /**
          * Create a new instance of the MultiLevelListItem class using the

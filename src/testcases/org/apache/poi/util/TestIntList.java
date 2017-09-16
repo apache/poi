@@ -256,6 +256,7 @@ public final class TestIntList extends TestCase {
         IntList list = new IntList();
 
         assertEquals(list, list);
+        //noinspection ObjectEqualsNull
         assertTrue(!list.equals(null));
         IntList list2 = new IntList(200);
 

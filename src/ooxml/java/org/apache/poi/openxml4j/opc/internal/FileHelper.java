@@ -41,8 +41,7 @@ public final class FileHelper {
 	public static File getDirectory(File f) {
 		if (f != null) {
 			String path = f.getPath();
-			int len = path.length();
-			int num2 = len;
+            int num2 = path.length();
 			while (--num2 >= 0) {
 				char ch1 = path.charAt(num2);
 				if (ch1 == File.separatorChar) {

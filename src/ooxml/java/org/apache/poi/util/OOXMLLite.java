@@ -89,7 +89,7 @@ public final class OOXMLLite {
     }
 
     void build() throws IOException, ClassNotFoundException {
-        List<Class<?>> lst = new ArrayList<Class<?>>();
+        List<Class<?>> lst = new ArrayList<>();
         //collect unit tests
         String exclude = StringUtil.join("|",
                 "BaseTestXWorkbook",
@@ -119,7 +119,19 @@ public final class OOXMLLite {
                 "TestFormulaEvaluatorOnXSSF\\$SS",
                 "TestMultiSheetFormulaEvaluatorOnXSSF\\$Result",
                 "TestMultiSheetFormulaEvaluatorOnXSSF\\$SS",
-                "TestXSSFBugs\\$\\d"
+                "TestXSSFBugs\\$\\d",
+                "AddImageBench",
+                "AddImageBench_jmhType_B\\d",
+                "AddImageBench_benchCreatePicture_jmhTest",
+                "TestEvilUnclosedBRFixingInputStream\\$EvilUnclosedBRFixingInputStream",
+                "TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource\\$TempFileRecordingSheetDataWriterWithDecorator",
+                "TestXSSFBReader\\$1",
+                "TestXSSFBReader\\$TestSheetHandler",
+                "TestFormulaEvaluatorOnXSSF\\$1",
+                "TestMultiSheetFormulaEvaluatorOnXSSF\\$1",
+                "TestZipPackagePropertiesMarshaller\\$1",
+                "SLCommonUtils",
+                "TestPPTX2PNG\\$1"
         );
         System.out.println("Collecting unit tests from " + _testDir);
         collectTests(_testDir, _testDir, lst, ".+.class$", ".+(" + exclude + ").class");
@@ -264,7 +276,7 @@ public final class OOXMLLite {
         ClassLoader appLoader = ClassLoader.getSystemClassLoader();
         try {
             Vector<Class<?>> classes = (Vector<Class<?>>) _classes.get(appLoader);
-            Map<String, Class<?>> map = new HashMap<String, Class<?>>();
+            Map<String, Class<?>> map = new HashMap<>();
             for (Class<?> cls : classes) {
                 // e.g. proxy-classes, ...
                 ProtectionDomain pd = cls.getProtectionDomain();

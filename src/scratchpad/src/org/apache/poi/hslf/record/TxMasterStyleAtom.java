@@ -144,8 +144,8 @@ public final class TxMasterStyleAtom extends RecordAtom {
         short levels = LittleEndian.getShort(_data, 0);
         pos += LittleEndian.SHORT_SIZE;
 
-        paragraphStyles = new ArrayList<TextPropCollection>(levels);
-        charStyles = new ArrayList<TextPropCollection>(levels);
+        paragraphStyles = new ArrayList<>(levels);
+        charStyles = new ArrayList<>(levels);
 
         for(short i = 0; i < levels; i++) {
             TextPropCollection prprops = new TextPropCollection(0, TextPropType.paragraph);

@@ -37,7 +37,7 @@ import org.apache.poi.sl.draw.binding.CTGeomGuide;
  */
 public class Guide implements Formula {
     enum Op {
-        muldiv,addsub,adddiv,ifelse,val,abs,sqrt,max,min,at2,sin,cos,tan,cat2,sat2,pin,mod;
+        muldiv,addsub,adddiv,ifelse,val,abs,sqrt,max,min,at2,sin,cos,tan,cat2,sat2,pin,mod
     }
 
     private final String name, fmla;

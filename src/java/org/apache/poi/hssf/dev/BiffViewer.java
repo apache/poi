@@ -76,7 +76,7 @@ public final class BiffViewer {
      */
     public static Record[] createRecords(InputStream is, PrintWriter ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
             throws org.apache.poi.util.RecordFormatException {
-        List<Record> temp = new ArrayList<Record>();
+        List<Record> temp = new ArrayList<>();
 
         RecordInputStream recStream = new RecordInputStream(is);
         while (true) {
@@ -422,8 +422,7 @@ public final class BiffViewer {
             } else {
                 boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
                 boolean dumpHex = cmdArgs.shouldDumpBiffHex();
-                boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
-                runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
+                runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, dumpInterpretedRecords,
                         cmdArgs.suppressHeader());
             }
         } finally {
@@ -456,7 +455,7 @@ public final class BiffViewer {
 			_hexDumpWriter = hexDumpWriter;
 			_zeroAlignEachRecord = zeroAlignEachRecord;
 			_noHeader = noHeader;
-			_headers = new ArrayList<String>();
+			_headers = new ArrayList<>();
 		}
 
 		@Override
@@ -480,7 +479,7 @@ public final class BiffViewer {
 		}
 		public List<String> getRecentHeaders() {
 		    List<String> result = _headers;
-		    _headers = new ArrayList<String>();
+		    _headers = new ArrayList<>();
 		    return result;
 		}
 		private static String formatRecordDetails(int globalOffset, int sid, int size, int recordCounter) {

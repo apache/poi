@@ -132,7 +132,7 @@ public final class TestFormulaEvaluatorOnXSSF {
         sheet = workbook.getSheetAt( 0 );
         evaluator = new XSSFFormulaEvaluator(workbook);
         
-        List<Object[]> data = new ArrayList<Object[]>();
+        List<Object[]> data = new ArrayList<>();
         
         processFunctionGroup(data, SS.START_OPERATORS_ROW_INDEX, null);
         processFunctionGroup(data, SS.START_FUNCTIONS_ROW_INDEX, null);

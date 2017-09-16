@@ -172,7 +172,7 @@ public final class TestSharedStringsTable extends TestCase {
     }
 
     private List<String> readStrings(String filename) throws IOException {
-        List<String> strs = new ArrayList<String>();
+        List<String> strs = new ArrayList<>();
         POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
         BufferedReader br = new BufferedReader(
                 new InputStreamReader(samples.openResourceAsStream(filename), "UTF-8"));
