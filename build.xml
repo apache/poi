@@ -445,6 +445,8 @@ under the License.
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
         <path refid="excelant.classpath"/>
+        <path refid="examples.classpath"/>
+        <pathelement location="${examples.output.dir}"/>
         <path path="${env.CLASSPATH}"/>
     </path>
 
@@ -1978,6 +1980,9 @@ under the License.
         <maven-jar dir="${excelant.src}"/>
     </target>
 
+    <target name="integration-test-jar" depends="compile-integration,-manifest" description="target for packaging the integration-test code for mass regression test runs">
+        <maven-jar dir="${integration.output.test.dir}"/>
+    </target>
 
     <target name="-do-jar-check-javadocs-package-list">
         <condition property="javadocs.package-list.present">
@@ -2228,7 +2233,7 @@ under the License.
     <!--  spot any cases where we've accidently used methods we shouldn't -->
     <!-- See https://github.com/policeman-tools/forbidden-apis for details -->
     <!--  of the checks that this can do -->
-    <target name="forbidden-apis-check" depends="init, compile">
+    <target name="forbidden-apis-check" depends="init, compile, compile-integration">
         <taskdef name="forbiddenapis"
                  classname="de.thetaphi.forbiddenapis.ant.AntTask"
                  classpath="${forbidden.jar}"/>
@@ -2262,6 +2267,7 @@ under the License.
             <!--
             <fileset dir="${scratchpad.output.test.dir}"/>
             <fileset dir="${excelant.output.test.dir}"/>
+            <fileset dir="${integration.output.test.dir}"/>
             -->
         </forbiddenapis>
 
@@ -2277,6 +2283,7 @@ under the License.
             <fileset dir="${ooxml.output.dir}"/>
             <fileset dir="${scratchpad.output.dir}"/>
             <fileset dir="${excelant.output.dir}"/>
+            <fileset dir="${integration.output.test.dir}"/>
         </forbiddenapis>
     </target>
 
