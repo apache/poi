@@ -91,7 +91,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
 
-    static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
+    static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found", "**/.git/**" };
 
     private static final Map<String,String> FILE_PASSWORD;
 
