@@ -2786,7 +2786,7 @@ under the License.
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
       <p>A summary of changes is available in the
-        <link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/RELEASE-NOTES-${version.id}.txt">Release Notes</link>.
+        <link href="https://www.apache.org/dyn/closer.lua/poi/dev/RELEASE-NOTES-${version.id}.txt">Release Notes</link>.
         A full list of changes is available in the <link href="changes.html">change log</link>.
         People interested should also follow the <link href="mailinglists.html">dev list</link>
         to track progress.</p>
