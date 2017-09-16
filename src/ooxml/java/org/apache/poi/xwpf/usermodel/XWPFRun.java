@@ -1049,7 +1049,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public String toString() {
         String phonetic = getPhonetic();
         if (phonetic.length() > 0) {
-            return text() +" ("+phonetic.toString()+")";
+            return text() +" ("+ phonetic +")";
         } else {
             return text();
         }

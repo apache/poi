@@ -531,7 +531,7 @@ public class TestWriteWellKnown {
 
         /* Removing the custom property must return the remove property and
          * reduce the size to 0. */
-        cp = (CustomProperty) cps.remove(KEY);
+        cp = cps.remove(KEY);
         assertEquals(KEY, cp.getName());
         assertEquals(VALUE_2, cp.getValue());
         assertEquals(0, cps.size());
