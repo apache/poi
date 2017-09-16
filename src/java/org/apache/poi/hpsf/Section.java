@@ -232,7 +232,7 @@ public class Section {
                     } catch (RuntimeException e) {
                         LOG.log(POILogger.INFO, "Dictionary fallback failed - ignoring property");
                     }
-                };
+                }
             } else {
                 setProperty(new Property(id, leis, pLen, codepage));
             }
