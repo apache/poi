@@ -46,7 +46,7 @@ public class TestOfficeDrawings extends TestCase
 
         EscherOptRecord officeArtFOPT = escherContainerRecord
                 .getChildById( (short) 0xF00B );
-        EscherComplexProperty gtextUNICODE = (EscherComplexProperty) officeArtFOPT
+        EscherComplexProperty gtextUNICODE = officeArtFOPT
                 .lookup( 0x00c0 );
 
         String text = StringUtil.getFromUnicodeLE(gtextUNICODE.getComplexData());

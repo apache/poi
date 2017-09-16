@@ -199,7 +199,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         PPDrawing ppdrawing = getPPDrawing();
 
         EscherContainerRecord dgContainer = ppdrawing.getDgContainer();
-        EscherContainerRecord spgr = (EscherContainerRecord) HSLFShape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
+        EscherContainerRecord spgr = HSLFShape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
         spgr.addChildRecord(shape.getSpContainer());
 
         shape.setSheet(this);

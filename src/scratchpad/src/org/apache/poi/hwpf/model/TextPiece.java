@@ -103,7 +103,7 @@ public class TextPiece extends PropertyNode<TextPiece> {
     }
 
     public byte[] getRawBytes() {
-        return ((CharSequence) _buf).toString().getBytes(
+        return _buf.toString().getBytes(
                 Charset.forName(_usesUnicode ? "UTF-16LE" : "Cp1252")
         );
     }

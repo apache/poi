@@ -209,14 +209,14 @@ public final class OperationEvaluationContext {
         SheetRangeEvaluator sre = new SheetRangeEvaluator(_sheetIndex, se);
         
         // ugly typecast - TODO - make spreadsheet version more easily accessible
-        SpreadsheetVersion ssVersion = ((FormulaParsingWorkbook)_workbook).getSpreadsheetVersion();
+        SpreadsheetVersion ssVersion = _workbook.getSpreadsheetVersion();
 
         NameType part1refType = classifyCellReference(refStrPart1, ssVersion);
         switch (part1refType) {
             case BAD_CELL_OR_NAMED_RANGE:
                 return ErrorEval.REF_INVALID;
             case NAMED_RANGE:
-                EvaluationName nm = ((FormulaParsingWorkbook)_workbook).getName(refStrPart1, _sheetIndex);
+                EvaluationName nm = _workbook.getName(refStrPart1, _sheetIndex);
                 if(!nm.isRange()){
                     throw new RuntimeException("Specified name '" + refStrPart1 + "' is not a range as expected.");
                 }

@@ -69,7 +69,7 @@ public class DirectoryNode
                   final OPOIFSFileSystem filesystem,
                   final DirectoryNode parent)
     {
-       this(property, parent, filesystem, (NPOIFSFileSystem)null);
+       this(property, parent, filesystem, null);
     }
 
     /**
@@ -84,7 +84,7 @@ public class DirectoryNode
                   final NPOIFSFileSystem nfilesystem,
                   final DirectoryNode parent)
     {
-       this(property, parent, (OPOIFSFileSystem)null, nfilesystem);
+       this(property, parent, null, nfilesystem);
     }
 
     private DirectoryNode(final DirectoryProperty property,

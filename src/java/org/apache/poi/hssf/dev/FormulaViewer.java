@@ -185,7 +185,7 @@ public class FormulaViewer
     
     private static String composeFormula(FormulaRecord record)
     {
-       return  HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, record.getParsedExpression());
+       return  HSSFFormulaParser.toFormulaString(null, record.getParsedExpression());
     }
 
     /**

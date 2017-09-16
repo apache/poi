@@ -791,7 +791,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		EscherContainerRecord bstore;
 
 		EscherContainerRecord dggContainer = _documentRecord.getPPDrawingGroup().getDggContainer();
-		bstore = (EscherContainerRecord) HSLFShape.getEscherChild(dggContainer,
+		bstore = HSLFShape.getEscherChild(dggContainer,
 				EscherContainerRecord.BSTORE_CONTAINER);
 		if (bstore == null) {
 			bstore = new EscherContainerRecord();

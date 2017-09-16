@@ -2169,7 +2169,7 @@ public final class InternalWorkbook {
                             sp.setShapeId(shapeId);
                         } else if (recordId == EscherOptRecord.RECORD_ID){
                             EscherOptRecord opt = (EscherOptRecord)shapeChildRecord;
-                            EscherSimpleProperty prop = (EscherSimpleProperty)opt.lookup(
+                            EscherSimpleProperty prop = opt.lookup(
                                     EscherProperties.BLIP__BLIPTODISPLAY );
                             if (prop != null){
                                 int pictureIndex = prop.getPropertyValue();

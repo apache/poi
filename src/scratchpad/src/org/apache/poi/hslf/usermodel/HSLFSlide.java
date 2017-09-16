@@ -162,7 +162,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         //initialize drawing group id
         EscherDggRecord dgg = getSlideShow().getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
         EscherContainerRecord dgContainer = getSheetContainer().getPPDrawing().getDgContainer();
-        EscherDgRecord dg = (EscherDgRecord) HSLFShape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
+        EscherDgRecord dg = HSLFShape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
         int dgId = dgg.getMaxDrawingGroupId() + 1;
         dg.setOptions((short)(dgId << 4));
         dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);

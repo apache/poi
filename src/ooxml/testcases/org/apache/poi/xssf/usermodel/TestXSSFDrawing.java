@@ -50,7 +50,7 @@ public class TestXSSFDrawing {
         RelationPart rp = rels.get(0);
         assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
 
-        XSSFDrawing drawing = (XSSFDrawing)rp.getDocumentPart();
+        XSSFDrawing drawing = rp.getDocumentPart();
         //sheet.createDrawingPatriarch() should return the same instance of XSSFDrawing
         assertSame(drawing, sheet.createDrawingPatriarch());
         String drawingId = rp.getRelationship().getId();

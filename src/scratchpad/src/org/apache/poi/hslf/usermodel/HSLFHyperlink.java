@@ -360,7 +360,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
         if (exobj != null && cldata != null) {
             List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
             find(cldata.getHSLFChildRecords(), exobj, lst);
-            return lst.isEmpty() ? null : (HSLFHyperlink)lst.get(0);
+            return lst.isEmpty() ? null : lst.get(0);
         }
 
         return null;

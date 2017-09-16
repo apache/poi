@@ -2130,7 +2130,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     @Override
     public void setDefaultColumnStyle(int column, CellStyle style) {
-        _sheet.setDefaultColumnStyle(column, ((HSSFCellStyle) style).getIndex());
+        _sheet.setDefaultColumnStyle(column, style.getIndex());
     }
 
     /**

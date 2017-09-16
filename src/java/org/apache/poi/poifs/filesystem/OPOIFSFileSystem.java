@@ -494,7 +494,7 @@ public class OPOIFSFileSystem
             Property      property = properties.next();
             String        name     = property.getName();
             DirectoryNode parent   = (dir == null)
-                                     ? (( DirectoryNode ) getRoot())
+                                     ? getRoot()
                                      : dir;
 
             if (property.isDirectory())
@@ -547,7 +547,7 @@ public class OPOIFSFileSystem
     {
         if (preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableArray();
+            return getRoot().getViewableArray();
         }
         return new Object[ 0 ];
     }
@@ -564,7 +564,7 @@ public class OPOIFSFileSystem
     {
         if (!preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableIterator();
+            return getRoot().getViewableIterator();
         }
         return Collections.emptyList().iterator();
     }
@@ -579,7 +579,7 @@ public class OPOIFSFileSystem
 
     public boolean preferArray()
     {
-        return (( POIFSViewable ) getRoot()).preferArray();
+        return getRoot().preferArray();
     }
 
     /**
