@@ -74,6 +74,8 @@ public enum FileMagic {
     RTF("{\\rtf"),
     /** PDF document */
     PDF("%PDF"),
+    /** Some different HTML documents */
+    HTML("<!DOCTYP".getBytes(), "<html".getBytes()),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);
