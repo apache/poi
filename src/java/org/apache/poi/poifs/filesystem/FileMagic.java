@@ -23,6 +23,7 @@ import static org.apache.poi.poifs.common.POIFSConstants.RAW_XML_FILE_HEADER;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.util.IOUtils;
@@ -75,7 +76,7 @@ public enum FileMagic {
     /** PDF document */
     PDF("%PDF"),
     /** Some different HTML documents */
-    HTML("<!DOCTYP".getBytes(), "<html".getBytes()),
+    HTML("<!DOCTYP".getBytes(Charset.forName("UTF-8")), "<html".getBytes(Charset.forName("UTF-8"))),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);
@@ -141,7 +142,7 @@ public enum FileMagic {
 
 
     /**
-     * Checks if an {@link InputStream} can be reseted (i.e. used for checking the header magic) and wraps it if not
+     * Checks if an {@link InputStream} can be reset (i.e. used for checking the header magic) and wraps it if not
      *
      * @param stream stream to be checked for wrapping
      * @return a mark enabled stream

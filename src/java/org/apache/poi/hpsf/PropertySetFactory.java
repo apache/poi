@@ -93,7 +93,7 @@ public class PropertySetFactory {
         LittleEndianInputStream leis = new LittleEndianInputStream(stream);
         int byteOrder =  leis.readUShort();
         int format = leis.readUShort();
-        int osVersion = (int)leis.readUInt();
+        /*int osVersion = (int)*/leis.readUInt();
         byte[] clsIdBuf = new byte[ClassID.LENGTH];
         leis.readFully(clsIdBuf);
         int sectionCount = (int)leis.readUInt();
