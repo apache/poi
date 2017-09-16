@@ -55,6 +55,7 @@ public final class DVRecord extends StandardRecord implements Cloneable {
 	/** Formula data for first condition (RPN token array without size field) */
 	private Formula _formula1;
 	/** Not used - Excel seems to always write 0x0000 */
+	@SuppressWarnings("RedundantFieldInitialization")
 	private short _not_used_2 = 0x0000;
 	/** Formula data for second condition (RPN token array without size field) */
 	private Formula _formula2;
