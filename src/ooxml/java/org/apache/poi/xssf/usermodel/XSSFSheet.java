@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -3316,7 +3315,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         String ref = address.formatAsString();
         CTSelection ctsel = getSheetTypeSelection();
         ctsel.setActiveCell(ref);
-        ctsel.setSqref(Arrays.asList(ref));
+        ctsel.setSqref(Collections.singletonList(ref));
     }
 
     /**
