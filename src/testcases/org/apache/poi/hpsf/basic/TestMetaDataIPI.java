@@ -544,8 +544,8 @@ public final class TestMetaDataIPI {
         /* Read the document summary information. */
         DirectoryEntry dir = poifs.getRoot();
         
-        dsi = (DocumentSummaryInformation)PropertySetFactory.create(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);;
-        si = (SummaryInformation)PropertySetFactory.create(dir, SummaryInformation.DEFAULT_STREAM_NAME);;
+        dsi = (DocumentSummaryInformation)PropertySetFactory.create(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        si = (SummaryInformation)PropertySetFactory.create(dir, SummaryInformation.DEFAULT_STREAM_NAME);
     }
 
     /**

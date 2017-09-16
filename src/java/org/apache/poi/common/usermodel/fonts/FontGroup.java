@@ -101,7 +101,7 @@ public enum FontGroup {
         UCS_RANGES.put(0xFB1D,  new Range(0xFB4F, COMPLEX_SCRIPT));
         UCS_RANGES.put(0xFE50,  new Range(0xFE6F, LATIN));
         // All others EAST_ASIAN
-    };
+    }
 
 
     /**

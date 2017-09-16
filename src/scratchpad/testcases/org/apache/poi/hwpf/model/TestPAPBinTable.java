@@ -34,7 +34,7 @@ public final class TestPAPBinTable {
     @Test
     public void testObIs() throws IOException {
         // shall not fail with assertions on
-        HWPFTestDataSamples.openSampleFile( "ob_is.doc" ).close();;
+        HWPFTestDataSamples.openSampleFile( "ob_is.doc" ).close();
     }
 
     @Test
