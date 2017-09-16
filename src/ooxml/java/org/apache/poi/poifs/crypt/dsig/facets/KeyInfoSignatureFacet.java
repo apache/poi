@@ -75,10 +75,10 @@ public class KeyInfoSignatureFacet extends SignatureFacet {
          * Construct the ds:KeyInfo element using JSR 105.
          */
         KeyInfoFactory keyInfoFactory = signatureConfig.getKeyInfoFactory();
-        List<Object> x509DataObjects = new ArrayList<Object>();
+        List<Object> x509DataObjects = new ArrayList<>();
         X509Certificate signingCertificate = signatureConfig.getSigningCertificateChain().get(0);
 
-        List<XMLStructure> keyInfoContent = new ArrayList<XMLStructure>();
+        List<XMLStructure> keyInfoContent = new ArrayList<>();
 
         if (signatureConfig.isIncludeKeyValue()) {
             KeyValue keyValue;

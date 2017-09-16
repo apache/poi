@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
-import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
@@ -36,8 +35,8 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     private final CTCfRule _cfRule;
     private XSSFSheet _sh;
     
-    private static Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<STCfType.Enum, ConditionType>();
-    private static Map<STCfType.Enum, ConditionFilterType> filterTypeLookup = new HashMap<STCfType.Enum, ConditionFilterType>();
+    private static Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<>();
+    private static Map<STCfType.Enum, ConditionFilterType> filterTypeLookup = new HashMap<>();
     static {
         typeLookup.put(STCfType.CELL_IS, ConditionType.CELL_VALUE_IS);
         typeLookup.put(STCfType.EXPRESSION, ConditionType.FORMULA);

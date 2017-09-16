@@ -38,7 +38,7 @@ public final class ChartSubstreamRecordAggregate extends RecordAggregate {
 
 	public ChartSubstreamRecordAggregate(RecordStream rs) {
 		_bofRec = (BOFRecord) rs.getNext();
-		List<RecordBase> temp = new ArrayList<RecordBase>();
+		List<RecordBase> temp = new ArrayList<>();
 		while (rs.peekNextClass() != EOFRecord.class) {
 			if (PageSettingsBlock.isComponentRecord(rs.peekNextSid())) {
 				if (_psBlock != null) {

@@ -75,7 +75,7 @@ public final class CollaboratingWorkbooksEnvironment {
         new CollaboratingWorkbooksEnvironment(evaluatorsByName, evaluators);
     }
     public static void setupFormulaEvaluator(Map<String,FormulaEvaluator> evaluators) {
-        Map<String, WorkbookEvaluator> evaluatorsByName = new HashMap<String, WorkbookEvaluator>(evaluators.size());
+        Map<String, WorkbookEvaluator> evaluatorsByName = new HashMap<>(evaluators.size());
         for (Map.Entry<String,FormulaEvaluator> swb : evaluators.entrySet()) {
             String wbName = swb.getKey();
             FormulaEvaluator eval = swb.getValue();
@@ -93,7 +93,7 @@ public final class CollaboratingWorkbooksEnvironment {
         this(toUniqueMap(workbookNames, evaluators, nItems), evaluators);
     }
     private static Map<String, WorkbookEvaluator> toUniqueMap(String[] workbookNames, WorkbookEvaluator[] evaluators, int nItems) {
-        Map<String, WorkbookEvaluator> evaluatorsByName = new HashMap<String, WorkbookEvaluator>(nItems * 3 / 2);
+        Map<String, WorkbookEvaluator> evaluatorsByName = new HashMap<>(nItems * 3 / 2);
         for(int i=0; i<nItems; i++) {
             String wbName = workbookNames[i];
             WorkbookEvaluator wbEval = evaluators[i];
@@ -105,7 +105,7 @@ public final class CollaboratingWorkbooksEnvironment {
         return evaluatorsByName;
     }
     private CollaboratingWorkbooksEnvironment(Map<String, WorkbookEvaluator> evaluatorsByName, WorkbookEvaluator[] evaluators) {
-        IdentityHashMap<WorkbookEvaluator, String> uniqueEvals = new IdentityHashMap<WorkbookEvaluator, String>(evaluators.length);
+        IdentityHashMap<WorkbookEvaluator, String> uniqueEvals = new IdentityHashMap<>(evaluators.length);
         for (Map.Entry<String, WorkbookEvaluator> me : evaluatorsByName.entrySet()) {
             String uniEval = uniqueEvals.put(me.getValue(), me.getKey());
             if (uniEval != null) {
@@ -144,7 +144,7 @@ public final class CollaboratingWorkbooksEnvironment {
      * Completely dismantles all workbook environments that the supplied evaluators are part of
      */
     private void unhookOldEnvironments(WorkbookEvaluator[] evaluators) {
-        Set<CollaboratingWorkbooksEnvironment> oldEnvs = new HashSet<CollaboratingWorkbooksEnvironment>();
+        Set<CollaboratingWorkbooksEnvironment> oldEnvs = new HashSet<>();
         for(int i=0; i<evaluators.length; i++) {
             oldEnvs.add(evaluators[i].getEnvironment());
         }

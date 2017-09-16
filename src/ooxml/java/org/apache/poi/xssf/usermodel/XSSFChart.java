@@ -84,7 +84,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	 */
 	private CTChart chart;
 
-	List<XSSFChartAxis> axis = new ArrayList<XSSFChartAxis>();
+	List<XSSFChartAxis> axis = new ArrayList<>();
 
 	/**
 	 * Create a new SpreadsheetML chart

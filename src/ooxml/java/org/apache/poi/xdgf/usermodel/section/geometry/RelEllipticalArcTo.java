@@ -26,32 +26,32 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class RelEllipticalArcTo implements GeometryRow {
 
-    RelEllipticalArcTo _master = null;
+    RelEllipticalArcTo _master;
 
     // The x-coordinate of the ending vertex on an arc relative to the width of
     // the shape.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of the ending vertex on an arc relative to the height of
     // the shape.
-    Double y = null;
+    Double y;
 
     // The x-coordinate of the arc's control point relative to the shape's
     // width; a point on the arc.
-    Double a = null;
+    Double a;
 
     // The y-coordinate of an arc's control point relative to the shape's width.
-    Double b = null;
+    Double b;
 
     // The angle of an arc's major axis relative to the x-axis of its parent.
-    Double c = null;
+    Double c;
 
     // The ratio of an arc's major axis to its minor axis. Despite the usual
     // meaning of these words, the "major" axis does not have to be greater than
     // the "minor" axis, so this ratio does not have to be greater than 1.
-    Double d = null;
+    Double d;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

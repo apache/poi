@@ -19,7 +19,6 @@
 package org.apache.poi.hssf.eventusermodel;
 
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 
 /**
  * Abstract class for use with the HSSFRequest and HSSFEventFactory, which

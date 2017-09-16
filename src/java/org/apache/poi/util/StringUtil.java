@@ -27,9 +27,6 @@ import java.util.Map;
  */
 @Internal
 public class StringUtil {
-
-    private static final POILogger logger = POILogFactory
-            .getLogger(StringUtil.class);
     protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
     public static final Charset UTF16LE = Charset.forName("UTF-16LE");
     public static final Charset UTF8 = Charset.forName("UTF-8");
@@ -315,7 +312,7 @@ public class StringUtil {
     */
    public static class StringsIterator implements Iterator<String> {
       private String[] strings = {};
-      private int position = 0;
+      private int position;
       public StringsIterator(String[] strings) {
           if (strings != null) {
               this.strings = strings.clone();
@@ -370,7 +367,7 @@ public class StringUtil {
    
    private static synchronized void initMsCodepointMap() {
        if (msCodepointToUnicode != null) return;
-       msCodepointToUnicode = new HashMap<Integer,Integer>();
+       msCodepointToUnicode = new HashMap<>();
        int i=0xF020;
        for (int ch : symbolMap_f020) {
            msCodepointToUnicode.put(i++, ch);

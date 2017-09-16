@@ -91,12 +91,12 @@ public final class TestFormulaParser {
      * @return parsed token array already confirmed not <code>null</code>
      */
     /* package */ static Ptg[] parseFormula(String formula) {
-        Ptg[] result = HSSFFormulaParser.parse(formula, (HSSFWorkbook)null);
+        Ptg[] result = HSSFFormulaParser.parse(formula, null);
         assertNotNull("Ptg array should not be null", result);
         return result;
     }
     private static String toFormulaString(Ptg[] ptgs) {
-        return HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, ptgs);
+        return HSSFFormulaParser.toFormulaString(null, ptgs);
     }
 
     @Test
@@ -1456,7 +1456,7 @@ public final class TestFormulaParser {
 
         MemFuncPtg mf = (MemFuncPtg)ptgs[0];
         assertEquals(57, mf.getLenRefSubexpression());
-        assertEquals("D4:E5", ((AreaPtgBase)ptgs[7]).toFormulaString());
+        assertEquals("D4:E5", ptgs[7].toFormulaString());
         assertTrue(((AttrPtg)ptgs[16]).isSum());
 
         ptgs = parseFormula("SUM(A1:B2:C3:D4)");
@@ -1567,7 +1567,7 @@ public final class TestFormulaParser {
         Ptg[] ptgs;
         try {
             ptgs = HSSFFormulaParser.parse(leadingZeroCellRef, wb);
-            assertEquals("B1", ((RefPtg) ptgs[0]).toFormulaString());
+            assertEquals("B1", ptgs[0].toFormulaString());
         } catch (FormulaParseException e) {
             confirmParseException(e, "Specified named range '"
                     + leadingZeroCellRef + "' does not exist in the current workbook.");

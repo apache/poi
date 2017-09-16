@@ -49,7 +49,7 @@ public class PAPBinTable
     private static final POILogger logger = POILogFactory
             .getLogger( PAPBinTable.class );
 
-    protected final ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
+    protected final ArrayList<PAPX> _paragraphs = new ArrayList<>();
 
     public PAPBinTable()
     {
@@ -158,7 +158,7 @@ public class PAPBinTable
             start = System.currentTimeMillis();
         }
 
-        List<PAPX> oldPapxSortedByEndPos = new ArrayList<PAPX>( paragraphs );
+        List<PAPX> oldPapxSortedByEndPos = new ArrayList<>(paragraphs);
         Collections.sort( oldPapxSortedByEndPos,
                 PropertyNode.EndComparator.instance );
 
@@ -166,7 +166,7 @@ public class PAPBinTable
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
-        final Map<PAPX, Integer> papxToFileOrder = new IdentityHashMap<PAPX, Integer>();
+        final Map<PAPX, Integer> papxToFileOrder = new IdentityHashMap<>();
         {
             int counter = 0;
             for ( PAPX papx : paragraphs )
@@ -188,7 +188,7 @@ public class PAPBinTable
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
-        List<PAPX> newPapxs = new LinkedList<PAPX>();
+        List<PAPX> newPapxs = new LinkedList<>();
         int lastParStart = 0;
         int lastPapxIndex = 0;
         for ( int charIndex = 0; charIndex < docText.length(); charIndex++ )
@@ -201,7 +201,7 @@ public class PAPBinTable
             final int endExclusive = charIndex + 1;
 
             boolean broken = false;
-            List<PAPX> papxs = new LinkedList<PAPX>();
+            List<PAPX> papxs = new LinkedList<>();
             for ( int papxIndex = lastPapxIndex; papxIndex < oldPapxSortedByEndPos
                     .size(); papxIndex++ )
             {

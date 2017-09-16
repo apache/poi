@@ -42,11 +42,11 @@ public class Ole10Native {
     private short flags1 = 2;          // 2 bytes, unknown, mostly [02 00]
     private String label;              // ASCIIZ, stored in this field without the terminating zero
     private String fileName;           // ASCIIZ, stored in this field without the terminating zero
-    private short flags2 = 0;          // 2 bytes, unknown, mostly [00 00]
+    private short flags2;          // 2 bytes, unknown, mostly [00 00]
     private short unknown1 = 3;        // see below
     private String command;            // ASCIIZ, stored in this field without the terminating zero
     private byte[] dataBuffer;         // varying size, the actual native data
-    private short flags3 = 0;          // some final flags? or zero terminators?, sometimes not there
+    private short flags3;          // some final flags? or zero terminators?, sometimes not there
   
     /**
      * the field encoding mode - merely a try-and-error guess ...

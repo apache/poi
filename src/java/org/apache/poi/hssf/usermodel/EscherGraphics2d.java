@@ -127,8 +127,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
     public Graphics create()
     {
-        EscherGraphics2d g2d = new EscherGraphics2d(_escherGraphics);
-        return g2d;
+        return new EscherGraphics2d(_escherGraphics);
     }
 
     public void dispose()

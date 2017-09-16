@@ -66,9 +66,9 @@ public final class InternalSheet {
     private static POILogger            log              = POILogFactory.getLogger(InternalSheet.class);
 
     private List<RecordBase>             _records;
-    protected PrintGridlinesRecord       printGridlines    =     null;
-    protected PrintHeadersRecord         printHeaders      =     null;
-    protected GridsetRecord              gridset           =     null;
+    protected PrintGridlinesRecord       printGridlines;
+    protected PrintHeadersRecord         printHeaders;
+    protected GridsetRecord              gridset;
     private   GutsRecord                 _gutsRecord;
     protected DefaultColWidthRecord      defaultcolwidth   =     new DefaultColWidthRecord();
     protected DefaultRowHeightRecord     defaultrowheight  =     new DefaultRowHeightRecord();
@@ -80,8 +80,8 @@ public final class InternalSheet {
      */
     private final WorksheetProtectionBlock _protectionBlock = new WorksheetProtectionBlock();
 
-    protected WindowTwoRecord            windowTwo         =     null;
-    protected SelectionRecord            _selection         =     null;
+    protected WindowTwoRecord            windowTwo;
+    protected SelectionRecord            _selection;
     /** java object always present, but if empty no BIFF records are written */
     private final MergedCellsTable       _mergedCellsTable;
     /** always present in this POI object, not always written to Excel file */
@@ -90,13 +90,13 @@ public final class InternalSheet {
     private DimensionsRecord             _dimensions;
     /** always present */
     protected final RowRecordsAggregate  _rowsAggregate;
-    private   DataValidityTable          _dataValidityTable=     null;
+    private   DataValidityTable          _dataValidityTable;
     private   ConditionalFormattingTable condFormatting;
 
-    private   Iterator<RowRecord>        rowRecIterator    =     null;
+    private   Iterator<RowRecord>        rowRecIterator;
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
-    protected boolean _isUncalced = false;
+    protected boolean _isUncalced;
 
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
@@ -125,7 +125,7 @@ public final class InternalSheet {
         _mergedCellsTable = new MergedCellsTable();
         RowRecordsAggregate rra = null;
 
-        List<RecordBase> records = new ArrayList<RecordBase>(128);
+        List<RecordBase> records = new ArrayList<>(128);
         _records = records; // needed here due to calls to findFirstRecordLocBySid before we're done
         int dimsloc = -1;
 
@@ -378,7 +378,7 @@ public final class InternalSheet {
      * @return the cloned sheet
      */
     public InternalSheet cloneSheet() {
-        List<Record> clonedRecords = new ArrayList<Record>(_records.size());
+        List<Record> clonedRecords = new ArrayList<>(_records.size());
         for (int i = 0; i < _records.size(); i++) {
             RecordBase rb = _records.get(i);
             if (rb instanceof RecordAggregate) {
@@ -413,7 +413,7 @@ public final class InternalSheet {
     }
     private InternalSheet() {
         _mergedCellsTable = new MergedCellsTable();
-        List<RecordBase> records = new ArrayList<RecordBase>(32);
+        List<RecordBase> records = new ArrayList<>(32);
 
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
@@ -1662,7 +1662,7 @@ public final class InternalSheet {
      * @return never <code>null</code>, typically empty array
      */
     public NoteRecord[] getNoteRecords() {
-        List<NoteRecord> temp = new ArrayList<NoteRecord>();
+        List<NoteRecord> temp = new ArrayList<>();
         for(int i=_records.size()-1; i>=0; i--) {
             RecordBase rec = _records.get(i);
             if (rec instanceof NoteRecord) {

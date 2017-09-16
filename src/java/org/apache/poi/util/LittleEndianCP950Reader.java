@@ -54,7 +54,7 @@ public class LittleEndianCP950Reader extends Reader {
     private int offset;
     private int trailing;
     private int leading;
-    int cnt = 0;
+    int cnt;
     //the char that is logically trailing in Big5 encoding
     //however in LittleEndian order, this is the first encountered.
     public LittleEndianCP950Reader(byte[] data) {

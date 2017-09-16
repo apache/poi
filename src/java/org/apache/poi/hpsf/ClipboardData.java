@@ -28,7 +28,7 @@ import org.apache.poi.util.POILogger;
 class ClipboardData {
     private static final POILogger LOG = POILogFactory.getLogger( ClipboardData.class );
 
-    private int _format = 0;
+    private int _format;
     private byte[] _value;
     
     ClipboardData() {}

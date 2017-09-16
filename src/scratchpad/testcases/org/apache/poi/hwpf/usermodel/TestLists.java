@@ -207,6 +207,9 @@ public final class TestLists extends TestCase {
       assertEquals(4, r.getParagraph(21).getIlvl());
       assertEquals(1, r.getParagraph(22).getIlvl());
       assertEquals(0, r.getParagraph(23).getIlvl());
+
+      // Try to read numCharacterRuns, see bug 50060
+      assertEquals(1, r.getParagraph(0).numCharacterRuns());
    }
 
    public void testSpecificNumberedOrderedListFeatures() throws IOException {
@@ -250,5 +253,4 @@ public final class TestLists extends TestCase {
       assertEquals((byte)3, lvl[1]);
       assertEquals((byte)5, lvl[2]);
    }
-
 }

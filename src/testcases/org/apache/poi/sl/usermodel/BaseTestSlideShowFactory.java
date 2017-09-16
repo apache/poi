@@ -154,8 +154,7 @@ public class BaseTestSlideShowFactory {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-        final byte[] bytes = baos.toByteArray();
-        return bytes;
+        return baos.toByteArray();
     }
 
     /**

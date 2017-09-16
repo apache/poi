@@ -118,8 +118,7 @@ public class RecordUtil
 
         for ( int x = 0; x < parentSize; x++ )
         {
-            int temp = mask;
-            numBits += ( temp >> x ) & 0x1;
+            numBits += ( mask >> x ) & 0x1;
         }
 
         if ( numBits == 1 )

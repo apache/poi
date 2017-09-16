@@ -59,7 +59,7 @@ public class XSSFBReader extends XSSFReader {
 
     private static final POILogger log = POILogFactory.getLogger(XSSFBReader.class);
     private static final Set<String> WORKSHEET_RELS =
-            Collections.unmodifiableSet(new HashSet<String>(
+            Collections.unmodifiableSet(new HashSet<>(
                     Arrays.asList(new String[]{
                             XSSFRelation.WORKSHEET.getRelation(),
                             XSSFRelation.CHARTSHEET.getRelation(),
@@ -183,7 +183,7 @@ public class XSSFBReader extends XSSFReader {
         static {
             RECORDS.set(XSSFBRecordType.BrtAbsPath15.getId());
         }
-        private String path = null;
+        private String path;
         public PathExtractor(InputStream is) {
             super(is, RECORDS);
         }
@@ -208,7 +208,7 @@ public class XSSFBReader extends XSSFReader {
     }
 
     private static class SheetRefLoader extends XSSFBParser {
-        List<XSSFSheetRef> sheets = new LinkedList<XSSFSheetRef>();
+        List<XSSFSheetRef> sheets = new LinkedList<>();
 
         private SheetRefLoader(InputStream is) {
             super(is);

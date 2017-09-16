@@ -57,7 +57,7 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		@SuppressWarnings("unchecked")
 		B[] flattenedArray = (B[]) Array.newInstance(cellClass, nItems);
 		flattenedList.toArray(flattenedArray);
-		return new SSCellRange<B>(firstRow, firstColumn, height, width, flattenedArray);
+		return new SSCellRange<>(firstRow, firstColumn, height, width, flattenedArray);
 	}
 
 	public int getHeight() {
@@ -109,7 +109,7 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		return result;
 	}
 	public Iterator<K> iterator() {
-		return new ArrayIterator<K>(_flattenedArray);
+		return new ArrayIterator<>(_flattenedArray);
 	}
 	private static final class ArrayIterator<D> implements Iterator<D> {
 

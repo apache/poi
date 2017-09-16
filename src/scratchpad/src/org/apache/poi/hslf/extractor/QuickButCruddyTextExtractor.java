@@ -137,15 +137,14 @@ public final class QuickButCruddyTextExtractor {
 	 *  strings, one per text record
 	 */
 	public List<String> getTextAsVector() {
-	    List<String> textV = new ArrayList<String>();
+	    List<String> textV = new ArrayList<>();
 
 		// Set to the start of the file
 		int walkPos = 0;
 
 		// Start walking the file, looking for the records
 		while(walkPos != -1) {
-			int newPos = findTextRecords(walkPos,textV);
-			walkPos = newPos;
+            walkPos = findTextRecords(walkPos,textV);
 		}
 
 		// Return what we find

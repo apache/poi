@@ -667,7 +667,6 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         // get fcMin and fcMac because we will be writing the actual text with the
         // complex table.
-        int fcMin = mainOffset;
 
         /*
          * clx (encoding of the sprm lists for a complex file and piece table
@@ -736,7 +735,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         // write out the CHPBinTable.
         _fib.setFcPlcfbteChpx(tableOffset);
-        _cbt.writeTo(wordDocumentStream, tableStream, fcMin, _cft.getTextPieceTable());
+        _cbt.writeTo(wordDocumentStream, tableStream, mainOffset, _cft.getTextPieceTable());
         _fib.setLcbPlcfbteChpx(tableStream.size() - tableOffset);
         tableOffset = tableStream.size();
 
@@ -892,7 +891,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         tableOffset = tableStream.size();
 
         // set some variables in the FileInformationBlock.
-        _fib.getFibBase().setFcMin(fcMin);
+        _fib.getFibBase().setFcMin(mainOffset);
         _fib.getFibBase().setFcMac(fcMac);
         _fib.setCbMac(wordDocumentStream.size());
 

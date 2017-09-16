@@ -50,7 +50,7 @@ public final class TestXSSFTable {
 
         // read the original sheet header order
         XSSFRow row = wb1.getSheetAt(0).getRow(0);
-        List<String> headers = new ArrayList<String>();
+        List<String> headers = new ArrayList<>();
         for (Cell cell : row) {
             headers.add(cell.getStringCellValue());
         }

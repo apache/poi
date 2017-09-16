@@ -56,7 +56,7 @@ public class SVTableCellRenderer extends JLabel
     protected SVBorder cellBorder = new SVBorder();
 
 
-    private HSSFWorkbook wb = null;
+    private HSSFWorkbook wb;
 
     /** This class holds the references to the predefined cell formats.
      */

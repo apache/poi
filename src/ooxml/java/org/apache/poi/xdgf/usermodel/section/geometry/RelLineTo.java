@@ -30,12 +30,12 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
  */
 public class RelLineTo implements GeometryRow {
 
-    RelLineTo _master = null;
+    RelLineTo _master;
 
-    Double x = null;
-    Double y = null;
+    Double x;
+    Double y;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

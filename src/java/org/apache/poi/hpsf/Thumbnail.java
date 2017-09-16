@@ -123,7 +123,7 @@ public final class Thumbnail {
      * <p>A <code>byte[]</code> to hold a thumbnail image in ({@link
      * Variant#VT_CF VT_CF}) format.</p>
      */
-    private byte[] _thumbnailData = null;
+    private byte[] _thumbnailData;
 
 
 
@@ -198,9 +198,8 @@ public final class Thumbnail {
      */
     public long getClipboardFormatTag()
     {
-        long clipboardFormatTag = LittleEndian.getInt(getThumbnail(),
+        return (long) LittleEndian.getInt(getThumbnail(),
                                                        OFFSET_CFTAG);
-        return clipboardFormatTag;
     }
 
 

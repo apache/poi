@@ -38,7 +38,7 @@ public interface PaintStyle {
         /** darken the paint/filling */
         DARKEN,
         /** darken (... a bit less) the paint/filling */
-        DARKEN_LESS;
+        DARKEN_LESS
     }
 
     interface SolidPaint extends PaintStyle {

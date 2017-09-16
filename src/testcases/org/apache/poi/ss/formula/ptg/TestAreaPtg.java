@@ -137,7 +137,6 @@ public final class TestAreaPtg extends TestCase {
 				aptg.setLastColumn((short)(aptg.getLastColumn()+letUsShiftColumn1By1Column));
 			}
 		}
-		String newFormula = HSSFFormulaParser.toFormulaString(wb, ptgs);
-		return newFormula;
+        return HSSFFormulaParser.toFormulaString(wb, ptgs);
 	}
 }

@@ -794,9 +794,9 @@ public class AddDimensionedImage {
      */
     public class ClientAnchorDetail {
 
-        public int fromIndex = 0;
-        public int toIndex = 0;
-        public int inset = 0;
+        public int fromIndex;
+        public int toIndex;
+        public int inset;
 
         /**
          * Create a new instance of the ClientAnchorDetail class using the

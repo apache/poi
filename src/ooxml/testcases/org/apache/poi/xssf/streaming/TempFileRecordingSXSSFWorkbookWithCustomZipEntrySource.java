@@ -28,10 +28,10 @@ import org.apache.poi.poifs.crypt.temp.SheetDataWriterWithDecorator;
 // afterwards, a test function can check whether these files were encrypted or not
 public class TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbookWithCustomZipEntrySource {
 
-    private final List<File> tempFiles = new ArrayList<File>();
+    private final List<File> tempFiles = new ArrayList<>();
 
     List<File> getTempFiles() {
-        return new ArrayList<File>(tempFiles);
+        return new ArrayList<>(tempFiles);
     }
     
     @Override

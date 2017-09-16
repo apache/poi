@@ -48,7 +48,7 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
  */
 public final class HWPFList
 {
-    private boolean _ignoreLogicalLeftIdentation = false;
+    private boolean _ignoreLogicalLeftIdentation;
     private LFO _lfo;
     private LFOData _lfoData;
     private ListData _listData;
@@ -136,8 +136,7 @@ public final class HWPFList
                     + " is more than number of level for list ("
                     + _listData.numLevels() + ")" );
         }
-        ListLevel lvl = _listData.getLevels()[level];
-        return lvl;
+        return _listData.getLevels()[level];
     }
 
     /**

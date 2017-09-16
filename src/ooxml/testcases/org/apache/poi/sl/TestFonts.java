@@ -123,7 +123,7 @@ public class TestFonts {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = img.createGraphics();
 
-        Map<String,String> fallbackMap = new HashMap<String,String>();
+        Map<String,String> fallbackMap = new HashMap<>();
         fallbackMap.put("NoSuchFont", "Mona");
         // in XSLF the fonts default to the theme fonts (Calibri), if the font group is not overridden
         // see XSLFTextRun.XSLFTextInfo.getCTTextFont

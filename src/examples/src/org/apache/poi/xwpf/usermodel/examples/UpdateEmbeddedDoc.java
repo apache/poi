@@ -49,8 +49,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  */
 public class UpdateEmbeddedDoc {
 
-    private XWPFDocument doc = null;
-    private File docFile = null;
+    private XWPFDocument doc;
+    private File docFile;
 
     private static final int SHEET_NUM = 0;
     private static final int ROW_NUM = 0;

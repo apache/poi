@@ -63,12 +63,12 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     /**
      *  Array of individual string items in the Shared String table.
      */
-    private final List<CTRst> strings = new ArrayList<CTRst>();
+    private final List<CTRst> strings = new ArrayList<>();
 
     /**
      *  Maps strings and their indexes in the <code>strings</code> arrays
      */
-    private final Map<String, Integer> stmap = new HashMap<String, Integer>();
+    private final Map<String, Integer> stmap = new HashMap<>();
 
     /**
      * An integer representing the total count of strings in the workbook. This count does not

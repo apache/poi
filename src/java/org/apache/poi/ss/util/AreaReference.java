@@ -236,7 +236,7 @@ public class AreaReference {
         if (null == version) {
             version = DEFAULT_SPREADSHEET_VERSION; // how the code used to behave. 
         }
-        List<AreaReference> refs = new ArrayList<AreaReference>();
+        List<AreaReference> refs = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(reference, ",");
         while(st.hasMoreTokens()) {
             refs.add(
@@ -287,7 +287,7 @@ public class AreaReference {
         int maxCol = Math.max(_firstCell.getCol(), _lastCell.getCol());
         String sheetName = _firstCell.getSheetName();
         
-        List<CellReference> refs = new ArrayList<CellReference>();
+        List<CellReference> refs = new ArrayList<>();
         for(int row=minRow; row<=maxRow; row++) {
             for(int col=minCol; col<=maxCol; col++) {
                 CellReference ref = new CellReference(sheetName, row, col, _firstCell.isRowAbsolute(), _firstCell.isColAbsolute());

@@ -135,7 +135,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
     @Override
     protected Object[][] getAttributeMap() {
         int numCh = getChildRecords().size();
-        List<Object> chLst = new ArrayList<Object>(numCh*2+2);
+        List<Object> chLst = new ArrayList<>(numCh * 2 + 2);
         chLst.add("children");
         chLst.add(numCh);
         for (EscherRecord er : getChildRecords()) {

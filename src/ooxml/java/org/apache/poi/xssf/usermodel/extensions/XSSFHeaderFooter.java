@@ -124,7 +124,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	private HeaderFooterHelper helper;
 	private CTHeaderFooter headerFooter;
 
-	private boolean stripFields = false;
+	private boolean stripFields;
 
 	/**
 	 * Create an instance of XSSFHeaderFooter from the supplied XML bean

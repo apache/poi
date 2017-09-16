@@ -159,10 +159,9 @@ public final class TestReadMissingBuiltInFuncs {
 	}
 
 	private String getCellFormula(int rowIx) {
-		String result = _sheet.getRow(rowIx).getCell(0).getCellFormula();
-//		if (false) {
+        //		if (false) {
 //			System.err.println(result);
 //		}
-		return result;
+		return _sheet.getRow(rowIx).getCell(0).getCellFormula();
 	}
 }

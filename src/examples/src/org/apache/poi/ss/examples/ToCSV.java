@@ -132,13 +132,13 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 public class ToCSV {
 
-    private Workbook workbook = null;
-    private ArrayList<ArrayList<String>> csvData = null;
-    private int maxRowWidth = 0;
-    private int formattingConvention = 0;
-    private DataFormatter formatter = null;
-    private FormulaEvaluator evaluator = null;
-    private String separator = null;
+    private Workbook workbook;
+    private ArrayList<ArrayList<String>> csvData;
+    private int maxRowWidth;
+    private int formattingConvention;
+    private DataFormatter formatter;
+    private FormulaEvaluator evaluator;
+    private String separator;
 
     private static final String CSV_FILE_EXTENSION = ".csv";
     private static final String DEFAULT_SEPARATOR = ",";
@@ -409,7 +409,7 @@ public class ToCSV {
         Sheet sheet = null;
         Row row = null;
         int lastRowNum = 0;
-        this.csvData = new ArrayList<ArrayList<String>>();
+        this.csvData = new ArrayList<>();
 
         System.out.println("Converting files contents to CSV format.");
 
@@ -526,7 +526,7 @@ public class ToCSV {
     private void rowToCSV(Row row) {
         Cell cell = null;
         int lastCellNum = 0;
-        ArrayList<String> csvLine = new ArrayList<String>();
+        ArrayList<String> csvLine = new ArrayList<>();
 
         // Check to ensure that a row was recovered from the sheet as it is
         // possible that one or more rows between other populated rows could be

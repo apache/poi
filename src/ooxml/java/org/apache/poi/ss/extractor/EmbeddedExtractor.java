@@ -98,7 +98,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         if (null == patriarch){
             return Collections.emptyList();
         }
-        List<EmbeddedData> embeddings = new ArrayList<EmbeddedData>();
+        List<EmbeddedData> embeddings = new ArrayList<>();
         extractAll(patriarch, embeddings);
         return embeddings;
     }

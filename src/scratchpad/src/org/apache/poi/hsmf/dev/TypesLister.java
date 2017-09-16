@@ -31,7 +31,7 @@ public class TypesLister {
    public TypesLister() {}
    
    public void listByName(PrintStream out) {
-      ArrayList<MAPIProperty> all = new ArrayList<MAPIProperty>(MAPIProperty.getAll());
+      ArrayList<MAPIProperty> all = new ArrayList<>(MAPIProperty.getAll());
       Collections.sort(all, new Comparator<MAPIProperty>() {
          public int compare(MAPIProperty a, MAPIProperty b) {
             return a.name.compareTo(b.name);
@@ -40,12 +40,10 @@ public class TypesLister {
       list(all, out);
    }
    public void listById(PrintStream out) {
-      ArrayList<MAPIProperty> all = new ArrayList<MAPIProperty>(MAPIProperty.getAll());
+      ArrayList<MAPIProperty> all = new ArrayList<>(MAPIProperty.getAll());
       Collections.sort(all, new Comparator<MAPIProperty>() {
          public int compare(MAPIProperty a, MAPIProperty b) {
-            if(a.id < b.id) return -1;
-            if(a.id > b.id) return +1;
-            return 0;
+             return Integer.compare(a.id, b.id);
          }
       });
       list(all, out);

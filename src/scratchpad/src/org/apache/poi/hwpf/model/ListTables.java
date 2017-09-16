@@ -38,7 +38,7 @@ public final class ListTables
     /**
      * Both PlfLst and the following LVLs
      */
-    private final LinkedHashMap<Integer, ListData> _listMap = new LinkedHashMap<Integer, ListData>();
+    private final LinkedHashMap<Integer, ListData> _listMap = new LinkedHashMap<>();
     private PlfLfo _plfLfo;
 
   public ListTables()
@@ -151,8 +151,7 @@ public final class ListTables
         return null;
     }
     if(level < lst.numLevels()) {
-    	ListLevel lvl = lst.getLevels()[level];
-    	return lvl;
+        return lst.getLevels()[level];
     }
     if (log.check(POILogger.WARN)) {
         log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")");

@@ -88,7 +88,7 @@ public class OPOIFSFileSystem
     {
         HeaderBlock header_block = new HeaderBlock(bigBlockSize);
         _property_table = new PropertyTable(header_block);
-        _documents      = new ArrayList<OPOIFSDocument>();
+        _documents      = new ArrayList<>();
         _root           = null;
     }
 
@@ -309,7 +309,7 @@ public class OPOIFSFileSystem
 
         // create a list of BATManaged objects: the documents plus the
         // property table and the small block table
-        List<Object> bm_objects = new ArrayList<Object>();
+        List<Object> bm_objects = new ArrayList<>();
 
         bm_objects.addAll(_documents);
         bm_objects.add(_property_table);
@@ -362,7 +362,7 @@ public class OPOIFSFileSystem
         // property table, the small block store, the small block
         // allocation table, the block allocation table, and the
         // extended block allocation table blocks)
-        List<Object> writers = new ArrayList<Object>();
+        List<Object> writers = new ArrayList<>();
 
         writers.add(header_block_writer);
         writers.addAll(_documents);
@@ -494,7 +494,7 @@ public class OPOIFSFileSystem
             Property      property = properties.next();
             String        name     = property.getName();
             DirectoryNode parent   = (dir == null)
-                                     ? (( DirectoryNode ) getRoot())
+                                     ? getRoot()
                                      : dir;
 
             if (property.isDirectory())
@@ -547,7 +547,7 @@ public class OPOIFSFileSystem
     {
         if (preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableArray();
+            return getRoot().getViewableArray();
         }
         return new Object[ 0 ];
     }
@@ -564,7 +564,7 @@ public class OPOIFSFileSystem
     {
         if (!preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableIterator();
+            return getRoot().getViewableIterator();
         }
         return Collections.emptyList().iterator();
     }
@@ -579,7 +579,7 @@ public class OPOIFSFileSystem
 
     public boolean preferArray()
     {
-        return (( POIFSViewable ) getRoot()).preferArray();
+        return getRoot().preferArray();
     }
 
     /**

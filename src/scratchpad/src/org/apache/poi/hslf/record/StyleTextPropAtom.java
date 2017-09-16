@@ -55,7 +55,7 @@ public final class StyleTextPropAtom extends RecordAtom {
      * Only set to true once setParentTextSize(int) is called.
      * Until then, no stylings will have been decoded
      */
-    private boolean initialised = false;
+    private boolean initialised;
 
     /**
      * The list of all the different paragraph stylings we code for.
@@ -137,8 +137,8 @@ public final class StyleTextPropAtom extends RecordAtom {
         reserved = new byte[0];
 
         // Set empty lists, ready for when they call setParentTextSize
-        paragraphStyles = new ArrayList<TextPropCollection>();
-        charStyles = new ArrayList<TextPropCollection>();
+        paragraphStyles = new ArrayList<>();
+        charStyles = new ArrayList<>();
     }
 
 
@@ -156,8 +156,8 @@ public final class StyleTextPropAtom extends RecordAtom {
         LittleEndian.putInt(_header,4,10);
 
         // Set empty paragraph and character styles
-        paragraphStyles = new ArrayList<TextPropCollection>();
-        charStyles = new ArrayList<TextPropCollection>();
+        paragraphStyles = new ArrayList<>();
+        charStyles = new ArrayList<>();
 
         addParagraphTextPropCollection(parentTextSize);
         addCharacterTextPropCollection(parentTextSize);

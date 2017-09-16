@@ -143,12 +143,9 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
 
     public static void main(String[] args) throws IOException {
         for (String file : args) {
-            HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(
-                    new NPOIFSFileSystem(new File(file)));
-            try {
+            try (HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(
+                    new NPOIFSFileSystem(new File(file)))) {
                 System.out.println(ext.getText());
-            } finally {
-                ext.close();
             }
         }
     }

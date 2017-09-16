@@ -135,7 +135,7 @@ public class HemfExtractorTest {
         long lastX = -1;
         long fudgeFactorX = 1000;//derive this from the font or frame/bounds information
         StringBuilder sb = new StringBuilder();
-        Set<String> expectedParts = new HashSet<String>();
+        Set<String> expectedParts = new HashSet<>();
         expectedParts.add("C:\\Users\\tallison\\");
         expectedParts.add("testPDF.pdf");
         int foundExpected = 0;

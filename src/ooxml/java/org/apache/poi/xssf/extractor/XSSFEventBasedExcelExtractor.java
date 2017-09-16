@@ -65,9 +65,9 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     private Locale locale;
     private boolean includeTextBoxes = true;
     private boolean includeSheetNames = true;
-    private boolean includeCellComments = false;
+    private boolean includeCellComments;
     private boolean includeHeadersFooters = true;
-    private boolean formulasNotResults = false;
+    private boolean formulasNotResults;
     private boolean concatenatePhoneticRuns = true;
 
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
@@ -335,7 +335,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         protected SheetTextExtractor() {
             this.output = new StringBuffer();
             this.firstCellOfRow = true;
-            this.headerFooterMap = includeHeadersFooters ? new HashMap<String, String>() : null;
+            this.headerFooterMap = includeHeadersFooters ? new HashMap<>() : null;
         }
 
         @Override

@@ -98,7 +98,7 @@ public class TestXSLFChart {
         strData.setPtArray(null);  // unset old axis text
         numData.setPtArray(null);  // unset old values
 
-        Map<String, Double> pieModel = new LinkedHashMap<String, Double>();
+        Map<String, Double> pieModel = new LinkedHashMap<>();
         pieModel.put("First", 1.0);
         pieModel.put("Second", 3.0);
         pieModel.put("Third", 4.0);

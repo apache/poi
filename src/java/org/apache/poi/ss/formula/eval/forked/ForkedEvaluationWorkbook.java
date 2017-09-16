@@ -47,7 +47,7 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
     public ForkedEvaluationWorkbook(EvaluationWorkbook master) {
         _masterBook = master;
-        _sharedSheetsByName = new HashMap<String, ForkedEvaluationSheet>();
+        _sharedSheetsByName = new HashMap<>();
     }
 
     public ForkedEvaluationCell getOrCreateUpdatableCell(String sheetName, int rowIndex,

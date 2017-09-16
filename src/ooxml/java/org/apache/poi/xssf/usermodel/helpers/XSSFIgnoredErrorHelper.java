@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -88,14 +88,14 @@ public class XSSFIgnoredErrorHelper {
     }
     
     public static void addIgnoredErrors(CTIgnoredError err, String ref, IgnoredErrorType... ignoredErrorTypes) {
-        err.setSqref(Arrays.asList(ref));
+        err.setSqref(Collections.singletonList(ref));
         for (IgnoredErrorType errType : ignoredErrorTypes) {
             XSSFIgnoredErrorHelper.set(errType, err);
         }
     }
 
     public static  Set<IgnoredErrorType> getErrorTypes(CTIgnoredError err) {
-        Set<IgnoredErrorType> result = new LinkedHashSet<IgnoredErrorType>();
+        Set<IgnoredErrorType> result = new LinkedHashSet<>();
         for (IgnoredErrorType errType : IgnoredErrorType.values()) {
             if (XSSFIgnoredErrorHelper.isSet(errType, err)) {
                 result.add(errType);

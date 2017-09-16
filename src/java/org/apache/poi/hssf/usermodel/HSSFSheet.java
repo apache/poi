@@ -124,7 +124,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     protected HSSFSheet(HSSFWorkbook workbook) {
         _sheet = InternalSheet.createSheet();
-        _rows = new TreeMap<Integer, HSSFRow>();
+        _rows = new TreeMap<>();
         this._workbook = workbook;
         this._book = workbook.getWorkbook();
     }
@@ -139,7 +139,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     protected HSSFSheet(HSSFWorkbook workbook, InternalSheet sheet) {
         this._sheet = sheet;
-        _rows = new TreeMap<Integer, HSSFRow>();
+        _rows = new TreeMap<>();
         this._workbook = workbook;
         this._book = workbook.getWorkbook();
         setPropertiesFromSheet(sheet);
@@ -424,7 +424,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     @Override
     public List<HSSFDataValidation> getDataValidations() {
         DataValidityTable dvt = _sheet.getOrCreateDataValidityTable();
-        final List<HSSFDataValidation> hssfValidations = new ArrayList<HSSFDataValidation>();
+        final List<HSSFDataValidation> hssfValidations = new ArrayList<>();
         RecordVisitor visitor = new RecordVisitor() {
             private HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(getWorkbook());
 
@@ -908,7 +908,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     @Override
     public void removeMergedRegions(Collection<Integer> indices) {
-        for (int i : (new TreeSet<Integer>(indices)).descendingSet()) {
+        for (int i : (new TreeSet<>(indices)).descendingSet()) {
             _sheet.removeMergedRegion(i);
         }
     }
@@ -936,7 +936,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     @Override
     public List<CellRangeAddress> getMergedRegions() {
-        List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
+        List<CellRangeAddress> addresses = new ArrayList<>();
         int count = _sheet.getNumMergedRegions();
         for (int i=0; i < count; i++) {
             addresses.add(_sheet.getMergedRegionAt(i));
@@ -2130,7 +2130,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     @Override
     public void setDefaultColumnStyle(int column, CellStyle style) {
-        _sheet.setDefaultColumnStyle(column, ((HSSFCellStyle) style).getIndex());
+        _sheet.setDefaultColumnStyle(column, style.getIndex());
     }
 
     /**
@@ -2223,7 +2223,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     @Override
     public List<HSSFHyperlink> getHyperlinkList() {
-        final List<HSSFHyperlink> hyperlinkList = new ArrayList<HSSFHyperlink>();
+        final List<HSSFHyperlink> hyperlinkList = new ArrayList<>();
         for (RecordBase rec : _sheet.getRecords()) {
             if (rec instanceof HyperlinkRecord) {
                 HyperlinkRecord link = (HyperlinkRecord) rec;
@@ -2290,7 +2290,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         int lastColumn = range.getLastColumn();
         int height = lastRow - firstRow + 1;
         int width = lastColumn - firstColumn + 1;
-        List<HSSFCell> temp = new ArrayList<HSSFCell>(height * width);
+        List<HSSFCell> temp = new ArrayList<>(height * width);
         for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
             for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
                 HSSFRow row = getRow(rowIn);
@@ -2432,7 +2432,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             patriarch = createDrawingPatriarch();
         }
         
-        Map<CellAddress, HSSFComment> locations = new TreeMap<CellAddress, HSSFComment>();
+        Map<CellAddress, HSSFComment> locations = new TreeMap<>();
         findCellCommentLocations(patriarch, locations);
         return locations;
     }
@@ -2530,7 +2530,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                     NameRecord.BUILTIN_PRINT_TITLE, sheetIndex);
         }
 
-        List<Ptg> ptgList = new ArrayList<Ptg>();
+        List<Ptg> ptgList = new ArrayList<>();
         if (setBoth) {
             final int exprsSize = 2 * 11 + 1; // 2 * Area3DPtg.SIZE + UnionPtg.SIZE
             ptgList.add(new MemFuncPtg(exprsSize));

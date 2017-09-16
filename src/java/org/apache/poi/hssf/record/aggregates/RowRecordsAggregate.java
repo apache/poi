@@ -43,7 +43,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 
     // Cache values to speed up performance of
     // getStartRowNumberForBlock / getEndRowNumberForBlock, see Bugzilla 47405
-    private RowRecord[] _rowRecordValues = null;
+    private RowRecord[] _rowRecordValues;
 
     /** Creates a new instance of ValueRecordsAggregate */
     public RowRecordsAggregate() {
@@ -53,9 +53,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
         if (svm == null) {
             throw new IllegalArgumentException("SharedValueManager must be provided.");
         }
-        _rowRecords = new TreeMap<Integer, RowRecord>();
+        _rowRecords = new TreeMap<>();
         _valuesAgg = new ValueRecordsAggregate();
-        _unknownRecords = new ArrayList<Record>();
+        _unknownRecords = new ArrayList<>();
         _sharedValueManager = svm;
     }
 

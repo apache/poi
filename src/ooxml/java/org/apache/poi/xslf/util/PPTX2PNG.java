@@ -174,7 +174,7 @@ public class PPTX2PNG {
     }
     
     private static Set<Integer> slideIndexes(final int slideCount, String range) {
-        Set<Integer> slideIdx = new TreeSet<Integer>();
+        Set<Integer> slideIdx = new TreeSet<>();
         if ("-1".equals(range)) {
             for (int i=0; i<slideCount; i++) {
                 slideIdx.add(i);

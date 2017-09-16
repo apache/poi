@@ -82,7 +82,7 @@ public final class StreamUtility {
 	private static int[] diffInternal(InputStream isA, InputStream isB, int[] allowableDifferenceRegions)
 			throws IOException {
 		int offset = 0;
-		List<Integer> temp = new ArrayList<Integer>();
+		List<Integer> temp = new ArrayList<>();
 		while (true) {
 			int b = isA.read();
 			int b2 = isB.read();

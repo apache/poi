@@ -2055,7 +2055,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 "Good", "Heading 1", "Heading 2", "Heading 3", "Heading 4", "Input", "Linked Cell",
                 "Neutral", "Note", "Output", "Title", "Total", "Warning Text");
 
-        List<String> collecteddStyles = new ArrayList<String>();
+        List<String> collecteddStyles = new ArrayList<>();
         for (int i = 0; i < numCellStyles; i++) {
             HSSFCellStyle cellStyle = wb.getCellStyleAt(i);
             String styleName = cellStyle.getUserStyleName();
@@ -2492,7 +2492,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug51675() throws Exception {
-        final List<Short> list = new ArrayList<Short>();
+        final List<Short> list = new ArrayList<>();
         HSSFWorkbook wb = openSample("51675.xls");
         HSSFSheet sh = wb.getSheetAt(0);
         InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);

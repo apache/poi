@@ -39,11 +39,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     private static final Boolean UNDEFINED = null;
     
     private final SXSSFSheet _sheet; // parent sheet
-    private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<Integer, SXSSFCell>();
+    private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<>();
     private short _style = -1; // index of cell style in style table
     private short _height = -1; // row height in twips (1/20 point)
-    private boolean _zHeight = false; // row zero-height (this is somehow different than being hidden)
-    private int _outlineLevel = 0;   // Outlining level of the row, when outlining is on
+    private boolean _zHeight; // row zero-height (this is somehow different than being hidden)
+    private int _outlineLevel;   // Outlining level of the row, when outlining is on
     // use Boolean to have a tri-state for on/off/undefined 
     private Boolean _hidden = UNDEFINED;
     private Boolean _collapsed = UNDEFINED;
@@ -490,7 +490,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     public class CellIterator implements Iterator<Cell>
     {
         final int maxColumn = getLastCellNum(); //last column PLUS ONE
-        int pos = 0;
+        int pos;
 
         @Override
         public boolean hasNext()

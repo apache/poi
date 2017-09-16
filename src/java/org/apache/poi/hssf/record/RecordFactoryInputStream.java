@@ -103,13 +103,12 @@ public final class RecordFactoryInputStream {
 		}
 
 		public RecordInputStream createDecryptingStream(InputStream original) {
-			FilePassRecord fpr = _filePassRec;
-			String userPassword = Biff8EncryptionKey.getCurrentUserPassword();
+            String userPassword = Biff8EncryptionKey.getCurrentUserPassword();
 			if (userPassword == null) {
 			    userPassword = Decryptor.DEFAULT_PASSWORD;
 			}
 
-			EncryptionInfo info = fpr.getEncryptionInfo();
+			EncryptionInfo info = _filePassRec.getEncryptionInfo();
             try {
                 if (!info.getDecryptor().verifyPassword(userPassword)) {
                     throw new EncryptedDocumentException(
@@ -163,7 +162,7 @@ public final class RecordFactoryInputStream {
 	/**
 	 * The most recent record that we gave to the user
 	 */
-	private Record _lastRecord = null;
+	private Record _lastRecord;
 	/**
 	 * The most recent DrawingRecord seen
 	 */
@@ -183,7 +182,7 @@ public final class RecordFactoryInputStream {
 	 */
 	public RecordFactoryInputStream(InputStream in, boolean shouldIncludeContinueRecords) {
 		RecordInputStream rs = new RecordInputStream(in);
-		List<Record> records = new ArrayList<Record>();
+		List<Record> records = new ArrayList<>();
 		StreamEncryptionInfo sei = new StreamEncryptionInfo(rs, records);
 		if (sei.hasEncryption()) {
 			rs = sei.createDecryptingStream(in);

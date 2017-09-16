@@ -342,8 +342,7 @@ public final class DStarRunner implements Function3Arg {
         // Construct double from condition.
         double conditionValue = 0.0;
         try {
-            int intValue = Integer.parseInt(condition);
-            conditionValue = intValue;
+            conditionValue = Integer.parseInt(condition);
         } catch (NumberFormatException e) { // It's not an int.
             try {
                 conditionValue = Double.parseDouble(condition);

@@ -84,7 +84,7 @@ public class TestExcelStyleDateFormatter {
                 "\u004a", "\u004a", "\u0041", "\u0053", "\u004f", "\u004e", "\u0044");
 
 
-        Map<Locale, List<String>> testMap = new HashMap<Locale, List<String>>();
+        Map<Locale, List<String>> testMap = new HashMap<>();
         testMap.put(germanLocale,        germanResultList);
         testMap.put(russianLocale,        russianResultList);
         testMap.put(austrianLocale,        austrianResultList);

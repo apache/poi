@@ -51,7 +51,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
  */
 public class XWPFStyles extends POIXMLDocumentPart {
     private CTStyles ctStyles;
-    private List<XWPFStyle> listStyle = new ArrayList<XWPFStyle>();
+    private List<XWPFStyle> listStyle = new ArrayList<>();
 
     private XWPFLatentStyles latentStyles;
     private XWPFDefaultRunStyle defaultRunStyle;
@@ -208,7 +208,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
      * @return a list of all styles which were used by this method
      */
     public List<XWPFStyle> getUsedStyleList(XWPFStyle style) {
-        List<XWPFStyle> usedStyleList = new ArrayList<XWPFStyle>();
+        List<XWPFStyle> usedStyleList = new ArrayList<>();
         usedStyleList.add(style);
         return getUsedStyleList(style, usedStyleList);
     }

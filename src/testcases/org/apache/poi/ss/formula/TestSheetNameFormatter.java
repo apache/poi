@@ -18,7 +18,6 @@
 package org.apache.poi.ss.formula;
 
 import junit.framework.TestCase;
-import org.apache.poi.ss.formula.SheetNameFormatter;
 
 /**
  * Tests for {@link SheetNameFormatter}

@@ -46,7 +46,7 @@ public final class FontTable
     private int fcSttbfffn;// table stream offset for sttbfffn
 
     // FFN structure containing strings of font names
-    private Ffn[] _fontNames = null;
+    private Ffn[] _fontNames;
 
 
     public FontTable(byte[] buf, int offset, int lcbSttbfffn)

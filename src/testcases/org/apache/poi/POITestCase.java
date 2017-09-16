@@ -19,7 +19,6 @@ package org.apache.poi;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
@@ -176,7 +175,7 @@ public final class POITestCase {
                 @Override
                 @SuppressForbidden("Test only")
                 public List<Field> run() throws Exception {
-                    List<Field> flds = new ArrayList<Field>();
+                    List<Field> flds = new ArrayList<>();
                     for (Class<?> c = expected.getClass(); c != null; c = c.getSuperclass()) {
                         Field[] fs = c.getDeclaredFields();
                         AccessibleObject.setAccessible(fs, true);                        

@@ -45,7 +45,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
 
     // an instance of all SXSSFWorkbooks opened by this TestDataProvider,
     // so that the temporary files created can be disposed up by cleanup() 
-    private final Collection<SXSSFWorkbook> instances = new ArrayList<SXSSFWorkbook>();
+    private final Collection<SXSSFWorkbook> instances = new ArrayList<>();
 
     private SXSSFITestDataProvider() {
         // enforce singleton

@@ -48,7 +48,7 @@ public class RawDataBlockList
     public RawDataBlockList(final InputStream stream, POIFSBigBlockSize bigBlockSize)
         throws IOException
     {
-        List<RawDataBlock> blocks = new ArrayList<RawDataBlock>();
+        List<RawDataBlock> blocks = new ArrayList<>();
 
         while (true)
         {

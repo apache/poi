@@ -76,7 +76,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
         SldMasterDocument doc =
             SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getSldMaster();
-        setCommonSlideData(_slide.getCSld());
     }
     
     @Override
@@ -96,7 +95,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
 
     private Map<String, XSLFSlideLayout> getLayouts(){
         if(_layouts == null){
-            _layouts = new HashMap<String, XSLFSlideLayout>();
+            _layouts = new HashMap<>();
             for (POIXMLDocumentPart p : getRelations()) {
                 if (p instanceof XSLFSlideLayout){
                     XSLFSlideLayout layout = (XSLFSlideLayout)p;

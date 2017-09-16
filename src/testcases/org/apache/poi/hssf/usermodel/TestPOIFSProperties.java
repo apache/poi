@@ -25,11 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;

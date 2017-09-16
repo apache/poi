@@ -480,7 +480,7 @@ public class TestWrite {
         final POIFSFileSystem poiFs = new POIFSFileSystem();
         final PropertySet ps1 = new PropertySet();
         final Section s = ps1.getSections().get(0);
-        final Map<Long,String> m = new HashMap<Long,String>(3, 1.0f);
+        final Map<Long,String> m = new HashMap<>(3, 1.0f);
         m.put(Long.valueOf(1), "String 1");
         m.put(Long.valueOf(2), "String 2");
         m.put(Long.valueOf(3), "String 3");
@@ -744,7 +744,7 @@ public class TestWrite {
         final POIFSFileSystem poiFs = new POIFSFileSystem();
         final PropertySet ps1 = new PropertySet();
         final Section s = ps1.getSections().get(0);
-        final Map<Long,String> m = new HashMap<Long, String>(3, 1.0f);
+        final Map<Long,String> m = new HashMap<>(3, 1.0f);
         m.put(Long.valueOf(1), "String 1");
         m.put(Long.valueOf(2), "String 2");
         m.put(Long.valueOf(3), "String 3");

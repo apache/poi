@@ -171,7 +171,7 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
     {
         int _blocks_per_big_block = getBlocksPerBigBlock(bigBlockSize);
         
-        List<SmallDocumentBlock> sdbs = new ArrayList<SmallDocumentBlock>();
+        List<SmallDocumentBlock> sdbs = new ArrayList<>();
 
         for (int j = 0; j < blocks.length; j++)
         {

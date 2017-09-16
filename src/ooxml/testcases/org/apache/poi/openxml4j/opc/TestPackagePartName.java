@@ -17,9 +17,6 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-
 import junit.framework.TestCase;
 
 public final class TestPackagePartName extends TestCase {

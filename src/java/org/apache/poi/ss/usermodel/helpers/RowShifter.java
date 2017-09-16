@@ -50,8 +50,8 @@ public abstract class RowShifter {
      * @return an array of affected merged regions, doesn't contain deleted ones
      */
     public List<CellRangeAddress> shiftMergedRegions(int startRow, int endRow, int n) {
-        List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
-        Set<Integer> removedIndices = new HashSet<Integer>();
+        List<CellRangeAddress> shiftedRegions = new ArrayList<>();
+        Set<Integer> removedIndices = new HashSet<>();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
         int size = sheet.getNumMergedRegions();
         for (int i = 0; i < size; i++) {

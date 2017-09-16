@@ -121,7 +121,7 @@ public final class TestHSSFEventFactory extends TestCase {
     }
 
     private static class MockHSSFListener implements HSSFListener {
-        private final List<Record> records = new ArrayList<Record>();
+        private final List<Record> records = new ArrayList<>();
 
         public MockHSSFListener() {}
         public Record[] getRecords() {

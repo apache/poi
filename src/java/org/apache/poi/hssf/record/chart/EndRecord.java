@@ -67,8 +67,7 @@ public final class EndRecord extends StandardRecord implements Cloneable {
     
     @Override
     public EndRecord clone() {
-       EndRecord er = new EndRecord();
-       // No data so nothing to copy
-       return er;
+        // No data so nothing to copy
+       return new EndRecord();
     }
 }

@@ -65,7 +65,7 @@ public class EventWorkbookBuilder {
 	 */
 	public static InternalWorkbook createStubWorkbook(ExternSheetRecord[] externs,
 			BoundSheetRecord[] bounds, SSTRecord sst) {
-		List<Record> wbRecords = new ArrayList<Record>();
+		List<Record> wbRecords = new ArrayList<>();
 
 		// Core Workbook records go first
 		if(bounds != null) {
@@ -114,9 +114,9 @@ public class EventWorkbookBuilder {
 	 */
 	public static class SheetRecordCollectingListener implements HSSFListener {
 		private final HSSFListener childListener;
-		private final List<BoundSheetRecord> boundSheetRecords = new ArrayList<BoundSheetRecord>();
-		private final List<ExternSheetRecord> externSheetRecords = new ArrayList<ExternSheetRecord>();
-		private SSTRecord sstRecord = null;
+		private final List<BoundSheetRecord> boundSheetRecords = new ArrayList<>();
+		private final List<ExternSheetRecord> externSheetRecords = new ArrayList<>();
+		private SSTRecord sstRecord;
 
 		public SheetRecordCollectingListener(HSSFListener childListener) {
 			this.childListener = childListener;

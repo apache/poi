@@ -113,7 +113,7 @@ public class XmlVisioDocument extends POIXMLDocument {
      */
     @Override
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
-        return new ArrayList<PackagePart>();
+        return new ArrayList<>();
     }
 
     //

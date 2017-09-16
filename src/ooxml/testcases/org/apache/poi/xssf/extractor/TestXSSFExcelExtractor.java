@@ -133,7 +133,7 @@ public class TestXSSFExcelExtractor extends TestCase {
 		ExcelExtractor ole2Extractor =
 			new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
 		
-		Map<String, POITextExtractor> extractors = new HashMap<String, POITextExtractor>();
+		Map<String, POITextExtractor> extractors = new HashMap<>();
 		extractors.put("SampleSS.xlsx", ooxmlExtractor);
 		extractors.put("SampleSS.xls", ole2Extractor);
 		

@@ -565,9 +565,8 @@ public class Paragraph extends Range implements Cloneable {
         {
             throw new IllegalStateException( "Paragraph not in list" );
         }
-        HWPFList hwpfList = new HWPFList( getDocument().getStyleSheet(),
+        return new HWPFList( getDocument().getStyleSheet(),
                 getDocument().getListTables(), getIlfo() );
-        return hwpfList;
     }
 
     public boolean isInList()

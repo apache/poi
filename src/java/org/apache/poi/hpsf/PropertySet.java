@@ -134,7 +134,7 @@ public class PropertySet {
     /**
      * The sections in this {@link PropertySet}.
      */
-    private final List<Section> sections = new ArrayList<Section>();
+    private final List<Section> sections = new ArrayList<>();
 
     
     /**
@@ -391,8 +391,7 @@ public class PropertySet {
          */
         try {
             final byte[] buffer = IOUtils.peekFirstNBytes(stream, BUFFER_SIZE);
-            final boolean isPropertySetStream = isPropertySetStream(buffer, 0, buffer.length);
-            return isPropertySetStream;
+            return isPropertySetStream(buffer, 0, buffer.length);
         } catch (EmptyFileException e) {
             return false;
         }

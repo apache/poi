@@ -54,7 +54,7 @@ public abstract class BaseXLSIteratingTest {
     public ExpectedException thrown = ExpectedException.none();
     
 	protected static final Map<String,Class<? extends Throwable>> EXCLUDED =
-        new HashMap<String,Class<? extends Throwable>>();
+            new HashMap<>();
 
     @Parameters(name="{index}: {0}")
     public static Iterable<Object[]> files() {
@@ -63,7 +63,7 @@ public abstract class BaseXLSIteratingTest {
             dataDirName = "test-data";
         }
 
-        List<Object[]> files = new ArrayList<Object[]>();
+        List<Object[]> files = new ArrayList<>();
         findFile(files, dataDirName + "/spreadsheet");
         findFile(files, dataDirName + "/hpsf");
         

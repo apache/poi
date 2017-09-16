@@ -197,8 +197,8 @@ public class ZipSecureFile extends ZipFile {
     }
 
     public static class ThresholdInputStream extends PushbackInputStream {
-        long counter = 0;
-        long markPos = 0;
+        long counter;
+        long markPos;
         ThresholdInputStream cis;
 
         public ThresholdInputStream(InputStream is, ThresholdInputStream cis) {

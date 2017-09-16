@@ -56,7 +56,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 
     // lazily populated. This should only be accessed through getTableCache
     // keys are lower-case to make this a quasi-case-insensitive map
-    private Map<String, XSSFTable> _tableCache = null;
+    private Map<String, XSSFTable> _tableCache;
 
 
     protected BaseXSSFEvaluationWorkbook(XSSFWorkbook book) {
@@ -369,7 +369,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             return _tableCache;
         }
         // FIXME: use org.apache.commons.collections.map.CaseInsensitiveMap
-        _tableCache = new HashMap<String, XSSFTable>();
+        _tableCache = new HashMap<>();
 
         for (Sheet sheet : _uBook) {
             for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {

@@ -122,7 +122,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
     public List<String> getSheetNames() {
         CTExternalSheetName[] sheetNames = 
                 link.getExternalBook().getSheetNames().getSheetNameArray();
-        List<String> names = new ArrayList<String>(sheetNames.length);
+        List<String> names = new ArrayList<>(sheetNames.length);
         for (CTExternalSheetName name : sheetNames) {
             names.add(name.getVal());
         }
@@ -132,7 +132,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
     public List<Name> getDefinedNames() {
         CTExternalDefinedName[] extNames = 
                 link.getExternalBook().getDefinedNames().getDefinedNameArray();
-        List<Name> names = new ArrayList<Name>(extNames.length);
+        List<Name> names = new ArrayList<>(extNames.length);
         for (CTExternalDefinedName extName : extNames) {
             names.add(new ExternalName(extName));
         }

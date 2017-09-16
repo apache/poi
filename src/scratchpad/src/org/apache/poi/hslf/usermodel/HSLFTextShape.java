@@ -133,7 +133,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /**
      * TextRun object which holds actual text and format data
      */
-    private List<HSLFTextParagraph> _paragraphs = new ArrayList<HSLFTextParagraph>();
+    private List<HSLFTextParagraph> _paragraphs = new ArrayList<>();
 
     /**
      * Escher container which holds text attributes such as
@@ -723,8 +723,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public Insets2D getInsets() {
-        Insets2D insets = new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
-        return insets;
+        return new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
     }
 
     @Override
@@ -934,7 +933,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @return null, if there's no alternative representation, otherwise the text shape
      */
     public TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> getMetroShape() {
-        HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>> mbs = new HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>>(this);
+        HSLFMetroShape<TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>> mbs = new HSLFMetroShape<>(this);
         return mbs.getShape();
     }
 }

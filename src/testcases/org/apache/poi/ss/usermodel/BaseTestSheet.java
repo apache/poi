@@ -430,7 +430,7 @@ public abstract class BaseTestSheet {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         
-        Map<Integer, CellRangeAddress> mergedRegions = new HashMap<Integer, CellRangeAddress>();
+        Map<Integer, CellRangeAddress> mergedRegions = new HashMap<>();
         for (int r=0; r<10; r++) {
             CellRangeAddress region = new CellRangeAddress(r, r, 0, 1);
             mergedRegions.put(r, region);
@@ -447,8 +447,8 @@ public abstract class BaseTestSheet {
     }
     
     private static <T> void assertCollectionEquals(Collection<T> expected, Collection<T> actual) {
-        Set<T> e = new HashSet<T>(expected);
-        Set<T> a = new HashSet<T>(actual);
+        Set<T> e = new HashSet<>(expected);
+        Set<T> a = new HashSet<>(actual);
         assertEquals(e, a);
     }
 

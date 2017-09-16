@@ -70,7 +70,7 @@ public enum HyperlinkType {
         this.code = code;
     }
     
-    private static final Map<Integer, HyperlinkType> map = new HashMap<Integer, HyperlinkType>();
+    private static final Map<Integer, HyperlinkType> map = new HashMap<>();
     static {
         for (HyperlinkType type : values()) {
             map.put(type.getCode(), type);

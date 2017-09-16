@@ -103,7 +103,7 @@ public class CellFormatTestBase {
 
         readFlags(workbook);
 
-        Set<String> runCategories = new TreeSet<String>(
+        Set<String> runCategories = new TreeSet<>(
                 String.CASE_INSENSITIVE_ORDER);
         String runCategoryList = flagString("Categories", "");
         if (runCategoryList != null) {
@@ -155,7 +155,7 @@ public class CellFormatTestBase {
      */
     private void readFlags(Workbook wb) {
         Sheet flagSheet = wb.getSheet("Flags");
-        testFlags = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+        testFlags = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         if (flagSheet != null) {
             int end = flagSheet.getLastRowNum();
             // Skip the header row, therefore "+ 1"

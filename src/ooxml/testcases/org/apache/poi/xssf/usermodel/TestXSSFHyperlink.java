@@ -17,27 +17,21 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.ss.usermodel.BaseTestHyperlink;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 public final class TestXSSFHyperlink extends BaseTestHyperlink {
     public TestXSSFHyperlink() {
@@ -84,6 +78,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         for(int i = 0; i < rels.size(); i++){
             PackageRelationship rel = rels.getRelationship(i);
             // there should be a relationship for each URL
+            assertNotNull(rel);
             assertEquals(urls[i], rel.getTargetURI().toString());
         }
 
@@ -95,6 +90,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         for(int i = 0; i < rels.size(); i++){
             PackageRelationship rel = rels.getRelationship(i);
             // there should be a relationship for each URL
+            assertNotNull(rel);
             assertEquals(urls[i], rel.getTargetURI().toString());
         }
     }
@@ -114,7 +110,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
                 createHelper.createHyperlink(HyperlinkType.URL).setAddress(s);
                 fail("expected IllegalArgumentException: " + s);
             } catch (IllegalArgumentException e){
-
+                // expected here
             }
         }
         workbook.close();
@@ -332,5 +328,48 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals("link target", "Sheet1", link.getAddress());
         
         wb.close();
+    }
+
+    @Test
+    public void test() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        CreationHelper createHelper = wb.getCreationHelper();
+        XSSFCellStyle hlinkStyle = wb.createCellStyle();
+        Font hlinkFont = wb.createFont();
+
+        Sheet sheet = wb.createSheet("test");
+
+        Row rowDet = sheet.createRow(0);
+
+        Cell cellDet = rowDet.createCell(7);
+        cellDet.setCellValue("http://www.google.at");
+        //set up style to be able to create hyperlinks
+            hlinkFont.setColor(IndexedColors.BLUE.getIndex());
+            hlinkStyle.setFont(hlinkFont);
+        Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
+            link.setAddress("http://www.example.com");
+            cellDet.setHyperlink(link);
+            cellDet.setCellStyle(hlinkStyle);
+
+        //set up style to be able to create hyperlinks
+        hlinkFont.setColor(IndexedColors.BLUE.getIndex());
+        hlinkStyle.setFont(hlinkFont);
+        link = createHelper.createHyperlink(HyperlinkType.URL);
+
+        //string for hyperlink
+        cellDet = rowDet.createCell(13);
+        cellDet.setCellValue("http://www.other.com");
+        link.setAddress("http://www.gmx.at");
+        cellDet.setHyperlink(link);
+        cellDet.setCellStyle(hlinkStyle);
+
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+
+        assertNotNull(wbBack.getSheetAt(0).getRow(0).getCell(7).getHyperlink());
+        assertNotNull(wbBack.getSheetAt(0).getRow(0).getCell(13).getHyperlink());
+
+        wb.close();
+        wbBack.close();
     }
 }

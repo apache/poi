@@ -41,24 +41,24 @@ import org.apache.poi.hwmf.record.HwmfText.HwmfTextVerticalAlignment;
 
 public class HwmfDrawProperties {
     private final Rectangle2D window;
-    private Rectangle2D viewport = null;
+    private Rectangle2D viewport;
     private final Point2D location;
     private HwmfMapMode mapMode = HwmfMapMode.MM_ANISOTROPIC;
     private HwmfColorRef backgroundColor = new HwmfColorRef(Color.BLACK);
     private HwmfBrushStyle brushStyle = HwmfBrushStyle.BS_SOLID;
     private HwmfColorRef brushColor = new HwmfColorRef(Color.BLACK);
     private HwmfHatchStyle brushHatch = HwmfHatchStyle.HS_HORIZONTAL;
-    private BufferedImage brushBitmap = null;
+    private BufferedImage brushBitmap;
     private double penWidth = 1;
     private HwmfPenStyle penStyle = HwmfPenStyle.valueOf(0);
     private HwmfColorRef penColor = new HwmfColorRef(Color.BLACK);
     private double penMiterLimit = 10;
     private HwmfBkMode bkMode = HwmfBkMode.OPAQUE;
     private HwmfPolyfillMode polyfillMode = HwmfPolyfillMode.WINDING;
-    private Shape region = null;
-    private List<PaletteEntry> palette = null;
-    private int paletteOffset = 0;
-    private HwmfFont font = null;
+    private Shape region;
+    private List<PaletteEntry> palette;
+    private int paletteOffset;
+    private HwmfFont font;
     private HwmfColorRef textColor = new HwmfColorRef(Color.BLACK);
     private HwmfTextAlignment textAlignLatin = HwmfTextAlignment.LEFT;
     private HwmfTextVerticalAlignment textVAlignLatin = HwmfTextVerticalAlignment.TOP;
@@ -93,7 +93,7 @@ public class HwmfDrawProperties {
         this.bkMode = other.bkMode;
         this.polyfillMode = other.polyfillMode;
         if (other.region instanceof Rectangle2D) {
-            this.region = ((Rectangle2D)other.region).getBounds2D();
+            this.region = other.region.getBounds2D();
         } else if (other.region instanceof Area) {
             this.region = new Area(other.region);
         }

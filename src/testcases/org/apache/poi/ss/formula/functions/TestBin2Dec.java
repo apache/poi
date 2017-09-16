@@ -97,9 +97,8 @@ public final class TestBin2Dec extends TestCase {
                 return true;
             }
         }, null);
-        OperationEvaluationContext ctx = new OperationEvaluationContext(workbookEvaluator, 
+        return new OperationEvaluationContext(workbookEvaluator,
                 workbook, 0, 0, 0, null);
-        return ctx;
     }
 
     public void testRefs() {

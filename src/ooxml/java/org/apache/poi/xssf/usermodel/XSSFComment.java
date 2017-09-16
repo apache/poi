@@ -223,8 +223,7 @@ public class XSSFComment implements Comment {
         for (String s : position.split(",")) {
             pos[i++] = Integer.parseInt(s.trim());
         }
-        XSSFClientAnchor ca = new XSSFClientAnchor(pos[1]*EMU_PER_PIXEL, pos[3]*EMU_PER_PIXEL, pos[5]*EMU_PER_PIXEL, pos[7]*EMU_PER_PIXEL, pos[0], pos[2], pos[4], pos[6]);
-        return ca;
+        return new XSSFClientAnchor(pos[1]*EMU_PER_PIXEL, pos[3]*EMU_PER_PIXEL, pos[5]*EMU_PER_PIXEL, pos[7]*EMU_PER_PIXEL, pos[0], pos[2], pos[4], pos[6]);
     }
 
     /**

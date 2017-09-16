@@ -64,7 +64,7 @@ public class TestVBAMacroReader {
     }
 
     static {
-        final Map<POIDataSamples, String> _expectedMacroContents = new HashMap<POIDataSamples, String>();
+        final Map<POIDataSamples, String> _expectedMacroContents = new HashMap<>();
         final POIDataSamples[] dataSamples = {
                 POIDataSamples.getSpreadSheetInstance(),
                 POIDataSamples.getSlideShowInstance(),

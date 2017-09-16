@@ -41,7 +41,7 @@ final class StaticFontMetrics {
 	/** The font metrics property file we're using */
 	private static Properties fontMetricsProps;
 	/** Our cache of font details we've already looked up */
-	private static final Map<String, FontDetails> fontDetailsMap = new HashMap<String, FontDetails>();
+	private static final Map<String, FontDetails> fontDetailsMap = new HashMap<>();
 
 	private StaticFontMetrics() {}
 	

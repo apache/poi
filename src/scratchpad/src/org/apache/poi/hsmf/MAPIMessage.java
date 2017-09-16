@@ -85,7 +85,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    private RecipientChunks[] recipientChunks;
    private AttachmentChunks[] attachmentChunks;
 
-   private boolean returnNullOnMissingChunk = false;
+   private boolean returnNullOnMissingChunk;
 
    /**
     * Constructor for creating new files.
@@ -149,8 +149,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
       ChunkGroup[] chunkGroups = POIFSChunkParser.parse(poifsDir);
 
       // Grab interesting bits
-      ArrayList<AttachmentChunks> attachments = new ArrayList<AttachmentChunks>();
-      ArrayList<RecipientChunks>  recipients  = new ArrayList<RecipientChunks>();
+      ArrayList<AttachmentChunks> attachments = new ArrayList<>();
+      ArrayList<RecipientChunks>  recipients  = new ArrayList<>();
       for(ChunkGroup group : chunkGroups) {
          // Should only ever be one of each of these
          if(group instanceof Chunks) {
@@ -487,7 +487,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    public boolean has7BitEncodingStrings() {
       for(Chunk c : mainChunks.getChunks()) {
          if(c instanceof StringChunk) {
-            if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+            if( c.getType() == Types.ASCII_STRING ) {
                return true;
             }
          }
@@ -496,7 +496,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       if (nameIdChunks!=null) {
          for(Chunk c : nameIdChunks.getChunks()) {
             if(c instanceof StringChunk) {
-               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               if( c.getType() == Types.ASCII_STRING ) {
                   return true;
                }
             }
@@ -506,7 +506,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       for(RecipientChunks rc : recipientChunks) {
          for(Chunk c : rc.getAll()) {
             if(c instanceof StringChunk) {
-               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+               if( c.getType() == Types.ASCII_STRING ) {
                   return true;
                }
             }

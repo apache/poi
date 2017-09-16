@@ -600,7 +600,7 @@ public enum Borders {
 
     ZIG_ZAG_STITCH(191);
 
-    private static Map<Integer, Borders> imap = new HashMap<Integer, Borders>();
+    private static Map<Integer, Borders> imap = new HashMap<>();
 
     static {
         for (Borders p : values()) {

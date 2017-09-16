@@ -237,9 +237,8 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                         .lookup( propertyId );
                 if ( escherProperty == null )
                     return defaultValue;
-                int value = escherProperty.getPropertyValue();
 
-                return value;
+                return escherProperty.getPropertyValue();
             }
 
             public VerticalPositioning getVerticalPositioning()
@@ -305,7 +304,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
 
     public Collection<OfficeDrawing> getOfficeDrawings()
     {
-        List<OfficeDrawing> result = new ArrayList<OfficeDrawing>();
+        List<OfficeDrawing> result = new ArrayList<>();
         for ( FSPA fspa : _fspaTable.getShapes() )
         {
             result.add( getOfficeDrawing( fspa ) );

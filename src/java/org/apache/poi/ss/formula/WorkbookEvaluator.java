@@ -95,8 +95,8 @@ public final class WorkbookEvaluator {
         _workbook = workbook;
         _evaluationListener = evaluationListener;
         _cache = new EvaluationCache(evaluationListener);
-        _sheetIndexesBySheet = new IdentityHashMap<EvaluationSheet, Integer>();
-        _sheetIndexesByName = new IdentityHashMap<String, Integer>();
+        _sheetIndexesBySheet = new IdentityHashMap<>();
+        _sheetIndexesByName = new IdentityHashMap<>();
         _collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
         _workbookIx = 0;
         _stabilityClassifier = stabilityClassifier;
@@ -125,8 +125,7 @@ public final class WorkbookEvaluator {
     }
 
     /* package */ EvaluationName getName(String name, int sheetIndex) {
-        EvaluationName evalName = _workbook.getName(name, sheetIndex);
-        return evalName;
+        return _workbook.getName(name, sheetIndex);
     }
 
     private static boolean isDebugLogEnabled() {
@@ -401,7 +400,7 @@ public final class WorkbookEvaluator {
             dbgEvaluationOutputIndent++;
         }
 
-        Stack<ValueEval> stack = new Stack<ValueEval>();
+        Stack<ValueEval> stack = new Stack<>();
         for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
@@ -928,7 +927,7 @@ public final class WorkbookEvaluator {
      * @return names of functions supported by POI
      */
     public static Collection<String> getSupportedFunctionNames(){
-        Collection<String> lst = new TreeSet<String>();
+        Collection<String> lst = new TreeSet<>();
         lst.addAll(FunctionEval.getSupportedFunctionNames());
         lst.addAll(AnalysisToolPak.getSupportedFunctionNames());
         return Collections.unmodifiableCollection(lst);
@@ -940,7 +939,7 @@ public final class WorkbookEvaluator {
      * @return names of functions NOT supported by POI
      */
     public static Collection<String> getNotSupportedFunctionNames(){
-        Collection<String> lst = new TreeSet<String>();
+        Collection<String> lst = new TreeSet<>();
         lst.addAll(FunctionEval.getNotSupportedFunctionNames());
         lst.addAll(AnalysisToolPak.getNotSupportedFunctionNames());
         return Collections.unmodifiableCollection(lst);

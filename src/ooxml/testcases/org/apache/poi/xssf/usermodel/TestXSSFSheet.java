@@ -296,9 +296,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         sheet.addMergedRegion(region_3);
         sheet.addMergedRegion(region_4);
         // test invalid indexes OOBE
-        Set<Integer> rmIdx = new HashSet<Integer>(Arrays.asList(5,6));
+        Set<Integer> rmIdx = new HashSet<>(Arrays.asList(5, 6));
         sheet.removeMergedRegions(rmIdx);
-        rmIdx = new HashSet<Integer>(Arrays.asList(1,3));
+        rmIdx = new HashSet<>(Arrays.asList(1, 3));
         sheet.removeMergedRegions(rmIdx);
         assertEquals("A1:B2", ctWorksheet.getMergeCells().getMergeCellArray(0).getRef());
         assertEquals("E5:F6", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
@@ -722,8 +722,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         // Now check the low level stuff, and check that's all
         //  been set correctly
-        XSSFSheet xs = sheet;
-        CTWorksheet cts = xs.getCTWorksheet();
+        CTWorksheet cts = sheet.getCTWorksheet();
 
         assertEquals(1, cts.sizeOfColsArray());
         CTCols cols = cts.getColsArray(0);

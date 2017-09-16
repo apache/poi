@@ -22,11 +22,6 @@ import java.net.URISyntaxException;
 import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.ContentTypes;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 
 public class TestPackagingURIHelper extends TestCase {
 

@@ -49,13 +49,13 @@ public class XWPFTableCell implements IBody, ICell {
 
     static {
         // populate enum maps
-        alignMap = new EnumMap<XWPFVertAlign, STVerticalJc.Enum>(XWPFVertAlign.class);
+        alignMap = new EnumMap<>(XWPFVertAlign.class);
         alignMap.put(XWPFVertAlign.TOP, STVerticalJc.Enum.forInt(STVerticalJc.INT_TOP));
         alignMap.put(XWPFVertAlign.CENTER, STVerticalJc.Enum.forInt(STVerticalJc.INT_CENTER));
         alignMap.put(XWPFVertAlign.BOTH, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTH));
         alignMap.put(XWPFVertAlign.BOTTOM, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTTOM));
 
-        stVertAlignTypeMap = new HashMap<Integer, XWPFVertAlign>();
+        stVertAlignTypeMap = new HashMap<>();
         stVertAlignTypeMap.put(STVerticalJc.INT_TOP, XWPFVertAlign.TOP);
         stVertAlignTypeMap.put(STVerticalJc.INT_CENTER, XWPFVertAlign.CENTER);
         stVertAlignTypeMap.put(STVerticalJc.INT_BOTH, XWPFVertAlign.BOTH);
@@ -64,12 +64,12 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     private final CTTc ctTc;
-    protected List<XWPFParagraph> paragraphs = null;
-    protected List<XWPFTable> tables = null;
-    protected List<IBodyElement> bodyElements = null;
+    protected List<XWPFParagraph> paragraphs;
+    protected List<XWPFTable> tables;
+    protected List<IBodyElement> bodyElements;
 
     protected IBody part;
-    private XWPFTableRow tableRow = null;
+    private XWPFTableRow tableRow;
 
     /**
      * If a table cell does not include at least one block-level element, then this document shall be considered corrupt
@@ -81,9 +81,9 @@ public class XWPFTableCell implements IBody, ICell {
         // NB: If a table cell does not include at least one block-level element, then this document shall be considered corrupt.
         if (cell.sizeOfPArray() < 1)
             cell.addNewP();
-        bodyElements = new ArrayList<IBodyElement>();
-        paragraphs = new ArrayList<XWPFParagraph>();
-        tables = new ArrayList<XWPFTable>();
+        bodyElements = new ArrayList<>();
+        paragraphs = new ArrayList<>();
+        tables = new ArrayList<>();
 
         XmlCursor cursor = ctTc.newCursor();
         cursor.selectPath("./*");
@@ -273,7 +273,7 @@ public class XWPFTableCell implements IBody, ICell {
         while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
             o = cursor.getObject();
         }
-        if ((!(o instanceof CTP)) || (CTP) o == p) {
+        if ((!(o instanceof CTP)) || o == p) {
             paragraphs.add(0, newP);
         } else {
             int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;

@@ -220,8 +220,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
     public OutputStream getDataStream(DirectoryNode dir)
             throws IOException, GeneralSecurityException {
         // TODO: initialize headers
-        AgileCipherOutputStream countStream = new AgileCipherOutputStream(dir);
-    	return countStream;
+        return new AgileCipherOutputStream(dir);
     }
 
     /**
@@ -364,7 +363,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
     protected void marshallEncryptionDocument(EncryptionDocument ed, LittleEndianByteArrayOutputStream os) {
         XmlOptions xo = new XmlOptions();
         xo.setCharacterEncoding("UTF-8");
-        Map<String,String> nsMap = new HashMap<String,String>();
+        Map<String,String> nsMap = new HashMap<>();
         nsMap.put(passwordUri.toString(),"p");
         nsMap.put(certificateUri.toString(), "c");
         xo.setUseDefaultNamespace();

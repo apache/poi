@@ -40,7 +40,7 @@ public enum ParagraphAlignment {
     LOW_KASHIDA(9),
     THAI_DISTRIBUTE(10);
 
-    private static Map<Integer, ParagraphAlignment> imap = new HashMap<Integer, ParagraphAlignment>();
+    private static Map<Integer, ParagraphAlignment> imap = new HashMap<>();
 
     static {
         for (ParagraphAlignment p : values()) {

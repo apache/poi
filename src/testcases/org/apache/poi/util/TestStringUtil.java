@@ -137,7 +137,9 @@ public class TestStringUtil {
        try {
           i.next();
           fail();
-       } catch(ArrayIndexOutOfBoundsException e) {}
+       } catch(ArrayIndexOutOfBoundsException e) {
+           // expected here
+       }
 
        
        i = new StringsIterator(new String[] {"1"});
@@ -148,7 +150,9 @@ public class TestStringUtil {
        try {
           i.next();
           fail();
-       } catch(ArrayIndexOutOfBoundsException e) {}
+       } catch(ArrayIndexOutOfBoundsException e) {
+           // expected here
+       }
 
        
        i = new StringsIterator(new String[] {"1","2","3"});
@@ -163,7 +167,9 @@ public class TestStringUtil {
        try {
           i.next();
           fail();
-       } catch(ArrayIndexOutOfBoundsException e) {}
+       } catch(ArrayIndexOutOfBoundsException e) {
+           // expected here
+       }
     }
     
 

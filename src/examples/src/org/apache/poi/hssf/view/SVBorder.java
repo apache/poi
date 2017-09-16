@@ -33,19 +33,19 @@ import org.apache.poi.ss.usermodel.BorderStyle;
  * @author Jason Height
  */
 public class SVBorder extends AbstractBorder {
-  private Color northColor = null;
-  private Color eastColor = null;
-  private Color southColor = null;
-  private Color westColor = null;
+  private Color northColor;
+  private Color eastColor;
+  private Color southColor;
+  private Color westColor;
   private BorderStyle northBorderType = BorderStyle.NONE;
   private BorderStyle eastBorderType = BorderStyle.NONE;
   private BorderStyle southBorderType = BorderStyle.NONE;
   private BorderStyle westBorderType = BorderStyle.NONE;
-  private boolean northBorder=false;
-  private boolean eastBorder=false;
-  private boolean southBorder=false;
-  private boolean westBorder=false;
-  private boolean selected = false;
+  private boolean northBorder;
+  private boolean eastBorder;
+  private boolean southBorder;
+  private boolean westBorder;
+  private boolean selected;
 
    public void setBorder(Color northColor, Color eastColor,
                          Color southColor, Color westColor,

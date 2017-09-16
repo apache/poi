@@ -54,7 +54,7 @@ public class POIXMLDocumentPart {
     private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;
     private POIXMLDocumentPart parent;
-    private Map<String,RelationPart> relations = new LinkedHashMap<String,RelationPart>();
+    private Map<String,RelationPart> relations = new LinkedHashMap<>();
 
     /**
      * The RelationPart is a cached relationship between the document, which contains the RelationPart,
@@ -93,7 +93,7 @@ public class POIXMLDocumentPart {
      * Counter that provides the amount of incoming relations from other parts
      * to this part.
      */
-    private int relationCounter = 0;
+    private int relationCounter;
 
     int incrementRelationCounter() {
         relationCounter++;
@@ -202,7 +202,7 @@ public class POIXMLDocumentPart {
      * @return child relations
      */
     public final List<POIXMLDocumentPart> getRelations(){
-        List<POIXMLDocumentPart> l = new ArrayList<POIXMLDocumentPart>();
+        List<POIXMLDocumentPart> l = new ArrayList<>();
         for (RelationPart rp : relations.values()) {
             l.add(rp.getDocumentPart());
         }
@@ -215,7 +215,7 @@ public class POIXMLDocumentPart {
      * @return child relations
      */
     public final List<RelationPart> getRelationParts() {
-        List<RelationPart> l = new ArrayList<RelationPart>(relations.values());
+        List<RelationPart> l = new ArrayList<>(relations.values());
         return Collections.unmodifiableList(l);
     }
 
@@ -554,7 +554,7 @@ public class POIXMLDocumentPart {
         if (!pp.hasRelationships()) return;
 
         PackageRelationshipCollection rels = packagePart.getRelationships();
-        List<POIXMLDocumentPart> readLater = new ArrayList<POIXMLDocumentPart>();
+        List<POIXMLDocumentPart> readLater = new ArrayList<>();
 
         // scan breadth-first, so parent-relations are hopefully the shallowest element
         for (PackageRelationship rel : rels) {

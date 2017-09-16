@@ -92,7 +92,7 @@ public class XAdESSignatureFacet extends SignatureFacet {
 
     private static final String XADES_TYPE = "http://uri.etsi.org/01903#SignedProperties";
     
-    private Map<String, String> dataObjectFormatMimeTypes = new HashMap<String, String>();
+    private Map<String, String> dataObjectFormatMimeTypes = new HashMap<>();
 
 
     @Override
@@ -192,7 +192,7 @@ public class XAdESSignatureFacet extends SignatureFacet {
         }
 
         // add XAdES ds:Object
-        List<XMLStructure> xadesObjectContent = new ArrayList<XMLStructure>();
+        List<XMLStructure> xadesObjectContent = new ArrayList<>();
         Element qualDocElSrc = (Element)qualifyingProperties.getDomNode();
         Element qualDocEl = (Element)document.importNode(qualDocElSrc, true);
         xadesObjectContent.add(new DOMStructure(qualDocEl));
@@ -200,7 +200,7 @@ public class XAdESSignatureFacet extends SignatureFacet {
         objects.add(xadesObject);
 
         // add XAdES ds:Reference
-        List<Transform> transforms = new ArrayList<Transform>();
+        List<Transform> transforms = new ArrayList<>();
         Transform exclusiveTransform = newTransform(CanonicalizationMethod.INCLUSIVE);
         transforms.add(exclusiveTransform);
         Reference reference = newReference

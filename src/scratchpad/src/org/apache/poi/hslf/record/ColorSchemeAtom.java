@@ -182,8 +182,7 @@ public final class ColorSchemeAtom extends RecordAtom {
 		byte[] with_zero = new byte[4];
 		System.arraycopy(rgb,0,with_zero,0,3);
 		with_zero[3] = 0;
-		int ret = LittleEndian.getInt(with_zero,0);
-		return ret;
+        return LittleEndian.getInt(with_zero,0);
 	}
 
 

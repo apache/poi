@@ -258,7 +258,7 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendar(double date) {
-        return getJavaCalendar(date, false, (TimeZone)null, false);
+        return getJavaCalendar(date, false, null, false);
     }
 
     /**
@@ -270,7 +270,7 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendar(double date, boolean use1904windowing) {
-        return getJavaCalendar(date, use1904windowing, (TimeZone)null, false);
+        return getJavaCalendar(date, use1904windowing, null, false);
     }
 
     /**
@@ -333,8 +333,8 @@ public class DateUtil {
             return -1;
         }
     };
-    private static ThreadLocal<String> lastFormatString = new ThreadLocal<String>();
-    private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<Boolean>();
+    private static ThreadLocal<String> lastFormatString = new ThreadLocal<>();
+    private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
     
     private static boolean isCached(String formatString, int formatIndex) {
         String cachedFormatString = lastFormatString.get();

@@ -22,9 +22,6 @@ import static org.apache.poi.POITestCase.assertContains;
 
 import org.junit.Test;
 
-import org.apache.poi.hwpf.usermodel.CharacterRun;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 

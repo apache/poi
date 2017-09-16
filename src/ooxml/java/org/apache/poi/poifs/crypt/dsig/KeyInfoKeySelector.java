@@ -49,7 +49,7 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
 
     private static final POILogger LOG = POILogFactory.getLogger(KeyInfoKeySelector.class);
 
-    private List<X509Certificate> certChain = new ArrayList<X509Certificate>();
+    private List<X509Certificate> certChain = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     @Override

@@ -30,7 +30,7 @@ import java.util.Iterator;
  * sheet.
  */
 public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
-    private final List<HSSFShape> shapes = new ArrayList<HSSFShape>();
+    private final List<HSSFShape> shapes = new ArrayList<>();
     private EscherSpgrRecord _spgrRecord;
 
     public HSSFShapeGroup(EscherContainerRecord spgrContainer, ObjRecord objRecord) {
@@ -268,7 +268,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     public void clear() {
-        ArrayList <HSSFShape> copy = new ArrayList<HSSFShape>(shapes);
+        ArrayList <HSSFShape> copy = new ArrayList<>(shapes);
         for (HSSFShape shape: copy){
             removeShape(shape);
         }

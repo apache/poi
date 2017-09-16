@@ -531,7 +531,7 @@ public class TestWriteWellKnown {
 
         /* Removing the custom property must return the remove property and
          * reduce the size to 0. */
-        cp = (CustomProperty) cps.remove(KEY);
+        cp = cps.remove(KEY);
         assertEquals(KEY, cp.getName());
         assertEquals(VALUE_2, cp.getValue());
         assertEquals(0, cps.size());
@@ -550,7 +550,7 @@ public class TestWriteWellKnown {
         final int ID_2 = 3;
         final String NAME_1 = "Schl\u00fcssel \u00e4";
         final String VALUE_1 = "Wert 1";
-        final Map<Long,String> dictionary = new HashMap<Long, String>();
+        final Map<Long,String> dictionary = new HashMap<>();
 
         DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
         CustomProperties cps;

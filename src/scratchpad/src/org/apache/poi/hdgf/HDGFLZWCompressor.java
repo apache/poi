@@ -44,21 +44,21 @@ import java.io.OutputStream;
 	// And how long it is
 	// (Un-compressed codes are 1 byte each, compressed codes
 	//   are two)
-	private int bufferLen = 0;
+	private int bufferLen;
 
 	// The raw length of a code is limited to 4 bits + 2
 	private byte[] rawCode = new byte[18];
 	// And how much we're using
-	private int rawCodeLen = 0;
+	private int rawCodeLen;
 
 	// How far through the input and output streams we are
-	private int posInp = 0;
-	private int posOut = 0;
+	private int posInp;
+	private int posOut;
 
 	// What the next mask byte to output will be
-	private int nextMask = 0;
+	private int nextMask;
 	// And how many bits we've already set
-	private int maskBitsSet = 0;
+	private int maskBitsSet;
 
 	public HDGFLZWCompressor() {}
 	

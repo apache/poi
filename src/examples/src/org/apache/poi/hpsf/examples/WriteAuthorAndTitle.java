@@ -323,7 +323,7 @@ public class WriteAuthorAndTitle
         /** Contains the directory paths that have already been created in the
          * output POI filesystem and maps them to their corresponding
          * {@link org.apache.poi.poifs.filesystem.DirectoryNode}s. */
-        private final Map<String, DirectoryEntry> paths = new HashMap<String, DirectoryEntry>();
+        private final Map<String, DirectoryEntry> paths = new HashMap<>();
 
 
 

@@ -30,36 +30,36 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class EllipticalArcTo implements GeometryRow {
 
-    EllipticalArcTo _master = null;
+    EllipticalArcTo _master;
 
     // The x-coordinate of the ending vertex on an arc.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of the ending vertex on an arc.
-    Double y = null;
+    Double y;
 
     // The x-coordinate of the arc's control point; a point on the arc. The
     // control point is best located about halfway between the beginning and
     // ending vertices of the arc. Otherwise, the arc may grow to an extreme
     // size in order to pass through the control point, with unpredictable
     // results.
-    Double a = null;
+    Double a;
 
     // The y-coordinate of an arc's control point.
-    Double b = null;
+    Double b;
 
     // The angle of an arc's major axis relative to the x-axis of its parent
     // shape.
-    Double c = null;
+    Double c;
 
     // The ratio of an arc's major axis to its minor axis. Despite the usual
     // meaning of these words, the "major" axis does not have to be greater than
     // the "minor" axis, so this ratio does not have to be greater than 1.
     // Setting this cell to a value less than or equal to 0 or greater than 1000
     // can lead to unpredictable results.
-    Double d = null;
+    Double d;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 
@@ -129,7 +129,7 @@ public class EllipticalArcTo implements GeometryRow {
         _master = (EllipticalArcTo) row;
     }
 
-    public static int draw = 0;
+    public static int draw;
 
     @Override
     public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {

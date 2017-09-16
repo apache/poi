@@ -44,8 +44,8 @@ public class TextPieceTable implements CharIndexTranslator {
 
     // int _multiple;
     int _cpMin;
-    protected ArrayList<TextPiece> _textPieces = new ArrayList<TextPiece>();
-    protected ArrayList<TextPiece> _textPiecesFCOrder = new ArrayList<TextPiece>();
+    protected ArrayList<TextPiece> _textPieces = new ArrayList<>();
+    protected ArrayList<TextPiece> _textPiecesFCOrder = new ArrayList<>();
 
     public TextPieceTable() {
     }
@@ -110,7 +110,7 @@ public class TextPieceTable implements CharIndexTranslator {
         // In the interest of our sanity, now sort the text pieces
         // into order, if they're not already
         Collections.sort(_textPieces);
-        _textPiecesFCOrder = new ArrayList<TextPiece>(_textPieces);
+        _textPiecesFCOrder = new ArrayList<>(_textPieces);
         Collections.sort(_textPiecesFCOrder, new FCComparator());
     }
 
@@ -234,7 +234,7 @@ public class TextPieceTable implements CharIndexTranslator {
     @Override
     public int[][] getCharIndexRanges(int startBytePosInclusive,
                                       int endBytePosExclusive) {
-        List<int[]> result = new LinkedList<int[]>();
+        List<int[]> result = new LinkedList<>();
         for (TextPiece textPiece : _textPiecesFCOrder) {
             final int tpStart = textPiece.getPieceDescriptor()
                     .getFilePosition();
@@ -449,15 +449,8 @@ public class TextPieceTable implements CharIndexTranslator {
 
     protected static class FCComparator implements Comparator<TextPiece>, Serializable {
         public int compare(TextPiece textPiece, TextPiece textPiece1) {
-            if (textPiece.getPieceDescriptor().fc > textPiece1
-                    .getPieceDescriptor().fc) {
-                return 1;
-            } else if (textPiece.getPieceDescriptor().fc < textPiece1
-                    .getPieceDescriptor().fc) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return Integer.compare(textPiece.getPieceDescriptor().fc, textPiece1
+                    .getPieceDescriptor().fc);
         }
     }
 }

@@ -19,8 +19,6 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.xssf.usermodel.helpers.HeaderFooterHelper;
-
 /**
  * Test the header and footer helper.
  * As we go through XmlBeans, should always use &,

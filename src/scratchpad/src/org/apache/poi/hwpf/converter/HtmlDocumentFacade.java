@@ -35,7 +35,7 @@ public class HtmlDocumentFacade
     /**
      * Map from tag name, to map linking known styles and css class names
      */
-    private Map<String, Map<String, String>> stylesheet = new LinkedHashMap<String, Map<String, String>>();
+    private Map<String, Map<String, String>> stylesheet = new LinkedHashMap<>();
     private Element stylesheetElement;
 
     protected Element title;
@@ -111,8 +111,7 @@ public class HtmlDocumentFacade
                 stringBuilder.append( "}\n" );
             }
         }
-        final String stylesheetText = stringBuilder.toString();
-        return stylesheetText;
+        return stringBuilder.toString();
     }
 
     public Element createBlock()
@@ -179,8 +178,7 @@ public class HtmlDocumentFacade
 
     public Element createSelect()
     {
-        Element result = document.createElement( "select" );
-        return result;
+        return document.createElement( "select" );
     }
 
     public Element createTable()
@@ -251,8 +249,8 @@ public class HtmlDocumentFacade
     public String getOrCreateCssClass( String classNamePrefix, String style )
     {
         if ( !stylesheet.containsKey( classNamePrefix ) )
-            stylesheet.put( classNamePrefix, new LinkedHashMap<String, String>(
-                    1 ) );
+            stylesheet.put( classNamePrefix, new LinkedHashMap<>(
+                    1) );
 
         Map<String, String> styleToClassName = stylesheet.get( classNamePrefix );
         String knownClass = styleToClassName.get( style );

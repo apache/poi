@@ -102,7 +102,7 @@ public class HwmfPalette {
          */
         private int start;
 
-        private List<PaletteEntry> palette = new ArrayList<PaletteEntry>();
+        private List<PaletteEntry> palette = new ArrayList<>();
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
@@ -127,7 +127,7 @@ public class HwmfPalette {
         }
         
         protected List<PaletteEntry> getPaletteCopy() {
-            List<PaletteEntry> newPalette = new ArrayList<PaletteEntry>();
+            List<PaletteEntry> newPalette = new ArrayList<>();
             for (PaletteEntry et : palette) {
                 newPalette.add(new PaletteEntry(et));
             }
@@ -169,7 +169,7 @@ public class HwmfPalette {
             HwmfDrawProperties props = ctx.getProperties();
             List<PaletteEntry> palette = props.getPalette();
             if (palette == null) {
-                palette = new ArrayList<PaletteEntry>();
+                palette = new ArrayList<>();
             }
             int start = getPaletteStart();
             for (int i=palette.size(); i<start; i++) {
@@ -220,7 +220,7 @@ public class HwmfPalette {
             HwmfDrawProperties props = ctx.getProperties();
             List<PaletteEntry> palette = props.getPalette();
             if (palette == null) {
-                palette = new ArrayList<PaletteEntry>();
+                palette = new ArrayList<>();
             }
             for (int i=palette.size(); i<numberOfEntries; i++) {
                 palette.add(new PaletteEntry());
@@ -303,7 +303,7 @@ public class HwmfPalette {
             List<PaletteEntry> src = getPaletteCopy();
             int start = getPaletteStart();
             if (dest == null) {
-                dest = new ArrayList<PaletteEntry>();
+                dest = new ArrayList<>();
             }
             for (int i=dest.size(); i<start; i++) {
                 dest.add(new PaletteEntry());

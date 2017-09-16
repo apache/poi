@@ -46,7 +46,7 @@ public class XSSFLineChartData implements LineChartData {
     private List<Series> series;
 
     public XSSFLineChartData() {
-        series = new ArrayList<Series>();
+        series = new ArrayList<>();
     }
 
     static class Series extends AbstractXSSFChartSeries implements LineChartSeries {

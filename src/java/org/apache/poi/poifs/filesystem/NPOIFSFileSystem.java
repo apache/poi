@@ -97,9 +97,9 @@ public class NPOIFSFileSystem extends BlockStore
     {
         _header         = new HeaderBlock(bigBlockSize);
         _property_table = new NPropertyTable(_header);
-        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
-        _xbat_blocks    = new ArrayList<BATBlock>();
-        _bat_blocks     = new ArrayList<BATBlock>();
+        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<>(), _header);
+        _xbat_blocks    = new ArrayList<>();
+        _bat_blocks     = new ArrayList<>();
         _root           = null;
         
         if(newFS) {
@@ -232,23 +232,15 @@ public class NPOIFSFileSystem extends BlockStore
           
           // Now process the various entries
           readCoreContents();
-       } catch(IOException e) {
-          // Until we upgrade to Java 7, and can do a MultiCatch, we 
-          //  need to keep these two catch blocks in sync on their cleanup
-          if (closeChannelOnError && channel != null) {
-              channel.close();
-              channel = null;
-          }
-          throw e;
-       } catch(RuntimeException e) {
-          // Comes from Iterators etc.
-          // TODO Decide if we can handle these better whilst
-          //  still sticking to the iterator contract
+       } catch(IOException | RuntimeException e) {
+           // Comes from Iterators etc.
+           // TODO Decide if we can handle these better whilst
+           //  still sticking to the iterator contract
            if (closeChannelOnError && channel != null) {
                channel.close();
                channel = null;
            }
-          throw e;
+           throw e;
        }
     }
     
@@ -434,7 +426,7 @@ public class NPOIFSFileSystem extends BlockStore
        
        // Finally read the Small Stream FAT (SBAT) blocks
        BATBlock sfat;
-       List<BATBlock> sbats = new ArrayList<BATBlock>();
+       List<BATBlock> sbats = new ArrayList<>();
        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), sbats, _header);
        nextAt = _header.getSBATStart();
        for(int i=0; i<_header.getSBATCount() && nextAt != POIFSConstants.END_OF_CHAIN; i++) {
@@ -935,7 +927,7 @@ public class NPOIFSFileSystem extends BlockStore
     {
         if (preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableArray();
+            return getRoot().getViewableArray();
         }
         return new Object[ 0 ];
     }
@@ -952,7 +944,7 @@ public class NPOIFSFileSystem extends BlockStore
     {
         if (!preferArray())
         {
-            return (( POIFSViewable ) getRoot()).getViewableIterator();
+            return getRoot().getViewableIterator();
         }
         return Collections.emptyList().iterator();
     }
@@ -967,7 +959,7 @@ public class NPOIFSFileSystem extends BlockStore
 
     public boolean preferArray()
     {
-        return (( POIFSViewable ) getRoot()).preferArray();
+        return getRoot().preferArray();
     }
 
     /**

@@ -137,7 +137,7 @@ public class HSSFOptimiser {
 		//  the new locations of the fonts
 		// Remember that one underlying unicode string
 		//  may be shared by multiple RichTextStrings!
-		HashSet<UnicodeString> doneUnicodeStrings = new HashSet<UnicodeString>();
+		HashSet<UnicodeString> doneUnicodeStrings = new HashSet<>();
 		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
 			for (Row row : s) {

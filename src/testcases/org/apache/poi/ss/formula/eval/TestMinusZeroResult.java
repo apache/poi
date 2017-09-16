@@ -97,8 +97,7 @@ public final class TestMinusZeroResult extends TestCase {
 		for (int i = 0; i < evalArgs.length; i++) {
 			evalArgs[i] = new NumberEval(dArgs[i]);
 		}
-		ValueEval r = instance.evaluate(evalArgs, -1, (short)-1);
-		return r;
+        return instance.evaluate(evalArgs, -1, (short)-1);
 	}
 
 	/**

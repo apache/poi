@@ -33,7 +33,7 @@ import org.apache.poi.util.POILogger;
  */
 
 public final class FontCollection extends RecordContainer {
-    private final Map<String,HSLFFontInfo> fonts = new LinkedHashMap<String,HSLFFontInfo>();
+    private final Map<String,HSLFFontInfo> fonts = new LinkedHashMap<>();
     private byte[] _header;
 
 	protected FontCollection(byte[] source, int start, int len) {

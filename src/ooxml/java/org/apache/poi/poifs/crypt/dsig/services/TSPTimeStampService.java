@@ -207,7 +207,7 @@ public class TSPTimeStampService implements TimeStampService {
         Collection<X509CertificateHolder> certificates = timeStampToken.getCertificates().getMatches(null);
         
         X509CertificateHolder signerCert = null;
-        Map<X500Name, X509CertificateHolder> certificateMap = new HashMap<X500Name, X509CertificateHolder>();
+        Map<X500Name, X509CertificateHolder> certificateMap = new HashMap<>();
         for (X509CertificateHolder certificate : certificates) {
             if (signerCertIssuer.equals(certificate.getIssuer())
                 && signerCertSerialNumber.equals(certificate.getSerialNumber())) {
@@ -220,7 +220,7 @@ public class TSPTimeStampService implements TimeStampService {
         if (signerCert == null) {
             throw new RuntimeException("TSP response token has no signer certificate");
         }
-        List<X509Certificate> tspCertificateChain = new ArrayList<X509Certificate>();
+        List<X509Certificate> tspCertificateChain = new ArrayList<>();
         JcaX509CertificateConverter x509converter = new JcaX509CertificateConverter();
         x509converter.setProvider("BC");
         X509CertificateHolder certificate = signerCert;

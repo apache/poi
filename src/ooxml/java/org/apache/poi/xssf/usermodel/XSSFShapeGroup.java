@@ -42,7 +42,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
  * specified just as they normally would.
  */
 public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XSSFShape> {
-    private static CTGroupShape prototype = null;
+    private static CTGroupShape prototype;
 
     private CTGroupShape ctGroup;
 

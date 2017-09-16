@@ -45,7 +45,7 @@ public class CellRangeAddressList {
 	protected final List<CellRangeAddress> _list;
 
 	public CellRangeAddressList() {
-		_list = new ArrayList<CellRangeAddress>();
+		_list = new ArrayList<>();
 	}
 	/**
 	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single 

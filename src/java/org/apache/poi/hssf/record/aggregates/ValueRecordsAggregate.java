@@ -275,7 +275,7 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 
 		short[] xfs = new short[nBlank];
 		for (int i = 0; i < xfs.length; i++) {
-			xfs[i] = ((BlankRecord)cellValues[startIx + i]).getXFIndex();
+			xfs[i] = cellValues[startIx + i].getXFIndex();
 		}
 		int rowIx = cellValues[startIx].getRow();
 		return new MulBlankRecord(rowIx, startIx, xfs);
@@ -307,8 +307,8 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 	 */
 	class ValueIterator implements Iterator<CellValueRecordInterface> {
 
-		int curRowIndex = 0, curColIndex = -1;
-		int nextRowIndex = 0, nextColIndex = -1;
+		int curRowIndex, curColIndex = -1;
+		int nextRowIndex, nextColIndex = -1;
 
 		public ValueIterator() {
 			getNextPos();

@@ -56,7 +56,7 @@ public class TestXWPFBugs {
         EncryptionInfo info = new EncryptionInfo(filesystem);
         assertEquals(128, info.getHeader().getKeySize());
         assertEquals(CipherAlgorithm.aes128, info.getHeader().getCipherAlgorithm());
-        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithmEx());
+        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithm());
 
         // Check it can be decoded
         Decryptor d = Decryptor.getInstance(info);
@@ -92,7 +92,7 @@ public class TestXWPFBugs {
         assertEquals(16, info.getHeader().getBlockSize());
         assertEquals(256, info.getHeader().getKeySize());
         assertEquals(CipherAlgorithm.aes256, info.getHeader().getCipherAlgorithm());
-        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithmEx());
+        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithm());
 
         // Check it can be decoded
         Decryptor d = Decryptor.getInstance(info);

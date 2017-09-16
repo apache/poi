@@ -78,7 +78,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         _table = (CTTable)xo;
         xc.dispose();
 
-        _rows = new ArrayList<XSLFTableRow>(_table.sizeOfTrArray());
+        _rows = new ArrayList<>(_table.sizeOfTrArray());
         for(CTTableRow row : _table.getTrArray()) {
             _rows.add(new XSLFTableRow(row, this));
         }

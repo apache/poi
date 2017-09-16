@@ -42,7 +42,7 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 		if (_begin.getSid() != UserSViewBegin.sid) {
 			throw new IllegalStateException("Bad begin record");
 		}
-		List<RecordBase> temp = new ArrayList<RecordBase>();
+		List<RecordBase> temp = new ArrayList<>();
 		while (rs.peekNextSid() != UserSViewEnd.sid) {
 			if (PageSettingsBlock.isComponentRecord(rs.peekNextSid())) {
                 if (_psBlock != null) {

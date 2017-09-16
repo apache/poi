@@ -77,7 +77,7 @@ public final class TestExHyperlink {
 		assertNotNull(exObjList);
 
 		// Within that, grab out the Hyperlink atoms
-		List<ExHyperlink> linksA = new ArrayList<ExHyperlink>();
+		List<ExHyperlink> linksA = new ArrayList<>();
 		for (Record ch : exObjList._children) {
 			if(ch instanceof ExHyperlink) {
 				linksA.add((ExHyperlink) ch);

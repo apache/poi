@@ -192,8 +192,7 @@ public final class TextRulerAtom extends RecordAtom {
             0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
             0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
         };
-        TextRulerAtom ruler = new TextRulerAtom(data, 0, data.length);
-        return ruler;
+        return new TextRulerAtom(data, 0, data.length);
     }
 
     public void setParagraphIndent(short tetxOffset, short bulletOffset){

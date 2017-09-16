@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -162,7 +161,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
 
-    private final SortedMap<Integer, XSSFRow> _rows = new TreeMap<Integer, XSSFRow>();
+    private final SortedMap<Integer, XSSFRow> _rows = new TreeMap<>();
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
@@ -256,14 +255,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         worksheet = newSheet();
         initRows(worksheet);
         columnHelper = new ColumnHelper(worksheet);
-        hyperlinks = new ArrayList<XSSFHyperlink>();
+        hyperlinks = new ArrayList<>();
     }
 
     private void initRows(CTWorksheet worksheetParam) {
         _rows.clear();
-        tables = new TreeMap<String, XSSFTable>();
-        sharedFormulas = new HashMap<Integer, CTCellFormula>();
-        arrayFormulas = new ArrayList<CellRangeAddress>();
+        tables = new TreeMap<>();
+        sharedFormulas = new HashMap<>();
+        arrayFormulas = new ArrayList<>();
         for (CTRow row : worksheetParam.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
@@ -277,7 +276,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * and initialize the internal array of XSSFHyperlink objects
      */
     private void initHyperlinks() {
-        hyperlinks = new ArrayList<XSSFHyperlink>();
+        hyperlinks = new ArrayList<>();
 
         if(!worksheet.isSetHyperlinks()) {
             return;
@@ -1316,7 +1315,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public List<CellRangeAddress> getMergedRegions() {
-        List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
+        List<CellRangeAddress> addresses = new ArrayList<>();
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
         if(ctMergeCells == null) {
             return addresses;
@@ -1468,7 +1467,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (startRowNum > endRowNum) {
             throw new IllegalArgumentException("getRows: startRowNum must be less than or equal to endRowNum");
         }
-        final List<XSSFRow> rows = new ArrayList<XSSFRow>();
+        final List<XSSFRow> rows = new ArrayList<>();
         if (createRowIfMissing) {
             for (int i = startRowNum; i <= endRowNum; i++) {
                 XSSFRow row = getRow(i);
@@ -1944,7 +1943,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
         
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
-        List<CTMergeCell> newMergeCells = new ArrayList<CTMergeCell>(ctMergeCells.sizeOfMergeCellArray());
+        List<CTMergeCell> newMergeCells = new ArrayList<>(ctMergeCells.sizeOfMergeCellArray());
 
         int idx = 0;
         for (CTMergeCell mc : ctMergeCells.getMergeCellArray()) {
@@ -1972,7 +1971,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             throw new IllegalArgumentException("Specified row does not belong to this sheet");
         }
         // collect cells into a temporary array to avoid ConcurrentModificationException
-        ArrayList<XSSFCell> cellsToDelete = new ArrayList<XSSFCell>();
+        ArrayList<XSSFCell> cellsToDelete = new ArrayList<>();
         for (Cell cell : row) {
             cellsToDelete.add((XSSFCell)cell);
         }
@@ -3020,7 +3019,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 // FIXME: (performance optimization) this should be moved outside the for-loop so that hyperlinks only needs to be iterated over once.
                 // also remove any hyperlinks associated with this row
                 if (hyperlinks != null) {
-                    for (XSSFHyperlink link : new ArrayList<XSSFHyperlink>(hyperlinks)) {
+                    for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
                         CellReference ref = new CellReference(link.getCellRef());
                         if (ref.getRow() == rownum) {
                             hyperlinks.remove(link);
@@ -3033,20 +3032,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // then do the actual moving and also adjust comments/rowHeight
         // we need to sort it in a way so the shifting does not mess up the structures, 
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
-        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<XSSFComment, Integer>(new Comparator<XSSFComment>() {
+        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
             @Override
             public int compare(XSSFComment o1, XSSFComment o2) {
                 int row1 = o1.getRow();
                 int row2 = o2.getRow();
-                
-                if(row1 == row2) {
+
+                if (row1 == row2) {
                     // ordering is not important when row is equal, but don't return zero to still 
                     // get multiple comments per row into the map
                     return o1.hashCode() - o2.hashCode();
                 }
 
                 // when shifting down, sort higher row-values first
-                if(n > 0) {
+                if (n > 0) {
                     return row1 < row2 ? 1 : -1;
                 } else {
                     // sort lower-row values first when shifting up
@@ -3116,7 +3115,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         rowShifter.updateHyperlinks(shifter);
 
         //rebuild the _rows map
-        Map<Integer, XSSFRow> map = new HashMap<Integer, XSSFRow>();
+        Map<Integer, XSSFRow> map = new HashMap<>();
         for(XSSFRow r : _rows.values()) {
             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
             final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
@@ -3316,7 +3315,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         String ref = address.formatAsString();
         CTSelection ctsel = getSheetTypeSelection();
         ctsel.setActiveCell(ref);
-        ctsel.setSqref(Arrays.asList(ref));
+        ctsel.setSqref(Collections.singletonList(ref));
     }
 
     /**
@@ -3833,7 +3832,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         int lastColumn = range.getLastColumn();
         int height = lastRow - firstRow + 1;
         int width = lastColumn - firstColumn + 1;
-        List<XSSFCell> temp = new ArrayList<XSSFCell>(height*width);
+        List<XSSFCell> temp = new ArrayList<>(height * width);
         for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
             for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
                 XSSFRow row = getRow(rowIn);
@@ -3888,7 +3887,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     @Override
     public List<XSSFDataValidation> getDataValidations() {
-        List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
+        List<XSSFDataValidation> xssfValidations = new ArrayList<>();
         CTDataValidations dataValidations = this.worksheet.getDataValidations();
         if( dataValidations!=null && dataValidations.getCount() > 0 ) {
             for (CTDataValidation ctDataValidation : dataValidations.getDataValidationArray()) {
@@ -3983,7 +3982,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Returns any tables associated with this Sheet
      */
     public List<XSSFTable> getTables() {
-        return new ArrayList<XSSFTable>(tables.values());
+        return new ArrayList<>(tables.values());
     }
 
     /**
@@ -4374,7 +4373,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Beta
     public List<XSSFPivotTable> getPivotTables() {
-        List<XSSFPivotTable> tables = new ArrayList<XSSFPivotTable>();
+        List<XSSFPivotTable> tables = new ArrayList<>();
         for (XSSFPivotTable table : getWorkbook().getPivotTables()) {
             if (table.getParent() == this) {
                 tables.add(table);
@@ -4421,12 +4420,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @return Map of error type to the range(s) where they are ignored.
      */
     public Map<IgnoredErrorType, Set<CellRangeAddress>> getIgnoredErrors() {
-        Map<IgnoredErrorType, Set<CellRangeAddress>> result = new LinkedHashMap<IgnoredErrorType, Set<CellRangeAddress>>();
+        Map<IgnoredErrorType, Set<CellRangeAddress>> result = new LinkedHashMap<>();
         if (worksheet.isSetIgnoredErrors()) {
             for (CTIgnoredError err : worksheet.getIgnoredErrors().getIgnoredErrorList()) {
                 for (IgnoredErrorType errType : XSSFIgnoredErrorHelper.getErrorTypes(err)) {
                     if (!result.containsKey(errType)) {
-                        result.put(errType, new LinkedHashSet<CellRangeAddress>());
+                        result.put(errType, new LinkedHashSet<>());
                     }
                     for (Object ref : err.getSqref()) {
                         result.get(errType).add(CellRangeAddress.valueOf(ref.toString()));
@@ -4450,7 +4449,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         for (RelationPart part : getRelationParts()) {
             if (part.getDocumentPart() instanceof XSSFTable) {
                 // call table delete
-                removeTable((XSSFTable) part.getDocumentPart());
+                removeTable(part.getDocumentPart());
                 continue;
             }
             removeRelation(part.getDocumentPart(), true);

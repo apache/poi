@@ -35,7 +35,7 @@ public final class POILogFactory {
     /**
      * Map of POILogger instances, with classes as keys
      */
-    private static final Map<String,POILogger> _loggers = new HashMap<String,POILogger>();
+    private static final Map<String,POILogger> _loggers = new HashMap<>();
 
     /**
      * A common instance of NullLogger, as it does nothing
@@ -46,7 +46,7 @@ public final class POILogFactory {
      * The name of the class to use. Initialised the
      *  first time we need it
      */
-    static String _loggerClassName = null;
+    static String _loggerClassName;
 
     /**
      * Construct a POILogFactory.

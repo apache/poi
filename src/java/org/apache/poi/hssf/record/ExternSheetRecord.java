@@ -87,11 +87,11 @@ public class ExternSheetRecord extends StandardRecord {
 	
 	
 	public ExternSheetRecord() {
-		_list = new ArrayList<RefSubRecord>();
+		_list = new ArrayList<>();
 	}
 
 	public ExternSheetRecord(RecordInputStream in) {
-		_list = new ArrayList<RefSubRecord>();
+		_list = new ArrayList<>();
 		
 		int nItems  = in.readShort();
 		

@@ -52,7 +52,7 @@ public enum TextAlignment {
      */
     AUTO(5);
 
-    private static Map<Integer, TextAlignment> imap = new HashMap<Integer, TextAlignment>();
+    private static Map<Integer, TextAlignment> imap = new HashMap<>();
 
     static {
         for (TextAlignment p : values()) {

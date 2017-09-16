@@ -46,7 +46,7 @@ public final class ExcelAntWorkbookUtilFactory {
      */
     public static ExcelAntWorkbookUtil getInstance(String fileName) {
         if(workbookUtilMap == null) {
-            workbookUtilMap = new HashMap<String, ExcelAntWorkbookUtil>();
+            workbookUtilMap = new HashMap<>();
         }
 
         if(workbookUtilMap.containsKey(fileName)) {

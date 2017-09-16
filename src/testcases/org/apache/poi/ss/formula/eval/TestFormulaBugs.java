@@ -239,9 +239,8 @@ public final class TestFormulaBugs {
 		cell.setCellFormula(formula);
 		
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-		CellValue value = evaluator.evaluate(cell);
-		
-		return value;
+
+        return evaluator.evaluate(cell);
 	}
 
 	private void checkFormulaValue(Workbook wb, Cell cell, String formula, double expectedValue) {

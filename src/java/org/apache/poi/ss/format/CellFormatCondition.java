@@ -35,7 +35,7 @@ public abstract class CellFormatCondition {
     private static final Map<String, Integer> TESTS;
 
     static {
-        TESTS = new HashMap<String, Integer>();
+        TESTS = new HashMap<>();
         TESTS.put("<", LT);
         TESTS.put("<=", LE);
         TESTS.put(">", GT);

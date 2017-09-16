@@ -37,7 +37,7 @@ public final class DefaultUDFFinder implements UDFFinder {
             throw new IllegalArgumentException(
                     "Mismatch in number of function names and implementations");
         }
-        HashMap<String, FreeRefFunction> m = new HashMap<String, FreeRefFunction>(nFuncs * 3 / 2);
+        HashMap<String, FreeRefFunction> m = new HashMap<>(nFuncs * 3 / 2);
         for (int i = 0; i < functionImpls.length; i++) {
             m.put(functionNames[i].toUpperCase(Locale.ROOT), functionImpls[i]);
         }

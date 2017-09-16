@@ -57,7 +57,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
 
     @Test
     public void defaultShapeType() {
-        HSSFComment comment = new HSSFComment((HSSFShape)null, new HSSFClientAnchor());
+        HSSFComment comment = new HSSFComment(null, new HSSFClientAnchor());
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
     }
 

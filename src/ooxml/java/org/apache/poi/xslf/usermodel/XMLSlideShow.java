@@ -126,8 +126,8 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                     PresentationDocument.Factory.parse(getCorePart().getInputStream(), DEFAULT_XML_OPTIONS);
             _presentation = doc.getPresentation();
 
-            Map<String, XSLFSlideMaster> masterMap = new HashMap<String, XSLFSlideMaster>();
-            Map<String, XSLFSlide> shIdMap = new HashMap<String, XSLFSlide>();
+            Map<String, XSLFSlideMaster> masterMap = new HashMap<>();
+            Map<String, XSLFSlide> shIdMap = new HashMap<>();
             for (RelationPart rp : getRelationParts()) {
                 POIXMLDocumentPart p = rp.getDocumentPart();
                 if (p instanceof XSLFSlide) {
@@ -143,13 +143,13 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 }
             }
 
-            _masters = new ArrayList<XSLFSlideMaster>(masterMap.size());
+            _masters = new ArrayList<>(masterMap.size());
             for (CTSlideMasterIdListEntry masterId : _presentation.getSldMasterIdLst().getSldMasterIdList()) {
                 XSLFSlideMaster master = masterMap.get(masterId.getId2());
                 _masters.add(master);
             }
 
-            _slides = new ArrayList<XSLFSlide>(shIdMap.size());
+            _slides = new ArrayList<>(shIdMap.size());
             if (_presentation.isSetSldIdLst()) {
                 for (CTSlideIdListEntry slId : _presentation.getSldIdLst().getSldIdList()) {
                     XSLFSlide sh = shIdMap.get(slId.getId2());
@@ -187,7 +187,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     public List<XSLFPictureData> getPictureData() {
         if(_pictures == null){
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?"));
-            _pictures = new ArrayList<XSLFPictureData>(mediaParts.size());
+            _pictures = new ArrayList<>(mediaParts.size());
             for(PackagePart part : mediaParts){
                 XSLFPictureData pd = new XSLFPictureData(part);
                 pd.setIndex(_pictures.size());
@@ -354,7 +354,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
         Integer themeIndex = 1;
         // TODO: check if that list can be replaced by idx = Math.max(idx,themeIdx)
-        List<Integer> themeIndexList = new ArrayList<Integer>();
+        List<Integer> themeIndexList = new ArrayList<>();
         for (POIXMLDocumentPart p : getRelations()) {
             if (p instanceof XSLFTheme) {
                 themeIndexList.add(XSLFRelation.THEME.getFileNameIndex(p));
@@ -489,7 +489,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         if (relType == null) {
             throw new IllegalArgumentException("Picture type "+format+" is not supported.");
         }
-        img = (XSLFPictureData) createRelationship(relType, XSLFFactory.getInstance(), imageNumber + 1, true).getDocumentPart();
+        img = createRelationship(relType, XSLFFactory.getInstance(), imageNumber + 1, true).getDocumentPart();
         img.setIndex(imageNumber);
         _pictures.add(img);
         try {

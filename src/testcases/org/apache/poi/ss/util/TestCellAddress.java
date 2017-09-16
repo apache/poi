@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.util.CellAddress;
-
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -29,8 +27,6 @@ import java.util.Arrays;
 
 /**
  * Tests that the common CellAddress works as we need it to.
- * Note - some additional testing is also done in the HSSF class,
- *  {@link org.apache.poi.hssf.util.TestCellAddress}
  */
 public final class TestCellAddress {
     @Test
@@ -62,6 +58,7 @@ public final class TestCellAddress {
         assertNotEquals(new CellReference(4, 6), new CellReference(6, 4));
     }
     
+    @SuppressWarnings("EqualsWithItself")
     @Test
     public void testCompareTo() {
         final CellAddress A1 = new CellAddress(0, 0);
@@ -91,7 +88,7 @@ public final class TestCellAddress {
         
         CellAddress[] sorted = {A1, B1, A2, B2};
         CellAddress[] unsorted = {B1, B2, A1, A2};
-        assumeTrue(!sorted.equals(unsorted));
+        assumeTrue(!Arrays.equals(sorted, unsorted));
         Arrays.sort(unsorted);
         assertArrayEquals(sorted, unsorted);
     }

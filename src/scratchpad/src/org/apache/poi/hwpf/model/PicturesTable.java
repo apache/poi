@@ -220,7 +220,7 @@ public final class PicturesTable
    * @return a list of Picture objects found in current document
    */
   public List<Picture> getAllPictures() {
-    ArrayList<Picture> pictures = new ArrayList<Picture>();
+    ArrayList<Picture> pictures = new ArrayList<>();
 
     Range range = _document.getOverallRange();
     for (int i = 0; i < range.numCharacterRuns(); i++) {

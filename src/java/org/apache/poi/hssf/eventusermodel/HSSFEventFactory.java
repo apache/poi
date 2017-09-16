@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.Set;
 
-import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;

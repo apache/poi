@@ -46,7 +46,7 @@ public class FactDouble extends Fixed1ArgFunction implements FreeRefFunction {
     public static final FreeRefFunction instance = new FactDouble();
 
     //Caching of previously calculated factorial for speed
-    static HashMap<Integer, BigInteger> cache = new HashMap<Integer, BigInteger>();
+    static HashMap<Integer, BigInteger> cache = new HashMap<>();
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
         int number;

@@ -34,6 +34,7 @@ import org.apache.poi.util.StringUtil;
  *  as {@link FeatRecord}
  */
 public final class FeatProtection implements SharedFeature {
+	@SuppressWarnings("RedundantFieldInitialization")
 	public static long NO_SELF_RELATIVE_SECURITY_FEATURE = 0;
 	public static long HAS_SELF_RELATIVE_SECURITY_FEATURE = 1;
 

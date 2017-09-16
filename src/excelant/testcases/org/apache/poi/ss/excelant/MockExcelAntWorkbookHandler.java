@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.poi.ss.usermodel.Workbook;
 
 public class MockExcelAntWorkbookHandler implements IExcelAntWorkbookHandler {
-    public static boolean executed = false;
-    public static Workbook workbook = null;
+    public static boolean executed;
+    public static Workbook workbook;
     
     
     @Override

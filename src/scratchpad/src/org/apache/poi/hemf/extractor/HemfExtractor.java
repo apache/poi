@@ -59,7 +59,7 @@ public class HemfExtractor implements Iterable<HemfRecord> {
 
     private class HemfRecordIterator implements Iterator<HemfRecord> {
 
-        private HemfRecord currentRecord = null;
+        private HemfRecord currentRecord;
 
         HemfRecordIterator() {
             //queue the first non-header record

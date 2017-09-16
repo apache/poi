@@ -18,33 +18,36 @@
 package org.apache.poi.hpsf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-
-import junit.framework.TestCase;
+import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hpsf.Thumbnail;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 
-public final class TestHPSFPropertiesExtractor extends TestCase {
+public final class TestHPSFPropertiesExtractor {
 	private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
+	@Test
 	public void testNormalProperties() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestMickey.doc"));
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		try {
     		// Check each bit in turn
     		String summary = ext.getSummaryInformationText();
-    		String docsummary = ext.getDocumentSummaryInformationText();
+    		String docSummary = ext.getDocumentSummaryInformationText();
 
     		assertContains(summary, "TEMPLATE = Normal");
     		assertContains(summary, "SUBJECT = sample subject");
-    		assertContains(docsummary, "MANAGER = sample manager");
-    		assertContains(docsummary, "COMPANY = sample company");
+    		assertContains(docSummary, "MANAGER = sample manager");
+    		assertContains(docSummary, "COMPANY = sample company");
     
     		// Now overall
     		String text = ext.getText();
@@ -57,18 +60,19 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		}
 	}
 
+	@Test
 	public void testNormalUnicodeProperties() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestUnicode.xls"));
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
 		try {
     		// Check each bit in turn
     		String summary = ext.getSummaryInformationText();
-    		String docsummary = ext.getDocumentSummaryInformationText();
+    		String docSummary = ext.getDocumentSummaryInformationText();
     
     		assertContains(summary, "AUTHOR = marshall");
     		assertContains(summary, "TITLE = Titel: \u00c4h");
-    		assertContains(docsummary, "COMPANY = Schreiner");
-    		assertContains(docsummary, "SCALE = false");
+    		assertContains(docSummary, "COMPANY = Schreiner");
+    		assertContains(docSummary, "SCALE = false");
     
     		// Now overall
     		String text = ext.getText();
@@ -81,6 +85,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCustomProperties() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				_samples.openResourceAsStream("TestMickey.doc")
@@ -100,6 +105,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
         }
 	}
 
+	@Test
 	public void testConstructors() throws IOException {
 		POIFSFileSystem fs;
 		HSSFWorkbook wb;
@@ -146,6 +152,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		assertContains(fsText, "TITLE = Titel: \u00c4h");
 	}
 
+	@Test
 	public void test42726() throws IOException {
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(HSSFTestDataSamples.openSampleWorkbook("42726.xls"));
 		try {
@@ -158,7 +165,8 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
             ext.close();
         }
 	}
-	
+
+	@Test
     public void testThumbnail() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestThumbnail.xls"));
         HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -169,6 +177,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
         wb.close();
     }
 
+	@Test
     public void test52258() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestVisioWithCodepage.vsd"));
         HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
@@ -182,4 +191,11 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
             ext.close();
         }
     }
+
+	@Test
+	public void test61300Extractor() throws NoPropertySetStreamException, MarkUnsupportedException, IOException {
+		HPSFPropertiesExtractor.main(new String[]{
+				POIDataSamples.getPOIFSInstance().getFile("61300.bin").getAbsolutePath()
+		});
+	}
 }

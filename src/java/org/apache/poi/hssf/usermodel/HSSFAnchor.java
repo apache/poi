@@ -30,8 +30,8 @@ import org.apache.poi.ss.usermodel.ChildAnchor;
  */
 public abstract class HSSFAnchor implements ChildAnchor {
 
-    protected boolean _isHorizontallyFlipped = false;
-    protected boolean _isVerticallyFlipped = false;
+    protected boolean _isHorizontallyFlipped;
+    protected boolean _isVerticallyFlipped;
 
     public HSSFAnchor() {
         createEscherAnchor();
@@ -47,10 +47,10 @@ public abstract class HSSFAnchor implements ChildAnchor {
 
     public static HSSFAnchor createAnchorFromEscher(EscherContainerRecord container){
         if (null != container.getChildById(EscherChildAnchorRecord.RECORD_ID)){
-            return new HSSFChildAnchor((EscherChildAnchorRecord) container.getChildById(EscherChildAnchorRecord.RECORD_ID));
+            return new HSSFChildAnchor(container.getChildById(EscherChildAnchorRecord.RECORD_ID));
         } else {
             if (null != container.getChildById(EscherClientAnchorRecord.RECORD_ID)){
-                return new HSSFClientAnchor((EscherClientAnchorRecord) container.getChildById(EscherClientAnchorRecord.RECORD_ID));
+                return new HSSFClientAnchor(container.getChildById(EscherClientAnchorRecord.RECORD_ID));
             }
             return null;
         }

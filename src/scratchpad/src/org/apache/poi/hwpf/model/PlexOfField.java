@@ -64,8 +64,7 @@ public class PlexOfField
     }
 
     public String toString() {
-        String str = String.format(Locale.ROOT, "[%d, %d) - FLD - 0x%x; 0x%x"
+        return String.format(Locale.ROOT, "[%d, %d) - FLD - 0x%x; 0x%x"
             , getFcStart(), getFcEnd(), fld.getBoundaryType(), fld.getFlt());
-        return str;
     }
 }

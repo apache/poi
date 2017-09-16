@@ -714,7 +714,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             // ensure that a memory based package part does not have lingering data from previous commit() calls
             if(sheetBack.getPackagePart() instanceof MemoryPackagePart) {
-                ((MemoryPackagePart)sheetBack.getPackagePart()).clear();
+                sheetBack.getPackagePart().clear();
             }
 
             sheetBack.commit();

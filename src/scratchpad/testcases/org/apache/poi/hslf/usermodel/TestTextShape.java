@@ -74,7 +74,7 @@ public final class TestTextShape {
     public void read() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("text_shapes.ppt");
 
-        List<String> lst1 = new ArrayList<String>();
+        List<String> lst1 = new ArrayList<>();
         HSLFSlide slide = ppt.getSlides().get(0);
         for (HSLFShape shape : slide.getShapes()) {
             assertTrue("Expected TextShape but found " + shape.getClass().getName(), shape instanceof HSLFTextShape);
@@ -112,7 +112,7 @@ public final class TestTextShape {
             lst1.add(rawText);
         }
 
-        List<String> lst2 = new ArrayList<String>();
+        List<String> lst2 = new ArrayList<>();
         for (List<HSLFTextParagraph> paras : slide.getTextParagraphs()) {
             lst2.add(HSLFTextParagraph.getRawText(paras));
         }
@@ -163,7 +163,7 @@ public final class TestTextShape {
 
         HSLFSlide slide = ppt.getSlides().get(0);
 
-        Map<String,HSLFTextShape> map = new HashMap<String,HSLFTextShape>();
+        Map<String,HSLFTextShape> map = new HashMap<>();
         for (HSLFShape shape : slide.getShapes()) {
             if(shape instanceof HSLFTextShape){
                 HSLFTextShape tx = (HSLFTextShape)shape;

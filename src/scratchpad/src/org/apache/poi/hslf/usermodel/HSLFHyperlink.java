@@ -328,7 +328,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      */
     @SuppressWarnings("resource")
     protected static List<HSLFHyperlink> find(List<HSLFTextParagraph> paragraphs){
-        List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
+        List<HSLFHyperlink> lst = new ArrayList<>();
         if (paragraphs == null || paragraphs.isEmpty()) return lst;
 
         HSLFTextParagraph firstPara = paragraphs.get(0);
@@ -358,9 +358,9 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
         HSLFEscherClientDataRecord cldata = shape.getClientData(false);
 
         if (exobj != null && cldata != null) {
-            List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
+            List<HSLFHyperlink> lst = new ArrayList<>();
             find(cldata.getHSLFChildRecords(), exobj, lst);
-            return lst.isEmpty() ? null : (HSLFHyperlink)lst.get(0);
+            return lst.isEmpty() ? null : lst.get(0);
         }
 
         return null;

@@ -85,11 +85,11 @@ public final class HSSFChart {
 	@SuppressWarnings("unused")
     private ChartTitleFormatRecord chartTitleFormat;
 	private SeriesTextRecord chartTitleText;
-	private List<ValueRangeRecord> valueRanges = new ArrayList<ValueRangeRecord>(); 
+	private List<ValueRangeRecord> valueRanges = new ArrayList<>();
 	
 	private HSSFChartType type = HSSFChartType.Unknown;
 	
-	private List<HSSFSeries> series = new ArrayList<HSSFSeries>();
+	private List<HSSFSeries> series = new ArrayList<>();
 
 	public enum HSSFChartType {
 		Area {
@@ -146,7 +146,7 @@ public final class HSSFChart {
 	public void createBarChart( HSSFWorkbook workbook, HSSFSheet parentSheet )
 	{
 
-		List<Record> records = new ArrayList<Record>();
+		List<Record> records = new ArrayList<>();
 		records.add( createMSDrawingObjectRecord() );
 		records.add( createOBJRecord() );
 		records.add( createBOFRecord() );
@@ -218,7 +218,7 @@ public final class HSSFChart {
 	 *  these charts yet, as this is very limited support
 	 */
 	public static HSSFChart[] getSheetCharts(HSSFSheet sheet) {
-		List<HSSFChart> charts = new ArrayList<HSSFChart>();
+		List<HSSFChart> charts = new ArrayList<>();
 		HSSFChart lastChart = null;
 		HSSFSeries lastSeries = null;
 		// Find records of interest
@@ -597,8 +597,7 @@ public final class HSSFChart {
 
 	private PlotAreaRecord createPlotAreaRecord()
 	{
-		PlotAreaRecord r = new PlotAreaRecord(  );
-		return r;
+        return new PlotAreaRecord(  );
 	}
 
 	private AxisLineFormatRecord createAxisLineFormatRecord( short format )
@@ -1136,7 +1135,7 @@ public final class HSSFChart {
 				return null;
 			}
 			
-			List<Ptg> ptgList = new ArrayList<Ptg>();
+			List<Ptg> ptgList = new ArrayList<>();
 			
 			int rowCount = (range.getLastRow() - range.getFirstRow()) + 1;
 			int colCount = (range.getLastColumn() - range.getFirstColumn()) + 1;
@@ -1181,7 +1180,7 @@ public final class HSSFChart {
 	}
 	
 	public HSSFSeries createSeries() throws Exception {
-		ArrayList<RecordBase> seriesTemplate = new ArrayList<RecordBase>();
+		ArrayList<RecordBase> seriesTemplate = new ArrayList<>();
 		boolean seriesTemplateFilled = false;
 		
 		int idx = 0;
@@ -1245,7 +1244,7 @@ public final class HSSFChart {
 		HSSFSeries newSeries = null;
 		
 		/* duplicate record of the template series */
-		ArrayList<RecordBase> clonedRecords = new ArrayList<RecordBase>();
+		ArrayList<RecordBase> clonedRecords = new ArrayList<>();
 		for(final RecordBase record : seriesTemplate) {		
 			
 			Record newRecord = null;

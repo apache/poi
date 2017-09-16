@@ -27,7 +27,7 @@ public final class NameIdChunks implements ChunkGroup {
     public static final String NAME = "__nameid_version1.0";
 
     /** Holds all the chunks that were found. */
-    private List<Chunk> allChunks = new ArrayList<Chunk>();
+    private List<Chunk> allChunks = new ArrayList<>();
 
     public Chunk[] getAll() {
         return allChunks.toArray(new Chunk[allChunks.size()]);

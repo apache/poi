@@ -365,11 +365,10 @@ public abstract class NumericFunction implements Function {
 				double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
 				double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
 				double logE = Math.log(d0);
-				double base = d1;
-				if (Double.compare(base, Math.E) == 0) {
+                if (Double.compare(d1, Math.E) == 0) {
 					result = logE;
 				} else {
-					result = logE / Math.log(base);
+					result = logE / Math.log(d1);
 				}
 				NumericFunction.checkValue(result);
 			} catch (EvaluationException e) {

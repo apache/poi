@@ -41,18 +41,18 @@ import org.apache.poi.hwpf.model.PicturesTable;
  */
 public class PictureRunMapper {
     private PicturesTable picturesTable;
-    private Set<Picture> claimed = new HashSet<Picture>();
+    private Set<Picture> claimed = new HashSet<>();
     private Map<Integer, Picture> lookup;
     private List<Picture> nonU1based;
     private List<Picture> all;
-    private int pn = 0;
+    private int pn;
 
     public PictureRunMapper(HWPFDocument doc) {
         picturesTable = doc.getPicturesTable();
         all = picturesTable.getAllPictures();
 
         // Build the Offset-Picture lookup map
-        lookup = new HashMap<Integer, Picture>();
+        lookup = new HashMap<>();
         for (Picture p : all) {
             lookup.put(p.getStartOffset(), p);
         }
@@ -62,7 +62,7 @@ public class PictureRunMapper {
         // These are \u0008 escher floating ones, ones
         //  found outside the normal text, and who
         //  knows what else...
-        nonU1based = new ArrayList<Picture>();
+        nonU1based = new ArrayList<>();
         nonU1based.addAll(all);
         Range r = doc.getRange();
         for (int i = 0; i < r.numCharacterRuns(); i++) {

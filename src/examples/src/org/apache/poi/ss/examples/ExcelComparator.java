@@ -88,7 +88,7 @@ public class ExcelComparator {
         Cell cell;
     }
     
-    List<String> listOfDifferences = new ArrayList<String>();
+    List<String> listOfDifferences = new ArrayList<>();
 
     public static void main(String args[]) throws Exception {
         if (args.length != 2 || !(new File(args[0]).exists()) || !(new File(args[1]).exists())) {

@@ -31,25 +31,25 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
  */
 public class InfiniteLine implements GeometryRow {
 
-    InfiniteLine _master = null;
+    InfiniteLine _master;
 
     // An x-coordinate of a point on the infinite line; paired with y-coordinate
     // represented by the Y cell.
-    Double x = null;
+    Double x;
 
     // A y-coordinate of a point on the infinite line; paired with x-coordinate
     // represented by the X cell.
-    Double y = null;
+    Double y;
 
     // An x-coordinate of a point on the infinite line; paired with y-coordinate
     // represented by the B cell.
-    Double a = null;
+    Double a;
 
     // A y-coordinate of a point on an infinite line; paired with x-coordinate
     // represented by the A cell.
-    Double b = null;
+    Double b;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

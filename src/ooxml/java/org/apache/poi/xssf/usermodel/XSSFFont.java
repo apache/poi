@@ -122,8 +122,7 @@ public class XSSFFont implements Font {
      */
     public int getCharSet() {
         CTIntProperty charset = _ctFont.sizeOfCharsetArray() == 0 ? null : _ctFont.getCharsetArray(0);
-        int val = charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue();
-        return val;
+        return charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue();
     }
 
 
@@ -214,8 +213,7 @@ public class XSSFFont implements Font {
     private double getFontHeightRaw() {
         CTFontSize size = _ctFont.sizeOfSzArray() == 0 ? null : _ctFont.getSzArray(0);
         if (size != null) {
-            double fontHeight = size.getVal();
-            return fontHeight;
+            return size.getVal();
         }
         return DEFAULT_FONT_SIZE;
     }

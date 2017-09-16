@@ -225,7 +225,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
     
     private static List<Integer> arrayToList(int[] array) {
-        List<Integer> list = new ArrayList<Integer>(array.length);
+        List<Integer> list = new ArrayList<>(array.length);
         for ( Integer element : array ) {
             list.add(element);
         }

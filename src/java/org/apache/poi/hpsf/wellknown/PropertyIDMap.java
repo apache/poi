@@ -417,10 +417,10 @@ public class PropertyIDMap implements Map<Long,String> {
     /**
      * Creates a {@link PropertyIDMap} backed by another map.
      *
-     * @param map The instance to be created is backed by this map.
+     * @param idValues an array of key/value pairs via nested Object[2] arrays
      */
     private PropertyIDMap(Object[][] idValues) {
-        Map<Long,String> m = new HashMap<Long,String>(idValues.length);
+        Map<Long,String> m = new HashMap<>(idValues.length);
         for (Object[] idValue : idValues) {
             m.put((Long)idValue[0], (String)idValue[1]);
         }

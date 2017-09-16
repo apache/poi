@@ -21,11 +21,11 @@ buildscript {
 
 	dependencies {
 		classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'	// 2.x requires Gradle >=4
-		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
+		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
 	}
 }
 
-// Only add the plugin for Sonar if enabled as it requires Java 8
+// Only add the plugin for Sonar if enabled
 if (project.hasProperty('enableSonar')) {
 	println 'Enabling Sonar support'
 	apply plugin: "org.sonarqube"
@@ -73,16 +73,16 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin 
 	apply plugin: 'me.champeau.gradle.japicmp'
         
-	version = '3.18-beta1'
+	version = '4.0-beta1'
 	ext {
-		japicmpversion = '3.15'
+		japicmpversion = '3.17'
 	}
 
 	tasks.withType(JavaCompile) {
 	    options.encoding = 'UTF-8'
 	}
 
-    sourceCompatibility = 1.6
+    sourceCompatibility = 1.8
 
     repositories {
         mavenCentral()
@@ -124,7 +124,7 @@ subprojects {
 	}
 
     jacoco {
-        toolVersion = '0.7.8'
+        toolVersion = '0.7.9'
     }
     
     // ensure the build-dir exists
@@ -198,9 +198,9 @@ project('ooxml') {
 		compile 'org.apache.xmlbeans:xmlbeans:2.6.0'
 		compile 'org.apache.commons:commons-collections4:4.1'
 		compile 'org.apache.commons:commons-math3:3.6.1'
-		compile 'org.apache.santuario:xmlsec:2.0.6'
-		compile 'org.bouncycastle:bcpkix-jdk15on:1.54'
-		compile 'com.github.virtuald:curvesapi:1.04'
+		compile 'org.apache.santuario:xmlsec:2.1.0'
+		compile 'org.bouncycastle:bcpkix-jdk15on:1.58'
+		compile 'com.github.virtuald:curvesapi:1.05'
 
 		// for ooxml-lite, should we move this somewhere else?
 		compile 'junit:junit:4.12'
@@ -212,9 +212,8 @@ project('ooxml') {
 		
 		testCompile 'junit:junit:4.12'
 		testCompile project(path: ':main', configuration: 'tests')
-		// Keep using 1.15 until we switch to Java 7
-		testCompile 'org.openjdk.jmh:jmh-core:1.15'
-		testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.15'
+		testCompile 'org.openjdk.jmh:jmh-core:1.19'
+		testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
 	}
 
 	// TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
@@ -245,7 +244,7 @@ project('excelant') {
 	sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
 	
 	dependencies {
-		compile 'org.apache.ant:ant:1.9.4'
+		compile 'org.apache.ant:ant:1.10.1'
 
 		compile project(':main')
 		compile project(':ooxml')
@@ -269,7 +268,7 @@ project('integrationtest') {
 	sourceSets.test.java.srcDirs = ['../../src/integrationtest']
 	
 	dependencies {
-		compile 'org.apache.ant:ant:1.9.4'
+		compile 'org.apache.ant:ant:1.10.1'
 
 		compile project(':main')
 		compile project(':ooxml')

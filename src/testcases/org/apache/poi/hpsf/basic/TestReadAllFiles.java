@@ -60,7 +60,7 @@ public class TestReadAllFiles {
     
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
-        final List<Object[]> files = new ArrayList<Object[]>();
+        final List<Object[]> files = new ArrayList<>();
         
         _samples.getFile("").listFiles(new FileFilter() {
             @Override
@@ -112,7 +112,7 @@ public class TestReadAllFiles {
     @Test
     public void recreate() throws IOException, HPSFException {
         /* Read the POI filesystem's property set streams: */
-        Map<String,PropertySet> psMap = new HashMap<String,PropertySet>();
+        Map<String,PropertySet> psMap = new HashMap<>();
         
         /* Create a new POI filesystem containing the origin file's
          * property set streams: */

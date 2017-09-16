@@ -31,12 +31,12 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
  */
 public class MoveTo implements GeometryRow {
 
-    MoveTo _master = null;
+    MoveTo _master;
 
-    Double x = null;
-    Double y = null;
+    Double x;
+    Double y;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

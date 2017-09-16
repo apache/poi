@@ -64,7 +64,7 @@ public class TestOle10Native {
         
         for (File f : files) {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(f, true);
-            List<Entry> entries = new ArrayList<Entry>();
+            List<Entry> entries = new ArrayList<>();
             findOle10(entries, fs.getRoot(), "/", "");
             
             for (Entry e : entries) {

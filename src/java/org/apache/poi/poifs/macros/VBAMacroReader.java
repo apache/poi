@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -124,7 +125,7 @@ public class VBAMacroReader implements Closeable {
         final ModuleMap modules = new ModuleMap();
         findMacros(fs.getRoot(), modules);
         
-        Map<String, String> moduleSources = new HashMap<String, String>();
+        Map<String, String> moduleSources = new HashMap<>();
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
             Module module = entry.getValue();
             if (module.buf != null && module.buf.length > 0) { // Skip empty modules

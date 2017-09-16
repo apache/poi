@@ -44,7 +44,7 @@ import org.apache.poi.hsmf.datatypes.Types.MAPIType;
  * http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
 public class MAPIProperty {
-    private static Map<Integer, MAPIProperty> attributes = new HashMap<Integer, MAPIProperty>();
+    private static Map<Integer, MAPIProperty> attributes = new HashMap<>();
 
     public static final MAPIProperty AB_DEFAULT_DIR =
         new MAPIProperty(0x3d06, BINARY, "AbDefaultDir", "PR_AB_DEFAULT_DIR");

@@ -71,7 +71,7 @@ public class Section {
     /**
      * This section's properties.
      */
-    private final Map<Long,Property> properties = new LinkedHashMap<Long,Property>();
+    private final Map<Long,Property> properties = new LinkedHashMap<>();
 
     /**
      * This member is {@code true} if the last call to {@link
@@ -175,7 +175,7 @@ public class Section {
          *    seconds pass reads the other properties.
          */
         /* Pass 1: Read the property list. */
-        final TreeBidiMap<Long,Long> offset2Id = new TreeBidiMap<Long,Long>();
+        final TreeBidiMap<Long,Long> offset2Id = new TreeBidiMap<>();
         for (int i = 0; i < propertyCount; i++) {
             /* Read the property ID. */
             long id = (int)leis.readUInt();
@@ -232,7 +232,7 @@ public class Section {
                     } catch (RuntimeException e) {
                         LOG.log(POILogger.INFO, "Dictionary fallback failed - ignoring property");
                     }
-                };
+                }
             } else {
                 setProperty(new Property(id, leis, pLen, codepage));
             }
@@ -662,7 +662,7 @@ public class Section {
 
         /* Compare all properties except the dictionary (id 0) and
          * the codepage (id 1 / ignored) as they must be handled specially. */
-        Set<Long> propIds = new HashSet<Long>(properties.keySet());
+        Set<Long> propIds = new HashSet<>(properties.keySet());
         propIds.addAll(s.properties.keySet());
         propIds.remove(0L);
         propIds.remove(1L);
@@ -800,7 +800,7 @@ public class Section {
      */
     private boolean readDictionary(LittleEndianByteArrayInputStream leis, final int length, final int codepage)
     throws UnsupportedEncodingException {
-        Map<Long,String> dic = new HashMap<Long,String>();
+        Map<Long,String> dic = new HashMap<>();
 
         /*
          * Read the number of dictionary entries.
@@ -919,7 +919,7 @@ public class Section {
     public void setDictionary(final Map<Long,String> dictionary) throws IllegalPropertySetDataException {
         if (dictionary != null) {
             if (this.dictionary == null) {
-                this.dictionary = new TreeMap<Long,String>();
+                this.dictionary = new TreeMap<>();
             }
             this.dictionary.putAll(dictionary);
 
@@ -955,8 +955,7 @@ public class Section {
         for (int i = 0; i < pa.length; i++) {
             hashCode += pa[i].hashCode();
         }
-        final int returnHashCode = (int) (hashCode & 0x0ffffffffL);
-        return returnHashCode;
+        return (int) (hashCode & 0x0ffffffffL);
     }
 
 

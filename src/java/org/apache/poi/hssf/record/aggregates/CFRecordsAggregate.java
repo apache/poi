@@ -72,7 +72,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
             throw new RecordFormatException("Mismatch number of rules");
         }
         header = pHeader;
-        rules = new ArrayList<CFRuleBase>(pRules.length);
+        rules = new ArrayList<>(pRules.length);
         for (CFRuleBase pRule : pRules) {
             checkRuleType(pRule);
             rules.add(pRule);
@@ -221,7 +221,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
     public boolean updateFormulasAfterCellShift(FormulaShifter shifter, int currentExternSheetIx) {
         CellRangeAddress[] cellRanges = header.getCellRanges();
         boolean changed = false;
-        List<CellRangeAddress> temp = new ArrayList<CellRangeAddress>();
+        List<CellRangeAddress> temp = new ArrayList<>();
         for (CellRangeAddress craOld : cellRanges) {
             CellRangeAddress craNew = shiftRange(shifter, craOld, currentExternSheetIx);
             if (craNew == null) {
