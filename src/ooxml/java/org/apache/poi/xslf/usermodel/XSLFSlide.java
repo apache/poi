@@ -60,7 +60,6 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     XSLFSlide() {
         super();
         _slide = prototype();
-        setCommonSlideData(_slide.getCSld());
     }
 
     /**
@@ -83,7 +82,6 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         
         SldDocument doc = SldDocument.Factory.parse(_doc, DEFAULT_XML_OPTIONS);
         _slide = doc.getSld();
-        setCommonSlideData(_slide.getCSld());
     }
     
     private static CTSlide prototype(){

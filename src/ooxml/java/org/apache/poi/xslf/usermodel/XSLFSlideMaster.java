@@ -76,7 +76,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
         SldMasterDocument doc =
             SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getSldMaster();
-        setCommonSlideData(_slide.getCSld());
     }
     
     @Override

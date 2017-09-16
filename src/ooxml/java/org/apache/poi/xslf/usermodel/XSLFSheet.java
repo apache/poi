@@ -58,7 +58,6 @@ public abstract class XSLFSheet extends POIXMLDocumentPart
 implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private static POILogger LOG = POILogFactory.getLogger(XSLFSheet.class);
     
-    private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
     private CTGroupShape _spTree;
@@ -140,18 +139,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @return top-level Xml bean representing this sheet
      */
     public abstract XmlObject getXmlObject();
-
-    /*
-     * @deprecated POI 3.16 beta 1. use {@link XSLFTable} instead
-     */
-    @Removal(version="3.18")
-    protected void setCommonSlideData(CTCommonSlideData data) {
-        if(data == null) {
-            _commonSlideData = null;
-        } else {
-            _commonSlideData = new XSLFCommonSlideData(data);
-        }
-    }
 
     private XSLFDrawing getDrawing(){
         initDrawingAndShapes();
