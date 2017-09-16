@@ -222,13 +222,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
             implements Comparator<RecipientChunks>, Serializable {
         @Override
         public int compare(RecipientChunks a, RecipientChunks b) {
-            if (a.recipientNumber < b.recipientNumber) {
-                return -1;
-            }
-            if (a.recipientNumber > b.recipientNumber) {
-                return +1;
-            }
-            return 0;
+            return Integer.compare(a.recipientNumber, b.recipientNumber);
         }
     }
 }

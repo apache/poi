@@ -43,9 +43,7 @@ public class TypesLister {
       ArrayList<MAPIProperty> all = new ArrayList<>(MAPIProperty.getAll());
       Collections.sort(all, new Comparator<MAPIProperty>() {
          public int compare(MAPIProperty a, MAPIProperty b) {
-            if(a.id < b.id) return -1;
-            if(a.id > b.id) return +1;
-            return 0;
+             return Integer.compare(a.id, b.id);
          }
       });
       list(all, out);

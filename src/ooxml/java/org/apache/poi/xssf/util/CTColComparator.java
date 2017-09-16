@@ -30,7 +30,7 @@ public class CTColComparator {
         public int compare(CTCol col1, CTCol col2) {
             long col1max = col1.getMax();
             long col2max = col2.getMax();
-            return col1max < col2max ? -1 : col1max > col2max ? 1 : 0;
+            return Long.compare(col1max, col2max);
         }
     };
 

@@ -449,15 +449,8 @@ public class TextPieceTable implements CharIndexTranslator {
 
     protected static class FCComparator implements Comparator<TextPiece>, Serializable {
         public int compare(TextPiece textPiece, TextPiece textPiece1) {
-            if (textPiece.getPieceDescriptor().fc > textPiece1
-                    .getPieceDescriptor().fc) {
-                return 1;
-            } else if (textPiece.getPieceDescriptor().fc < textPiece1
-                    .getPieceDescriptor().fc) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return Integer.compare(textPiece.getPieceDescriptor().fc, textPiece1
+                    .getPieceDescriptor().fc);
         }
     }
 }

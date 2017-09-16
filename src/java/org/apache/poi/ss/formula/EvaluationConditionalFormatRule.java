@@ -242,16 +242,16 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         final int x = getPriority();
         final int y = o.getPriority();
         // logic from Integer.compare()
-        cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);
+        cmp = Integer.compare(x, y);
         if (cmp != 0) {
             return cmp;
         }
 
-        cmp = new Integer(getFormattingIndex()).compareTo(new Integer(o.getFormattingIndex()));
+        cmp = Integer.compare(getFormattingIndex(), o.getFormattingIndex());
         if (cmp != 0) {
             return cmp;
         }
-        return new Integer(getRuleIndex()).compareTo(new Integer(o.getRuleIndex()));
+        return Integer.compare(getRuleIndex(), o.getRuleIndex());
     }
     
     @Override

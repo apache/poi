@@ -93,7 +93,7 @@ public final class TestNumberComparer {
 	private static boolean confirm(int i, double a, double b, int expRes) {
 		int actRes = NumberComparer.compare(a, b);
 
-		int sgnActRes = actRes < 0 ? -1 : actRes > 0 ? +1 : 0;
+		int sgnActRes = Integer.compare(actRes, 0);
 		if (sgnActRes != expRes) {
 			System.err.println("Mismatch example[" + i + "] ("
 					+ formatDoubleAsHex(a) + ", " + formatDoubleAsHex(b) + ") expected "
