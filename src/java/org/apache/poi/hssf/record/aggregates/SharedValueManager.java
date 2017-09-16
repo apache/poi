@@ -172,8 +172,7 @@ public final class SharedValueManager {
                 _groupsCache.put(getKeyForCache(group._firstCell),group);
             }
         }
-        SharedFormulaGroup sfg = _groupsCache.get(getKeyForCache(cellRef));
-        return sfg;
+        return _groupsCache.get(getKeyForCache(cellRef));
     }
 
     private Integer getKeyForCache(final CellReference cellRef) {

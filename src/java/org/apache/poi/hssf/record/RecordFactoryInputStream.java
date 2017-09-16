@@ -103,13 +103,12 @@ public final class RecordFactoryInputStream {
 		}
 
 		public RecordInputStream createDecryptingStream(InputStream original) {
-			FilePassRecord fpr = _filePassRec;
-			String userPassword = Biff8EncryptionKey.getCurrentUserPassword();
+            String userPassword = Biff8EncryptionKey.getCurrentUserPassword();
 			if (userPassword == null) {
 			    userPassword = Decryptor.DEFAULT_PASSWORD;
 			}
 
-			EncryptionInfo info = fpr.getEncryptionInfo();
+			EncryptionInfo info = _filePassRec.getEncryptionInfo();
             try {
                 if (!info.getDecryptor().verifyPassword(userPassword)) {
                     throw new EncryptedDocumentException(

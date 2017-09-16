@@ -166,8 +166,6 @@ public final class SlideIdListing {
 		long type = LittleEndian.getUShort(fileContents, pos+2);
 		long rlen = LittleEndian.getUInt(fileContents, pos+4);
 
-		Record r = Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
-
-		return r;
+        return Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
 	}
 }

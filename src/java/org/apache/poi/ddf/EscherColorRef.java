@@ -218,12 +218,11 @@ public class EscherColorRef {
     }
 
     public int[] getRGB() {
-        int rgb[] = {
+        return new int[]{
             FLAG_RED.getValue(colorRef),
             FLAG_GREEN.getValue(colorRef),
             FLAG_BLUE.getValue(colorRef)
         };
-        return rgb;
     }
     
     /**

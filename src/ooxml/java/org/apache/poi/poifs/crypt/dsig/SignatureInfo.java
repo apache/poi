@@ -357,8 +357,7 @@ public class SignatureInfo implements SignatureConfigurable {
             digestInfoValueBuf.write(signatureConfig.getHashMagic());
             digestInfoValueBuf.write(digest);
             byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
-            byte[] signatureValue = cipher.doFinal(digestInfoValue);
-            return signatureValue;
+            return cipher.doFinal(digestInfoValue);
         } catch (Exception e) {
             throw new EncryptedDocumentException(e);
         }

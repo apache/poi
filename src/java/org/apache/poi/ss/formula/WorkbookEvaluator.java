@@ -125,8 +125,7 @@ public final class WorkbookEvaluator {
     }
 
     /* package */ EvaluationName getName(String name, int sheetIndex) {
-        EvaluationName evalName = _workbook.getName(name, sheetIndex);
-        return evalName;
+        return _workbook.getName(name, sheetIndex);
     }
 
     private static boolean isDebugLogEnabled() {

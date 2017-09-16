@@ -93,18 +93,17 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg {
 	}
 
 	private static TwoDEval convertFirstArg(ValueEval arg0) {
-		ValueEval firstArg = arg0;
-		if (firstArg instanceof RefEval) {
+        if (arg0 instanceof RefEval) {
 			// convert to area ref for simpler code in getValueFromArea()
-			return ((RefEval)firstArg).offset(0, 0, 0, 0);
+			return ((RefEval) arg0).offset(0, 0, 0, 0);
 		}
-		if((firstArg instanceof TwoDEval)) {
-			return (TwoDEval) firstArg;
+		if((arg0 instanceof TwoDEval)) {
+			return (TwoDEval) arg0;
 		}
 		// else the other variation of this function takes an array as the first argument
 		// it seems like interface 'ArrayEval' does not even exist yet
 		throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
-				+ firstArg.getClass().getName() + ")");
+				+ arg0.getClass().getName() + ")");
 
 	}
 

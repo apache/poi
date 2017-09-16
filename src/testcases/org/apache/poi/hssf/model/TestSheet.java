@@ -541,8 +541,7 @@ public final class TestSheet {
 		MyIndexRecordListener myIndexListener = new MyIndexRecordListener();
 		sheet.visitContainedRecords(myIndexListener, 0);
 		IndexRecord indexRecord = myIndexListener.getIndexRecord();
-		int dbCellRecordPos = indexRecord.getDbcellAt(0);
-		return dbCellRecordPos;
+        return indexRecord.getDbcellAt(0);
 	}
 
 	private static final class MyIndexRecordListener implements RecordVisitor {

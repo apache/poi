@@ -74,8 +74,7 @@ public class XSSFSingleXmlCell {
 	public String getXpath(){
 		CTXmlCellPr xmlCellPr = singleXmlCell.getXmlCellPr();
 		CTXmlPr xmlPr = xmlCellPr.getXmlPr();
-		String xpath = xmlPr.getXpath();
-		return xpath;
+        return xmlPr.getXpath();
 	}
 	
 	public long getMapId(){

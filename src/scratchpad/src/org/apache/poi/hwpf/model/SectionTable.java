@@ -89,14 +89,13 @@ public class SectionTable
         // Some files seem to lie about their unicode status, which
         //    is very very pesky. Try to work around these, but this
         //    is getting on for black magic...
-        int mainEndsAt = mainLength;
         boolean matchAt = false;
         boolean matchHalf = false;
         for (int i=0; i<_sections.size(); i++) {
             SEPX s = _sections.get(i);
-            if (s.getEnd() == mainEndsAt) {
+            if (s.getEnd() == mainLength) {
                 matchAt = true;
-            } else if(s.getEnd() == mainEndsAt || s.getEnd() == mainEndsAt-1) {
+            } else if(s.getEnd() == mainLength || s.getEnd() == mainLength -1) {
                 matchHalf = true;
             }
         }

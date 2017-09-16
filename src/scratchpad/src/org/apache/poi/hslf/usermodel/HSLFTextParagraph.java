@@ -1212,8 +1212,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * representation
      */
     protected static String toInternalString(String s) {
-        String ns = s.replaceAll("\\r?\\n", "\r");
-        return ns;
+        return s.replaceAll("\\r?\\n", "\r");
     }
 
     /**

@@ -198,9 +198,8 @@ public final class Thumbnail {
      */
     public long getClipboardFormatTag()
     {
-        long clipboardFormatTag = LittleEndian.getInt(getThumbnail(),
+        return (long) LittleEndian.getInt(getThumbnail(),
                                                        OFFSET_CFTAG);
-        return clipboardFormatTag;
     }
 
 

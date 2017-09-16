@@ -137,8 +137,7 @@ public abstract class Record
 		}
 
 		// Turn the vector into an array, and return
-		Record[] cRecords = children.toArray( new Record[children.size()] );
-		return cRecords;
+        return children.toArray( new Record[children.size()] );
 	}
 
 	/**

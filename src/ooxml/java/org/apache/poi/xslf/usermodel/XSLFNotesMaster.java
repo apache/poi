@@ -78,8 +78,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
         try {
             try {
                 NotesMasterDocument doc = NotesMasterDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
-                CTNotesMaster slide =  doc.getNotesMaster();
-                return slide;
+                return doc.getNotesMaster();
             } finally {
                 is.close();
             }            

@@ -612,8 +612,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         };
         fetchParagraphProperty(fetcher);
 
-        double spcBef = fetcher.getValue() == null ? 0 : fetcher.getValue();
-        return spcBef;
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**

@@ -168,14 +168,13 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         }
 
         // TODO: find out where this -1 value comes from at #57820 (link to ms docs?)
-        Rectangle2D anchor = new Rectangle2D.Double(
+
+        return new Rectangle2D.Double(
             (x1 == -1 ? -1 : Units.masterToPoints(x1)),
             (y1 == -1 ? -1 : Units.masterToPoints(y1)),
             (x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
             (y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
         );
-        
-        return anchor;
     }
 
     /**

@@ -154,8 +154,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
                 XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
-        Document doc = excelToHtmlConverter.getDocument();
-        return doc;
+        return excelToHtmlConverter.getDocument();
     }
 
     private String cssClassContainerCell;

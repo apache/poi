@@ -522,8 +522,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         }
 
         for (NoteRecord noteRecord : tailRec.values()) {
-            Record rec = noteRecord;
-            pos += rec.serialize(pos, data);
+            pos += noteRecord.serialize(pos, data);
         }
         int bytesWritten = pos - offset;
         if (bytesWritten != getRecordSize())

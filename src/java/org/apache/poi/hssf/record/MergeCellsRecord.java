@@ -82,8 +82,7 @@ public final class MergeCellsRecord extends StandardRecord implements Cloneable 
 
     @Override
     public void serialize(LittleEndianOutput out) {
-        int nItems = _numberOfRegions;
-        out.writeShort(nItems);
+        out.writeShort(_numberOfRegions);
         for (int i = 0; i < _numberOfRegions; i++) {
 			_regions[_startIndex + i].serialize(out);
 		}

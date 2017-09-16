@@ -341,8 +341,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
         DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
 
         DataValidationConstraint constraint = dataValidationHelper.createCustomConstraint("true");
-        final XSSFDataValidation validation = (XSSFDataValidation) dataValidationHelper.createValidation(constraint, new CellRangeAddressList(0, 0, 0, 0));
-        return validation;
+        return (XSSFDataValidation) dataValidationHelper.createValidation(constraint, new CellRangeAddressList(0, 0, 0, 0));
     }
     
     @Test

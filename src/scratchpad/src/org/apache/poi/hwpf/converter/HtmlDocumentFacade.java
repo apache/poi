@@ -111,8 +111,7 @@ public class HtmlDocumentFacade
                 stringBuilder.append( "}\n" );
             }
         }
-        final String stylesheetText = stringBuilder.toString();
-        return stylesheetText;
+        return stringBuilder.toString();
     }
 
     public Element createBlock()
@@ -179,8 +178,7 @@ public class HtmlDocumentFacade
 
     public Element createSelect()
     {
-        Element result = document.createElement( "select" );
-        return result;
+        return document.createElement( "select" );
     }
 
     public Element createTable()

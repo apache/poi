@@ -722,8 +722,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         // Now check the low level stuff, and check that's all
         //  been set correctly
-        XSSFSheet xs = sheet;
-        CTWorksheet cts = xs.getCTWorksheet();
+        CTWorksheet cts = sheet.getCTWorksheet();
 
         assertEquals(1, cts.sizeOfColsArray());
         CTCols cols = cts.getColsArray(0);

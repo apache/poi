@@ -415,8 +415,7 @@ public final class HSLFTextRun implements TextRun {
             return null;
         }
 		Color color = HSLFTextParagraph.getColorFromColorIndexStruct(tp.getValue(), parentParagraph.getSheet());
-		SolidPaint ps = DrawPaint.createSolidPaint(color);
-		return ps;
+        return DrawPaint.createSolidPaint(color);
 	}
 
 	/**

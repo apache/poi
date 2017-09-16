@@ -151,8 +151,7 @@ public final class ListTables
         return null;
     }
     if(level < lst.numLevels()) {
-    	ListLevel lvl = lst.getLevels()[level];
-    	return lvl;
+        return lst.getLevels()[level];
     }
     if (log.check(POILogger.WARN)) {
         log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")");

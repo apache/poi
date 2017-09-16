@@ -1431,8 +1431,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFPictureData getPictureDataByID(String blipID) {
         POIXMLDocumentPart relatedPart = getRelationById(blipID);
         if (relatedPart instanceof XWPFPictureData) {
-            XWPFPictureData xwpfPicData = (XWPFPictureData) relatedPart;
-            return xwpfPicData;
+            return (XWPFPictureData) relatedPart;
         }
         return null;
     }

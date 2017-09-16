@@ -299,10 +299,9 @@ public abstract class CellRangeAddressBase {
 	
 	@Override
 	public int hashCode() {
-		int code = (getMinColumn() +
-		(getMaxColumn() << 8) +
-		(getMinRow() << 16) +
-		(getMaxRow() << 24));
-		return code;
+        return (getMinColumn() +
+        (getMaxColumn() << 8) +
+        (getMinRow() << 16) +
+        (getMaxRow() << 24));
 	}
 }

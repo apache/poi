@@ -226,8 +226,7 @@ public class CHPBinTable
             final int boundary = objBoundary.intValue();
 
             final int startInclusive = lastTextRunStart;
-            final int endExclusive = boundary;
-            lastTextRunStart = endExclusive;
+            lastTextRunStart = boundary;
 
             int startPosition = binarySearch( oldChpxSortedByStartPos, boundary );
             startPosition = Math.abs( startPosition );
@@ -246,7 +245,7 @@ public class CHPBinTable
                     break;
 
                 int left = Math.max( startInclusive, chpx.getStart() );
-                int right = Math.min( endExclusive, chpx.getEnd() );
+                int right = Math.min(boundary, chpx.getEnd() );
 
                 if ( left < right )
                 {
@@ -258,10 +257,10 @@ public class CHPBinTable
             {
                 logger.log( POILogger.WARN, "Text piece [",
                         Integer.valueOf( startInclusive ), "; ",
-                        Integer.valueOf( endExclusive ),
+                        Integer.valueOf(boundary),
                         ") has no CHPX. Creating new one." );
                 // create it manually
-                CHPX chpx = new CHPX( startInclusive, endExclusive,
+                CHPX chpx = new CHPX( startInclusive, boundary,
                         new SprmBuffer( 0 ) );
                 newChpxs.add( chpx );
                 continue;
@@ -272,7 +271,7 @@ public class CHPBinTable
                 // can we reuse existing?
                 CHPX existing = chpxs.get( 0 );
                 if ( existing.getStart() == startInclusive
-                        && existing.getEnd() == endExclusive )
+                        && existing.getEnd() == boundary)
                 {
                     newChpxs.add( existing );
                     continue;
@@ -286,7 +285,7 @@ public class CHPBinTable
             {
                 sprmBuffer.append( chpx.getGrpprl(), 0 );
             }
-            CHPX newChpx = new CHPX( startInclusive, endExclusive, sprmBuffer );
+            CHPX newChpx = new CHPX( startInclusive, boundary, sprmBuffer );
             newChpxs.add( newChpx );
 
             continue;

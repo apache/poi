@@ -361,8 +361,6 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     {
       int pheOffset = _offset + 1 + (((_crun + 1) * 4) + (index * 13));
 
-      ParagraphHeight phe = new ParagraphHeight(_fkp, pheOffset);
-
-      return phe;
+        return new ParagraphHeight(_fkp, pheOffset);
     }
 }

@@ -106,8 +106,7 @@ public class PkiTestUtils {
         SecureRandom random = new SecureRandom();
         keyPairGenerator.initialize(new RSAKeyGenParameterSpec(1024,
                 RSAKeyGenParameterSpec.F4), random);
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        return keyPair;
+        return keyPairGenerator.generateKeyPair();
     }
 
     static X509Certificate generateCertificate(PublicKey subjectPublicKey,
@@ -218,8 +217,7 @@ public class PkiTestUtils {
         documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder = documentBuilderFactory
                 .newDocumentBuilder();
-        Document document = documentBuilder.parse(inputSource);
-        return document;
+        return documentBuilder.parse(inputSource);
     }
 
     static String toString(Node dom) throws TransformerException {
@@ -310,8 +308,7 @@ public class PkiTestUtils {
 
         
         OCSPRespBuilder ocspRespBuilder = new OCSPRespBuilder();
-        OCSPResp ocspResp = ocspRespBuilder.build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp);
 
-        return ocspResp;
+        return ocspRespBuilder.build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp);
     }
 }

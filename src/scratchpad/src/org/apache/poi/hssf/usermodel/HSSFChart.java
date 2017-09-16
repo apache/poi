@@ -597,8 +597,7 @@ public final class HSSFChart {
 
 	private PlotAreaRecord createPlotAreaRecord()
 	{
-		PlotAreaRecord r = new PlotAreaRecord(  );
-		return r;
+        return new PlotAreaRecord(  );
 	}
 
 	private AxisLineFormatRecord createAxisLineFormatRecord( short format )

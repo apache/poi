@@ -363,12 +363,11 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 			attemptMergeColInfoRecords(k);
 		} else {
 			//split to 3 records
-			ColumnInfoRecord ciStart = ci;
-			ColumnInfoRecord ciMid = copyColInfo(ci);
+            ColumnInfoRecord ciMid = copyColInfo(ci);
 			ColumnInfoRecord ciEnd = copyColInfo(ci);
 			int lastcolumn = ci.getLastColumn();
 
-			ciStart.setLastColumn(targetColumnIx - 1);
+			ci.setLastColumn(targetColumnIx - 1);
 
 			ciMid.setFirstColumn(targetColumnIx);
 			ciMid.setLastColumn(targetColumnIx);
