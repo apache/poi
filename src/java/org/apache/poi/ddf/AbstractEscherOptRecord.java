@@ -142,7 +142,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
             {
                 short s1 = p1.getPropertyNumber();
                 short s2 = p2.getPropertyNumber();
-                return s1 < s2 ? -1 : s1 == s2 ? 0 : 1;
+                return Short.compare(s1, s2);
             }
         } );
     }

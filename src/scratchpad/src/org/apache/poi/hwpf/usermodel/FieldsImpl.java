@@ -267,7 +267,7 @@ public class FieldsImpl implements Fields
         {
             int thisVal = o1.getFcStart();
             int anotherVal = o2.getFcStart();
-            return thisVal < anotherVal ? -1 : thisVal == anotherVal ? 0 : 1;
+            return Integer.compare(thisVal, anotherVal);
         }
     }
 

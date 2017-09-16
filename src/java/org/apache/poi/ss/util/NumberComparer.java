@@ -131,7 +131,7 @@ public final class NumberComparer {
 	 * If both numbers are subnormal, Excel seems to use standard comparison rules
 	 */
 	private static int compareSubnormalNumbers(long fracA, long fracB, boolean isNegative) {
-		int cmp = fracA > fracB ? +1 : fracA < fracB ? -1 : 0;
+		int cmp = Long.compare(fracA, fracB);
 
 		return isNegative ? -cmp : cmp;
 	}
