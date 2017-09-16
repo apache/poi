@@ -105,7 +105,7 @@ public abstract class RefPtgBase extends OperandPtg {
 		return column.getValue(field_2_col);
 	}
 
-	protected final String formatReferenceAsString() {
+	protected String formatReferenceAsString() {
 		// Only make cell references as needed. Memory is an issue
 		CellReference cr = new CellReference(getRow(), getColumn(), !isRowRelative(), !isColRelative());
 		return cr.formatAsString();
