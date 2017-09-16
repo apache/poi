@@ -41,7 +41,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     XSSFTextParagraph(CTTextParagraph p, CTShape ctShape){
         _p = p;
         _shape = ctShape;
-        _runs = new ArrayList<XSSFTextRun>();
+        _runs = new ArrayList<>();
 
         for(XmlObject ch : _p.selectPath("*")){
             if(ch instanceof CTRegularTextRun){

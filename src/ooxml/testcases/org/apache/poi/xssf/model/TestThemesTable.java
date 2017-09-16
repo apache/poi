@@ -73,7 +73,7 @@ public class TestThemesTable {
         simple = XSSFTestDataSamples.openSampleWorkbook(testFileSimple);
         complex = XSSFTestDataSamples.openSampleWorkbook(testFileComplex);
         // Files and descriptions
-        Map<String,XSSFWorkbook> workbooks = new LinkedHashMap<String, XSSFWorkbook>();
+        Map<String,XSSFWorkbook> workbooks = new LinkedHashMap<>();
         workbooks.put(testFileSimple, simple);
         workbooks.put("Re-Saved_" + testFileSimple, simpleRS);
         workbooks.put(testFileComplex, complex);

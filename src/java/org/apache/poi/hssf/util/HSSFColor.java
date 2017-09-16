@@ -187,7 +187,7 @@ public class HSSFColor implements Color {
 
     private static Map<Integer,HSSFColor> createColorsByIndexMap() {
         Map<HSSFColorPredefined,HSSFColor> eList = mapEnumToColorClass();
-        Map<Integer,HSSFColor> result = new HashMap<Integer,HSSFColor>(eList.size() * 3 / 2);
+        Map<Integer,HSSFColor> result = new HashMap<>(eList.size() * 3 / 2);
 
         for (Map.Entry<HSSFColorPredefined,HSSFColor> colorRef : eList.entrySet()) {
             Integer index1 = (int)colorRef.getKey().getIndex();
@@ -218,7 +218,7 @@ public class HSSFColor implements Color {
 
     private static Map<String,HSSFColor> createColorsByHexStringMap() {
         Map<HSSFColorPredefined,HSSFColor> eList = mapEnumToColorClass();
-        Map<String,HSSFColor> result = new HashMap<String,HSSFColor>(eList.size());
+        Map<String,HSSFColor> result = new HashMap<>(eList.size());
 
         for (Map.Entry<HSSFColorPredefined,HSSFColor> colorRef : eList.entrySet()) {
             String hexString = colorRef.getKey().getHexString();
@@ -239,7 +239,7 @@ public class HSSFColor implements Color {
     @Removal(version="3.18")
     private static synchronized Map<HSSFColorPredefined,HSSFColor> mapEnumToColorClass() {
         if (enumList == null) {
-            enumList = new EnumMap<HSSFColorPredefined,HSSFColor>(HSSFColorPredefined.class);
+            enumList = new EnumMap<>(HSSFColorPredefined.class);
             // AUTOMATIC is not add to list
             addHSSFColorPredefined(HSSFColorPredefined.BLACK);
             addHSSFColorPredefined(HSSFColorPredefined.BROWN);

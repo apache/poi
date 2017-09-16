@@ -33,7 +33,7 @@ import org.apache.poi.util.Internal;
 public final class FSPATable
 {
 
-    private final Map<Integer, GenericPropertyNode> _byStart = new LinkedHashMap<Integer, GenericPropertyNode>();
+    private final Map<Integer, GenericPropertyNode> _byStart = new LinkedHashMap<>();
 
     public FSPATable( byte[] tableStream, FileInformationBlock fib,
             FSPADocumentPart part )
@@ -79,7 +79,7 @@ public final class FSPATable
 
     public FSPA[] getShapes()
     {
-        List<FSPA> result = new ArrayList<FSPA>( _byStart.size() );
+        List<FSPA> result = new ArrayList<>(_byStart.size());
         for ( GenericPropertyNode propertyNode : _byStart.values() )
         {
             result.add( new FSPA( propertyNode.getBytes(), 0 ) );

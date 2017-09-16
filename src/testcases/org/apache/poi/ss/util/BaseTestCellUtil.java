@@ -118,7 +118,7 @@ public class BaseTestCellUtil {
 
         // Add multiple border properties to cell should create a single new style
         int styCnt1 = wb.getNumCellStyles();
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put(CellUtil.BORDER_TOP, BorderStyle.THIN);
         props.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         props.put(CellUtil.BORDER_LEFT, BorderStyle.THIN);
@@ -376,7 +376,7 @@ public class BaseTestCellUtil {
     public void setFillForegroundColorBeforeFillBackgroundColor() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Cell A1 = wb1.createSheet().createRow(0).createCell(0);
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
         properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
         properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
@@ -396,7 +396,7 @@ public class BaseTestCellUtil {
     public void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Cell A1 = wb1.createSheet().createRow(0).createCell(0);
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
         properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
         properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);

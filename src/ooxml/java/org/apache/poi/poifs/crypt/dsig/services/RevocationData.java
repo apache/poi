@@ -45,8 +45,8 @@ public class RevocationData {
      * Default constructor.
      */
     public RevocationData() {
-        this.crls = new ArrayList<byte[]>();
-        this.ocsps = new ArrayList<byte[]>();
+        this.crls = new ArrayList<>();
+        this.ocsps = new ArrayList<>();
     }
 
     /**

@@ -134,7 +134,7 @@ public class PropertySet {
     /**
      * The sections in this {@link PropertySet}.
      */
-    private final List<Section> sections = new ArrayList<Section>();
+    private final List<Section> sections = new ArrayList<>();
 
     
     /**

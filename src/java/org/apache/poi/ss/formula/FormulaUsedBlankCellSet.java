@@ -59,7 +59,7 @@ final class FormulaUsedBlankCellSet {
 		private BlankCellRectangleGroup _currentRectangleGroup;
 
 		public BlankCellSheetGroup() {
-			_rectangleGroups = new ArrayList<BlankCellRectangleGroup>();
+			_rectangleGroups = new ArrayList<>();
 			_currentRowIndex = -1;
 		}
 
@@ -164,7 +164,7 @@ final class FormulaUsedBlankCellSet {
 	private final Map<BookSheetKey, BlankCellSheetGroup> _sheetGroupsByBookSheet;
 
 	public FormulaUsedBlankCellSet() {
-		_sheetGroupsByBookSheet = new HashMap<BookSheetKey, BlankCellSheetGroup>();
+		_sheetGroupsByBookSheet = new HashMap<>();
 	}
 
 	public void addCell(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {

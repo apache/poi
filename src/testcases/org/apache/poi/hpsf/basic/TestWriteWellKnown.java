@@ -550,7 +550,7 @@ public class TestWriteWellKnown {
         final int ID_2 = 3;
         final String NAME_1 = "Schl\u00fcssel \u00e4";
         final String VALUE_1 = "Wert 1";
-        final Map<Long,String> dictionary = new HashMap<Long, String>();
+        final Map<Long,String> dictionary = new HashMap<>();
 
         DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
         CustomProperties cps;

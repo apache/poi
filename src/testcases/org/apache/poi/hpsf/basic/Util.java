@@ -60,7 +60,7 @@ final class Util {
      */
     public static List<POIFile> readPOIFiles(final File poiFs, final String... poiFiles)
     throws FileNotFoundException, IOException {
-        final List<POIFile> files = new ArrayList<POIFile>();
+        final List<POIFile> files = new ArrayList<>();
         POIFSReader r = new POIFSReader();
         POIFSReaderListener pfl = new POIFSReaderListener() {
             @Override
@@ -116,7 +116,7 @@ final class Util {
      * @exception IOException if an I/O exception occurs
      */
     public static List<POIFile> readPropertySets(final File poiFs) throws IOException {
-        final List<POIFile> files = new ArrayList<POIFile>(7);
+        final List<POIFile> files = new ArrayList<>(7);
         final POIFSReader r = new POIFSReader();
         POIFSReaderListener pfl = new POIFSReaderListener() {
             @Override

@@ -148,7 +148,7 @@ public class CalendarDemo {
      * cell styles used for formatting calendar sheets
      */
     private static Map<String, CellStyle> createStyles(Workbook wb){
-        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+        Map<String, CellStyle> styles = new HashMap<>();
 
         short borderColor = IndexedColors.GREY_50_PERCENT.getIndex();
 

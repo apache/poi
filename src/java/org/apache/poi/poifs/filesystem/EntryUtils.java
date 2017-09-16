@@ -153,7 +153,7 @@ public class EntryUtils
        }
        
        // Next, check entries and their types/sizes
-       Map<String,Integer> aSizes = new HashMap<String, Integer>();
+       Map<String,Integer> aSizes = new HashMap<>();
        final int isDirectory = -12345; 
        for (Entry a : dirA) {
           String aName = a.getName();

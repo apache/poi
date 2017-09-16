@@ -66,7 +66,7 @@ public enum FontGroup {
     private static NavigableMap<Integer,Range> UCS_RANGES;
 
     static {
-        UCS_RANGES = new TreeMap<Integer,Range>();
+        UCS_RANGES = new TreeMap<>();
         UCS_RANGES.put(0x0000,  new Range(0x007F, LATIN));
         UCS_RANGES.put(0x0080,  new Range(0x00A6, LATIN));
         UCS_RANGES.put(0x00A9,  new Range(0x00AF, LATIN));
@@ -111,7 +111,7 @@ public enum FontGroup {
      * @return the FontGroup
      */
     public static List<FontGroupRange> getFontGroupRanges(String runText) {
-        List<FontGroupRange> ttrList = new ArrayList<FontGroupRange>();
+        List<FontGroupRange> ttrList = new ArrayList<>();
         FontGroupRange ttrLast = null;
         final int rlen = (runText != null) ? runText.length() : 0;
         for(int cp, i = 0, charCount; i < rlen; i += charCount) {

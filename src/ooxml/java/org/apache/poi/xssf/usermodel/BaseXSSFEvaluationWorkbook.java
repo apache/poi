@@ -369,7 +369,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             return _tableCache;
         }
         // FIXME: use org.apache.commons.collections.map.CaseInsensitiveMap
-        _tableCache = new HashMap<String, XSSFTable>();
+        _tableCache = new HashMap<>();
 
         for (Sheet sheet : _uBook) {
             for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {

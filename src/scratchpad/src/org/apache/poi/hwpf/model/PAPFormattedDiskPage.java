@@ -48,7 +48,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     private static final int BX_SIZE = 13;
     private static final int FC_SIZE = 4;
 
-    private ArrayList<PAPX> _papxList = new ArrayList<PAPX>();
+    private ArrayList<PAPX> _papxList = new ArrayList<>();
     private ArrayList<PAPX> _overFlow;
 
     /**
@@ -246,7 +246,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
         // see if we couldn't fit some
         if ( index != size )
         {
-            _overFlow = new ArrayList<PAPX>();
+            _overFlow = new ArrayList<>();
             _overFlow.addAll( _papxList.subList( index, size ) );
         }
 

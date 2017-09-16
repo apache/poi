@@ -42,8 +42,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
  * @author Philipp Epp
  */
 public class XWPFNumbering extends POIXMLDocumentPart {
-    protected List<XWPFAbstractNum> abstractNums = new ArrayList<XWPFAbstractNum>();
-    protected List<XWPFNum> nums = new ArrayList<XWPFNum>();
+    protected List<XWPFAbstractNum> abstractNums = new ArrayList<>();
+    protected List<XWPFNum> nums = new ArrayList<>();
     boolean isNew;
     private CTNumbering ctNumbering;
 
@@ -61,8 +61,8 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      * create a new XWPFNumbering object for use in a new document
      */
     public XWPFNumbering() {
-        abstractNums = new ArrayList<XWPFAbstractNum>();
-        nums = new ArrayList<XWPFNum>();
+        abstractNums = new ArrayList<>();
+        nums = new ArrayList<>();
         isNew = true;
     }
 

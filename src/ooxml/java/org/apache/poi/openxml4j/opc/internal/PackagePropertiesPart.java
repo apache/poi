@@ -95,7 +95,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * value might be used by an application's user interface to facilitate
 	 * navigation of a large set of documents. end example]
 	 */
-	protected Nullable<String> category = new Nullable<String>();
+	protected Nullable<String> category = new Nullable<>();
 
 	/**
 	 * The status of the content.
@@ -103,7 +103,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Example: Values might include "Draft", "Reviewed", and "Final". end
 	 * example]
 	 */
-	protected Nullable<String> contentStatus = new Nullable<String>();
+	protected Nullable<String> contentStatus = new Nullable<>();
 
 	/**
 	 * The type of content represented, generally defined by a specific use and
@@ -113,17 +113,17 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * "Exam". end example] [Note: This property is distinct from MIME content
 	 * types as defined in RFC 2616. end note]
 	 */
-	protected Nullable<String> contentType = new Nullable<String>();
+	protected Nullable<String> contentType = new Nullable<>();
 
 	/**
 	 * Date of creation of the resource.
 	 */
-	protected Nullable<Date> created = new Nullable<Date>();
+	protected Nullable<Date> created = new Nullable<>();
 
 	/**
 	 * An entity primarily responsible for making the content of the resource.
 	 */
-	protected Nullable<String> creator = new Nullable<String>();
+	protected Nullable<String> creator = new Nullable<>();
 
 	/**
 	 * An explanation of the content of the resource.
@@ -132,19 +132,19 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * to a graphical representation of content, and a free-text account of the
 	 * content. end example]
 	 */
-	protected Nullable<String> description = new Nullable<String>();
+	protected Nullable<String> description = new Nullable<>();
 
 	/**
 	 * An unambiguous reference to the resource within a given context.
 	 */
-	protected Nullable<String> identifier = new Nullable<String>();
+	protected Nullable<String> identifier = new Nullable<>();
 
 	/**
 	 * A delimited set of keywords to support searching and indexing. This is
 	 * typically a list of terms that are not available elsewhere in the
 	 * properties.
 	 */
-	protected Nullable<String> keywords = new Nullable<String>();
+	protected Nullable<String> keywords = new Nullable<>();
 
 	/**
 	 * The language of the intellectual content of the resource.
@@ -152,7 +152,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Note: IETF RFC 3066 provides guidance on encoding to represent
 	 * languages. end note]
 	 */
-	protected Nullable<String> language = new Nullable<String>();
+	protected Nullable<String> language = new Nullable<>();
 
 	/**
 	 * The user who performed the last modification. The identification is
@@ -161,17 +161,17 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Example: A name, email address, or employee ID. end example] It is
 	 * recommended that this value be as concise as possible.
 	 */
-	protected Nullable<String> lastModifiedBy = new Nullable<String>();
+	protected Nullable<String> lastModifiedBy = new Nullable<>();
 
 	/**
 	 * The date and time of the last printing.
 	 */
-	protected Nullable<Date> lastPrinted = new Nullable<Date>();
+	protected Nullable<Date> lastPrinted = new Nullable<>();
 
 	/**
 	 * Date on which the resource was changed.
 	 */
-	protected Nullable<Date> modified = new Nullable<Date>();
+	protected Nullable<Date> modified = new Nullable<>();
 
 	/**
 	 * The revision number.
@@ -179,22 +179,22 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Example: This value might indicate the number of saves or revisions,
 	 * provided the application updates it after each revision. end example]
 	 */
-	protected Nullable<String> revision = new Nullable<String>();
+	protected Nullable<String> revision = new Nullable<>();
 
 	/**
 	 * The topic of the content of the resource.
 	 */
-	protected Nullable<String> subject = new Nullable<String>();
+	protected Nullable<String> subject = new Nullable<>();
 
 	/**
 	 * The name given to the resource.
 	 */
-	protected Nullable<String> title = new Nullable<String>();
+	protected Nullable<String> title = new Nullable<>();
 
 	/**
 	 * The version number. This value is set by the user or by the application.
 	 */
-	protected Nullable<String> version = new Nullable<String>();
+	protected Nullable<String> version = new Nullable<>();
 
 	/*
 	 * Getters and setters
@@ -335,7 +335,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 		if (modified.hasValue()) {
 			return getDateValue(modified);
 		}
-		return getDateValue(new Nullable<Date>(new Date()));
+		return getDateValue(new Nullable<>(new Date()));
 	}
 
 	/**
@@ -567,9 +567,9 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 */
 	private Nullable<String> setStringValue(String s) {
 		if (s == null || s.equals("")) {
-			return new Nullable<String>();
+			return new Nullable<>();
 		}
-		return new Nullable<String>(s);
+		return new Nullable<>(s);
 	}
 
 	/**
@@ -580,7 +580,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 */
 	private Nullable<Date> setDateValue(String dateStr) throws InvalidFormatException {
 		if (dateStr == null || dateStr.equals("")) {
-			return new Nullable<Date>();
+			return new Nullable<>();
 		}
 
 		Matcher m = TIME_ZONE_PAT.matcher(dateStr);
@@ -592,7 +592,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 				df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 				Date d = df.parse(dateTzStr, new ParsePosition(0));
 				if (d != null) {
-					return new Nullable<Date>(d);
+					return new Nullable<>(d);
 				}
 			}
 		}
@@ -602,7 +602,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 			df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 			Date d = df.parse(dateTzStr, new ParsePosition(0));
 			if (d != null) {
-				return new Nullable<Date>(d);
+				return new Nullable<>(d);
 			}
 		}
 		//if you're here, no pattern matched, throw exception

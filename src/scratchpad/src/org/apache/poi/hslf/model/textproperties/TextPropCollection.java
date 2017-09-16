@@ -94,7 +94,7 @@ public class TextPropCollection {
     // indentLevel is only valid for paragraph collection
     // if it's set to -1, it must be omitted - see 2.9.36 TextMasterStyleLevel
     private short indentLevel;
-	private final Map<String,TextProp> textProps = new HashMap<String,TextProp>();
+	private final Map<String,TextProp> textProps = new HashMap<>();
     private int maskSpecial;
     private final TextPropType textPropType;
     
@@ -119,7 +119,7 @@ public class TextPropCollection {
 
 	/** Fetch the TextProps that define this styling in the record order */
 	public List<TextProp> getTextPropList() {
-	    List<TextProp> orderedList = new ArrayList<TextProp>();
+	    List<TextProp> orderedList = new ArrayList<>();
         for (TextProp potProp : getPotentialProperties()) {
             TextProp textProp = textProps.get(potProp.getName());
             if (textProp != null) {

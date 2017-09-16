@@ -37,7 +37,7 @@ import org.apache.poi.poifs.property.RootProperty;
 public final class TestSmallBlockTableWriter extends TestCase {
 
     public void testWritingConstructor() throws IOException {
-        List<OPOIFSDocument> documents = new ArrayList<OPOIFSDocument>();
+        List<OPOIFSDocument> documents = new ArrayList<>();
 
         documents.add(
             new OPOIFSDocument(

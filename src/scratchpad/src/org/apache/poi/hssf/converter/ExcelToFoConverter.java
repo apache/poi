@@ -528,7 +528,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             return 0;
         }
 
-        final List<Element> emptyCells = new ArrayList<Element>( maxColIx );
+        final List<Element> emptyCells = new ArrayList<>(maxColIx);
 
         if ( isOutputRowNumbers() )
         {
@@ -659,8 +659,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         final CellRangeAddress[][] mergedRanges = ExcelToHtmlUtils
                 .buildMergedRangesMap( sheet );
 
-        final List<Element> emptyRowElements = new ArrayList<Element>(
-                physicalNumberOfRows );
+        final List<Element> emptyRowElements = new ArrayList<>(
+                physicalNumberOfRows);
         int maxSheetColumns = 1;
         for ( int r = sheet.getFirstRowNum(); r <= sheet.getLastRowNum(); r++ )
         {

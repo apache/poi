@@ -66,7 +66,7 @@ final class NumberComparisonExamples {
 
 	private static ComparisonExample[] initExamples() {
 
-		List<ComparisonExample> temp = new ArrayList<ComparisonExample>();
+		List<ComparisonExample> temp = new ArrayList<>();
 
 		addStepTransition(temp, 0x4010000000000005L);
 		addStepTransition(temp, 0x4010000000000010L);

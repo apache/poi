@@ -83,7 +83,7 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
     
     private void write(NPOIFSFileSystem fs) throws IOException {
         // For tracking what we've written out, so far
-        List<String> excepts = new ArrayList<String>(2);
+        List<String> excepts = new ArrayList<>(2);
 
         // Write out our HPFS properties, with any changes
         writeProperties(fs, excepts);

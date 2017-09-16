@@ -78,7 +78,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
      * Depending on the rule type, it may want to know about certain values in the region when evaluating {@link #matches(Cell)},
      * such as top 10, unique, duplicate, average, etc.  This collection stores those if needed so they are not repeatedly calculated
      */
-    private final Map<CellRangeAddress, Set<ValueAndFormat>> meaningfulRegionValues = new HashMap<CellRangeAddress, Set<ValueAndFormat>>();
+    private final Map<CellRangeAddress, Set<ValueAndFormat>> meaningfulRegionValues = new HashMap<>();
     
     private final int priority;
     private final int formattingIndex;
@@ -435,10 +435,10 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                         limit = allValues.size() * limit / 100;
                     }
                     if (allValues.size() <= limit) {
-                        return new HashSet<ValueAndFormat>(allValues);
+                        return new HashSet<>(allValues);
                     }
 
-                    return new HashSet<ValueAndFormat>(allValues.subList(0, limit));
+                    return new HashSet<>(allValues.subList(0, limit));
                 }
             }).contains(cv);
         case UNIQUE_VALUES:
@@ -450,7 +450,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                     List<ValueAndFormat> values = allValues;
                     Collections.sort(values);
                     
-                    final Set<ValueAndFormat> unique = new HashSet<ValueAndFormat>();
+                    final Set<ValueAndFormat> unique = new HashSet<>();
                     
                     for (int i=0; i < values.size(); i++) {
                         final ValueAndFormat v = values.get(i);
@@ -475,7 +475,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                     List<ValueAndFormat> values = allValues;
                     Collections.sort(values);
                     
-                    final Set<ValueAndFormat> dup = new HashSet<ValueAndFormat>();
+                    final Set<ValueAndFormat> dup = new HashSet<>();
                     
                     for (int i=0; i < values.size(); i++) {
                         final ValueAndFormat v = values.get(i);
@@ -496,21 +496,21 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             final ConditionFilterData conf = rule.getFilterConfiguration();
 
             // actually ordered, so iteration order is predictable
-            List<ValueAndFormat> values = new ArrayList<ValueAndFormat>(getMeaningfulValues(region, false, new ValueFunction() {
+            List<ValueAndFormat> values = new ArrayList<>(getMeaningfulValues(region, false, new ValueFunction() {
                 @Override
                 public Set<ValueAndFormat> evaluate(List<ValueAndFormat> allValues) {
                     List<ValueAndFormat> values = allValues;
                     double total = 0;
                     ValueEval[] pop = new ValueEval[values.size()];
-                    for (int i=0; i < values.size(); i++) {
+                    for (int i = 0; i < values.size(); i++) {
                         ValueAndFormat v = values.get(i);
                         total += v.value.doubleValue();
                         pop[i] = new NumberEval(v.value.doubleValue());
                     }
-                    
-                    final Set<ValueAndFormat> avgSet = new LinkedHashSet<ValueAndFormat>(1);
+
+                    final Set<ValueAndFormat> avgSet = new LinkedHashSet<>(1);
                     avgSet.add(new ValueAndFormat(new Double(values.size() == 0 ? 0 : total / values.size()), null));
-                    
+
                     final double stdDev = values.size() <= 1 ? 0 : ((NumberEval) AggregateFunction.STDEV.evaluate(pop, 0, 0)).getNumberValue();
                     avgSet.add(new ValueAndFormat(new Double(stdDev), null));
                     return avgSet;
@@ -603,7 +603,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             return values;
         }
         
-        List<ValueAndFormat> allValues = new ArrayList<ValueAndFormat>((region.getLastColumn() - region.getFirstColumn()+1) * (region.getLastRow() - region.getFirstRow() + 1));
+        List<ValueAndFormat> allValues = new ArrayList<>((region.getLastColumn() - region.getFirstColumn() + 1) * (region.getLastRow() - region.getFirstRow() + 1));
         
         for (int r=region.getFirstRow(); r <= region.getLastRow(); r++) {
             final Row row = sheet.getRow(r);

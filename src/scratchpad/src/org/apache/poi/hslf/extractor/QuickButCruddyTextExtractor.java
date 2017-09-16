@@ -137,7 +137,7 @@ public final class QuickButCruddyTextExtractor {
 	 *  strings, one per text record
 	 */
 	public List<String> getTextAsVector() {
-	    List<String> textV = new ArrayList<String>();
+	    List<String> textV = new ArrayList<>();
 
 		// Set to the start of the file
 		int walkPos = 0;

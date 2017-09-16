@@ -159,7 +159,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     public abstract List<PackagePart> getAllEmbedds() throws OpenXML4JException;
 
     protected final void load(POIXMLFactory factory) throws IOException {
-        Map<PackagePart, POIXMLDocumentPart> context = new HashMap<PackagePart, POIXMLDocumentPart>();
+        Map<PackagePart, POIXMLDocumentPart> context = new HashMap<>();
         try {
             read(factory, context);
         } catch (OpenXML4JException e){
@@ -216,7 +216,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         
         //force all children to commit their changes into the underlying OOXML Package
         // TODO Shouldn't they be committing to the new one instead?
-        Set<PackagePart> context = new HashSet<PackagePart>();
+        Set<PackagePart> context = new HashSet<>();
         onSave(context);
         context.clear();
 

@@ -58,7 +58,7 @@ public class NumberRenderingSpreadsheetGenerator {
 			writeHeaderRow(wb, sheet);
 			_sheet = sheet;
 			_rowIndex = 1;
-			_replacementNaNs = new ArrayList<Long>();
+			_replacementNaNs = new ArrayList<>();
 		}
 
 		public void addTestRow(long rawBits, String expectedExcelRendering) {

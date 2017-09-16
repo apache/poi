@@ -77,12 +77,12 @@ public class HemfCommentPublic  {
             int currentOffset = 4 + 16;//4 public comment identifier, 16 for outputrect
             long countFormats = LittleEndian.getUInt(rawBytes, currentOffset);
             currentOffset += LittleEndianConsts.INT_SIZE;
-            List<EmrFormat> emrFormatList = new ArrayList<EmrFormat>();
+            List<EmrFormat> emrFormatList = new ArrayList<>();
             for (long i = 0; i < countFormats; i++) {
                 emrFormatList.add(new EmrFormat(rawBytes, currentOffset));
                 currentOffset += 4 * LittleEndianConsts.INT_SIZE;
             }
-            List<HemfMultiFormatsData> list = new ArrayList<HemfMultiFormatsData>();
+            List<HemfMultiFormatsData> list = new ArrayList<>();
             for (EmrFormat emrFormat : emrFormatList) {
                 byte[] data = IOUtils.safelyAllocate(emrFormat.size, MAX_RECORD_LENGTH);
                 System.arraycopy(rawBytes, emrFormat.offset-4, data, 0, emrFormat.size);

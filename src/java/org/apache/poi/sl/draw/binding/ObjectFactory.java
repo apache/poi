@@ -514,7 +514,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alpha", scope = CTSRgbColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSRgbColorAlpha(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -523,7 +523,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lum", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorLum(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -532,7 +532,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gamma", scope = CTSRgbColor.class)
     public JAXBElement<CTGammaTransform> createCTSRgbColorGamma(CTGammaTransform value) {
-        return new JAXBElement<CTGammaTransform>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -541,7 +541,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "invGamma", scope = CTSRgbColor.class)
     public JAXBElement<CTInverseGammaTransform> createCTSRgbColorInvGamma(CTInverseGammaTransform value) {
-        return new JAXBElement<CTInverseGammaTransform>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -550,7 +550,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redOff", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorRedOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -559,7 +559,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaMod", scope = CTSRgbColor.class)
     public JAXBElement<CTPositivePercentage> createCTSRgbColorAlphaMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -568,7 +568,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaOff", scope = CTSRgbColor.class)
     public JAXBElement<CTFixedPercentage> createCTSRgbColorAlphaOff(CTFixedPercentage value) {
-        return new JAXBElement<CTFixedPercentage>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -577,7 +577,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenOff", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorGreenOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -586,7 +586,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redMod", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorRedMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -595,7 +595,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hue", scope = CTSRgbColor.class)
     public JAXBElement<CTPositiveFixedAngle> createCTSRgbColorHue(CTPositiveFixedAngle value) {
-        return new JAXBElement<CTPositiveFixedAngle>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -604,7 +604,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satOff", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorSatOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -613,7 +613,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenMod", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorGreenMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -622,7 +622,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "sat", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorSat(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -631,7 +631,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blue", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorBlue(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -640,7 +640,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "red", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorRed(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -649,7 +649,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satMod", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorSatMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -658,7 +658,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueOff", scope = CTSRgbColor.class)
     public JAXBElement<CTAngle> createCTSRgbColorHueOff(CTAngle value) {
-        return new JAXBElement<CTAngle>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -667,7 +667,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueMod", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorBlueMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -676,7 +676,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "shade", scope = CTSRgbColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSRgbColorShade(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -685,7 +685,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumMod", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorLumMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -694,7 +694,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "inv", scope = CTSRgbColor.class)
     public JAXBElement<CTInverseTransform> createCTSRgbColorInv(CTInverseTransform value) {
-        return new JAXBElement<CTInverseTransform>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -703,7 +703,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumOff", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorLumOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -712,7 +712,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "tint", scope = CTSRgbColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSRgbColorTint(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -721,7 +721,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "green", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorGreen(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -730,7 +730,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "comp", scope = CTSRgbColor.class)
     public JAXBElement<CTComplementTransform> createCTSRgbColorComp(CTComplementTransform value) {
-        return new JAXBElement<CTComplementTransform>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -739,7 +739,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueOff", scope = CTSRgbColor.class)
     public JAXBElement<CTPercentage> createCTSRgbColorBlueOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -748,7 +748,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueMod", scope = CTSRgbColor.class)
     public JAXBElement<CTPositivePercentage> createCTSRgbColorHueMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -757,7 +757,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gray", scope = CTSRgbColor.class)
     public JAXBElement<CTGrayscaleTransform> createCTSRgbColorGray(CTGrayscaleTransform value) {
-        return new JAXBElement<CTGrayscaleTransform>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTSRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTSRgbColor.class, value);
     }
 
     /**
@@ -766,7 +766,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lum", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorLum(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -775,7 +775,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alpha", scope = CTSystemColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSystemColorAlpha(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -784,7 +784,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gamma", scope = CTSystemColor.class)
     public JAXBElement<CTGammaTransform> createCTSystemColorGamma(CTGammaTransform value) {
-        return new JAXBElement<CTGammaTransform>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTSystemColor.class, value);
     }
 
     /**
@@ -793,7 +793,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "invGamma", scope = CTSystemColor.class)
     public JAXBElement<CTInverseGammaTransform> createCTSystemColorInvGamma(CTInverseGammaTransform value) {
-        return new JAXBElement<CTInverseGammaTransform>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTSystemColor.class, value);
     }
 
     /**
@@ -802,7 +802,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaMod", scope = CTSystemColor.class)
     public JAXBElement<CTPositivePercentage> createCTSystemColorAlphaMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -811,7 +811,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redOff", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorRedOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -820,7 +820,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaOff", scope = CTSystemColor.class)
     public JAXBElement<CTFixedPercentage> createCTSystemColorAlphaOff(CTFixedPercentage value) {
-        return new JAXBElement<CTFixedPercentage>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -829,7 +829,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenOff", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorGreenOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -838,7 +838,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redMod", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorRedMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -847,7 +847,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hue", scope = CTSystemColor.class)
     public JAXBElement<CTPositiveFixedAngle> createCTSystemColorHue(CTPositiveFixedAngle value) {
-        return new JAXBElement<CTPositiveFixedAngle>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTSystemColor.class, value);
     }
 
     /**
@@ -856,7 +856,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satOff", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorSatOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -865,7 +865,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenMod", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorGreenMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -874,7 +874,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blue", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorBlue(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -883,7 +883,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "sat", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorSat(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -892,7 +892,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "red", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorRed(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -901,7 +901,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satMod", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorSatMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -910,7 +910,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueMod", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorBlueMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -919,7 +919,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueOff", scope = CTSystemColor.class)
     public JAXBElement<CTAngle> createCTSystemColorHueOff(CTAngle value) {
-        return new JAXBElement<CTAngle>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTSystemColor.class, value);
     }
 
     /**
@@ -928,7 +928,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "shade", scope = CTSystemColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSystemColorShade(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -937,7 +937,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumMod", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorLumMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -946,7 +946,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "inv", scope = CTSystemColor.class)
     public JAXBElement<CTInverseTransform> createCTSystemColorInv(CTInverseTransform value) {
-        return new JAXBElement<CTInverseTransform>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTSystemColor.class, value);
     }
 
     /**
@@ -955,7 +955,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumOff", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorLumOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -964,7 +964,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "tint", scope = CTSystemColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSystemColorTint(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -973,7 +973,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "green", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorGreen(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -982,7 +982,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "comp", scope = CTSystemColor.class)
     public JAXBElement<CTComplementTransform> createCTSystemColorComp(CTComplementTransform value) {
-        return new JAXBElement<CTComplementTransform>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTSystemColor.class, value);
     }
 
     /**
@@ -991,7 +991,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueOff", scope = CTSystemColor.class)
     public JAXBElement<CTPercentage> createCTSystemColorBlueOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -1000,7 +1000,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueMod", scope = CTSystemColor.class)
     public JAXBElement<CTPositivePercentage> createCTSystemColorHueMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTSystemColor.class, value);
     }
 
     /**
@@ -1009,7 +1009,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gray", scope = CTSystemColor.class)
     public JAXBElement<CTGrayscaleTransform> createCTSystemColorGray(CTGrayscaleTransform value) {
-        return new JAXBElement<CTGrayscaleTransform>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTSystemColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTSystemColor.class, value);
     }
 
     /**
@@ -1018,7 +1018,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lum", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorLum(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1027,7 +1027,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alpha", scope = CTSchemeColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSchemeColorAlpha(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1036,7 +1036,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gamma", scope = CTSchemeColor.class)
     public JAXBElement<CTGammaTransform> createCTSchemeColorGamma(CTGammaTransform value) {
-        return new JAXBElement<CTGammaTransform>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1045,7 +1045,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "invGamma", scope = CTSchemeColor.class)
     public JAXBElement<CTInverseGammaTransform> createCTSchemeColorInvGamma(CTInverseGammaTransform value) {
-        return new JAXBElement<CTInverseGammaTransform>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1054,7 +1054,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redOff", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorRedOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1063,7 +1063,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaMod", scope = CTSchemeColor.class)
     public JAXBElement<CTPositivePercentage> createCTSchemeColorAlphaMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1072,7 +1072,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaOff", scope = CTSchemeColor.class)
     public JAXBElement<CTFixedPercentage> createCTSchemeColorAlphaOff(CTFixedPercentage value) {
-        return new JAXBElement<CTFixedPercentage>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1081,7 +1081,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenOff", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorGreenOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1090,7 +1090,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hue", scope = CTSchemeColor.class)
     public JAXBElement<CTPositiveFixedAngle> createCTSchemeColorHue(CTPositiveFixedAngle value) {
-        return new JAXBElement<CTPositiveFixedAngle>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1099,7 +1099,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redMod", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorRedMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1108,7 +1108,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satOff", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorSatOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1117,7 +1117,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenMod", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorGreenMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1126,7 +1126,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blue", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorBlue(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1135,7 +1135,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "sat", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorSat(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1144,7 +1144,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "red", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorRed(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1153,7 +1153,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satMod", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorSatMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1162,7 +1162,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueOff", scope = CTSchemeColor.class)
     public JAXBElement<CTAngle> createCTSchemeColorHueOff(CTAngle value) {
-        return new JAXBElement<CTAngle>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1171,7 +1171,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueMod", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorBlueMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1180,7 +1180,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "shade", scope = CTSchemeColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSchemeColorShade(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1189,7 +1189,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumMod", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorLumMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1198,7 +1198,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "inv", scope = CTSchemeColor.class)
     public JAXBElement<CTInverseTransform> createCTSchemeColorInv(CTInverseTransform value) {
-        return new JAXBElement<CTInverseTransform>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1207,7 +1207,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumOff", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorLumOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1216,7 +1216,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "tint", scope = CTSchemeColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTSchemeColorTint(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1225,7 +1225,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "green", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorGreen(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1234,7 +1234,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "comp", scope = CTSchemeColor.class)
     public JAXBElement<CTComplementTransform> createCTSchemeColorComp(CTComplementTransform value) {
-        return new JAXBElement<CTComplementTransform>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1243,7 +1243,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueOff", scope = CTSchemeColor.class)
     public JAXBElement<CTPercentage> createCTSchemeColorBlueOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1252,7 +1252,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueMod", scope = CTSchemeColor.class)
     public JAXBElement<CTPositivePercentage> createCTSchemeColorHueMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1261,7 +1261,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gray", scope = CTSchemeColor.class)
     public JAXBElement<CTGrayscaleTransform> createCTSchemeColorGray(CTGrayscaleTransform value) {
-        return new JAXBElement<CTGrayscaleTransform>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTSchemeColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTSchemeColor.class, value);
     }
 
     /**
@@ -1270,7 +1270,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lum", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorLum(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1279,7 +1279,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alpha", scope = CTScRgbColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTScRgbColorAlpha(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1288,7 +1288,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gamma", scope = CTScRgbColor.class)
     public JAXBElement<CTGammaTransform> createCTScRgbColorGamma(CTGammaTransform value) {
-        return new JAXBElement<CTGammaTransform>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1297,7 +1297,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "invGamma", scope = CTScRgbColor.class)
     public JAXBElement<CTInverseGammaTransform> createCTScRgbColorInvGamma(CTInverseGammaTransform value) {
-        return new JAXBElement<CTInverseGammaTransform>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1306,7 +1306,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redOff", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorRedOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1315,7 +1315,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaMod", scope = CTScRgbColor.class)
     public JAXBElement<CTPositivePercentage> createCTScRgbColorAlphaMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1324,7 +1324,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaOff", scope = CTScRgbColor.class)
     public JAXBElement<CTFixedPercentage> createCTScRgbColorAlphaOff(CTFixedPercentage value) {
-        return new JAXBElement<CTFixedPercentage>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1333,7 +1333,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenOff", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorGreenOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1342,7 +1342,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hue", scope = CTScRgbColor.class)
     public JAXBElement<CTPositiveFixedAngle> createCTScRgbColorHue(CTPositiveFixedAngle value) {
-        return new JAXBElement<CTPositiveFixedAngle>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1351,7 +1351,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redMod", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorRedMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1360,7 +1360,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satOff", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorSatOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1369,7 +1369,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenMod", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorGreenMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1378,7 +1378,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "sat", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorSat(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1387,7 +1387,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blue", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorBlue(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1396,7 +1396,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "red", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorRed(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1405,7 +1405,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satMod", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorSatMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1414,7 +1414,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueOff", scope = CTScRgbColor.class)
     public JAXBElement<CTAngle> createCTScRgbColorHueOff(CTAngle value) {
-        return new JAXBElement<CTAngle>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1423,7 +1423,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueMod", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorBlueMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1432,7 +1432,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "shade", scope = CTScRgbColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTScRgbColorShade(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1441,7 +1441,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumMod", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorLumMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1450,7 +1450,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "inv", scope = CTScRgbColor.class)
     public JAXBElement<CTInverseTransform> createCTScRgbColorInv(CTInverseTransform value) {
-        return new JAXBElement<CTInverseTransform>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1459,7 +1459,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumOff", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorLumOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1468,7 +1468,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "tint", scope = CTScRgbColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTScRgbColorTint(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1477,7 +1477,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "green", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorGreen(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1486,7 +1486,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "comp", scope = CTScRgbColor.class)
     public JAXBElement<CTComplementTransform> createCTScRgbColorComp(CTComplementTransform value) {
-        return new JAXBElement<CTComplementTransform>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1495,7 +1495,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueOff", scope = CTScRgbColor.class)
     public JAXBElement<CTPercentage> createCTScRgbColorBlueOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1504,7 +1504,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueMod", scope = CTScRgbColor.class)
     public JAXBElement<CTPositivePercentage> createCTScRgbColorHueMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1513,7 +1513,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gray", scope = CTScRgbColor.class)
     public JAXBElement<CTGrayscaleTransform> createCTScRgbColorGray(CTGrayscaleTransform value) {
-        return new JAXBElement<CTGrayscaleTransform>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTScRgbColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTScRgbColor.class, value);
     }
 
     /**
@@ -1522,7 +1522,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alpha", scope = CTHslColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTHslColorAlpha(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1531,7 +1531,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lum", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorLum(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1540,7 +1540,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gamma", scope = CTHslColor.class)
     public JAXBElement<CTGammaTransform> createCTHslColorGamma(CTGammaTransform value) {
-        return new JAXBElement<CTGammaTransform>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTHslColor.class, value);
     }
 
     /**
@@ -1549,7 +1549,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "invGamma", scope = CTHslColor.class)
     public JAXBElement<CTInverseGammaTransform> createCTHslColorInvGamma(CTInverseGammaTransform value) {
-        return new JAXBElement<CTInverseGammaTransform>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTHslColor.class, value);
     }
 
     /**
@@ -1558,7 +1558,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaMod", scope = CTHslColor.class)
     public JAXBElement<CTPositivePercentage> createCTHslColorAlphaMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1567,7 +1567,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redOff", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorRedOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1576,7 +1576,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaOff", scope = CTHslColor.class)
     public JAXBElement<CTFixedPercentage> createCTHslColorAlphaOff(CTFixedPercentage value) {
-        return new JAXBElement<CTFixedPercentage>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1585,7 +1585,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenOff", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorGreenOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1594,7 +1594,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hue", scope = CTHslColor.class)
     public JAXBElement<CTPositiveFixedAngle> createCTHslColorHue(CTPositiveFixedAngle value) {
-        return new JAXBElement<CTPositiveFixedAngle>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTHslColor.class, value);
     }
 
     /**
@@ -1603,7 +1603,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redMod", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorRedMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1612,7 +1612,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satOff", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorSatOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1621,7 +1621,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenMod", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorGreenMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1630,7 +1630,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blue", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorBlue(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1639,7 +1639,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "sat", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorSat(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1648,7 +1648,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "red", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorRed(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1657,7 +1657,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satMod", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorSatMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1666,7 +1666,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueMod", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorBlueMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1675,7 +1675,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueOff", scope = CTHslColor.class)
     public JAXBElement<CTAngle> createCTHslColorHueOff(CTAngle value) {
-        return new JAXBElement<CTAngle>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTHslColor.class, value);
     }
 
     /**
@@ -1684,7 +1684,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "shade", scope = CTHslColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTHslColorShade(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1693,7 +1693,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumMod", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorLumMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1702,7 +1702,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "inv", scope = CTHslColor.class)
     public JAXBElement<CTInverseTransform> createCTHslColorInv(CTInverseTransform value) {
-        return new JAXBElement<CTInverseTransform>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTHslColor.class, value);
     }
 
     /**
@@ -1711,7 +1711,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumOff", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorLumOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1720,7 +1720,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "tint", scope = CTHslColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTHslColorTint(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1729,7 +1729,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "green", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorGreen(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1738,7 +1738,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "comp", scope = CTHslColor.class)
     public JAXBElement<CTComplementTransform> createCTHslColorComp(CTComplementTransform value) {
-        return new JAXBElement<CTComplementTransform>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTHslColor.class, value);
     }
 
     /**
@@ -1747,7 +1747,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueOff", scope = CTHslColor.class)
     public JAXBElement<CTPercentage> createCTHslColorBlueOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1756,7 +1756,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueMod", scope = CTHslColor.class)
     public JAXBElement<CTPositivePercentage> createCTHslColorHueMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTHslColor.class, value);
     }
 
     /**
@@ -1765,7 +1765,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gray", scope = CTHslColor.class)
     public JAXBElement<CTGrayscaleTransform> createCTHslColorGray(CTGrayscaleTransform value) {
-        return new JAXBElement<CTGrayscaleTransform>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTHslColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTHslColor.class, value);
     }
 
     /**
@@ -1774,7 +1774,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lum", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorLum(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLum_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1783,7 +1783,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alpha", scope = CTPresetColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTPresetColorAlpha(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlpha_QNAME, CTPositiveFixedPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1792,7 +1792,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gamma", scope = CTPresetColor.class)
     public JAXBElement<CTGammaTransform> createCTPresetColorGamma(CTGammaTransform value) {
-        return new JAXBElement<CTGammaTransform>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGamma_QNAME, CTGammaTransform.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1801,7 +1801,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "invGamma", scope = CTPresetColor.class)
     public JAXBElement<CTInverseGammaTransform> createCTPresetColorInvGamma(CTInverseGammaTransform value) {
-        return new JAXBElement<CTInverseGammaTransform>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInvGamma_QNAME, CTInverseGammaTransform.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1810,7 +1810,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redOff", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorRedOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1819,7 +1819,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaMod", scope = CTPresetColor.class)
     public JAXBElement<CTPositivePercentage> createCTPresetColorAlphaMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaMod_QNAME, CTPositivePercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1828,7 +1828,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "alphaOff", scope = CTPresetColor.class)
     public JAXBElement<CTFixedPercentage> createCTPresetColorAlphaOff(CTFixedPercentage value) {
-        return new JAXBElement<CTFixedPercentage>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorAlphaOff_QNAME, CTFixedPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1837,7 +1837,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenOff", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorGreenOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1846,7 +1846,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hue", scope = CTPresetColor.class)
     public JAXBElement<CTPositiveFixedAngle> createCTPresetColorHue(CTPositiveFixedAngle value) {
-        return new JAXBElement<CTPositiveFixedAngle>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHue_QNAME, CTPositiveFixedAngle.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1855,7 +1855,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "redMod", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorRedMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRedMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1864,7 +1864,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satOff", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorSatOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1873,7 +1873,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "greenMod", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorGreenMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreenMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1882,7 +1882,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blue", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorBlue(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlue_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1891,7 +1891,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "sat", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorSat(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSat_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1900,7 +1900,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "red", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorRed(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorRed_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1909,7 +1909,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "satMod", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorSatMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorSatMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1918,7 +1918,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueMod", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorBlueMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1927,7 +1927,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueOff", scope = CTPresetColor.class)
     public JAXBElement<CTAngle> createCTPresetColorHueOff(CTAngle value) {
-        return new JAXBElement<CTAngle>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueOff_QNAME, CTAngle.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1936,7 +1936,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "shade", scope = CTPresetColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTPresetColorShade(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorShade_QNAME, CTPositiveFixedPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1945,7 +1945,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumMod", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorLumMod(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumMod_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1954,7 +1954,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "inv", scope = CTPresetColor.class)
     public JAXBElement<CTInverseTransform> createCTPresetColorInv(CTInverseTransform value) {
-        return new JAXBElement<CTInverseTransform>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorInv_QNAME, CTInverseTransform.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1963,7 +1963,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "lumOff", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorLumOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorLumOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1972,7 +1972,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "tint", scope = CTPresetColor.class)
     public JAXBElement<CTPositiveFixedPercentage> createCTPresetColorTint(CTPositiveFixedPercentage value) {
-        return new JAXBElement<CTPositiveFixedPercentage>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorTint_QNAME, CTPositiveFixedPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1981,7 +1981,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "green", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorGreen(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGreen_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1990,7 +1990,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "comp", scope = CTPresetColor.class)
     public JAXBElement<CTComplementTransform> createCTPresetColorComp(CTComplementTransform value) {
-        return new JAXBElement<CTComplementTransform>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorComp_QNAME, CTComplementTransform.class, CTPresetColor.class, value);
     }
 
     /**
@@ -1999,7 +1999,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "blueOff", scope = CTPresetColor.class)
     public JAXBElement<CTPercentage> createCTPresetColorBlueOff(CTPercentage value) {
-        return new JAXBElement<CTPercentage>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorBlueOff_QNAME, CTPercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -2008,7 +2008,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "hueMod", scope = CTPresetColor.class)
     public JAXBElement<CTPositivePercentage> createCTPresetColorHueMod(CTPositivePercentage value) {
-        return new JAXBElement<CTPositivePercentage>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorHueMod_QNAME, CTPositivePercentage.class, CTPresetColor.class, value);
     }
 
     /**
@@ -2017,7 +2017,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", name = "gray", scope = CTPresetColor.class)
     public JAXBElement<CTGrayscaleTransform> createCTPresetColorGray(CTGrayscaleTransform value) {
-        return new JAXBElement<CTGrayscaleTransform>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTPresetColor.class, value);
+        return new JAXBElement<>(_CTSRgbColorGray_QNAME, CTGrayscaleTransform.class, CTPresetColor.class, value);
     }
 
 }

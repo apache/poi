@@ -38,7 +38,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
 
 public abstract class AbstractFileHandler implements FileHandler {
-    public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<String>();
+    public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>();
     static {
         // password protected files without password
     	// ... currently none ...

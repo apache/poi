@@ -37,8 +37,8 @@ import org.apache.poi.util.Internal;
 @Internal
 public class XSSFBStylesTable extends XSSFBParser {
 
-    private final SortedMap<Short, String> numberFormats = new TreeMap<Short,String>();
-    private final List<Short> styleIds = new ArrayList<Short>();
+    private final SortedMap<Short, String> numberFormats = new TreeMap<>();
+    private final List<Short> styleIds = new ArrayList<>();
 
     private boolean inCellXFS;
     private boolean inFmts;

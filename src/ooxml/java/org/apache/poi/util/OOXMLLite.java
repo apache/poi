@@ -89,7 +89,7 @@ public final class OOXMLLite {
     }
 
     void build() throws IOException, ClassNotFoundException {
-        List<Class<?>> lst = new ArrayList<Class<?>>();
+        List<Class<?>> lst = new ArrayList<>();
         //collect unit tests
         String exclude = StringUtil.join("|",
                 "BaseTestXWorkbook",
@@ -276,7 +276,7 @@ public final class OOXMLLite {
         ClassLoader appLoader = ClassLoader.getSystemClassLoader();
         try {
             Vector<Class<?>> classes = (Vector<Class<?>>) _classes.get(appLoader);
-            Map<String, Class<?>> map = new HashMap<String, Class<?>>();
+            Map<String, Class<?>> map = new HashMap<>();
             for (Class<?> cls : classes) {
                 // e.g. proxy-classes, ...
                 ProtectionDomain pd = cls.getProtectionDomain();

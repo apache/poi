@@ -63,7 +63,7 @@ public class DataValidationEvaluator {
      * there's no guarantee instances won't be recreated on the fly by some implementation.
      * So we use sheet name.
      */
-    private final Map<String, List<? extends DataValidation>> validations = new HashMap<String, List<? extends DataValidation>>();
+    private final Map<String, List<? extends DataValidation>> validations = new HashMap<>();
 
     private final Workbook workbook;
     private final WorkbookEvaluator workbookEvaluator;
@@ -187,7 +187,7 @@ public class DataValidationEvaluator {
         
         String formula = val.getFormula1();
         
-        final List<ValueEval> values = new ArrayList<ValueEval>();
+        final List<ValueEval> values = new ArrayList<>();
         
         if (val.getExplicitListValues() != null && val.getExplicitListValues().length > 0) {
             // assumes parsing interprets the overloaded property right for XSSF

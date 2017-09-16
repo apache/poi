@@ -26,8 +26,8 @@ import java.util.Map;
  * http://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefpropertytype%28v=EXCHG.140%29.aspx
  */
 public final class Types {
-    private static Map<Integer, MAPIType> builtInTypes = new HashMap<Integer, MAPIType>();
-    private static Map<Integer, MAPIType> customTypes = new HashMap<Integer, Types.MAPIType>();
+    private static Map<Integer, MAPIType> builtInTypes = new HashMap<>();
+    private static Map<Integer, MAPIType> customTypes = new HashMap<>();
 
     /** Unspecified */
     public static final MAPIType UNSPECIFIED = new MAPIType(0x0000,

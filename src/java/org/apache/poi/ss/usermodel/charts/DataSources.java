@@ -35,7 +35,7 @@ public class DataSources {
     }
 
     public static <T> ChartDataSource<T> fromArray(T[] elements) {
-        return new ArrayDataSource<T>(elements);
+        return new ArrayDataSource<>(elements);
     }
 
     public static ChartDataSource<Number> fromNumericCellRange(Sheet sheet, CellRangeAddress cellRangeAddress) {

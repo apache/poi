@@ -35,7 +35,7 @@ public final class EscherPropertyFactory {
      * @return                  The new properties
      */
     public List<EscherProperty> createProperties(byte[] data, int offset, short numProperties) {
-        List<EscherProperty> results = new ArrayList<EscherProperty>();
+        List<EscherProperty> results = new ArrayList<>();
 
         int pos = offset;
 

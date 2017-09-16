@@ -42,7 +42,7 @@ public class XDGFPages extends XDGFXMLDocumentPart {
     PagesType _pagesObject;
 
     // ordered by page number
-    List<XDGFPage> _pages = new ArrayList<XDGFPage>();
+    List<XDGFPage> _pages = new ArrayList<>();
 
     /**
      * @since POI 3.14-Beta1

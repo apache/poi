@@ -96,7 +96,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     enum LoadSavePhase {
         INIT, LOADED
 	}
-    private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<LoadSavePhase>();
+    private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<>();
     
     // What we're based on
 	private final HSLFSlideShowImpl _hslfSlideShow;
@@ -112,10 +112,10 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	private Document _documentRecord;
 
 	// Friendly objects for people to deal with
-	private final List<HSLFSlideMaster> _masters = new ArrayList<HSLFSlideMaster>();
-	private final List<HSLFTitleMaster> _titleMasters = new ArrayList<HSLFTitleMaster>();
-	private final List<HSLFSlide> _slides = new ArrayList<HSLFSlide>();
-	private final List<HSLFNotes> _notes = new ArrayList<HSLFNotes>();
+	private final List<HSLFSlideMaster> _masters = new ArrayList<>();
+	private final List<HSLFTitleMaster> _titleMasters = new ArrayList<>();
+	private final List<HSLFSlide> _slides = new ArrayList<>();
+	private final List<HSLFNotes> _notes = new ArrayList<>();
 	private FontCollection _fonts;
 
 	// For logging
@@ -196,7 +196,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 */
 	private void findMostRecentCoreRecords() {
 		// To start with, find the most recent in the byte offset domain
-		Map<Integer,Integer> mostRecentByBytes = new HashMap<Integer,Integer>();
+		Map<Integer,Integer> mostRecentByBytes = new HashMap<>();
 		for (Record record : _hslfSlideShow.getRecords()) {
 			if (record instanceof PersistPtrHolder) {
 				PersistPtrHolder pph = (PersistPtrHolder) record;
@@ -224,14 +224,14 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
 		// We'll also want to be able to turn the slide IDs into a position
 		// in this array
-		_sheetIdToCoreRecordsLookup = new HashMap<Integer,Integer>();
+		_sheetIdToCoreRecordsLookup = new HashMap<>();
 		Integer[] allIDs = mostRecentByBytes.keySet().toArray(new Integer[mostRecentByBytes.size()]); 
 		Arrays.sort(allIDs);
 		for (int i = 0; i < allIDs.length; i++) {
 			_sheetIdToCoreRecordsLookup.put(allIDs[i], i);
 		}
 
-		Map<Integer,Integer> mostRecentByBytesRev = new HashMap<Integer,Integer>(mostRecentByBytes.size());
+		Map<Integer,Integer> mostRecentByBytesRev = new HashMap<>(mostRecentByBytes.size());
 		for (Map.Entry<Integer,Integer> me : mostRecentByBytes.entrySet()) {
 		    mostRecentByBytesRev.put(me.getValue(), me.getKey());
 		}
@@ -340,7 +340,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		findMasterSlides();
 		
 		// Having sorted out the masters, that leaves the notes and slides
-        Map<Integer,Integer> slideIdToNotes = new HashMap<Integer,Integer>();
+        Map<Integer,Integer> slideIdToNotes = new HashMap<>();
 
         // Start by finding the notes records
         findNotesSlides(slideIdToNotes);
@@ -626,7 +626,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		_slides.get(newSlideNumber - 1).setSlideNumber(newSlideNumber);
 		_slides.get(oldSlideNumber - 1).setSlideNumber(oldSlideNumber);
 		
-		ArrayList<Record> lst = new ArrayList<Record>();
+		ArrayList<Record> lst = new ArrayList<>();
 		for (SlideAtomsSet s : sas) {
 			lst.add(s.getSlidePersistAtom());
 			lst.addAll(Arrays.asList(s.getSlideRecords()));
@@ -657,8 +657,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
 		SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
 
-		List<Record> records = new ArrayList<Record>();
-		List<SlideAtomsSet> sa = new ArrayList<SlideAtomsSet>(Arrays.asList(sas));
+		List<Record> records = new ArrayList<>();
+		List<SlideAtomsSet> sa = new ArrayList<>(Arrays.asList(sas));
 
 		HSLFSlide removedSlide = _slides.remove(index);
 		_notes.remove(removedSlide.getNotes());
@@ -685,8 +685,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
         int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
 		if (notesId != 0) {
 			SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
-			records = new ArrayList<Record>();
-			ArrayList<SlideAtomsSet> na = new ArrayList<SlideAtomsSet>();
+			records = new ArrayList<>();
+			ArrayList<SlideAtomsSet> na = new ArrayList<>();
 			for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()) {
 				if (ns.getSlidePersistAtom().getSlideIdentifier() == notesId) {
                     continue;
@@ -1090,7 +1090,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	}
 
     protected static Map<String,ClassID> getOleMap() {
-    	Map<String,ClassID> olemap = new HashMap<String,ClassID>();
+    	Map<String,ClassID> olemap = new HashMap<>();
     	olemap.put(POWERPOINT_DOCUMENT, ClassID.PPT_SHOW);
     	olemap.put("Workbook", ClassID.EXCEL97); // as per BIFF8 spec
     	olemap.put("WORKBOOK", ClassID.EXCEL97); // Typically from third party programs
@@ -1107,7 +1107,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
         // As we go along, update, and hand over, to any Position Dependent
         // records we happen across
 		Map<RecordTypes,PositionDependentRecord> interestingRecords =
-                new HashMap<RecordTypes,PositionDependentRecord>();
+                new HashMap<>();
 
 		try {
             _hslfSlideShow.updateAndWriteDependantRecords(null,interestingRecords);

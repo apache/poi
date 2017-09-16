@@ -108,7 +108,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		//      base number for these entries
 		//   count * 32 bit offsets
 		// Repeat as many times as you have data
-		_slideLocations = new HashMap<Integer,Integer>();
+		_slideLocations = new HashMap<>();
 		_ptrData = new byte[len-8];
 		System.arraycopy(source,start+8,_ptrData,0,_ptrData.length);
 
@@ -180,7 +180,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	}
 
 	private void normalizePersistDirectory() {
-        TreeMap<Integer,Integer> orderedSlideLocations = new TreeMap<Integer,Integer>(_slideLocations);
+        TreeMap<Integer,Integer> orderedSlideLocations = new TreeMap<>(_slideLocations);
         
         @SuppressWarnings("resource")
         BufAccessBAOS bos = new BufAccessBAOS(); // NOSONAR

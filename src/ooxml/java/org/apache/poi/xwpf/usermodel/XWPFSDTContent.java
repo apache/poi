@@ -40,11 +40,11 @@ public class XWPFSDTContent implements ISDTContent {
 
     // private final IBody part;
     // private final XWPFDocument document;
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
-    private List<XWPFTable> tables = new ArrayList<XWPFTable>();
-    private List<XWPFRun> runs = new ArrayList<XWPFRun>();
-    private List<XWPFSDT> contentControls = new ArrayList<XWPFSDT>();
-    private List<ISDTContents> bodyElements = new ArrayList<ISDTContents>();
+    private List<XWPFParagraph> paragraphs = new ArrayList<>();
+    private List<XWPFTable> tables = new ArrayList<>();
+    private List<XWPFRun> runs = new ArrayList<>();
+    private List<XWPFSDT> contentControls = new ArrayList<>();
+    private List<ISDTContents> bodyElements = new ArrayList<>();
 
     public XWPFSDTContent(CTSdtContentRun sdtRun, IBody part, IRunBody parent) {
         for (CTR ctr : sdtRun.getRArray()) {

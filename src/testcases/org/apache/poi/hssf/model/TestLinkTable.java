@@ -175,7 +175,7 @@ public final class TestLinkTable extends TestCase {
 		};
 		final List<Record> recList = Arrays.asList(recs);
 		final WorkbookRecordList wrl = new WorkbookRecordList();
-		final Map<String, NameCommentRecord> commentRecords = new LinkedHashMap<String, NameCommentRecord>();
+		final Map<String, NameCommentRecord> commentRecords = new LinkedHashMap<>();
 
 		final LinkTable	lt = new LinkTable(recList, 0, wrl, commentRecords);
 		assertNotNull(lt);

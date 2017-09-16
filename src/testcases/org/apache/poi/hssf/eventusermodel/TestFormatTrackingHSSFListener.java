@@ -106,7 +106,7 @@ public final class TestFormatTrackingHSSFListener {
 	
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
-		private final List<Record> _records = new ArrayList<Record>();
+		private final List<Record> _records = new ArrayList<>();
 
 		@Override
         public void processRecord(Record record) {

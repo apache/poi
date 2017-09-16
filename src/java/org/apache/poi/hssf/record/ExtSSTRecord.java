@@ -93,7 +93,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
         _stringsPerBucket = in.readShort();
 
         int nInfos = in.remaining() / InfoSubRecord.ENCODED_SIZE;
-        ArrayList<InfoSubRecord> lst = new ArrayList<InfoSubRecord>(nInfos);
+        ArrayList<InfoSubRecord> lst = new ArrayList<>(nInfos);
 
         while (in.available() > 0) {
             InfoSubRecord info = new InfoSubRecord(in);

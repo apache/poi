@@ -95,7 +95,7 @@ public class XSSFIgnoredErrorHelper {
     }
 
     public static  Set<IgnoredErrorType> getErrorTypes(CTIgnoredError err) {
-        Set<IgnoredErrorType> result = new LinkedHashSet<IgnoredErrorType>();
+        Set<IgnoredErrorType> result = new LinkedHashSet<>();
         for (IgnoredErrorType errType : IgnoredErrorType.values()) {
             if (XSSFIgnoredErrorHelper.isSet(errType, err)) {
                 result.add(errType);

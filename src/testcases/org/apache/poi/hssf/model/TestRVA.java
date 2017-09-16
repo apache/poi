@@ -72,7 +72,7 @@ public final class TestRVA {
         workbook = new HSSFWorkbook(poifs);
         sheet = workbook.getSheetAt(0);
 
-        List<Object[]> data = new ArrayList<Object[]>(); 
+        List<Object[]> data = new ArrayList<>();
         
         for (int rowIdx = 0; true; rowIdx++) {
             HSSFRow row = sheet.getRow(rowIdx);

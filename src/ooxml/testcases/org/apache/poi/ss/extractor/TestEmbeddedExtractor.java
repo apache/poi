@@ -49,7 +49,7 @@ public class TestEmbeddedExtractor {
         fis.close();
 
         EmbeddedExtractor ee = new EmbeddedExtractor();
-        List<EmbeddedData> edList = new ArrayList<EmbeddedData>();
+        List<EmbeddedData> edList = new ArrayList<>();
         for (Sheet s : wb) {
             edList.addAll(ee.extractAll(s));
         }
@@ -77,7 +77,7 @@ public class TestEmbeddedExtractor {
         fis.close();
 
         EmbeddedExtractor ee = new EmbeddedExtractor();
-        List<EmbeddedData> edList = new ArrayList<EmbeddedData>();
+        List<EmbeddedData> edList = new ArrayList<>();
         for (Sheet s : wb) {
             edList.addAll(ee.extractAll(s));
         }

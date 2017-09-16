@@ -65,7 +65,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	 * @return An array of each Text item in the document
 	 */
 	public String[] getAllText() {
-		ArrayList<String> text = new ArrayList<String>();
+		ArrayList<String> text = new ArrayList<>();
 		for(Stream stream : hdgf.getTopLevelStreams()) {
 			findText(stream, text);
 		}

@@ -370,7 +370,7 @@ public class StringUtil {
    
    private static synchronized void initMsCodepointMap() {
        if (msCodepointToUnicode != null) return;
-       msCodepointToUnicode = new HashMap<Integer,Integer>();
+       msCodepointToUnicode = new HashMap<>();
        int i=0xF020;
        for (int ch : symbolMap_f020) {
            msCodepointToUnicode.put(i++, ch);

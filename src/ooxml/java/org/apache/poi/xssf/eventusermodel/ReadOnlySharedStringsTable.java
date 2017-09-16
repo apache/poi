@@ -239,8 +239,8 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
             String uniqueCount = attributes.getValue("uniqueCount");
             if(uniqueCount != null) this.uniqueCount = Integer.parseInt(uniqueCount);
 
-            this.strings = new ArrayList<String>(this.uniqueCount);
-            this.phoneticStrings = new HashMap<Integer, String>();
+            this.strings = new ArrayList<>(this.uniqueCount);
+            this.phoneticStrings = new HashMap<>();
             characters = new StringBuffer();
         } else if ("si".equals(localName)) {
             characters.setLength(0);

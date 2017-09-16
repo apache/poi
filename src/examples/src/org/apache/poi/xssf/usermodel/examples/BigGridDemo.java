@@ -116,7 +116,7 @@ public class BigGridDemo {
      * Create a library of cell styles.
      */
     private static Map<String, XSSFCellStyle> createStyles(XSSFWorkbook wb){
-        Map<String, XSSFCellStyle> styles = new HashMap<String, XSSFCellStyle>();
+        Map<String, XSSFCellStyle> styles = new HashMap<>();
         XSSFDataFormat fmt = wb.createDataFormat();
 
         XSSFCellStyle style1 = wb.createCellStyle();

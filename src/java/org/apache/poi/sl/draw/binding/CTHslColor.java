@@ -145,7 +145,7 @@ public class CTHslColor {
      */
     public List<JAXBElement<?>> getEGColorTransform() {
         if (egColorTransform == null) {
-            egColorTransform = new ArrayList<JAXBElement<?>>();
+            egColorTransform = new ArrayList<>();
         }
         return this.egColorTransform;
     }

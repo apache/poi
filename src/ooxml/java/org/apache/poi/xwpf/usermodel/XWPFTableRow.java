@@ -134,7 +134,7 @@ public class XWPFTableRow {
      */
     public List<ICell> getTableICells() {
 
-        List<ICell> cells = new ArrayList<ICell>();
+        List<ICell> cells = new ArrayList<>();
         //Can't use ctRow.getTcList because that only gets table cells
         //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
         XmlCursor cursor = ctRow.newCursor();
@@ -159,7 +159,7 @@ public class XWPFTableRow {
      */
     public List<XWPFTableCell> getTableCells() {
         if (tableCells == null) {
-            List<XWPFTableCell> cells = new ArrayList<XWPFTableCell>();
+            List<XWPFTableCell> cells = new ArrayList<>();
             for (CTTc tableCell : ctRow.getTcArray()) {
                 cells.add(new XWPFTableCell(tableCell, this, table.getBody()));
             }

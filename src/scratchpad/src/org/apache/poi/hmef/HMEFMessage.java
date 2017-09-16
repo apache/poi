@@ -44,9 +44,9 @@ public final class HMEFMessage {
     
     @SuppressWarnings("unused")
     private int fileId;
-    private final List<TNEFAttribute> messageAttributes = new ArrayList<TNEFAttribute>();
-    private final List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
-    private final List<Attachment> attachments = new ArrayList<Attachment>();
+    private final List<TNEFAttribute> messageAttributes = new ArrayList<>();
+    private final List<MAPIAttribute> mapiAttributes = new ArrayList<>();
+    private final List<Attachment> attachments = new ArrayList<>();
     
     public HMEFMessage(InputStream inp) throws IOException {
         try {

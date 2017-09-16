@@ -36,7 +36,7 @@ public class BookmarksTables
 
     private PlexOfCps descriptorsLim = new PlexOfCps( 0 );
 
-    private List<String> names = new ArrayList<String>( 0 );
+    private List<String> names = new ArrayList<>(0);
 
     public BookmarksTables( byte[] tableStream, FileInformationBlock fib )
     {
@@ -118,8 +118,8 @@ public class BookmarksTables
         int namesLength = fib.getLcbSttbfbkmk();
 
         if ( namesStart != 0 && namesLength != 0 )
-            this.names = new ArrayList<String>( Arrays.asList( SttbUtils
-                    .readSttbfBkmk( tableStream, namesStart ) ) );
+            this.names = new ArrayList<>(Arrays.asList(SttbUtils
+                    .readSttbfBkmk(tableStream, namesStart)));
 
         int firstDescriptorsStart = fib.getFcPlcfbkf();
         int firstDescriptorsLength = fib.getLcbPlcfbkf();

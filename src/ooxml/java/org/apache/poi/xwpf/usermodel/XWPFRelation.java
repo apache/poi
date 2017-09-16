@@ -32,7 +32,7 @@ public final class XWPFRelation extends POIXMLRelation {
     /**
      * A map to lookup POIXMLRelation by its relation type
      */
-    private static final Map<String, XWPFRelation> _table = new HashMap<String, XWPFRelation>();
+    private static final Map<String, XWPFRelation> _table = new HashMap<>();
 
     public static final XWPFRelation DOCUMENT = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml",

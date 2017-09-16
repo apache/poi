@@ -51,7 +51,7 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
         is.close();
         _tblStyleLst = styleDoc.getTblStyleLst();
         CTTableStyle[] tblStyleArray = _tblStyleLst.getTblStyleArray();
-        _styles = new ArrayList<XSLFTableStyle>(tblStyleArray.length);
+        _styles = new ArrayList<>(tblStyleArray.length);
         for(CTTableStyle c : tblStyleArray){
             _styles.add(new XSLFTableStyle(c));
         }

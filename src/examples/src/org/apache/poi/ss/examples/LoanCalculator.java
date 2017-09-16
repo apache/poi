@@ -150,7 +150,7 @@ public class LoanCalculator {
      * cell styles used for formatting calendar sheets
      */
     private static Map<String, CellStyle> createStyles(Workbook wb){
-        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+        Map<String, CellStyle> styles = new HashMap<>();
 
         CellStyle style;
         Font titleFont = wb.createFont();

@@ -36,7 +36,7 @@ import org.apache.poi.util.Internal;
  * @author Yegor Kozlov
  */
 public final class HSLFSlideMaster extends HSLFMasterSheet {
-    private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
+    private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
 
     /**
      * all TxMasterStyleAtoms available in this master

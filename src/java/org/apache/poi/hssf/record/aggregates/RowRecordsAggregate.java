@@ -53,9 +53,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
         if (svm == null) {
             throw new IllegalArgumentException("SharedValueManager must be provided.");
         }
-        _rowRecords = new TreeMap<Integer, RowRecord>();
+        _rowRecords = new TreeMap<>();
         _valuesAgg = new ValueRecordsAggregate();
-        _unknownRecords = new ArrayList<Record>();
+        _unknownRecords = new ArrayList<>();
         _sharedValueManager = svm;
     }
 

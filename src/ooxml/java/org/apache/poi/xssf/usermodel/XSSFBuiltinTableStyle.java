@@ -334,7 +334,7 @@ public enum XSSFBuiltinTableStyle {
     /**
      * Interestingly, this is initialized after the enum instances, so using an {@link EnumMap} works.
      */
-    private static final Map<XSSFBuiltinTableStyle, TableStyle> styleMap = new EnumMap<XSSFBuiltinTableStyle, TableStyle>(XSSFBuiltinTableStyle.class);
+    private static final Map<XSSFBuiltinTableStyle, TableStyle> styleMap = new EnumMap<>(XSSFBuiltinTableStyle.class);
     
     private XSSFBuiltinTableStyle() {
     }

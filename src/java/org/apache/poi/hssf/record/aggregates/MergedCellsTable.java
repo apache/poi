@@ -38,7 +38,7 @@ public final class MergedCellsTable extends RecordAggregate {
 	 * Creates an empty aggregate
 	 */
 	public MergedCellsTable() {
-		_mergedRegions = new ArrayList<CellRangeAddress>();
+		_mergedRegions = new ArrayList<>();
 	}
 
 	/**

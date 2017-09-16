@@ -50,7 +50,7 @@ public class XSSFBSharedStringsTable {
     /**
      * The shared strings table.
      */
-    private List<String> strings = new ArrayList<String>();
+    private List<String> strings = new ArrayList<>();
 
     /**
      * @param pkg The {@link OPCPackage} to use as basis for the shared-strings table.
@@ -87,7 +87,7 @@ public class XSSFBSharedStringsTable {
      * @return a defensive copy of strings
      */
     public List<String> getItems() {
-        List<String> ret = new ArrayList<String>(strings.size());
+        List<String> ret = new ArrayList<>(strings.size());
         ret.addAll(strings);
         return ret;
     }

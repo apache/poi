@@ -210,7 +210,7 @@ public enum RecordTypes {
     private static final Map<Short,RecordTypes> LOOKUP;
 
     static {
-        LOOKUP = new HashMap<Short,RecordTypes>();
+        LOOKUP = new HashMap<>();
         for(RecordTypes s : values()) {
             LOOKUP.put(s.typeID, s);
         }

@@ -79,7 +79,7 @@ public class TabStopPropCollection extends TextProp {
         }
     }
     
-    private List<TabStop> tabStops = new ArrayList<TabStop>();
+    private List<TabStop> tabStops = new ArrayList<>();
     
     public TabStopPropCollection() {
         super(0, 0x100000, "tabStops");
@@ -113,7 +113,7 @@ public class TabStopPropCollection extends TextProp {
     @Override
     public TabStopPropCollection clone() {
         TabStopPropCollection other = (TabStopPropCollection)super.clone();
-        other.tabStops = new ArrayList<TabStop>();
+        other.tabStops = new ArrayList<>();
         for (TabStop ts : tabStops) {
             TabStop tso = new TabStop(ts.getPosition(), ts.getType());
             other.tabStops.add(tso);

@@ -59,7 +59,7 @@ public final class TestSSTDeserializer {
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
       
 
-        IntMapper<UnicodeString> strings = new IntMapper<UnicodeString>();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings(1, in );
 
@@ -72,7 +72,7 @@ public final class TestSSTDeserializer {
         byte[] continueBytes = readSampleHexData("evencontinuation.txt", "continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
 
-        IntMapper<UnicodeString> strings = new IntMapper<UnicodeString>();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 2, in);
 
@@ -91,7 +91,7 @@ public final class TestSSTDeserializer {
         
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, concat(continue1, continue2)));
 
-        IntMapper<UnicodeString> strings = new IntMapper<UnicodeString>();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 2, in);
 
@@ -105,7 +105,7 @@ public final class TestSSTDeserializer {
         byte[] continueBytes = readSampleHexData("extendedtextstrings.txt", "rich-continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
         
-        IntMapper<UnicodeString> strings = new IntMapper<UnicodeString>();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 1, in);
 
@@ -116,7 +116,7 @@ public final class TestSSTDeserializer {
         continueBytes = readSampleHexData("extendedtextstrings.txt", "norich-continue1", ContinueRecord.sid);
         in = TestcaseRecordInputStream.create(concat(header, continueBytes));
         
-        strings = new IntMapper<UnicodeString>();
+        strings = new IntMapper<>();
         deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 1, in);
 

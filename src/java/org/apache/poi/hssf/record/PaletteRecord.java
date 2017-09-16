@@ -39,7 +39,7 @@ public final class PaletteRecord extends StandardRecord {
 
     public PaletteRecord() {
       PColor[] defaultPalette = createDefaultPalette();
-      _colors    = new ArrayList<PColor>(defaultPalette.length);
+      _colors    = new ArrayList<>(defaultPalette.length);
       for (PColor element : defaultPalette) {
         _colors.add(element);
       }
@@ -47,7 +47,7 @@ public final class PaletteRecord extends StandardRecord {
 
     public PaletteRecord(RecordInputStream in) {
        int field_1_numcolors = in.readShort();
-       _colors    = new ArrayList<PColor>(field_1_numcolors);
+       _colors    = new ArrayList<>(field_1_numcolors);
        for (int k = 0; k < field_1_numcolors; k++) {
            _colors.add(new PColor(in));
        }

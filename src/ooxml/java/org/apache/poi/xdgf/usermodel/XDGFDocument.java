@@ -37,7 +37,7 @@ public class XDGFDocument {
 
     protected VisioDocumentType _document;
 
-    Map<Long, XDGFStyleSheet> _styleSheets = new HashMap<Long, XDGFStyleSheet>();
+    Map<Long, XDGFStyleSheet> _styleSheets = new HashMap<>();
 
     // defaults
     long _defaultFillStyle;

@@ -160,7 +160,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
     }
 
     /** Holds all the chunks that were found. */
-    private List<Chunk> allChunks = new ArrayList<Chunk>();
+    private List<Chunk> allChunks = new ArrayList<>();
 
     @Override
     public Map<MAPIProperty, List<PropertyValue>> getProperties() {

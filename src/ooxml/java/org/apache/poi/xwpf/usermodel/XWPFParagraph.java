@@ -58,8 +58,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
 
         // Build up the character runs
-        runs = new ArrayList<XWPFRun>();
-        iruns = new ArrayList<IRunElement>();
+        runs = new ArrayList<>();
+        iruns = new ArrayList<>();
         buildRunsInOrderFromXml(paragraph);
 
         // Look for bits associated with the runs

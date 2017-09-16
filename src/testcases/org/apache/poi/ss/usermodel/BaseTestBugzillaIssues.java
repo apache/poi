@@ -936,7 +936,7 @@ public abstract class BaseTestBugzillaIssues {
         Workbook wb3 = _testDataProvider.createWorkbook();
         wb3.createSheet().createRow(1).createCell(0).setCellValue(otherCellText);
 
-        Map<String,FormulaEvaluator> evaluators = new HashMap<String, FormulaEvaluator>();
+        Map<String,FormulaEvaluator> evaluators = new HashMap<>();
         evaluators.put(refLocal, wb3.getCreationHelper().createFormulaEvaluator());
         evaluators.put(refHttp,  wb3.getCreationHelper().createFormulaEvaluator());
 

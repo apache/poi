@@ -58,7 +58,7 @@ public class ReaderWriter
     {
         this.filesystem = filesystem;
         root            = this.filesystem.getRoot();
-        dataMap         = new HashMap<DocumentDescriptor, byte[]>();
+        dataMap         = new HashMap<>();
     }
 
     /**

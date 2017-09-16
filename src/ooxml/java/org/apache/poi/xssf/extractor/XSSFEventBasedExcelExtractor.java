@@ -335,7 +335,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         protected SheetTextExtractor() {
             this.output = new StringBuffer();
             this.firstCellOfRow = true;
-            this.headerFooterMap = includeHeadersFooters ? new HashMap<String, String>() : null;
+            this.headerFooterMap = includeHeadersFooters ? new HashMap<>() : null;
         }
 
         @Override

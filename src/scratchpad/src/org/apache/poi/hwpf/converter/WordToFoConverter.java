@@ -103,7 +103,7 @@ public class WordToFoConverter extends AbstractWordConverter
         return wordToFoConverter.getDocument();
     }
 
-    private List<Element> endnotes = new ArrayList<Element>( 0 );
+    private List<Element> endnotes = new ArrayList<>(0);
 
     protected final FoDocumentFacade foDocumentFacade;
 
@@ -111,7 +111,7 @@ public class WordToFoConverter extends AbstractWordConverter
 
     private boolean outputCharactersLanguage;
 
-    private Set<String> usedIds = new LinkedHashSet<String>();
+    private Set<String> usedIds = new LinkedHashSet<>();
 
     /**
      * Creates new instance of {@link WordToFoConverter}. Can be used for output

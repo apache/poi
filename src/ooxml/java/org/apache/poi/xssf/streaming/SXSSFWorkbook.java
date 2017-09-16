@@ -94,8 +94,8 @@ public class SXSSFWorkbook implements Workbook {
 
     private final XSSFWorkbook _wb;
 
-    private final Map<SXSSFSheet,XSSFSheet> _sxFromXHash = new HashMap<SXSSFSheet,XSSFSheet>();
-    private final Map<XSSFSheet,SXSSFSheet> _xFromSxHash = new HashMap<XSSFSheet,SXSSFSheet>();
+    private final Map<SXSSFSheet,XSSFSheet> _sxFromXHash = new HashMap<>();
+    private final Map<XSSFSheet,SXSSFSheet> _xFromSxHash = new HashMap<>();
 
     private int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
 
@@ -707,7 +707,7 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     public Iterator<Sheet> sheetIterator() {
-        return new SheetIterator<Sheet>();
+        return new SheetIterator<>();
     }
     
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {

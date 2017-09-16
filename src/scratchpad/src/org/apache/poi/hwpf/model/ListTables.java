@@ -38,7 +38,7 @@ public final class ListTables
     /**
      * Both PlfLst and the following LVLs
      */
-    private final LinkedHashMap<Integer, ListData> _listMap = new LinkedHashMap<Integer, ListData>();
+    private final LinkedHashMap<Integer, ListData> _listMap = new LinkedHashMap<>();
     private PlfLfo _plfLfo;
 
   public ListTables()

@@ -153,7 +153,7 @@ public class SSPerformanceTest {
     }
 
     static Map<String, CellStyle> createStyles(Workbook wb) {
-        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+        Map<String, CellStyle> styles = new HashMap<>();
         CellStyle style;
 
         Font headerFont = wb.createFont();

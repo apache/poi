@@ -68,7 +68,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
      */
     private int _remainingLength;
 
-    private final List<EscherRecord> _childRecords = new ArrayList<EscherRecord>();
+    private final List<EscherRecord> _childRecords = new ArrayList<>();
 
     @Override
     public int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory) {
@@ -148,7 +148,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
      */
     @Override
     public List<EscherRecord> getChildRecords() {
-        return new ArrayList<EscherRecord>(_childRecords);
+        return new ArrayList<>(_childRecords);
     }
 
     /**
@@ -190,7 +190,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
      * @return EscherContainer children
      */
     public List<EscherContainerRecord> getChildContainers() {
-        List<EscherContainerRecord> containers = new ArrayList<EscherContainerRecord>();
+        List<EscherContainerRecord> containers = new ArrayList<>();
         for (EscherRecord r : this) {
             if(r instanceof EscherContainerRecord) {
                 containers.add((EscherContainerRecord) r);
@@ -284,7 +284,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
     @Override
     protected Object[][] getAttributeMap() {
-        List<Object> chList = new ArrayList<Object>(_childRecords.size()*2+2);
+        List<Object> chList = new ArrayList<>(_childRecords.size() * 2 + 2);
         chList.add("children");
         chList.add(_childRecords.size());
         int count = 0;

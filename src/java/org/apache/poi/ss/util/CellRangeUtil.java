@@ -171,7 +171,7 @@ public final class CellRangeUtil {
         return result;
     }
     private static List<CellRangeAddress> toList(CellRangeAddress[] temp) {
-        List<CellRangeAddress> result = new ArrayList<CellRangeAddress>(temp.length);
+        List<CellRangeAddress> result = new ArrayList<>(temp.length);
         for (CellRangeAddress range : temp) {
             result.add(range);
         }

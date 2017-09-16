@@ -82,7 +82,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     private static final POILogger logger = POILogFactory.getLogger( WordToHtmlConverter.class );
 
-    private final Deque<BlockProperies> blocksProperies = new LinkedList<BlockProperies>();
+    private final Deque<BlockProperies> blocksProperies = new LinkedList<>();
 
     private final HtmlDocumentFacade htmlDocumentFacade;
 

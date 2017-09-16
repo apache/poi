@@ -159,7 +159,7 @@ public final class TestHyperlink {
     }
     
     private static List<HSLFHyperlink> findHyperlinks(List<HSLFTextParagraph> paras) {
-        List<HSLFHyperlink> links = new ArrayList<HSLFHyperlink>();
+        List<HSLFHyperlink> links = new ArrayList<>();
         for (HSLFTextParagraph p : paras) {
             for (HSLFTextRun r : p) {
                 HSLFHyperlink hl = r.getHyperlink();

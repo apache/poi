@@ -111,7 +111,7 @@ public class CTPath2D {
      */
     public List<Object> getCloseOrMoveToOrLnTo() {
         if (closeOrMoveToOrLnTo == null) {
-            closeOrMoveToOrLnTo = new ArrayList<Object>();
+            closeOrMoveToOrLnTo = new ArrayList<>();
         }
         return this.closeOrMoveToOrLnTo;
     }

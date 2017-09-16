@@ -41,11 +41,11 @@ public class XSSFDataValidation implements DataValidation {
 	private XSSFDataValidationConstraint validationConstraint;
 	private CellRangeAddressList regions;
 
-    static Map<Integer,STDataValidationOperator.Enum> operatorTypeMappings = new HashMap<Integer,STDataValidationOperator.Enum>();
-	static Map<STDataValidationOperator.Enum,Integer> operatorTypeReverseMappings = new HashMap<STDataValidationOperator.Enum,Integer>();
-	static Map<Integer,STDataValidationType.Enum> validationTypeMappings = new HashMap<Integer,STDataValidationType.Enum>();
-	static Map<STDataValidationType.Enum,Integer> validationTypeReverseMappings = new HashMap<STDataValidationType.Enum,Integer>();
-	static Map<Integer,STDataValidationErrorStyle.Enum> errorStyleMappings = new HashMap<Integer,STDataValidationErrorStyle.Enum>();
+    static Map<Integer,STDataValidationOperator.Enum> operatorTypeMappings = new HashMap<>();
+	static Map<STDataValidationOperator.Enum,Integer> operatorTypeReverseMappings = new HashMap<>();
+	static Map<Integer,STDataValidationType.Enum> validationTypeMappings = new HashMap<>();
+	static Map<STDataValidationType.Enum,Integer> validationTypeReverseMappings = new HashMap<>();
+	static Map<Integer,STDataValidationErrorStyle.Enum> errorStyleMappings = new HashMap<>();
 
     static {
 		errorStyleMappings.put(DataValidation.ErrorStyle.INFO, STDataValidationErrorStyle.INFORMATION);

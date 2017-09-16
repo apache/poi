@@ -825,7 +825,7 @@ public class DocumentSummaryInformation extends PropertySet {
             throw new HPSFRuntimeException("Illegal internal format of Document SummaryInformation stream: second section is missing.");
         }
 
-        List<Section> l = new LinkedList<Section>(getSections());
+        List<Section> l = new LinkedList<>(getSections());
         clearSections();
         int idx = 0;
         for (Section s : l) {

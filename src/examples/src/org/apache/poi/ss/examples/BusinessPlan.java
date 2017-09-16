@@ -209,7 +209,7 @@ public class BusinessPlan {
      * create a library of cell styles
      */
     private static Map<String, CellStyle> createStyles(Workbook wb){
-        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+        Map<String, CellStyle> styles = new HashMap<>();
         DataFormat df = wb.createDataFormat();
 
         CellStyle style;

@@ -65,7 +65,7 @@ public final class TestFileSystemBugs extends TestCase {
     }
     protected DirectoryNode[] openSamples(InputStream[] inps, boolean oldFails) throws Exception {
         NPOIFSFileSystem nfs = new NPOIFSFileSystem(inps[0]);
-        if (openedFSs == null) openedFSs = new ArrayList<NPOIFSFileSystem>();
+        if (openedFSs == null) openedFSs = new ArrayList<>();
         openedFSs.add(nfs);
         
         OPOIFSFileSystem ofs = null;
@@ -131,7 +131,7 @@ public final class TestFileSystemBugs extends TestCase {
     public void testHeavilyNestedReWrite() throws Exception {
         for (DirectoryNode root : openSSSample("ex42570-20305.xls", false)) {
             // Record the structure
-            Map<String,Integer> entries = new HashMap<String, Integer>();
+            Map<String,Integer> entries = new HashMap<>();
             fetchSizes("/", root, entries);
             
             // Prepare to copy

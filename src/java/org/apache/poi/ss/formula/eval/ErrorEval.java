@@ -26,7 +26,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
  * Evaluations for formula errors
  */
 public final class ErrorEval implements ValueEval {
-    private static final Map<FormulaError,ErrorEval> evals = new HashMap<FormulaError, ErrorEval>();
+    private static final Map<FormulaError,ErrorEval> evals = new HashMap<>();
     
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
     public static final ErrorEval NULL_INTERSECTION = new ErrorEval(FormulaError.NULL);

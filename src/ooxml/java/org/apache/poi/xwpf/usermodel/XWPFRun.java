@@ -123,7 +123,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
         // Look for any text in any of our pictures or drawings
         StringBuilder text = new StringBuilder();
-        List<XmlObject> pictTextObjs = new ArrayList<XmlObject>();
+        List<XmlObject> pictTextObjs = new ArrayList<>();
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
         for (XmlObject o : pictTextObjs) {
@@ -143,7 +143,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
         // Do we have any embedded pictures?
         // (They're a different CTPicture, under the drawingml namespace)
-        pictures = new ArrayList<XWPFPicture>();
+        pictures = new ArrayList<>();
         for (XmlObject o : pictTextObjs) {
             for (CTPicture pict : getCTPictures(o)) {
                 XWPFPicture picture = new XWPFPicture(pict, this);
@@ -175,7 +175,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     private List<CTPicture> getCTPictures(XmlObject o) {
-        List<CTPicture> pics = new ArrayList<CTPicture>();
+        List<CTPicture> pics = new ArrayList<>();
         XmlObject[] picts = o.selectPath("declare namespace pic='" + CTPicture.type.getName().getNamespaceURI() + "' .//pic:pic");
         for (XmlObject pict : picts) {
             if (pict instanceof XmlAnyTypeImpl) {

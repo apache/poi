@@ -66,7 +66,7 @@ public class TestPPTX2PNG {
     
     @Parameters(name="{0}")
     public static Collection<String> data() {
-        final Set<String> data = new TreeSet<String>();
+        final Set<String> data = new TreeSet<>();
         for (String f : files.split(", ?")) {
             if (basedir == null) {
                 data.add(f);

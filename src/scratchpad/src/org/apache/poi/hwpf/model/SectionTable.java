@@ -38,7 +38,7 @@ public class SectionTable
     private final static POILogger _logger = POILogFactory.getLogger(SectionTable.class);
     private static final int SED_SIZE = 12;
 
-    protected List<SEPX> _sections = new ArrayList<SEPX>();
+    protected List<SEPX> _sections = new ArrayList<>();
     protected List<TextPiece> _text;
 
     /** So we can know if things are unicode or not */

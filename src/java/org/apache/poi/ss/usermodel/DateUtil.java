@@ -333,8 +333,8 @@ public class DateUtil {
             return -1;
         }
     };
-    private static ThreadLocal<String> lastFormatString = new ThreadLocal<String>();
-    private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<Boolean>();
+    private static ThreadLocal<String> lastFormatString = new ThreadLocal<>();
+    private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
     
     private static boolean isCached(String formatString, int formatIndex) {
         String cachedFormatString = lastFormatString.get();

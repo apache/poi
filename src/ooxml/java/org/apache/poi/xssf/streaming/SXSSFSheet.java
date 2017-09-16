@@ -66,7 +66,7 @@ public class SXSSFSheet implements Sheet
 {
     /*package*/ final XSSFSheet _sh;
     private final SXSSFWorkbook _workbook;
-    private final TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
+    private final TreeMap<Integer,SXSSFRow> _rows= new TreeMap<>();
     private final SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     private final AutoSizeColumnTracker _autoSizeColumnTracker;

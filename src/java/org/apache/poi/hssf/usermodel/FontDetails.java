@@ -29,7 +29,7 @@ public class FontDetails
 {
     private String _fontName;
     private int _height;
-    private final Map<Character, Integer> charWidths = new HashMap<Character, Integer>();
+    private final Map<Character, Integer> charWidths = new HashMap<>();
 
     /**
      * Construct the font details with the given name and height.

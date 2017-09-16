@@ -67,7 +67,7 @@ public class DrawTextParagraph implements Drawable {
 
     protected TextParagraph<?,?,?> paragraph;
     double x, y;
-    protected List<DrawTextFragment> lines = new ArrayList<DrawTextFragment>();
+    protected List<DrawTextFragment> lines = new ArrayList<>();
     protected String rawText;
     protected DrawTextFragment bullet;
     protected int autoNbrIdx;
@@ -563,7 +563,7 @@ public class DrawTextParagraph implements Drawable {
     }
 
     protected AttributedString getAttributedString(Graphics2D graphics, StringBuilder text){
-        List<AttributedStringData> attList = new ArrayList<AttributedStringData>();
+        List<AttributedStringData> attList = new ArrayList<>();
         if (text == null) {
             text = new StringBuilder();
         }

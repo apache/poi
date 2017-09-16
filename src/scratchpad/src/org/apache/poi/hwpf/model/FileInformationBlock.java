@@ -234,7 +234,7 @@ public final class FileInformationBlock
          * fields FIBFieldHandler will load it content into
          * UnhandledDataStructure and save them on save.
          */
-        HashSet<Integer> knownFieldSet = new HashSet<Integer>();
+        HashSet<Integer> knownFieldSet = new HashSet<>();
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.STSHF ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.CLX ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.DOP ) );

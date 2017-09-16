@@ -54,7 +54,7 @@ public class HemfPlusExtractorTest {
 
         //test that the HemfCommentEMFPlus record at offset 1
         //contains 6 HemfCommentEMFPlus records within it
-        List<HemfPlusRecordType> expected = new ArrayList<HemfPlusRecordType>();
+        List<HemfPlusRecordType> expected = new ArrayList<>();
         expected.add(HemfPlusRecordType.setPixelOffsetMode);
         expected.add(HemfPlusRecordType.setAntiAliasMode);
         expected.add(HemfPlusRecordType.setCompositingQuality);

@@ -54,7 +54,7 @@ public class FileBackedDataSource extends DataSource {
    // See https://bz.apache.org/bugzilla/show_bug.cgi?id=58480, 
    // http://stackoverflow.com/questions/3602783/file-access-synchronized-on-java-object and
    // http://bugs.java.com/view_bug.do?bug_id=4724038 for related discussions
-   private List<ByteBuffer> buffersToClean = new ArrayList<ByteBuffer>();
+   private List<ByteBuffer> buffersToClean = new ArrayList<>();
 
    public FileBackedDataSource(File file) throws FileNotFoundException {
        this(newSrcFile(file, "r"), true);

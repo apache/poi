@@ -75,7 +75,7 @@ public final class CellUtil {
     public static final String WRAP_TEXT = "wrapText";
     
     private static final Set<String> shortValues = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+            new HashSet<>(Arrays.asList(
                     BOTTOM_BORDER_COLOR,
                     LEFT_BORDER_COLOR,
                     RIGHT_BORDER_COLOR,
@@ -86,20 +86,20 @@ public final class CellUtil {
                     DATA_FORMAT,
                     FONT,
                     ROTATION
-    )));
+            )));
     private static final Set<String> booleanValues = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+            new HashSet<>(Arrays.asList(
                     LOCKED,
                     HIDDEN,
                     WRAP_TEXT
-    )));
+            )));
     private static final Set<String> borderTypeValues = Collections.unmodifiableSet(
-            new HashSet<String>(Arrays.asList(
+            new HashSet<>(Arrays.asList(
                     BORDER_BOTTOM,
                     BORDER_LEFT,
                     BORDER_RIGHT,
                     BORDER_TOP
-    )));
+            )));
     
 
 
@@ -334,7 +334,7 @@ public final class CellUtil {
      * @see #setFormatProperties(org.apache.poi.ss.usermodel.CellStyle, org.apache.poi.ss.usermodel.Workbook, java.util.Map)
      */
     private static Map<String, Object> getFormatProperties(CellStyle style) {
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         put(properties, ALIGNMENT, style.getAlignmentEnum());
         put(properties, VERTICAL_ALIGNMENT, style.getVerticalAlignmentEnum());
         put(properties, BORDER_BOTTOM, style.getBorderBottomEnum());

@@ -55,7 +55,7 @@ public final class PackageRelationshipCollection implements
     /**
      * A lookup of internal relationships to avoid
      */
-    private HashMap<String, PackageRelationship> internalRelationshipsByTargetName = new HashMap<String, PackageRelationship>();
+    private HashMap<String, PackageRelationship> internalRelationshipsByTargetName = new HashMap<>();
 
 
     /**
@@ -88,8 +88,8 @@ public final class PackageRelationshipCollection implements
      * Constructor.
      */
     PackageRelationshipCollection() {
-        relationshipsByID = new TreeMap<String, PackageRelationship>();
-        relationshipsByType = new TreeMap<String, PackageRelationship>();
+        relationshipsByID = new TreeMap<>();
+        relationshipsByType = new TreeMap<>();
     }
 
     /**
@@ -392,7 +392,7 @@ public final class PackageRelationshipCollection implements
      *         specified type contain in this collection.
      */
     public Iterator<PackageRelationship> iterator(String typeFilter) {
-        ArrayList<PackageRelationship> retArr = new ArrayList<PackageRelationship>();
+        ArrayList<PackageRelationship> retArr = new ArrayList<>();
         for (PackageRelationship rel : relationshipsByID.values()) {
             if (rel.getRelationshipType().equals(typeFilter))
                 retArr.add(rel);

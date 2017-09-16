@@ -27,7 +27,7 @@ import org.apache.poi.hslf.record.SlideAtom;
  * Title masters define the design template for slides with a Title Slide layout.
  */
 public final class HSLFTitleMaster extends HSLFMasterSheet {
-    private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
+    private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
 
     /**
      * Constructs a TitleMaster

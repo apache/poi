@@ -59,7 +59,7 @@ public class SettingExternalFunction {
                     return ErrorEval.NA;
                 }
             };
-            _functionsByName = new HashMap<String, FreeRefFunction>();
+            _functionsByName = new HashMap<>();
             _functionsByName.put("BDP", NA);
             _functionsByName.put("BDH", NA);
             _functionsByName.put("BDS", NA);

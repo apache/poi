@@ -47,12 +47,12 @@ public abstract class AbstractEscherHolderRecord extends Record implements Clone
 
     public AbstractEscherHolderRecord()
     {
-        escherRecords = new ArrayList<EscherRecord>();
+        escherRecords = new ArrayList<>();
     }
 
     public AbstractEscherHolderRecord(RecordInputStream in)
     {
-        escherRecords = new ArrayList<EscherRecord>();
+        escherRecords = new ArrayList<>();
         if (! DESERIALISE ) {
             rawDataContainer.concatenate(in.readRemainder());
         } else {

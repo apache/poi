@@ -68,12 +68,12 @@ public class SignatureConfig {
         void setSignatureConfig(SignatureConfig signatureConfig);        
     }
 
-    private ThreadLocal<OPCPackage> opcPackage = new ThreadLocal<OPCPackage>();
-    private ThreadLocal<XMLSignatureFactory> signatureFactory = new ThreadLocal<XMLSignatureFactory>();
-    private ThreadLocal<KeyInfoFactory> keyInfoFactory = new ThreadLocal<KeyInfoFactory>();
-    private ThreadLocal<Provider> provider = new ThreadLocal<Provider>();
+    private ThreadLocal<OPCPackage> opcPackage = new ThreadLocal<>();
+    private ThreadLocal<XMLSignatureFactory> signatureFactory = new ThreadLocal<>();
+    private ThreadLocal<KeyInfoFactory> keyInfoFactory = new ThreadLocal<>();
+    private ThreadLocal<Provider> provider = new ThreadLocal<>();
     
-    private List<SignatureFacet> signatureFacets = new ArrayList<SignatureFacet>();
+    private List<SignatureFacet> signatureFacets = new ArrayList<>();
     private HashAlgorithm digestAlgo = HashAlgorithm.sha1;
     private Date executionTime = new Date();
     private PrivateKey key;
@@ -156,7 +156,7 @@ public class SignatureConfig {
      * Map of namespace uris to prefix
      * If a mapping is specified, the corresponding elements will be prefixed
      */
-    Map<String,String> namespacePrefixes = new HashMap<String,String>();
+    Map<String,String> namespacePrefixes = new HashMap<>();
     
     /**
      * Inits and checks the config object.

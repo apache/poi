@@ -121,7 +121,7 @@ public final class TestXWPFSDT {
     public void testNewLinesBetweenRuns() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug55142.docx");
         List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
-        List<String> targs = new ArrayList<String>();
+        List<String> targs = new ArrayList<>();
         //these test newlines and tabs in paragraphs/body elements
         targs.add("Rich-text1 abcdefghi");
         targs.add("Rich-text2 abcd\t\tefgh");
@@ -152,7 +152,7 @@ public final class TestXWPFSDT {
 
     private List<AbstractXWPFSDT> extractAllSDTs(XWPFDocument doc) {
 
-        List<AbstractXWPFSDT> sdts = new ArrayList<AbstractXWPFSDT>();
+        List<AbstractXWPFSDT> sdts = new ArrayList<>();
 
         List<XWPFHeader> headers = doc.getHeaderList();
         for (XWPFHeader header : headers) {
@@ -175,7 +175,7 @@ public final class TestXWPFSDT {
     }
 
     private List<AbstractXWPFSDT> extractSDTsFromBodyElements(List<IBodyElement> elements) {
-        List<AbstractXWPFSDT> sdts = new ArrayList<AbstractXWPFSDT>();
+        List<AbstractXWPFSDT> sdts = new ArrayList<>();
         for (IBodyElement e : elements) {
             if (e instanceof XWPFSDT) {
                 XWPFSDT sdt = (XWPFSDT) e;
@@ -199,7 +199,7 @@ public final class TestXWPFSDT {
 
     private List<AbstractXWPFSDT> extractSDTsFromTable(XWPFTable table) {
 
-        List<AbstractXWPFSDT> sdts = new ArrayList<AbstractXWPFSDT>();
+        List<AbstractXWPFSDT> sdts = new ArrayList<>();
         for (XWPFTableRow r : table.getRows()) {
             for (ICell c : r.getTableICells()) {
                 if (c instanceof XWPFSDTCell) {

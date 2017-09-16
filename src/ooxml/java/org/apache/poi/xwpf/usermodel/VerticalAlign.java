@@ -47,7 +47,7 @@ public enum VerticalAlign {
      */
     SUBSCRIPT(3);
 
-    private static Map<Integer, VerticalAlign> imap = new HashMap<Integer, VerticalAlign>();
+    private static Map<Integer, VerticalAlign> imap = new HashMap<>();
 
     static {
         for (VerticalAlign p : values()) {

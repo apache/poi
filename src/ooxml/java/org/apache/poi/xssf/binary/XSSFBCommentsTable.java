@@ -36,9 +36,9 @@ import org.apache.poi.util.LittleEndian;
 @Internal
 public class XSSFBCommentsTable extends XSSFBParser {
 
-    private Map<CellAddress, XSSFBComment> comments = new TreeMap<CellAddress, XSSFBComment>();
-    private Queue<CellAddress> commentAddresses = new LinkedList<CellAddress>();
-    private List<String> authors = new ArrayList<String>();
+    private Map<CellAddress, XSSFBComment> comments = new TreeMap<>();
+    private Queue<CellAddress> commentAddresses = new LinkedList<>();
+    private List<String> authors = new ArrayList<>();
 
     //these are all used only during parsing, and they are mutable!
     private int authorId = -1;

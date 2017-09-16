@@ -51,7 +51,7 @@ public final class ObjRecord extends Record implements Cloneable {
 
 
 	public ObjRecord() {
-		subrecords = new ArrayList<SubRecord>(2);
+		subrecords = new ArrayList<>(2);
 		// TODO - ensure 2 sub-records (ftCmo 15h, and ftEnd 00h) are always created
 		_uninterpretedData = null;
 	}
@@ -84,7 +84,7 @@ public final class ObjRecord extends Record implements Cloneable {
 		}
         */
 
-		subrecords = new ArrayList<SubRecord>();
+		subrecords = new ArrayList<>();
 		ByteArrayInputStream bais = new ByteArrayInputStream(subRecordData);
 		LittleEndianInputStream subRecStream = new LittleEndianInputStream(bais);
 		CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)SubRecord.createSubRecord(subRecStream, 0);

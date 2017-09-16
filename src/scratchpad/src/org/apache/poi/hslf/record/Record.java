@@ -108,7 +108,7 @@ public abstract class Record
 	 * Default method for finding child records of a container record
 	 */
 	public static Record[] findChildRecords(byte[] b, int start, int len) {
-		List<Record> children = new ArrayList<Record>(5);
+		List<Record> children = new ArrayList<>(5);
 
 		// Jump our little way along, creating records as we go
 		int pos = start;

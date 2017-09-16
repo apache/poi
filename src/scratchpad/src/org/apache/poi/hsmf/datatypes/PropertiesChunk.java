@@ -58,7 +58,7 @@ public abstract class PropertiesChunk extends Chunk {
      * Holds properties, indexed by type. If a property is multi-valued, or
      * variable length, it will be held via a {@link ChunkBasedPropertyValue}.
      */
-    private Map<MAPIProperty, PropertyValue> properties = new HashMap<MAPIProperty, PropertyValue>();
+    private Map<MAPIProperty, PropertyValue> properties = new HashMap<>();
 
     /**
      * The ChunkGroup that these properties apply to. Used when matching chunks
@@ -95,7 +95,7 @@ public abstract class PropertiesChunk extends Chunk {
      */
     public Map<MAPIProperty, List<PropertyValue>> getProperties() {
         Map<MAPIProperty, List<PropertyValue>> props =
-            new HashMap<MAPIProperty, List<PropertyValue>>(properties.size());
+                new HashMap<>(properties.size());
         for (MAPIProperty prop : properties.keySet()) {
             props.put(prop, getValues(prop));
         }
@@ -135,7 +135,7 @@ public abstract class PropertiesChunk extends Chunk {
     protected void matchVariableSizedPropertiesToChunks() {
         // Index the Parent Group chunks for easy lookup
         // TODO Is this the right way?
-        Map<Integer, Chunk> chunks = new HashMap<Integer, Chunk>();
+        Map<Integer, Chunk> chunks = new HashMap<>();
         for (Chunk chunk : parentGroup.getChunks()) {
             chunks.put(chunk.getChunkId(), chunk);
         }

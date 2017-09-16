@@ -94,7 +94,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     }
 
     protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFSheet sheet){
-        List<XSLFShape> shapes = new ArrayList<XSLFShape>();
+        List<XSLFShape> shapes = new ArrayList<>();
         XmlCursor cur = spTree.newCursor();
         try {
             for (boolean b=cur.toFirstChild();b;b=cur.toNextSibling()) {
@@ -324,7 +324,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      */
     @Override
     public void clear() {
-        List<XSLFShape> shapes = new ArrayList<XSLFShape>(getShapes());
+        List<XSLFShape> shapes = new ArrayList<>(getShapes());
         for(XSLFShape shape : shapes){
             removeShape(shape);
         }
@@ -472,9 +472,9 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
     void initPlaceholders() {
         if(_placeholders == null) {
-            _placeholders = new ArrayList<XSLFTextShape>();
-            _placeholderByIdMap = new HashMap<Integer, XSLFSimpleShape>();
-            _placeholderByTypeMap = new HashMap<Integer, XSLFSimpleShape>();
+            _placeholders = new ArrayList<>();
+            _placeholderByIdMap = new HashMap<>();
+            _placeholderByTypeMap = new HashMap<>();
 
             for(XSLFShape sh : getShapes()){
                 if(sh instanceof XSLFTextShape){

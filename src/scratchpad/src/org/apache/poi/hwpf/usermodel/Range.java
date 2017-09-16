@@ -167,7 +167,7 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = _doc.getParagraphTable().getParagraphs();
 		_characters = _doc.getCharacterTable().getTextRuns();
 		_text = _doc.getText();
-		_parent = new WeakReference<Range>(null);
+		_parent = new WeakReference<>(null);
 
 		sanityCheckStartEnd();
 	}
@@ -190,7 +190,7 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = parent._paragraphs;
 		_characters = parent._characters;
 		_text = parent._text;
-		_parent = new WeakReference<Range>(parent);
+		_parent = new WeakReference<>(parent);
 
 		sanityCheckStartEnd();
 		sanityCheck();

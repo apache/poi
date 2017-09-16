@@ -157,7 +157,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         }
     }
 
-    private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<String>();
+    private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<>();
     static {
         // expected sheet-id not found
         // EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/52348.xlsx");

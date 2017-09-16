@@ -34,7 +34,7 @@ import org.w3c.dom.events.MutationEvent;
  * e.g. to register id attributes or set prefixes for registered namespaces
  */
 public class SignatureMarshalListener implements EventListener, SignatureConfigurable {
-    ThreadLocal<EventTarget> target = new ThreadLocal<EventTarget>();
+    ThreadLocal<EventTarget> target = new ThreadLocal<>();
     SignatureConfig signatureConfig;
     public void setEventTarget(EventTarget target) {
         this.target.set(target);

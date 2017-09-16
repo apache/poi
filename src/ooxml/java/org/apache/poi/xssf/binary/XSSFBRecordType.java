@@ -82,7 +82,7 @@ public enum XSSFBRecordType {
     Unimplemented(-1);
 
     private static final Map<Integer, XSSFBRecordType> TYPE_MAP =
-            new HashMap<Integer, XSSFBRecordType>();
+            new HashMap<>();
 
     static {
         for (XSSFBRecordType type : XSSFBRecordType.values()) {

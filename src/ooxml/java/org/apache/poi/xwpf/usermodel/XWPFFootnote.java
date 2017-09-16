@@ -32,10 +32,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 
 public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
-    private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
-    private List<XWPFTable> tables = new ArrayList<XWPFTable>();
-    private List<XWPFPictureData> pictures = new ArrayList<XWPFPictureData>();
-    private List<IBodyElement> bodyElements = new ArrayList<IBodyElement>();
+    private List<XWPFParagraph> paragraphs = new ArrayList<>();
+    private List<XWPFTable> tables = new ArrayList<>();
+    private List<XWPFPictureData> pictures = new ArrayList<>();
+    private List<IBodyElement> bodyElements = new ArrayList<>();
 
     private CTFtnEdn ctFtnEdn;
     private XWPFFootnotes footnotes;

@@ -54,7 +54,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 		// TODO: still fails on some records... RecordsStresser.handleWorkbook(wb);
 	}
 
-	private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<String>();
+	private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<>();
 	static {
 		// encrypted
 		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/35897-type4.xls");

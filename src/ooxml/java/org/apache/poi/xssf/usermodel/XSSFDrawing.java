@@ -482,7 +482,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * Returns all charts in this drawing.
      */
     public List<XSSFChart> getCharts() {
-       List<XSSFChart> charts = new ArrayList<XSSFChart>();
+       List<XSSFChart> charts = new ArrayList<>();
        for(POIXMLDocumentPart part : getRelations()) {
           if(part instanceof XSSFChart) {
              charts.add((XSSFChart)part);
@@ -549,7 +549,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * @return list of shapes in this drawing
      */
     public List<XSSFShape> getShapes(){
-        List<XSSFShape> lst = new ArrayList<XSSFShape>();
+        List<XSSFShape> lst = new ArrayList<>();
         XmlCursor cur = drawing.newCursor();
         try {
             if (cur.toFirstChild()) {
@@ -565,7 +565,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * @return list of shapes in this shape group
      */
     public List<XSSFShape> getShapes(XSSFShapeGroup groupshape){
-        List<XSSFShape> lst = new ArrayList<XSSFShape>();
+        List<XSSFShape> lst = new ArrayList<>();
         XmlCursor cur = groupshape.getCTGroupShape().newCursor();
         try {
             addShapes(cur, lst);

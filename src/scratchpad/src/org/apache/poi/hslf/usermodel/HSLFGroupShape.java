@@ -274,7 +274,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     public List<HSLFShape> getShapes() {
         // Our escher container record should contain several
         // SpContainers, the first of which is the group shape itself
-        List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
+        List<HSLFShape> shapeList = new ArrayList<>();
         boolean isFirst = true;
         for (EscherRecord r : getSpContainer()) {
             if (isFirst) {

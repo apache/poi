@@ -35,7 +35,7 @@ public final class SectionSprmCompressor
     public static byte[] compressSectionProperty(SectionProperties newSEP)
     {
         int size = 0;
-        List<byte[]> sprmList = new ArrayList<byte[]>();
+        List<byte[]> sprmList = new ArrayList<>();
 
         if (newSEP.getCnsPgn() != DEFAULT_SEP.getCnsPgn())
         {

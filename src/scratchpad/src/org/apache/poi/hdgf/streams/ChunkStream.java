@@ -47,7 +47,7 @@ public final class ChunkStream extends Stream {
 	 * Process the contents of the stream out into chunks
 	 */
 	public void findChunks() {
-		ArrayList<Chunk> chunksA = new ArrayList<Chunk>();
+		ArrayList<Chunk> chunksA = new ArrayList<>();
 
 		if(getPointer().getOffset() == 0x64b3) {
 			int i = 0;

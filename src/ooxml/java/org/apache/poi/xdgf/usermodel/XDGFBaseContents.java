@@ -49,9 +49,9 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     protected PageContentsType _pageContents;
 
     // shapes without parents
-    protected List<XDGFShape> _toplevelShapes = new ArrayList<XDGFShape>();
-    protected Map<Long, XDGFShape> _shapes = new HashMap<Long, XDGFShape>();
-    protected List<XDGFConnection> _connections = new ArrayList<XDGFConnection>();
+    protected List<XDGFShape> _toplevelShapes = new ArrayList<>();
+    protected Map<Long, XDGFShape> _shapes = new HashMap<>();
+    protected List<XDGFConnection> _connections = new ArrayList<>();
 
     /**
      * @since POI 3.14-Beta1

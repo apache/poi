@@ -48,7 +48,7 @@ public final class StyleTextProp9Atom extends RecordAtom {
      */
     protected StyleTextProp9Atom(byte[] source, int start, int len) {
         // Get the header.
-        final List<TextPFException9> schemes = new LinkedList<TextPFException9>();
+        final List<TextPFException9> schemes = new LinkedList<>();
         header = new byte[8];
         System.arraycopy(source,start, header,0,8);
         this.version  = LittleEndian.getShort(header, 0);

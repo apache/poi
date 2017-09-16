@@ -24,7 +24,7 @@ public final class Biff8EncryptionKey {
 	 * using a {@link ThreadLocal} in order to avoid further overloading the various public APIs
 	 * (e.g. {@link HSSFWorkbook}) that need this functionality.
 	 */
-	private static final ThreadLocal<String> _userPasswordTLS = new ThreadLocal<String>();
+	private static final ThreadLocal<String> _userPasswordTLS = new ThreadLocal<>();
 
 	/**
 	 * Sets the BIFF8 encryption/decryption password for the current thread.

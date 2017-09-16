@@ -98,7 +98,7 @@ public class ToHtml {
 
     @SuppressWarnings({"unchecked"})
     private static <K, V> Map<K, V> mapFor(Object... mapping) {
-        Map<K, V> map = new HashMap<K, V>();
+        Map<K, V> map = new HashMap<>();
         for (int i = 0; i < mapping.length; i += 2) {
             map.put((K) mapping[i], (V) mapping[i + 1]);
         }
@@ -260,7 +260,7 @@ public class ToHtml {
         }
 
         // now add css for each used style
-        Set<CellStyle> seen = new HashSet<CellStyle>();
+        Set<CellStyle> seen = new HashSet<>();
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             Sheet sheet = wb.getSheetAt(i);
             Iterator<Row> rows = sheet.rowIterator();

@@ -52,7 +52,7 @@ public final class PageSettingsBlock extends RecordAggregate {
         public PLSAggregate(RecordStream rs) {
             _pls = rs.getNext();
             if (rs.peekNextSid()==ContinueRecord.sid) {
-                List<ContinueRecord> temp = new ArrayList<ContinueRecord>();
+                List<ContinueRecord> temp = new ArrayList<>();
                 while (rs.peekNextSid()==ContinueRecord.sid) {
                     temp.add((ContinueRecord)rs.getNext());
                 }
@@ -93,11 +93,11 @@ public final class PageSettingsBlock extends RecordAggregate {
      * The indicator of such records is a non-zero GUID,
      *  see {@link  org.apache.poi.hssf.record.HeaderFooterRecord#getGuid()}
      */
-    private final List<HeaderFooterRecord> _sviewHeaderFooters = new ArrayList<HeaderFooterRecord>();
+    private final List<HeaderFooterRecord> _sviewHeaderFooters = new ArrayList<>();
     private Record _printSize;
 
     public PageSettingsBlock(RecordStream rs) {
-        _plsRecords = new ArrayList<PLSAggregate>();
+        _plsRecords = new ArrayList<>();
         while(true) {
             if (!readARecord(rs)) {
                 break;
@@ -109,7 +109,7 @@ public final class PageSettingsBlock extends RecordAggregate {
      * Creates a PageSettingsBlock with default settings
      */
     public PageSettingsBlock() {
-        _plsRecords = new ArrayList<PLSAggregate>();
+        _plsRecords = new ArrayList<>();
         _rowBreaksRecord = new HorizontalPageBreakRecord();
         _columnBreaksRecord = new VerticalPageBreakRecord();
         _header = new HeaderRecord("");
@@ -482,7 +482,7 @@ public final class PageSettingsBlock extends RecordAggregate {
     private static void shiftBreaks(PageBreakRecord breaks, int start, int stop, int count) {
 
         Iterator<PageBreakRecord.Break> iterator = breaks.getBreaksIterator();
-        List<PageBreakRecord.Break> shiftedBreak = new ArrayList<PageBreakRecord.Break>();
+        List<PageBreakRecord.Break> shiftedBreak = new ArrayList<>();
         while(iterator.hasNext())
         {
             PageBreakRecord.Break breakItem = iterator.next();
@@ -672,9 +672,9 @@ public final class PageSettingsBlock extends RecordAggregate {
     public void positionRecords(List<RecordBase> sheetRecords) {
         // Take a copy to loop over, so we can update the real one
         //  without concurrency issues
-        List<HeaderFooterRecord> hfRecordsToIterate = new ArrayList<HeaderFooterRecord>(_sviewHeaderFooters);
+        List<HeaderFooterRecord> hfRecordsToIterate = new ArrayList<>(_sviewHeaderFooters);
 
-        final Map<String, HeaderFooterRecord> hfGuidMap = new HashMap<String, HeaderFooterRecord>();
+        final Map<String, HeaderFooterRecord> hfGuidMap = new HashMap<>();
 
         for(final HeaderFooterRecord hf : hfRecordsToIterate) {
             hfGuidMap.put(HexDump.toHex(hf.getGuid()), hf);
