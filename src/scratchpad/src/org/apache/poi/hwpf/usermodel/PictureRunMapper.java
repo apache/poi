@@ -45,7 +45,7 @@ public class PictureRunMapper {
     private Map<Integer, Picture> lookup;
     private List<Picture> nonU1based;
     private List<Picture> all;
-    private int pn = 0;
+    private int pn;
 
     public PictureRunMapper(HWPFDocument doc) {
         picturesTable = doc.getPicturesTable();

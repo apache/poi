@@ -57,7 +57,7 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
     /**
      * A default instance of CTShape used for creating new shapes.
      */
-    private static CTShape prototype = null;
+    private static CTShape prototype;
 
     private CTOleObject oleObject;
 

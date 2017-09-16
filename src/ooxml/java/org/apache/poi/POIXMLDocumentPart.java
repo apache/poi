@@ -93,7 +93,7 @@ public class POIXMLDocumentPart {
      * Counter that provides the amount of incoming relations from other parts
      * to this part.
      */
-    private int relationCounter = 0;
+    private int relationCounter;
 
     int incrementRelationCounter() {
         relationCounter++;

@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndian;
 public class EscherColorRef {
     @SuppressWarnings("unused")
     private int opid = -1;
-    private int colorRef = 0;
+    private int colorRef;
 
     public enum SysIndexSource {
         /** Use the fill color of the shape. */

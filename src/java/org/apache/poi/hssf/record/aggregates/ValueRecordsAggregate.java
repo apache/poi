@@ -307,8 +307,8 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 	 */
 	class ValueIterator implements Iterator<CellValueRecordInterface> {
 
-		int curRowIndex = 0, curColIndex = -1;
-		int nextRowIndex = 0, nextColIndex = -1;
+		int curRowIndex, curColIndex = -1;
+		int nextRowIndex, nextColIndex = -1;
 
 		public ValueIterator() {
 			getNextPos();

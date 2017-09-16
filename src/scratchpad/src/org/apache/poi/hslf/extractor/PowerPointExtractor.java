@@ -58,9 +58,9 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
    private final List<HSLFSlide> _slides;
 
    private boolean _slidesByDefault = true;
-   private boolean _notesByDefault = false;
-   private boolean _commentsByDefault = false;
-   private boolean _masterByDefault = false;
+   private boolean _notesByDefault;
+   private boolean _commentsByDefault;
+   private boolean _masterByDefault;
 
 	/**
 	 * Basic extractor. Returns all the text, and optionally all the notes

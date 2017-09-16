@@ -83,7 +83,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * Root element of the SpreadsheetML Drawing part
      */
     private CTDrawing drawing;
-    private long numOfGraphicFrames = 0L;
+    private long numOfGraphicFrames;
 
     protected static final String NAMESPACE_A = XSSFRelation.NS_DRAWINGML;
     protected static final String NAMESPACE_C = XSSFRelation.NS_CHART;

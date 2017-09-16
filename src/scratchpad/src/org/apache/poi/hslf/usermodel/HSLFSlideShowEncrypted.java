@@ -56,7 +56,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
     DocumentEncryptionAtom dea;
     EncryptionInfo _encryptionInfo;
 //    Cipher cipher = null;
-    ChunkedCipherOutputStream cyos = null;
+    ChunkedCipherOutputStream cyos;
 
     private static final BitField fieldRecInst = new BitField(0xFFF0);
 

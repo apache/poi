@@ -40,10 +40,10 @@ public class XDGFDocument {
     Map<Long, XDGFStyleSheet> _styleSheets = new HashMap<Long, XDGFStyleSheet>();
 
     // defaults
-    long _defaultFillStyle = 0;
-    long _defaultGuideStyle = 0;
-    long _defaultLineStyle = 0;
-    long _defaultTextStyle = 0;
+    long _defaultFillStyle;
+    long _defaultGuideStyle;
+    long _defaultLineStyle;
+    long _defaultTextStyle;
 
 
     public XDGFDocument(VisioDocumentType document) {

@@ -35,7 +35,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public final class PublisherTextExtractor extends POIOLE2TextExtractor {
    private HPBFDocument doc;
-   private boolean hyperlinksByDefault = false;
+   private boolean hyperlinksByDefault;
 
    public PublisherTextExtractor(HPBFDocument doc) {
       super(doc);

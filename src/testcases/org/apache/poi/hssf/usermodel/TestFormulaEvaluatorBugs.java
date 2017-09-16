@@ -51,7 +51,7 @@ import org.junit.Test;
  *
  */
 public final class TestFormulaEvaluatorBugs {
-    private static boolean OUTPUT_TEST_FILES = false;
+    private static boolean OUTPUT_TEST_FILES;
     private static String tmpDirName;
 
     @BeforeClass

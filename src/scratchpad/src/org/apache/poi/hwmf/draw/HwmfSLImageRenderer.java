@@ -39,8 +39,8 @@ import org.apache.poi.util.Units;
  * via reflection
  */
 public class HwmfSLImageRenderer implements ImageRenderer {
-    HwmfPicture image = null;
-    double alpha = 0;
+    HwmfPicture image;
+    double alpha;
     
     @Override
     public void loadImage(InputStream data, String contentType) throws IOException {

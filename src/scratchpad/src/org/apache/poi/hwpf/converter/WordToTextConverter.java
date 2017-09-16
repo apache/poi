@@ -126,9 +126,9 @@ public class WordToTextConverter extends AbstractWordConverter
 
     private AtomicInteger noteCounters = new AtomicInteger( 1 );
 
-    private Element notes = null;
+    private Element notes;
 
-    private boolean outputSummaryInformation = false;
+    private boolean outputSummaryInformation;
 
     private final TextDocumentFacade textDocumentFacade;
 

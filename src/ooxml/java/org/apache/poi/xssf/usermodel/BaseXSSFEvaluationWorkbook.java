@@ -56,7 +56,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 
     // lazily populated. This should only be accessed through getTableCache
     // keys are lower-case to make this a quasi-case-insensitive map
-    private Map<String, XSSFTable> _tableCache = null;
+    private Map<String, XSSFTable> _tableCache;
 
 
     protected BaseXSSFEvaluationWorkbook(XSSFWorkbook book) {

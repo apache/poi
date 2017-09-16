@@ -42,7 +42,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 public class FormulaViewer
 {
     private String file;
-    private boolean list=false;
+    private boolean list;
 
     /** Creates new FormulaViewer */
 

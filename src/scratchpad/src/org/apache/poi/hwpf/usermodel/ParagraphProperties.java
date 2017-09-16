@@ -23,7 +23,7 @@ public final class ParagraphProperties extends PAPAbstractType implements
         Cloneable
 {
 
-    private boolean jcLogical = false;
+    private boolean jcLogical;
 
     public ParagraphProperties()
     {

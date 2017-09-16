@@ -46,7 +46,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     /**
      * A default instance of CTShape used for creating new shapes.
      */
-    private static CTShape prototype = null;
+    private static CTShape prototype;
 
     /**
      *  Xml bean that stores properties of this shape

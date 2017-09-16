@@ -35,7 +35,7 @@ public final class HSSFDataValidation implements DataValidation {
 
 	private int _errorStyle = ErrorStyle.STOP;
 	private boolean _emptyCellAllowed = true;
-	private boolean _suppress_dropdown_arrow = false;
+	private boolean _suppress_dropdown_arrow;
 	private boolean _showPromptBox = true;
 	private boolean _showErrorBox = true;
 	private CellRangeAddressList _regions;

@@ -109,7 +109,7 @@ public class WordToFoConverter extends AbstractWordConverter
 
     private AtomicInteger internalLinkCounter = new AtomicInteger( 0 );
 
-    private boolean outputCharactersLanguage = false;
+    private boolean outputCharactersLanguage;
 
     private Set<String> usedIds = new LinkedHashSet<String>();
 

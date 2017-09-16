@@ -40,7 +40,7 @@ import com.microsoft.schemas.office.visio.x2012.main.SectionType;
 
 public class GeometrySection extends XDGFSection {
 
-    GeometrySection _master = null;
+    GeometrySection _master;
 
     // rows
     SortedMap<Long, GeometryRow> _rows = new TreeMap<Long, GeometryRow>();

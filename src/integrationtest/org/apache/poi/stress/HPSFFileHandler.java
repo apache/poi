@@ -46,7 +46,7 @@ import org.junit.Test;
 public class HPSFFileHandler extends POIFSFileHandler {
     private static final String NL = System.getProperty("line.separator");
     
-    private static File copyOutput = null;
+    private static File copyOutput;
     
     static final Set<String> EXCLUDES_HANDLE_ADD = unmodifiableHashSet(
         "spreadsheet/45290.xls",
@@ -92,8 +92,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
 	    try {
 	        return PropertySet.isPropertySetStream(dis);
 	    } finally {
-	        dis.close();;
-	    }
+	        dis.close();
+        }
 	}
 	
     @Override

@@ -34,7 +34,7 @@ public final class CompressedStreamStore extends StreamStore {
 	 *  real contents in the de-compressed data
 	 */
 	private byte[] blockHeader = new byte[4];
-	private boolean blockHeaderInContents = false;
+	private boolean blockHeaderInContents;
 
 	protected byte[] _getCompressedContents() { return compressedContents; }
 	protected byte[] _getBlockHeader() { return blockHeader; }

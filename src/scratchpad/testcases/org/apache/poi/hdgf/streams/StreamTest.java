@@ -26,7 +26,7 @@ import org.apache.poi.hdgf.pointers.Pointer;
 public abstract class StreamTest {
     public static class TestPointer extends Pointer {
         private final boolean compressed;
-        protected boolean hasPointers = false;
+        protected boolean hasPointers;
         public TestPointer(boolean compressed, int offset, int length, int type, short format) {
             this.compressed = compressed;
             setOffset(offset);

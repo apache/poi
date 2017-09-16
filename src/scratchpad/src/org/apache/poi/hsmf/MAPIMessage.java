@@ -85,7 +85,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
    private RecipientChunks[] recipientChunks;
    private AttachmentChunks[] attachmentChunks;
 
-   private boolean returnNullOnMissingChunk = false;
+   private boolean returnNullOnMissingChunk;
 
    /**
     * Constructor for creating new files.

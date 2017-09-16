@@ -35,7 +35,7 @@ import org.apache.poi.util.BitFieldFactory;
 public class HSLFFontInfo implements FontInfo {
 
     public enum FontRenderType {
-        raster, device, truetype;
+        raster, device, truetype
     }
     
     /** A bit that specifies whether a subset of this font is embedded. */
@@ -51,7 +51,7 @@ public class HSLFFontInfo implements FontInfo {
     private FontRenderType renderType = FontRenderType.truetype;
     private FontFamily family = FontFamily.FF_SWISS;
     private FontPitch pitch = FontPitch.VARIABLE;
-    private boolean isSubsetted = false;
+    private boolean isSubsetted;
     private boolean isSubstitutable = true;
 
     /**

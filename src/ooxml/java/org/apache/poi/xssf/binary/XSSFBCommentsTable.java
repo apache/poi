@@ -42,9 +42,9 @@ public class XSSFBCommentsTable extends XSSFBParser {
 
     //these are all used only during parsing, and they are mutable!
     private int authorId = -1;
-    private CellAddress cellAddress = null;
-    private XSSFBCellRange cellRange = null;
-    private String comment = null;
+    private CellAddress cellAddress;
+    private XSSFBCellRange cellRange;
+    private String comment;
     private StringBuilder authorBuffer = new StringBuilder();
 
 

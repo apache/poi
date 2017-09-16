@@ -34,7 +34,7 @@ public class XDGFPage {
     private PageType _page;
     protected XDGFPageContents _content;
     protected XDGFPages _pages;
-    protected XDGFSheet _pageSheet = null;
+    protected XDGFSheet _pageSheet;
 
     public XDGFPage(PageType page, XDGFPageContents content,
             XDGFDocument document, XDGFPages pages) {

@@ -512,8 +512,8 @@ public class InCellLists {
      */
     public final class MultiLevelListItem {
 
-        private String itemText = null;
-        private ArrayList<String> lowerLevelItems = null;
+        private String itemText;
+        private ArrayList<String> lowerLevelItems;
 
         /**
          * Create a new instance of the MultiLevelListItem class using the

@@ -42,7 +42,7 @@ import org.junit.Test;
 public class TestDrawPictureShape {
     final static POIDataSamples ssSamples = POIDataSamples.getSlideShowInstance();
 
-    private static boolean xslfOnly = false;
+    private static boolean xslfOnly;
 
     @BeforeClass
     public static void checkHslf() {

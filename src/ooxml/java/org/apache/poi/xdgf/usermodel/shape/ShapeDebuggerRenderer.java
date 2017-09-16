@@ -25,7 +25,7 @@ import org.apache.poi.xdgf.usermodel.XDGFShape;
 
 public class ShapeDebuggerRenderer extends ShapeRenderer {
 
-    ShapeVisitorAcceptor _debugAcceptor = null;
+    ShapeVisitorAcceptor _debugAcceptor;
 
     public ShapeDebuggerRenderer() {
         super();

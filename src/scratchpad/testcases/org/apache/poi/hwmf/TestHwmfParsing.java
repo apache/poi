@@ -158,7 +158,7 @@ public class TestHwmfParsing {
         outdir.mkdirs();
         final String startFile = "";
         File files[] = indir.listFiles(new FileFilter() {
-            boolean foundStartFile = false;
+            boolean foundStartFile;
             @Override
             public boolean accept(File pathname) {
                 foundStartFile |= startFile.isEmpty() || pathname.getName().contains(startFile);

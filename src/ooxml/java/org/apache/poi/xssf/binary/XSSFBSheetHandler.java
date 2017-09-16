@@ -47,9 +47,9 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
     private int lastEndedRow = -1;
     private int lastStartedRow = -1;
-    private int currentRow = 0;
+    private int currentRow;
     private byte[] rkBuffer = new byte[8];
-    private XSSFBCellRange hyperlinkCellRange = null;
+    private XSSFBCellRange hyperlinkCellRange;
     private StringBuilder xlWideStringBuffer = new StringBuilder();
 
     private final XSSFBCellHeader cellBuffer = new XSSFBCellHeader();

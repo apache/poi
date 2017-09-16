@@ -33,30 +33,30 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class NURBSTo implements GeometryRow {
 
-    NURBSTo _master = null;
+    NURBSTo _master;
 
     // The x-coordinate of the last control point of a NURBS.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of the last control point of a NURBS.
-    Double y = null;
+    Double y;
 
     // The second to the last knot of the NURBS.
-    Double a = null;
+    Double a;
 
     // The last weight of the NURBS.
-    Double b = null;
+    Double b;
 
     // The first knot of the NURBS.
-    Double c = null;
+    Double c;
 
     // The first weight of the NURBS.
-    Double d = null;
+    Double d;
 
     // A NURBS formula.
-    String e = null;
+    String e;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

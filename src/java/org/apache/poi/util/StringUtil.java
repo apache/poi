@@ -315,7 +315,7 @@ public class StringUtil {
     */
    public static class StringsIterator implements Iterator<String> {
       private String[] strings = {};
-      private int position = 0;
+      private int position;
       public StringsIterator(String[] strings) {
           if (strings != null) {
               this.strings = strings.clone();

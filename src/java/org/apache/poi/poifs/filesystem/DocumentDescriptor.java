@@ -30,7 +30,7 @@ public class DocumentDescriptor
 {
     private POIFSDocumentPath path;
     private String            name;
-    private int               hashcode = 0;
+    private int               hashcode;
 
     /**
      * Trivial constructor

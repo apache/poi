@@ -30,18 +30,18 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
  */
 public class SplineKnot implements GeometryRow {
 
-    SplineKnot _master = null;
+    SplineKnot _master;
 
     // The x-coordinate of a control point.
-    Double x = null;
+    Double x;
 
     // The y-coordinate of a control point.
-    Double y = null;
+    Double y;
 
     // One of the spline's knots (other than the last one or the first two).
-    Double a = null;
+    Double a;
 
-    Boolean deleted = null;
+    Boolean deleted;
 
     // TODO: support formulas
 

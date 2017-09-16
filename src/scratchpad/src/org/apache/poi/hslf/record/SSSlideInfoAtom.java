@@ -118,18 +118,18 @@ public class SSSlideInfoAtom extends RecordAtom {
      * before advancing to the next presentation slide. It MUST be greater than or equal to 0 and
      * less than or equal to 86399000. It MUST be ignored unless AUTO_ADVANCE_BIT is TRUE.
      */
-    private int _slideTime = 0;
+    private int _slideTime;
     
     /**
      * A SoundIdRef that specifies which sound to play when the transition starts. 
      */
-    private int _soundIdRef = 0;
+    private int _soundIdRef;
 
     /**
      * A byte that specifies the variant of effectType. In combination of the effectType
      * there are further restriction and specification of this field.
      */
-    private short _effectDirection = 0; // byte
+    private short _effectDirection; // byte
     
     /**
      * A byte that specifies which transition is used when transitioning to the
@@ -137,18 +137,18 @@ public class SSSlideInfoAtom extends RecordAtom {
      * determined by the rendering application. As such, the same transition can have
      * many variations depending on the implementation.
      */
-    private short _effectType = 0; // byte
+    private short _effectType; // byte
     
     /**
      * Various flags - see bitmask for more details
      */
-    private short _effectTransitionFlags = 0;
+    private short _effectTransitionFlags;
     
     /**
      * A byte value that specifies how long the transition takes to run.
      * (0x00 = 0.75 seconds, 0x01 = 0.5 seconds, 0x02 = 0.25 seconds) 
      */
-    private short _speed = 0; // byte
+    private short _speed; // byte
     private byte[] _unused; // 3-byte
 
     public SSSlideInfoAtom() {

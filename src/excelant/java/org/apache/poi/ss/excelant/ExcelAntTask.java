@@ -37,7 +37,7 @@ public class ExcelAntTask extends Task {
 	
 	private String excelFileName ;
 	
-	private boolean failOnError = false  ;
+	private boolean failOnError;
 	
 	private ExcelAntWorkbookUtil workbookUtil ;
 	

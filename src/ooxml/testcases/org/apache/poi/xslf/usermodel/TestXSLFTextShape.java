@@ -49,7 +49,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 public class TestXSLFTextShape {
-    private static boolean xslfOnly = false;
+    private static boolean xslfOnly;
 
     @BeforeClass
     public static void checkHslf() {

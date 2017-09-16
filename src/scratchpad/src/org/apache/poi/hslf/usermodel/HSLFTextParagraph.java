@@ -103,7 +103,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     private StyleTextProp9Atom styleTextProp9Atom;
 
-    private boolean _dirty = false;
+    private boolean _dirty;
 
     private final List<HSLFTextParagraph> parentList;
 
