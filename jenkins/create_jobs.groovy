@@ -18,13 +18,13 @@ def xercesUrl = 'http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImp
 def xercesLib = 'compile-lib/xercesImpl-2.6.1.jar'
 
 def poijobs = [
-        [ name: 'POI-DSL-1.6',
+        [ name: 'POI-DSL-1.6', jdk: '1.6',
           // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
           // as part of the Ant build
           addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}",
           disabled: true
         ],
-        [ name: 'POI-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *'
+        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
           // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
@@ -61,17 +61,17 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
-        [ name: 'POI-DSL-API-Check', jdk: '1.8', trigger: '@daily', apicheck: true
+        [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true
         ],
-        [ name: 'POI-DSL-Gradle', jdk: '1.8', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
+        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
           // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
           addShell: 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml'
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-SonarQube', jdk: '1.8', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.8', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
           addShell: "@if not exist ${findbugs2Lib} powershell -Command wget -Uri \"${findbugs2Url}\" -OutFile ${findbugs2Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
@@ -81,12 +81,12 @@ def poijobs = [
           addShell: "@if not exist ${findbugs3Lib} powershell -Command wget -Uri \"${findbugs3Url}\" -OutFile ${findbugs3Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.8', jdk: '1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
+        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
 ]
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
-def defaultJdk = '1.6'
+def defaultJdk = '1.8'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9.9'
@@ -417,13 +417,13 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'JDK 9 b181',
                 'JDK 9 b181 (unlimited security)'
         )
-        label(
-                'beam1,beam2,beam3,beam4,beam5,beam6,beam7,beam8,' +
-                'freebsd1,' +
-                'H0,H1,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H2,H20,H21,H22,H23,H24,H25,H26,H27,H3,H4,H5,H6,H7,H8,H9,' +
-                'qnode1,qnode2,qnode3,' +
-                'ubuntu-1,ubuntu-2,ubuntu-4,ubuntu-5,ubuntu-6,ubuntu-eu2,ubuntu-eu3,ubuntu-ppc64le,ubuntu-us1,' +
-                'windows-2012-1,windows-2012-2,windows-2012-3'
+        label('Nodes',
+                'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8',
+                'freebsd1',
+                'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19','H2','H20','H21','H22','H23','H24','H25','H26','H27','H3','H4','H5','H6','H7','H8','H9',
+                'qnode1','qnode2','qnode3',
+                'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-5','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
+                'windows-2012-1','windows-2012-2','windows-2012-3'
         )
     }
     steps {
