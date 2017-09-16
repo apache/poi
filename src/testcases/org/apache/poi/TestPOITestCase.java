@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.poi.POITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
-import org.apache.poi.xssf.usermodel.TextAlign;
 import org.apache.poi.xssf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;

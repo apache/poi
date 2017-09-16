@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
-import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
