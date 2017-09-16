@@ -47,7 +47,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
         byte certVerifier[];
     }
     
-    private List<AgileCertificateEntry> certList = new ArrayList<AgileCertificateEntry>();
+    private List<AgileCertificateEntry> certList = new ArrayList<>();
     private int keyBits = -1;
     private int blockSize = -1;
 
@@ -176,7 +176,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
     public AgileEncryptionVerifier clone() throws CloneNotSupportedException {
         AgileEncryptionVerifier other = (AgileEncryptionVerifier)super.clone();
         // TODO: deep copy of certList
-        other.certList = new ArrayList<AgileCertificateEntry>(certList);
+        other.certList = new ArrayList<>(certList);
         return other;
     }
     

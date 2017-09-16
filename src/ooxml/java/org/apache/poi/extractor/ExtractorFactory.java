@@ -326,9 +326,9 @@ public class ExtractorFactory {
      */
     public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, OpenXML4JException, XmlException {
         // All the embedded directories we spotted
-        ArrayList<Entry> dirs = new ArrayList<Entry>();
+        ArrayList<Entry> dirs = new ArrayList<>();
         // For anything else not directly held in as a POIFS directory
-        ArrayList<InputStream> nonPOIFS = new ArrayList<InputStream>();
+        ArrayList<InputStream> nonPOIFS = new ArrayList<>();
 
         // Find all the embedded directories
         DirectoryEntry root = ext.getRoot();
@@ -381,7 +381,7 @@ public class ExtractorFactory {
             return new POITextExtractor[0];
         }
 
-        ArrayList<POITextExtractor> textExtractors = new ArrayList<POITextExtractor>();
+        ArrayList<POITextExtractor> textExtractors = new ArrayList<>();
         for (Entry dir : dirs) {
             textExtractors.add(createExtractor((DirectoryNode) dir));
         }

@@ -206,7 +206,7 @@ public final class XSSFRowShifter extends RowShifter {
         for (int j = conditionalFormattingArray.length - 1; j >= 0; j--) {
             CTConditionalFormatting cf = conditionalFormattingArray[j];
 
-            ArrayList<CellRangeAddress> cellRanges = new ArrayList<CellRangeAddress>();
+            ArrayList<CellRangeAddress> cellRanges = new ArrayList<>();
             for (Object stRef : cf.getSqref()) {
                 String[] regions = stRef.toString().split(" ");
                 for (String region : regions) {
@@ -215,7 +215,7 @@ public final class XSSFRowShifter extends RowShifter {
             }
 
             boolean changed = false;
-            List<CellRangeAddress> temp = new ArrayList<CellRangeAddress>();
+            List<CellRangeAddress> temp = new ArrayList<>();
             for (CellRangeAddress craOld : cellRanges) {
                 CellRangeAddress craNew = shiftRange(shifter, craOld, sheetIndex);
                 if (craNew == null) {
@@ -234,7 +234,7 @@ public final class XSSFRowShifter extends RowShifter {
                     ctWorksheet.removeConditionalFormatting(j);
                     continue;
                 }
-                List<String> refs = new ArrayList<String>();
+                List<String> refs = new ArrayList<>();
                 for(CellRangeAddress a : temp) refs.add(a.formatAsString());
                 cf.setSqref(refs);
             }

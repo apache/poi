@@ -163,7 +163,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
             throw new IllegalStateException("spgr not found");
         }
 
-        List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
+        List<HSLFShape> shapeList = new ArrayList<>();
         boolean isFirst = true;
         for (EscherRecord r : spgr) {
             if (isFirst) {

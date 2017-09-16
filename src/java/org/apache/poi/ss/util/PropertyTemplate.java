@@ -63,7 +63,7 @@ public final class PropertyTemplate {
      * Create a PropertyTemplate object
      */
     public PropertyTemplate() {
-        _propertyTemplate = new HashMap<CellAddress, Map<String, Object>>();
+        _propertyTemplate = new HashMap<>();
     }
     
     /**
@@ -83,7 +83,7 @@ public final class PropertyTemplate {
     }
     
     private static Map<String, Object> cloneCellProperties(Map<String, Object> properties) {
-        Map<String, Object> newProperties = new HashMap<String, Object>(); 
+        Map<String, Object> newProperties = new HashMap<>();
         for(Map.Entry<String, Object> entry : properties.entrySet()) {
             newProperties.put(entry.getKey(), entry.getValue());
         }
@@ -411,7 +411,7 @@ public final class PropertyTemplate {
      * @parm range - {@link CellRangeAddress} range of cells to remove borders.
      */
     private void removeBorders(CellRangeAddress range) {
-        Set<String> properties = new HashSet<String>();
+        Set<String> properties = new HashSet<>();
         properties.add(CellUtil.BORDER_TOP);
         properties.add(CellUtil.BORDER_BOTTOM);
         properties.add(CellUtil.BORDER_LEFT);
@@ -758,7 +758,7 @@ public final class PropertyTemplate {
      * @parm range - {@link CellRangeAddress} range of cells to remove borders.
      */
     private void removeBorderColors(CellRangeAddress range) {
-        Set<String> properties = new HashSet<String>();
+        Set<String> properties = new HashSet<>();
         properties.add(CellUtil.TOP_BORDER_COLOR);
         properties.add(CellUtil.BOTTOM_BORDER_COLOR);
         properties.add(CellUtil.LEFT_BORDER_COLOR);
@@ -795,7 +795,7 @@ public final class PropertyTemplate {
         CellAddress cell = new CellAddress(row, col);
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
         if (cellProperties == null) {
-            cellProperties = new HashMap<String, Object>();
+            cellProperties = new HashMap<>();
         }
         cellProperties.put(property, value);
         _propertyTemplate.put(cell, cellProperties);

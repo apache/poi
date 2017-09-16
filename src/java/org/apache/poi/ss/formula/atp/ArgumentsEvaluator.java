@@ -82,7 +82,7 @@ final class ArgumentsEvaluator {
         if (arg instanceof StringEval) {
             return new double[]{ evaluateDateArg(arg, srcCellRow, srcCellCol) };
         } else if (arg instanceof AreaEvalBase) {
-            List<Double> valuesList = new ArrayList<Double>();
+            List<Double> valuesList = new ArrayList<>();
             AreaEvalBase area = (AreaEvalBase) arg;
             for (int i = area.getFirstRow(); i <= area.getLastRow(); i++) {
                 for (int j = area.getFirstColumn(); j <= area.getLastColumn(); j++) {

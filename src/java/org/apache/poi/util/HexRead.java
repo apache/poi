@@ -95,7 +95,7 @@ public class HexRead {
     {
         int characterCount = 0;
         byte b = (byte) 0;
-        List<Byte> bytes = new ArrayList<Byte>();
+        List<Byte> bytes = new ArrayList<>();
         final char a = 'a' - 10;
         final char A = 'A' - 10;
         while ( true ) {

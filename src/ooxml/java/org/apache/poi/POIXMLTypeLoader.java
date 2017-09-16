@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 @SuppressWarnings("deprecation")
 public class POIXMLTypeLoader {
 
-    private static ThreadLocal<SchemaTypeLoader> typeLoader = new ThreadLocal<SchemaTypeLoader>();
+    private static ThreadLocal<SchemaTypeLoader> typeLoader = new ThreadLocal<>();
 
     // TODO: Do these have a good home like o.a.p.openxml4j.opc.PackageNamespaces and PackageRelationshipTypes?
     // These constants should be common to all of POI and easy to use by other applications such as Tika
@@ -76,7 +76,7 @@ public class POIXMLTypeLoader {
         // when reading properties in separate workbooks in multiple threads
         // DEFAULT_XML_OPTIONS.setUnsynchronized();
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/chart", "c");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing", "wp");

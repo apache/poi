@@ -283,7 +283,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     @Beta
     public List<Integer> getRowLabelColumns() {
         if (pivotTableDefinition.getRowFields() != null) {
-            List<Integer> columnIndexes = new ArrayList<Integer>();
+            List<Integer> columnIndexes = new ArrayList<>();
             for (CTField f : pivotTableDefinition.getRowFields().getFieldArray()) {
                 columnIndexes.add(f.getX());
             }

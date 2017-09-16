@@ -77,7 +77,7 @@ public class CTPath2DCubicBezierTo {
      */
     public List<CTAdjPoint2D> getPt() {
         if (pt == null) {
-            pt = new ArrayList<CTAdjPoint2D>();
+            pt = new ArrayList<>();
         }
         return this.pt;
     }

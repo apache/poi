@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.poi.hssf.record.Record;
 
 public final class WorkbookRecordList {
-    private List<Record> records = new ArrayList<Record>();
+    private List<Record> records = new ArrayList<>();
 
     /** holds the position of the protect record */
 	private int protpos;

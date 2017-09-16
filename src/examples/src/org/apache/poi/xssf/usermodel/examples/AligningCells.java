@@ -131,7 +131,7 @@ public class AligningCells {
         // You can add multiple spans for one row
         Object span = start_column + ":" + end_column;
 
-        List<Object> spanList = new ArrayList<Object>();
+        List<Object> spanList = new ArrayList<>();
         spanList.add(span);
 
         //add spns to the row

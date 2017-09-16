@@ -47,8 +47,8 @@ public class ExcelAntTask extends Task {
 	private LinkedList<ExcelAntUserDefinedFunction> functions ;
 	
 	public ExcelAntTask() {
-		tests = new LinkedList<ExcelAntTest>() ;
-		functions = new LinkedList<ExcelAntUserDefinedFunction>() ;
+		tests = new LinkedList<>() ;
+		functions = new LinkedList<>() ;
 	}
 
 	public void addPrecision( ExcelAntPrecision prec ) {

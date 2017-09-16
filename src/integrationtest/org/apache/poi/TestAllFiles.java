@@ -97,7 +97,7 @@ public class TestAllFiles {
 
     
     // map file extensions to the actual mappers
-    static final Map<String, FileHandler> HANDLERS = new HashMap<String, FileHandler>();
+    static final Map<String, FileHandler> HANDLERS = new HashMap<>();
     static {
         // Excel
         HANDLERS.put(".xls", new HSSFFileHandler());
@@ -210,7 +210,7 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/BigSSTRecordCR", new NullFileHandler());
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
         
-        Map<String,String> passmap = new HashMap<String,String>();
+        Map<String,String> passmap = new HashMap<>();
         passmap.put("slideshow/Password_Protected-hello.ppt", "hello");
         passmap.put("slideshow/Password_Protected-56-hello.ppt", "hello");
         passmap.put("slideshow/Password_Protected-np-hello.ppt", "hello");
@@ -237,7 +237,7 @@ public class TestAllFiles {
         return Collections.unmodifiableSet(hashSet(a));
     }
     private static Set<String> hashSet(String... a) {
-        return new HashSet<String>(Arrays.asList(a));
+        return new HashSet<>(Arrays.asList(a));
     }
 
     // Old Word Documents where we can at least extract some text
@@ -345,7 +345,7 @@ public class TestAllFiles {
 
         System.out.println("Handling " + scanner.getIncludedFiles().length + " files");
 
-        List<Object[]> files = new ArrayList<Object[]>();
+        List<Object[]> files = new ArrayList<>();
         for(String file : scanner.getIncludedFiles()) {
             file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
             if (IGNORED.contains(file)) {

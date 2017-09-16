@@ -46,7 +46,7 @@ public class ComplexFileTable {
                                Charset charset) throws IOException {
         //skips through the prms before we reach the piece table. These contain data
         //for actual fast saved files
-        List<SprmBuffer> sprmBuffers = new LinkedList<SprmBuffer>();
+        List<SprmBuffer> sprmBuffers = new LinkedList<>();
         while (tableStream[offset] == GRPPRL_TYPE) {
             offset++;
             int size = LittleEndian.getShort(tableStream, offset);

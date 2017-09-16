@@ -105,7 +105,7 @@ public class VariantSupport extends Variant {
         if (isLogUnsupportedTypes())
         {
             if (unsupportedMessage == null) {
-                unsupportedMessage = new LinkedList<Long>();
+                unsupportedMessage = new LinkedList<>();
             }
             Long vt = Long.valueOf(ex.getVariantType());
             if (!unsupportedMessage.contains(vt))

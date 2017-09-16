@@ -54,7 +54,7 @@ public class XSLFCommonSlideData {
     public List<DrawingTextBody> getDrawingText() {
         CTGroupShape gs = data.getSpTree();
 
-        List<DrawingTextBody> out = new ArrayList<DrawingTextBody>();
+        List<DrawingTextBody> out = new ArrayList<>();
 
         processShape(gs, out);
 
@@ -97,7 +97,7 @@ public class XSLFCommonSlideData {
         return out;
     }
     public List<DrawingParagraph> getText() {
-       List<DrawingParagraph> paragraphs = new ArrayList<DrawingParagraph>();
+       List<DrawingParagraph> paragraphs = new ArrayList<>();
        for(DrawingTextBody textBody : getDrawingText()) {
           paragraphs.addAll(Arrays.asList(textBody.getParagraphs()));
        }

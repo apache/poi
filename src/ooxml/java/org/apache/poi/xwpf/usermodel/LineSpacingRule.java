@@ -49,7 +49,7 @@ public enum LineSpacingRule {
     AT_LEAST(3);
 
 
-    private static Map<Integer, LineSpacingRule> imap = new HashMap<Integer, LineSpacingRule>();
+    private static Map<Integer, LineSpacingRule> imap = new HashMap<>();
 
     static {
         for (LineSpacingRule p : values()) {

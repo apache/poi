@@ -37,10 +37,10 @@ public final class TestListParts extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		values = new TreeMap<PackagePartName, String>();
+		values = new TreeMap<>();
 
 		// Expected values
-		expectedValues = new TreeMap<PackagePartName, String>();
+		expectedValues = new TreeMap<>();
 		expectedValues.put(PackagingURIHelper.createPartName("/_rels/.rels"),
 				"application/vnd.openxmlformats-package.relationships+xml");
 

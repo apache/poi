@@ -83,7 +83,7 @@ public final class SlideListWithText extends RecordContainer {
 		// Group our children together into SlideAtomsSets
 		// That way, model layer code can just grab the sets to use,
 		//  without having to try to match the children together
-		List<SlideAtomsSet> sets = new ArrayList<SlideAtomsSet>();
+		List<SlideAtomsSet> sets = new ArrayList<>();
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof SlidePersistAtom) {
 				// Find where the next SlidePersistAtom is

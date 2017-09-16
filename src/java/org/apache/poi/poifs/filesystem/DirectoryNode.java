@@ -107,8 +107,8 @@ public class DirectoryNode
                 property.getName()
             });
         }
-        _byname     = new HashMap<String, Entry>();
-        _entries    = new ArrayList<Entry>();
+        _byname     = new HashMap<>();
+        _entries    = new ArrayList<>();
         Iterator<Property> iter = property.getChildren();
 
         while (iter.hasNext())
@@ -588,7 +588,7 @@ public class DirectoryNode
      */
     public Iterator<Object> getViewableIterator()
     {
-        List<Object> components = new ArrayList<Object>();
+        List<Object> components = new ArrayList<>();
 
         components.add(getProperty());
         Iterator<Entry> iter = _entries.iterator();

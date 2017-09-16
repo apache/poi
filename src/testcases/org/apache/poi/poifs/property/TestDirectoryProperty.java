@@ -102,7 +102,7 @@ public final class TestDirectoryProperty {
 
     private void verifyChildren(int count) {
         Iterator<Property> iter = _property.getChildren();
-        List<Property> children = new ArrayList<Property>();
+        List<Property> children = new ArrayList<>();
 
         while (iter.hasNext())
         {

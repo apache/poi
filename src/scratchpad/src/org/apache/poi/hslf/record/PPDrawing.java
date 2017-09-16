@@ -55,7 +55,7 @@ public final class PPDrawing extends RecordAtom {
 	private byte[] _header;
 	private long _type;
 
-	private final List<EscherRecord> childRecords = new ArrayList<EscherRecord>();
+	private final List<EscherRecord> childRecords = new ArrayList<>();
 	private EscherTextboxWrapper[] textboxWrappers;
 
 	//cached EscherDgRecord
@@ -112,13 +112,13 @@ public final class PPDrawing extends RecordAtom {
 			textboxWrappers = findInDgContainer(dgContainer);
 		} else {
 			// Find and EscherTextboxRecord's, and wrap them up
-			final List<EscherTextboxWrapper> textboxes = new ArrayList<EscherTextboxWrapper>();
+			final List<EscherTextboxWrapper> textboxes = new ArrayList<>();
 			findEscherTextboxRecord(childRecords, textboxes);
 			this.textboxWrappers = textboxes.toArray(new EscherTextboxWrapper[textboxes.size()]);
 		}
 	}
 	private EscherTextboxWrapper[] findInDgContainer(final EscherContainerRecord dgContainer) {
-		final List<EscherTextboxWrapper> found = new LinkedList<EscherTextboxWrapper>();
+		final List<EscherTextboxWrapper> found = new LinkedList<>();
 		final EscherContainerRecord spgrContainer = findFirstEscherContainerRecordOfType(RecordTypes.EscherSpgrContainer, dgContainer);
 		final EscherContainerRecord[] spContainers = findAllEscherContainerRecordOfType(RecordTypes.EscherSpContainer, spgrContainer);
 		for (EscherContainerRecord spContainer : spContainers) {
@@ -397,7 +397,7 @@ public final class PPDrawing extends RecordAtom {
     protected EscherContainerRecord[] findAllEscherContainerRecordOfType(RecordTypes type, EscherContainerRecord parent) {
     	if (null == parent) { return new EscherContainerRecord[0]; }
 		final List<EscherContainerRecord> children = parent.getChildContainers();
-		final List<EscherContainerRecord> result = new LinkedList<EscherContainerRecord>();
+		final List<EscherContainerRecord> result = new LinkedList<>();
 		for (EscherContainerRecord child : children) {
 			if (type.typeID == child.getRecordId()) {
 				result.add(child);
@@ -407,7 +407,7 @@ public final class PPDrawing extends RecordAtom {
     }
 
     public StyleTextProp9Atom[] getNumberedListInfo() {
-    	final List<StyleTextProp9Atom> result = new LinkedList<StyleTextProp9Atom>();
+    	final List<StyleTextProp9Atom> result = new LinkedList<>();
     	EscherContainerRecord dgContainer = getDgContainer();
 		final EscherContainerRecord spgrContainer = findFirstEscherContainerRecordOfType(RecordTypes.EscherSpgrContainer, dgContainer);
 		final EscherContainerRecord[] spContainers = findAllEscherContainerRecordOfType(RecordTypes.EscherSpContainer, spgrContainer);

@@ -49,13 +49,13 @@ public class XWPFTableCell implements IBody, ICell {
 
     static {
         // populate enum maps
-        alignMap = new EnumMap<XWPFVertAlign, STVerticalJc.Enum>(XWPFVertAlign.class);
+        alignMap = new EnumMap<>(XWPFVertAlign.class);
         alignMap.put(XWPFVertAlign.TOP, STVerticalJc.Enum.forInt(STVerticalJc.INT_TOP));
         alignMap.put(XWPFVertAlign.CENTER, STVerticalJc.Enum.forInt(STVerticalJc.INT_CENTER));
         alignMap.put(XWPFVertAlign.BOTH, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTH));
         alignMap.put(XWPFVertAlign.BOTTOM, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTTOM));
 
-        stVertAlignTypeMap = new HashMap<Integer, XWPFVertAlign>();
+        stVertAlignTypeMap = new HashMap<>();
         stVertAlignTypeMap.put(STVerticalJc.INT_TOP, XWPFVertAlign.TOP);
         stVertAlignTypeMap.put(STVerticalJc.INT_CENTER, XWPFVertAlign.CENTER);
         stVertAlignTypeMap.put(STVerticalJc.INT_BOTH, XWPFVertAlign.BOTH);
@@ -81,9 +81,9 @@ public class XWPFTableCell implements IBody, ICell {
         // NB: If a table cell does not include at least one block-level element, then this document shall be considered corrupt.
         if (cell.sizeOfPArray() < 1)
             cell.addNewP();
-        bodyElements = new ArrayList<IBodyElement>();
-        paragraphs = new ArrayList<XWPFParagraph>();
-        tables = new ArrayList<XWPFTable>();
+        bodyElements = new ArrayList<>();
+        paragraphs = new ArrayList<>();
+        tables = new ArrayList<>();
 
         XmlCursor cursor = ctTc.newCursor();
         cursor.selectPath("./*");

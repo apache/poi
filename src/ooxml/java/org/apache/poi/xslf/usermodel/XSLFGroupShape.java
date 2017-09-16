@@ -391,7 +391,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
      */
     @Override
     public void clear() {
-        List<XSLFShape> shapes = new ArrayList<XSLFShape>(getShapes());
+        List<XSLFShape> shapes = new ArrayList<>(getShapes());
         for(XSLFShape shape : shapes){
             removeShape(shape);
         }

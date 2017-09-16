@@ -96,9 +96,9 @@ public class TestEvaluationCache extends TestCase {
 
 		public EvalListener(HSSFWorkbook wb) {
 			_book = wb;
-			_logList = new ArrayList<String>();
-			_formulaCellsByCacheEntry = new HashMap<ICacheEntry,EvaluationCell>();
-			_plainCellLocsByCacheEntry = new HashMap<ICacheEntry, Loc>();
+			_logList = new ArrayList<>();
+			_formulaCellsByCacheEntry = new HashMap<>();
+			_plainCellLocsByCacheEntry = new HashMap<>();
 		}
 		@Override
         public void onCacheHit(int sheetIndex, int rowIndex, int columnIndex, ValueEval result) {

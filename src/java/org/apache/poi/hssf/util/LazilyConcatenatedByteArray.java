@@ -26,7 +26,7 @@ import java.util.List;
  * a large amount of time.
  */
 public class LazilyConcatenatedByteArray {
-    private final List<byte[]> arrays = new ArrayList<byte[]>(1);
+    private final List<byte[]> arrays = new ArrayList<>(1);
 
     /**
      * Clears the array (sets the concatenated length back to zero.

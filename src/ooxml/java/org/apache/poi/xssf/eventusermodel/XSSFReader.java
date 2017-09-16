@@ -67,7 +67,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XSSFReader {
 
     private static final Set<String> WORKSHEET_RELS =
-            Collections.unmodifiableSet(new HashSet<String>(
+            Collections.unmodifiableSet(new HashSet<>(
                     Arrays.asList(new String[]{
                             XSSFRelation.WORKSHEET.getRelation(),
                             XSSFRelation.CHARTSHEET.getRelation(),
@@ -229,7 +229,7 @@ public class XSSFReader {
              */
             try {
                 //step 1. Map sheet's relationship Id and the corresponding PackagePart
-                sheetMap = new HashMap<String, PackagePart>();
+                sheetMap = new HashMap<>();
                 OPCPackage pkg = wb.getPackage();
                 Set<String> worksheetRels = getSheetRelationships();
                 for(PackageRelationship rel : wb.getRelationships()){
@@ -265,7 +265,7 @@ public class XSSFReader {
                 throw new POIXMLException(e);
             }
 
-            List<XSSFSheetRef> validSheets = new ArrayList<XSSFSheetRef>();
+            List<XSSFSheetRef> validSheets = new ArrayList<>();
             for (XSSFSheetRef xssfSheetRef : xmlSheetRefReader.getSheetRefs()) {
                 //if there's no relationship id, silently skip the sheet
                 String sheetId = xssfSheetRef.getId();
@@ -356,7 +356,7 @@ public class XSSFReader {
          */
         public List<XSSFShape> getShapes() {
             PackagePart sheetPkg = getSheetPart();
-            List<XSSFShape> shapes= new LinkedList<XSSFShape>();
+            List<XSSFShape> shapes= new LinkedList<>();
            // Do we have a comments relationship? (Only ever one if so)
            try {
               PackageRelationshipCollection drawingsList = sheetPkg.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
@@ -421,7 +421,7 @@ public class XSSFReader {
         private static final String ID = "id";
         private static final String NAME = "name";
 
-        private final List<XSSFSheetRef> sheetRefs = new LinkedList<XSSFSheetRef>();
+        private final List<XSSFSheetRef> sheetRefs = new LinkedList<>();
 
         // read <sheet name="Sheet6" sheetId="4" r:id="rId6"/>
         // and add XSSFSheetRef(id="rId6", name="Sheet6") to sheetRefs

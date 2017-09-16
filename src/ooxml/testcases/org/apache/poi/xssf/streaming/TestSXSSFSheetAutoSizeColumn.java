@@ -68,7 +68,7 @@ public class TestSXSSFSheetAutoSizeColumn {
     
     private static final SortedSet<Integer> columns;
     static {
-        SortedSet<Integer>_columns = new TreeSet<Integer>();
+        SortedSet<Integer>_columns = new TreeSet<>();
         _columns.add(0);
         _columns.add(1);
         _columns.add(3);
@@ -224,7 +224,7 @@ public class TestSXSSFSheetAutoSizeColumn {
         sheet = workbook.createSheet();
         sheet.trackColumnForAutoSizing(0);
         
-        SortedSet<Integer> expected = new TreeSet<Integer>();
+        SortedSet<Integer> expected = new TreeSet<>();
         expected.add(0);
         assertEquals(expected, sheet.getTrackedColumnsForAutoSizing());
         
@@ -244,7 +244,7 @@ public class TestSXSSFSheetAutoSizeColumn {
         sheet = workbook.createSheet();
         
         sheet.trackColumnsForAutoSizing(columns);
-        SortedSet<Integer> sorted = new TreeSet<Integer>(columns);
+        SortedSet<Integer> sorted = new TreeSet<>(columns);
         assertEquals(sorted, sheet.getTrackedColumnsForAutoSizing());
         
         sheet.autoSizeColumn(sorted.first(), useMergedCells);

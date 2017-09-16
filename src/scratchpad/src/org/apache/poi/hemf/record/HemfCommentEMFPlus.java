@@ -53,7 +53,7 @@ public class HemfCommentEMFPlus extends AbstractHemfComment {
     private static class HemfPlusParser {
 
         public static List<HemfPlusRecord> parse(byte[] bytes) {
-            List<HemfPlusRecord> records = new ArrayList<HemfPlusRecord>();
+            List<HemfPlusRecord> records = new ArrayList<>();
             int offset = 0;
             while (offset < bytes.length) {
                 if (offset + 12 > bytes.length) {

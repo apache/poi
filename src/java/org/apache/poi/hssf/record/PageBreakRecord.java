@@ -77,15 +77,15 @@ public abstract class PageBreakRecord extends StandardRecord {
     }
 
     protected PageBreakRecord() {
-        _breaks = new ArrayList<Break>();
-        _breakMap = new HashMap<Integer, Break>();
+        _breaks = new ArrayList<>();
+        _breakMap = new HashMap<>();
     }
 
     public PageBreakRecord(RecordInputStream in)
     {
         int nBreaks = in.readShort();
-        _breaks = new ArrayList<Break>(nBreaks + 2);
-        _breakMap = new HashMap<Integer, Break>();
+        _breaks = new ArrayList<>(nBreaks + 2);
+        _breakMap = new HashMap<>();
 
         for(int k = 0; k < nBreaks; k++) {
             Break br = new Break(in);

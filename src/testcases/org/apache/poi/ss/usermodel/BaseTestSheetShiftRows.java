@@ -323,7 +323,7 @@ public abstract class BaseTestSheetShiftRows {
         sheet.shiftRows(4, sheet.getLastRowNum(), 1);
         
         // all regions should still start at row 3, and elongate by 1 row
-        List<CellRangeAddress> expectedMergedRegions = new ArrayList<CellRangeAddress>();
+        List<CellRangeAddress> expectedMergedRegions = new ArrayList<>();
         CellRangeAddress A4_B8 = CellRangeAddress.valueOf("A4:B8"); //A4:B7 should be elongated by 1 row
         CellRangeAddress C4_D8 = CellRangeAddress.valueOf("C4:D8"); //C4:B7 should be elongated by 1 row
         expectedMergedRegions.add(A4_B8);

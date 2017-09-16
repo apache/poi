@@ -37,7 +37,7 @@ public final class TestPropertyBlock {
     public void testCreatePropertyBlocks() throws Exception {
 
         // test with 0 properties
-        List<Property> properties = new ArrayList<Property>();
+        List<Property> properties = new ArrayList<>();
         BlockWritable[] blocks     =
             PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
 

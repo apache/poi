@@ -97,9 +97,9 @@ public class NPOIFSFileSystem extends BlockStore
     {
         _header         = new HeaderBlock(bigBlockSize);
         _property_table = new NPropertyTable(_header);
-        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
-        _xbat_blocks    = new ArrayList<BATBlock>();
-        _bat_blocks     = new ArrayList<BATBlock>();
+        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<>(), _header);
+        _xbat_blocks    = new ArrayList<>();
+        _bat_blocks     = new ArrayList<>();
         _root           = null;
         
         if(newFS) {
@@ -426,7 +426,7 @@ public class NPOIFSFileSystem extends BlockStore
        
        // Finally read the Small Stream FAT (SBAT) blocks
        BATBlock sfat;
-       List<BATBlock> sbats = new ArrayList<BATBlock>();
+       List<BATBlock> sbats = new ArrayList<>();
        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), sbats, _header);
        nextAt = _header.getSBATStart();
        for(int i=0; i<_header.getSBATCount() && nextAt != POIFSConstants.END_OF_CHAIN; i++) {

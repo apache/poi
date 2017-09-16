@@ -85,7 +85,7 @@ public class TestEntryUtils {
        fsD = new POIFSFileSystem();
        assertEquals(0, fsD.getRoot().getEntryCount());
        
-       EntryUtils.copyNodes(fs, fsD, new ArrayList<String>());
+       EntryUtils.copyNodes(fs, fsD, new ArrayList<>());
        assertEquals(3, fsD.getRoot().getEntryCount());
        assertNotNull(fsD.getRoot().getEntry(dirA.getName()));
        assertNotNull(fsD.getRoot().getEntry(dirB.getName()));

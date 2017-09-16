@@ -250,8 +250,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private Record[] read(byte[] docstream, int usrOffset) throws IOException {
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
-        NavigableMap<Integer, Record> records = new TreeMap<Integer, Record>(); // offset -> record
-        Map<Integer, Integer> persistIds = new HashMap<Integer, Integer>(); // offset -> persistId
+        NavigableMap<Integer, Record> records = new TreeMap<>(); // offset -> record
+        Map<Integer, Integer> persistIds = new HashMap<>(); // offset -> persistId
         initRecordOffsets(docstream, usrOffset, records, persistIds);
         HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(docstream, records);
 
@@ -347,7 +347,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * This is lazily called as and when we want to touch pictures.
      */
     private void readPictures() throws IOException {
-        _pictures = new ArrayList<HSLFPictureData>();
+        _pictures = new ArrayList<>();
 
         // if the presentation doesn't contain pictures - will use a null set instead
         if (!getDirectory().hasEntry("Pictures")) {
@@ -460,7 +460,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
         //  records we happen across
-        Map<Integer, Integer> oldToNewPositions = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> oldToNewPositions = new HashMap<>();
 
         // First pass - figure out where all the position dependent
         //   records are going to end up, in the new scheme
@@ -505,7 +505,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             throw new HSLFException("UserEditAtom or PersistPtr can't be determined.");
         }
 
-        Map<Integer, Integer> persistIds = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> persistIds = new HashMap<>();
         for (Map.Entry<Integer, Integer> entry : ptr.getSlideLocationsLookup().entrySet()) {
             persistIds.put(oldToNewPositions.get(entry.getValue()), entry.getKey());
         }
@@ -667,7 +667,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         _records = encryptedSS.updateEncryptionRecord(_records);
 
         // The list of entries we've written out
-        List<String> writtenEntries = new ArrayList<String>(1);
+        List<String> writtenEntries = new ArrayList<>(1);
 
         // Write out the Property Streams
         writeProperties(outFS, writtenEntries);
@@ -830,7 +830,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      */
     public HSLFObjectData[] getEmbeddedObjects() {
         if (_objects == null) {
-            List<HSLFObjectData> objects = new ArrayList<HSLFObjectData>();
+            List<HSLFObjectData> objects = new ArrayList<>();
             for (Record r : _records) {
                 if (r instanceof ExOleObjStg) {
                     objects.add(new HSLFObjectData((ExOleObjStg) r));

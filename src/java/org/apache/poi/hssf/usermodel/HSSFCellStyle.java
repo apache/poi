@@ -116,8 +116,8 @@ public final class HSSFCellStyle implements CellStyle {
             return Short.MIN_VALUE;
         }
     };
-    private static final ThreadLocal<List<FormatRecord>> lastFormats = new ThreadLocal<List<FormatRecord>>();
-    private static final ThreadLocal<String> getDataFormatStringCache = new ThreadLocal<String>();
+    private static final ThreadLocal<List<FormatRecord>> lastFormats = new ThreadLocal<>();
+    private static final ThreadLocal<String> getDataFormatStringCache = new ThreadLocal<>();
 
     /**
      * Get the contents of the format string, by looking up

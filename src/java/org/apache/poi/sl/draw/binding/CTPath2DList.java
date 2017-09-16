@@ -77,7 +77,7 @@ public class CTPath2DList {
      */
     public List<CTPath2D> getPath() {
         if (path == null) {
-            path = new ArrayList<CTPath2D>();
+            path = new ArrayList<>();
         }
         return this.path;
     }

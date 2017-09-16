@@ -54,7 +54,7 @@ public final class MasterTextPropAtom extends RecordAtom {
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _data.length);
         
-        indents = new ArrayList<IndentProp>();
+        indents = new ArrayList<>();
     }
 
     /**
@@ -121,7 +121,7 @@ public final class MasterTextPropAtom extends RecordAtom {
      */
     private void read() {
         int pos = 0;
-        indents = new ArrayList<IndentProp>(_data.length/6);
+        indents = new ArrayList<>(_data.length / 6);
         
         while (pos <= _data.length - 6) {
             int count = LittleEndian.getInt(_data, pos);

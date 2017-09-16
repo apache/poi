@@ -473,7 +473,7 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * Add ds:References that come from signing client local files.
          */
-        List<Reference> references = new ArrayList<Reference>();
+        List<Reference> references = new ArrayList<>();
         for (DigestInfo digestInfo : safe(digestInfos)) {
             byte[] documentDigestValue = digestInfo.digestValue;
 
@@ -486,7 +486,7 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * Invoke the signature facets.
          */
-        List<XMLObject> objects = new ArrayList<XMLObject>();
+        List<XMLObject> objects = new ArrayList<>();
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
             LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
             signatureFacet.preSign(document, references, objects);
@@ -618,7 +618,7 @@ public class SignatureInfo implements SignatureConfigurable {
      */
     protected void writeDocument(Document document) throws MarshalException {
         XmlOptions xo = new XmlOptions();
-        Map<String,String> namespaceMap = new HashMap<String,String>();
+        Map<String,String> namespaceMap = new HashMap<>();
         for(Map.Entry<String,String> entry : signatureConfig.getNamespacePrefixes().entrySet()){
             namespaceMap.put(entry.getValue(), entry.getKey());
         }        

@@ -103,7 +103,7 @@ public final class TestPOIFSReaderRegistry extends TestCase {
                 else
                 {
                     Set<POIFSReaderListener> registeredListeners =
-                            new HashSet<POIFSReaderListener>();
+                            new HashSet<>();
 
                     while (listeners.hasNext())
                     {
@@ -135,7 +135,7 @@ public final class TestPOIFSReaderRegistry extends TestCase {
                 Iterator<POIFSReaderListener> listeners =
                     registry.getListeners(path, name);
                 Set<POIFSReaderListener> registeredListeners =
-                    new HashSet<POIFSReaderListener>();
+                        new HashSet<>();
 
                 while (listeners.hasNext())
                 {

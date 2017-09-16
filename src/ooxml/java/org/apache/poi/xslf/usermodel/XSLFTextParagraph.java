@@ -69,7 +69,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     XSLFTextParagraph(CTTextParagraph p, XSLFTextShape shape){
         _p = p;
-        _runs = new ArrayList<XSLFTextRun>();
+        _runs = new ArrayList<>();
         _shape = shape;
 
         XmlCursor c = _p.newCursor();

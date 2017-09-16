@@ -115,7 +115,7 @@ public final class Chunk {
 
 		// Loop over the definitions, building the commands
 		//  and getting their values
-		ArrayList<Command> commandList = new ArrayList<Command>();
+		ArrayList<Command> commandList = new ArrayList<>();
 		for(CommandDefinition cdef : commandDefinitions) {
 			int type = cdef.getType();
 			int offset = cdef.getOffset();

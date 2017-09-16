@@ -63,8 +63,8 @@ public final class MainMaster extends SheetContainer {
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
 
-		ArrayList<TxMasterStyleAtom> tx = new ArrayList<TxMasterStyleAtom>();
-		ArrayList<ColorSchemeAtom> clr = new ArrayList<ColorSchemeAtom>();
+		ArrayList<TxMasterStyleAtom> tx = new ArrayList<>();
+		ArrayList<ColorSchemeAtom> clr = new ArrayList<>();
 		// Find the interesting ones in there
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof SlideAtom) {

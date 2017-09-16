@@ -52,8 +52,8 @@ public class IntMapper<T>
 
     public IntMapper(final int initialCapacity)
     {
-        elements = new ArrayList<T>(initialCapacity);
-        valueKeyMap = new HashMap<T,Integer>(initialCapacity);
+        elements = new ArrayList<>(initialCapacity);
+        valueKeyMap = new HashMap<>(initialCapacity);
     }
 
     /**

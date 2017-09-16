@@ -32,7 +32,7 @@ import com.graphbuilder.geom.PointFactory;
 public class SplineCollector {
 
     SplineStart _start;
-    ArrayList<SplineKnot> _knots = new ArrayList<SplineKnot>();
+    ArrayList<SplineKnot> _knots = new ArrayList<>();
 
     public SplineCollector(SplineStart start) {
         _start = start;

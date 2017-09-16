@@ -165,7 +165,7 @@ public class BookmarksImpl implements Bookmarks
         if ( nodes == null || nodes.isEmpty() )
             return Collections.emptyList();
 
-        List<Bookmark> result = new ArrayList<Bookmark>( nodes.size() );
+        List<Bookmark> result = new ArrayList<>(nodes.size());
         for ( GenericPropertyNode node : nodes )
         {
             result.add( getBookmark( node ) );
@@ -192,7 +192,7 @@ public class BookmarksImpl implements Bookmarks
         if ( endLookupIndex < 0 )
             endLookupIndex = -( endLookupIndex + 1 );
 
-        Map<Integer, List<Bookmark>> result = new LinkedHashMap<Integer, List<Bookmark>>();
+        Map<Integer, List<Bookmark>> result = new LinkedHashMap<>();
         for ( int lookupIndex = startLookupIndex; lookupIndex < endLookupIndex; lookupIndex++ )
         {
             int s = sortedStartPositions[lookupIndex];
@@ -225,7 +225,7 @@ public class BookmarksImpl implements Bookmarks
         if ( sortedDescriptors != null )
             return;
 
-        Map<Integer, List<GenericPropertyNode>> result = new HashMap<Integer, List<GenericPropertyNode>>();
+        Map<Integer, List<GenericPropertyNode>> result = new HashMap<>();
         for ( int b = 0; b < bookmarksTables.getDescriptorsFirstCount(); b++ )
         {
             GenericPropertyNode property = bookmarksTables
@@ -234,7 +234,7 @@ public class BookmarksImpl implements Bookmarks
             List<GenericPropertyNode> atPositionList = result.get( positionKey );
             if ( atPositionList == null )
             {
-                atPositionList = new LinkedList<GenericPropertyNode>();
+                atPositionList = new LinkedList<>();
                 result.put( positionKey, atPositionList );
             }
             atPositionList.add( property );
@@ -246,8 +246,8 @@ public class BookmarksImpl implements Bookmarks
                 .entrySet() )
         {
             indices[counter++] = entry.getKey().intValue();
-            List<GenericPropertyNode> updated = new ArrayList<GenericPropertyNode>(
-                    entry.getValue() );
+            List<GenericPropertyNode> updated = new ArrayList<>(
+                    entry.getValue());
             Collections.sort( updated, PropertyNode.EndComparator.instance );
             entry.setValue( updated );
         }

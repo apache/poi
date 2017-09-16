@@ -98,7 +98,7 @@ public final class TestPOIXMLDocument {
     }
 
     private static void traverse(POIXMLDocument doc) throws IOException{
-        HashMap<String,POIXMLDocumentPart> context = new HashMap<String,POIXMLDocumentPart>();
+        HashMap<String,POIXMLDocumentPart> context = new HashMap<>();
         for (RelationPart p : doc.getRelationParts()){
             traverse(p, context);
         }
@@ -275,7 +275,7 @@ public final class TestPOIXMLDocument {
         POIXMLDocumentPart part = new POIXMLDocumentPart();
         part.prepareForCommit();
         part.commit();
-        part.onSave(new HashSet<PackagePart>());
+        part.onSave(new HashSet<>());
 
         assertNull(part.getRelationById(null));
         assertNull(part.getRelationId(null));

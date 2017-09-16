@@ -71,7 +71,7 @@ final class OperationEvaluatorFactory {
 	}
 
 	private static Map<OperationPtg, Function> initialiseInstancesMap() {
-		Map<OperationPtg, Function> m = new HashMap<OperationPtg, Function>(32);
+		Map<OperationPtg, Function> m = new HashMap<>(32);
 
 		put(m, EqualPtg.instance, RelationalOperationEval.EqualEval);
 		put(m, GreaterEqualPtg.instance, RelationalOperationEval.GreaterEqualEval);

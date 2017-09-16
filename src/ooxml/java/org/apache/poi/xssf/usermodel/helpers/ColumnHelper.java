@@ -47,7 +47,7 @@ public class ColumnHelper {
     }
     
     public void cleanColumns() {
-        TreeSet<CTCol> trackedCols = new TreeSet<CTCol>(CTColComparator.BY_MIN_MAX);
+        TreeSet<CTCol> trackedCols = new TreeSet<>(CTColComparator.BY_MIN_MAX);
         CTCols newCols = CTCols.Factory.newInstance();
         CTCols[] colsArray = worksheet.getColsArray();
         int i = 0;
@@ -72,7 +72,7 @@ public class ColumnHelper {
         // class then we could keep trackedCols as state,
         // making this log(N) rather than Nlog(N). We do this for the initial
         // read above.
-        TreeSet<CTCol> trackedCols = new TreeSet<CTCol>(
+        TreeSet<CTCol> trackedCols = new TreeSet<>(
                 CTColComparator.BY_MIN_MAX);
         trackedCols.addAll(cols.getColList());
         addCleanColIntoCols(cols, newCol, trackedCols);
@@ -130,7 +130,7 @@ public class ColumnHelper {
     private List<CTCol> getOverlappingCols(final CTCol newCol, final TreeSet<CTCol> trackedCols) {
         CTCol lower = trackedCols.lower(newCol);
         NavigableSet<CTCol> potentiallyOverlapping = lower == null ? trackedCols : trackedCols.tailSet(lower, overlaps(lower, newCol));
-        List<CTCol> overlapping = new ArrayList<CTCol>();
+        List<CTCol> overlapping = new ArrayList<>();
         for (CTCol existing : potentiallyOverlapping) {
             if (overlaps(newCol, existing)) {
                 overlapping.add(existing);

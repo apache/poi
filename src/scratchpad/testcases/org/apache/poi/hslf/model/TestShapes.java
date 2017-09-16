@@ -291,7 +291,7 @@ public final class TestShapes {
     private void textBoxSet(String filename) throws IOException {
         HSLFSlideShow ss = new HSLFSlideShow(_slTests.openResourceAsStream(filename));
         for (HSLFSlide sld : ss.getSlides()) {
-            ArrayList<String> lst1 = new ArrayList<String>();
+            ArrayList<String> lst1 = new ArrayList<>();
             for (List<HSLFTextParagraph> txt : sld.getTextParagraphs()) {
                 for (HSLFTextParagraph p : txt) {
                     for (HSLFTextRun r : p) {
@@ -300,7 +300,7 @@ public final class TestShapes {
                 }
             }
 
-            ArrayList<String> lst2 = new ArrayList<String>();
+            ArrayList<String> lst2 = new ArrayList<>();
             for (HSLFShape sh : sld.getShapes()) {
                 if (sh instanceof HSLFTextShape){
                     HSLFTextShape tbox = (HSLFTextShape)sh;

@@ -42,7 +42,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
  */
 public class XWPFFootnotes extends POIXMLDocumentPart {
     protected XWPFDocument document;
-    private List<XWPFFootnote> listFootnote = new ArrayList<XWPFFootnote>();
+    private List<XWPFFootnote> listFootnote = new ArrayList<>();
     private CTFootnotes ctFootnotes;
 
     /**

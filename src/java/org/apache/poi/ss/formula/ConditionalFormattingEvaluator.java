@@ -60,7 +60,7 @@ public class ConditionalFormattingEvaluator {
      * there's no guarantee instances won't be recreated on the fly by some implementation.
      * So we use sheet name.
      */
-    private final Map<String, List<EvaluationConditionalFormatRule>> formats = new HashMap<String, List<EvaluationConditionalFormatRule>>();
+    private final Map<String, List<EvaluationConditionalFormatRule>> formats = new HashMap<>();
     
     /**
      * Evaluating rules for cells in their region(s) is expensive, so we want to cache them,
@@ -70,7 +70,7 @@ public class ConditionalFormattingEvaluator {
      * <p>
      * CellReference implements equals().
      */
-    private final Map<CellReference, List<EvaluationConditionalFormatRule>> values = new HashMap<CellReference, List<EvaluationConditionalFormatRule>>();
+    private final Map<CellReference, List<EvaluationConditionalFormatRule>> values = new HashMap<>();
 
     public ConditionalFormattingEvaluator(Workbook wb, WorkbookEvaluatorProvider provider) {
         this.workbook = wb;
@@ -115,7 +115,7 @@ public class ConditionalFormattingEvaluator {
             }
             final SheetConditionalFormatting scf = sheet.getSheetConditionalFormatting();
             final int count = scf.getNumConditionalFormattings();
-            rules = new ArrayList<EvaluationConditionalFormatRule>(count);
+            rules = new ArrayList<>(count);
             formats.put(sheetName, rules);
             for (int i=0; i < count; i++) {
                 ConditionalFormatting f = scf.getConditionalFormattingAt(i);
@@ -154,7 +154,7 @@ public class ConditionalFormattingEvaluator {
         
         if (rules == null) {
             // compute and cache them
-            rules = new ArrayList<EvaluationConditionalFormatRule>();
+            rules = new ArrayList<>();
             
             Sheet sheet = null;
             if (cellRef.getSheetName() != null) sheet = workbook.getSheet(cellRef.getSheetName());
@@ -252,7 +252,7 @@ public class ConditionalFormattingEvaluator {
      * @return unmodifiable List of all cells in the rule's region matching the rule's condition
      */
     public List<Cell> getMatchingCells(EvaluationConditionalFormatRule rule) {
-        final List<Cell> cells = new ArrayList<Cell>();
+        final List<Cell> cells = new ArrayList<>();
         final Sheet sheet = rule.getSheet();
         
         for (CellRangeAddress region : rule.getRegions()) {

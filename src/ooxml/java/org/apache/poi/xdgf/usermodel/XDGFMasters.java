@@ -43,7 +43,7 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
     MastersType _mastersObject;
 
     // key: id of master
-    protected Map<Long, XDGFMaster> _masters = new HashMap<Long, XDGFMaster>();
+    protected Map<Long, XDGFMaster> _masters = new HashMap<>();
 
     /**
      * @since POI 3.14-Beta1
@@ -68,7 +68,7 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
                 throw new POIXMLException(e);
             }
 
-            Map<String, MasterType> masterSettings = new HashMap<String, MasterType>();
+            Map<String, MasterType> masterSettings = new HashMap<>();
             for (MasterType master: _mastersObject.getMasterArray()) {
                 masterSettings.put(master.getRel().getId(), master);
             }

@@ -50,13 +50,13 @@ public class CellNumberFormatter extends CellFormatter {
     private final Special afterInteger;
     private final Special afterFractional;
     private final boolean showGroupingSeparator;
-    private final List<Special> specials =  new ArrayList<Special>();
-    private final List<Special> integerSpecials = new ArrayList<Special>();
-    private final List<Special> fractionalSpecials = new ArrayList<Special>();
-    private final List<Special> numeratorSpecials = new ArrayList<Special>();
-    private final List<Special> denominatorSpecials = new ArrayList<Special>();
-    private final List<Special> exponentSpecials = new ArrayList<Special>();
-    private final List<Special> exponentDigitSpecials = new ArrayList<Special>();
+    private final List<Special> specials = new ArrayList<>();
+    private final List<Special> integerSpecials = new ArrayList<>();
+    private final List<Special> fractionalSpecials = new ArrayList<>();
+    private final List<Special> numeratorSpecials = new ArrayList<>();
+    private final List<Special> denominatorSpecials = new ArrayList<>();
+    private final List<Special> exponentSpecials = new ArrayList<>();
+    private final List<Special> exponentDigitSpecials = new ArrayList<>();
     private final int maxDenominator;
     private final String numeratorFmt;
     private final String denominatorFmt;
@@ -448,7 +448,7 @@ public class CellNumberFormatter extends CellFormatter {
             }
         }
 
-        Set<CellNumberStringMod> mods = new TreeSet<CellNumberStringMod>();
+        Set<CellNumberStringMod> mods = new TreeSet<>();
         StringBuffer output = new StringBuffer(localiseFormat(desc));
 
         if (exponent != null) {

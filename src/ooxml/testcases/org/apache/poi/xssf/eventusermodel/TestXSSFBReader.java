@@ -127,7 +127,7 @@ public class TestXSSFBReader {
 
     private List<String> getSheets(String testFileName) throws Exception {
         OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream(testFileName));
-        List<String> sheetTexts = new ArrayList<String>();
+        List<String> sheetTexts = new ArrayList<>();
         XSSFBReader r = new XSSFBReader(pkg);
 
 //        assertNotNull(r.getWorkbookData());

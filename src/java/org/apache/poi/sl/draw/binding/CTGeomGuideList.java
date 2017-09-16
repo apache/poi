@@ -77,7 +77,7 @@ public class CTGeomGuideList {
      */
     public List<CTGeomGuide> getGd() {
         if (gd == null) {
-            gd = new ArrayList<CTGeomGuide>();
+            gd = new ArrayList<>();
         }
         return this.gd;
     }

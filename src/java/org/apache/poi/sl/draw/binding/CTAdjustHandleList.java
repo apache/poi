@@ -83,7 +83,7 @@ public class CTAdjustHandleList {
      */
     public List<Object> getAhXYOrAhPolar() {
         if (ahXYOrAhPolar == null) {
-            ahXYOrAhPolar = new ArrayList<Object>();
+            ahXYOrAhPolar = new ArrayList<>();
         }
         return this.ahXYOrAhPolar;
     }

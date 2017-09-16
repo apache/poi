@@ -62,7 +62,7 @@ public class PICFAndOfficeArtData
                 escherRecordFactory );
         offset += recordSize;
 
-        _blipRecords = new LinkedList<EscherRecord>();
+        _blipRecords = new LinkedList<>();
         while ( ( offset - startOffset ) < _picf.getLcb() )
         {
             EscherRecord nextRecord = escherRecordFactory.createRecord(

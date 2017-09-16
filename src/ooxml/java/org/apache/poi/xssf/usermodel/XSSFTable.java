@@ -219,7 +219,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     public List<XSSFXmlColumnPr> getXmlColumnPrs() {
         if (xmlColumnPr==null) {
-            xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
+            xmlColumnPr = new ArrayList<>();
             for (CTTableColumn column: getTableColumns()) {
                 if (column.getXmlColumnPr()!=null) {
                     XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
@@ -520,7 +520,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if (columnMap == null) {
             // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
             final int count = getTableColumns().length;
-            columnMap = new HashMap<String, Integer>(count * 3 / 2);
+            columnMap = new HashMap<>(count * 3 / 2);
             
             int i = 0;
             for (CTTableColumn column : getTableColumns()) {

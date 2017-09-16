@@ -28,7 +28,7 @@ import org.apache.xmlbeans.XmlObject;
 
 public class ObjectFactory<T, X extends XmlObject> {
 
-    Map<String, Constructor<? extends T>> _types = new HashMap<String, Constructor<? extends T>>();
+    Map<String, Constructor<? extends T>> _types = new HashMap<>();
 
     public void put(String typeName, Class<? extends T> cls, Class<?>... varargs) throws NoSuchMethodException, SecurityException {
         _types.put(typeName, cls.getDeclaredConstructor(varargs));

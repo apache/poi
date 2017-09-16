@@ -43,7 +43,7 @@ public class GeometrySection extends XDGFSection {
     GeometrySection _master;
 
     // rows
-    SortedMap<Long, GeometryRow> _rows = new TreeMap<Long, GeometryRow>();
+    SortedMap<Long, GeometryRow> _rows = new TreeMap<>();
 
     public GeometrySection(SectionType section, XDGFSheet containingSheet) {
         super(section, containingSheet);
@@ -89,7 +89,7 @@ public class GeometrySection extends XDGFSection {
     }
 
     public Iterable<GeometryRow> getCombinedRows() {
-        return new CombinedIterable<GeometryRow>(_rows,
+        return new CombinedIterable<>(_rows,
                 _master == null ? null : _master._rows);
     }
 

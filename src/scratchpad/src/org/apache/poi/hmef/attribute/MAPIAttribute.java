@@ -100,7 +100,7 @@ public class MAPIAttribute {
       
       // First up, get the number of attributes
       int count = LittleEndian.readInt(inp);
-      List<MAPIAttribute> attrs = new ArrayList<MAPIAttribute>();
+      List<MAPIAttribute> attrs = new ArrayList<>();
       
       // Now, read each one in in turn
       for(int i=0; i<count; i++) {

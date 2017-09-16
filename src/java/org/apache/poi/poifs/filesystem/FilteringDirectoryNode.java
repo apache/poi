@@ -64,8 +64,8 @@ public class FilteringDirectoryNode implements DirectoryEntry
       this.directory = directory;
       
       // Process the excludes
-      this.excludes = new HashSet<String>();
-      this.childExcludes = new HashMap<String, List<String>>();
+      this.excludes = new HashSet<>();
+      this.childExcludes = new HashMap<>();
       for (String excl : excludes) {
          int splitAt = excl.indexOf('/');
          if (splitAt == -1) {
@@ -76,7 +76,7 @@ public class FilteringDirectoryNode implements DirectoryEntry
             String child = excl.substring(0, splitAt);
             String childExcl = excl.substring(splitAt+1);
             if (! this.childExcludes.containsKey(child)) {
-               this.childExcludes.put(child, new ArrayList<String>());
+               this.childExcludes.put(child, new ArrayList<>());
             }
             this.childExcludes.get(child).add(childExcl);
          }
@@ -116,7 +116,7 @@ public class FilteringDirectoryNode implements DirectoryEntry
    }
    
    public Set<String> getEntryNames() {
-       Set<String> names = new HashSet<String>();
+       Set<String> names = new HashSet<>();
        for (String name : directory.getEntryNames()) {
            if (!excludes.contains(name)) {
                names.add(name);

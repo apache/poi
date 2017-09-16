@@ -59,7 +59,7 @@ import org.apache.poi.sl.usermodel.Slide;
 public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTextParagraph> {
 	private int _slideNo;
 	private SlideAtomsSet _atomSet;
-	private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
+	private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<>();
 	private HSLFNotes _notes; // usermodel needs to set this
 
 	/**

@@ -33,7 +33,7 @@ public class CharacterSection extends XDGFSection {
     Double _fontSize;
     Color _fontColor;
 
-    Map<String, XDGFCell> _characterCells = new HashMap<String, XDGFCell>();
+    Map<String, XDGFCell> _characterCells = new HashMap<>();
 
     public CharacterSection(SectionType section, XDGFSheet containingSheet) {
         super(section, containingSheet);

@@ -70,7 +70,7 @@ public final class TestEscherAggregate extends TestCase {
 
         ObjRecord r2 = new ObjRecord();
 
-        List<RecordBase> records = new ArrayList<RecordBase>();
+        List<RecordBase> records = new ArrayList<>();
         records.add( d1 );
         records.add( r1 );
         records.add( d2 );

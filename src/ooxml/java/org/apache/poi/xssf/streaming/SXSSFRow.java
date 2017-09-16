@@ -39,7 +39,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     private static final Boolean UNDEFINED = null;
     
     private final SXSSFSheet _sheet; // parent sheet
-    private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<Integer, SXSSFCell>();
+    private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<>();
     private short _style = -1; // index of cell style in style table
     private short _height = -1; // row height in twips (1/20 point)
     private boolean _zHeight; // row zero-height (this is somehow different than being hidden)

@@ -53,7 +53,7 @@ public class CHPBinTable
             .getLogger( CHPBinTable.class );
 
   /** List of character properties.*/
-  protected List<CHPX> _textRuns = new ArrayList<CHPX>();
+  protected List<CHPX> _textRuns = new ArrayList<>();
 
   public CHPBinTable()
   {
@@ -171,7 +171,7 @@ public class CHPBinTable
             start = System.currentTimeMillis();
         }
 
-        List<CHPX> oldChpxSortedByStartPos = new ArrayList<CHPX>( _textRuns );
+        List<CHPX> oldChpxSortedByStartPos = new ArrayList<>(_textRuns);
         Collections.sort( oldChpxSortedByStartPos,
                 PropertyNode.StartComparator.instance );
 
@@ -179,7 +179,7 @@ public class CHPBinTable
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
-        final Map<CHPX, Integer> chpxToFileOrder = new IdentityHashMap<CHPX, Integer>();
+        final Map<CHPX, Integer> chpxToFileOrder = new IdentityHashMap<>();
         {
             int counter = 0;
             for ( CHPX chpx : _textRuns )
@@ -203,15 +203,15 @@ public class CHPBinTable
 
         List<Integer> textRunsBoundariesList;
         {
-            Set<Integer> textRunsBoundariesSet = new HashSet<Integer>();
+            Set<Integer> textRunsBoundariesSet = new HashSet<>();
             for ( CHPX chpx : _textRuns )
             {
                 textRunsBoundariesSet.add( Integer.valueOf( chpx.getStart() ) );
                 textRunsBoundariesSet.add( Integer.valueOf( chpx.getEnd() ) );
             }
             textRunsBoundariesSet.remove( Integer.valueOf( 0 ) );
-            textRunsBoundariesList = new ArrayList<Integer>(
-                    textRunsBoundariesSet );
+            textRunsBoundariesList = new ArrayList<>(
+                    textRunsBoundariesSet);
             Collections.sort( textRunsBoundariesList );
         }
 
@@ -219,7 +219,7 @@ public class CHPBinTable
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
         start = System.currentTimeMillis();
 
-        List<CHPX> newChpxs = new LinkedList<CHPX>();
+        List<CHPX> newChpxs = new LinkedList<>();
         int lastTextRunStart = 0;
         for ( Integer objBoundary : textRunsBoundariesList )
         {
@@ -237,7 +237,7 @@ public class CHPBinTable
                     && oldChpxSortedByStartPos.get( startPosition ).getStart() >= boundary )
                 startPosition--;
 
-            List<CHPX> chpxs = new LinkedList<CHPX>();
+            List<CHPX> chpxs = new LinkedList<>();
             for ( int c = startPosition; c < oldChpxSortedByStartPos.size(); c++ )
             {
                 CHPX chpx = oldChpxSortedByStartPos.get( c );
@@ -291,7 +291,7 @@ public class CHPBinTable
 
             continue;
         }
-        this._textRuns = new ArrayList<CHPX>( newChpxs );
+        this._textRuns = new ArrayList<>(newChpxs);
 
         logger.log( POILogger.DEBUG, "CHPX rebuilded in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",

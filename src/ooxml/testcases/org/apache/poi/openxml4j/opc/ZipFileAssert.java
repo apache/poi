@@ -75,7 +75,7 @@ public class ZipFileAssert {
 			File filename) throws IOException {
 		// store the zip content in memory
 		// let s assume it is not Go ;-)
-		TreeMap<String, ByteArrayOutputStream> zipContent = new TreeMap<String, ByteArrayOutputStream>();
+		TreeMap<String, ByteArrayOutputStream> zipContent = new TreeMap<>();
 
 		byte data[] = new byte[BUFFER_SIZE];
 		/* Open file to decompress */

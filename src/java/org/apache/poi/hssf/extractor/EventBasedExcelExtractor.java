@@ -171,7 +171,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
        private int nextRow = -1;
 
        public TextListener() {
-           sheetNames = new ArrayList<String>();
+           sheetNames = new ArrayList<>();
        }
        public void processRecord(Record record) {
            String thisText = null;

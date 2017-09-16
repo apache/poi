@@ -92,8 +92,8 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      */
     private static final Pattern ptrn_shapeId = Pattern.compile("_x0000_s(\\d+)");
 
-    private List<QName> _qnames = new ArrayList<QName>();
-    private List<XmlObject> _items = new ArrayList<XmlObject>();
+    private List<QName> _qnames = new ArrayList<>();
+    private List<XmlObject> _items = new ArrayList<>();
     private String _shapeTypeId;
     private int _shapeId = 1024;
 
@@ -135,8 +135,8 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         }
         XmlObject root = XmlObject.Factory.parse(doc, DEFAULT_XML_OPTIONS);
 
-        _qnames = new ArrayList<QName>();
-        _items = new ArrayList<XmlObject>();
+        _qnames = new ArrayList<>();
+        _items = new ArrayList<>();
         for(XmlObject obj : root.selectPath("$this/xml/*")) {
             Node nd = obj.getDomNode();
             QName qname = new QName(nd.getNamespaceURI(), nd.getLocalName());

@@ -120,7 +120,7 @@ public class XDGFShape extends XDGFSheet {
             _text = new XDGFText(text, this);
 
         if (shapeSheet.isSetShapes()) {
-            _shapes = new ArrayList<XDGFShape>();
+            _shapes = new ArrayList<>();
             for (ShapeSheetType shape : shapeSheet.getShapes().getShapeArray())
                 _shapes.add(new XDGFShape(this, shape, parentPage, document));
         }
@@ -781,7 +781,7 @@ public class XDGFShape extends XDGFSheet {
     //
 
     public Iterable<GeometrySection> getGeometrySections() {
-        return new CombinedIterable<GeometrySection>(_geometry,
+        return new CombinedIterable<>(_geometry,
                 _masterShape != null ? _masterShape._geometry : null);
     }
 

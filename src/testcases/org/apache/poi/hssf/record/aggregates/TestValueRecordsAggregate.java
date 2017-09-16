@@ -52,7 +52,7 @@ public final class TestValueRecordsAggregate {
 	private final ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
 	
 	private List<CellValueRecordInterface> getValueRecords() {
-	    List<CellValueRecordInterface> list = new ArrayList<CellValueRecordInterface>();
+	    List<CellValueRecordInterface> list = new ArrayList<>();
 	    for ( CellValueRecordInterface rec : valueRecord ) {
 	        list.add(rec);
 	    }
@@ -65,7 +65,7 @@ public final class TestValueRecordsAggregate {
 	 */
     @Test
 	public void testSharedFormula() {
-		List<Record> records = new ArrayList<Record>();
+		List<Record> records = new ArrayList<>();
 		records.add(new FormulaRecord());
 		records.add(new SharedFormulaRecord());
 		records.add(new WindowTwoRecord());
@@ -91,7 +91,7 @@ public final class TestValueRecordsAggregate {
 	}
 
 	private static List<Record> testData() {
-		List<Record> records = new ArrayList<Record>();
+		List<Record> records = new ArrayList<>();
 		FormulaRecord formulaRecord = new FormulaRecord();
 		BlankRecord blankRecord = new BlankRecord();
 		formulaRecord.setRow(1);

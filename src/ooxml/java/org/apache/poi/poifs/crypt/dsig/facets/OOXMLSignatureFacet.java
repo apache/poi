@@ -98,11 +98,11 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         , List<XMLObject> objects)
     throws XMLSignatureException {
 
-        List<Reference> manifestReferences = new ArrayList<Reference>();
+        List<Reference> manifestReferences = new ArrayList<>();
         addManifestReferences(manifestReferences);
         Manifest manifest =  getSignatureFactory().newManifest(manifestReferences);
 
-        List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
+        List<XMLStructure> objectContent = new ArrayList<>();
         objectContent.add(manifest);
 
         addSignatureTime(document, objectContent);
@@ -121,7 +121,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         OPCPackage ooxml = signatureConfig.getOpcPackage();
         List<PackagePart> relsEntryNames = ooxml.getPartsByContentType(ContentTypes.RELATIONSHIPS_PART);
 
-        Set<String> digestedPartNames = new HashSet<String>();
+        Set<String> digestedPartNames = new HashSet<>();
         for (PackagePart pp : relsEntryNames) {
             final String baseUri = pp.getPartName().getName().replaceFirst("(.*)/_rels/.*", "$1");
 
@@ -181,7 +181,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
             }
 
             if (parameterSpec.hasSourceIds()) {
-                List<Transform> transforms = new ArrayList<Transform>();
+                List<Transform> transforms = new ArrayList<>();
                 transforms.add(newTransform(RelationshipTransformService.TRANSFORM_URI, parameterSpec));
                 transforms.add(newTransform(CanonicalizationMethod.INCLUSIVE));
                 String uri = normalizePartName(pp.getPartName().getURI(), baseUri)
@@ -232,12 +232,12 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         ctTime.setValue(nowStr);
 
         Element n = (Element)document.importNode(ctTime.getDomNode(),true);
-        List<XMLStructure> signatureTimeContent = new ArrayList<XMLStructure>();
+        List<XMLStructure> signatureTimeContent = new ArrayList<>();
         signatureTimeContent.add(new DOMStructure(n));
         SignatureProperty signatureTimeSignatureProperty = getSignatureFactory()
             .newSignatureProperty(signatureTimeContent, "#" + signatureConfig.getPackageSignatureId(),
             "idSignatureTime");
-        List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
+        List<SignatureProperty> signaturePropertyContent = new ArrayList<>();
         signaturePropertyContent.add(signatureTimeSignatureProperty);
         SignatureProperties signatureProperties = getSignatureFactory()
             .newSignatureProperties(signaturePropertyContent, null);
@@ -248,7 +248,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         List<Reference> references,
         List<XMLObject> objects)
     throws XMLSignatureException {
-        List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
+        List<XMLStructure> objectContent = new ArrayList<>();
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
@@ -256,13 +256,13 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
         n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
 
-        List<XMLStructure> signatureInfoContent = new ArrayList<XMLStructure>();
+        List<XMLStructure> signatureInfoContent = new ArrayList<>();
         signatureInfoContent.add(new DOMStructure(n));
         SignatureProperty signatureInfoSignatureProperty = getSignatureFactory()
             .newSignatureProperty(signatureInfoContent, "#" + signatureConfig.getPackageSignatureId(),
             "idOfficeV1Details");
 
-        List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
+        List<SignatureProperty> signaturePropertyContent = new ArrayList<>();
         signaturePropertyContent.add(signatureInfoSignatureProperty);
         SignatureProperties signatureProperties = getSignatureFactory()
             .newSignatureProperties(signaturePropertyContent, null);
@@ -294,26 +294,26 @@ public class OOXMLSignatureFacet extends SignatureFacet {
     /**
      * Office 2010 list of signed types (extensions).
      */
-    private static final Set<String> signed = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
-        "activeXControlBinary","aFChunk","attachedTemplate","attachedToolbars","audio","calcChain","chart","chartColorStyle",
-        "chartLayout","chartsheet","chartStyle","chartUserShapes","commentAuthors","comments","connections","connectorXml",
-        "control","ctrlProp","customData","customData","customProperty","customXml","diagram","diagramColors",
-        "diagramColorsHeader","diagramData","diagramDrawing","diagramLayout","diagramLayoutHeader","diagramQuickStyle",
-        "diagramQuickStyleHeader","dialogsheet","dictionary","documentParts","downRev","drawing","endnotes","externalLink",
-        "externalLinkPath","font","fontTable","footer","footnotes","functionPrototypes","glossaryDocument","graphicFrameDoc",
-        "groupShapeXml","handoutMaster","hdphoto","header","hyperlink","image","ink","inkXml","keyMapCustomizations",
-        "legacyDiagramText","legacyDocTextInfo","mailMergeHeaderSource","mailMergeRecipientData","mailMergeSource","media",
-        "notesMaster","notesSlide","numbering","officeDocument","officeDocument","oleObject","package","pictureXml",
-        "pivotCacheDefinition","pivotCacheRecords","pivotTable","powerPivotData","presProps","printerSettings","queryTable",
-        "recipientData","settings","shapeXml","sharedStrings","sheetMetadata","slicer","slicer","slicerCache","slicerCache",
-        "slide","slideLayout","slideMaster","slideUpdateInfo","slideUpdateUrl","smartTags","styles","stylesWithEffects",
-        "table","tableSingleCells","tableStyles","tags","theme","themeOverride","timeline","timelineCache","transform",
-        "ui/altText","ui/buttonSize","ui/controlID","ui/description","ui/enabled","ui/extensibility","ui/extensibility",
-        "ui/helperText","ui/imageID","ui/imageMso","ui/keyTip","ui/label","ui/lcid","ui/loud","ui/pressed","ui/progID",
-        "ui/ribbonID","ui/showImage","ui/showLabel","ui/supertip","ui/target","ui/text","ui/title","ui/tooltip",
-        "ui/userCustomization","ui/visible","userXmlData","vbaProject","video","viewProps","vmlDrawing",
-        "volatileDependencies","webSettings","wordVbaData","worksheet","wsSortMap","xlBinaryIndex",
-        "xlExternalLinkPath/xlAlternateStartup","xlExternalLinkPath/xlLibrary","xlExternalLinkPath/xlPathMissing",
-        "xlExternalLinkPath/xlStartup","xlIntlMacrosheet","xlMacrosheet","xmlMaps"
+    private static final Set<String> signed = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            "activeXControlBinary", "aFChunk", "attachedTemplate", "attachedToolbars", "audio", "calcChain", "chart", "chartColorStyle",
+            "chartLayout", "chartsheet", "chartStyle", "chartUserShapes", "commentAuthors", "comments", "connections", "connectorXml",
+            "control", "ctrlProp", "customData", "customData", "customProperty", "customXml", "diagram", "diagramColors",
+            "diagramColorsHeader", "diagramData", "diagramDrawing", "diagramLayout", "diagramLayoutHeader", "diagramQuickStyle",
+            "diagramQuickStyleHeader", "dialogsheet", "dictionary", "documentParts", "downRev", "drawing", "endnotes", "externalLink",
+            "externalLinkPath", "font", "fontTable", "footer", "footnotes", "functionPrototypes", "glossaryDocument", "graphicFrameDoc",
+            "groupShapeXml", "handoutMaster", "hdphoto", "header", "hyperlink", "image", "ink", "inkXml", "keyMapCustomizations",
+            "legacyDiagramText", "legacyDocTextInfo", "mailMergeHeaderSource", "mailMergeRecipientData", "mailMergeSource", "media",
+            "notesMaster", "notesSlide", "numbering", "officeDocument", "officeDocument", "oleObject", "package", "pictureXml",
+            "pivotCacheDefinition", "pivotCacheRecords", "pivotTable", "powerPivotData", "presProps", "printerSettings", "queryTable",
+            "recipientData", "settings", "shapeXml", "sharedStrings", "sheetMetadata", "slicer", "slicer", "slicerCache", "slicerCache",
+            "slide", "slideLayout", "slideMaster", "slideUpdateInfo", "slideUpdateUrl", "smartTags", "styles", "stylesWithEffects",
+            "table", "tableSingleCells", "tableStyles", "tags", "theme", "themeOverride", "timeline", "timelineCache", "transform",
+            "ui/altText", "ui/buttonSize", "ui/controlID", "ui/description", "ui/enabled", "ui/extensibility", "ui/extensibility",
+            "ui/helperText", "ui/imageID", "ui/imageMso", "ui/keyTip", "ui/label", "ui/lcid", "ui/loud", "ui/pressed", "ui/progID",
+            "ui/ribbonID", "ui/showImage", "ui/showLabel", "ui/supertip", "ui/target", "ui/text", "ui/title", "ui/tooltip",
+            "ui/userCustomization", "ui/visible", "userXmlData", "vbaProject", "video", "viewProps", "vmlDrawing",
+            "volatileDependencies", "webSettings", "wordVbaData", "worksheet", "wsSortMap", "xlBinaryIndex",
+            "xlExternalLinkPath/xlAlternateStartup", "xlExternalLinkPath/xlLibrary", "xlExternalLinkPath/xlPathMissing",
+            "xlExternalLinkPath/xlStartup", "xlIntlMacrosheet", "xlMacrosheet", "xmlMaps"
     )));
 }

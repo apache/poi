@@ -58,7 +58,7 @@ public final class POIFSChunkParser {
    public static ChunkGroup[] parse(DirectoryNode node) throws IOException {
       Chunks mainChunks = new Chunks();
       
-      ArrayList<ChunkGroup> groups = new ArrayList<ChunkGroup>();
+      ArrayList<ChunkGroup> groups = new ArrayList<>();
       groups.add(mainChunks);
 
       // Find our top level children

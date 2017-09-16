@@ -109,8 +109,8 @@ public final class TestPackageCoreProperties {
 		props.setKeywordsProperty("MyKeywords");
 		props.setLanguageProperty("MyLanguage");
 		props.setLastModifiedByProperty("Julien Chable");
-		props.setLastPrintedProperty(new Nullable<Date>(dateToInsert));
-		props.setModifiedProperty(new Nullable<Date>(dateToInsert));
+		props.setLastPrintedProperty(new Nullable<>(dateToInsert));
+		props.setModifiedProperty(new Nullable<>(dateToInsert));
 		props.setRevisionProperty("2");
 		props.setTitleProperty("MyTitle");
 		props.setSubjectProperty("MySubject");
@@ -168,10 +168,10 @@ public final class TestPackageCoreProperties {
         props.setCreatedProperty((String)null);
         assertEquals("", props.getCreatedPropertyString());
         assertNull(props.getCreatedProperty().getValue());
-        props.setCreatedProperty(new Nullable<Date>());
+        props.setCreatedProperty(new Nullable<>());
         assertEquals("", props.getCreatedPropertyString());
         assertNull(props.getCreatedProperty().getValue());
-        props.setCreatedProperty(new Nullable<Date>(date));
+        props.setCreatedProperty(new Nullable<>(date));
         assertEquals(strDate, props.getCreatedPropertyString());
         assertEquals(date, props.getCreatedProperty().getValue());
         props.setCreatedProperty(strDate);
@@ -184,10 +184,10 @@ public final class TestPackageCoreProperties {
         props.setLastPrintedProperty((String)null);
         assertEquals("", props.getLastPrintedPropertyString());
         assertNull(props.getLastPrintedProperty().getValue());
-        props.setLastPrintedProperty(new Nullable<Date>());
+        props.setLastPrintedProperty(new Nullable<>());
         assertEquals("", props.getLastPrintedPropertyString());
         assertNull(props.getLastPrintedProperty().getValue());
-        props.setLastPrintedProperty(new Nullable<Date>(date));
+        props.setLastPrintedProperty(new Nullable<>(date));
         assertEquals(strDate, props.getLastPrintedPropertyString());
         assertEquals(date, props.getLastPrintedProperty().getValue());
         props.setLastPrintedProperty(strDate);
@@ -198,9 +198,9 @@ public final class TestPackageCoreProperties {
         assertNull(props.getModifiedProperty().getValue());
         props.setModifiedProperty((String)null);
         assertNull(props.getModifiedProperty().getValue());
-        props.setModifiedProperty(new Nullable<Date>());
+        props.setModifiedProperty(new Nullable<>());
         assertNull(props.getModifiedProperty().getValue());
-        props.setModifiedProperty(new Nullable<Date>(date));
+        props.setModifiedProperty(new Nullable<>(date));
         assertEquals(strDate, props.getModifiedPropertyString());
         assertEquals(date, props.getModifiedProperty().getValue());
         props.setModifiedProperty(strDate);

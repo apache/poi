@@ -56,7 +56,7 @@ public class CellFormatPart {
     private static final Map<String, Color> NAMED_COLORS;
 
     static {
-        NAMED_COLORS = new TreeMap<String, Color>(
+        NAMED_COLORS = new TreeMap<>(
                 String.CASE_INSENSITIVE_ORDER);
 
         Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();

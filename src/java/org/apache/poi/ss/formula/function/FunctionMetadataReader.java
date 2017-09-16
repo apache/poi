@@ -50,7 +50,7 @@ final class FunctionMetadataReader {
 		// except in these cases
 		"LOG10", "ATAN2", "DAYS360", "SUMXMY2", "SUMX2MY2", "SUMX2PY2",
 	};
-	private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<String>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
+	private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
 
 	public static FunctionMetadataRegistry createRegistry() {
 	    try {

@@ -197,15 +197,15 @@ public final class InternalWorkbook {
     private InternalWorkbook() {
     	records     = new WorkbookRecordList();
 
-		boundsheets = new ArrayList<BoundSheetRecord>();
-		formats = new ArrayList<FormatRecord>();
-		hyperlinks = new ArrayList<HyperlinkRecord>();
+		boundsheets = new ArrayList<>();
+		formats = new ArrayList<>();
+		hyperlinks = new ArrayList<>();
 		numxfs = 0;
 		numfonts = 0;
 		maxformatid = -1;
 		uses1904datewindowing = false;
-		escherBSERecords = new ArrayList<EscherBSERecord>();
-		commentRecords = new LinkedHashMap<String, NameCommentRecord>();
+		escherBSERecords = new ArrayList<>();
+		commentRecords = new LinkedHashMap<>();
     }
 
     /**
@@ -223,7 +223,7 @@ public final class InternalWorkbook {
     public static InternalWorkbook createWorkbook(List<Record> recs) {
         LOG.log(DEBUG, "Workbook (readfile) created with reclen=", recs.size());
         InternalWorkbook retval = new InternalWorkbook();
-        List<Record> records = new ArrayList<Record>(recs.size() / 3);
+        List<Record> records = new ArrayList<>(recs.size() / 3);
         retval.records.setRecords(records);
 
         boolean eofPassed = false;
@@ -369,7 +369,7 @@ public final class InternalWorkbook {
         LOG.log( DEBUG, "creating new workbook from scratch" );
 
         InternalWorkbook retval = new InternalWorkbook();
-        List<Record> records = new ArrayList<Record>( 30 );
+        List<Record> records = new ArrayList<>(30);
         retval.records.setRecords(records);
         List<FormatRecord> formats = retval.formats;
 

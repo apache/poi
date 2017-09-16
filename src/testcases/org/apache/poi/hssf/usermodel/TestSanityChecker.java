@@ -47,7 +47,7 @@ public final class TestSanityChecker {
 	@Test
 	public void testCheckRecordOrder() {
 		final SanityChecker c = new SanityChecker();
-		List<Record> records = new ArrayList<Record>();
+		List<Record> records = new ArrayList<>();
 		records.add(new BOFRecord());
 		records.add(INTERFACEHDR);
 		records.add(createBoundSheetRec());

@@ -67,7 +67,7 @@ public final class TestChartTitleFormatRecord {
 		private final List<ChartTitleFormatRecord> chartTitleFormatRecords;
 		
 		public ChartTitleFormatRecordGrabber() {
-			chartTitleFormatRecords = new ArrayList<ChartTitleFormatRecord>();
+			chartTitleFormatRecords = new ArrayList<>();
 		}
 
 		@Override

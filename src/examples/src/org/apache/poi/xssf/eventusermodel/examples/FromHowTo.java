@@ -96,7 +96,7 @@ public class FromHowTo {
 		private String lastContents;
 		private boolean nextIsString;
 		private boolean inlineStr;
-		private final LruCache<Integer,String> lruCache = new LruCache<Integer,String>(50);
+		private final LruCache<Integer,String> lruCache = new LruCache<>(50);
 
 		private static class LruCache<A,B> extends LinkedHashMap<A, B> {
 		    private final int maxEntries;

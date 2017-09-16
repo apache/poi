@@ -43,7 +43,7 @@ public class ExObjList extends RecordContainer {
 	 * Returns all the ExHyperlinks
 	 */
 	public ExHyperlink[] getExHyperlinks() {
-		ArrayList<ExHyperlink> links = new ArrayList<ExHyperlink>();
+		ArrayList<ExHyperlink> links = new ArrayList<>();
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof ExHyperlink) {
 				links.add( (ExHyperlink)_children[i] );

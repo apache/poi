@@ -38,7 +38,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
 
-    private final List<Record> _childRecords = new ArrayList<Record>();
+    private final List<Record> _childRecords = new ArrayList<>();
     
     public List<? extends Record> getHSLFChildRecords() { 
         return _childRecords;

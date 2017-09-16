@@ -305,7 +305,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
 
     public Collection<OfficeDrawing> getOfficeDrawings()
     {
-        List<OfficeDrawing> result = new ArrayList<OfficeDrawing>();
+        List<OfficeDrawing> result = new ArrayList<>();
         for ( FSPA fspa : _fspaTable.getShapes() )
         {
             result.add( getOfficeDrawing( fspa ) );

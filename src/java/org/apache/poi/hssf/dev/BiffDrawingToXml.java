@@ -57,7 +57,7 @@ public class BiffDrawingToXml {
     }
 
     private static List<Integer> getIndexesByName(String[] params, HSSFWorkbook workbook) {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         int pos = getAttributeIndex(SHEET_NAME_PARAM, params);
         if (-1 != pos) {
             if (pos >= params.length) {
@@ -74,7 +74,7 @@ public class BiffDrawingToXml {
     }
 
     private static List<Integer> getIndexesByIdArray(String[] params) {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         int pos = getAttributeIndex(SHEET_INDEXES_PARAM, params);
         if (-1 != pos) {
             if (pos >= params.length) {
@@ -90,7 +90,7 @@ public class BiffDrawingToXml {
     }
 
     private static List<Integer> getSheetsIndexes(String[] params, HSSFWorkbook workbook) {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         list.addAll(getIndexesByIdArray(params));
         list.addAll(getIndexesByName(params, workbook));
         if (0 == list.size()) {

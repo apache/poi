@@ -64,7 +64,7 @@ public final class TestColumnInfoRecordsAggregate {
 
 	private static final class CIRCollector implements RecordVisitor {
 
-		private final List<Record> _list = new ArrayList<Record>();
+		private final List<Record> _list = new ArrayList<>();
 
 		@Override
         public void visitRecord(Record r) {

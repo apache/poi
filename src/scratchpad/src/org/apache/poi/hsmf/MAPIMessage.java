@@ -149,8 +149,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
       ChunkGroup[] chunkGroups = POIFSChunkParser.parse(poifsDir);
 
       // Grab interesting bits
-      ArrayList<AttachmentChunks> attachments = new ArrayList<AttachmentChunks>();
-      ArrayList<RecipientChunks>  recipients  = new ArrayList<RecipientChunks>();
+      ArrayList<AttachmentChunks> attachments = new ArrayList<>();
+      ArrayList<RecipientChunks>  recipients  = new ArrayList<>();
       for(ChunkGroup group : chunkGroups) {
          // Should only ever be one of each of these
          if(group instanceof Chunks) {

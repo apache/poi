@@ -51,7 +51,7 @@ public final class Table extends Range
         if ( _rowsFound )
             return;
 
-        _rows = new ArrayList<TableRow>();
+        _rows = new ArrayList<>();
         int rowStart = 0;
         int rowEnd = 0;
 

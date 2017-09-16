@@ -45,7 +45,7 @@ import org.apache.poi.util.Units;
 public class HwmfPicture {
     private static final POILogger logger = POILogFactory.getLogger(HwmfPicture.class);
     
-    final List<HwmfRecord> records = new ArrayList<HwmfRecord>();
+    final List<HwmfRecord> records = new ArrayList<>();
     final HwmfPlaceableHeader placeableHeader;
     final HwmfHeader header;
     

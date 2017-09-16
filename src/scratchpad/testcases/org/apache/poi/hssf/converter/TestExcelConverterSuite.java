@@ -50,7 +50,7 @@ public class TestExcelConverterSuite
 
     @Parameterized.Parameters(name="{index}: {0}")
     public static Iterable<Object[]> files() {
-        List<Object[]> files = new ArrayList<Object[]>();
+        List<Object[]> files = new ArrayList<>();
         File directory = POIDataSamples.getDocumentInstance().getFile(
                 "../spreadsheet" );
         for ( final File child : directory.listFiles( new FilenameFilter()

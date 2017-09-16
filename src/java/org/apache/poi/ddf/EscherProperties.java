@@ -334,7 +334,7 @@ public final class EscherProperties {
 	private static final Map<Short, EscherPropertyMetaData> properties = initProps();
 
 	private static Map<Short, EscherPropertyMetaData> initProps() {
-		Map<Short, EscherPropertyMetaData> m = new HashMap<Short, EscherPropertyMetaData>();
+		Map<Short, EscherPropertyMetaData> m = new HashMap<>();
 		addProp(m, TRANSFORM__ROTATION, "transform.rotation");
 		addProp(m, PROTECTION__LOCKROTATION, "protection.lockrotation");
 		addProp(m, PROTECTION__LOCKASPECTRATIO, "protection.lockaspectratio");

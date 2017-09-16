@@ -87,7 +87,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook(filename);
         confirmReadMeSheet(workbook, clazz);
 
-        List<Object[]> data = new ArrayList<Object[]>();
+        List<Object[]> data = new ArrayList<>();
 
         int nSheets = workbook.getNumberOfSheets();
         for(int sheetIdx=1; sheetIdx< nSheets; sheetIdx++) {

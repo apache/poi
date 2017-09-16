@@ -44,7 +44,7 @@ public abstract class PropertyTableBase implements BATManaged {
     public PropertyTableBase(final HeaderBlock header_block)
     {
         _header_block = header_block;
-        _properties  = new ArrayList<Property>();
+        _properties  = new ArrayList<>();
         addProperty(new RootProperty());
     }
 
@@ -110,7 +110,7 @@ public abstract class PropertyTableBase implements BATManaged {
             // property has no children
             return;
         }
-        Stack<Property> children = new Stack<Property>();
+        Stack<Property> children = new Stack<>();
 
         children.push(_properties.get(index));
         while (!children.empty())

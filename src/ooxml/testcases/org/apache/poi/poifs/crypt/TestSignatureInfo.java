@@ -248,7 +248,7 @@ public class TestSignatureInfo {
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
             si.setSignatureConfig(sic);
-            List<X509Certificate> result = new ArrayList<X509Certificate>();
+            List<X509Certificate> result = new ArrayList<>();
             for (SignaturePart sp : si.getSignatureParts()) {
                 if (sp.validate()) {
                     result.add(sp.getSigner());
@@ -283,7 +283,7 @@ public class TestSignatureInfo {
                 sic.setOpcPackage(pkg);
                 SignatureInfo si = new SignatureInfo();
                 si.setSignatureConfig(sic);
-                List<X509Certificate> result = new ArrayList<X509Certificate>();
+                List<X509Certificate> result = new ArrayList<>();
                 for (SignaturePart sp : si.getSignatureParts()) {
                     if (sp.validate()) {
                         result.add(sp.getSigner());
@@ -313,7 +313,7 @@ public class TestSignatureInfo {
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
             si.setSignatureConfig(sic);
-            List<X509Certificate> result = new ArrayList<X509Certificate>();
+            List<X509Certificate> result = new ArrayList<>();
             for (SignaturePart sp : si.getSignatureParts()) {
                 if (sp.validate()) {
                     result.add(sp.getSigner());
@@ -384,7 +384,7 @@ public class TestSignatureInfo {
         si.setSignatureConfig(sic);
         // hash > sha1 doesn't work in excel viewer ...
         si.confirmSignature();
-        List<X509Certificate> result = new ArrayList<X509Certificate>();
+        List<X509Certificate> result = new ArrayList<>();
         for (SignaturePart sp : si.getSignatureParts()) {
             if (sp.validate()) {
                 result.add(sp.getSigner());
@@ -411,7 +411,7 @@ public class TestSignatureInfo {
          * We need at least 2 certificates for the XAdES-C complete certificate
          * refs construction.
          */
-        List<X509Certificate> certificateChain = new ArrayList<X509Certificate>();
+        List<X509Certificate> certificateChain = new ArrayList<>();
         certificateChain.add(x509);
         certificateChain.add(x509);
         signatureConfig.setSigningCertificateChain(certificateChain);
@@ -600,7 +600,7 @@ public class TestSignatureInfo {
 
         Key key = keystore.getKey("poitest", password.toCharArray());
         Certificate chainList[] = keystore.getCertificateChain("poitest");
-        List<X509Certificate> certChain = new ArrayList<X509Certificate>();
+        List<X509Certificate> certChain = new ArrayList<>();
         for (Certificate c : chainList) {
             certChain.add((X509Certificate)c);
         }
@@ -752,7 +752,7 @@ public class TestSignatureInfo {
 
         // verify: signature
         si.getSignatureConfig().setOpcPackage(pkgCopy);
-        List<X509Certificate> result = new ArrayList<X509Certificate>();
+        List<X509Certificate> result = new ArrayList<>();
         for (SignaturePart sp : si.getSignatureParts()) {
             if (sp.validate()) {
                 result.add(sp.getSigner());

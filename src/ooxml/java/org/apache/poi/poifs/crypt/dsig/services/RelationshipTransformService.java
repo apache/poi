@@ -82,7 +82,7 @@ public class RelationshipTransformService extends TransformService {
      * Relationship Transform parameter specification class.
      */
     public static class RelationshipTransformParameterSpec implements TransformParameterSpec {
-        List<String> sourceIds = new ArrayList<String>();
+        List<String> sourceIds = new ArrayList<>();
         public void addRelationshipReference(String relationshipId) {
                 sourceIds.add(relationshipId);
         }
@@ -95,7 +95,7 @@ public class RelationshipTransformService extends TransformService {
     public RelationshipTransformService() {
         super();
         LOG.log(POILogger.DEBUG, "constructor");
-        this.sourceIds = new ArrayList<String>();
+        this.sourceIds = new ArrayList<>();
     }
 
     /**
@@ -197,7 +197,7 @@ public class RelationshipTransformService extends TransformService {
         // keep only those relationships which id is registered in the sourceIds
         Element root = doc.getDocumentElement();
         NodeList nl = root.getChildNodes();
-        TreeMap<String,Element> rsList = new TreeMap<String,Element>();
+        TreeMap<String,Element> rsList = new TreeMap<>();
         for (int i=nl.getLength()-1; i>=0; i--) {
             Node n = nl.item(i);
             if ("Relationship".equals(n.getLocalName())) {

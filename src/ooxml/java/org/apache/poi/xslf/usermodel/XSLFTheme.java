@@ -75,7 +75,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     	CTBaseStyles elems = _theme.getThemeElements();
     	CTColorScheme scheme = elems.getClrScheme();
     	// The color scheme is responsible for defining a list of twelve colors. 
-    	_schemeColors = new HashMap<String, CTColor>(12);
+    	_schemeColors = new HashMap<>(12);
     	for(XmlObject o : scheme.selectPath("*")){
     		CTColor c = (CTColor)o;
     		String name = c.getDomNode().getLocalName();

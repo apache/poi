@@ -156,7 +156,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
-        Set<HSLFLine> lineSet = new HashSet<HSLFLine>();
+        Set<HSLFLine> lineSet = new HashSet<>();
         for (HSLFTableCell row[] : cells) {
             for (HSLFTableCell c : row) {
                 addShape(c);
@@ -176,7 +176,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
 
     private void cellListToArray() {
-        List<HSLFTableCell> htc = new ArrayList<HSLFTableCell>();
+        List<HSLFTableCell> htc = new ArrayList<>();
         for (HSLFShape h : getShapes()) {
             if (h instanceof HSLFTableCell) {
                 htc.add((HSLFTableCell)h);
@@ -187,8 +187,8 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
             throw new IllegalStateException("HSLFTable without HSLFTableCells");
         }
         
-        SortedSet<Double> colSet = new TreeSet<Double>();
-        SortedSet<Double> rowSet = new TreeSet<Double>();
+        SortedSet<Double> colSet = new TreeSet<>();
+        SortedSet<Double> rowSet = new TreeSet<>();
         
         // #1 pass - determine cols and rows
         for (HSLFTableCell sh : htc) {
@@ -198,8 +198,8 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         }
         cells = new HSLFTableCell[rowSet.size()][colSet.size()];
         
-        List<Double> colLst = new ArrayList<Double>(colSet);
-        List<Double> rowLst = new ArrayList<Double>(rowSet);
+        List<Double> colLst = new ArrayList<>(colSet);
+        List<Double> rowLst = new ArrayList<>(rowSet);
         
         // #2 pass - assign shape to table cells
         for (HSLFTableCell sh : htc) {
@@ -254,7 +254,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
 
     private void fitLinesToCells() {
-        List<LineRect> lines = new ArrayList<LineRect>();
+        List<LineRect> lines = new ArrayList<>();
         for (HSLFShape h : getShapes()) {
             if (h instanceof HSLFLine) {
                 lines.add(new LineRect((HSLFLine)h));

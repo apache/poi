@@ -36,10 +36,10 @@ public final class PackagePartCollection implements Serializable {
 	 * HashSet use to store this collection part names as string for rule
 	 * M1.11 optimized checking.
 	 */
-	private HashSet<String> registerPartNameStr = new HashSet<String>();
+	private HashSet<String> registerPartNameStr = new HashSet<>();
 
 
-	private final HashMap<PackagePartName, PackagePart> packagePartLookup = new HashMap<PackagePartName, PackagePart>();
+	private final HashMap<PackagePartName, PackagePart> packagePartLookup = new HashMap<>();
 
 
 	/**
@@ -79,7 +79,7 @@ public final class PackagePartCollection implements Serializable {
 	 * avoids paying the high cost of Natural Ordering per insertion.
 	 */
 	public Collection<PackagePart> sortedValues() {
-		ArrayList<PackagePart> packageParts = new ArrayList<PackagePart>(packagePartLookup.values());
+		ArrayList<PackagePart> packageParts = new ArrayList<>(packagePartLookup.values());
 		Collections.sort(packageParts);
 		return packageParts;
 

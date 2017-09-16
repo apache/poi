@@ -176,7 +176,7 @@ public final class POITestCase {
                 @Override
                 @SuppressForbidden("Test only")
                 public List<Field> run() throws Exception {
-                    List<Field> flds = new ArrayList<Field>();
+                    List<Field> flds = new ArrayList<>();
                     for (Class<?> c = expected.getClass(); c != null; c = c.getSuperclass()) {
                         Field[] fs = c.getDeclaredFields();
                         AccessibleObject.setAccessible(fs, true);                        

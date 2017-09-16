@@ -76,7 +76,7 @@ public class XLS2CSVmra implements HSSFListener {
 	/** So we known which sheet we're on */
 	private int sheetIndex = -1;
 	private BoundSheetRecord[] orderedBSRs;
-	private List<BoundSheetRecord> boundSheetRecords = new ArrayList<BoundSheetRecord>();
+	private List<BoundSheetRecord> boundSheetRecords = new ArrayList<>();
 
 	// For handling formulas with string results
 	private int nextRow;

@@ -37,8 +37,8 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
  *  and list methods to get all of them.
  */
 public final class Attachment {
-   private final List<TNEFAttribute> attributes = new ArrayList<TNEFAttribute>();
-   private final List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
+   private final List<TNEFAttribute> attributes = new ArrayList<>();
+   private final List<MAPIAttribute> mapiAttributes = new ArrayList<>();
    
    protected void addAttribute(TNEFAttribute attr) {
       attributes.add(attr);

@@ -99,7 +99,7 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public List<List<XSLFTextParagraph>> getTextParagraphs() {
-        List<List<XSLFTextParagraph>> tp = new ArrayList<List<XSLFTextParagraph>>();
+        List<List<XSLFTextParagraph>> tp = new ArrayList<>();
         for (XSLFShape sh : super.getShapes()) {
             if (sh instanceof XSLFTextShape) {
                 XSLFTextShape txt = (XSLFTextShape)sh;

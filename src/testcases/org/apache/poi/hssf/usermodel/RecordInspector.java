@@ -39,7 +39,7 @@ public final class RecordInspector {
 		private final List<Record> _list;
 
 		public RecordCollector() {
-			_list = new ArrayList<Record>(128);
+			_list = new ArrayList<>(128);
 		}
 
 		@Override

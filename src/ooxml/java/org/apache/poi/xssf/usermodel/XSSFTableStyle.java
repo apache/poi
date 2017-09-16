@@ -45,7 +45,7 @@ public class XSSFTableStyle implements TableStyle {
 
     private final String name;
     private final int index;
-    private final Map<TableStyleType, DifferentialStyleProvider> elementMap = new EnumMap<TableStyleType, DifferentialStyleProvider>(TableStyleType.class);
+    private final Map<TableStyleType, DifferentialStyleProvider> elementMap = new EnumMap<>(TableStyleType.class);
 
     /**
      * @param index style definition index or built-in ordinal depending on use
@@ -58,7 +58,7 @@ public class XSSFTableStyle implements TableStyle {
         this.name = tableStyle.getName();
         this.index = index;
         
-        List<CTDxf> dxfList = new ArrayList<CTDxf>();
+        List<CTDxf> dxfList = new ArrayList<>();
 
         // CT* classes don't handle "mc:AlternateContent" elements, so get the Dxf instances manually
         XmlCursor cur = dxfs.newCursor();

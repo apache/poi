@@ -55,7 +55,7 @@ public class POIFSViewEngine
                                        final int indentLevel,
                                        final String indentString)
     {
-        List<String> objects = new ArrayList<String>();
+        List<String> objects = new ArrayList<>();
 
         if (viewable instanceof POIFSViewable)
         {

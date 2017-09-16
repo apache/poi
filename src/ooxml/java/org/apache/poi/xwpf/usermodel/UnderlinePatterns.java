@@ -135,7 +135,7 @@ public enum UnderlinePatterns {
      */
     NONE(18);
 
-    private static Map<Integer, UnderlinePatterns> imap = new HashMap<Integer, UnderlinePatterns>();
+    private static Map<Integer, UnderlinePatterns> imap = new HashMap<>();
 
     static {
         for (UnderlinePatterns p : values()) {

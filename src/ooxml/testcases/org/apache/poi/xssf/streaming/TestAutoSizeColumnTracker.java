@@ -55,7 +55,7 @@ public class TestAutoSizeColumnTracker {
     private AutoSizeColumnTracker tracker;
     private static final SortedSet<Integer> columns;
     static {
-        SortedSet<Integer>_columns = new TreeSet<Integer>();
+        SortedSet<Integer>_columns = new TreeSet<>();
         _columns.add(0);
         _columns.add(1);
         _columns.add(3);
@@ -85,7 +85,7 @@ public class TestAutoSizeColumnTracker {
     public void trackAndUntrackColumn() {
         assumeTrue(tracker.getTrackedColumns().isEmpty());
         tracker.trackColumn(0);
-        Set<Integer> expected = new HashSet<Integer>();
+        Set<Integer> expected = new HashSet<>();
         expected.add(0);
         assertEquals(expected, tracker.getTrackedColumns());
         tracker.untrackColumn(0);

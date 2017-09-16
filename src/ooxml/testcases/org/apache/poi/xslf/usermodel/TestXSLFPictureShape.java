@@ -114,7 +114,7 @@ public class TestXSLFPictureShape {
         XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
         ppt1.close();
         // pictures keyed by file name
-        Map<String, XSLFPictureData> pics = new HashMap<String, XSLFPictureData>();
+        Map<String, XSLFPictureData> pics = new HashMap<>();
         for(XSLFPictureData p : ppt2.getPictureData()){
             pics.put(p.getFileName(), p);
         }

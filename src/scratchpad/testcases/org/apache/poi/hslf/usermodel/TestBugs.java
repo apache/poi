@@ -150,7 +150,7 @@ public final class TestBugs {
         HSLFSlideShow ppt = open("42474-2.ppt");
 
         //map slide number and starting phrase of its notes
-        Map<Integer, String> notesMap = new HashMap<Integer, String>();
+        Map<Integer, String> notesMap = new HashMap<>();
         notesMap.put(Integer.valueOf(4), "For  decades before calculators");
         notesMap.put(Integer.valueOf(5), "Several commercial applications");
         notesMap.put(Integer.valueOf(6), "There are three variations of LNS that are discussed here");
@@ -308,7 +308,7 @@ public final class TestBugs {
         List<List<HSLFTextParagraph>> paras = slide.get(0).getTextParagraphs();
         assertEquals(4, paras.size());
 
-        Set<String> expected = new HashSet<String>();
+        Set<String> expected = new HashSet<>();
         expected.add("\u201CHAPPY BIRTHDAY SCOTT\u201D");
         expected.add("Have a HAPPY DAY");
         expected.add("PS Nobody is allowed to hassle Scott TODAY\u2026");
@@ -344,7 +344,7 @@ public final class TestBugs {
         assertEquals("Second run", HSLFTextParagraph.getRawText(slTr.get(2)));
 
         // Check the shape based text runs
-        List<HSLFTextParagraph> lst = new ArrayList<HSLFTextParagraph>();
+        List<HSLFTextParagraph> lst = new ArrayList<>();
         for (HSLFShape shape : slide.getShapes()) {
             if (shape instanceof HSLFTextShape){
                 List<HSLFTextParagraph> textRun = ((HSLFTextShape)shape).getTextParagraphs();

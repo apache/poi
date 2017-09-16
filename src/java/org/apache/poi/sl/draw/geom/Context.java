@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Context {
-    final Map<String, Double> _ctx = new HashMap<String, Double>();
+    final Map<String, Double> _ctx = new HashMap<>();
     final IAdjustableShape _props;
     final Rectangle2D _anchor;
     

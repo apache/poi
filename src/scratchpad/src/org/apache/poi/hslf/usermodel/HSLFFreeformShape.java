@@ -186,8 +186,8 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         Rectangle2D bounds = path.getBounds2D();
         PathIterator it = path.getPathIterator(new AffineTransform());
 
-        List<byte[]> segInfo = new ArrayList<byte[]>();
-        List<Point2D.Double> pntInfo = new ArrayList<Point2D.Double>();
+        List<byte[]> segInfo = new ArrayList<>();
+        List<Point2D.Double> pntInfo = new ArrayList<>();
         boolean isClosed = false;
         int numPoints = 0;
         while (!it.isDone()) {

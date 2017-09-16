@@ -57,13 +57,13 @@ public class CheckFunctionsSupported {
         CheckFunctionsSupported check = new CheckFunctionsSupported(wb);
         
         // Fetch all the problems
-        List<FormulaEvaluationProblems> problems = new ArrayList<CheckFunctionsSupported.FormulaEvaluationProblems>();
+        List<FormulaEvaluationProblems> problems = new ArrayList<>();
         for (int sn=0; sn<wb.getNumberOfSheets(); sn++) {
             problems.add(check.getEvaluationProblems(sn));
         }
         
         // Produce an overall summary
-        Set<String> unsupportedFunctions = new TreeSet<String>();
+        Set<String> unsupportedFunctions = new TreeSet<>();
         for (FormulaEvaluationProblems p : problems) {
             unsupportedFunctions.addAll(p.unsupportedFunctions);
         }
@@ -121,8 +121,8 @@ public class CheckFunctionsSupported {
         return getEvaluationProblems(workbook.getSheetAt(sheetIndex));
     }
     public FormulaEvaluationProblems getEvaluationProblems(Sheet sheet) {
-        Set<String> unsupportedFunctions = new HashSet<String>();
-        Map<CellReference,Exception> unevaluatableCells = new HashMap<CellReference, Exception>();
+        Set<String> unsupportedFunctions = new HashSet<>();
+        Map<CellReference,Exception> unevaluatableCells = new HashMap<>();
         
         for (Row r : sheet) {
             for (Cell c : r) {

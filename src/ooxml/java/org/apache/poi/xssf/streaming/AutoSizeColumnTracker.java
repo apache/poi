@@ -55,10 +55,10 @@ import org.apache.poi.util.Internal;
     // will be called more frequently than getTrackedColumns(). The O(1) cost of insertion, removal, and membership operations
     // outweigh the infrequent O(n*log n) cost of sorting getTrackedColumns().
     // Memory consumption for a HashMap and TreeMap is about the same
-    private final Map<Integer, ColumnWidthPair> maxColumnWidths = new HashMap<Integer, ColumnWidthPair>();
+    private final Map<Integer, ColumnWidthPair> maxColumnWidths = new HashMap<>();
     // untrackedColumns stores columns have been explicitly untracked so they aren't implicitly re-tracked by trackAllColumns
     // Using a HashSet instead of a TreeSet because we don't care about order.
-    private final Set<Integer> untrackedColumns = new HashSet<Integer>();
+    private final Set<Integer> untrackedColumns = new HashSet<>();
     private boolean trackAllColumns;
 
     /**
@@ -126,7 +126,7 @@ import org.apache.poi.util.Internal;
      * @since 3.14beta1
      */
     public SortedSet<Integer> getTrackedColumns() {
-        SortedSet<Integer> sorted = new TreeSet<Integer>(maxColumnWidths.keySet());
+        SortedSet<Integer> sorted = new TreeSet<>(maxColumnWidths.keySet());
         return Collections.unmodifiableSortedSet(sorted);
     }
     

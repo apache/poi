@@ -52,7 +52,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	 * Creates an empty aggregate
 	 */
 	public ColumnInfoRecordsAggregate() {
-		records = new ArrayList<ColumnInfoRecord>();
+		records = new ArrayList<>();
 	}
 	public ColumnInfoRecordsAggregate(RecordStream rs) {
 		this();

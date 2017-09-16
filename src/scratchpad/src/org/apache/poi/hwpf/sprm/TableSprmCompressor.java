@@ -37,7 +37,7 @@ public final class TableSprmCompressor
   public static byte[] compressTableProperty(TableProperties newTAP)
   {
     int size = 0;
-    List<byte[]> sprmList = new ArrayList<byte[]>();
+    List<byte[]> sprmList = new ArrayList<>();
 
     if (newTAP.getJc() != 0)
     {

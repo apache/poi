@@ -51,10 +51,10 @@ public class XSSFBHyperlinksTable {
     }
 
 
-    private final List<XSSFHyperlinkRecord> hyperlinkRecords = new ArrayList<XSSFHyperlinkRecord>();
+    private final List<XSSFHyperlinkRecord> hyperlinkRecords = new ArrayList<>();
 
     //cache the relId to hyperlink url from the sheet's .rels
-    private Map<String, String> relIdToHyperlink = new HashMap<String, String>();
+    private Map<String, String> relIdToHyperlink = new HashMap<>();
 
     public XSSFBHyperlinksTable(PackagePart sheetPart) throws IOException {
         //load the urls from the sheet .rels
@@ -70,13 +70,13 @@ public class XSSFBHyperlinksTable {
      */
     public Map<CellAddress, List<XSSFHyperlinkRecord>> getHyperLinks() {
         Map<CellAddress, List<XSSFHyperlinkRecord>> hyperlinkMap =
-                new TreeMap<CellAddress, List<XSSFHyperlinkRecord>>(new TopLeftCellAddressComparator());
+                new TreeMap<>(new TopLeftCellAddressComparator());
         for (XSSFHyperlinkRecord hyperlinkRecord : hyperlinkRecords) {
             CellAddress cellAddress = new CellAddress(hyperlinkRecord.getCellRangeAddress().getFirstRow(),
                     hyperlinkRecord.getCellRangeAddress().getFirstColumn());
             List<XSSFHyperlinkRecord> list = hyperlinkMap.get(cellAddress);
             if (list == null) {
-                list = new ArrayList<XSSFHyperlinkRecord>();
+                list = new ArrayList<>();
             }
             list.add(hyperlinkRecord);
             hyperlinkMap.put(cellAddress, list);
@@ -99,7 +99,7 @@ public class XSSFBHyperlinksTable {
         for (XSSFHyperlinkRecord record : hyperlinkRecords) {
             if (CellRangeUtil.intersect(targetCellRangeAddress, record.getCellRangeAddress()) != CellRangeUtil.NO_INTERSECTION) {
                 if (overlapping == null) {
-                    overlapping = new ArrayList<XSSFHyperlinkRecord>();
+                    overlapping = new ArrayList<>();
                 }
                 overlapping.add(record);
             }

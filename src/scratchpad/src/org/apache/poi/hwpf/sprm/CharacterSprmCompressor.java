@@ -32,7 +32,7 @@ public final class CharacterSprmCompressor
   }
   public static byte[] compressCharacterProperty(CharacterProperties newCHP, CharacterProperties oldCHP)
   {
-    List<byte[]> sprmList = new ArrayList<byte[]>();
+    List<byte[]> sprmList = new ArrayList<>();
     int size = 0;
 
     if (newCHP.isFRMarkDel() != oldCHP.isFRMarkDel())
