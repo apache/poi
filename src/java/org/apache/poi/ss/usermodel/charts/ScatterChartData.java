@@ -19,12 +19,15 @@ package org.apache.poi.ss.usermodel.charts;
 
 import java.util.List;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Data for a Scatter Chart
  *
  * @deprecated use XDDFScatterChartData instead
  */
 @Deprecated
+@Removal(version="4.2")
 public interface ScatterChartData extends ChartData {
 	/**
 	 * @param xs data source to be used for X axis values

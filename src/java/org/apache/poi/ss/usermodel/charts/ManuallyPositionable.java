@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Abstraction of chart element that can be positioned with manual
  * layout.
@@ -24,6 +26,7 @@ package org.apache.poi.ss.usermodel.charts;
  * @deprecated
  */
 @Deprecated
+@Removal(version="4.2")
 public interface ManuallyPositionable {
 
 	/**

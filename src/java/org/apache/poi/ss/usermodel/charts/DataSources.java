@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Removal;
 
 /**
  * Class {@code DataSources} is a factory for {@link ChartDataSource} instances.
@@ -32,6 +33,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  *@deprecated use XDDFDataSourcesFactory instead
  */
 @Deprecated
+@Removal(version="4.2")
 public class DataSources {
 
     private DataSources() {

@@ -17,12 +17,15 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Specifies the possible crossing points for an axis.
  *
  * @deprecated use XDDF AxisCrosses instead
  */
 @Deprecated
+@Removal(version="4.2")
 public enum AxisCrosses {
 	/**
 	 * The category axis crosses at the zero point of the value axis (if

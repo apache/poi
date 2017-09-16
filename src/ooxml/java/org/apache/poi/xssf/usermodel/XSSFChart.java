@@ -86,6 +86,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	private XSSFGraphicFrame frame;
 
 	@Deprecated
+	@Removal(version="4.2")
 	List<XSSFChartAxis> axis = new ArrayList<>();
 
 	List<XDDFChartAxis> axes = new ArrayList<>();
@@ -169,24 +170,28 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public XSSFChartDataFactory getChartDataFactory() {
 		return XSSFChartDataFactory.getInstance();
 	}
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public XSSFChart getChartAxisFactory() {
 		return this;
 	}
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public void plot(ChartData data, ChartAxis... chartAxis) {
 		data.fillChart(this, chartAxis);
 	}
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public XSSFValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
 		long id = axis.size() + 1;
 		XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
@@ -201,6 +206,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public XSSFCategoryAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
 		long id = axis.size() + 1;
 		XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
@@ -215,6 +221,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public XSSFDateAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
 		long id = axis.size() + 1;
 		XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
@@ -229,6 +236,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
     @Override
     @Deprecated
+    @Removal(version="4.2")
     public List<? extends XSSFChartAxis> getAxis() {
         if (axis.isEmpty() && hasAxis()) {
             parseAxis();
@@ -298,6 +306,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public XSSFManualLayout getManualLayout() {
 		return new XSSFManualLayout(this);
 	}
@@ -469,6 +478,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
 	@Override
     @Deprecated
+    @Removal(version="4.2")
 	public XSSFChartLegend getOrCreateLegend() {
 		return new XSSFChartLegend(this);
 	}
@@ -478,6 +488,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	 * @return hasAxes()
 	 */
 	@Deprecated
+	@Removal(version="4.2")
 	private boolean hasAxis() {
 		return hasAxes();
 	}
@@ -502,6 +513,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     }
 
 	@Deprecated
+	@Removal(version="4.2")
 	private void parseAxis() {
 		// TODO: add other axis types
 		parseCategoryAxis();
@@ -510,6 +522,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	}
 
 	@Deprecated
+	@Removal(version="4.2")
 	private void parseCategoryAxis() {
 		for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
 			axis.add(new XSSFCategoryAxis(this, catAx));
@@ -517,6 +530,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	}
 
 	@Deprecated
+	@Removal(version="4.2")
 	private void parseDateAxis() {
 		for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
 			axis.add(new XSSFDateAxis(this, dateAx));
@@ -524,6 +538,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	}
 
 	@Deprecated
+	@Removal(version="4.2")
 	private void parseValueAxis() {
 		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
 			axis.add(new XSSFValueAxis(this, valAx));

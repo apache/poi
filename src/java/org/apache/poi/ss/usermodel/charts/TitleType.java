@@ -17,12 +17,15 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Title types for charts.
  *
  * @deprecated
  */
 @Deprecated
+@Removal(version="4.2")
 public enum TitleType {
     STRING,
     CELL_REFERENCE

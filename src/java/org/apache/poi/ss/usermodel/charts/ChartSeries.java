@@ -18,12 +18,14 @@
 package org.apache.poi.ss.usermodel.charts;
 
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Removal;
 
 /**
  * Basic settings for all chart series.
  * @deprecated
  */
 @Deprecated
+@Removal(version="4.2")
 public interface ChartSeries {
 
     /**

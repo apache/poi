@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.charts.ChartData;
 import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
 import org.apache.poi.ss.usermodel.charts.ChartLegend;
 import org.apache.poi.ss.usermodel.charts.ManuallyPositionable;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a chart.
@@ -32,6 +33,7 @@ import org.apache.poi.ss.usermodel.charts.ManuallyPositionable;
  * @deprecated
  */
 @Deprecated
+@Removal(version="4.2")
 public interface Chart extends ManuallyPositionable {
 
 	/**
