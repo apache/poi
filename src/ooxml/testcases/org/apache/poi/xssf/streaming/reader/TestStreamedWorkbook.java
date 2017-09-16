@@ -40,36 +40,22 @@ public class TestStreamedWorkbook {
 
     @Test
     public void testInvalidFilePath() throws Exception {
-        StreamedWorkbook workbook = null;
-        try {
-            workbook = new StreamedWorkbook(null);
+        try(StreamedWorkbook workbook = new StreamedWorkbook(null)) {
             fail("expected exception");
         } catch (Exception e) {
             assertEquals("No sheets found", e.getMessage());
         }
-
-        if (workbook != null) {
-            workbook.close();
-        }
-
     }
 
     @Test
     public void testInvalidFile() throws Exception {
         POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
         File f = files.getFile("InvalidFile.txt");
-        StreamedWorkbook workbook = null;
-        try {
-            workbook = new StreamedWorkbook(f.getAbsolutePath());
+        try(StreamedWorkbook workbook = new StreamedWorkbook(f.getAbsolutePath())) {
             workbook.getSheetIterator();
             fail("expected an exception");
         } catch (Exception e) {
-            assertEquals("No valid entries or contents found, this is not a valid OOXML (Office Open XML) file",
-                    e.getMessage());
-        }
-
-        if (workbook != null) {
-            workbook.close();
+            assertEquals("The supplied file was empty (zero bytes long)", e.getMessage());
         }
     }
 
@@ -77,92 +63,85 @@ public class TestStreamedWorkbook {
     public void testSheetCount() throws Exception {
         POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
         File f = files.getFile(TEST_FILE);
-        StreamedWorkbook streamedWorkbook = new StreamedWorkbook(f.getAbsolutePath());
-        Workbook workbook = new XSSFWorkbook(f);
-        int streamedSheetcount = 0;
-        int count = 0;
+        try(StreamedWorkbook streamedWorkbook = new StreamedWorkbook(f.getAbsolutePath());
+            Workbook workbook = new XSSFWorkbook(f)) {
+            int streamedSheetcount = 0;
+            int count = 0;
 
-        Iterator<StreamedSheet> streamedSheetIterator = streamedWorkbook.getSheetIterator();
+            Iterator<StreamedSheet> streamedSheetIterator = streamedWorkbook.getSheetIterator();
 
-        while (streamedSheetIterator.hasNext()) {
-            streamedSheetIterator.next();
-            streamedSheetcount++;
+            while (streamedSheetIterator.hasNext()) {
+                streamedSheetIterator.next();
+                streamedSheetcount++;
+            }
+
+            Iterator<Sheet> sheetIterator = workbook.sheetIterator();
+
+            while (sheetIterator.hasNext()) {
+                sheetIterator.next();
+                count++;
+            }
+
+            assertEquals(count, streamedSheetcount);
         }
-
-        Iterator<Sheet> sheetIterator = workbook.sheetIterator();
-
-        while (sheetIterator.hasNext()) {
-            sheetIterator.next();
-            count++;
-        }
-
-        assertEquals(count, streamedSheetcount);
-
-        streamedWorkbook.close();
-        workbook.close();
-
     }
 
     @Test
     public void testTotalNumberOfSheets() throws Exception {
         POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
         File f = files.getFile(TEST_FILE);
-        StreamedWorkbook streamedWorkbook = new StreamedWorkbook(f.getAbsolutePath());
-        Workbook workbook = new XSSFWorkbook(f);
+        try(StreamedWorkbook streamedWorkbook = new StreamedWorkbook(f.getAbsolutePath());
+            Workbook workbook = new XSSFWorkbook(f)) {
 
-        int sheetCount = workbook.getNumberOfSheets();
-        int streamedSheetCount = streamedWorkbook.getNumberOfSheets();
+            int sheetCount = workbook.getNumberOfSheets();
+            int streamedSheetCount = streamedWorkbook.getNumberOfSheets();
 
-        assertEquals(sheetCount, streamedSheetCount);
-
-        workbook.close();
-        streamedWorkbook.close();
+            assertEquals(sheetCount, streamedSheetCount);
+        }
     }
 
     @Test
     public void testTotalRowCount() throws Exception {
         POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
         File f = files.getFile(TEST_FILE);
-        StreamedWorkbook streamedWorkbook = new StreamedWorkbook(f.getAbsolutePath());
-        Workbook workbook = new XSSFWorkbook(f);
-        int streamedSheetCount = 0;
+        try(StreamedWorkbook streamedWorkbook = new StreamedWorkbook(f.getAbsolutePath());
+            Workbook workbook = new XSSFWorkbook(f)) {
+            int streamedSheetCount = 0;
 
-        long streamedRowCount = 0;
+            long streamedRowCount = 0;
 
-        Iterator<StreamedSheet> streamedSheetIterator = streamedWorkbook.getSheetIterator();
+            Iterator<StreamedSheet> streamedSheetIterator = streamedWorkbook.getSheetIterator();
 
-        while ((streamedSheetIterator.hasNext()) && (streamedSheetCount == 0)) {
-            StreamedSheet sheet = streamedSheetIterator.next();
+            while ((streamedSheetIterator.hasNext()) && (streamedSheetCount == 0)) {
+                StreamedSheet sheet = streamedSheetIterator.next();
 
-            Iterator<StreamedRow> rows = sheet.getAllRows();
+                Iterator<StreamedRow> rows = sheet.getAllRows();
 
-            while (rows.hasNext()) {
-                rows.next();
-                streamedRowCount++;
+                while (rows.hasNext()) {
+                    rows.next();
+                    streamedRowCount++;
+                }
+
+                streamedSheetCount++;
             }
 
-            streamedSheetCount++;
-        }
+            int sheetCount = 0;
+            int rowCount = 0;
+            Iterator<Sheet> sheetIterator = workbook.sheetIterator();
+            while (sheetIterator.hasNext() && sheetCount == 0) {
+                Sheet sheet = sheetIterator.next();
+                Iterator<Row> rowIterator = sheet.iterator();
 
-        int sheetCount = 0;
-        int rowCount = 0;
-        Iterator<Sheet> sheetIterator = workbook.sheetIterator();
-        while (sheetIterator.hasNext() && sheetCount == 0) {
-            Sheet sheet = sheetIterator.next();
-            Iterator<Row> rowIterator = sheet.iterator();
+                while (rowIterator.hasNext()) {
+                    rowIterator.next();
+                    rowCount++;
+                }
 
-            while (rowIterator.hasNext()) {
-                rowIterator.next();
-                rowCount++;
+                sheetCount++;
             }
 
-            sheetCount++;
+            assertEquals(rowCount, streamedRowCount);
         }
-
-        assertEquals(rowCount, streamedRowCount);
-
-        streamedWorkbook.close();
-        workbook.close();
     }
 
     @Test

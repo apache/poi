@@ -131,7 +131,6 @@ public class StreamedWorkbook implements Workbook {
     /**
      * Returns the list of sheets for the given excel file
      * 
-     * @param file
      * @return Iterator<StreamedSheet>
      */
     private Iterator<StreamedSheet> getAllSheets() {
@@ -188,7 +187,7 @@ public class StreamedWorkbook implements Workbook {
     /**
      * Receives the excel file and returns the file excel file reader
      * 
-     * @param inputStream
+     * @param file input file
      * @return
      * @throws Exception
      */
@@ -998,20 +997,6 @@ public class StreamedWorkbook implements Workbook {
      */
     @Override
     @NotImplemented
-    public void setSheetHidden(int sheetIx, int hidden) {
-        throw new UnsupportedOperationException("Not supported due to memory footprint");
-    }
-
-    /**
-     * <pre>
-     * Not supported right now, as StreamedWorkbook
-     * supports only reading.
-     * </pre>
-     * 
-     * @exception UnsupportedOperationException
-     */
-    @Override
-    @NotImplemented
     public void addToolPack(UDFFinder toopack) {
         throw new UnsupportedOperationException("Not supported due to memory footprint");
     }
@@ -1130,7 +1115,6 @@ public class StreamedWorkbook implements Workbook {
      * Parser is used here assuming that workbook.xml will never contribute
      * towards the size of excel file.
      *
-     * @param xml
      * @param xpathQuery
      * @return Object[]
      * @throws Exception
