@@ -58,7 +58,7 @@
 	</modules>
 	
 	<properties>
-		<project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Try to disable running SVN blame as it causes errors here because the source is copied from the actual SVN location here! -->
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 
