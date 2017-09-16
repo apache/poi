@@ -251,11 +251,8 @@ public class TestHexDump {
     public void testMain() throws Exception {
         File file = TempFile.createTempFile("HexDump", ".dat");
         try {
-            FileOutputStream out = new FileOutputStream(file);
-            try {
+            try (FileOutputStream out = new FileOutputStream(file)) {
                 IOUtils.copy(new ByteArrayInputStream("teststring".getBytes(LocaleUtil.CHARSET_1252)), out);
-            } finally {
-                out.close();
             }
             assertTrue(file.exists());
             assertTrue(file.length() > 0);
