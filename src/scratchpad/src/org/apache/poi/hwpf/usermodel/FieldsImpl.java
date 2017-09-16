@@ -117,7 +117,7 @@ public class FieldsImpl implements Fields
         if ( map == null || map.isEmpty() )
             return Collections.emptySet();
 
-        return Collections.<Field> unmodifiableCollection( map.values() );
+        return Collections.unmodifiableCollection( map.values() );
     }
 
     public FieldImpl getFieldByStartOffset( FieldsDocumentPart documentPart,
