@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.util.CellAddress;
-
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
