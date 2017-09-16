@@ -28,7 +28,10 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
           // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!H12&&!H13&&!H14&&!H15&&!H16&&!H17&&!H18&&!H19&&!H20&&!H21&&!H22&&!H23&&!H24&&!H25&&!H26&&!H27&&!qnode1&&!qnode2&&!qnode3&&!ubuntu-eu2&&!ubuntu-eu3&&!ubuntu-us1',
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8' +
+                  '&&!H0&&!H1&&!H2&&!H3&&!H4&&!H5&&!H6&&!H7&&!H8&&!H9&&!H10&&!H11' +
+                  '&&!qnode3' +
+                  '&&!ubuntu-1&&!ubuntu-2&&!ubuntu-4&&!ubuntu-5&&!ubuntu-6&&!ubuntu-eu2&&!ubuntu-us1',
           // the JDK is missing on some slaves so builds are unstable
           skipcigame: true
         ],
@@ -197,11 +200,12 @@ poijobs.each { poijob ->
             }
         }
         wrappers {
+            /* Plugin seems to be missing: Warning: (create_jobs.groovy, line 202) version 1.13 or later of plugin 'build-timeout' needs to be installed
             timeout {
                 absolute(180)
                 abortBuild()
                 writeDescription('Build was aborted due to timeout')
-            }
+            }*/
             if(poijob.sonar) {
                 configure { project ->
                     project / buildWrappers << 'hudson.plugins.sonar.SonarBuildWrapper' {}
