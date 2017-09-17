@@ -691,8 +691,6 @@ public abstract class AbstractWordConverter
         if ( separatorMark + 1 < endMark )
             processCharacters( wordDocument, currentTableLevel,
                     deadFieldValueSubrage, currentBlock );
-
-        return;
     }
 
     public void processDocument( HWPFDocumentCore wordDocument )
@@ -1106,7 +1104,7 @@ public abstract class AbstractWordConverter
                 }
             }
 
-            if ( processed == false )
+            if (!processed)
             {
                 processParagraph( wordDocument, flow, currentTableLevel,
                         paragraph, AbstractWordUtils.EMPTY );

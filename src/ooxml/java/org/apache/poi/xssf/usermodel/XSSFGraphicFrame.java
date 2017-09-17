@@ -158,7 +158,6 @@ public final class XSSFGraphicFrame extends XSSFShape {
 		CTGraphicalObjectData data = graphicFrame.getGraphic().addNewGraphicData();
 		appendChartElement(data, relId);
 		chart.setGraphicFrame(this);
-		return;
 	}
 
 	/**

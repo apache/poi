@@ -169,7 +169,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     /**
      * Constructs a new, empty, Powerpoint document.
      */
-    public static final HSLFSlideShowImpl create() {
+    public static HSLFSlideShowImpl create() {
         InputStream is = HSLFSlideShowImpl.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt");
         if (is == null) {
             throw new HSLFException("Missing resource 'empty.ppt'");

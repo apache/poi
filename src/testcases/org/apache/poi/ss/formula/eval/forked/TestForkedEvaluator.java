@@ -108,15 +108,11 @@ public class TestForkedEvaluator {
 	public void testMissingInputCellH() throws IOException {
 	    expectedEx.expect(UnsupportedOperationException.class);
 	    expectedEx.expectMessage("Underlying cell 'A2' is missing in master sheet.");
-	    
-		Workbook wb = createWorkbook();
 
-		try {
-    		ForkedEvaluator fe = ForkedEvaluator.create(wb, null, null);
-    		// attempt update input at cell A2 (which is missing)
-            fe.updateCell("Inputs", 1, 0, new NumberEval(4.0));
-		} finally {
-		    wb.close();
+		try (Workbook wb = createWorkbook()) {
+			ForkedEvaluator fe = ForkedEvaluator.create(wb, null, null);
+			// attempt update input at cell A2 (which is missing)
+			fe.updateCell("Inputs", 1, 0, new NumberEval(4.0));
 		}
 	}
 }

@@ -67,7 +67,9 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
         // held on the first bit
         if (b == getNeedRecalculation()) {
             return;
-        } else if (b) {
+        }
+
+        if (b) {
             field_2_need_recalculation_and_id++;
         } else {
             field_2_need_recalculation_and_id--;
@@ -105,8 +107,7 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
         }
         CellRangeAddressList cral = new CellRangeAddressList();
         CellRangeAddress enclosingRange = null;
-        for (int i = 0; i < cellRanges.length; i++) {
-            CellRangeAddress cr = cellRanges[i];
+        for (CellRangeAddress cr : cellRanges) {
             enclosingRange = CellRangeUtil.createEnclosingCellRange(cr, enclosingRange);
             cral.addCellRangeAddress(cr);
         }
@@ -119,8 +120,9 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
     }
 
     protected abstract String getRecordName();
+
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[").append(getRecordName()).append("]\n");
         buffer.append("\t.numCF             = ").append(getNumberOfConditionalFormats()).append("\n");

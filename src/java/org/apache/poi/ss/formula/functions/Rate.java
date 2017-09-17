@@ -115,7 +115,7 @@ public class Rate implements Function {
     * 
     * @throws EvaluationException (#NUM!) if <tt>result</tt> is <tt>NaN</> or <tt>Infinity</tt>
     */
-   static final void checkValue(double result) throws EvaluationException {
+   static void checkValue(double result) throws EvaluationException {
       if (Double.isNaN(result) || Double.isInfinite(result)) {
          throw new EvaluationException(ErrorEval.NUM_ERROR);
       }

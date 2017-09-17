@@ -369,7 +369,7 @@ public enum XSSFBuiltinTableStyle {
      * Public so clients can initialize the map on startup rather than lazily
      * during evaluation if desired.
      */
-    public static final synchronized void init() {
+    public static synchronized void init() {
         if (! styleMap.isEmpty()) return; 
         
         /*

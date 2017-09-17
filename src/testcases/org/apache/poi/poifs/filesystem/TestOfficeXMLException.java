@@ -34,7 +34,7 @@ import junit.framework.TestCase;
  */
 public class TestOfficeXMLException extends TestCase {
 
-	private static final InputStream openSampleStream(String sampleFileName) {
+	private static InputStream openSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
 	public void testOOXMLException() throws IOException

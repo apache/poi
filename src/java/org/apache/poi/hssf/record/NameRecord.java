@@ -66,7 +66,7 @@ public final class NameRecord extends ContinuableRecord {
 		public static final int OPT_COMPLEX =       0x0010;
 		public static final int OPT_BUILTIN =       0x0020;
 		public static final int OPT_BINDATA =       0x1000;
-		public static final boolean isFormula(int optValue) {
+		public static boolean isFormula(int optValue) {
 			return (optValue & 0x0F) == 0;
 		}
 	}

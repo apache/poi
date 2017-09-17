@@ -34,7 +34,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
  */
 public abstract class MatrixFunction implements Function{
     
-    public static final void checkValues(double[] results) throws EvaluationException {
+    public static void checkValues(double[] results) throws EvaluationException {
         for (int idx = 0; idx < results.length; idx++) {
             if (Double.isNaN(results[idx]) || Double.isInfinite(results[idx])) {
                 throw new EvaluationException(ErrorEval.NUM_ERROR);

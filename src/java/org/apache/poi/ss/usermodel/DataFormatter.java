@@ -693,7 +693,7 @@ public class DataFormatter implements Observer {
         private BigDecimal divider;
         private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
         private final DecimalFormat df;
-        private static final String trimTrailingCommas(String s) {
+        private static String trimTrailingCommas(String s) {
             return s.replaceAll(",+$", "");
         }
 

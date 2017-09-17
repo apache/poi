@@ -207,9 +207,9 @@ public final class Chunks implements ChunkGroupWithProperties {
             conversationTopic = (StringChunk) chunk;
         } else if (prop == MAPIProperty.SUBJECT) {
             subjectChunk = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.ORIGINAL_SUBJECT) {
+        } /*else if (prop == MAPIProperty.ORIGINAL_SUBJECT) {
             // TODO
-        }
+        }*/
 
         else if (prop == MAPIProperty.DISPLAY_TO) {
             displayToChunk = (StringChunk) chunk;

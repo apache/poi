@@ -60,7 +60,7 @@ public class ImReal extends Fixed1ArgFunction implements FreeRefFunction {
         boolean result = m.matches();
 
         String real = "";
-        if (result == true) {
+        if (result) {
             String realGroup = m.group(2);
             boolean hasRealPart = realGroup.length() != 0;
 

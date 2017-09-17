@@ -168,7 +168,7 @@ public class HSSFColor implements Color {
      *
      * @return a Map containing all colours keyed by <tt>Integer</tt> excel-style palette indexes
      */
-    public static final synchronized Map<Integer,HSSFColor> getIndexHash() {
+    public static synchronized Map<Integer,HSSFColor> getIndexHash() {
         if(indexHash == null) {
            indexHash = Collections.unmodifiableMap( createColorsByIndexMap() );
         }
@@ -181,7 +181,7 @@ public class HSSFColor implements Color {
      *  the table, then call {@link #getIndexHash()} which returns a
      *  statically cached immutable map of colours.
      */
-    public static final Map<Integer,HSSFColor> getMutableIndexHash() {
+    public static Map<Integer,HSSFColor> getMutableIndexHash() {
        return createColorsByIndexMap();
     }
 
