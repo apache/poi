@@ -29,7 +29,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTLegend;
 public final class XDDFChartLegend {
 
     /**
-     * Underlaying CTLagend bean
+     * Underlying CTLegend bean
      */
     private CTLegend legend;
 

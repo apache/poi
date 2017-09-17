@@ -80,7 +80,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @return the underlying CTChartSpace bean
      */
     @Internal
-    public CTChartSpace getCTChartSpace(){
+    public CTChartSpace getCTChartSpace() {
         return chartSpace;
     }
 
@@ -90,7 +90,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @return the underlying CTChart bean
      */
     @Internal
-    public CTChart getCTChart(){
+    public CTChart getCTChart() {
         return chart;
 
     }
@@ -156,7 +156,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
         chart.getAutoTitleDeleted().setVal(deleted);
     }
 
-
     public XDDFChartLegend getOrAddLegend() {
         return new XDDFChartLegend(chart);
     }
@@ -170,7 +169,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     public XDDFManualLayout getOrAddManualLayout() {
         return new XDDFManualLayout(chart.getPlotArea());
     }
-
 
     public void plot(XDDFChartData data) {
         for (XDDFChartData.Series series : data.getSeries()) {
