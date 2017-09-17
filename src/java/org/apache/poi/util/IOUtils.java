@@ -211,6 +211,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void write(POIDocument doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
@@ -233,6 +234,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void write(Workbook doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
@@ -256,6 +258,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(POIDocument doc, OutputStream out) throws IOException {
         try {
             write(doc, out);
@@ -278,6 +281,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(POIDocument doc, File out) throws IOException {
         try {
             doc.write(out);
@@ -299,6 +303,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(POIDocument doc) throws IOException {
         try {
             doc.write();
@@ -314,6 +319,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(Workbook doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
