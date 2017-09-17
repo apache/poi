@@ -35,8 +35,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 public abstract class MatrixFunction implements Function{
     
     public static void checkValues(double[] results) throws EvaluationException {
-        for (int idx = 0; idx < results.length; idx++) {
-            if (Double.isNaN(results[idx]) || Double.isInfinite(results[idx])) {
+        for (double result : results) {
+            if (Double.isNaN(result) || Double.isInfinite(result)) {
                 throw new EvaluationException(ErrorEval.NUM_ERROR);
             }
         }
@@ -56,15 +56,15 @@ public abstract class MatrixFunction implements Function{
         }
         
         double[][] matrix = new double[rows][cols];
-        
-        for (int idx = 0; idx < vector.length; idx++) {
+
+        for (double aVector : vector) {
             if (j < matrix.length) {
                 if (i == matrix[0].length) {
                     i = 0;
                     j++;
                 }
-                matrix[j][i++] = vector[idx];
-            } 
+                matrix[j][i++] = aVector;
+            }
         }
         
         return matrix;
@@ -79,10 +79,10 @@ public abstract class MatrixFunction implements Function{
         }
         
         double[] vector = new double[matrix.length * matrix[0].length];
-        
-        for (int j = 0; j < matrix.length; j++) {
+
+        for (double[] aMatrix : matrix) {
             for (int i = 0; i < matrix[0].length; i++) {
-                vector[idx++] = matrix[j][i];
+                vector[idx++] = aMatrix[i];
             }
         }
         return vector;
@@ -96,8 +96,8 @@ public abstract class MatrixFunction implements Function{
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
             if (arg0 instanceof AreaEval) {
-                double result[] = null, resultArray[][];
-                int width = 1, height = 1;
+                double result[], resultArray[][];
+                int width, height;
                 
                 try {
                     double values[] = collectValues(arg0);
@@ -130,7 +130,7 @@ public abstract class MatrixFunction implements Function{
                 }
             }
             else {
-                double result[][] = null;
+                double result[][];
                 try {
                     double value = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
                     double temp[][] = {{value}};
@@ -157,7 +157,7 @@ public abstract class MatrixFunction implements Function{
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
             double result[];
-            int width = 1, height = 1;
+            int width, height;
 
             try {
                 double array0[][], array1[][], resultArray[][];

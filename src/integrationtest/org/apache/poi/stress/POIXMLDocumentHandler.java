@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public final class POIXMLDocumentHandler {
@@ -35,14 +36,11 @@ public final class POIXMLDocumentHandler {
 	}
 
     protected static boolean isEncrypted(InputStream stream) throws IOException {
-        if (POIFSFileSystem.hasPOIFSHeader(stream)) {
-            POIFSFileSystem poifs = new POIFSFileSystem(stream);
-            try {
+        if (FileMagic.valueOf(stream) == FileMagic.OLE2) {
+            try (POIFSFileSystem poifs = new POIFSFileSystem(stream)) {
                 if (poifs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
                     return true;
                 }
-            } finally {
-                poifs.close();
             }
             throw new IOException("Wrong file format or file extension for OO XML file");
         }

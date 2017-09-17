@@ -123,18 +123,11 @@ public class POIFSFileSystem
      * @return The created and opened {@link POIFSFileSystem}
      */
     public static POIFSFileSystem create(File file) throws IOException {
-        // TODO Make this nicer!
         // Create a new empty POIFS in the file
-        POIFSFileSystem tmp = new POIFSFileSystem();
-        try {
-            OutputStream out = new FileOutputStream(file);
-            try {
+        try (POIFSFileSystem tmp = new POIFSFileSystem()) {
+            try (OutputStream out = new FileOutputStream(file)) {
                 tmp.writeFilesystem(out);
-            } finally {
-                out.close();
             }
-        } finally {
-            tmp.close();
         }
         
         // Open it up again backed by the file
