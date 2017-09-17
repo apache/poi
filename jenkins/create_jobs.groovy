@@ -72,7 +72,8 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true,
+                disabled: true // try to use the Gradle-based run so we can get rid of the Maven buildsystem
         ],
         [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
         ],
@@ -393,6 +394,11 @@ poijobs.each { poijob ->
     }
 }
 
+/*
+Add a special job which spans a two-dimensional matrix of all JDKs that we want to use and
+all slaves that we would like to use and test if the java and ant binaries are available
+on that machine correctly.
+ */
 matrixJob('POI-DSL-Test-Environment') {
     description(
             '''
