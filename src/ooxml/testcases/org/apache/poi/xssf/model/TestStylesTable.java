@@ -207,10 +207,10 @@ public final class TestStylesTable {
         }
     }
     
-    private static final <K,V> void assertNotContainsKey(Map<K,V> map, K key) {
+    private static <K,V> void assertNotContainsKey(Map<K,V> map, K key) {
         assertFalse(map.containsKey(key));
     }
-    private static final <K,V> void assertNotContainsValue(Map<K,V> map, V value) {
+    private static <K,V> void assertNotContainsValue(Map<K,V> map, V value) {
         assertFalse(map.containsValue(value));
     }
     

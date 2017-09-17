@@ -158,7 +158,7 @@ public enum FormulaError {
         }
     }
     
-    public static final boolean isValidCode(int errorCode) {
+    public static boolean isValidCode(int errorCode) {
         for (FormulaError error : values()) {
             if (error.getCode() == errorCode) return true;
             if (error.getLongCode() == errorCode) return true;

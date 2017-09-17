@@ -36,14 +36,14 @@ public abstract class AbstractPtgTestCase extends TestCase {
      * @param sampleFileName the filename.
      * @return the loaded workbook.
      */
-    protected static final HSSFWorkbook loadWorkbook(String sampleFileName) {
+    protected static HSSFWorkbook loadWorkbook(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
 
     /**
      * Creates a new Workbook and adds one sheet with the specified name
      */
-    protected static final HSSFWorkbook createWorkbookWithSheet(String sheetName) {
+    protected static HSSFWorkbook createWorkbookWithSheet(String sheetName) {
         HSSFWorkbook book = new HSSFWorkbook();
         book.createSheet(sheetName);
         return book;

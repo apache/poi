@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
@@ -29,15 +26,11 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public final class PrintGridlinesRecord
-    extends StandardRecord
-{
+public final class PrintGridlinesRecord extends StandardRecord {
     public final static short sid = 0x2b;
     private short             field_1_print_gridlines;
 
-    public PrintGridlinesRecord()
-    {
+    public PrintGridlinesRecord() {
     }
 
     public PrintGridlinesRecord(RecordInputStream in)
@@ -50,15 +43,10 @@ public final class PrintGridlinesRecord
      *
      * @param pg  make spreadsheet ugly - Y/N
      */
-
-    public void setPrintGridlines(boolean pg)
-    {
-        if (pg == true)
-        {
+    public void setPrintGridlines(boolean pg) {
+        if (pg) {
             field_1_print_gridlines = 1;
-        }
-        else
-        {
+        } else {
             field_1_print_gridlines = 0;
         }
     }
@@ -68,21 +56,16 @@ public final class PrintGridlinesRecord
      *
      * @return make spreadsheet ugly - Y/N
      */
-
     public boolean getPrintGridlines()
     {
         return (field_1_print_gridlines == 1);
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[PRINTGRIDLINES]\n");
-        buffer.append("    .printgridlines = ").append(getPrintGridlines())
-            .append("\n");
-        buffer.append("[/PRINTGRIDLINES]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[PRINTGRIDLINES]\n" +
+                "    .printgridlines = " + getPrintGridlines() +
+                "\n" +
+                "[/PRINTGRIDLINES]\n";
     }
 
     public void serialize(LittleEndianOutput out) {

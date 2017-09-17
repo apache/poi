@@ -100,7 +100,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from the file system.
     * 
     * @param filename Name of the file to read
-    * @throws IOException
+    * @exception IOException on errors reading, or invalid data
     */
    public MAPIMessage(String filename) throws IOException {
       this(new File(filename));
@@ -109,7 +109,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from the file system.
     * 
     * @param file The file to read from
-    * @throws IOException
+    * @exception IOException on errors reading, or invalid data
     */
    public MAPIMessage(File file) throws IOException {
       this(new NPOIFSFileSystem(file));
@@ -122,7 +122,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     *  in order to process. For lower memory use, use {@link #MAPIMessage(File)}
     *  
     * @param in The InputStream to buffer then read from
-    * @throws IOException
+    * @exception IOException on errors reading, or invalid data
     */
    public MAPIMessage(InputStream in) throws IOException {
       this(new NPOIFSFileSystem(in));
@@ -131,7 +131,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from a POIFS filesystem
     * 
     * @param fs Open POIFS FileSystem containing the message
-    * @throws IOException
+    * @exception IOException on errors reading, or invalid data
     */
    public MAPIMessage(NPOIFSFileSystem fs) throws IOException {
       this(fs.getRoot());
@@ -140,7 +140,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from a certain
     *  point within a POIFS filesystem
     * @param poifsDir Directory containing the message
-    * @throws IOException
+    * @exception IOException on errors reading, or invalid data
     */
    public MAPIMessage(DirectoryNode poifsDir) throws IOException {
       super(poifsDir);
@@ -195,7 +195,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Gets the plain text body of this Outlook Message
     * @return The string representation of the 'text' version of the body, if available.
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the text-body chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getTextBody() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getTextBodyChunk());
@@ -205,7 +206,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Gets the html body of this Outlook Message, if this email
     *  contains a html version.
     * @return The string representation of the 'html' version of the body, if available.
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the html-body chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getHtmlBody() throws ChunkNotFoundException {
       if(mainChunks.getHtmlBodyChunkBinary() != null) {
@@ -218,7 +220,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Gets the RTF Rich Message body of this Outlook Message, if this email
     *  contains a RTF (rich) version.
     * @return The string representation of the 'RTF' version of the body, if available.
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the rtf-body chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getRtfBody() throws ChunkNotFoundException {
       ByteChunk chunk = mainChunks.getRtfBodyChunk();
@@ -242,7 +245,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
    /**
     * Gets the subject line of the Outlook Message
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the subject-chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getSubject() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getSubjectChunk());
@@ -251,7 +255,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Gets the display value of the "FROM" line of the outlook message
     * This is not the actual address that was sent from but the formated display of the user name.
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the from-chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getDisplayFrom() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getDisplayFromChunk());
@@ -264,7 +269,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * This is not the actual list of addresses/values that will be 
     *  sent to if you click Reply in the email - those are stored
     *  in {@link RecipientChunks}.
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the to-chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getDisplayTo() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getDisplayToChunk());
@@ -277,7 +283,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * This is not the actual list of addresses/values that will be 
     *  sent to if you click Reply in the email - those are stored
     *  in {@link RecipientChunks}.
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the cc-chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getDisplayCC() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getDisplayCCChunk());
@@ -291,7 +298,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
     *  sent to if you click Reply in the email - those are stored
     *  in {@link RecipientChunks}.
     * This will only be present in sent emails, not received ones!
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the bcc-chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getDisplayBCC() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getDisplayBCCChunk());
@@ -440,7 +448,6 @@ public class MAPIMessage extends POIReadOnlyDocument {
                // Found it! Tell all the string chunks
                String charset = m.group(1);
                set7BitEncoding(charset);
-               return;
             }
          }
       } catch(ChunkNotFoundException e) {}
@@ -529,7 +536,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
    /**
     * Gets the conversation topic of the parsed Outlook Message.
     * This is the part of the subject line that is after the RE: and FWD:
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the conversation-topic chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public String getConversationTopic() throws ChunkNotFoundException {
       return getStringFromChunk(mainChunks.getConversationTopic());
@@ -541,7 +549,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
     *  item, note, or actual outlook Message)
     * For emails the class will be IPM.Note
     *
-    * @throws ChunkNotFoundException
+    * @throws ChunkNotFoundException If the message-class chunk does not exist and
+    *       returnNullOnMissingChunk is set
     */
    public MESSAGE_CLASS getMessageClassEnum() throws ChunkNotFoundException {
       String mc = getStringFromChunk(mainChunks.getMessageClass());
@@ -643,7 +652,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
 
    private String toSemicolonList(String[] l) {
-      StringBuffer list = new StringBuffer();
+      StringBuilder list = new StringBuilder();
       boolean first = true;
 
       for(String s : l) {

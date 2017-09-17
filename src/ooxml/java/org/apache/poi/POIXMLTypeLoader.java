@@ -141,20 +141,14 @@ public class POIXMLTypeLoader {
     }
 
     public static XmlObject parse(File file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        InputStream is = new FileInputStream(file);
-        try {
+        try (InputStream is = new FileInputStream(file)) {
             return parse(is, type, options);
-        } finally {
-            is.close();
         }
     }
 
     public static XmlObject parse(URL file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        InputStream is = file.openStream();
-        try {
+        try (InputStream is = file.openStream()) {
             return parse(is, type, options);
-        } finally {
-            is.close();
         }
     }
 

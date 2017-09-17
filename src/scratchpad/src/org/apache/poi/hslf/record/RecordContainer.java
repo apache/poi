@@ -86,8 +86,9 @@ public abstract class RecordContainer extends Record
 	/**
 	 * Adds the given new Child Record at the given location,
 	 *  shuffling everything from there on down by one
-	 * @param newChild
-	 * @param position
+	 *
+	 * @param newChild The record to be added as child-record.
+	 * @param position The index where the child should be added, 0-based
 	 */
 	private void addChildAt(Record newChild, int position) {
 		// Firstly, have the child added in at the end
@@ -168,8 +169,8 @@ public abstract class RecordContainer extends Record
 
 	/**
 	 * Adds the given Child Record after the supplied record
-	 * @param newChild
-	 * @param after
+	 * @param newChild The record to add as new child.
+	 * @param after The record after which the given record should be added.
 	 * @return the position of the added child within the list
 	 */
 	public int addChildAfter(Record newChild, Record after) {
@@ -186,8 +187,8 @@ public abstract class RecordContainer extends Record
 
 	/**
 	 * Adds the given Child Record before the supplied record
-	 * @param newChild
-	 * @param before
+	 * @param newChild The record to add as new child.
+	 * @param before The record before which the given record should be added.
      * @return the position of the added child within the list
 	 */
 	public int addChildBefore(Record newChild, Record before) {
@@ -309,8 +310,8 @@ public abstract class RecordContainer extends Record
 			mout.write(new byte[4]);
 
 			// Write out the children
-			for(int i=0; i<children.length; i++) {
-				children[i].writeOut(mout);
+			for (Record aChildren : children) {
+				aChildren.writeOut(mout);
 			}
 
 			// Update our header with the size
@@ -335,8 +336,8 @@ public abstract class RecordContainer extends Record
 			baos.write(new byte[] {0,0,0,0});
 
 			// Write out our children
-			for(int i=0; i<children.length; i++) {
-				children[i].writeOut(baos);
+			for (Record aChildren : children) {
+				aChildren.writeOut(baos);
 			}
 
 			// Grab the bytes back

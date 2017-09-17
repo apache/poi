@@ -242,10 +242,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         // Get the hyperlinks
         // TODO: make me optional/separated in private function
         try {
-            Iterator<PackageRelationship> relIter =
-                    getPackagePart().getRelationshipsByType(XWPFRelation.HYPERLINK.getRelation()).iterator();
-            while (relIter.hasNext()) {
-                PackageRelationship rel = relIter.next();
+            for (PackageRelationship rel : getPackagePart().getRelationshipsByType(XWPFRelation.HYPERLINK.getRelation())) {
                 hyperlinks.add(new XWPFHyperlink(rel.getId(), rel.getTargetURI().toString()));
             }
         } catch (InvalidFormatException e) {
@@ -453,7 +450,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         // TODO this needs to be migrated out into section code
         if (type == HeaderFooterType.FIRST) {
             CTSectPr ctSectPr = getSection();
-            if (ctSectPr.isSetTitlePg() == false) {
+            if (!ctSectPr.isSetTitlePg()) {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
                 titlePg.setVal(STOnOff.ON);
             }
@@ -475,7 +472,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         // TODO this needs to be migrated out into section code
         if (type == HeaderFooterType.FIRST) {
             CTSectPr ctSectPr = getSection();
-            if (ctSectPr.isSetTitlePg() == false) {
+            if (!ctSectPr.isSetTitlePg()) {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
                 titlePg.setVal(STOnOff.ON);
             }
@@ -600,7 +597,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * parameter points to the {@link org.apache.xmlbeans.XmlCursor.TokenType#END}
      * of the newly inserted paragraph.
      *
-     * @param cursor
+     * @param cursor The cursor-position where the new paragraph should be added.
      * @return the {@link XWPFParagraph} object representing the newly inserted
      * CTP object
      */
