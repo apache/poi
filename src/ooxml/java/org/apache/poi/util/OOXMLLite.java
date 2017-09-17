@@ -18,10 +18,7 @@
 package org.apache.poi.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -52,6 +49,7 @@ import org.junit.runner.Result;
  * @author Yegor Kozlov
  */
 public final class OOXMLLite {
+    private static final Pattern SCHEMA_PATTERN = Pattern.compile("schemaorg_apache_xmlbeans/(system|element)/.*\\.xsb");
 
     /**
      * Destination directory to copy filtered classes
@@ -80,9 +78,17 @@ public final class OOXMLLite {
         String dest = null, test = null, ooxml = null;
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-dest")) dest = args[++i];
-            else if (args[i].equals("-test")) test = args[++i];
-            else if (args[i].equals("-ooxml")) ooxml = args[++i];
+            switch (args[i]) {
+                case "-dest":
+                    dest = args[++i];
+                    break;
+                case "-test":
+                    test = args[++i];
+                    break;
+                case "-ooxml":
+                    ooxml = args[++i];
+                    break;
+            }
         }
         OOXMLLite builder = new OOXMLLite(dest, test, ooxml);
         builder.build();
@@ -152,7 +158,7 @@ public final class OOXMLLite {
             String className = cls.getName();
             String classRef = className.replace('.', '/') + ".class";
             File destFile = new File(_destDest, classRef);
-            copyFile(cls.getResourceAsStream('/' + classRef), destFile);
+            IOUtils.copy(cls.getResourceAsStream('/' + classRef), destFile);
 
             if(cls.isInterface()){
                 /// Copy classes and interfaces declared as members of this class
@@ -160,25 +166,21 @@ public final class OOXMLLite {
                     className = fc.getName();
                     classRef = className.replace('.', '/') + ".class";
                     destFile = new File(_destDest, classRef);
-                    copyFile(fc.getResourceAsStream('/' + classRef), destFile);
+                    IOUtils.copy(fc.getResourceAsStream('/' + classRef), destFile);
                 }
             }
         }
 
         //finally copy the compiled .xsb files
         System.out.println("Copying .xsb resources");
-        JarFile jar = new  JarFile(_ooxmlJar);
-        Pattern p = Pattern.compile("schemaorg_apache_xmlbeans/(system|element)/.*\\.xsb");
-        try {
-            for(Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ){
+        try (JarFile jar = new JarFile(_ooxmlJar)) {
+            for (Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ) {
                 JarEntry je = e.nextElement();
-                if(p.matcher(je.getName()).matches()) {
-                     File destFile = new File(_destDest, je.getName());
-                     copyFile(jar.getInputStream(je), destFile);
+                if (SCHEMA_PATTERN.matcher(je.getName()).matches()) {
+                    File destFile = new File(_destDest, je.getName());
+                    IOUtils.copy(jar.getInputStream(je), destFile);
                 }
             }
-        } finally {
-            jar.close();
         }
     }
 
@@ -296,18 +298,4 @@ public final class OOXMLLite {
             throw new RuntimeException(e);
         }
     }
-
-    private static void copyFile(InputStream srcStream, File destFile) throws IOException {
-        File destDirectory = destFile.getParentFile();
-        if (!(destDirectory.exists() || destDirectory.mkdirs())) {
-            throw new RuntimeException("Can't create destination directory: "+destDirectory);
-        }
-        OutputStream destStream = new FileOutputStream(destFile);
-        try {
-            IOUtils.copy(srcStream, destStream);
-        } finally {
-            destStream.close();
-        }
-    }
-
 }

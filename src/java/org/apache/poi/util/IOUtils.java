@@ -17,13 +17,7 @@
 
 package org.apache.poi.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PushbackInputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.CRC32;
@@ -331,6 +325,10 @@ public final class IOUtils {
     /**
      * Copies all the data from the given InputStream to the OutputStream. It
      * leaves both streams open, so you will still need to close them once done.
+     *
+     * @param inp The {@link InputStream} which provides the data
+     * @param out The {@link OutputStream} to write the data to
+     * @throws IOException If copying the data fails.
      */
     public static void copy(InputStream inp, OutputStream out) throws IOException {
         byte[] buff = new byte[4096];
@@ -342,6 +340,24 @@ public final class IOUtils {
             if (count > 0) {
                 out.write(buff, 0, count);
             }
+        }
+    }
+
+    /**
+     * Copy the contents of the stream to a new file.
+     *
+     * @param srcStream The {@link InputStream} which provides the data
+     * @param destFile The file where the data should be stored
+     * @throws IOException If the target directory does not exist and cannot be created
+     *      or if copying the data fails.
+     */
+    public static void copy(InputStream srcStream, File destFile) throws IOException {
+        File destDirectory = destFile.getParentFile();
+        if (!(destDirectory.exists() || destDirectory.mkdirs())) {
+            throw new RuntimeException("Can't create destination directory: "+destDirectory);
+        }
+        try (OutputStream destStream = new FileOutputStream(destFile)) {
+            IOUtils.copy(srcStream, destStream);
         }
     }
 
