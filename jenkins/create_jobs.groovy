@@ -36,8 +36,7 @@ def poijobs = [
           skipcigame: true
         ],
         [ name: 'POI-DSL-1.9', jdk: '1.9', trigger: triggerSundays,
-          properties: ['-Dmaxpermsize=-Dthis.is.a.dummy=true',
-                       '-Djava9addmods=--add-modules=java.xml.bind',
+          properties: ['-Djava9addmods=--add-modules=java.xml.bind',
                        '-Djavadoc9addmods=--add-modules=java.xml.bind',
                        '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
                        '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
@@ -251,7 +250,6 @@ poijobs.each { poijob ->
                     rootPOM('sonar/pom.xml')
                     mavenOpts('-Xmx2g')
                     mavenOpts('-Xms256m')
-                    mavenOpts('-XX:MaxPermSize=512m')
                     mavenOpts('-XX:-OmitStackTraceInFastThrow')
                     localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
                     mavenInstallation('maven-3.2.1')
