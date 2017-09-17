@@ -156,7 +156,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>512m</maven.compiler.maxmem>
-                <argLine>-Xmx768m -XX:MaxPermSize=128m</argLine>
+                <argLine>-Xmx768m</argLine>
 			</properties>
 		</profile>
 		
@@ -170,7 +170,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>768m</maven.compiler.maxmem>
-                <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                <argLine>-Xmx1024m</argLine>
 			</properties>
 		</profile>
 
