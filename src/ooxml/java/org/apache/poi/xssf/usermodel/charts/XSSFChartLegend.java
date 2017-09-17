@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel.charts;
 import org.apache.poi.ss.usermodel.charts.ChartLegend;
 import org.apache.poi.ss.usermodel.charts.LegendPosition;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.XDDFChartLegend;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
@@ -32,6 +33,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STLegendPos;
  * @deprecated use {@link XDDFChartLegend} instead
  */
 @Deprecated
+@Removal(version="4.2")
 public final class XSSFChartLegend implements ChartLegend {
 
 	/**

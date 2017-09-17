@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.LineChartData;
 import org.apache.poi.ss.usermodel.charts.LineChartSeries;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.XDDFLineChartData;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
@@ -40,6 +41,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STMarkerStyle;
  * @deprecated use {@link XDDFLineChartData} instead
  */
 @Deprecated
+@Removal(version="4.2")
 public class XSSFLineChartData implements LineChartData {
 
     /**
@@ -111,6 +113,7 @@ public class XSSFLineChartData implements LineChartData {
         return series;
     }
 
+    @Override
     public void fillChart(Chart chart, ChartAxis... axis) {
         if (!(chart instanceof XSSFChart)) {
             throw new IllegalArgumentException("Chart must be instance of XSSFChart");

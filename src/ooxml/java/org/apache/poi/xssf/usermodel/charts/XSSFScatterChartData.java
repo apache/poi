@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.ScatterChartData;
 import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.XDDFScatterChartData;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
@@ -42,6 +43,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STScatterStyle;
  * @deprecated use {@link XDDFScatterChartData} instead
  */
 @Deprecated
+@Removal(version="4.2")
 public class XSSFScatterChartData implements ScatterChartData {
 
     /**
@@ -119,6 +121,7 @@ public class XSSFScatterChartData implements ScatterChartData {
         return newSerie;
     }
 
+    @Override
     public void fillChart(Chart chart, ChartAxis... axis) {
         if (!(chart instanceof XSSFChart)) {
             throw new IllegalArgumentException("Chart must be instance of XSSFChart");

@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.usermodel.charts;
 
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
@@ -35,6 +36,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
  * @deprecated
  */
 @Deprecated
+@Removal(version="4.2")
 class XSSFChartUtil {
 
     private XSSFChartUtil() {}

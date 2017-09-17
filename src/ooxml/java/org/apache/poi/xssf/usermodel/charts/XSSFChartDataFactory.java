@@ -18,11 +18,13 @@
 package org.apache.poi.xssf.usermodel.charts;
 
 import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
+import org.apache.poi.util.Removal;
 
 /**
  * @deprecated
  */
 @Deprecated
+@Removal(version="4.2")
 public class XSSFChartDataFactory implements ChartDataFactory {
 
 	private static XSSFChartDataFactory instance;
