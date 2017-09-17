@@ -280,7 +280,7 @@ public final class TestPOIXMLDocument {
         assertNull(part.getRelationById(null));
         assertNull(part.getRelationId(null));
         assertFalse(part.removeRelation(null, true));
-        part.removeRelation(null);
+        part.removeRelation((POIXMLDocumentPart)null);
         assertEquals("",part.toString());
         part.onDocumentCreate();
         //part.getTargetPart(null);
