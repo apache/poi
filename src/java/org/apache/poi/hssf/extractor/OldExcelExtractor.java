@@ -40,10 +40,7 @@ import org.apache.poi.hssf.record.OldSheetRecord;
 import org.apache.poi.hssf.record.OldStringRecord;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.NotOLE2FileException;
+import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.IOUtils;
 
@@ -80,16 +77,8 @@ public class OldExcelExtractor implements Closeable {
             open(poifs);
             toClose = poifs;
             return;
-        } catch (OldExcelFormatException e) {
+        } catch (OldExcelFormatException | NotOLE2FileException e) {
             // will be handled by workaround below
-        } catch (NotOLE2FileException e) {
-            // will be handled by workaround below
-        } catch (IOException e) {
-            // ensure streams are closed correctly
-            throw e;
-        } catch (RuntimeException e) {
-            // ensure streams are closed correctly
-            throw e;
         } finally {
             if (toClose == null) {
                 IOUtils.closeQuietly(poifs);
@@ -100,12 +89,7 @@ public class OldExcelExtractor implements Closeable {
         FileInputStream biffStream = new FileInputStream(f); // NOSONAR
         try {
             open(biffStream);
-        } catch (IOException e)  {
-            // ensure that the stream is properly closed here if an Exception
-            // is thrown while opening
-            biffStream.close();
-            throw e;
-        } catch (RuntimeException e)  {
+        } catch (IOException | RuntimeException e)  {
             // ensure that the stream is properly closed here if an Exception
             // is thrown while opening
             biffStream.close();
@@ -126,12 +110,9 @@ public class OldExcelExtractor implements Closeable {
             ? (BufferedInputStream)biffStream
             : new BufferedInputStream(biffStream, 8);
 
-        if (NPOIFSFileSystem.hasPOIFSHeader(bis)) {
-            NPOIFSFileSystem poifs = new NPOIFSFileSystem(bis);
-            try {
+        if (FileMagic.valueOf(bis) == FileMagic.OLE2) {
+            try (NPOIFSFileSystem poifs = new NPOIFSFileSystem(bis)) {
                 open(poifs);
-            } finally {
-                poifs.close();
             }
         } else {
             ris = new RecordInputStream(bis);

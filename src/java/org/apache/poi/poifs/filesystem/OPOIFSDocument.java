@@ -384,11 +384,8 @@ public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSVie
 	 * @return short description
 	 */
 	public String getShortDescription() {
-		StringBuffer buffer = new StringBuffer();
-
-		buffer.append("Document: \"").append(_property.getName()).append("\"");
-		buffer.append(" size = ").append(getSize());
-		return buffer.toString();
+		return "Document: \"" + _property.getName() + "\"" +
+				" size = " + getSize();
 	}
 
 	/* **********  END  begin implementation of POIFSViewable ********** */
@@ -529,8 +526,8 @@ public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSVie
 					dstream.writeFiller(countBlocks() * _bigBlockSize.getBigBlockSize(),
 							DocumentBlock.getFillByte());
 				} else {
-					for (int k = 0; k < bigBlocks.length; k++) {
-						bigBlocks[k].writeBlocks(stream);
+					for (DocumentBlock bigBlock : bigBlocks) {
+						bigBlock.writeBlocks(stream);
 					}
 				}
 			}
