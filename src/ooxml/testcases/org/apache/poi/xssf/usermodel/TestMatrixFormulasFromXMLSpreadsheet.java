@@ -37,8 +37,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

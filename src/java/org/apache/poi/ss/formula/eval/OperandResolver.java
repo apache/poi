@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula.eval;
 
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.formula.eval.ErrorEval;
+
 import java.util.regex.Pattern;
 
 /**
