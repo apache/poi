@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.charts.ChartSeries;
 import org.apache.poi.ss.usermodel.charts.TitleType;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xddf.usermodel.XDDFChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 /**

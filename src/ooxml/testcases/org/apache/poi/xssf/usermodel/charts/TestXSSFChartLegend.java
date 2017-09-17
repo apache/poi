@@ -23,8 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.poi.xddf.usermodel.LegendPosition;
-import org.apache.poi.xddf.usermodel.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.chart.LegendPosition;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;

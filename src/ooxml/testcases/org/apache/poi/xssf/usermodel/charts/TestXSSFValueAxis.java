@@ -17,10 +17,10 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.xddf.usermodel.AxisCrossBetween;
-import org.apache.poi.xddf.usermodel.AxisCrosses;
-import org.apache.poi.xddf.usermodel.AxisPosition;
-import org.apache.poi.xddf.usermodel.XDDFValueAxis;
+import org.apache.poi.xddf.usermodel.chart.AxisCrossBetween;
+import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
+import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;

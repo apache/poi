@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xddf.usermodel.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;

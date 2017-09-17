@@ -29,11 +29,11 @@ import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xddf.usermodel.XDDFChartData;
-import org.apache.poi.xddf.usermodel.XDDFDataSource;
-import org.apache.poi.xddf.usermodel.XDDFDataSourcesFactory;
-import org.apache.poi.xddf.usermodel.XDDFNumericalDataSource;
-import org.apache.poi.xddf.usermodel.XDDFPieChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFDataSource;
+import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
+import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
+import org.apache.poi.xddf.usermodel.chart.XDDFPieChartData;
 
 /**
  * Build a pie chart from a template pptx

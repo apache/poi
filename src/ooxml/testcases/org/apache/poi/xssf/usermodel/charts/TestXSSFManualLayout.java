@@ -22,10 +22,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.poi.xddf.usermodel.LayoutMode;
-import org.apache.poi.xddf.usermodel.LayoutTarget;
-import org.apache.poi.xddf.usermodel.XDDFChartLegend;
-import org.apache.poi.xddf.usermodel.XDDFManualLayout;
+import org.apache.poi.xddf.usermodel.chart.LayoutMode;
+import org.apache.poi.xddf.usermodel.chart.LayoutTarget;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
+import org.apache.poi.xddf.usermodel.chart.XDDFManualLayout;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;

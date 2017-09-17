@@ -26,7 +26,7 @@ import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.LineChartData;
 import org.apache.poi.ss.usermodel.charts.LineChartSeries;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xddf.usermodel.XDDFLineChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;

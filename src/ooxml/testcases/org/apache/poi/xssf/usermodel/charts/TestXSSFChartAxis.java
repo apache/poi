@@ -19,9 +19,9 @@ package org.apache.poi.xssf.usermodel.charts;
 
 import java.util.List;
 
-import org.apache.poi.xddf.usermodel.AxisPosition;
-import org.apache.poi.xddf.usermodel.AxisTickMark;
-import org.apache.poi.xddf.usermodel.XDDFChartAxis;
+import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.AxisTickMark;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;

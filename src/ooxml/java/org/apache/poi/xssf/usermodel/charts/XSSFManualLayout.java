@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.charts.LayoutTarget;
 import org.apache.poi.ss.usermodel.charts.ManualLayout;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xddf.usermodel.XDDFManualLayout;
+import org.apache.poi.xddf.usermodel.chart.XDDFManualLayout;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayout;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayoutMode;

@@ -17,9 +17,9 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.xddf.usermodel.AxisCrosses;
-import org.apache.poi.xddf.usermodel.AxisPosition;
-import org.apache.poi.xddf.usermodel.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
+import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
