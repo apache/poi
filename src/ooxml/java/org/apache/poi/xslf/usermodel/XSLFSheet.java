@@ -612,7 +612,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @param pictureShape the picture shapes whose relation is to be removed
      */
     void removePictureRelation(XSLFPictureShape pictureShape) {
-        POIXMLDocumentPart pd = getRelationById(pictureShape.getBlipId());
-        removeRelation(pd);
+        removeRelation(pictureShape.getBlipId());
     }
 }
