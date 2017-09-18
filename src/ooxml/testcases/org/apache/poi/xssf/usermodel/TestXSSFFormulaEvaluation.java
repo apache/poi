@@ -592,9 +592,9 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-        assertEquals(CellType.ERROR, getCell(sheet, 0,0).getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.ERROR, getCell(sheet, 0,0).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,0).getErrorCellValue());
-        assertEquals(CellType.ERROR, getCell(sheet, 0,1).getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.ERROR, getCell(sheet, 0,1).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,1).getErrorCellValue());
         
         wb.close();
@@ -613,11 +613,11 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-        assertEquals(CellType.ERROR, getCell(sheet, 0, 0).getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 0).getErrorCellValue());
-        assertEquals(CellType.ERROR, getCell(sheet, 1, 0).getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.ERROR, getCell(sheet, 1, 0).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 1, 0).getErrorCellValue());
-        assertEquals(CellType.ERROR, getCell(sheet, 0, 3).getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.ERROR, getCell(sheet, 0, 3).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 3).getErrorCellValue());
         
         wb.close();

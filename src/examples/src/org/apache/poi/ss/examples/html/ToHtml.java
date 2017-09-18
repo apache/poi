@@ -340,9 +340,9 @@ public class ToHtml {
     }
 
     private static CellType ultimateCellType(Cell c) {
-        CellType type = c.getCellTypeEnum();
+        CellType type = c.getCellType();
         if (type == CellType.FORMULA) {
-            type = c.getCachedFormulaResultTypeEnum();
+            type = c.getCachedFormulaResultType();
         }
         return type;
     }

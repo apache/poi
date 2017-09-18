@@ -417,7 +417,7 @@ public final class TestHSSFCell extends BaseTestCell {
         assertEquals(wb.getWorkbook(), cell.getBoundWorkbook());
 
         try {
-            cell.getCachedFormulaResultTypeEnum();
+            cell.getCachedFormulaResultType();
             fail("Should catch exception");
         } catch (IllegalStateException e) {
             // expected here
