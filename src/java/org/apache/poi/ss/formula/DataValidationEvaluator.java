@@ -255,10 +255,10 @@ public class DataValidationEvaluator {
     * @return true if the cell or cached cell formula result type match the given type
     */
     public static boolean isType(Cell cell, CellType type) {
-        final CellType cellType = cell.getCellTypeEnum();
+        final CellType cellType = cell.getCellType();
         return cellType == type 
               || (cellType == CellType.FORMULA 
-                  && cell.getCachedFormulaResultTypeEnum() == type
+                  && cell.getCachedFormulaResultType() == type
                  );
     }
    

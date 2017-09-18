@@ -138,11 +138,11 @@ public class SheetUtil {
         }
 
         CellStyle style = cell.getCellStyle();
-        CellType cellType = cell.getCellTypeEnum();
+        CellType cellType = cell.getCellType();
 
         // for formula cells we compute the cell width for the cached formula result
         if (cellType == CellType.FORMULA)
-            cellType = cell.getCachedFormulaResultTypeEnum();
+            cellType = cell.getCachedFormulaResultType();
 
         Font font = wb.getFontAt(style.getFontIndex());
 

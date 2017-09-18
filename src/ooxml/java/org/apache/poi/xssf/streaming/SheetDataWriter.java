@@ -262,7 +262,7 @@ public class SheetDataWriter implements Closeable {
                 _out.write("><f>");
                 outputQuotedString(cell.getCellFormula());
                 _out.write("</f>");
-                switch (cell.getCachedFormulaResultTypeEnum()) {
+                switch (cell.getCachedFormulaResultType()) {
                     case NUMERIC:
                         double nval = cell.getNumericCellValue();
                         if (!Double.isNaN(nval)) {
