@@ -103,7 +103,7 @@ public class POIXMLTypeLoader {
      * opposed to being loaded by the factory class which is accompanied by each generated XmlBeans interface.
      * <p>
      * This is especially necessary in a context which doesn't guarantee that the current (thread) context
-     * cassloader has access to all XmlBeans schema definitions (*.xsb) - which is typically in OSGI the case.
+     * classloader has access to all XmlBeans schema definitions (*.xsb) - which is typically in OSGI the case.
      * <p>
      * The classloader will be only set for the current thread in a {@link ThreadLocal}. Although the
      * ThreadLocal is implemented via a {@link WeakReference}, it's good style to {@code null} the classloader
@@ -141,20 +141,14 @@ public class POIXMLTypeLoader {
     }
 
     public static XmlObject parse(File file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        InputStream is = new FileInputStream(file);
-        try {
+        try (InputStream is = new FileInputStream(file)) {
             return parse(is, type, options);
-        } finally {
-            is.close();
         }
     }
 
     public static XmlObject parse(URL file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        InputStream is = file.openStream();
-        try {
+        try (InputStream is = file.openStream()) {
             return parse(is, type, options);
-        } finally {
-            is.close();
         }
     }
 

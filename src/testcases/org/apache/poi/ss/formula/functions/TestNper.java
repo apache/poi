@@ -58,12 +58,12 @@ public final class TestNper {
 		cell.setCellFormula("NPER(12,4500,100000,100000)");
 		cell.setCellValue(15.0);
 		assertEquals("NPER(12,4500,100000,100000)", cell.getCellFormula());
-		assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultTypeEnum());
+		assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
 		assertEquals(15.0, cell.getNumericCellValue(), 0.0);
 
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		fe.evaluateFormulaCellEnum(cell);
-		assertEquals(CellType.ERROR, cell.getCachedFormulaResultTypeEnum());
+		fe.evaluateFormulaCell(cell);
+		assertEquals(CellType.ERROR, cell.getCachedFormulaResultType());
 		assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
 		wb.close();
 	}

@@ -176,7 +176,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 
         Cell c = r.getCell(SS.COLUMN_INDEX_ACTUAL_VALUE);
         assumeNotNull(c);
-        assumeTrue(c.getCellTypeEnum() == CellType.FORMULA);
+        assumeTrue(c.getCellType() == CellType.FORMULA);
 
         CellValue actValue = evaluator.evaluate(c);
 
@@ -185,17 +185,17 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 
         assertNotNull(msg + " - actual value was null", actValue);
 
-        final CellType expectedCellType = expValue.getCellTypeEnum();
+        final CellType expectedCellType = expValue.getCellType();
         switch (expectedCellType) {
             case BLANK:
-                assertEquals(msg, CellType.BLANK, actValue.getCellTypeEnum());
+                assertEquals(msg, CellType.BLANK, actValue.getCellType());
                 break;
             case BOOLEAN:
-                assertEquals(msg, CellType.BOOLEAN, actValue.getCellTypeEnum());
+                assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
                 assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
                 break;
             case ERROR:
-                assertEquals(msg, CellType.ERROR, actValue.getCellTypeEnum());
+                assertEquals(msg, CellType.ERROR, actValue.getCellType());
 //              if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
 //                  assertEquals(msg, expected.getErrorCellValue(), actual.getErrorValue());
 //              }
@@ -203,14 +203,14 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
             case FORMULA: // will never be used, since we will call method after formula evaluation
                 fail("Cannot expect formula as result of formula evaluation: " + msg);
             case NUMERIC:
-                assertEquals(msg, CellType.NUMERIC, actValue.getCellTypeEnum());
+                assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
                 TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
 //              double delta = Math.abs(expected.getNumericCellValue()-actual.getNumberValue());
 //              double pctExpected = Math.abs(0.00001*expected.getNumericCellValue());
 //              assertTrue(msg, delta <= pctExpected);
                 break;
             case STRING:
-                assertEquals(msg, CellType.STRING, actValue.getCellTypeEnum());
+                assertEquals(msg, CellType.STRING, actValue.getCellType());
                 assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
                 break;
             default:
@@ -231,15 +231,15 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
             logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.BLANK) {
+		if(cell.getCellType() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.STRING) {
+		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 
 		fail("Bad cell type for 'function name' column: ("
-			+ cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
+			+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 		return "";
 	}
 	/**
@@ -255,15 +255,15 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 		    logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_TEST_NAME + ", can't figure out test name");
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.BLANK) {
+		if(cell.getCellType() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.STRING) {
+		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 
 		fail("Bad cell type for 'test name' column: ("
-			+ cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
+			+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 		return "";
 	}
 

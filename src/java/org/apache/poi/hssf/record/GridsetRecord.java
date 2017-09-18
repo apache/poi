@@ -15,8 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
@@ -33,13 +31,11 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * @version 2.0-pre
  */
-
 public final class GridsetRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x82;
     public short              field_1_gridset_flag;
 
-    public GridsetRecord()
-    {
+    public GridsetRecord() {
     }
 
     public GridsetRecord(RecordInputStream in)
@@ -52,15 +48,10 @@ public final class GridsetRecord extends StandardRecord implements Cloneable {
      *
      * @param gridset - <b>true</b> if no gridlines are print, <b>false</b> if gridlines are not print.
      */
-
-    public void setGridset(boolean gridset)
-    {
-        if (gridset == true)
-        {
+    public void setGridset(boolean gridset) {
+        if (gridset) {
             field_1_gridset_flag = 1;
-        }
-        else
-        {
+        } else {
             field_1_gridset_flag = 0;
         }
     }
@@ -70,21 +61,16 @@ public final class GridsetRecord extends StandardRecord implements Cloneable {
      *
      * @return gridset - true if gridlines are NOT printed, false if they are.
      */
-
     public boolean getGridset()
     {
         return (field_1_gridset_flag == 1);
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[GRIDSET]\n");
-        buffer.append("    .gridset        = ").append(getGridset())
-            .append("\n");
-        buffer.append("[/GRIDSET]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[GRIDSET]\n" +
+                "    .gridset        = " + getGridset() +
+                "\n" +
+                "[/GRIDSET]\n";
     }
 
     public void serialize(LittleEndianOutput out) {

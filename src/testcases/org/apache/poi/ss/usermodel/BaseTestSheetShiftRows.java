@@ -750,7 +750,7 @@ public abstract class BaseTestSheetShiftRows {
     private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
         assertTrue(cellHasHyperlink(cell));
         Hyperlink link = cell.getHyperlink();
-        assertEquals(linkType, link.getTypeEnum());
+        assertEquals(linkType, link.getType());
         assertEquals(ref, link.getAddress());
     }
     

@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.Removal;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -289,7 +290,7 @@ public class CellFormat {
      * @return The result, in a {@link CellFormatResult}.
      */
     public CellFormatResult apply(Cell c) {
-        switch (ultimateTypeEnum(c)) {
+        switch (ultimateType(c)) {
         case BLANK:
             return apply("");
         case BOOLEAN:
@@ -359,7 +360,7 @@ public class CellFormat {
      * @return The result, in a {@link CellFormatResult}.
      */
     public CellFormatResult apply(JLabel label, Cell c) {
-        switch (ultimateTypeEnum(c)) {
+        switch (ultimateType(c)) {
             case BLANK:
                 return apply(label, "");
             case BOOLEAN:
@@ -435,40 +436,37 @@ public class CellFormat {
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
      * the cell is a {@link CellType#FORMULA}, this returns the result of
-     * {@link Cell#getCachedFormulaResultTypeEnum()}.  Otherwise this returns the
-     * result of {@link Cell#getCellTypeEnum()}.
+     * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
+     * result of {@link Cell#getCellType()}.
      * 
-     * Will return {@link CellType} in a future version of POI.
-     * For forwards compatibility, do not hard-code cell type literals in your code.
-     *
      * @param cell The cell.
      *
      * @return The ultimate type of this cell.
-     * @deprecated POI 3.15. This will return a CellType enum in the future
      */
-    public static int ultimateType(Cell cell) {
-        return ultimateTypeEnum(cell).getCode();
+    public static CellType ultimateType(Cell cell) {
+        CellType type = cell.getCellType();
+        if (type == CellType.FORMULA)
+            return cell.getCachedFormulaResultType();
+        else
+            return type;
     }
 
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
      * the cell is a {@link CellType#FORMULA}, this returns the result of
-     * {@link Cell#getCachedFormulaResultTypeEnum()}.  Otherwise this returns the
-     * result of {@link Cell#getCellTypeEnum()}.
+     * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
+     * result of {@link Cell#getCellType()}.
      *
      * @param cell The cell.
      *
      * @return The ultimate type of this cell.
      * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
+     * @deprecated use <code>ultimateType</code> instead
      */
+    @Deprecated
+    @Removal(version = "4.2")
     public static CellType ultimateTypeEnum(Cell cell) {
-        CellType type = cell.getCellTypeEnum();
-        if (type == CellType.FORMULA)
-            return cell.getCachedFormulaResultTypeEnum();
-        else
-            return type;
+        return ultimateType(cell);
     }
 
     /**

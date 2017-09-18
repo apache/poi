@@ -135,13 +135,13 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertNull(str.getString());
         cell_0.setCellValue(str);
         assertEquals(0, sst.getCount());
-        assertEquals(CellType.BLANK, cell_0.getCellTypeEnum());
+        assertEquals(CellType.BLANK, cell_0.getCellType());
 
         //case 2. cell.setCellValue((String)null);
         Cell cell_1 = row.createCell(1);
         cell_1.setCellValue((String)null);
         assertEquals(0, sst.getCount());
-        assertEquals(CellType.BLANK, cell_1.getCellTypeEnum());
+        assertEquals(CellType.BLANK, cell_1.getCellType());
         wb.close();
     }
 
@@ -153,7 +153,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
     
             cell.setCellFormula("A2");
-            assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, cell.getCellType());
             assertEquals("A2", cell.getCellFormula());
             //the value is not set and cell's type='N' which means blank
             assertEquals(STCellType.N, ctCell.getT());
@@ -161,7 +161,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             //set cached formula value
             cell.setCellValue("t='str'");
             //we are still of 'formula' type
-            assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, cell.getCellType());
             assertEquals("A2", cell.getCellFormula());
             //cached formula value is set and cell's type='STR'
             assertEquals(STCellType.STR, ctCell.getT());
@@ -169,14 +169,14 @@ public final class TestXSSFCell extends BaseTestXCell {
     
             //now remove the formula, the cached formula result remains
             cell.setCellFormula(null);
-            assertEquals(CellType.STRING, cell.getCellTypeEnum());
+            assertEquals(CellType.STRING, cell.getCellType());
             assertEquals(STCellType.STR, ctCell.getT());
             //the line below failed prior to fix of Bug #47889
             assertEquals("t='str'", cell.getStringCellValue());
     
             //revert to a blank cell
             cell.setCellValue((String)null);
-            assertEquals(CellType.BLANK, cell.getCellTypeEnum());
+            assertEquals(CellType.BLANK, cell.getCellType());
             assertEquals(STCellType.N, ctCell.getT());
             assertEquals("", cell.getStringCellValue());
         } finally {
@@ -196,7 +196,7 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         //try a string cell
         cell = sh.getRow(0).getCell(0);
-        assertEquals(CellType.STRING, cell.getCellTypeEnum());
+        assertEquals(CellType.STRING, cell.getCellType());
         assertEquals("a", cell.getStringCellValue());
         assertEquals("a", cell.toString());
         //Gnumeric produces spreadsheets without styles
@@ -205,7 +205,7 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         //try a numeric cell
         cell = sh.getRow(1).getCell(0);
-        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, cell.getCellType());
         assertEquals(1.0, cell.getNumericCellValue(), 0);
         assertEquals("1.0", cell.toString());
         //Gnumeric produces spreadsheets without styles
@@ -515,7 +515,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         final CellCopyPolicy policy = new CellCopyPolicy();
         destCell.copyCellFrom(srcCell, policy);
         
-        assertEquals(CellType.FORMULA, destCell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, destCell.getCellType());
         assertEquals("2+3", destCell.getCellFormula());
         assertEquals(srcCell.getCellStyle(), destCell.getCellStyle());
     }
@@ -527,7 +527,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         // Paste values only
         final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellFormula(false).build();
         destCell.copyCellFrom(srcCell, policy);
-        assertEquals(CellType.NUMERIC, destCell.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, destCell.getCellType());
     }
     
     @Test
@@ -554,8 +554,8 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertEquals(srcCell.getCellStyle(), destCell.getCellStyle());
         
         // Old cell value should not have been overwritten
-        assertNotEquals(CellType.BLANK, destCell.getCellTypeEnum());
-        assertEquals(CellType.BOOLEAN, destCell.getCellTypeEnum());
+        assertNotEquals(CellType.BLANK, destCell.getCellType());
+        assertEquals(CellType.BOOLEAN, destCell.getCellType());
         assertEquals(true, destCell.getBooleanCellValue());
     }
     

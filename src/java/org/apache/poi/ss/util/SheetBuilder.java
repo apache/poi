@@ -98,8 +98,8 @@ public class SheetBuilder {
      */
     public Sheet build() {
         Sheet sheet = (sheetName == null) ? workbook.createSheet() : workbook.createSheet(sheetName);
-        Row currentRow = null;
-        Cell currentCell = null;
+        Row currentRow;
+        Cell currentCell;
 
         for (int rowIndex = 0; rowIndex < cells.length; ++rowIndex) {
             Object[] rowArray = cells[rowIndex];
@@ -125,7 +125,9 @@ public class SheetBuilder {
     private void setCellValue(Cell cell, Object value) {
         if (value == null || cell == null) {
             return;
-        } else if (value instanceof Number) {
+        }
+
+        if (value instanceof Number) {
             double doubleValue = ((Number) value).doubleValue();
             cell.setCellValue(doubleValue);
         } else if (value instanceof Date) {
@@ -142,11 +144,7 @@ public class SheetBuilder {
     private boolean isFormulaDefinition(Object obj) {
         if (obj instanceof String) {
             String str = (String) obj;
-            if (str.length() < 2) {
-                return false;
-            } else {
-                return ((String) obj).charAt(0) == '=';
-            }
+            return str.length() >= 2 && str.charAt(0) == '=';
         } else {
             return false;
         }

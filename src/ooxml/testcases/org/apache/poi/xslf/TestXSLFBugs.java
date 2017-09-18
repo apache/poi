@@ -20,6 +20,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -30,17 +31,24 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
@@ -49,6 +57,7 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
@@ -76,6 +85,50 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
+    @Test
+    public void bug60499() throws IOException, InvalidFormatException {
+        InputStream is = slTests.openResourceAsStream("bug60499.pptx");
+        byte buf[] = IOUtils.toByteArray(is);
+        is.close();
+
+        PackagePartName ppn = PackagingURIHelper.createPartName("/ppt/media/image1.png");
+        
+        XMLSlideShow ppt1 = new XMLSlideShow(new ByteArrayInputStream(buf));
+        XSLFSlide slide1 = ppt1.getSlides().get(0);
+        
+        Optional<XSLFShape> shapeToDelete1 =
+            slide1.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).findFirst();
+        
+        assertTrue(shapeToDelete1.isPresent());
+        slide1.removeShape(shapeToDelete1.get());
+        slide1.getRelationParts().stream()
+            .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId()) ); 
+        
+        assertNotNull(ppt1.getPackage().getPart(ppn));
+        ppt1.close();
+
+        XMLSlideShow ppt2 = new XMLSlideShow(new ByteArrayInputStream(buf));
+        XSLFSlide slide2 = ppt2.getSlides().get(0);
+
+        Optional<XSLFShape> shapeToDelete2 =
+            slide2.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).skip(1).findFirst();
+        assertTrue(shapeToDelete2.isPresent());
+        slide2.removeShape(shapeToDelete2.get());
+        slide2.getRelationParts().stream()
+            .allMatch(rp -> "rId1,rId2".contains(rp.getRelationship().getId()) ); 
+        assertNotNull(ppt2.getPackage().getPart(ppn));
+        ppt2.close();
+
+        XMLSlideShow ppt3 = new XMLSlideShow(new ByteArrayInputStream(buf));
+        XSLFSlide slide3 = ppt3.getSlides().get(0);
+        slide3.getShapes().stream()
+            .filter(s -> s instanceof XSLFPictureShape)
+            .collect(Collectors.toList())
+            .forEach(s -> slide3.removeShape(s));
+        assertNull(ppt3.getPackage().getPart(ppn));
+        ppt3.close();
+    }
+    
     @Test
     public void bug51187() throws Exception {
        XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("51187.pptx");

@@ -56,7 +56,7 @@ final class EvaluationCache {
 		Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
 		PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
 
-		if (cell.getCellTypeEnum() == CellType.FORMULA) {
+		if (cell.getCellType() == CellType.FORMULA) {
 			if (fcce == null) {
 				fcce = new FormulaCellCacheEntry();
 				if (pcce == null) {
@@ -197,7 +197,7 @@ final class EvaluationCache {
 	}
 	public void notifyDeleteCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
 
-		if (cell.getCellTypeEnum() == CellType.FORMULA) {
+		if (cell.getCellType() == CellType.FORMULA) {
 			FormulaCellCacheEntry fcce = _formulaCellCache.remove(cell);
 			if (fcce == null) {
 				// formula cell has not been evaluated yet

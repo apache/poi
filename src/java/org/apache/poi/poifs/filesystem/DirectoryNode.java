@@ -114,7 +114,7 @@ public class DirectoryNode
         while (iter.hasNext())
         {
             Property child     = iter.next();
-            Entry    childNode = null;
+            Entry    childNode;
 
             if (child.isDirectory())
             {
@@ -586,16 +586,11 @@ public class DirectoryNode
      * @return an Iterator; may not be null, but may have an empty
      * back end store
      */
-    public Iterator<Object> getViewableIterator()
-    {
+    public Iterator<Object> getViewableIterator() {
         List<Object> components = new ArrayList<>();
 
         components.add(getProperty());
-        Iterator<Entry> iter = _entries.iterator();
-        while (iter.hasNext())
-        {
-            components.add(iter.next());
-        }
+        components.addAll(_entries);
         return components.iterator();
     }
 

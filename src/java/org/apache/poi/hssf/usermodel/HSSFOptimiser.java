@@ -142,7 +142,7 @@ public class HSSFOptimiser {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
 			for (Row row : s) {
 			   for (Cell cell : row) {
-					if(cell.getCellTypeEnum() == CellType.STRING) {
+					if(cell.getCellType() == CellType.STRING) {
 						HSSFRichTextString rtr = (HSSFRichTextString)cell.getRichStringCellValue();
 						UnicodeString u = rtr.getRawUnicodeString();
 						

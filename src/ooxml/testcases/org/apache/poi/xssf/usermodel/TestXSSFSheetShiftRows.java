@@ -113,7 +113,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         }
         Cell readCell = readRow.getCell(0);
         //noinspection deprecation
-        if(readCell.getCellTypeEnum() == CellType.NUMERIC) {
+        if(readCell.getCellType() == CellType.NUMERIC) {
             assertEquals(expect, Double.toString(readCell.getNumericCellValue()));
         } else {
             assertEquals(expect, readCell.getStringCellValue());
@@ -413,7 +413,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertNotNull(row);
         Cell cell = row.getCell(cellAddress.getColumn());
         assertNotNull(cell);
-        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         return cell.getCellFormula();
     }
 

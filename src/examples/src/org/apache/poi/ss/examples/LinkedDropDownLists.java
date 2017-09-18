@@ -132,7 +132,7 @@ public class LinkedDropDownLists {
      * @param dataSheet An instance of a class that implements the Sheet Sheet
      *        interface (HSSFSheet or XSSFSheet).
      */
-    private static final void buildDataSheet(Sheet dataSheet) {
+    private static void buildDataSheet(Sheet dataSheet) {
         Row row = null;
         Cell cell = null;
         Name name = null;

@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 
 public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
@@ -69,17 +70,8 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
         _link.setTooltip(label);
     }
 
-    /* (non-Javadoc)
-     * @deprecated POI 3.15. Use {@link #getTypeEnum()} instead.
-     * Will return a HyperlinkType enum in the future
-     */
     @Override
-    public int getType() {
-        return getTypeEnum().getCode();
-    }
-    
-    @Override
-    public HyperlinkType getTypeEnum() {
+    public HyperlinkType getType() {
         String action = _link.getAction();
         if (action == null) {
             action = "";
@@ -87,7 +79,7 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
         if (action.equals("ppaction://hlinksldjump") || action.startsWith("ppaction://hlinkshowjump")) {
             return HyperlinkType.DOCUMENT;
         }
-        
+
         String address = getAddress();
         if (address == null) {
             address = "";
@@ -97,6 +89,13 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
         } else {
             return HyperlinkType.URL;
         }
+    }
+
+    @Deprecated
+    @Removal(version = "4.2")
+    @Override
+    public HyperlinkType getTypeEnum() {
+        return getType();
     }
 
     @Override

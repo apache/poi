@@ -28,7 +28,7 @@ under the License.
 
     Some people may find the tests hang when run through Ant. If this
     happens to you, try giving Ant some more memory when you run it, eg:
-          ANT_OPTS="-Xmx1024m -XX:MaxPermSize=256m" ant test
+          ANT_OPTS="-Xmx1024m" ant test
 
  -->
 <project name="POI Build" default="help" basedir="."
@@ -40,7 +40,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="4.0-beta1"/>
+    <property name="version.id" value="4.0.0-SNAPSHOT"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -305,8 +305,6 @@ under the License.
         <propertyref name="version.id"/>    <!-- to detect if we are running on slow Gump VM -->
     </propertyset>
 
-    <!-- this needs to be overwriten to empty when running with Java 9 -->
-    <property name="maxpermsize" value="-XX:MaxPermSize=256m"/>
     <!-- these need to be set differently when running with Java 9 -->
     <property name="java9addmods" value="-Dthis.is.a.dummy=true"/>
     <property name="javadoc9addmods" value="-J-Dthis.is.a.dummy=true"/>
@@ -1486,7 +1484,6 @@ under the License.
                       <path refid="test.jar.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
@@ -1570,7 +1567,6 @@ under the License.
                      failureproperty="ooxml.ss.test.failed">
                   <classpath refid="@{classpath}"/>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
@@ -1685,7 +1681,6 @@ under the License.
             <classpath refid="test.ooxml.classpath"/>
             <classpath refid="ooxml.xmlsec.classpath"/>
             <syspropertyset refid="junit.properties"/>
-            <jvmarg value="${maxpermsize}"/>
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="${java9addmods}" />
             <jvmarg value="${java9addmodsvalue}" />
@@ -2786,7 +2781,7 @@ under the License.
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
       <p>A summary of changes is available in the
-        <link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/RELEASE-NOTES-${version.id}.txt">Release Notes</link>.
+        <link href="https://www.apache.org/dyn/closer.lua/poi/dev/RELEASE-NOTES-${version.id}.txt">Release Notes</link>.
         A full list of changes is available in the <link href="changes.html">change log</link>.
         People interested should also follow the <link href="mailinglists.html">dev list</link>
         to track progress.</p>

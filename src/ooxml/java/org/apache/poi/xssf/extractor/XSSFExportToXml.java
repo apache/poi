@@ -269,13 +269,13 @@ public class XSSFExportToXml implements Comparator<String>{
     private void mapCellOnNode(XSSFCell cell, Node node) {
 
         String value ="";
-        switch (cell.getCellTypeEnum()) {
+        switch (cell.getCellType()) {
 
         case STRING: value = cell.getStringCellValue(); break;
         case BOOLEAN: value += cell.getBooleanCellValue(); break;
         case ERROR: value = cell.getErrorCellString();  break;
         case FORMULA:
-           if (cell.getCachedFormulaResultTypeEnum() == CellType.STRING) {
+           if (cell.getCachedFormulaResultType() == CellType.STRING) {
                value = cell.getStringCellValue();
            } else {
                if (DateUtil.isCellDateFormatted(cell)) {

@@ -252,7 +252,7 @@ public class SheetDataWriter implements Closeable {
             // APIs
             writeAttribute("s", Integer.toString(cellStyle.getIndex() & 0xffff));
         }
-        CellType cellType = cell.getCellTypeEnum();
+        CellType cellType = cell.getCellType();
         switch (cellType) {
             case BLANK: {
                 _out.write('>');
@@ -262,7 +262,7 @@ public class SheetDataWriter implements Closeable {
                 _out.write("><f>");
                 outputQuotedString(cell.getCellFormula());
                 _out.write("</f>");
-                switch (cell.getCachedFormulaResultTypeEnum()) {
+                switch (cell.getCachedFormulaResultType()) {
                     case NUMERIC:
                         double nval = cell.getNumericCellValue();
                         if (!Double.isNaN(nval)) {

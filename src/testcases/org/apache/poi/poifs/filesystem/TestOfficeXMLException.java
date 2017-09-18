@@ -34,7 +34,7 @@ import junit.framework.TestCase;
  */
 public class TestOfficeXMLException extends TestCase {
 
-	private static final InputStream openSampleStream(String sampleFileName) {
+	private static InputStream openSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
 	public void testOOXMLException() throws IOException
@@ -50,8 +50,8 @@ public class TestOfficeXMLException extends TestCase {
 			assertContains(e.getMessage(), "You are calling the part of POI that deals with OLE2 Office Documents");
 		}
 	}
-    public void test2003XMLException() throws IOException
-    {
+
+    public void test2003XMLException() throws IOException {
         InputStream in = openSampleStream("SampleSS.xml");
 
         try {
@@ -87,18 +87,9 @@ public class TestOfficeXMLException extends TestCase {
 	}
 	
 	private void confirmIsPOIFS(String sampleFileName, boolean expectedResult) throws IOException {
-		InputStream in  = FileMagic.prepareToCheckMagic(openSampleStream(sampleFileName));
-		try {
-    		boolean actualResult;
-    		try {
-    			actualResult = POIFSFileSystem.hasPOIFSHeader(in);
-    		} catch (IOException e) {
-    			throw new RuntimeException(e);
-    		}
-    		assertEquals(expectedResult, actualResult);
-		} finally {
-		    in.close();
-		}
+        try (InputStream in = FileMagic.prepareToCheckMagic(openSampleStream(sampleFileName))) {
+            assertEquals(expectedResult, FileMagic.valueOf(in) == FileMagic.OLE2);
+        }
 	}
     
     public void testFileCorruption() throws Exception {
@@ -109,11 +100,12 @@ public class TestOfficeXMLException extends TestCase {
         
         // detect header
         InputStream in = FileMagic.prepareToCheckMagic(testInput);
-        assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+
+        assertFalse(FileMagic.valueOf(in) == FileMagic.OLE2);
         
         // check if InputStream is still intact
         byte[] test = new byte[3];
-        in.read(test);
+        assertEquals(3, in.read(test));
         assertTrue(Arrays.equals(testData, test));
         assertEquals(-1, in.read());
     }
@@ -127,11 +119,12 @@ public class TestOfficeXMLException extends TestCase {
         
         // detect header
         InputStream in = FileMagic.prepareToCheckMagic(testInput);
-        assertFalse(OPOIFSFileSystem.hasPOIFSHeader(in));
+        assertFalse(FileMagic.valueOf(in) == FileMagic.OLE2);
+        assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(in));
 
         // check if InputStream is still intact
         byte[] test = new byte[3];
-        in.read(test);
+        assertEquals(3, in.read(test));
         assertTrue(Arrays.equals(testData, test));
         assertEquals(-1, in.read());
     }

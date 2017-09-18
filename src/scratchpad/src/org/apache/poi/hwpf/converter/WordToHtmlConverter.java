@@ -202,11 +202,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 && !AbstractWordUtils.equals( triplet.fontName,
                         blockProperies.pFontName ) )
         {
-            style.append( "font-family:" + triplet.fontName + ";" );
+            style.append("font-family:").append(triplet.fontName).append(";");
         }
         if ( characterRun.getFontSize() / 2 != blockProperies.pFontSize )
         {
-            style.append( "font-size:" + characterRun.getFontSize() / 2 + "pt;" );
+            style.append("font-size:").append(characterRun.getFontSize() / 2).append("pt;");
         }
         if ( triplet.bold )
         {
@@ -593,7 +593,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
 
         WordToHtmlUtils.compactSpans( pElement );
-        return;
     }
 
     @Override

@@ -462,7 +462,6 @@ public class WordToFoConverter extends AbstractWordConverter
         }
 
         WordToFoUtils.compactInlines( block );
-        return;
     }
 
     protected void processSection( HWPFDocumentCore wordDocument,

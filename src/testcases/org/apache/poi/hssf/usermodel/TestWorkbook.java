@@ -392,7 +392,7 @@ public final class TestWorkbook {
         HSSFSheet    s  = wb.getSheetAt(0);
         HSSFCell     c  = s.getRow(0).getCell(0);
 
-        assertEquals(CellType.NUMERIC, c.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, c.getCellType());
         
         wb.close();
     }

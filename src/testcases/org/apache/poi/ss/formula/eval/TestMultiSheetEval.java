@@ -106,28 +106,28 @@ public final class TestMultiSheetEval extends TestCase {
 			throw new AssertionFailedError(msg + " - actual value was null");
 		}
 		
-		final CellType cellType = expected.getCellTypeEnum();
+		final CellType cellType = expected.getCellType();
 
 		switch (cellType) {
 			case BLANK:
-				assertEquals(msg, CellType.BLANK, actual.getCellTypeEnum());
+				assertEquals(msg, CellType.BLANK, actual.getCellType());
 				break;
 			case BOOLEAN:
-				assertEquals(msg, CellType.BOOLEAN, actual.getCellTypeEnum());
+				assertEquals(msg, CellType.BOOLEAN, actual.getCellType());
 				assertEquals(msg, expected.getBooleanCellValue(), actual.getBooleanValue());
 				break;
 			case ERROR:
-				assertEquals(msg, CellType.ERROR, actual.getCellTypeEnum());
+				assertEquals(msg, CellType.ERROR, actual.getCellType());
 				assertEquals(msg, ErrorEval.getText(expected.getErrorCellValue()), ErrorEval.getText(actual.getErrorValue()));
 				break;
 			case FORMULA: // will never be used, since we will call method after formula evaluation
 				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
 			case NUMERIC:
-				assertEquals(msg, CellType.NUMERIC, actual.getCellTypeEnum());
+				assertEquals(msg, CellType.NUMERIC, actual.getCellType());
 				TestMathX.assertEquals(msg, expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
 				break;
 			case STRING:
-				assertEquals(msg, CellType.STRING, actual.getCellTypeEnum());
+				assertEquals(msg, CellType.STRING, actual.getCellType());
 				assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
 				break;
 			default:
@@ -232,7 +232,7 @@ public final class TestMultiSheetEval extends TestCase {
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 
 		Cell c = formulasRow.getCell(SS.COLUMN_INDEX_ACTUAL_VALUE);
-		if (c == null || c.getCellTypeEnum() != CellType.FORMULA) {
+		if (c == null || c.getCellType() != CellType.FORMULA) {
 			return result;
 		}
 
@@ -301,15 +301,15 @@ public final class TestMultiSheetEval extends TestCase {
 			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.BLANK) {
+		if(cell.getCellType() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.STRING) {
+		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 
 		throw new AssertionFailedError("Bad cell type for 'function name' column: ("
-				+ cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
+				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 	}
 	/**
 	 * @return <code>null</code> if cell is missing, empty or blank
@@ -324,15 +324,15 @@ public final class TestMultiSheetEval extends TestCase {
 			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_TEST_NAME + ", can't figure out test name");
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.BLANK) {
+		if(cell.getCellType() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.STRING) {
+		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 
 		throw new AssertionFailedError("Bad cell type for 'test name' column: ("
-				+ cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
+				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 	}
 	
 }

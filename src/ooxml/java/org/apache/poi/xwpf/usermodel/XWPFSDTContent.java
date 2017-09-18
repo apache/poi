@@ -98,7 +98,7 @@ public class XWPFSDTContent implements ISDTContent {
                 text.append(o);
                 addNewLine = false;
             }
-            if (addNewLine == true && i < bodyElements.size() - 1) {
+            if (addNewLine && i < bodyElements.size() - 1) {
                 text.append("\n");
             }
         }

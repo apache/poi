@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>4.0-beta1-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>poi-ooxml</artifactId>
     <packaging>jar</packaging>
@@ -93,7 +93,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
                 <configuration>
-                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -XX:MaxPermSize=256m -XX:-OmitStackTraceInFastThrow</argLine>
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -XX:-OmitStackTraceInFastThrow</argLine>
                 </configuration>
             </plugin>
 		</plugins>

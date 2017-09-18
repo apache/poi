@@ -184,7 +184,7 @@ public final class TestFormulaRecord extends TestCase {
 
 		fr0.setCachedResultBoolean(false);
 		fr1.setCachedResultBoolean(true);
-		if (fr0.getCachedBooleanValue() == true && fr1.getCachedBooleanValue() == false) {
+		if (fr0.getCachedBooleanValue() && !fr1.getCachedBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 46479c");
 		}
 		assertEquals(false, fr0.getCachedBooleanValue());
