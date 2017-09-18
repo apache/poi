@@ -275,7 +275,7 @@ public abstract class BaseTestXSSFPivotTable {
     @Test
     public void testAddDataColumnWithOffsetData() {
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
-        assertEquals(CellType.NUMERIC, offsetOuterCell.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, offsetOuterCell.getCellType());
         
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
     }

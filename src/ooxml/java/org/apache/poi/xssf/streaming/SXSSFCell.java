@@ -392,7 +392,7 @@ public class SXSSFCell implements Cell {
      * For strings we throw an exception. For blank cells we return a null.
      * </p>
      * @return the value of the cell as a date
-     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is CellType.STRING
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CellType.STRING
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see org.apache.poi.ss.usermodel.DataFormatter for formatting  this date into a string similar to how excel does.
      */
@@ -512,7 +512,7 @@ public class SXSSFCell implements Cell {
      * For strings, numbers, and errors, we throw an exception. For blank cells we return a false.
      * </p>
      * @return the value of the cell as a boolean
-     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()}
      *   is not CellType.BOOLEAN, CellType.BLANK or CellType.FORMULA
      */
     @Override
@@ -547,7 +547,7 @@ public class SXSSFCell implements Cell {
      * </p>
      *
      * @return the value of the cell as an error code
-     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} isn't CellType.ERROR
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't CellType.ERROR
      * @see org.apache.poi.ss.usermodel.FormulaError for error codes
      */
     @Override
@@ -727,7 +727,7 @@ public class SXSSFCell implements Cell {
      */
     @Override
     public String toString() {
-        switch (getCellTypeEnum()) {
+        switch (getCellType()) {
             case BLANK:
                 return "";
             case BOOLEAN:

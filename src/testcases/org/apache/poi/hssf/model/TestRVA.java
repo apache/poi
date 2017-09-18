@@ -80,7 +80,7 @@ public final class TestRVA {
                 break;
             }
             HSSFCell cell = row.getCell(0);
-            if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
+            if (cell == null || cell.getCellType() == CellType.BLANK) {
                 break;
             }
 

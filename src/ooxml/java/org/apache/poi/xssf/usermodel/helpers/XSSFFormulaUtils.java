@@ -75,7 +75,7 @@ public final class XSSFFormulaUtils {
         for (Sheet sh : _wb) {
             for (Row row : sh) {
                 for (Cell cell : row) {
-                    if (cell.getCellTypeEnum() == CellType.FORMULA) {
+                    if (cell.getCellType() == CellType.FORMULA) {
                         updateFormula((XSSFCell) cell, oldName, newName);
                     }
                 }

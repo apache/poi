@@ -228,7 +228,7 @@ public final class TestSharedFormulaRecord extends TestCase {
     private static void confirmCellEvaluation(HSSFWorkbook wb, HSSFCell cell, double expectedValue) {
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         CellValue cv = fe.evaluate(cell);
-        assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, cv.getCellType());
         assertEquals(expectedValue, cv.getNumberValue(), 0.0);
     }
 
