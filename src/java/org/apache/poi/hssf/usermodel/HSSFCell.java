@@ -55,6 +55,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -1145,18 +1146,21 @@ public class HSSFCell implements Cell {
 
     /**
      * Only valid for formula cells
-     * 
-     * Will return {@link CellType} in a future version of POI.
-     * For forwards compatibility, do not hard-code cell type literals in your code.
-     * 
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
-     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
+     *
+     * @since POI 4.0
+     * @return <code>CellType</code> depending
+     * on the cached value of the formula
      */
     @Override
-    public int getCachedFormulaResultType() {
-        return getCachedFormulaResultTypeEnum().getCode();
+    public CellType getCachedFormulaResultType() {
+        if (_cellType != CellType.FORMULA) {
+            throw new IllegalStateException("Only formula cells have cached results");
+        }
+        int code = ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedResultType();
+        return CellType.forInt(code);
     }
 
     /**
@@ -1165,15 +1169,14 @@ public class HSSFCell implements Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
+     * @deprecated use <code>getCachedFormulaResultType</code>
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
+    @Deprecated
+    @Removal(version="4.2")
     @Override
     public CellType getCachedFormulaResultTypeEnum() {
-        if (_cellType != CellType.FORMULA) {
-            throw new IllegalStateException("Only formula cells have cached results");
-        }
-        int code = ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedResultType();
-        return CellType.forInt(code);
+        return getCachedFormulaResultType();
     }
 
     void setCellArrayFormula(CellRangeAddress range) {

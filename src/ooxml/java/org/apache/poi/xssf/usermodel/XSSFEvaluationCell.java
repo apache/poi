@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * XSSF wrapper for a cell under evaluation
@@ -110,24 +111,22 @@ final class XSSFEvaluationCell implements EvaluationCell {
 	}
 	
 	/**
-	 * Will return {@link CellType} in a future version of POI.
-	 * For forwards compatibility, do not hard-code cell type literals in your code.
-	 *
 	 * @return cell type of cached formula result
-	 * @deprecated 3.17. Will return a {@link CellType} enum in the future.
 	 */
 	@Override
-	public int getCachedFormulaResultType() {
-		return _cell.getCachedFormulaResultType();
+	public CellType getCachedFormulaResultType() {
+		return _cell.getCachedFormulaResultTypeEnum();
 	}
 	/**
 	 * @since POI 3.15 beta 3
 	 * @deprecated POI 3.15 beta 3.
 	 * Will be deleted when we make the CellType enum transition. See bug 59791.
 	 */
+	@Deprecated
+    @Removal(version = "4.2")
 	@Internal(since="POI 3.15 beta 3")
 	@Override
 	public CellType getCachedFormulaResultTypeEnum() {
-		return _cell.getCachedFormulaResultTypeEnum();
+		return getCachedFormulaResultType();
 	}
 }

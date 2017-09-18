@@ -714,20 +714,17 @@ public final class XSSFCell implements Cell {
 
     /**
      * Only valid for formula cells
-     * 
-     * Will return {@link CellType} in a future version of POI.
-     * For forwards compatibility, do not hard-code cell type literals in your code.
-     * 
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
-     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
-    @Deprecated
     @Override
-    @Removal(version="3.17")
-    public int getCachedFormulaResultType() {
-        return getCachedFormulaResultTypeEnum().getCode();
+    public CellType getCachedFormulaResultType() {
+        if (! isFormulaCell()) {
+            throw new IllegalStateException("Only formula cells have cached results");
+        }
+
+        return getBaseCellType(false);
     }
     
     /**
@@ -736,15 +733,14 @@ public final class XSSFCell implements Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
+     * @deprecated use <code>getCachedFormulaResultType</code> instead
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
+    @Deprecated
+    @Removal(version = "4.2")
     @Override
     public CellType getCachedFormulaResultTypeEnum() {
-        if (! isFormulaCell()) {
-            throw new IllegalStateException("Only formula cells have cached results");
-        }
-
-        return getBaseCellType(false);
+        return getCachedFormulaResultType();
     }
 
     /**

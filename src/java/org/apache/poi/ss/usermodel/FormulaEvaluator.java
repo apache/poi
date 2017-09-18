@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Removal;
+
 import java.util.Map;
 
 /**
@@ -99,9 +101,8 @@ public interface FormulaEvaluator {
      *      or one of {@link CellType#NUMERIC}, {@link CellType#STRING},
      *      {@link CellType#BOOLEAN}, {@link CellType#ERROR}
      *      Note: the cell's type remains as CellType.FORMULA however.
-     * @deprecated 3.15. Will return a {@link CellType} enum in the future
      */
-    int evaluateFormulaCell(Cell cell);
+    CellType evaluateFormulaCell(Cell cell);
     
     /**
      * If cell contains formula, it evaluates the formula,
@@ -123,7 +124,10 @@ public interface FormulaEvaluator {
      *      or one of {@link CellType#NUMERIC}, {@link CellType#STRING},
      *      {@link CellType#BOOLEAN}, {@link CellType#ERROR}
      *      Note: the cell's type remains as CellType.FORMULA however.
+     * @deprecated use <code>evaluateFormulaCell(cell)</code>
      */
+    @Deprecated
+    @Removal(version = "4.2")
     CellType evaluateFormulaCellEnum(Cell cell);
 
     /**

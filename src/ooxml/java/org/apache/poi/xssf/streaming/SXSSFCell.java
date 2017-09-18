@@ -38,10 +38,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.*;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
@@ -175,12 +172,14 @@ public class SXSSFCell implements Cell {
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
-     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
     @Override
-    public int getCachedFormulaResultType()
-    {
-        return getCachedFormulaResultTypeEnum().getCode();
+    public CellType getCachedFormulaResultType() {
+        if (_value.getType() != CellType.FORMULA) {
+            throw new IllegalStateException("Only formula cells have cached results");
+        }
+
+        return ((FormulaValue)_value).getFormulaType();
     }
 
     /**
@@ -189,16 +188,13 @@ public class SXSSFCell implements Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
+     * @deprecated use <code>getCachedFormulaResultTypeEnum</code> instead
      */
+    @Deprecated
+    @Removal(version = "4.2")
     @Override
-    public CellType getCachedFormulaResultTypeEnum()
-    {
-        if (_value.getType() != CellType.FORMULA) {
-            throw new IllegalStateException("Only formula cells have cached results");
-        }
-
-        return ((FormulaValue)_value).getFormulaType();
+    public CellType getCachedFormulaResultTypeEnum() {
+        return getCachedFormulaResultType();
     }
 
     /**
