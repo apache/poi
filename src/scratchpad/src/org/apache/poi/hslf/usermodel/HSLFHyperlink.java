@@ -33,6 +33,7 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.util.Removal;
 
 /**
  * Represents a hyperlink in a PowerPoint document
@@ -128,11 +129,26 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      *
      * @return the hyperlink URL
      * @see InteractiveInfoAtom
-     * @deprecated POI 3.15 beta 3. Use {@link #getTypeEnum()}
      */
     @Override
-    public int getType() {
-        return getTypeEnum().getCode();
+    public HyperlinkType getType() {
+        switch (info.getInteractiveInfoAtom().getHyperlinkType()) {
+            case InteractiveInfoAtom.LINK_Url:
+                return (exHyper.getLinkURL().startsWith("mailto:")) ? HyperlinkType.EMAIL : HyperlinkType.URL;
+            case InteractiveInfoAtom.LINK_NextSlide:
+            case InteractiveInfoAtom.LINK_PreviousSlide:
+            case InteractiveInfoAtom.LINK_FirstSlide:
+            case InteractiveInfoAtom.LINK_LastSlide:
+            case InteractiveInfoAtom.LINK_SlideNumber:
+                return HyperlinkType.DOCUMENT;
+            case InteractiveInfoAtom.LINK_CustomShow:
+            case InteractiveInfoAtom.LINK_OtherPresentation:
+            case InteractiveInfoAtom.LINK_OtherFile:
+                return HyperlinkType.FILE;
+            default:
+            case InteractiveInfoAtom.LINK_NULL:
+                return HyperlinkType.NONE;
+        }
     }
     
     /**
@@ -141,26 +157,13 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      *
      * @return the hyperlink URL
      * @see InteractiveInfoAtom
+     * @deprecated use <code>getType</code> instead
      */
+    @Deprecated
+    @Removal(version = "4.2")
     @Override
     public HyperlinkType getTypeEnum() {
-        switch (info.getInteractiveInfoAtom().getHyperlinkType()) {
-        case InteractiveInfoAtom.LINK_Url:
-            return (exHyper.getLinkURL().startsWith("mailto:")) ? HyperlinkType.EMAIL : HyperlinkType.URL;
-        case InteractiveInfoAtom.LINK_NextSlide:
-        case InteractiveInfoAtom.LINK_PreviousSlide:
-        case InteractiveInfoAtom.LINK_FirstSlide:
-        case InteractiveInfoAtom.LINK_LastSlide:
-        case InteractiveInfoAtom.LINK_SlideNumber:
-            return HyperlinkType.DOCUMENT;
-        case InteractiveInfoAtom.LINK_CustomShow:
-        case InteractiveInfoAtom.LINK_OtherPresentation:
-        case InteractiveInfoAtom.LINK_OtherFile:
-            return HyperlinkType.FILE;
-        default:
-        case InteractiveInfoAtom.LINK_NULL:
-            return HyperlinkType.NONE;
-        }
+        return getType();
     }
 
     @Override

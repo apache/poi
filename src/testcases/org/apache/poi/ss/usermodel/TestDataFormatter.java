@@ -811,7 +811,7 @@ public class TestDataFormatter {
         CellReference ref = new CellReference("D47");
 
         Cell cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
-        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals("G9:K9 I7:I12", cell.getCellFormula());
 
         DataFormatter formatter = new DataFormatter();

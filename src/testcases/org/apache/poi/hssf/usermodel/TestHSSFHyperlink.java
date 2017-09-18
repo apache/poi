@@ -65,7 +65,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("POI", link.getLabel());
         assertEquals("POI", cell.getRichStringCellValue().getString());
         assertEquals("http://poi.apache.org/", link.getAddress());
-        assertEquals(HyperlinkType.URL, link.getTypeEnum());
+        assertEquals(HyperlinkType.URL, link.getType());
 
         cell = sheet.getRow(8).getCell(0);
         link = cell.getHyperlink();
@@ -73,7 +73,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("HSSF", link.getLabel());
         assertEquals("HSSF", cell.getRichStringCellValue().getString());
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
-        assertEquals(HyperlinkType.URL, link.getTypeEnum());
+        assertEquals(HyperlinkType.URL, link.getType());
 
         sheet = wb.getSheet("Emails");
         cell = sheet.getRow(4).getCell(0);
@@ -82,7 +82,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("dev", link.getLabel());
         assertEquals("dev", cell.getRichStringCellValue().getString());
         assertEquals("mailto:dev@poi.apache.org", link.getAddress());
-        assertEquals(HyperlinkType.EMAIL, link.getTypeEnum());
+        assertEquals(HyperlinkType.EMAIL, link.getType());
 
         sheet = wb.getSheet("Internal");
         cell = sheet.getRow(4).getCell(0);
@@ -92,7 +92,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("Link To First Sheet", cell.getRichStringCellValue().getString());
         assertEquals("WebLinks!A1", link.getTextMark());
         assertEquals("WebLinks!A1", link.getAddress());
-        assertEquals(HyperlinkType.DOCUMENT, link.getTypeEnum());
+        assertEquals(HyperlinkType.DOCUMENT, link.getType());
     }
 
     @Test
