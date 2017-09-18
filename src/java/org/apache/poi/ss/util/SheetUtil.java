@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 
 /**
@@ -90,19 +91,16 @@ public class SheetUtil {
         @Override
         public void evaluateAll() {}
         @Override
-        public int evaluateFormulaCell(Cell cell) {
-            //noinspection deprecation
-            return cell.getCachedFormulaResultType();
-        }
-        /** 
+        public CellType evaluateFormulaCell(Cell cell) { return cell.getCachedFormulaResultType(); }
+        /**
          * @since POI 3.15 beta 3
          * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
          */
+        @Deprecated
+        @Removal(version = "4.2")
         @Internal(since="POI 3.15 beta 3")
         @Override
-        public CellType evaluateFormulaCellEnum(Cell cell) {
-            return cell.getCachedFormulaResultTypeEnum();
-        }
+        public CellType evaluateFormulaCellEnum(Cell cell) { return evaluateFormulaCell(cell); }
     };
 
     /**
