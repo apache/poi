@@ -134,6 +134,11 @@ public interface Name {
      *  <li><code>-PMT(Interest_Rate/12,Number_of_Payments,Loan_Amount)</li>
      * </ul>
      *
+     * Note: Using relative values like 'A1:B1' can lead to unexpected moving of
+     *      the cell that the name points to when working with the workbook in Microsoft Excel,
+     *      usually using absolute references like '$A$1:$B$1' avoids this, see also
+     *      https://superuser.com/a/1031047/126954
+     *
      * @param formulaText the reference for this name
      * @throws IllegalArgumentException if the specified formulaText is unparsable
     */
