@@ -66,7 +66,7 @@ public final class TestFind {
 		cell.setCellFormula(formulaText);
 		fe.notifyUpdateCell(cell);
 		CellValue result = fe.evaluate(cell);
-		assertEquals(result.getCellTypeEnum(), CellType.NUMERIC);
+		assertEquals(result.getCellType(), CellType.NUMERIC);
 		assertEquals(expectedResult, result.getNumberValue(), 0.0);
 	}
 
@@ -75,7 +75,7 @@ public final class TestFind {
 		cell.setCellFormula(formulaText);
 		fe.notifyUpdateCell(cell);
 		CellValue result = fe.evaluate(cell);
-		assertEquals(result.getCellTypeEnum(), CellType.ERROR);
+		assertEquals(result.getCellType(), CellType.ERROR);
 		assertEquals(expectedErrorCode.getCode(), result.getErrorValue());
 	}
 }

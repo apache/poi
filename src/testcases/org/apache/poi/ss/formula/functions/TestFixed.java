@@ -117,7 +117,7 @@ public final class TestFixed {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        assertEquals("Wrong result type: " + cv.formatAsString(), CellType.STRING, cv.getCellTypeEnum());
+        assertEquals("Wrong result type: " + cv.formatAsString(), CellType.STRING, cv.getCellType());
         String actualValue = cv.getStringValue();
         assertEquals(expectedResult, actualValue);
     }
@@ -127,7 +127,7 @@ public final class TestFixed {
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
         assertTrue("Wrong result type: " + cv.formatAsString(), 
-                cv.getCellTypeEnum() == CellType.ERROR
+                cv.getCellType() == CellType.ERROR
                 && cv.getErrorValue() == FormulaError.VALUE.getCode());
     }
 }

@@ -190,7 +190,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 		for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
 			Cell c = formulasRow.getCell(colnum);
 			assumeNotNull(c);
-			assumeTrue(c.getCellTypeEnum() == CellType.FORMULA);
+			assumeTrue(c.getCellType() == CellType.FORMULA);
 			ignoredFormulaTestCase(c.getCellFormula());
 
 			CellValue actValue = evaluator.evaluate(c);
@@ -202,17 +202,17 @@ public final class TestFormulaEvaluatorOnXSSF {
 			assertNotNull(msg + " - Bad setup data expected value is null", expValue);
 			assertNotNull(msg + " - actual value was null", actValue);
 	        
-	        final CellType expectedCellType = expValue.getCellTypeEnum();
+	        final CellType expectedCellType = expValue.getCellType();
 	        switch (expectedCellType) {
 	            case BLANK:
-	                assertEquals(msg, CellType.BLANK, actValue.getCellTypeEnum());
+	                assertEquals(msg, CellType.BLANK, actValue.getCellType());
 	                break;
 	            case BOOLEAN:
-	                assertEquals(msg, CellType.BOOLEAN, actValue.getCellTypeEnum());
+	                assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
 	                assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
 	                break;
 	            case ERROR:
-	                assertEquals(msg, CellType.ERROR, actValue.getCellTypeEnum());
+	                assertEquals(msg, CellType.ERROR, actValue.getCellType());
 //	              if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
 //	                  assertEquals(msg, expValue.getErrorCellValue(), actValue.getErrorValue());
 //	              }
@@ -220,14 +220,14 @@ public final class TestFormulaEvaluatorOnXSSF {
 	            case FORMULA: // will never be used, since we will call method after formula evaluation
 	                fail("Cannot expect formula as result of formula evaluation: " + msg);
 	            case NUMERIC:
-	                assertEquals(msg, CellType.NUMERIC, actValue.getCellTypeEnum());
+	                assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
 	                TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
 //	              double delta = Math.abs(expValue.getNumericCellValue()-actValue.getNumberValue());
 //	              double pctExpValue = Math.abs(0.00001*expValue.getNumericCellValue());
 //	              assertTrue(msg, delta <= pctExpValue);
 	                break;
 	            case STRING:
-	                assertEquals(msg, CellType.STRING, actValue.getCellTypeEnum());
+	                assertEquals(msg, CellType.STRING, actValue.getCellType());
 	                assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
 	                break;
 	            default:
@@ -264,10 +264,10 @@ public final class TestFormulaEvaluatorOnXSSF {
             logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.BLANK) {
+		if(cell.getCellType() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellTypeEnum() == CellType.STRING) {
+		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 		

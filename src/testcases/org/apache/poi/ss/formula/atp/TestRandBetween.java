@@ -66,11 +66,11 @@ public class TestRandBetween extends TestCase {
 		
 		evaluator.clearAllCachedResultValues();
 		formulaCell.setCellFormula("RANDBETWEEN(1,1)");
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(1, formulaCell.getNumericCellValue(), 0);
 		evaluator.clearAllCachedResultValues();
 		formulaCell.setCellFormula("RANDBETWEEN(-1,-1)");
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(-1, formulaCell.getNumericCellValue(), 0);
 
 	}
@@ -86,25 +86,25 @@ public class TestRandBetween extends TestCase {
 		topValueCell.setCellValue(0.1);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(1, formulaCell.getNumericCellValue(), 0);
 		bottomValueCell.setCellValue(-0.1);		
 		topValueCell.setCellValue(-0.05);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(0, formulaCell.getNumericCellValue(), 0);
 		bottomValueCell.setCellValue(-1.1);		
 		topValueCell.setCellValue(-1.05);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(-1, formulaCell.getNumericCellValue(), 0);
 		bottomValueCell.setCellValue(-1.1);		
 		topValueCell.setCellValue(-1.1);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(-1, formulaCell.getNumericCellValue(), 0);
 	}
 	
@@ -117,7 +117,7 @@ public class TestRandBetween extends TestCase {
 		topValueCell.setCellType(CellType.BLANK);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertTrue(formulaCell.getNumericCellValue() == 0 || formulaCell.getNumericCellValue() == -1);
 	
 	}
@@ -130,7 +130,7 @@ public class TestRandBetween extends TestCase {
 		topValueCell.setCellValue(1);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 		
@@ -140,7 +140,7 @@ public class TestRandBetween extends TestCase {
 		topValueCell.setCellValue("STRING");		
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 
@@ -149,7 +149,7 @@ public class TestRandBetween extends TestCase {
 		topValueCell.setCellValue("STRING");		
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 	
@@ -165,14 +165,14 @@ public class TestRandBetween extends TestCase {
 		topValueCell.setCellValue(0);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());		
 		bottomValueCell.setCellValue(1);		
 		topValueCell.setCellType(CellType.BLANK);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());
 	}
@@ -186,7 +186,7 @@ public class TestRandBetween extends TestCase {
 		topValueCell.setCellValue(Double.MAX_VALUE);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
-		evaluator.evaluateFormulaCellEnum(formulaCell);
+		evaluator.evaluateFormulaCell(formulaCell);
 		assertTrue(formulaCell.getNumericCellValue() >= Double.MIN_VALUE && formulaCell.getNumericCellValue() <= Double.MAX_VALUE);		
 		
 	}

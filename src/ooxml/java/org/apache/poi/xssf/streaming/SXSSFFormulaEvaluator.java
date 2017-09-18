@@ -106,8 +106,8 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
             // Evaluate what we have
             for (Row r : sheet) {
                 for (Cell c : r) {
-                    if (c.getCellTypeEnum() == CellType.FORMULA) {
-                        eval.evaluateFormulaCellEnum(c);
+                    if (c.getCellType() == CellType.FORMULA) {
+                        eval.evaluateFormulaCell(c);
                     }
                 }
             }

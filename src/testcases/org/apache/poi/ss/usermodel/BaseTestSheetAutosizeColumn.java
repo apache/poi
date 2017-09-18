@@ -344,8 +344,8 @@ public abstract class BaseTestSheetAutosizeColumn {
             Sheet sheet = workbook.getSheetAt(i);
             for (Row r : sheet) {
                 for (Cell c : r) {
-                    if (c.getCellTypeEnum() == CellType.FORMULA){
-                        eval.evaluateFormulaCellEnum(c);
+                    if (c.getCellType() == CellType.FORMULA){
+                        eval.evaluateFormulaCell(c);
                     }
                 }
             }

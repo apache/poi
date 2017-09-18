@@ -252,7 +252,7 @@ public class SheetDataWriter implements Closeable {
             // APIs
             writeAttribute("s", Integer.toString(cellStyle.getIndex() & 0xffff));
         }
-        CellType cellType = cell.getCellTypeEnum();
+        CellType cellType = cell.getCellType();
         switch (cellType) {
             case BLANK: {
                 _out.write('>');
