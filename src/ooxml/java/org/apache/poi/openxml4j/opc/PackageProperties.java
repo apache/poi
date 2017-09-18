@@ -33,195 +33,195 @@ public interface PackageProperties {
 	/**
 	 * Dublin Core Terms URI.
 	 */
-	public final static String NAMESPACE_DCTERMS = "http://purl.org/dc/terms/";
+	String NAMESPACE_DCTERMS = "http://purl.org/dc/terms/";
 	
 	/**
 	 * Dublin Core namespace URI.
 	 */
-	public final static String NAMESPACE_DC = "http://purl.org/dc/elements/1.1/";
+	String NAMESPACE_DC = "http://purl.org/dc/elements/1.1/";
 
 	/* Getters and setters */
 
 	/**
 	 * Set the category of the content of this package.
 	 */
-	public abstract Nullable<String> getCategoryProperty();
+	Nullable<String> getCategoryProperty();
 
 	/**
 	 * Set the category of the content of this package.
 	 */
-	public abstract void setCategoryProperty(String category);
+	void setCategoryProperty(String category);
 
 	/**
 	 * Set the status of the content.
 	 */
-	public abstract Nullable<String> getContentStatusProperty();
+	Nullable<String> getContentStatusProperty();
 
 	/**
 	 * Get the status of the content.
 	 */
-	public abstract void setContentStatusProperty(String contentStatus);
+	void setContentStatusProperty(String contentStatus);
 
 	/**
 	 * Get the type of content represented, generally defined by a specific use
 	 * and intended audience.
 	 */
-	public abstract Nullable<String> getContentTypeProperty();
+	Nullable<String> getContentTypeProperty();
 
 	/**
 	 * Set the type of content represented, generally defined by a specific use
 	 * and intended audience.
 	 */
-	public abstract void setContentTypeProperty(String contentType);
+	void setContentTypeProperty(String contentType);
 
 	/**
 	 * Get the date of creation of the resource.
 	 */
-	public abstract Nullable<Date> getCreatedProperty();
+	Nullable<Date> getCreatedProperty();
 
 	/**
 	 * Set the date of creation of the resource.
 	 */
-	public abstract void setCreatedProperty(String created);
+	void setCreatedProperty(String created);
 	
 	/**
 	 * Set the date of creation of the resource.
 	 */
-	public abstract void setCreatedProperty(Nullable<Date> created);
+	void setCreatedProperty(Nullable<Date> created);
 
 	/**
 	 * Get the entity primarily responsible for making the content of the
 	 * resource.
 	 */
-	public abstract Nullable<String> getCreatorProperty();
+	Nullable<String> getCreatorProperty();
 
 	/**
 	 * Set the entity primarily responsible for making the content of the
 	 * resource.
 	 */
-	public abstract void setCreatorProperty(String creator);
+	void setCreatorProperty(String creator);
 
 	/**
 	 * Get the explanation of the content of the resource.
 	 */
-	public abstract Nullable<String> getDescriptionProperty();
+	Nullable<String> getDescriptionProperty();
 
 	/**
 	 * Set the explanation of the content of the resource.
 	 */
-	public abstract void setDescriptionProperty(String description);
+	void setDescriptionProperty(String description);
 
 	/**
 	 * Get an unambiguous reference to the resource within a given context.
 	 */
-	public abstract Nullable<String> getIdentifierProperty();
+	Nullable<String> getIdentifierProperty();
 
 	/**
 	 * Set an unambiguous reference to the resource within a given context.
 	 */
-	public abstract void setIdentifierProperty(String identifier);
+	void setIdentifierProperty(String identifier);
 
 	/**
 	 * Get a delimited set of keywords to support searching and indexing. This
 	 * is typically a list of terms that are not available elsewhere in the
 	 * properties
 	 */
-	public abstract Nullable<String> getKeywordsProperty();
+	Nullable<String> getKeywordsProperty();
 
 	/**
 	 * Set a delimited set of keywords to support searching and indexing. This
 	 * is typically a list of terms that are not available elsewhere in the
 	 * properties
 	 */
-	public abstract void setKeywordsProperty(String keywords);
+	void setKeywordsProperty(String keywords);
 
 	/**
 	 * Get the language of the intellectual content of the resource.
 	 */
-	public abstract Nullable<String> getLanguageProperty();
+	Nullable<String> getLanguageProperty();
 
 	/**
 	 * Set the language of the intellectual content of the resource.
 	 */
-	public abstract void setLanguageProperty(String language);
+	void setLanguageProperty(String language);
 
 	/**
 	 * Get the user who performed the last modification.
 	 */
-	public abstract Nullable<String> getLastModifiedByProperty();
+	Nullable<String> getLastModifiedByProperty();
 
 	/**
 	 * Set the user who performed the last modification.
 	 */
-	public abstract void setLastModifiedByProperty(String lastModifiedBy);
+	void setLastModifiedByProperty(String lastModifiedBy);
 
 	/**
 	 * Get the date and time of the last printing.
 	 */
-	public abstract Nullable<Date> getLastPrintedProperty();
+	Nullable<Date> getLastPrintedProperty();
 
 	/**
 	 * Set the date and time of the last printing.
 	 */
-	public abstract void setLastPrintedProperty(String lastPrinted);
+	void setLastPrintedProperty(String lastPrinted);
 	
 	/**
 	 * Set the date and time of the last printing.
 	 */
-	public abstract void setLastPrintedProperty(Nullable<Date> lastPrinted);
+	void setLastPrintedProperty(Nullable<Date> lastPrinted);
 
 	/**
 	 * Get the date on which the resource was changed.
 	 */
-	public abstract Nullable<Date> getModifiedProperty();
+	Nullable<Date> getModifiedProperty();
 
 	/**
 	 * Set the date on which the resource was changed.
 	 */
-	public abstract void setModifiedProperty(String modified);
+	void setModifiedProperty(String modified);
 	
 	/**
 	 * Set the date on which the resource was changed.
 	 */
-	public abstract void setModifiedProperty(Nullable<Date> modified);
+	void setModifiedProperty(Nullable<Date> modified);
 
 	/**
 	 * Get the revision number.
 	 */
-	public abstract Nullable<String> getRevisionProperty();
+	Nullable<String> getRevisionProperty();
 
 	/**
 	 * Set the revision number.
 	 */
-	public abstract void setRevisionProperty(String revision);
+	void setRevisionProperty(String revision);
 
 	/**
 	 * Get the topic of the content of the resource.
 	 */
-	public abstract Nullable<String> getSubjectProperty();
+	Nullable<String> getSubjectProperty();
 
 	/**
 	 * Set the topic of the content of the resource.
 	 */
-	public abstract void setSubjectProperty(String subject);
+	void setSubjectProperty(String subject);
 
 	/**
 	 * Get the name given to the resource.
 	 */
-	public abstract Nullable<String> getTitleProperty();
+	Nullable<String> getTitleProperty();
 
 	/**
 	 * Set the name given to the resource.
 	 */
-	public abstract void setTitleProperty(String title);
+	void setTitleProperty(String title);
 
 	/**
 	 * Get the version number.
 	 */
-	public abstract Nullable<String> getVersionProperty();
+	Nullable<String> getVersionProperty();
 
 	/**
 	 * Set the version number.
 	 */
-	public abstract void setVersionProperty(String version);
+	void setVersionProperty(String version);
 }
