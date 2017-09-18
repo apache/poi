@@ -101,7 +101,7 @@ public class CellWalk {
     }
 
     private boolean isEmpty(Cell cell) {
-        return (cell.getCellTypeEnum() == CellType.BLANK);
+        return (cell.getCellType() == CellType.BLANK);
     }
 
     /**

@@ -2424,7 +2424,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Check the evaluated result
         HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
-        eval.evaluateFormulaCellEnum(c);
+        eval.evaluateFormulaCell(c);
         assertEquals(4.0, c.getNumericCellValue(), 0);
         wb.close();
     }

@@ -287,7 +287,7 @@ public final class TestFormulaEvaluatorBugs {
                 HSSFRow r = (HSSFRow)rows.next();
                 for (Iterator<Cell> cells = r.cellIterator(); cells.hasNext();) {
                     HSSFCell c = (HSSFCell)cells.next();
-                    eval.evaluateFormulaCellEnum(c);
+                    eval.evaluateFormulaCell(c);
                 }
             }
         }
@@ -568,7 +568,7 @@ public final class TestFormulaEvaluatorBugs {
         }
     }
     private Ptg[] getPtgs(HSSFCell cell) {
-        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals(FormulaRecordAggregate.class, cell.getCellValueRecord().getClass());
         FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
         FormulaRecord rec = agg.getFormulaRecord();

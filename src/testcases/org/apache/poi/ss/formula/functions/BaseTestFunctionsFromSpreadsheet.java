@@ -123,7 +123,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
                 currentGroupComment = newMarkerValue;
             }
             HSSFCell evalCell = r.getCell(SS.COLUMN_INDEX_EVALUATION);
-            if (evalCell == null || evalCell.getCellTypeEnum() != CellType.FORMULA) {
+            if (evalCell == null || evalCell.getCellType() != CellType.FORMULA) {
                 continue;
             }
             String rowComment = getCellTextValue(r, SS.COLUMN_ROW_COMMENT, "row comment");
@@ -153,9 +153,9 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         assertNotNull(msg + " - Bad setup data expected value is null", expectedCell);
         assertNotNull(msg + " - actual value was null", actualValue);
 
-        if (expectedCell.getCellTypeEnum() == CellType.ERROR) {
+        if (expectedCell.getCellType() == CellType.ERROR) {
             int expectedErrorCode = expectedCell.getErrorCellValue();
-            assertEquals(msg, CellType.ERROR, actualValue.getCellTypeEnum());
+            assertEquals(msg, CellType.ERROR, actualValue.getCellType());
             assertEquals(msg, ErrorEval.getText(expectedErrorCode), actualValue.formatAsString());
             assertEquals(msg, expectedErrorCode, actualValue.getErrorValue());
             assertEquals(msg, ErrorEval.getText(expectedErrorCode), ErrorEval.getText(actualValue.getErrorValue()));
@@ -163,13 +163,13 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         }
 
         // unexpected error
-        assertNotEquals(msg, CellType.ERROR, actualValue.getCellTypeEnum());
+        assertNotEquals(msg, CellType.ERROR, actualValue.getCellType());
         assertNotEquals(msg, formatValue(expectedCell), ErrorEval.getText(actualValue.getErrorValue()));
 
         // wrong type error
-        assertEquals(msg, expectedCell.getCellTypeEnum(), actualValue.getCellTypeEnum());
+        assertEquals(msg, expectedCell.getCellType(), actualValue.getCellType());
 
-        final CellType expectedCellType = expectedCell.getCellTypeEnum();
+        final CellType expectedCellType = expectedCell.getCellType();
         switch (expectedCellType) {
             case BOOLEAN:
                 assertEquals(msg, expectedCell.getBooleanCellValue(), actualValue.getBooleanValue());
@@ -212,25 +212,25 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         if(cell == null) {
             return null;
         }
-        if(cell.getCellTypeEnum() == CellType.BLANK) {
+        if(cell.getCellType() == CellType.BLANK) {
             return null;
         }
-        if(cell.getCellTypeEnum() == CellType.STRING) {
+        if(cell.getCellType() == CellType.STRING) {
             return cell.getRichStringCellValue().getString();
         }
 
         fail("Bad cell type for '" + columnName + "' column: ("
-                + cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
+                + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
         return "";
     }
 
     private static String formatValue(HSSFCell expecedCell) {
-        switch (expecedCell.getCellTypeEnum()) {
+        switch (expecedCell.getCellType()) {
             case BLANK: return "<blank>";
             case BOOLEAN: return Boolean.toString(expecedCell.getBooleanCellValue());
             case NUMERIC: return Double.toString(expecedCell.getNumericCellValue());
             case STRING: return expecedCell.getRichStringCellValue().getString();
-            default: fail("Unexpected cell type of expected value (" + expecedCell.getCellTypeEnum() + ")");
+            default: fail("Unexpected cell type of expected value (" + expecedCell.getCellType() + ")");
         }
         return "";
     }

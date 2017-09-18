@@ -93,7 +93,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
             return null;
         }
 
-        switch (cell.getCellTypeEnum()) {
+        switch (cell.getCellType()) {
             case BOOLEAN:
                 return CellValue.valueOf(cell.getBooleanCellValue());
             case ERROR:
@@ -107,7 +107,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
             case BLANK:
                 return null;
             default:
-                throw new IllegalStateException("Bad cell type (" + cell.getCellTypeEnum() + ")");
+                throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
         }
     }
     
@@ -124,7 +124,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      * </pre>
      * Be aware that your cell value will be changed to hold the
      *  result of the formula. If you simply want the formula
-     *  value computed for you, use {@link #evaluateFormulaCellEnum(Cell)}}
+     *  value computed for you, use {@link #evaluateFormulaCell(Cell)}}
      * @param cell
      * @return the {@code cell} that was passed in, allowing for chained calls
      */
@@ -133,7 +133,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         if (cell == null) {
             return null;
         }
-        if (cell.getCellTypeEnum() == CellType.FORMULA) {
+        if (cell.getCellType() == CellType.FORMULA) {
             CellValue cv = evaluateFormulaCellValue(cell);
             setCellValue(cell, cv);
             setCellType(cell, cv); // cell will no longer be a formula cell
@@ -153,7 +153,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      *  so you know what kind of value is also stored with
      *  the formula.
      * <pre>
-     * CellType evaluatedCellType = evaluator.evaluateFormulaCellEnum(cell);
+     * CellType evaluatedCellType = evaluator.evaluateFormulaCell(cell);
      * </pre>
      * Be aware that your cell will hold both the formula,
      *  and the result. If you want the cell replaced with
@@ -164,13 +164,13 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      */
     @Override
     public CellType evaluateFormulaCell(Cell cell) {
-        if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
+        if (cell == null || cell.getCellType() != CellType.FORMULA) {
             return CellType._NONE;
         }
         CellValue cv = evaluateFormulaCellValue(cell);
         // cell remains a formula cell, but the cached value is changed
         setCellValue(cell, cv);
-        return cv.getCellTypeEnum();
+        return cv.getCellType();
     }
     
     /**
@@ -183,7 +183,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      *  so you know what kind of value is also stored with
      *  the formula.
      * <pre>
-     * CellType evaluatedCellType = evaluator.evaluateFormulaCellEnum(cell);
+     * CellType evaluatedCellType = evaluator.evaluateFormulaCell(cell);
      * </pre>
      * Be aware that your cell will hold both the formula,
      *  and the result. If you want the cell replaced with
@@ -202,7 +202,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
     }
 
     protected static void setCellType(Cell cell, CellValue cv) {
-        CellType cellType = cv.getCellTypeEnum();
+        CellType cellType = cv.getCellType();
         switch (cellType) {
             case BOOLEAN:
             case ERROR:
@@ -224,7 +224,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
     protected abstract RichTextString createRichTextString(String str);
     
     protected void setCellValue(Cell cell, CellValue cv) {
-        CellType cellType = cv.getCellTypeEnum();
+        CellType cellType = cv.getCellType();
         switch (cellType) {
             case BOOLEAN:
                 cell.setCellValue(cv.getBooleanValue());
@@ -269,8 +269,8 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
 
             for(Row r : sheet) {
                 for (Cell c : r) {
-                    if (c.getCellTypeEnum() == CellType.FORMULA) {
-                        evaluator.evaluateFormulaCellEnum(c);
+                    if (c.getCellType() == CellType.FORMULA) {
+                        evaluator.evaluateFormulaCell(c);
                     }
                 }
             }

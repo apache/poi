@@ -114,7 +114,7 @@ public interface FormulaEvaluator {
      *  so you know what kind of value is also stored with
      *  the formula.
      * <pre>
-     * CellType evaluatedCellType = evaluator.evaluateFormulaCellEnum(cell);
+     * CellType evaluatedCellType = evaluator.evaluateFormulaCell(cell);
      * </pre>
      * Be aware that your cell will hold both the formula,
      *  and the result. If you want the cell replaced with
@@ -143,7 +143,7 @@ public interface FormulaEvaluator {
      * </pre>
      * Be aware that your cell value will be changed to hold the
      *  result of the formula. If you simply want the formula
-     *  value computed for you, use {@link #evaluateFormulaCellEnum(Cell)}
+     *  value computed for you, use {@link #evaluateFormulaCell(Cell)}
      * @param cell
      */
     Cell evaluateInCell(Cell cell);

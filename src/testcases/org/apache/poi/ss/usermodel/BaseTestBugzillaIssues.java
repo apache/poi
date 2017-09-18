@@ -864,7 +864,7 @@ public abstract class BaseTestBugzillaIssues {
 
     private Cell evaluateCell(Workbook wb, Cell c) {
         Sheet s = c.getSheet();
-        wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCellEnum(c);
+        wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(c);
         return s.getRow(c.getRowIndex()).getCell(c.getColumnIndex());
     }
 
@@ -945,8 +945,8 @@ public abstract class BaseTestBugzillaIssues {
 
 
         // Try to evaluate, with the other file
-        evaluator.evaluateFormulaCellEnum(c1);
-        evaluator.evaluateFormulaCellEnum(c2);
+        evaluator.evaluateFormulaCell(c1);
+        evaluator.evaluateFormulaCell(c2);
 
         assertEquals(otherCellText, c1.getStringCellValue());
         assertEquals(otherCellText, c2.getStringCellValue());
@@ -1153,8 +1153,8 @@ public abstract class BaseTestBugzillaIssues {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals(CellType.NUMERIC, fe.evaluate(cfn).getCellType());
         assertEquals(CellType.STRING, fe.evaluate(cfs).getCellType());
-        fe.evaluateFormulaCellEnum(cfn);
-        fe.evaluateFormulaCellEnum(cfs);
+        fe.evaluateFormulaCell(cfn);
+        fe.evaluateFormulaCell(cfs);
 
         // Now test
         assertEquals(CellType.NUMERIC, cn.getCellType());
@@ -1282,17 +1282,17 @@ public abstract class BaseTestBugzillaIssues {
         // Check read ok, and re-evaluate fine
         cell = row.getCell(5);
         assertEquals("ab", cell.getStringCellValue());
-        ev.evaluateFormulaCellEnum(cell);
+        ev.evaluateFormulaCell(cell);
         assertEquals("ab", cell.getStringCellValue());
 
         cell = row.getCell(6);
         assertEquals("empty", cell.getStringCellValue());
-        ev.evaluateFormulaCellEnum(cell);
+        ev.evaluateFormulaCell(cell);
         assertEquals("empty", cell.getStringCellValue());
 
         cell = row.getCell(7);
         assertEquals("ab", cell.getStringCellValue());
-        ev.evaluateFormulaCellEnum(cell);
+        ev.evaluateFormulaCell(cell);
         assertEquals("ab", cell.getStringCellValue());
         wb2.close();
     }

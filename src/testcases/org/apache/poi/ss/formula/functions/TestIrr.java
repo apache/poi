@@ -81,7 +81,7 @@ public final class TestIrr extends TestCase {
 
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCellEnum(cell);
+        fe.evaluateFormulaCell(cell);
         double res = cell.getNumericCellValue();
         assertEquals(0.143d, Math.round(res * 1000d) / 1000d);
     }

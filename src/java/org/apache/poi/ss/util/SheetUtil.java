@@ -69,7 +69,7 @@ public class SheetUtil {
      *
      *  See Bugzilla #50021
      */
-    private static final FormulaEvaluator dummyEvaluator = new FormulaEvaluator(){
+    private static final FormulaEvaluator dummyEvaluator = new FormulaEvaluator() {
         @Override
         public void clearAllCachedResultValues(){}
         @Override

@@ -47,7 +47,7 @@ package org.apache.poi.ss.formula;
  * <li>To retain freedom to change any cell definition at any time, an application may classify all
  * cells as 'not final'.  This freedom comes at the expense of greater memory consumption.</li>
  * <li>For the purpose of these classifications, setting the cached formula result of a cell (for 
- * example in {@link org.apache.poi.ss.usermodel.FormulaEvaluator#evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)})
+ * example in {@link org.apache.poi.ss.usermodel.FormulaEvaluator#evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)})
  * does not constitute changing the definition of the cell.</li>
  * <li>Updating cells which have been classified as 'final' will cause the evaluator to behave 
  * unpredictably (typically ignoring the update).</li> 

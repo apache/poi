@@ -488,7 +488,7 @@ public final class TestXSSFFormulaParser {
                 for (Cell cell : row) {
                     if (cell.getCellTypeEnum() == CellType.FORMULA) {
                         try {
-                            evaluator.evaluateFormulaCellEnum(cell);
+                            evaluator.evaluateFormulaCell(cell);
                         } catch (Exception e) {
                             CellReference cellRef = new CellReference(cell.getRowIndex(), cell.getColumnIndex());
                             throw new RuntimeException("error at: " + cellRef, e);

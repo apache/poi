@@ -1012,7 +1012,7 @@ public class HSSFCell implements Cell {
             case STRING:
                 return getStringCellValue();
             default:
-                return "Unknown Cell Type: " + getCellTypeEnum();
+                return "Unknown Cell Type: " + getCellType();
         }
     }
 
