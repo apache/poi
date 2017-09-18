@@ -321,7 +321,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 						// Only output if requested
 						outputContents = _includeBlankCells;
 					} else {
-						switch(cell.getCellTypeEnum()) {
+						switch(cell.getCellType()) {
 							case STRING:
 								text.append(cell.getRichStringCellValue().getString());
 								break;
@@ -338,7 +338,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 								if(!_shouldEvaluateFormulas) {
 									text.append(cell.getCellFormula());
 								} else {
-									switch(cell.getCachedFormulaResultTypeEnum()) {
+									switch(cell.getCachedFormulaResultType()) {
 										case STRING:
 											HSSFRichTextString str = cell.getRichStringCellValue();
 											if(str != null && str.length() > 0) {
@@ -359,13 +359,13 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 											text.append(ErrorEval.getText(cell.getErrorCellValue()));
 											break;
 										default:
-											throw new IllegalStateException("Unexpected cell cached formula result type: " + cell.getCachedFormulaResultTypeEnum());
+											throw new IllegalStateException("Unexpected cell cached formula result type: " + cell.getCachedFormulaResultType());
 
 									}
 								}
 								break;
 							default:
-								throw new RuntimeException("Unexpected cell type (" + cell.getCellTypeEnum() + ")");
+								throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
 						}
 
 						// Output the comment, if requested and exists

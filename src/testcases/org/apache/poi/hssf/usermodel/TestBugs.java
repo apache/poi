@@ -507,7 +507,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             HSSFRow row = sheet.getRow(i);
             if (row != null) {
                 HSSFCell cell = row.getCell(0);
-                assertEquals(CellType.STRING, cell.getCellTypeEnum());
+                assertEquals(CellType.STRING, cell.getCellType());
                 count++;
             }
         }
@@ -1143,9 +1143,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Now evaluate, they should all be changed
         HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb1);
-        eval.evaluateFormulaCellEnum(c1);
-        eval.evaluateFormulaCellEnum(c2);
-        eval.evaluateFormulaCellEnum(c3);
+        eval.evaluateFormulaCell(c1);
+        eval.evaluateFormulaCell(c2);
+        eval.evaluateFormulaCell(c3);
 
         // Check that the cells now contain
         //  the correct values
@@ -1192,14 +1192,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     private static void confirmCachedValue(double expectedValue, HSSFCell cell) {
-        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
-        assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
         assertEquals(expectedValue, cell.getNumericCellValue(), 0.0);
     }
 
     private static void confirmCachedValue(String expectedValue, HSSFCell cell) {
-        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
-        assertEquals(CellType.STRING, cell.getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
         assertEquals(expectedValue, cell.getRichStringCellValue().getString());
     }
 
@@ -1313,7 +1313,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         s = wb.getSheet("OneVariable Table Completed");
         r = s.getRow(3);
         c = r.getCell(4);
-        assertEquals(CellType.FORMULA, c.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, c.getCellType());
 
         // TODO - check the formula once tables and
         //  arrays are properly supported
@@ -1323,7 +1323,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         s = wb.getSheet("TwoVariable Table Example");
         r = s.getRow(3);
         c = r.getCell(4);
-        assertEquals(CellType.FORMULA, c.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, c.getCellType());
 
         // TODO - check the formula once tables and
         //  arrays are properly supported
@@ -1850,26 +1850,26 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFRow row;
 
         row = s.getRow(0);
-        assertEquals(CellType.NUMERIC, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, row.getCell(1).getCellType());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(1);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("B1", row.getCell(1).getCellFormula());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(2);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("Sheet1!B1", row.getCell(1).getCellFormula());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(3);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("[Formulas2.xls]Sheet1!B2", row.getCell(1).getCellFormula());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(4);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("'[$http://gagravarr.org/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
@@ -1899,31 +1899,31 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         s = wb2.getSheetAt(0);
 
         row = s.getRow(0);
-        assertEquals(CellType.NUMERIC, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, row.getCell(1).getCellType());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(1);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("B1", row.getCell(1).getCellFormula());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(2);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("Sheet1!B1", row.getCell(1).getCellFormula());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(3);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("[Formulas2.xls]Sheet1!B2", row.getCell(1).getCellFormula());
         assertEquals(112.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(4);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("'[$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2", row.getCell(1).getCellFormula());
         assertEquals(123.0, row.getCell(1).getNumericCellValue(), 0);
 
         row = s.getRow(5);
-        assertEquals(CellType.FORMULA, row.getCell(1).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, row.getCell(1).getCellType());
         assertEquals("'[$http://example.com/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
         assertEquals(234.0, row.getCell(1).getNumericCellValue(), 0);
 
@@ -2795,12 +2795,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
-        assertEquals(CellType.FORMULA, intF.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, intF.getCellType());
         if (null == expectedResultOrNull) {
-            assertEquals(CellType.ERROR, intF.getCachedFormulaResultTypeEnum());
+            assertEquals(CellType.ERROR, intF.getCachedFormulaResultType());
             expectedResultOrNull = "#VALUE!";
         } else {
-            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultTypeEnum());
+            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultType());
         }
 
         assertEquals(expectedFormula, intF.getCellFormula());
@@ -3026,12 +3026,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell(0);
-        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals("IF(TRUE,\"\",\"\")", cell.getCellFormula());
         assertEquals("", cell.getStringCellValue());
         cell.setCellType(CellType.STRING);
 
-        assertEquals(CellType.BLANK, cell.getCellTypeEnum());
+        assertEquals(CellType.BLANK, cell.getCellType());
         try {
             assertNull(cell.getCellFormula());
             fail("Should throw an exception here");

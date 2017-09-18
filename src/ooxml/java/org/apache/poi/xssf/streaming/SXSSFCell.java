@@ -117,24 +117,6 @@ public class SXSSFCell implements Cell {
      * Set the cells type (numeric, formula or string)
      *
      * @throws IllegalArgumentException if the specified cell type is invalid
-     * @see CellType#NUMERIC
-     * @see CellType#STRING
-     * @see CellType#FORMULA
-     * @see CellType#BLANK
-     * @see CellType#BOOLEAN
-     * @see CellType#ERROR
-     * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
-     */
-    @Override
-    public void setCellType(int cellType)
-    {
-        ensureType(CellType.forInt(cellType));
-    }
-    /**
-     * Set the cells type (numeric, formula or string)
-     *
-     * @throws IllegalArgumentException if the specified cell type is invalid
      */
     @Override
     public void setCellType(CellType cellType)
@@ -146,12 +128,11 @@ public class SXSSFCell implements Cell {
      * Return the cell type.
      *
      * @return the cell type
-     * @deprecated 3.15. Will return a {@link CellType} enum in the future.
      */
     @Override
-    public int getCellType()
+    public CellType getCellType()
     {
-        return getCellTypeEnum().getCode();
+        return _value.getType();
     }
     
     /**
@@ -159,12 +140,14 @@ public class SXSSFCell implements Cell {
      *
      * @return the cell type
      * @since POI 3.15 beta 3
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
+     * @deprecated use <code>getCellType</code> instead
      */
+    @Deprecated
+    @Removal(version = "4.2")
     @Override
     public CellType getCellTypeEnum()
     {
-        return _value.getType();
+        return getCellType();
     }
 
     /**
@@ -188,7 +171,7 @@ public class SXSSFCell implements Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
-     * @deprecated use <code>getCachedFormulaResultTypeEnum</code> instead
+     * @deprecated use <code>getCachedFormulaResultType</code> instead
      */
     @Deprecated
     @Removal(version = "4.2")
@@ -999,7 +982,7 @@ public class SXSSFCell implements Cell {
         CellType cellType = getCellTypeEnum();
 
         if (cellType == CellType.FORMULA) {
-            cellType = getCachedFormulaResultTypeEnum();
+            cellType = getCachedFormulaResultType();
         }
 
         switch (cellType) {

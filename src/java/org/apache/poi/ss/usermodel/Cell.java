@@ -42,66 +42,6 @@ import org.apache.poi.util.Removal;
 public interface Cell {
 
     /**
-     * Numeric Cell type (0)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     * @deprecated POI 3.15 beta 3. Use {@link CellType#NUMERIC} instead.
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    int CELL_TYPE_NUMERIC = 0; //CellType.NUMERIC.getCode();
-
-    /**
-     * String Cell type (1)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     * @deprecated POI 3.15 beta 3. Use {@link CellType#STRING} instead.
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    int CELL_TYPE_STRING = 1; //CellType.STRING.getCode();
-
-    /**
-     * Formula Cell type (2)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     * @deprecated POI 3.15 beta 3. Use {@link CellType#FORMULA} instead.
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    int CELL_TYPE_FORMULA = 2; //CellType.FORMULA.getCode();
-
-    /**
-     * Blank Cell type (3)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     * @deprecated POI 3.15 beta 3. Use {@link CellType#BLANK} instead.
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    int CELL_TYPE_BLANK = 3; //CellType.BLANK.getCode();
-
-    /**
-     * Boolean Cell type (4)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     * @deprecated POI 3.15 beta 3. Use {@link CellType#BOOLEAN} instead.
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    int CELL_TYPE_BOOLEAN = 4; //CellType.BOOLEAN.getCode();
-
-    /**
-     * Error Cell type (5)
-     * @see #setCellType(int)
-     * @see #getCellType()
-     * @deprecated POI 3.15 beta 3. Use {@link CellType#ERROR} instead.
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    int CELL_TYPE_ERROR = 5; //CellType.ERROR.getCode();
-
-    /**
      * Returns column index of this cell
      *
      * @return zero-based column index of a column in a sheet.
@@ -141,43 +81,15 @@ public interface Cell {
      *
      * @throws IllegalArgumentException if the specified cell type is invalid
      * @throws IllegalStateException if the current value cannot be converted to the new type
-     * @see CellType#NUMERIC
-     * @see CellType#STRING
-     * @see CellType#FORMULA
-     * @see CellType#BLANK
-     * @see CellType#BOOLEAN
-     * @see CellType#ERROR
-     * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    void setCellType(int cellType);
-    /**
-     * Set the cells type (numeric, formula or string).
-     * <p>If the cell currently contains a value, the value will
-     *  be converted to match the new type, if possible. Formatting
-     *  is generally lost in the process however.</p>
-     * <p>If what you want to do is get a String value for your
-     *  numeric cell, <i>stop!</i>. This is not the way to do it.
-     *  Instead, for fetching the string value of a numeric or boolean
-     *  or date cell, use {@link DataFormatter} instead.</p> 
-     *
-     * @throws IllegalArgumentException if the specified cell type is invalid
-     * @throws IllegalStateException if the current value cannot be converted to the new type
      */
     void setCellType(CellType cellType);
 
     /**
      * Return the cell type.
-     * 
-     * Will return {@link CellType} in version 4.0 of POI.
-     * For forwards compatibility, do not hard-code cell type literals in your code.
      *
      * @return the cell type
-     * @deprecated POI 3.15. Will return a {@link CellType} enum in the future.
      */
-    @Deprecated
-    int getCellType();
+    CellType getCellType();
     
     /**
      * Return the cell type.
@@ -186,6 +98,7 @@ public interface Cell {
      * @since POI 3.15 beta 3
      * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
+    @Deprecated
     @Removal(version="4.2")
     CellType getCellTypeEnum();
     

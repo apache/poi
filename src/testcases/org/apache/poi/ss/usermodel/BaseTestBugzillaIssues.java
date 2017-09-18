@@ -973,7 +973,7 @@ public abstract class BaseTestBugzillaIssues {
             assertEquals(1, cArray.length);*/
 
             Cell cell = row.getCell(0);
-            assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, cell.getCellType());
         }
 
         { // overwrite the row
@@ -1151,18 +1151,18 @@ public abstract class BaseTestBugzillaIssues {
         cfs.setCellFormula("B1");
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals(CellType.NUMERIC, fe.evaluate(cfn).getCellTypeEnum());
-        assertEquals(CellType.STRING, fe.evaluate(cfs).getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, fe.evaluate(cfn).getCellType());
+        assertEquals(CellType.STRING, fe.evaluate(cfs).getCellType());
         fe.evaluateFormulaCellEnum(cfn);
         fe.evaluateFormulaCellEnum(cfs);
 
         // Now test
-        assertEquals(CellType.NUMERIC, cn.getCellTypeEnum());
-        assertEquals(CellType.STRING, cs.getCellTypeEnum());
-        assertEquals(CellType.FORMULA, cfn.getCellTypeEnum());
-        assertEquals(CellType.NUMERIC, cfn.getCachedFormulaResultTypeEnum());
-        assertEquals(CellType.FORMULA, cfs.getCellTypeEnum());
-        assertEquals(CellType.STRING, cfs.getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.NUMERIC, cn.getCellType());
+        assertEquals(CellType.STRING, cs.getCellType());
+        assertEquals(CellType.FORMULA, cfn.getCellType());
+        assertEquals(CellType.NUMERIC, cfn.getCachedFormulaResultType());
+        assertEquals(CellType.FORMULA, cfs.getCellType());
+        assertEquals(CellType.STRING, cfs.getCachedFormulaResultType());
 
         // Different ways of retrieving
         assertEquals(1.2, cn.getNumericCellValue(), 0);
@@ -1406,7 +1406,7 @@ public abstract class BaseTestBugzillaIssues {
         Sheet s = wb.createSheet();
         Cell cell = s.createRow(0).createCell(0);
         cell.setCellValue((String)null);
-        assertEquals(CellType.BLANK, cell.getCellTypeEnum());
+        assertEquals(CellType.BLANK, cell.getCellType());
         
         _testDataProvider.trackAllColumnsForAutosizing(s);
         
@@ -1577,8 +1577,8 @@ public abstract class BaseTestBugzillaIssues {
         Cell cell = row.getCell(cellId);
 
         System.out.println("Formula:" + cell.getCellFormula());
-        if (CellType.FORMULA == cell.getCellTypeEnum()) {
-            CellType formulaResultType = cell.getCachedFormulaResultTypeEnum();
+        if (CellType.FORMULA == cell.getCellType()) {
+            CellType formulaResultType = cell.getCachedFormulaResultType();
             System.out.println("Formula Result Type:" + formulaResultType);
         }
 
@@ -1592,8 +1592,8 @@ public abstract class BaseTestBugzillaIssues {
         cell = row.getCell(cellId);
         System.out.println("Formula:" + cell.getCellFormula());
 
-        if (CellType.FORMULA == cell.getCellTypeEnum()) {
-            CellType formulaResultType = cell.getCachedFormulaResultTypeEnum();
+        if (CellType.FORMULA == cell.getCellType()) {
+            CellType formulaResultType = cell.getCachedFormulaResultType();
             System.out.println("Formula Result Type:" + formulaResultType);
         }
 
@@ -1658,9 +1658,9 @@ public abstract class BaseTestBugzillaIssues {
             cell3.setCellFormula("SUM(C1:C10)");
             cell3.setCellValue(65);
 
-            assertEquals(CellType.FORMULA, cell1.getCellTypeEnum());
-            assertEquals(CellType.FORMULA, cell2.getCellTypeEnum());
-            assertEquals(CellType.FORMULA, cell3.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, cell1.getCellType());
+            assertEquals(CellType.FORMULA, cell2.getCellType());
+            assertEquals(CellType.FORMULA, cell3.getCellType());
 
             assertEquals("SUM(A1:A10)", cell1.getCellFormula());
             assertEquals("SUM(B1:B10)", cell2.getCellFormula());
@@ -1690,7 +1690,7 @@ public abstract class BaseTestBugzillaIssues {
 
         for (Cell cell : row) {
             String cellValue;
-            switch (cell.getCellTypeEnum()) {
+            switch (cell.getCellType()) {
                 case STRING:
                     cellValue = cell.getRichStringCellValue().getString();
                     break;
