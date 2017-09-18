@@ -78,18 +78,18 @@ public class TestIfError extends TestCase {
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
         assertEquals("Checks that the cell is numeric",
-        		CellType.NUMERIC, evaluator.evaluate(cell1).getCellTypeEnum());
+        		CellType.NUMERIC, evaluator.evaluate(cell1).getCellType());
         assertEquals("Divides 210 by 35 and returns 6.0",
                 6.0, evaluator.evaluate(cell1).getNumberValue(), accuracy);
         
         
         assertEquals("Checks that the cell is numeric",
-        		CellType.STRING, evaluator.evaluate(cell2).getCellTypeEnum());
+        		CellType.STRING, evaluator.evaluate(cell2).getCellType());
         assertEquals("Rounds -10 to a nearest multiple of -3 (-9)",
                 "Error in calculation", evaluator.evaluate(cell2).getStringValue());
         
         assertEquals("Check that C1 returns string", 
-        		CellType.STRING, evaluator.evaluate(cell3).getCellTypeEnum());
+        		CellType.STRING, evaluator.evaluate(cell3).getCellType());
         assertEquals("Check that C1 returns string \"error\"", 
         		"error", evaluator.evaluate(cell3).getStringValue());
     }

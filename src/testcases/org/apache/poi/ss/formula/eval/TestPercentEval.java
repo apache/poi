@@ -78,7 +78,7 @@ public final class TestPercentEval extends TestCase {
 			// else some other unexpected error
 			throw e;
 		}
-		assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
+		assertEquals(CellType.NUMERIC, cv.getCellType());
 		assertEquals(0.5, cv.getNumberValue(), 0.0);
 	}
 }

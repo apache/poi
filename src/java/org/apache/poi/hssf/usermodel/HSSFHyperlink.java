@@ -102,7 +102,7 @@ public class HSSFHyperlink implements Hyperlink {
             link_type = getType(record);
         }
         else {
-            link_type = other.getTypeEnum();
+            link_type = other.getType();
             record = new HyperlinkRecord();
             setFirstRow(other.getFirstRow());
             setFirstColumn(other.getFirstColumn());

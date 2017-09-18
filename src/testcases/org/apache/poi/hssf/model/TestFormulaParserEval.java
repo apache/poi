@@ -99,7 +99,7 @@ public final class TestFormulaParserEval extends TestCase {
 			}
 			throw e;
 		}
-		assertEquals(CellType.NUMERIC, result.getCellTypeEnum());
+		assertEquals(CellType.NUMERIC, result.getCellType());
 		assertEquals(42.0, result.getNumberValue(), 0.0);
 	}
 }

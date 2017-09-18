@@ -51,7 +51,7 @@ public class TestExternalReferenceChange extends TestCase {
 		HSSFSheet lSheet = mainWorkbook.getSheetAt(0);
 		HSSFCell lA1Cell = lSheet.getRow(0).getCell(0);
 		
-		assertEquals(CellType.FORMULA, lA1Cell.getCellTypeEnum());
+		assertEquals(CellType.FORMULA, lA1Cell.getCellType());
 		
 		HSSFFormulaEvaluator lMainWorkbookEvaluator = new HSSFFormulaEvaluator(mainWorkbook);
 		HSSFFormulaEvaluator lSourceEvaluator = new HSSFFormulaEvaluator(sourceWorkbook);

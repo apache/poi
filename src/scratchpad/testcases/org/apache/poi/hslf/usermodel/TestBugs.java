@@ -870,7 +870,7 @@ public final class TestBugs {
         assertEquals(hlRun.getId(), hlShape.getId());
         assertEquals(hlRun.getAddress(), hlShape.getAddress());
         assertEquals(hlRun.getLabel(), hlShape.getLabel());
-        assertEquals(hlRun.getTypeEnum(), hlShape.getTypeEnum());
+        assertEquals(hlRun.getType(), hlShape.getType());
         assertEquals(hlRun.getStartIndex(), hlShape.getStartIndex());
         assertEquals(hlRun.getEndIndex(), hlShape.getEndIndex());
 

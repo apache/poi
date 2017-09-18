@@ -63,7 +63,7 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 			HSSFRow row = (HSSFRow) rowIterator.next();
 			
 			HSSFCell cell = row.getCell(SS.YEARFRAC_FORMULA_COLUMN);
-			if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
+			if (cell == null || cell.getCellType() != CellType.FORMULA) {
 				continue;
 			}
             processRow(row, cell, formulaEvaluator);

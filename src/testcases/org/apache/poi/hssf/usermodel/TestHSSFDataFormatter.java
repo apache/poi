@@ -384,7 +384,7 @@ public final class TestHSSFDataFormatter {
         HSSFRow row = sheet.getRow(0);
         HSSFCell cellA1 = row.getCell(0);
 
-        assertEquals(CellType.NUMERIC, cellA1.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, cellA1.getCellType());
         assertEquals(2345.0, cellA1.getNumericCellValue(), 0.0001);
         assertEquals("@", cellA1.getCellStyle().getDataFormatString());
 

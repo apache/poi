@@ -978,7 +978,7 @@ public class DataFormatter implements Observer {
             return "";
         }
 
-        CellType cellType = cell.getCellTypeEnum();
+        CellType cellType = cell.getCellType();
         if (cellType == CellType.FORMULA) {
             if (evaluator == null) {
                 return cell.getCellFormula();
