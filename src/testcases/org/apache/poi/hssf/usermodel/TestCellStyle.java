@@ -438,7 +438,7 @@ public final class TestCellStyle extends TestCase {
         
                             Cell cell = row.getCell(idxCell);
                             cell.getCellStyle().getDataFormatString();
-                            if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+                            if (cell.getCellType() == CellType.NUMERIC) {
                                 boolean isDate = HSSFDateUtil.isCellDateFormatted(cell);
                                 if (idxCell > 0 && isDate) {
                                     fail("cell " + idxCell + " is not a date: " + idxCell);

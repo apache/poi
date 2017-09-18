@@ -25,6 +25,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
 /**
@@ -108,13 +109,13 @@ public class XSSFHyperlink implements Hyperlink {
     public XSSFHyperlink(Hyperlink other) {
         if (other instanceof XSSFHyperlink) {
             XSSFHyperlink xlink = (XSSFHyperlink) other;
-            _type = xlink.getTypeEnum();
+            _type = xlink.getType();
             _location = xlink._location;
             _externalRel = xlink._externalRel;
             _ctHyperlink = (CTHyperlink) xlink._ctHyperlink.copy();
         }
         else {
-            _type = other.getTypeEnum();
+            _type = other.getType();
             _location = other.getAddress();
             _externalRel = null;
             _ctHyperlink = CTHyperlink.Factory.newInstance();
@@ -156,22 +157,23 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return the type of this hyperlink
      * @see HyperlinkType#forInt
-     * @deprecated POI 3.15 beta 3. Use {@link #getTypeEnum()} instead.
-     * getType will return a HyperlinkType enum in the future.
      */
     @Override
-    public int getType() {
-        return _type.getCode();
+    public HyperlinkType getType() {
+        return _type;
     }
     
     /**
      * Return the type of this hyperlink
      *
      * @return the type of this hyperlink
+     * @deprecated use <code>getType</code> instead
      */
+    @Deprecated
+    @Removal(version = "4.2")
     @Override
     public HyperlinkType getTypeEnum() {
-        return _type;
+        return getType();
     }
 
     /**

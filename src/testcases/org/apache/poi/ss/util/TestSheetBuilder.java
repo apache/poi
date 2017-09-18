@@ -50,7 +50,7 @@ public final class TestSheetBuilder extends TestCase {
         Row firstRow = sheet.getRow(0);
         Cell firstCell = firstRow.getCell(0);
 
-        assertEquals(firstCell.getCellTypeEnum(), CellType.NUMERIC);
+        assertEquals(firstCell.getCellType(), CellType.NUMERIC);
         assertEquals(1.0, firstCell.getNumericCellValue(), 0.00001);
 
 
@@ -59,11 +59,11 @@ public final class TestSheetBuilder extends TestCase {
         assertNull(secondRow.getCell(2));
 
         Row thirdRow = sheet.getRow(2);
-        assertEquals(CellType.STRING, thirdRow.getCell(0).getCellTypeEnum());
+        assertEquals(CellType.STRING, thirdRow.getCell(0).getCellType());
         String cellValue = thirdRow.getCell(0).getStringCellValue();
         assertEquals(testData[2][0].toString(), cellValue);
 
-        assertEquals(CellType.FORMULA, thirdRow.getCell(2).getCellTypeEnum());
+        assertEquals(CellType.FORMULA, thirdRow.getCell(2).getCellType());
         assertEquals("A1+B2", thirdRow.getCell(2).getCellFormula());
     }
 
@@ -73,7 +73,7 @@ public final class TestSheetBuilder extends TestCase {
 
         Cell emptyCell = sheet.getRow(1).getCell(1);
         assertNotNull(emptyCell);
-        assertEquals(CellType.BLANK, emptyCell.getCellTypeEnum());
+        assertEquals(CellType.BLANK, emptyCell.getCellType());
     }
 
     public void testSheetName() {

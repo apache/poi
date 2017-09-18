@@ -165,7 +165,7 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
                
                Cell c = sheet.getRow(rowNum).getCell(colNum);
                
-               if (c == null || c.getCellTypeEnum() != CellType.FORMULA) {
+               if (c == null || c.getCellType() != CellType.FORMULA) {
                    continue;
                }
     
@@ -178,27 +178,27 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
                assertNotNull(msg + " - Bad setup data expected value is null", expValue);
                assertNotNull(msg + " - actual value was null", actValue);
     
-               final CellType cellType = expValue.getCellTypeEnum();
+               final CellType cellType = expValue.getCellType();
                switch (cellType) {
                    case BLANK:
-                       assertEquals(msg, CellType.BLANK, actValue.getCellTypeEnum());
+                       assertEquals(msg, CellType.BLANK, actValue.getCellType());
                        break;
                    case BOOLEAN:
-                       assertEquals(msg, CellType.BOOLEAN, actValue.getCellTypeEnum());
+                       assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
                        assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
                        break;
                    case ERROR:
-                       assertEquals(msg, CellType.ERROR, actValue.getCellTypeEnum());
+                       assertEquals(msg, CellType.ERROR, actValue.getCellType());
                        assertEquals(msg, ErrorEval.getText(expValue.getErrorCellValue()), ErrorEval.getText(actValue.getErrorValue()));
                        break;
                    case FORMULA: // will never be used, since we will call method after formula evaluation
                        fail("Cannot expect formula as result of formula evaluation: " + msg);
                    case NUMERIC:
-                       assertEquals(msg, CellType.NUMERIC, actValue.getCellTypeEnum());
+                       assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
                        TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
                        break;
                    case STRING:
-                       assertEquals(msg, CellType.STRING, actValue.getCellTypeEnum());
+                       assertEquals(msg, CellType.STRING, actValue.getCellType());
                        assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
                        break;
                    default:
@@ -222,15 +222,15 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
             System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + Navigator.START_OPERATORS_COL_INDEX + ", can't figure out function name");
             return null;
         }
-        if(cell.getCellTypeEnum() == CellType.BLANK) {
+        if(cell.getCellType() == CellType.BLANK) {
             return null;
         }
-        if(cell.getCellTypeEnum() == CellType.STRING) {
+        if(cell.getCellType() == CellType.STRING) {
             return cell.getRichStringCellValue().getString();
         }
 
         throw new AssertionFailedError("Bad cell type for 'function name' column: ("
-                + cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
+                + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
     }
     
     
