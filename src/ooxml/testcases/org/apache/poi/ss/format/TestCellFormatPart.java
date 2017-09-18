@@ -59,7 +59,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
-                switch (CellFormat.ultimateTypeEnum(cell)) {
+                switch (CellFormat.ultimateType(cell)) {
                     case BOOLEAN:
                         return cell.getBooleanCellValue();
                     case NUMERIC:
@@ -132,7 +132,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
-                switch(CellFormat.ultimateTypeEnum(cell)) {
+                switch(CellFormat.ultimateType(cell)) {
                     case BOOLEAN:
                         return cell.getBooleanCellValue();
                     default:
@@ -158,7 +158,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
             throw new IllegalArgumentException(
                     "Cannot find numer in \"" + str + "\"");
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // The groups in the pattern are the parts of the number
         for (int i = 1; i <= m.groupCount(); i++) {
             String part = m.group(i);
