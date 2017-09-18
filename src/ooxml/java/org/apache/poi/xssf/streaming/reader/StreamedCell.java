@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.streaming.value.BooleanValue;
 import org.apache.poi.xssf.streaming.value.RichTextValue;
 import org.apache.poi.xssf.streaming.value.StringValue;
@@ -116,14 +117,6 @@ public class StreamedCell implements Cell {
      * {@inheritDoc}
      */
     @Override
-    public void setCellType(int cellType) {
-        setCellType(CellType.forInt(cellType));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void setCellType(CellType cellType) {
         // to avoid setting this by user
         if (this.cellType == null) {
@@ -135,17 +128,18 @@ public class StreamedCell implements Cell {
      * {@inheritDoc}
      */
     @Override
-    public int getCellType() {
-        return cellType.getCode();
+    public CellType getCellType() {
+        return cellType;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Deprecated
+    @Removal(version = "4.2")
     @Override
-    @NotImplemented
     public CellType getCellTypeEnum() {
-        return cellType;
+        return getCellType();
     }
 
     /**
@@ -157,7 +151,7 @@ public class StreamedCell implements Cell {
      */
     @Override
     @NotImplemented
-    public int getCachedFormulaResultType() {
+    public CellType getCachedFormulaResultType() {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
