@@ -1375,6 +1375,7 @@ under the License.
             <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
                    failureproperty="main.hssf.test.failed" showoutput="true">
                 <classpath refid="test.classpath"/>
+                <classpath refid="test.jar.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
