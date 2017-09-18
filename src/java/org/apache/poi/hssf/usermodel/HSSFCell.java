@@ -260,22 +260,6 @@ public class HSSFCell implements Cell {
      * Set the cells type (numeric, formula or string).
      * If the cell currently contains a value, the value will
      *  be converted to match the new type, if possible.
-     * @see CellType#NUMERIC
-     * @see CellType#STRING
-     * @see CellType#FORMULA
-     * @see CellType#BLANK
-     * @see CellType#BOOLEAN
-     * @see CellType#ERROR
-     * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
-     */
-    @Override
-    public void setCellType(int cellType) {
-        setCellType(CellType.forInt(cellType));
-    }
-    /**
-     * Set the cells type (numeric, formula or string).
-     * If the cell currently contains a value, the value will
-     *  be converted to match the new type, if possible.
      */
     @Override
     public void setCellType(CellType cellType) {
@@ -444,26 +428,23 @@ public class HSSFCell implements Cell {
 
     /**
      * get the cells type (numeric, formula or string)
-     * 
-     * Will return {@link CellType} in a future version of POI.
-     * For forwards compatibility, do not hard-code cell type literals in your code.
-     * @deprecated 3.15. Will be return a {@link CellType} enum in the future.
      */
     @Override
-    public int getCellType()
+    public CellType getCellType()
     {
-        return getCellTypeEnum().getCode();
+        return _cellType;
     }
     
     /**
      * get the cells type (numeric, formula or string)
      * @since POI 3.15 beta 3
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
+    @Deprecated
+    @Removal(version = "4.2")
     @Override
     public CellType getCellTypeEnum()
     {
-        return _cellType;
+        return getCellType();
     }
 
     /**
@@ -1227,7 +1208,6 @@ public class HSSFCell implements Cell {
      * The purpose of this method is to validate the cell state prior to modification.
      * </p>
      *
-     * @see #setCellType(int)
      * @see #setCellFormula(String)
      * @see HSSFRow#removeCell(org.apache.poi.ss.usermodel.Cell)
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#removeRow(org.apache.poi.ss.usermodel.Row)

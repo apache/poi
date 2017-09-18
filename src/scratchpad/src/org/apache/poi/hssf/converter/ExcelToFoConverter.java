@@ -209,14 +209,14 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         final HSSFCellStyle cellStyle = cell.getCellStyle();
 
         String value;
-        switch ( cell.getCellTypeEnum() )
+        switch ( cell.getCellType() )
         {
         case STRING:
             // XXX: enrich
             value = cell.getRichStringCellValue().getString();
             break;
         case FORMULA:
-            switch ( cell.getCachedFormulaResultTypeEnum() )
+            switch ( cell.getCachedFormulaResultType() )
             {
             case STRING:
                 HSSFRichTextString str = cell.getRichStringCellValue();
@@ -245,7 +245,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                 logger.log(
                         POILogger.WARN,
                         "Unexpected cell cachedFormulaResultType ("
-                                + cell.getCachedFormulaResultTypeEnum() + ")" );
+                                + cell.getCachedFormulaResultType() + ")" );
                 value = ExcelToHtmlUtils.EMPTY;
                 break;
             }
@@ -264,7 +264,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             break;
         default:
             logger.log( POILogger.WARN,
-                    "Unexpected cell type (" + cell.getCellTypeEnum() + ")" );
+                    "Unexpected cell type (" + cell.getCellType() + ")" );
             return true;
         }
 

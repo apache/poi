@@ -435,8 +435,8 @@ public class CellFormat {
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
      * the cell is a {@link CellType#FORMULA}, this returns the result of
-     * {@link Cell#getCachedFormulaResultTypeEnum()}.  Otherwise this returns the
-     * result of {@link Cell#getCellTypeEnum()}.
+     * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
+     * result of {@link Cell#getCellType()}.
      * 
      * Will return {@link CellType} in a future version of POI.
      * For forwards compatibility, do not hard-code cell type literals in your code.
@@ -453,8 +453,8 @@ public class CellFormat {
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
      * the cell is a {@link CellType#FORMULA}, this returns the result of
-     * {@link Cell#getCachedFormulaResultTypeEnum()}.  Otherwise this returns the
-     * result of {@link Cell#getCellTypeEnum()}.
+     * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
+     * result of {@link Cell#getCellType()}.
      *
      * @param cell The cell.
      *
@@ -464,9 +464,9 @@ public class CellFormat {
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
     public static CellType ultimateTypeEnum(Cell cell) {
-        CellType type = cell.getCellTypeEnum();
+        CellType type = cell.getCellType();
         if (type == CellType.FORMULA)
-            return cell.getCachedFormulaResultTypeEnum();
+            return cell.getCachedFormulaResultType();
         else
             return type;
     }

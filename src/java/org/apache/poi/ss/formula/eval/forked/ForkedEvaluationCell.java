@@ -105,25 +105,21 @@ final class ForkedEvaluationCell implements EvaluationCell {
 			throw new RuntimeException("Wrong data type (" + _cellType + ")");
 		}
 	}
-	/**
-	 * Will return {@link CellType} in a future version of POI.
-	 * For forwards compatibility, do not hard-code cell type literals in your code.
-	 *
-	 * @return cell type
-	 * @deprecated 3.15. Will return a {@link CellType} enum in the future.
-	 */
+
 	@Override
-	public int getCellType() {
-		return _cellType.getCode();
+	public CellType getCellType() {
+		return _cellType;
 	}
 	/**
 	 * @since POI 3.15 beta 3
 	 * @deprecated POI 3.15 beta 3.
 	 * Will be deleted when we make the CellType enum transition. See bug 59791.
 	 */
+	@Deprecated
+    @Removal(version = "4.2")
 	@Override
 	public CellType getCellTypeEnum() {
-		return _cellType;
+		return getCellType();
 	}
 	@Override
 	public boolean getBooleanCellValue() {

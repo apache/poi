@@ -55,25 +55,22 @@ final class XSSFEvaluationCell implements EvaluationCell {
 	public boolean getBooleanCellValue() {
 		return _cell.getBooleanCellValue();
 	}
-/**
-	 * Will return {@link CellType} in a future version of POI.
-	 * For forwards compatibility, do not hard-code cell type literals in your code.
-	 *
+	/**
 	 * @return cell type
-	 * @deprecated 3.15. Will return a {@link CellType} enum in the future.
 	 */
 	@Override
-	public int getCellType() {
+	public CellType getCellType() {
 		return _cell.getCellType();
 	}
 	/**
 	 * @since POI 3.15 beta 3
-	 * @deprecated POI 3.15 beta 3.
-	 * Will be deleted when we make the CellType enum transition. See bug 59791.
+	 * @deprecated use <code>getCellType</code> instead
 	 */
+	@Deprecated
+	@Removal(version = "4.2")
 	@Override
 	public CellType getCellTypeEnum() {
-		return _cell.getCellTypeEnum();
+		return getCellType();
 	}
 	@Override
 	public int getColumnIndex() {
@@ -115,11 +112,11 @@ final class XSSFEvaluationCell implements EvaluationCell {
 	 */
 	@Override
 	public CellType getCachedFormulaResultType() {
-		return _cell.getCachedFormulaResultTypeEnum();
+		return _cell.getCachedFormulaResultType();
 	}
 	/**
 	 * @since POI 3.15 beta 3
-	 * @deprecated POI 3.15 beta 3.
+	 * @deprecated use <code>getCachedFormulaResultType</code> instead
 	 * Will be deleted when we make the CellType enum transition. See bug 59791.
 	 */
 	@Deprecated
