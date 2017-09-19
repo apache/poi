@@ -103,7 +103,6 @@ public final class TestUnfixedBugs {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("54071.xlsx");
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
-        System.out.println(">> file rows is:"+(rows-1)+" <<");
         Row title = sheet.getRow(0);
 
         Date prev = null;
@@ -115,7 +114,7 @@ public final class TestUnfixedBugs {
                 if (titleName.startsWith("time")) {
                     // here the output will produce ...59 or ...58 for the rows, probably POI is
                     // doing some different rounding or some other small difference...
-                    System.out.println("==Time:"+cell.getDateCellValue());
+                    //System.out.println("==Time:"+cell.getDateCellValue());
                     if(prev != null) {
                         assertEquals(prev, cell.getDateCellValue());
                     }

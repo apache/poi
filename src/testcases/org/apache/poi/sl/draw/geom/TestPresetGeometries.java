@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestPresetGeometries {
@@ -67,6 +68,7 @@ public class TestPresetGeometries {
         PresetGeometries._inst = null;
     }
 
+    @Ignore("problem solved? Turn back on if this debugging is still in process.")
     @Test
     public void testCheckXMLParser() throws Exception{
         // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where 

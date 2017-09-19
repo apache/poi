@@ -283,7 +283,6 @@ public class TestCommentsTable {
     // Set the comment on a sheet
     //
     private static void setComment(Sheet sheet, Cell cell, Drawing<?> drawing, String commentText, CreationHelper helper, ClientAnchor anchor) {
-        System.out.println("Setting col: " + cell.getColumnIndex() + " and row " + cell.getRowIndex());
         anchor.setCol1(cell.getColumnIndex());
         anchor.setCol2(cell.getColumnIndex());
         anchor.setRow1(cell.getRowIndex());

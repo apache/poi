@@ -21,6 +21,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -29,6 +30,7 @@ import org.apache.poi.hpsf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
@@ -194,8 +196,10 @@ public final class TestHPSFPropertiesExtractor {
 
 	@Test
 	public void test61300Extractor() throws NoPropertySetStreamException, MarkUnsupportedException, IOException {
-		HPSFPropertiesExtractor.main(new String[]{
-				POIDataSamples.getPOIFSInstance().getFile("61300.bin").getAbsolutePath()
-		});
+		try (NPOIFSFileSystem npoifs = new NPOIFSFileSystem(
+				POIDataSamples.getPOIFSInstance().getFile("61300.bin"))) {
+			HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(npoifs);
+			assertContains(ext.getText(), "PID_CODEPAGE = 1252");
+		}
 	}
 }

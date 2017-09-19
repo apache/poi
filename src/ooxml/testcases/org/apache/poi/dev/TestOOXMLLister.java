@@ -22,6 +22,7 @@ package org.apache.poi.dev;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -29,9 +30,29 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestOOXMLLister {
+    private static PrintStream SYSTEM_OUT;
+
+    @BeforeClass
+    public static void setUp() {
+        SYSTEM_OUT = System.out;
+        System.setOut(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+
+            }
+        }));
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        System.setOut(SYSTEM_OUT);
+    }
+
     @Test
     public void testMain() throws IOException, InvalidFormatException {
         File file = XSSFTestDataSamples.getSampleFile("Formatting.xlsx");
