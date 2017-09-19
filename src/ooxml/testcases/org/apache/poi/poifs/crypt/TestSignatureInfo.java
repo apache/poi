@@ -220,16 +220,13 @@ public class TestSignatureInfo {
     
     @Test
     public void office2007prettyPrintedRels() throws Exception {
-        OPCPackage pkg = OPCPackage.open(testdata.getFile("office2007prettyPrintedRels.docx"), PackageAccess.READ);
-        try {
+        try (OPCPackage pkg = OPCPackage.open(testdata.getFile("office2007prettyPrintedRels.docx"), PackageAccess.READ)) {
             SignatureConfig sic = new SignatureConfig();
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
             si.setSignatureConfig(sic);
             boolean isValid = si.verifySignature();
             assertTrue(isValid);
-        } finally {
-            pkg.close();
         }
     }
     
@@ -277,8 +274,7 @@ public class TestSignatureInfo {
         };
         
         for (String testFile : testFiles) {
-            OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-            try {
+            try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
                 SignatureConfig sic = new SignatureConfig();
                 sic.setOpcPackage(pkg);
                 SignatureInfo si = new SignatureInfo();
@@ -289,17 +285,15 @@ public class TestSignatureInfo {
                         result.add(sp.getSigner());
                     }
                 }
-    
+
                 assertNotNull(result);
-                assertEquals("test-file: "+testFile, 1, result.size());
+                assertEquals("test-file: " + testFile, 1, result.size());
                 X509Certificate signer = result.get(0);
                 LOG.log(POILogger.DEBUG, "signer: " + signer.getSubjectX500Principal());
-    
+
                 boolean b = si.verifySignature();
-                assertTrue("test-file: "+testFile, b);
+                assertTrue("test-file: " + testFile, b);
                 pkg.revert();
-            } finally {
-                pkg.close();
             }
         }
     }
@@ -307,8 +301,7 @@ public class TestSignatureInfo {
     @Test
     public void getMultiSigners() throws Exception {
         String testFile = "hello-world-signed-twice.docx";
-        OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-        try {
+        try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
             SignatureConfig sic = new SignatureConfig();
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
@@ -319,19 +312,17 @@ public class TestSignatureInfo {
                     result.add(sp.getSigner());
                 }
             }
-    
+
             assertNotNull(result);
-            assertEquals("test-file: "+testFile, 2, result.size());
+            assertEquals("test-file: " + testFile, 2, result.size());
             X509Certificate signer1 = result.get(0);
             X509Certificate signer2 = result.get(1);
             LOG.log(POILogger.DEBUG, "signer 1: " + signer1.getSubjectX500Principal());
             LOG.log(POILogger.DEBUG, "signer 2: " + signer2.getSubjectX500Principal());
-    
+
             boolean b = si.verifySignature();
-            assertTrue("test-file: "+testFile, b);
+            assertTrue("test-file: " + testFile, b);
             pkg.revert();
-        } finally {
-            pkg.close();
         }
     }
     
@@ -703,12 +694,9 @@ public class TestSignatureInfo {
         //X509Certificate x509B = x509;
         
         File tpl = copy(testdata.getFile("bug58630.xlsx"));
-        OPCPackage pkg = OPCPackage.open(tpl);
-        try {
+        try (OPCPackage pkg = OPCPackage.open(tpl)) {
             //SignatureConfig signatureConfig = new SignatureConfig();
             assertNotNull(pkg);
-        } finally {
-            pkg.close();
         }
     }
 
@@ -822,16 +810,10 @@ public class TestSignatureInfo {
         }
         File tmpFile = new File(buildDir, "sigtest"+extension);
 
-        OutputStream fos = new FileOutputStream(tmpFile);
-        try {
-            InputStream fis = new FileInputStream(input);
-            try {
+        try (OutputStream fos = new FileOutputStream(tmpFile)) {
+            try (InputStream fis = new FileInputStream(input)) {
                 IOUtils.copy(fis, fos);
-            } finally {
-                fis.close();
             }
-        } finally {
-            fos.close();
         }
 
         return tmpFile;
