@@ -23,8 +23,6 @@ import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Evaluates formula cells.<p>
@@ -55,6 +53,16 @@ public final class XSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
      */
     public static XSSFFormulaEvaluator create(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
         return new XSSFFormulaEvaluator(workbook, stabilityClassifier, udfFinder);
+    }
+
+    public void notifySetFormula(Cell cell) {
+        _bookEvaluator.notifyUpdateCell(new XSSFEvaluationCell((XSSFCell)cell));
+    }
+    public void notifyDeleteCell(Cell cell) {
+        _bookEvaluator.notifyDeleteCell(new XSSFEvaluationCell((XSSFCell)cell));
+    }
+    public void notifyUpdateCell(Cell cell) {
+        _bookEvaluator.notifyUpdateCell(new XSSFEvaluationCell((XSSFCell)cell));
     }
 
     /**
