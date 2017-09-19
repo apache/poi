@@ -46,15 +46,15 @@ public class CreatePivotTable2 {
 
         AreaReference source = new AreaReference("A1:E7", SpreadsheetVersion.EXCEL2007);
         CellReference position = new CellReference("H1");
-        // Create a pivot table on this sheet, with H5 as the top-left cell..
-        // The pivot table's data source is on the same sheet in A1:D4
+        // Create a pivot table on this sheet, with H1 as the top-left cell..
+        // The pivot table's data source is on the same sheet in A1:E7
         XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
         //Configure the pivot table
         //Use first column as row label
         pivotTable.addRowLabel(0);
-        //Sum up the second column
-//        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
+        //Sum up the second column with column title and data format
         pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1, "Values", "#,##0.00");
+        //Use third column (month) as columns (side by side)
         pivotTable.addColLabel(3, "DD.MM.YYYY");
 
         //Add filter on forth column
@@ -73,6 +73,7 @@ public class CreatePivotTable2 {
         cal2.set(2017, 1, 1, 0, 0, 0);
         Row row1 = sheet.createRow(0);
         // Create a cell and put a value in it.
+        // first row are column titles
         Cell cell11 = row1.createCell(0);
         cell11.setCellValue("Names");
         Cell cell12 = row1.createCell(1);
@@ -91,7 +92,7 @@ public class CreatePivotTable2 {
         CellStyle csDt = sheet.getWorkbook().createCellStyle();
         DataFormat dfDt = sheet.getWorkbook().createDataFormat();
         csDt.setDataFormat(dfDt.getFormat("dd/MM/yyyy"));
-
+        // data
         setDataRow(sheet, 1, "Jane", 1120.5, 100, cal1.getTime(), 1, csDbl, csDt);
         setDataRow(sheet, 2, "Jane", 1453.2, 95, cal2.getTime(), 2, csDbl, csDt);
 
@@ -105,6 +106,7 @@ public class CreatePivotTable2 {
 
     public static void setDataRow(XSSFSheet sheet, int rowNum, String name, double v1, int v2, Date dt, int no, CellStyle csDbl, CellStyle csDt){
         Row row = sheet.createRow(rowNum);
+        // set the values for one row
         Cell c1 = row.createCell(0);
         c1.setCellValue(name);
         Cell c2 = row.createCell(1);
