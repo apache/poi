@@ -733,6 +733,8 @@ public abstract class BaseTestCell {
         style = cell.getCellStyle();
         assertFalse(style2.getLocked());
         assertTrue(style2.getHidden());
+        assertTrue(style.getLocked());
+        assertFalse(style.getHidden());
 
         style2.setLocked(true);
         style2.setHidden(false);
@@ -887,6 +889,7 @@ public abstract class BaseTestCell {
      * Setting a cell value of a null RichTextString should set
      *  the cell to Blank, test case for 58558
      */
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testSetCellValueNullRichTextString() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -1018,8 +1021,10 @@ public abstract class BaseTestCell {
             cell.setCellFormula("A2");
             cell.setCellErrorValue(FormulaError.NAME.getCode());
 
-            assertEquals(CellType.FORMULA, cell.getCellType());
-            assertEquals(CellType.ERROR, cell.getCachedFormulaResultType());
+            assertEquals("Should still be a formula even after we set an error value",
+                    CellType.FORMULA, cell.getCellType());
+            assertEquals("Should still be a formula even after we set an error value",
+                    CellType.ERROR, cell.getCachedFormulaResultType());
             assertEquals("A2", cell.getCellFormula());
             try {
                 cell.getNumericCellValue();

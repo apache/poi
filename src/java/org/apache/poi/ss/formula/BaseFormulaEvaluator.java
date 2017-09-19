@@ -117,7 +117,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      *  of the old formula.
      * Else if cell does not contain formula, this method leaves
      *  the cell unchanged.
-     * Note that the same instance of HSSFCell is returned to
+     * Note that the same instance of {@link Cell} is returned to
      * allow chained calls like:
      * <pre>
      * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
@@ -125,7 +125,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
      * Be aware that your cell value will be changed to hold the
      *  result of the formula. If you simply want the formula
      *  value computed for you, use {@link #evaluateFormulaCell(Cell)}}
-     * @param cell
+     * @param cell The {@link Cell} to evaluate and modify.
      * @return the {@code cell} that was passed in, allowing for chained calls
      */
     @Override
@@ -135,8 +135,15 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         }
         if (cell.getCellType() == CellType.FORMULA) {
             CellValue cv = evaluateFormulaCellValue(cell);
+
             setCellValue(cell, cv);
             setCellType(cell, cv); // cell will no longer be a formula cell
+
+            // Due to bug 46479 we should call setCellValue() before setCellType(),
+            // but bug 61148 showed a case where it would be better the other
+            // way around, so for now we call setCellValue() a second time to
+            // handle both cases correctly. There is surely a better way to do this, though...
+            setCellValue(cell, cv);
         }
         return cell;
     }
