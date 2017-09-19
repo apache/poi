@@ -20,10 +20,7 @@
 ==================================================================== */
 package org.apache.poi.dev;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -38,14 +35,14 @@ public class TestOOXMLLister {
     private static PrintStream SYSTEM_OUT;
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws UnsupportedEncodingException {
         SYSTEM_OUT = System.out;
         System.setOut(new PrintStream(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
 
             }
-        }));
+        }, false, "UTF-8"));
     }
 
     @AfterClass

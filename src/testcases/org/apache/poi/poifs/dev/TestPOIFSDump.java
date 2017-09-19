@@ -28,13 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 import static org.junit.Assert.*;
 
@@ -42,15 +36,14 @@ public class TestPOIFSDump {
 
     private static PrintStream SYSTEM;
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws UnsupportedEncodingException {
         SYSTEM = System.out;
         System.setOut(new PrintStream(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
 
             }
-        }
-        ));
+        }, false, "UTF-8"));
     }
 
     @AfterClass
