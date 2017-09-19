@@ -30,7 +30,7 @@
 	text-indent: 0;
 	letter-spacing: 0;
 	word-spacing: 0;
-	white-space: normal;
+	white-space: pre-wrap;
 	unicode-bidi: normal;
 	vertical-align: 0;
 	background-image: none;
@@ -40,7 +40,6 @@
 	padding: 0;
 	margin: 0;
 	border-collapse: collapse;
-	white-space: pre;
 	vertical-align: bottom;
 	font-style: normal;
 	font-family: sans-serif;
@@ -48,6 +47,9 @@
 	font-weight: normal;
 	font-size: 10pt;
 	text-align: right;
+	table-layout: fixed;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .excelDefaults td {
