@@ -17,15 +17,12 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Common superclass for testing implementation of {@link FormulaEvaluator}
@@ -599,5 +596,32 @@ public abstract class BaseTestFormulaEvaluator {
      */
     private Cell getCell(Sheet sheet, int rowNo, int column) {
         return sheet.getRow(rowNo).getCell(column);
+    }
+
+    @Test
+    public void testBug61532() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            final Cell cell = wb.createSheet().createRow(0).createCell(0);
+            cell.setCellFormula("1+2");
+
+            assertEquals(0, (int)cell.getNumericCellValue());
+            assertEquals("1+2", cell.toString());
+
+            FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+
+            CellValue value = eval.evaluate(cell);
+
+            assertEquals(CellType.NUMERIC, value.getCellType());
+            assertEquals(3.0, value.getNumberValue(), 0.01);
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals("1+2", cell.getCellFormula());
+            assertEquals("1+2", cell.toString());
+
+            assertNotNull(eval.evaluateInCell(cell));
+
+            assertEquals("3.0", cell.toString());
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertEquals(3.0, cell.getNumericCellValue(), 0.01);
+        }
     }
 }
