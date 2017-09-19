@@ -53,7 +53,6 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Removal;
 
@@ -306,7 +305,7 @@ public class HSSFCell implements Cell {
                 break;
 
             case NUMERIC :
-                NumberRecord nrec = null;
+                NumberRecord nrec;
 
                 if (cellType != _cellType)
                 {
@@ -356,7 +355,7 @@ public class HSSFCell implements Cell {
                 break;
 
             case BLANK :
-                BlankRecord brec = null;
+                BlankRecord brec;
 
                 if (cellType != _cellType)
                 {
@@ -375,7 +374,7 @@ public class HSSFCell implements Cell {
                 break;
 
             case BOOLEAN :
-                BoolErrRecord boolRec = null;
+                BoolErrRecord boolRec;
 
                 if (cellType != _cellType)
                 {
@@ -396,7 +395,7 @@ public class HSSFCell implements Cell {
                 break;
 
             case ERROR :
-                BoolErrRecord errRec = null;
+                BoolErrRecord errRec;
 
                 if (cellType != _cellType)
                 {
@@ -574,7 +573,7 @@ public class HSSFCell implements Cell {
         if (_cellType != CellType.STRING) {
             setCellType(CellType.STRING, false, row, col, styleIndex);
         }
-        int index = 0;
+        int index;
 
         HSSFRichTextString hvalue = (HSSFRichTextString) value;
         UnicodeString str = hvalue.getUnicodeString();
@@ -1132,8 +1131,6 @@ public class HSSFCell implements Cell {
      * on the cached value of the formula
      *
      * @since POI 4.0
-     * @return <code>CellType</code> depending
-     * on the cached value of the formula
      */
     @Override
     public CellType getCachedFormulaResultType() {
@@ -1182,10 +1179,7 @@ public class HSSFCell implements Cell {
     }
 
     public boolean isPartOfArrayFormulaGroup() {
-        if (_cellType != CellType.FORMULA) {
-            return false;
-        }
-        return ((FormulaRecordAggregate)_record).isPartOfArrayFormula();
+        return _cellType == CellType.FORMULA && ((FormulaRecordAggregate) _record).isPartOfArrayFormula();
     }
 
     /**

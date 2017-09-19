@@ -76,7 +76,7 @@ public interface FormulaEvaluator {
      * the cell and also its cell type. This method should be preferred over
      * evaluateInCell() when the call should not modify the contents of the
      * original cell.
-     * @param cell
+     * @param cell The {@link Cell} to evaluate
      */
     CellValue evaluate(Cell cell);
 
@@ -144,7 +144,7 @@ public interface FormulaEvaluator {
      * Be aware that your cell value will be changed to hold the
      *  result of the formula. If you simply want the formula
      *  value computed for you, use {@link #evaluateFormulaCell(Cell)}
-     * @param cell
+     * @param cell The {@link Cell} to evaluate and modify.
      */
     Cell evaluateInCell(Cell cell);
     
