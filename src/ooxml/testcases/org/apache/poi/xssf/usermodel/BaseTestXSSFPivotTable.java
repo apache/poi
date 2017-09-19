@@ -349,9 +349,9 @@ public abstract class BaseTestXSSFPivotTable {
 
         try {
             pivotTable.addColLabel(columnIndex);
+            fail("expected IndexOutOfBoundsException for column: " + columnIndex);
         } catch(IndexOutOfBoundsException e) {
-            return;
+            // expected here
         }
-        fail();
     }
 }
