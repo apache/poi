@@ -19,6 +19,7 @@ package org.apache.poi.hsmf;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -99,13 +100,13 @@ public final class TestBasics extends TestCase {
       // Quick doesn't have them
       try {
          quick.getHeaders();
-         fail();
+         fail("expected ChunkNotFoundException");
       } catch(ChunkNotFoundException e) {}
       
       // Attachments doesn't have them
       try {
          attachments.getHeaders();
-         fail();
+         fail("expected ChunkNotFoundException");
       } catch(ChunkNotFoundException e) {}
       
       // Outlook30 has some
@@ -157,7 +158,7 @@ public final class TestBasics extends TestCase {
 
       try {
           attachments.getHtmlBody();
-          fail();
+         fail("expected ChunkNotFoundException");
       } catch(ChunkNotFoundException e) {
           // Good
       }
@@ -170,7 +171,7 @@ public final class TestBasics extends TestCase {
       
       try {
          attachments.getHtmlBody();
-         fail();
+         fail("expected ChunkNotFoundException");
       } catch(ChunkNotFoundException e) {
          // Good
       }
@@ -185,13 +186,13 @@ public final class TestBasics extends TestCase {
 
       try {
          noRecipientAddress.getRecipientEmailAddress();
-         fail();
+         fail("expected ChunkNotFoundException");
       } catch(ChunkNotFoundException e) {
          // Good
       }
       try {
          noRecipientAddress.getRecipientEmailAddressList();
-         fail();
+         fail("expected ChunkNotFoundException");
       } catch(ChunkNotFoundException e) {
          // Good
       }

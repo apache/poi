@@ -332,7 +332,7 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(txt);
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
             // Good
         }
@@ -480,14 +480,9 @@ public class TestExtractorFactory {
         extractor.close();
 
         // Text
-        try {
-            FileInputStream stream = new FileInputStream(txt);
-            try {
-                ExtractorFactory.createExtractor(stream);
-                fail();
-            } finally {
-                IOUtils.closeQuietly(stream);
-            }
+        try (FileInputStream stream = new FileInputStream(txt)) {
+            ExtractorFactory.createExtractor(stream);
+            fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
             // Good
         }
@@ -568,7 +563,7 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(txt)));
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IOException e) {
             // Good
         }
@@ -650,7 +645,7 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(txt)));
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IOException e) {
             // Good
         }

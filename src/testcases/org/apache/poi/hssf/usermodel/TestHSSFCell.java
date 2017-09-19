@@ -301,13 +301,13 @@ public final class TestHSSFCell extends BaseTestCell {
 		styB.verifyBelongsToWorkbook(wbB);
 		try {
 			styA.verifyBelongsToWorkbook(wbB);
-			fail();
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// expected during successful test
 		}
 		try {
 			styB.verifyBelongsToWorkbook(wbA);
-			fail();
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// expected during successful test
 		}
@@ -319,13 +319,13 @@ public final class TestHSSFCell extends BaseTestCell {
 		cellB.setCellStyle(styB);
 		try {
 			cellA.setCellStyle(styB);
-			fail();
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// expected during successful test
 		}
 		try {
 			cellB.setCellStyle(styA);
-			fail();
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// expected during successful test
 		}
@@ -352,7 +352,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		Record[] recs = RecordInspector.getRecords(sheet, 0);
 		if (recs.length == 28 && recs[23] instanceof StringRecord) {
 		    wb.close();
-			throw new AssertionFailedError("Identified bug - leftover StringRecord");
+			fail("Identified bug - leftover StringRecord");
 		}
 		confirmStringRecord(sheet, false);
 

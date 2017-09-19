@@ -86,16 +86,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddRowLabelOutOfRangeThrowsException() {
-        int columnIndex = 5;
-
-        try {
-            pivotTable.addRowLabel(columnIndex);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addRowLabel(5);
     }
 
     /**
@@ -197,16 +190,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a column label outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddColumnLabelOutOfRangeThrowsException() {
-        int columnIndex = 5;
-
-        try {
-            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 5);
     }
 
      /**
@@ -226,17 +212,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a data column outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddDataColumnOutOfRangeThrowsException() {
-        int columnIndex = 5;
-        boolean isDataField = true;
-
-        try {
-            pivotTable.addDataColumn(columnIndex, isDataField);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addDataColumn(5, true);
     }
 
      /**
@@ -257,15 +235,9 @@ public abstract class BaseTestXSSFPivotTable {
      /**
      * Verify that it's not possible to create a new filter outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddReportFilterOutOfRangeThrowsException() {
-        int columnIndex = 5;
-        try {
-            pivotTable.addReportFilter(columnIndex);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addReportFilter(5);
     }
     
     /**
