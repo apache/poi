@@ -34,11 +34,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFormats;
 
 public class CreatePivotTable2 {
 
