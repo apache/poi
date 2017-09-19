@@ -121,14 +121,11 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         assertEquals(1, tempFiles.size());
         File tempFile = tempFiles.get(0);
         assertTrue("tempFile exists?", tempFile.exists());
-        InputStream stream = new FileInputStream(tempFile);
-        try {
+        try (InputStream stream = new FileInputStream(tempFile)) {
             byte[] data = IOUtils.toByteArray(stream);
             String text = new String(data, UTF_8);
             assertFalse(text.contains(sheetName));
             assertFalse(text.contains(cellValue));
-        } finally {
-            stream.close();
         }
         workbook.dispose();
         assertFalse("tempFile deleted after dispose?", tempFile.exists());
