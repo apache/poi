@@ -58,14 +58,6 @@ public class TestLittleEndianCP950Reader {
 
     }
 
-    @Test
-    public void one() {
-        byte b = (byte) 0xfe;
-        byte c = (byte) 0xd3;
-
-        int i = ((b & 0xff) << 8) + (c & 0xff);
-        System.out.println(i);
-    }
 
     private void assertCharEquals(char expected, byte[] data) throws IOException {
         Reader reader = new LittleEndianCP950Reader(data);

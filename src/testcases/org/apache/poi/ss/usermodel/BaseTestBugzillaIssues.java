@@ -1571,30 +1571,28 @@ public abstract class BaseTestBugzillaIssues {
         // First cell of array formula, OK
         int rowId = 0;
         int cellId = 1;
-        System.out.println("Reading row " + rowId + ", col " + cellId);
 
         Row row = sheet.getRow(rowId);
         Cell cell = row.getCell(cellId);
 
-        System.out.println("Formula:" + cell.getCellFormula());
+        assertEquals("A1", cell.getCellFormula());
         if (CellType.FORMULA == cell.getCellType()) {
             CellType formulaResultType = cell.getCachedFormulaResultType();
-            System.out.println("Formula Result Type:" + formulaResultType);
+            assertEquals(CellType.STRING, formulaResultType);
         }
 
         // *******************************
         // Second cell of array formula, NOT OK for xlsx files
         rowId = 1;
         cellId = 1;
-        System.out.println("Reading row " + rowId + ", col " + cellId);
 
         row = sheet.getRow(rowId);
         cell = row.getCell(cellId);
-        System.out.println("Formula:" + cell.getCellFormula());
+        assertEquals("A1", cell.getCellFormula());
 
         if (CellType.FORMULA == cell.getCellType()) {
             CellType formulaResultType = cell.getCachedFormulaResultType();
-            System.out.println("Formula Result Type:" + formulaResultType);
+            assertEquals(CellType.STRING, formulaResultType);
         }
 
         workbook.close();
