@@ -124,14 +124,21 @@ public class SXSSFCell implements Cell {
         ensureType(cellType);
     }
 
+    private boolean isFormulaCell() {
+        return _value instanceof FormulaValue;
+    }
+
     /**
      * Return the cell type.
      *
      * @return the cell type
      */
     @Override
-    public CellType getCellType()
-    {
+    public CellType getCellType() {
+        if (isFormulaCell()) {
+            return CellType.FORMULA;
+        }
+
         return _value.getType();
     }
     
@@ -158,7 +165,7 @@ public class SXSSFCell implements Cell {
      */
     @Override
     public CellType getCachedFormulaResultType() {
-        if (_value.getType() != CellType.FORMULA) {
+        if (!isFormulaCell()) {
             throw new IllegalStateException("Only formula cells have cached results");
         }
 
@@ -497,13 +504,18 @@ public class SXSSFCell implements Cell {
      * @see org.apache.poi.ss.usermodel.FormulaError
      */
     @Override
-    public void setCellErrorValue(byte value)
-    {
-        ensureType(CellType.ERROR);
-        if(_value.getType()==CellType.FORMULA)
-            ((ErrorFormulaValue)_value).setPreEvaluatedValue(value);
-        else
-            ((ErrorValue)_value).setValue(value);
+    public void setCellErrorValue(byte value) {
+        // for formulas, we want to keep the type and only have an ERROR as formula value
+        if(_value.getType()==CellType.FORMULA) {
+            // ensure that the type is "ERROR"
+            setFormulaType(CellType.ERROR);
+
+            // populate the value
+            ((ErrorFormulaValue) _value).setPreEvaluatedValue(value);
+        } else {
+            ensureType(CellType.ERROR);
+            ((ErrorValue) _value).setValue(value);
+        }
     }
 
     /**
@@ -827,13 +839,13 @@ public class SXSSFCell implements Cell {
     {
         if(_value.getType()!=CellType.STRING
            ||((StringValue)_value).isRichText())
-            _value=new PlainStringValue();
+            _value = new PlainStringValue();
     }
     /*package*/ void ensureRichTextStringType()
     {
         if(_value.getType()!=CellType.STRING
            ||!((StringValue)_value).isRichText())
-            _value=new RichTextValue();
+            _value = new RichTextValue();
     }
     /*package*/ void ensureType(CellType type)
     {
@@ -879,7 +891,7 @@ public class SXSSFCell implements Cell {
         {
             case NUMERIC:
             {
-                _value=new NumericValue();
+                _value = new NumericValue();
                 break;
             }
             case STRING:
@@ -895,12 +907,12 @@ public class SXSSFCell implements Cell {
             }
             case FORMULA:
             {
-                _value=new NumericFormulaValue();
+                _value = new NumericFormulaValue();
                 break;
             }
             case BLANK:
             {
-                _value=new BlankValue();
+                _value = new BlankValue();
                 break;
             }
             case BOOLEAN:
@@ -916,7 +928,7 @@ public class SXSSFCell implements Cell {
             }
             case ERROR:
             {
-                _value=new ErrorValue();
+                _value = new ErrorValue();
                 break;
             }
             default:
@@ -932,22 +944,22 @@ public class SXSSFCell implements Cell {
         {
             case NUMERIC:
             {
-                _value=new NumericFormulaValue();
+                _value = new NumericFormulaValue();
                 break;
             }
             case STRING:
             {
-                _value=new StringFormulaValue();
+                _value = new StringFormulaValue();
                 break;
             }
             case BOOLEAN:
             {
-                _value=new BooleanFormulaValue();
+                _value = new BooleanFormulaValue();
                 break;
             }
             case ERROR:
             {
-                _value=new ErrorFormulaValue();
+                _value = new ErrorFormulaValue();
                 break;
             }
             default:
@@ -1041,12 +1053,12 @@ public class SXSSFCell implements Cell {
         Property _next;
         public Property(Object value)
         {
-            _value=value;
+            _value = value;
         }
         abstract int getType();
         void setValue(Object value)
         {
-            _value=value;
+            _value = value;
         }
         Object getValue()
         {
@@ -1090,7 +1102,7 @@ public class SXSSFCell implements Cell {
         }
         void setValue(double value)
         {
-            _value=value;
+            _value = value;
         }
         double getValue()
         {
@@ -1111,7 +1123,7 @@ public class SXSSFCell implements Cell {
         String _value;
         void setValue(String value)
         {
-            _value=value;
+            _value = value;
         }
         String getValue()
         {
@@ -1133,7 +1145,7 @@ public class SXSSFCell implements Cell {
         }
         void setValue(RichTextString value)
         {
-            _value=value;
+            _value = value;
         }
         RichTextString getValue()
         {
@@ -1154,7 +1166,7 @@ public class SXSSFCell implements Cell {
         }
         void setValue(String value)
         {
-            _value=value;
+            _value = value;
         }
         String getValue()
         {
@@ -1246,7 +1258,7 @@ public class SXSSFCell implements Cell {
         }
         void setValue(boolean value)
         {
-            _value=value;
+            _value = value;
         }
         boolean getValue()
         {
@@ -1262,7 +1274,7 @@ public class SXSSFCell implements Cell {
         }
         void setValue(byte value)
         {
-            _value=value;
+            _value = value;
         }
         byte getValue()
         {
