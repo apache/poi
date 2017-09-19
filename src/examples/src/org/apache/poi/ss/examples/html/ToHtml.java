@@ -391,7 +391,7 @@ public class ToHtml {
         tableWidth += headerColWidth;
 
         for (int i = firstColumn; i < endColumn; i++) {
-            int colWidth = poiWidthToPixels(sheet.getColumnWidth(i));
+            int colWidth = widthToPixels(sheet.getColumnWidth(i));
             ret.put(i, colWidth);
             tableWidth += colWidth;
         }
