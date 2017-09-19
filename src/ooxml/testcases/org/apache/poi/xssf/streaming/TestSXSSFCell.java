@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.streaming;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -71,6 +72,7 @@ public class TestSXSSFCell extends BaseTestXCell {
             XSSFCell xCell = xwb.getSheetAt(0).getRow(0).getCell(0);
 
             CTRst is = xCell.getCTCell().getIs();
+            assertNotNull(is);
             XmlCursor c = is.newCursor();
             c.toNextToken();
             String t = c.getAttributeText(new QName("http://www.w3.org/XML/1998/namespace", "space"));

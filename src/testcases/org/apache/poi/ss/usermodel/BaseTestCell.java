@@ -1014,4 +1014,46 @@ public abstract class BaseTestCell {
 
         wb.close();
     }
+
+    @Test
+    public void testSetErrorValue() throws Exception {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+
+            cell.setCellFormula("A2");
+            cell.setCellErrorValue(FormulaError.NAME.getCode());
+
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.ERROR, cell.getCachedFormulaResultType());
+            assertEquals("A2", cell.getCellFormula());
+            try {
+                cell.getNumericCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            try {
+                cell.getStringCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            try {
+                cell.getRichStringCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            try {
+                cell.getDateCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            assertEquals(FormulaError.NAME.getCode(), cell.getErrorCellValue());
+            assertNull(cell.getHyperlink());
+        }
+    }
 }
