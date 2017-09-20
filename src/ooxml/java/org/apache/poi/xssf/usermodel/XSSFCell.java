@@ -564,9 +564,11 @@ public final class XSSFCell implements Cell {
             return;
         }
 
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        //validate through the FormulaParser
-        FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+        if(wb.getCellFormulaValidation()) {
+            XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+            //validate through the FormulaParser
+            FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
+        }
 
         CTCellFormula f = CTCellFormula.Factory.newInstance();
         f.setStringValue(formula);
