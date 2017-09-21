@@ -64,7 +64,7 @@ public class LittleEndian implements LittleEndianConsts
      *            Number of bytes to copy.
      * @return The byteArray value
      *
-     * @see #getByteArray(byte[], int, int, long) if size is not a constant
+     * @see #getByteArray(byte[], int, int, int) if size is not a constant
      *
      * @throws IndexOutOfBoundsException
      *             - if copying would cause access of data outside array bounds.
