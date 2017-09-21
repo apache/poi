@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
@@ -28,6 +29,10 @@ import java.io.ByteArrayOutputStream;
  * Subrecords are part of the OBJ class.
  */
 public abstract class SubRecord {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	protected SubRecord() {
 		// no fields to initialise
 	}
@@ -107,7 +112,7 @@ public abstract class SubRecord {
 
 		public UnknownSubRecord(LittleEndianInput in, int sid, int size) {
 			_sid = sid;
-	    	byte[] buf = new byte[size];
+	    	byte[] buf = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 	    	in.readFully(buf);
 	        _data = buf;
 		}

@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -30,6 +31,9 @@ import org.apache.poi.util.POILogger;
 
 @Internal
 class CodePageString {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private final static POILogger LOG = POILogFactory.getLogger( CodePageString.class );
 
     private byte[] _value;
@@ -40,7 +44,7 @@ class CodePageString {
     void read( LittleEndianByteArrayInputStream lei ) {
         int offset = lei.getReadIndex();
         int size = lei.readInt();
-        _value = new byte[size];
+        _value = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
         if (size == 0) {
             return;
         }

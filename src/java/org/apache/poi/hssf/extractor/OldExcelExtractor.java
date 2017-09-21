@@ -57,6 +57,9 @@ import org.apache.poi.util.IOUtils;
 public class OldExcelExtractor implements Closeable {
 
     private final static int FILE_PASS_RECORD_SID = 0x2f;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
 
     private RecordInputStream ris;
 
@@ -278,7 +281,7 @@ public class OldExcelExtractor implements Closeable {
                     break;
                     
                 default:
-                    ris.readFully(new byte[ris.remaining()]);
+                    ris.readFully(IOUtils.safelyAllocate(ris.remaining(), MAX_RECORD_LENGTH));
             }
         }
 

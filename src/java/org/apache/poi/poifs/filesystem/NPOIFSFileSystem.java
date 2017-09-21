@@ -66,7 +66,10 @@ import org.apache.poi.util.POILogger;
 public class NPOIFSFileSystem extends BlockStore
     implements POIFSViewable, Closeable
 {
-	private static final POILogger LOG = POILogFactory.getLogger(NPOIFSFileSystem.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
+    private static final POILogger LOG = POILogFactory.getLogger(NPOIFSFileSystem.class);
 
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
@@ -103,7 +106,8 @@ public class NPOIFSFileSystem extends BlockStore
         if(newFS) {
            // Data needs to initially hold just the header block,
            //  a single bat block, and an empty properties section
-           _data        = new ByteArrayBackedDataSource(new byte[bigBlockSize.getBigBlockSize()*3]);
+           _data        = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(
+                   bigBlockSize.getBigBlockSize()*3, MAX_RECORD_LENGTH));
         }
     }
     

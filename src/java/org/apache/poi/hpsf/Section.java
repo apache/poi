@@ -33,6 +33,7 @@ import org.apache.commons.collections4.bidimap.TreeBidiMap;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
@@ -43,6 +44,9 @@ import org.apache.poi.util.POILogger;
  * Represents a section in a {@link PropertySet}.
  */
 public class Section {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private static final POILogger LOG = POILogFactory.getLogger(Section.class);
 
     /**
@@ -835,7 +839,7 @@ public class Section {
             }
 
             try {
-                byte buf[] = new byte[nrBytes];
+                byte buf[] = IOUtils.safelyAllocate(nrBytes, MAX_RECORD_LENGTH);
                 leis.readFully(buf, 0, nrBytes);
                 final String str = CodePageUtil.getStringFromCodePage(buf, 0, nrBytes, cp);
 

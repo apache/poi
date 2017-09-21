@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -35,6 +36,10 @@ import org.apache.poi.util.POILogger;
 @Internal
 public class SectionTable
 {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private final static POILogger _logger = POILogFactory.getLogger(SectionTable.class);
     private static final int SED_SIZE = 12;
 
@@ -79,7 +84,7 @@ public class SectionTable
             {
                 // The first short at the offset is the size of the grpprl.
                 int sepxSize = LittleEndian.getShort(documentStream, fileOffset);
-                byte[] buf = new byte[sepxSize];
+                byte[] buf = IOUtils.safelyAllocate(sepxSize, MAX_RECORD_LENGTH);
                 fileOffset += LittleEndian.SHORT_SIZE;
                 System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
                 _sections.add(new SEPX(sed, startAt, endAt, buf));

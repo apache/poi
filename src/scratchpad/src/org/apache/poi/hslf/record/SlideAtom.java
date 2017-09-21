@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.hslf.record.SlideAtomLayout.SlideLayoutType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -33,7 +34,10 @@ public final class SlideAtom extends RecordAtom {
     public static final int USES_MASTER_SLIDE_ID  =  0x80000000;
     // private static final int MASTER_SLIDE_ID      =  0x00000000;
 
-    private byte[] _header;
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
+	private byte[] _header;
 	private static long _type = 1007l;
 
 	private int masterID;
@@ -109,7 +113,7 @@ public final class SlideAtom extends RecordAtom {
 
 		// If there's any other bits of data, keep them about
 		// 8 bytes header + 20 bytes to flags + 2 bytes flags = 30 bytes
-		reserved = new byte[len-30];
+		reserved = IOUtils.safelyAllocate(len-30, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+30,reserved,0,reserved.length);
 	}
 

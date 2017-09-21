@@ -73,6 +73,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument
 public class XMLSlideShow extends POIXMLDocument
 implements SlideShow<XSLFShape,XSLFTextParagraph> {
     private static final POILogger LOG = POILogFactory.getLogger(XMLSlideShow.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private CTPresentation _presentation;
     private List<XSLFSlide> _slides;
@@ -533,7 +535,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     public XSLFPictureData addPicture(File pict, PictureType format) throws IOException
     {
         int length = (int) pict.length();
-        byte[] data = new byte[length];
+        byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
         FileInputStream is = new FileInputStream(pict);
         try {
             IOUtils.readFully(is, data);

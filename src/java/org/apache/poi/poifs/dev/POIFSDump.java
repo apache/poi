@@ -39,6 +39,10 @@ import org.apache.poi.util.IOUtils;
  * Dump internal structure of a OLE2 file into file system
  */
 public class POIFSDump {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.err.println("Must specify at least one file to dump");
@@ -132,7 +136,7 @@ public class POIFSDump {
         try {
             NPOIFSStream stream = new NPOIFSStream(fs, startBlock);
 
-            byte[] b = new byte[fs.getBigBlockSize()];
+            byte[] b = IOUtils.safelyAllocate(fs.getBigBlockSize(), MAX_RECORD_LENGTH);
             for (ByteBuffer bb : stream) {
                 int len = bb.remaining();
                 bb.get(b);

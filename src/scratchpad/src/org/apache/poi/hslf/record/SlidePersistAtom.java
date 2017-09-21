@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,6 +29,10 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 public final class SlidePersistAtom extends RecordAtom {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 32;
+
 	private byte[] _header;
 	private static long _type = 1011l;
 
@@ -92,7 +97,7 @@ public final class SlidePersistAtom extends RecordAtom {
 
 		// Finally you have typically 4 or 8 bytes of reserved fields,
 		//  all zero running from 24 bytes in to the end
-		reservedFields = new byte[len-24];
+		reservedFields = IOUtils.safelyAllocate(len-24, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+24,reservedFields,0,reservedFields.length);
 	}
 

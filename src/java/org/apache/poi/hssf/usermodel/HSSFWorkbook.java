@@ -112,6 +112,7 @@ import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -128,6 +129,10 @@ import org.apache.poi.util.POILogger;
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  */
 public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
@@ -1552,7 +1557,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                 if (sid == BoundSheetRecord.sid) {
                     // special case for the field_1_position_of_BOF (=lbPlyPos) field of
                     // the BoundSheet8 record which must be unencrypted
-                    byte bsrBuf[] = new byte[len];
+                    byte bsrBuf[] = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
                     plain.readFully(bsrBuf);
                     os.writePlain(bsrBuf, 0, 4);
                     os.write(bsrBuf, 4, len-4);

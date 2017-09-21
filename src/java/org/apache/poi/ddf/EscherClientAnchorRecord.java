@@ -17,6 +17,7 @@
 
 package org.apache.poi.ddf;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,6 +31,9 @@ import org.apache.poi.util.LittleEndian;
 public class EscherClientAnchorRecord
         extends EscherRecord
 {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public static final short RECORD_ID = (short) 0xF010;
     public static final String RECORD_DESCRIPTION = "MsofbtClientAnchor";
 
@@ -83,7 +87,7 @@ public class EscherClientAnchorRecord
             }
         }
         bytesRemaining -= size;
-        remainingData  =  new byte[bytesRemaining];
+        remainingData  = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );
         return 8 + size + bytesRemaining;
     }

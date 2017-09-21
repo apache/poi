@@ -34,10 +34,24 @@ public final class IOUtils {
      * The default buffer size to use for the skip() methods.
      */
     private static final int SKIP_BUFFER_SIZE = 2048;
+    private static int BYTE_ARRAY_MAX_OVERRIDE = -1;
     private static byte[] SKIP_BYTE_BUFFER;
 
     private IOUtils() {
         // no instances of this class
+    }
+
+    /**
+     * If this value is set to > 0, {@link #safelyAllocate(long, int)} will ignore the
+     * maximum record length parameter.  This is designed to allow users to bypass
+     * the hard-coded maximum record lengths if they are willing to accept the risk
+     * of an OutOfMemoryException.
+     *
+     * @param maxOverride
+     * @since 4.0.0
+     */
+    public static void setByteArrayMaxOverride(int maxOverride) {
+        BYTE_ARRAY_MAX_OVERRIDE = maxOverride;
     }
 
     /**
@@ -480,12 +494,23 @@ public final class IOUtils {
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
         }
-        if (length > maxLength) {
-            throw new RecordFormatException("Not allowed to allocate an array > "+
-                    maxLength+" for this record type." +
-                    "If the file is not corrupt, please open an issue on bugzilla to request " +
-                    "increasing the maximum allowable size for this record type");
+        if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
+            if (length > BYTE_ARRAY_MAX_OVERRIDE) {
+                throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+            }
+        } else if (length > maxLength) {
+            throwRFE(length, maxLength);
         }
         return new byte[(int)length];
+    }
+
+    private static void throwRFE(long length, int maxLength) {
+        throw new RecordFormatException("Tried to allocate an array of length "+length +
+                ", but "+ maxLength+" is the maximum for this record type.\n" +
+                "If the file is not corrupt, please open an issue on bugzilla to request \n" +
+                "increasing the maximum allowable size for this record type.\n"+
+                "As a temporary workaround, consider setting a higher override value with " +
+                "IOUtils.setByteArrayMaxOverride()");
+
     }
 }

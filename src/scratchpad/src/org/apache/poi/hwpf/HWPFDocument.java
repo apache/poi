@@ -72,6 +72,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
@@ -83,6 +84,8 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 public final class HWPFDocument extends HWPFDocumentCore {
     /*package*/ static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
     private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private static final String STREAM_DATA = "Data";
 
@@ -635,7 +638,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         // preserve space for the FileInformationBlock because we will be writing
         // it after we write everything else.
-        byte[] placeHolder = new byte[fibSize];
+        byte[] placeHolder = IOUtils.safelyAllocate(fibSize, MAX_RECORD_LENGTH);
         wordDocumentStream.write(placeHolder);
         int mainOffset = wordDocumentStream.size();
         int tableOffset = 0;

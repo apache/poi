@@ -23,11 +23,16 @@ import java.util.ArrayList;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Parent class of all Escher parts
  */
 public abstract class EscherPart extends HPBFPart {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	private EscherRecord[] records;
 
 	/**
@@ -69,7 +74,7 @@ public abstract class EscherPart extends HPBFPart {
 			size += records[i].getRecordSize();
 		}
 
-		byte data[] = new byte[size];
+		byte data[] = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 		size = 0;
 		for(int i=0; i<records.length; i++) {
 			int thisSize =

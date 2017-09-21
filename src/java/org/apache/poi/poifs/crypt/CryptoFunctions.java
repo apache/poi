@@ -34,6 +34,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.RC2ParameterSpec;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -44,6 +45,10 @@ import org.apache.poi.util.StringUtil;
  */
 @Internal
 public class CryptoFunctions {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     /**
      * <p><cite>2.3.4.7 ECMA-376 Document Encryption Key Generation (Standard Encryption)<br>
      * 2.3.4.11 Encryption Key Generation (Agile Encryption)</cite></p>
@@ -280,7 +285,7 @@ public class CryptoFunctions {
     private static byte[] getBlockX(byte[] hash, int size, byte fill) {
         if (hash.length == size) return hash;
         
-        byte[] result = new byte[size];
+        byte[] result = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
         Arrays.fill(result, fill);
         System.arraycopy(hash, 0, result, 0, Math.min(result.length, hash.length));
         return result;

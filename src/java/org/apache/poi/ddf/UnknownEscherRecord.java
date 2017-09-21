@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -28,6 +29,10 @@ import org.apache.poi.util.LittleEndian;
  * we do not explicitly support.
  */
 public final class UnknownEscherRecord extends EscherRecord implements Cloneable {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
     private static final byte[] NO_BYTES = new byte[0];
 
     /** The data for this record not including the the 8 byte header */
@@ -70,7 +75,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
             bytesRemaining = 0;
         }
         
-        thedata = new byte[bytesRemaining];
+        thedata = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
         return bytesRemaining + 8;
     }

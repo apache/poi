@@ -51,6 +51,9 @@ import org.apache.poi.util.POILogger;
 public abstract class PropertiesChunk extends Chunk {
     public static final String NAME = "__properties_version1.0";
 
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     /** For logging problems we spot with the file */
     private POILogger logger = POILogFactory.getLogger(PropertiesChunk.class);
 
@@ -223,7 +226,7 @@ public abstract class PropertiesChunk extends Chunk {
                 }
 
                 // Grab the data block
-                byte[] data = new byte[length];
+                byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
                 IOUtils.readFully(value, data);
 
                 // Skip over any padding

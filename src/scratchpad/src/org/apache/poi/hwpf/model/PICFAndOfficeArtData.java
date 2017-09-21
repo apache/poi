@@ -29,6 +29,9 @@ import org.apache.poi.util.LittleEndian;
 public class PICFAndOfficeArtData
 {
 
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private List<EscherRecord> _blipRecords;
 
     private short _cchPicName;
@@ -52,7 +55,7 @@ public class PICFAndOfficeArtData
             offset += 1;
 
             _stPicName = LittleEndian.getByteArray( dataStream, offset,
-                    _cchPicName );
+                    _cchPicName, MAX_RECORD_LENGTH);
             offset += _cchPicName;
         }
 

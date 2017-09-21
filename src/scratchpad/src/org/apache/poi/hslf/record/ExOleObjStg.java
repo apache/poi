@@ -27,12 +27,16 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.util.BoundedInputStream;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Storage for embedded OLE objects.
  */
 public class ExOleObjStg extends PositionDependentRecordAtom implements PersistRecord {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private int _persistId; // Found from PersistPtrHolder
 
@@ -72,7 +76,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
         System.arraycopy(source,start,_header,0,8);
 
         // Get the record data.
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,len-8);
     }
 

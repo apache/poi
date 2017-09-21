@@ -38,6 +38,7 @@ import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
@@ -52,6 +53,9 @@ public class HWPFOldDocument extends HWPFDocumentCore {
 
     private static final POILogger logger = POILogFactory
             .getLogger( HWPFOldDocument.class );
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private final static Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
 
@@ -167,7 +171,8 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         // Generate a single Text Piece Table, with a single Text Piece
         //  which covers all the (8 bit only) text in the file
         tpt = new OldTextPieceTable();
-        byte[] textData = new byte[_fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin()];
+        byte[] textData = IOUtils.safelyAllocate(
+                _fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin(), MAX_RECORD_LENGTH);
         System.arraycopy(_mainStream, _fib.getFibBase().getFcMin(), textData, 0, textData.length);
 
         int numChars = textData.length;

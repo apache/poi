@@ -17,12 +17,17 @@
 
 package org.apache.poi.hpbf.model.qcbits;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
  * A Text based bit of Quill Contents
  */
 public final class QCTextBit extends QCBit {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	public QCTextBit(String thingType, String bitType, byte[] data) {
 		super(thingType, bitType, data);
 	}
@@ -36,7 +41,7 @@ public final class QCTextBit extends QCBit {
 	}
 
 	public void setText(String text) {
-		byte data[] = new byte[text.length()*2];
+		byte data[] = IOUtils.safelyAllocate(text.length()*2, MAX_RECORD_LENGTH);
 		StringUtil.putUnicodeLE(text, data, 0);
 		setData(data);
 	}

@@ -26,6 +26,9 @@ import org.apache.poi.util.POILogger;
 
 @Internal
 class ClipboardData {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
     private static final POILogger LOG = POILogFactory.getLogger( ClipboardData.class );
 
     private int _format;
@@ -48,7 +51,7 @@ class ClipboardData {
         }
 
         _format = lei.readInt();
-        _value = new byte[size - LittleEndianConsts.INT_SIZE];
+        _value = IOUtils.safelyAllocate(size - LittleEndianConsts.INT_SIZE, MAX_RECORD_LENGTH);
         lei.readFully(_value);
     }
 
