@@ -36,7 +36,7 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfCommentPublic  {
 
-    private static final int MAX_RECORD_LENGTH = 1000000;
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 
     /**

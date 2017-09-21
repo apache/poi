@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
@@ -34,9 +35,12 @@ import org.apache.poi.util.StringUtil;
  */
 public class Ole10Native {
 
+
     public static final String OLE10_NATIVE = "\u0001Ole10Native";
     protected static final String ISO1 = "ISO-8859-1";
-  
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
     // (the fields as they appear in the raw record:)
     private int totalSize;             // 4 bytes, total size of record not including this field
     private short flags1 = 2;          // 2 bytes, unknown, mostly [02 00]
@@ -97,7 +101,7 @@ public class Ole10Native {
     public static Ole10Native createFromEmbeddedOleObject(DirectoryNode directory) throws IOException, Ole10NativeException {
        DocumentEntry nativeEntry = 
           (DocumentEntry)directory.getEntry(OLE10_NATIVE);
-       byte[] data = new byte[nativeEntry.getSize()];
+       byte[] data = IOUtils.safelyAllocate(nativeEntry.getSize(), MAX_RECORD_LENGTH);
        int readBytes = directory.createDocumentInputStream(nativeEntry).read(data);
        assert(readBytes == data.length);
   
@@ -196,7 +200,7 @@ public class Ole10Native {
         if ((long)dataSize + (long)ofs > (long)data.length) { //cast to avoid overflow
             throw new Ole10NativeException("Invalid Ole10Native: declared data length > available data");
         }
-        dataBuffer = new byte[dataSize];
+        dataBuffer = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
         System.arraycopy(data, ofs, dataBuffer, 0, dataSize);
         ofs += dataSize;
     }

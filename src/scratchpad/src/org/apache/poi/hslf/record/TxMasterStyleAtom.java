@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.POILogFactory;
@@ -49,6 +50,8 @@ import org.apache.poi.util.POILogger;
  */
 public final class TxMasterStyleAtom extends RecordAtom {
     private static final POILogger LOG = POILogFactory.getLogger(TxMasterStyleAtom.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
     
     /**
      * Maximum number of indentation levels allowed in PowerPoint documents
@@ -66,7 +69,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         _header = new byte[8];
         System.arraycopy(source,start,_header,0,8);
 
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,_data.length);
 
         //read available styles

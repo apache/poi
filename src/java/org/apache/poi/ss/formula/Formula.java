@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
@@ -34,6 +35,9 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Josh Micich
  */
 public class Formula {
+
+	//Arbitrarily set.  May need to increase.
+	private static final int MAX_ENCODED_LEN = 100000;
 
 	private static final Formula EMPTY = new Formula(new byte[0], 0);
 
@@ -72,7 +76,7 @@ public class Formula {
 	 * @return A new formula object as read from the stream.  Possibly empty, never <code>null</code>.
 	 */
 	public static Formula read(int encodedTokenLen, LittleEndianInput in, int totalEncodedLen) {
-		byte[] byteEncoding = new byte[totalEncodedLen];
+		byte[] byteEncoding = IOUtils.safelyAllocate(totalEncodedLen, MAX_ENCODED_LEN);
 		in.readFully(byteEncoding);
 		return new Formula(byteEncoding, encodedTokenLen);
 	}

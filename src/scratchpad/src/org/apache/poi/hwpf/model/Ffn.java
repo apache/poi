@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -34,6 +35,10 @@ import org.apache.poi.util.LittleEndian;
 @Internal
 public final class Ffn
 {
+
+  //arbitrarily selected; may need to increase
+  private static final int MAX_RECORD_LENGTH = 100_000;
+
   private int _cbFfnM1;//total length of FFN - 1.
   private byte _info;
     private static BitField _prq = BitFieldFactory.getInstance(0x0003);// pitch request
@@ -153,7 +158,7 @@ public final class Ffn
   public byte[] toByteArray()
   {
     int offset = 0;
-    byte[] buf = new byte[this.getSize()];
+    byte[] buf = IOUtils.safelyAllocate(this.getSize(), MAX_RECORD_LENGTH);
 
     buf[offset] = (byte)_cbFfnM1;
     offset += LittleEndian.BYTE_SIZE;

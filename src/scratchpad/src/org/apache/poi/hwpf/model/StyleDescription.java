@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -37,7 +38,9 @@ public final class StyleDescription implements HDFType
 {
 
     private static final POILogger logger = POILogFactory.getLogger( StyleDescription.class );
-    
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
   private final static int PARAGRAPH_STYLE = 1;
   private final static int CHARACTER_STYLE = 2;
   // private final static int TABLE_STYLE = 3;
@@ -118,7 +121,7 @@ public final class StyleDescription implements HDFType
           int upxSize = LittleEndian.getShort(std, varOffset);
           varOffset += LittleEndian.SHORT_SIZE;
 
-          byte[] upx = new byte[upxSize];
+          byte[] upx = IOUtils.safelyAllocate(upxSize, Short.MAX_VALUE);
           System.arraycopy(std, varOffset, upx, 0, upxSize);
           _upxs[x] = new UPX(upx);
           varOffset += upxSize;

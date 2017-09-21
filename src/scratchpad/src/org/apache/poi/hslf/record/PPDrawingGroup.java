@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 import java.io.OutputStream;
@@ -35,6 +36,10 @@ import java.util.Iterator;
  */
 public final class PPDrawingGroup extends RecordAtom {
 
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
+
     private byte[] _header;
     private EscherContainerRecord dggContainer;
     //cached dgg
@@ -46,7 +51,7 @@ public final class PPDrawingGroup extends RecordAtom {
         System.arraycopy(source,start,_header,0,8);
 
         // Get the contents for now
-        byte[] contents = new byte[len];
+        byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
         System.arraycopy(source,start,contents,0,len);
 
         DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();

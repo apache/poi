@@ -35,6 +35,9 @@ import java.io.*;
 public class RawDataBlock
     implements ListManagedBlock
 {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private byte[]  _data;
     private boolean _eof;
     private boolean _hasData;
@@ -66,7 +69,7 @@ public class RawDataBlock
      */
     public RawDataBlock(final InputStream stream, int blockSize)
     		throws IOException {
-        _data = new byte[ blockSize ];
+        _data = IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH);
         int count = IOUtils.readFully(stream, _data);
         _hasData = (count > 0);
 

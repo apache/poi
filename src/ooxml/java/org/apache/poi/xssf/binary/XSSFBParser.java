@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.BitSet;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -33,6 +34,9 @@ import org.apache.poi.util.LittleEndianInputStream;
  */
 @Internal
 public abstract class XSSFBParser {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private final LittleEndianInputStream is;
     private final BitSet records;
@@ -88,8 +92,7 @@ public abstract class XSSFBParser {
 
         }
         if (records == null || records.get(recordId)) {
-            //add sanity check for length?
-            byte[] buff = new byte[(int) recordLength];
+            byte[] buff = IOUtils.safelyAllocate(recordLength, MAX_RECORD_LENGTH);
             is.readFully(buff);
             handleRecord(recordId, buff);
         } else {

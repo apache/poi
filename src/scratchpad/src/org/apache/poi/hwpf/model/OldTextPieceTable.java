@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -31,6 +32,9 @@ public class OldTextPieceTable extends TextPieceTable {
 
     private static final POILogger logger = POILogFactory
             .getLogger(OldTextPieceTable.class);
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
 
     public OldTextPieceTable() {
         super();
@@ -85,7 +89,7 @@ public class OldTextPieceTable extends TextPieceTable {
             int textSizeBytes = textSizeChars * multiple;
 
             // Grab the data that makes up the piece
-            byte[] buf = new byte[textSizeBytes];
+            byte[] buf = IOUtils.safelyAllocate(textSizeBytes, MAX_RECORD_LENGTH);
             System.arraycopy(documentStream, start, buf, 0, textSizeBytes);
 
             // And now build the piece

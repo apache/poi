@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -38,6 +39,11 @@ import org.apache.poi.util.POILogger;
  *  to process the chunk value area
  */
 public final class ChunkFactory {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
+
 	/** The version of the currently open document */
 	private int version;
 	/**
@@ -179,7 +185,7 @@ public final class ChunkFactory {
 		}
 
 		// Now, create the chunk
-		byte[] contents = new byte[header.getLength()];
+		byte[] contents = IOUtils.safelyAllocate(header.getLength(), MAX_RECORD_LENGTH);
 		System.arraycopy(data, offset+header.getSizeInBytes(), contents, 0, contents.length);
 		Chunk chunk = new Chunk(header, trailer, separator, contents);
 

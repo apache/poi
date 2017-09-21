@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -32,6 +33,8 @@ import org.apache.poi.util.StringUtil;
 @Internal
 class UnicodeString {
     private static final POILogger LOG = POILogFactory.getLogger( UnicodeString.class );
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private byte[] _value;
     
@@ -40,7 +43,7 @@ class UnicodeString {
     void read(LittleEndianByteArrayInputStream lei) {
         final int length = lei.readInt();
         final int unicodeBytes = length*2;
-        _value = new byte[unicodeBytes];
+        _value = IOUtils.safelyAllocate(unicodeBytes, MAX_RECORD_LENGTH);
         
         // If Length is zero, this field MUST be zero bytes in length. If Length is
         // nonzero, this field MUST be a null-terminated array of 16-bit Unicode characters, followed by

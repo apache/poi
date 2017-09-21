@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Title:        Bound Sheet Record (aka BundleSheet) (0x0085) for BIFF 5<P>
@@ -26,6 +27,10 @@ import org.apache.poi.util.HexDump;
  *               file.
  */
 public final class OldSheetRecord {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public final static short sid = 0x0085;
 
     private int field_1_position_of_BOF;
@@ -39,7 +44,7 @@ public final class OldSheetRecord {
         field_2_visibility = in.readUByte();
         field_3_type = in.readUByte();
         int field_4_sheetname_length = in.readUByte();
-        field_5_sheetname = new byte[field_4_sheetname_length];
+        field_5_sheetname = IOUtils.safelyAllocate(field_4_sheetname_length, MAX_RECORD_LENGTH);
         in.read(field_5_sheetname, 0, field_4_sheetname_length);
     }
 

@@ -39,6 +39,10 @@ import org.apache.poi.util.LittleEndian;
  */
 
 public final class PPTXMLDump {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     private static final int HEADER_SIZE = 8; //size of the record header
     private static final int PICT_HEADER_SIZE = 25; //size of the picture header
     private static final String PICTURES_ENTRY = "Pictures";
@@ -164,7 +168,7 @@ public final class PPTXMLDump {
 
             System.arraycopy(data, pos, header, 0, header.length);
             int size = LittleEndian.getInt(header, 4) - 17;
-            byte[] pictdata = new byte[size];
+            byte[] pictdata = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
             System.arraycopy(data, pos + PICT_HEADER_SIZE, pictdata, 0, pictdata.length);
             pos += PICT_HEADER_SIZE + size;
 

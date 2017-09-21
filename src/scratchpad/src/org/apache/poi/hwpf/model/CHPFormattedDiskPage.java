@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
@@ -46,6 +47,9 @@ import org.apache.poi.util.RecordFormatException;
 public final class CHPFormattedDiskPage extends FormattedDiskPage
 {
     private static final int FC_SIZE = 4;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
 
     private ArrayList<CHPX> _chpxList = new ArrayList<>();
     private ArrayList<CHPX> _overFlow;
@@ -137,7 +141,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
 
         int size = LittleEndian.getUByte(_fkp, _offset + chpxOffset);
 
-        byte[] chpx = new byte[size];
+        byte[] chpx = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 
         System.arraycopy(_fkp, _offset + ++chpxOffset, chpx, 0, size);
         return chpx;

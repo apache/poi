@@ -32,6 +32,10 @@ import org.apache.poi.util.IOUtils;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class DocumentBlock extends BigBlock {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private static final byte _default_value = ( byte ) 0xFF;
     private byte[]            _data;
     private int               _bytes_read;
@@ -81,7 +85,7 @@ public final class DocumentBlock extends BigBlock {
     private DocumentBlock(POIFSBigBlockSize bigBlockSize)
     {
         super(bigBlockSize);
-        _data = new byte[ bigBlockSize.getBigBlockSize() ];
+        _data = IOUtils.safelyAllocate(bigBlockSize.getBigBlockSize(), MAX_RECORD_LENGTH);
         Arrays.fill(_data, _default_value);
     }
 

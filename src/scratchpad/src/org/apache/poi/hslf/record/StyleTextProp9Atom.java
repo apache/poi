@@ -23,12 +23,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * The atom record that specifies additional text formatting.
  */
 public final class StyleTextProp9Atom extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private final TextPFException9[] autoNumberSchemes;
     /** Record header. */
     private byte[] header;
@@ -56,7 +61,7 @@ public final class StyleTextProp9Atom extends RecordAtom {
         this.length   = LittleEndian.getInt(header, 4);
         
         // Get the record data.
-        data = new byte[len-8];
+        data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source, start+8, data, 0, len-8);
         for (int i = 0; i < data.length; ) {
             final TextPFException9 item = new TextPFException9(data, i);

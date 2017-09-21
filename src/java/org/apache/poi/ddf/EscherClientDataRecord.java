@@ -18,6 +18,7 @@
 
 package org.apache.poi.ddf;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -27,6 +28,9 @@ import org.apache.poi.util.LittleEndian;
 public class EscherClientDataRecord
     extends EscherRecord
 {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public static final short RECORD_ID = (short) 0xF011;
     public static final String RECORD_DESCRIPTION = "MsofbtClientData";
 
@@ -36,7 +40,7 @@ public class EscherClientDataRecord
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
-        remainingData  =  new byte[bytesRemaining];
+        remainingData = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy( data, pos, remainingData, 0, bytesRemaining );
         return 8 + bytesRemaining;
     }

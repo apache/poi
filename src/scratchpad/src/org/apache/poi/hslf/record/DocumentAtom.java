@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,6 +31,9 @@ import java.io.OutputStream;
 
 public final class DocumentAtom extends RecordAtom
 {
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	private byte[] _header;
 	private static long _type = 1001l;
 
@@ -137,7 +141,7 @@ public final class DocumentAtom extends RecordAtom
 		showComments = source[start+39+8];
 
 		// If there's any other bits of data, keep them about
-		reserved = new byte[len-40-8];
+		reserved = IOUtils.safelyAllocate(len-40-8, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+48,reserved,0,reserved.length);
 	}
 

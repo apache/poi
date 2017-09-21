@@ -90,7 +90,11 @@ import org.apache.poi.util.Units;
  * understanding DocSlideList and DocNotesList) - handle Slide creation cleaner
  */
 public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable {
-    /** Powerpoint document entry/stream name */
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 10_000_000;
+
+	/** Powerpoint document entry/stream name */
     public static final String POWERPOINT_DOCUMENT = "PowerPoint Document";
     
     enum LoadSavePhase {
@@ -867,8 +871,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	    if (format == null || format.nativeId == -1) { // fail early
 	        throw new IllegalArgumentException("Unsupported picture format: " + format);
 	    }
-		int length = (int) pict.length();
-		byte[] data = new byte[length];
+		byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH);
         FileInputStream is = new FileInputStream(pict);
 		try {
 			IOUtils.readFully(is, data);

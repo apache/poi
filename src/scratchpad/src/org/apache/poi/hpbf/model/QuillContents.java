@@ -24,6 +24,7 @@ import org.apache.poi.hpbf.model.qcbits.QCPLCBit;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
 import org.apache.poi.hpbf.model.qcbits.UnknownQCBit;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
@@ -34,6 +35,8 @@ import org.apache.poi.util.POILogger;
  */
 public final class QuillContents extends HPBFPart {
 	private static POILogger logger = POILogFactory.getLogger(QuillContents.class);
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 	private static final String[] PATH = { "Quill", "QuillSub", "CONTENTS", };
 	private QCBit[] bits;
@@ -66,7 +69,7 @@ public final class QuillContents extends HPBFPart {
 				int from = (int)LittleEndian.getUInt(data, offset+16);
 				int len = (int)LittleEndian.getUInt(data, offset+20);
 
-				byte[] bitData = new byte[len];
+				byte[] bitData = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
 				System.arraycopy(data, from, bitData, 0, len);
 
 				// Create

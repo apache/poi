@@ -28,6 +28,9 @@ import java.util.Map;
 @Internal
 public class StringUtil {
     protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 10000000;
+
     public static final Charset UTF16LE = Charset.forName("UTF-16LE");
     public static final Charset UTF8 = Charset.forName("UTF-8");
     public static final Charset WIN_1252 = Charset.forName("cp1252");
@@ -118,7 +121,7 @@ public class StringUtil {
     }
 
     public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
-        byte[] buf = new byte[nChars];
+        byte[] buf = IOUtils.safelyAllocate(nChars, MAX_RECORD_LENGTH);
         in.readFully(buf);
         return new String(buf, ISO_8859_1);
     }
@@ -252,7 +255,7 @@ public class StringUtil {
 	}
 
 	public static String readUnicodeLE(LittleEndianInput in, int nChars) {
-        byte[] bytes = new byte[nChars*2];
+        byte[] bytes = IOUtils.safelyAllocate(nChars*2, MAX_RECORD_LENGTH);
         in.readFully(bytes);
         return new String(bytes, UTF16LE);
 	}

@@ -36,6 +36,7 @@ import org.apache.poi.ddf.EscherSerializationListener;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
@@ -85,6 +86,9 @@ import org.apache.poi.util.RecordFormatException;
 public final class EscherAggregate extends AbstractEscherHolderRecord {
     public static final short sid = 9876; // not a real sid - dummy value
     private static POILogger log = POILogFactory.getLogger(EscherAggregate.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
 
     public static final short ST_MIN = (short) 0;
     public static final short ST_NOT_PRIMATIVE = ST_MIN;
@@ -592,7 +596,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         // Determine buffer size
         List<EscherRecord> records = getEscherRecords();
         int rawEscherSize = getEscherRecordSize(records);
-        byte[] buffer = new byte[rawEscherSize];
+        byte[] buffer = IOUtils.safelyAllocate(rawEscherSize, MAX_RECORD_LENGTH);
         final List<Integer> spEndingOffsets = new ArrayList<>();
         int pos = 0;
         for (EscherRecord e : records) {

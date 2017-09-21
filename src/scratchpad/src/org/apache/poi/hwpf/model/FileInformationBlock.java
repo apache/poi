@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Locale;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -43,6 +44,10 @@ import org.apache.poi.util.POILogger;
 @Internal
 public final class FileInformationBlock
 {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public static final POILogger logger = POILogFactory
             .getLogger( FileInformationBlock.class );
 
@@ -121,8 +126,8 @@ public final class FileInformationBlock
             // first short is already read as _nFibNew
             final int fibRgCswNewLength = ( _cswNew - 1 )
                     * LittleEndian.SHORT_SIZE;
-            _fibRgCswNew = new byte[fibRgCswNewLength];
-            LittleEndian.getByteArray( mainDocument, offset, fibRgCswNewLength );
+            _fibRgCswNew = IOUtils.safelyAllocate(fibRgCswNewLength, MAX_RECORD_LENGTH);
+            LittleEndian.getByteArray( mainDocument, offset, fibRgCswNewLength, MAX_RECORD_LENGTH );
             offset += fibRgCswNewLength;
         }
         else

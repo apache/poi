@@ -25,6 +25,7 @@ import java.util.Locale;
 import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
@@ -36,9 +37,13 @@ import org.apache.poi.util.RecordFormatException;
  * Description:  Wraps a stream and provides helper methods for the construction of records.<P>
  */
 public final class RecordInputStream implements LittleEndianInput {
+
+
 	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
 	public final static short MAX_RECORD_DATA_SIZE = 8224;
 	private static final int INVALID_SID_VALUE = -1;
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 100_000;
 	/**
 	 * When {@link #_currentDataLength} has this value, it means that the previous BIFF record is
 	 * finished, the next sid has been properly read, but the data size field has not been read yet.
@@ -441,7 +446,7 @@ public final class RecordInputStream implements LittleEndianInput {
 		if (size ==0) {
 			return EMPTY_BYTE_ARRAY;
 		}
-		byte[] result = new byte[size];
+		byte[] result = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 		readFully(result);
 		return result;
 	}

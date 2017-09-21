@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.InterfaceHdrRecord;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
@@ -35,6 +36,8 @@ import org.apache.poi.util.RecordFormatException;
 public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndianInput {
 
     public static final int RC4_REKEYING_INTERVAL = 1024;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private final EncryptionInfo info;
     private ChunkedCipherInputStream ccis;
@@ -43,7 +46,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
 	public Biff8DecryptingStream(InputStream in, int initialOffset, EncryptionInfo info) throws RecordFormatException {
         try {
-    	    byte initialBuf[] = new byte[initialOffset];
+    	    byte initialBuf[] = IOUtils.safelyAllocate(initialOffset, MAX_RECORD_LENGTH);
     	    InputStream stream;
     	    if (initialOffset == 0) {
     	        stream = in;

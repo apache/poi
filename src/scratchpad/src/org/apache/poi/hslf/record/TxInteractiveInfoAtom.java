@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 import java.io.OutputStream;
@@ -28,6 +29,10 @@ import java.io.IOException;
  * @author Yegor Kozlov
  */
 public final class TxInteractiveInfoAtom extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     /**
      * Record header.
      */
@@ -63,7 +68,7 @@ public final class TxInteractiveInfoAtom extends RecordAtom {
         System.arraycopy(source,start,_header,0,8);
 
         // Get the record data.
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,len-8);
 
     }
