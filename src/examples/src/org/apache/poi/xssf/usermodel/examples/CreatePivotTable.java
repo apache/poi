@@ -34,31 +34,31 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class CreatePivotTable {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, InvalidFormatException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
 
-        //Create some data to build the pivot table on
-        setCellData(sheet);
+            //Create some data to build the pivot table on
+            setCellData(sheet);
 
-        AreaReference source = new AreaReference("A1:D4", SpreadsheetVersion.EXCEL2007);
-        CellReference position = new CellReference("H5");
-        // Create a pivot table on this sheet, with H5 as the top-left cell..
-        // The pivot table's data source is on the same sheet in A1:D4
-        XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
-        //Configure the pivot table
-        //Use first column as row label
-        pivotTable.addRowLabel(0);
-        //Sum up the second column
-        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
-        //Set the third column as filter
-        pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, 2);
-        //Add filter on forth column
-        pivotTable.addReportFilter(3);
+            AreaReference source = new AreaReference("A1:D4", SpreadsheetVersion.EXCEL2007);
+            CellReference position = new CellReference("H5");
+            // Create a pivot table on this sheet, with H5 as the top-left cell..
+            // The pivot table's data source is on the same sheet in A1:D4
+            XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
+            //Configure the pivot table
+            //Use first column as row label
+            pivotTable.addRowLabel(0);
+            //Sum up the second column
+            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
+            //Set the third column as filter
+            pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, 2);
+            //Add filter on forth column
+            pivotTable.addReportFilter(3);
 
-        FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable.xlsx");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+            try (FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable.xlsx")) {
+                wb.write(fileOut);
+            }
+        }
     }
 
     public static void setCellData(XSSFSheet sheet){

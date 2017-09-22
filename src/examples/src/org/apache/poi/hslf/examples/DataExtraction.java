@@ -52,10 +52,10 @@ public final class DataExtraction {
 
         //extract all sound files embedded in this presentation
         HSLFSoundData[] sound = ppt.getSoundData();
-        for (int i = 0; i < sound.length; i++) {
-            String type = sound[i].getSoundType();  //*.wav
-            String name = sound[i].getSoundName();  //typically file name
-            byte[] data = sound[i].getData();       //raw bytes
+        for (HSLFSoundData aSound : sound) {
+            String type = aSound.getSoundType();  //*.wav
+            String name = aSound.getSoundName();  //typically file name
+            byte[] data = aSound.getData();       //raw bytes
 
             //save the sound  on disk
             FileOutputStream out = new FileOutputStream(name + type);

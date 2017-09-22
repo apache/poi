@@ -32,36 +32,36 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  */
 public class EmbeddedObjects {
     public static void main(String[] args) throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(args[0]);
-        for (PackagePart pPart : workbook.getAllEmbedds()) {
-            String contentType = pPart.getContentType();
-            InputStream is = pPart.getInputStream();
-            Closeable document;
-            if (contentType.equals("application/vnd.ms-excel")) {
-                // Excel Workbook - either binary or OpenXML
-                document = new HSSFWorkbook(is);
-            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
-                // Excel Workbook - OpenXML file format
-                document = new XSSFWorkbook(is);
-            } else if (contentType.equals("application/msword")) {
-                // Word Document - binary (OLE2CDF) file format
-                document = new HWPFDocument(is);
-            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                // Word Document - OpenXML file format
-                document = new XWPFDocument(is);
-            } else if (contentType.equals("application/vnd.ms-powerpoint")) {
-                // PowerPoint Document - binary file format
-                document = new HSLFSlideShow(is);
-            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
-                // PowerPoint Document - OpenXML file format
-                document = new XMLSlideShow(is);
-            } else {
-                // Any other type of embedded object.
-                document = is;
+        try (XSSFWorkbook workbook = new XSSFWorkbook(args[0])) {
+            for (PackagePart pPart : workbook.getAllEmbedds()) {
+                String contentType = pPart.getContentType();
+                try (InputStream is = pPart.getInputStream()) {
+                    Closeable document;
+                    if (contentType.equals("application/vnd.ms-excel")) {
+                        // Excel Workbook - either binary or OpenXML
+                        document = new HSSFWorkbook(is);
+                    } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+                        // Excel Workbook - OpenXML file format
+                        document = new XSSFWorkbook(is);
+                    } else if (contentType.equals("application/msword")) {
+                        // Word Document - binary (OLE2CDF) file format
+                        document = new HWPFDocument(is);
+                    } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                        // Word Document - OpenXML file format
+                        document = new XWPFDocument(is);
+                    } else if (contentType.equals("application/vnd.ms-powerpoint")) {
+                        // PowerPoint Document - binary file format
+                        document = new HSLFSlideShow(is);
+                    } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+                        // PowerPoint Document - OpenXML file format
+                        document = new XMLSlideShow(is);
+                    } else {
+                        // Any other type of embedded object.
+                        document = is;
+                    }
+                    document.close();
+                }
             }
-            document.close();
-            is.close();
         }
-        workbook.close();
     }
 }

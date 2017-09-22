@@ -33,19 +33,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class MergingCells {
     public static void main(String[] args) throws IOException {
-        Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
-        Sheet sheet = wb.createSheet("new sheet");
+        try (Workbook wb = new XSSFWorkbook()) { //or new HSSFWorkbook();
+            Sheet sheet = wb.createSheet("new sheet");
 
-        Row row = sheet.createRow((short) 1);
-        Cell cell = row.createCell((short) 1);
-        cell.setCellValue(new XSSFRichTextString("This is a test of merging"));
+            Row row = sheet.createRow((short) 1);
+            Cell cell = row.createCell((short) 1);
+            cell.setCellValue(new XSSFRichTextString("This is a test of merging"));
 
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 2));
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 2));
 
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("merging_cells.xlsx");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+            // Write the output to a file
+            try (FileOutputStream fileOut = new FileOutputStream("merging_cells.xlsx")) {
+                wb.write(fileOut);
+            }
+        }
     }
 }

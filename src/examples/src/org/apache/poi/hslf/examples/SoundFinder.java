@@ -30,23 +30,23 @@ import org.apache.poi.hslf.usermodel.HSLFSoundData;
  */
 public class SoundFinder {
     public static void main(String[] args) throws IOException {
-        FileInputStream fis = new FileInputStream(args[0]);
-        HSLFSlideShow ppt = new HSLFSlideShow(fis);
-        HSLFSoundData[] sounds = ppt.getSoundData();
+        try (FileInputStream fis = new FileInputStream(args[0])) {
+            try (HSLFSlideShow ppt = new HSLFSlideShow(fis)) {
+                HSLFSoundData[] sounds = ppt.getSoundData();
 
-        for (HSLFSlide slide : ppt.getSlides()) {
-            for (HSLFShape shape : slide.getShapes()) {
-                int soundRef = getSoundReference(shape);
-                if(soundRef == -1) continue;
+                for (HSLFSlide slide : ppt.getSlides()) {
+                    for (HSLFShape shape : slide.getShapes()) {
+                        int soundRef = getSoundReference(shape);
+                        if (soundRef == -1) continue;
 
-                
-                System.out.println("Slide["+slide.getSlideNumber()+"], shape["+shape.getShapeId()+"], soundRef: "+soundRef);
-                System.out.println("  " + sounds[soundRef].getSoundName());
-                System.out.println("  " + sounds[soundRef].getSoundType());
+
+                        System.out.println("Slide[" + slide.getSlideNumber() + "], shape[" + shape.getShapeId() + "], soundRef: " + soundRef);
+                        System.out.println("  " + sounds[soundRef].getSoundName());
+                        System.out.println("  " + sounds[soundRef].getSoundType());
+                    }
+                }
             }
         }
-        ppt.close();
-        fis.close();
     }
 
     /**

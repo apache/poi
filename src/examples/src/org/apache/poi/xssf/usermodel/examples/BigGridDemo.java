@@ -86,30 +86,29 @@ public class BigGridDemo {
         // Step 1. Create a template file. Setup sheets and workbook-level objects such as
         // cell styles, number formats, etc.
 
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet("Big Grid");
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("Big Grid");
 
-        Map<String, XSSFCellStyle> styles = createStyles(wb);
-        //name of the zip entry holding sheet data, e.g. /xl/worksheets/sheet1.xml
-        String sheetRef = sheet.getPackagePart().getPartName().getName();
+            Map<String, XSSFCellStyle> styles = createStyles(wb);
+            //name of the zip entry holding sheet data, e.g. /xl/worksheets/sheet1.xml
+            String sheetRef = sheet.getPackagePart().getPartName().getName();
 
-        //save the template
-        FileOutputStream os = new FileOutputStream("template.xlsx");
-        wb.write(os);
-        os.close();
+            //save the template
+            FileOutputStream os = new FileOutputStream("template.xlsx");
+            wb.write(os);
+            os.close();
 
-        //Step 2. Generate XML file.
-        File tmp = File.createTempFile("sheet", ".xml");
-        Writer fw = new OutputStreamWriter(new FileOutputStream(tmp), XML_ENCODING);
-        generate(fw, styles);
-        fw.close();
+            //Step 2. Generate XML file.
+            File tmp = File.createTempFile("sheet", ".xml");
+            Writer fw = new OutputStreamWriter(new FileOutputStream(tmp), XML_ENCODING);
+            generate(fw, styles);
+            fw.close();
 
-        //Step 3. Substitute the template entry with the generated data
-        FileOutputStream out = new FileOutputStream("big-grid.xlsx");
-        substitute(new File("template.xlsx"), tmp, sheetRef.substring(1), out);
-        out.close();
-        
-        wb.close();
+            //Step 3. Substitute the template entry with the generated data
+            try (FileOutputStream out = new FileOutputStream("big-grid.xlsx")) {
+                substitute(new File("template.xlsx"), tmp, sheetRef.substring(1), out);
+            }
+        }
     }
 
     /**
@@ -194,28 +193,23 @@ public class BigGridDemo {
      * @param out the stream to write the result to
      */
     private static void substitute(File zipfile, File tmpfile, String entry, OutputStream out) throws IOException {
-        ZipFile zip = ZipHelper.openZipFile(zipfile);
-        try {
-            ZipOutputStream zos = new ZipOutputStream(out);
-    
-            Enumeration<? extends ZipEntry> en = zip.entries();
-            while (en.hasMoreElements()) {
-                ZipEntry ze = en.nextElement();
-                if(!ze.getName().equals(entry)){
-                    zos.putNextEntry(new ZipEntry(ze.getName()));
-                    InputStream is = zip.getInputStream(ze);
+        try (ZipFile zip = ZipHelper.openZipFile(zipfile)) {
+            try (ZipOutputStream zos = new ZipOutputStream(out)) {
+                Enumeration<? extends ZipEntry> en = zip.entries();
+                while (en.hasMoreElements()) {
+                    ZipEntry ze = en.nextElement();
+                    if (!ze.getName().equals(entry)) {
+                        zos.putNextEntry(new ZipEntry(ze.getName()));
+                        try (InputStream is = zip.getInputStream(ze)) {
+                            copyStream(is, zos);
+                        }
+                    }
+                }
+                zos.putNextEntry(new ZipEntry(entry));
+                try (InputStream is = new FileInputStream(tmpfile)) {
                     copyStream(is, zos);
-                    is.close();
                 }
             }
-            zos.putNextEntry(new ZipEntry(entry));
-            InputStream is = new FileInputStream(tmpfile);
-            copyStream(is, zos);
-            is.close();
-    
-            zos.close();
-        } finally {
-            zip.close();
         }
     }
 

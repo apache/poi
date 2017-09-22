@@ -123,9 +123,9 @@ public class CopyCompare
         final CopyFile cf = new CopyFile(copyFileName);
         r.registerListener(cf);
         r.setNotifyEmptyDirectories(true);
-        FileInputStream fis = new FileInputStream(originalFileName);
-        r.read(fis);
-        fis.close();
+        try (FileInputStream fis = new FileInputStream(originalFileName)) {
+            r.read(fis);
+        }
         
         /* Write the new POIFS to disk. */
         cf.close();
@@ -183,7 +183,7 @@ public class CopyCompare
         for (final Entry e1 : d1) {
             final String n1 = e1.getName();
             if (!d2.hasEntry(n1)) {
-                msg.append("Document \"" + n1 + "\" exists only in the source.\n");
+                msg.append("Document \"").append(n1).append("\" exists only in the source.\n");
                 equal = false;
                 break;
             }
@@ -194,8 +194,7 @@ public class CopyCompare
             } else if (e1.isDocumentEntry() && e2.isDocumentEntry()) {
                 equal = equal((DocumentEntry) e1, (DocumentEntry) e2, msg);
             } else {
-                msg.append("One of \"" + e1 + "\" and \"" + e2 + "\" is a " +
-                           "document while the other one is a directory.\n");
+                msg.append("One of \"").append(e1).append("\" and \"").append(e2).append("\" is a ").append("document while the other one is a directory.\n");
                 equal = false;
             }
         }
@@ -208,8 +207,7 @@ public class CopyCompare
             try {
                 e1 = d1.getEntry(n2);
             } catch (FileNotFoundException ex) {
-                msg.append("Document \"" + e2 + "\" exitsts, document \"" +
-                           e1 + "\" does not.\n");
+                msg.append("Document \"").append(e2).append("\" exitsts, document \"").append(e1).append("\" does not.\n");
                 equal = false;
                 break;
             }
@@ -243,11 +241,9 @@ public class CopyCompare
     throws NoPropertySetStreamException, MarkUnsupportedException,
            UnsupportedEncodingException, IOException
     {
-        final DocumentInputStream dis1 = new DocumentInputStream(d1);
-        final DocumentInputStream dis2 = new DocumentInputStream(d2);
-        try {
+        try (DocumentInputStream dis1 = new DocumentInputStream(d1); DocumentInputStream dis2 = new DocumentInputStream(d2)) {
             if (PropertySet.isPropertySetStream(dis1) &&
-                PropertySet.isPropertySetStream(dis2)) {
+                    PropertySet.isPropertySetStream(dis2)) {
                 final PropertySet ps1 = PropertySetFactory.create(dis1);
                 final PropertySet ps2 = PropertySetFactory.create(dis2);
                 if (!ps1.equals(ps2)) {
@@ -265,9 +261,6 @@ public class CopyCompare
                     }
                 } while (i1 > -1);
             }
-        } finally {
-            dis2.close();
-            dis1.close();
         }
         return true;
     }
@@ -339,11 +332,7 @@ public class CopyCompare
                      * copy it unmodified to the destination POIFS. */
                     copy(poiFs, path, name, stream);
                 }
-            } catch (MarkUnsupportedException ex) {
-                t = ex;
-            } catch (IOException ex) {
-                t = ex;
-            } catch (WritingNotSupportedException ex) {
+            } catch (MarkUnsupportedException | WritingNotSupportedException | IOException ex) {
                 t = ex;
             }
 

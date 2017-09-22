@@ -33,8 +33,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
  */
 public class Borders {
     public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("new sheet");
 
             // Create a row and put some cells in it. Rows are 0 based.
@@ -57,11 +56,9 @@ public class Borders {
             cell.setCellStyle(style);
 
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-            wb.write(fileOut);
-            fileOut.close();
-        } finally {
-            wb.close();
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
         }
     }
 }

@@ -51,97 +51,97 @@ public class CalendarDemo {
 
         Calendar calendar = Calendar.getInstance();
         boolean xlsx = true;
-        for (int i = 0; i < args.length; i++) {
-            if(args[i].charAt(0) == '-'){
-                xlsx = args[i].equals("-xlsx");
+        for (String arg : args) {
+            if (arg.charAt(0) == '-') {
+                xlsx = arg.equals("-xlsx");
             } else {
-              calendar.set(Calendar.YEAR, Integer.parseInt(args[i]));
+                calendar.set(Calendar.YEAR, Integer.parseInt(arg));
             }
         }
         int year = calendar.get(Calendar.YEAR);
 
-        Workbook wb = xlsx ? new XSSFWorkbook() : new HSSFWorkbook();
+        try (Workbook wb = xlsx ? new XSSFWorkbook() : new HSSFWorkbook()) {
 
-        Map<String, CellStyle> styles = createStyles(wb);
+            Map<String, CellStyle> styles = createStyles(wb);
 
-        for (int month = 0; month < 12; month++) {
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, 1);
-            //create a sheet for each month
-            Sheet sheet = wb.createSheet(months[month]);
+            for (int month = 0; month < 12; month++) {
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                //create a sheet for each month
+                Sheet sheet = wb.createSheet(months[month]);
 
-            //turn off gridlines
-            sheet.setDisplayGridlines(false);
-            sheet.setPrintGridlines(false);
-            sheet.setFitToPage(true);
-            sheet.setHorizontallyCenter(true);
-            PrintSetup printSetup = sheet.getPrintSetup();
-            printSetup.setLandscape(true);
+                //turn off gridlines
+                sheet.setDisplayGridlines(false);
+                sheet.setPrintGridlines(false);
+                sheet.setFitToPage(true);
+                sheet.setHorizontallyCenter(true);
+                PrintSetup printSetup = sheet.getPrintSetup();
+                printSetup.setLandscape(true);
 
-            //the following three statements are required only for HSSF
-            sheet.setAutobreaks(true);
-            printSetup.setFitHeight((short)1);
-            printSetup.setFitWidth((short)1);
+                //the following three statements are required only for HSSF
+                sheet.setAutobreaks(true);
+                printSetup.setFitHeight((short) 1);
+                printSetup.setFitWidth((short) 1);
 
-            //the header row: centered text in 48pt font
-            Row headerRow = sheet.createRow(0);
-            headerRow.setHeightInPoints(80);
-            Cell titleCell = headerRow.createCell(0);
-            titleCell.setCellValue(months[month] + " " + year);
-            titleCell.setCellStyle(styles.get("title"));
-            sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$N$1"));
+                //the header row: centered text in 48pt font
+                Row headerRow = sheet.createRow(0);
+                headerRow.setHeightInPoints(80);
+                Cell titleCell = headerRow.createCell(0);
+                titleCell.setCellValue(months[month] + " " + year);
+                titleCell.setCellStyle(styles.get("title"));
+                sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$N$1"));
 
-            //header with month titles
-            Row monthRow = sheet.createRow(1);
-            for (int i = 0; i < days.length; i++) {
-                //set column widths, the width is measured in units of 1/256th of a character width
-                sheet.setColumnWidth(i*2, 5*256); //the column is 5 characters wide
-                sheet.setColumnWidth(i*2 + 1, 13*256); //the column is 13 characters wide
-                sheet.addMergedRegion(new CellRangeAddress(1, 1, i*2, i*2+1));
-                Cell monthCell = monthRow.createCell(i*2);
-                monthCell.setCellValue(days[i]);
-                monthCell.setCellStyle(styles.get("month"));
+                //header with month titles
+                Row monthRow = sheet.createRow(1);
+                for (int i = 0; i < days.length; i++) {
+                    //set column widths, the width is measured in units of 1/256th of a character width
+                    sheet.setColumnWidth(i * 2, 5 * 256); //the column is 5 characters wide
+                    sheet.setColumnWidth(i * 2 + 1, 13 * 256); //the column is 13 characters wide
+                    sheet.addMergedRegion(new CellRangeAddress(1, 1, i * 2, i * 2 + 1));
+                    Cell monthCell = monthRow.createCell(i * 2);
+                    monthCell.setCellValue(days[i]);
+                    monthCell.setCellStyle(styles.get("month"));
+                }
+
+                int cnt = 1, day = 1;
+                int rownum = 2;
+                for (int j = 0; j < 6; j++) {
+                    Row row = sheet.createRow(rownum++);
+                    row.setHeightInPoints(100);
+                    for (int i = 0; i < days.length; i++) {
+                        Cell dayCell_1 = row.createCell(i * 2);
+                        Cell dayCell_2 = row.createCell(i * 2 + 1);
+
+                        int day_of_week = calendar.get(Calendar.DAY_OF_WEEK);
+                        if (cnt >= day_of_week && calendar.get(Calendar.MONTH) == month) {
+                            dayCell_1.setCellValue(day);
+                            calendar.set(Calendar.DAY_OF_MONTH, ++day);
+
+                            if (i == 0 || i == days.length - 1) {
+                                dayCell_1.setCellStyle(styles.get("weekend_left"));
+                                dayCell_2.setCellStyle(styles.get("weekend_right"));
+                            } else {
+                                dayCell_1.setCellStyle(styles.get("workday_left"));
+                                dayCell_2.setCellStyle(styles.get("workday_right"));
+                            }
+                        } else {
+                            dayCell_1.setCellStyle(styles.get("grey_left"));
+                            dayCell_2.setCellStyle(styles.get("grey_right"));
+                        }
+                        cnt++;
+                    }
+                    if (calendar.get(Calendar.MONTH) > month) break;
+                }
             }
 
-            int cnt = 1, day=1;
-            int rownum = 2;
-            for (int j = 0; j < 6; j++) {
-                Row row = sheet.createRow(rownum++);
-                row.setHeightInPoints(100);
-                for (int i = 0; i < days.length; i++) {
-                    Cell dayCell_1 = row.createCell(i*2);
-                    Cell dayCell_2 = row.createCell(i*2 + 1);
+            // Write the output to a file
+            String file = "calendar.xls";
+            if (wb instanceof XSSFWorkbook) file += "x";
 
-                    int day_of_week = calendar.get(Calendar.DAY_OF_WEEK);
-                    if(cnt >= day_of_week && calendar.get(Calendar.MONTH) == month) {
-                        dayCell_1.setCellValue(day);
-                        calendar.set(Calendar.DAY_OF_MONTH, ++day);
-
-                        if(i == 0 || i == days.length-1) {
-                            dayCell_1.setCellStyle(styles.get("weekend_left"));
-                            dayCell_2.setCellStyle(styles.get("weekend_right"));
-                        } else {
-                            dayCell_1.setCellStyle(styles.get("workday_left"));
-                            dayCell_2.setCellStyle(styles.get("workday_right"));
-                        }
-                    } else {
-                        dayCell_1.setCellStyle(styles.get("grey_left"));
-                        dayCell_2.setCellStyle(styles.get("grey_right"));
-                    }
-                    cnt++;
-                }
-                if(calendar.get(Calendar.MONTH) > month) break;
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                wb.write(out);
             }
         }
-
-        // Write the output to a file
-        String file = "calendar.xls";
-        if(wb instanceof XSSFWorkbook) file += "x";
-        FileOutputStream out = new FileOutputStream(file);
-        wb.write(out);
-        out.close();
-        
-        wb.close();
     }
 
     /**

@@ -62,104 +62,91 @@ public class PieChartDemo {
             return;
         }
 
-        BufferedReader modelReader = new BufferedReader(new FileReader(args[1]));
-        XMLSlideShow pptx = null;
-        try {
+        try (BufferedReader modelReader = new BufferedReader(new FileReader(args[1]))) {
             String chartTitle = modelReader.readLine();  // first line is chart title
-    
-            pptx = new XMLSlideShow(new FileInputStream(args[0]));
-            XSLFSlide slide = pptx.getSlides().get(0);
-    
-            // find chart in the slide
-            XSLFChart chart = null;
-            for(POIXMLDocumentPart part : slide.getRelations()){
-                if(part instanceof XSLFChart){
-                    chart = (XSLFChart) part;
-                    break;
+
+            try (XMLSlideShow pptx = new XMLSlideShow(new FileInputStream(args[0]))) {
+                XSLFSlide slide = pptx.getSlides().get(0);
+
+                // find chart in the slide
+                XSLFChart chart = null;
+                for (POIXMLDocumentPart part : slide.getRelations()) {
+                    if (part instanceof XSLFChart) {
+                        chart = (XSLFChart) part;
+                        break;
+                    }
+                }
+
+                if (chart == null) throw new IllegalStateException("chart not found in the template");
+
+                // embedded Excel workbook that holds the chart data
+                POIXMLDocumentPart xlsPart = chart.getRelations().get(0);
+                try (XSSFWorkbook wb = new XSSFWorkbook()) {
+                    XSSFSheet sheet = wb.createSheet();
+
+                    CTChart ctChart = chart.getCTChart();
+                    CTPlotArea plotArea = ctChart.getPlotArea();
+
+                    CTPieChart pieChart = plotArea.getPieChartArray(0);
+                    //Pie Chart Series
+                    CTPieSer ser = pieChart.getSerArray(0);
+
+                    // Series Text
+                    CTSerTx tx = ser.getTx();
+                    tx.getStrRef().getStrCache().getPtArray(0).setV(chartTitle);
+                    sheet.createRow(0).createCell(1).setCellValue(chartTitle);
+                    String titleRef = new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
+                    tx.getStrRef().setF(titleRef);
+
+                    // Category Axis Data
+                    CTAxDataSource cat = ser.getCat();
+                    CTStrData strData = cat.getStrRef().getStrCache();
+
+                    // Values
+                    CTNumDataSource val = ser.getVal();
+                    CTNumData numData = val.getNumRef().getNumCache();
+
+                    strData.setPtArray(null);  // unset old axis text
+                    numData.setPtArray(null);  // unset old values
+
+                    // set model
+                    int idx = 0;
+                    int rownum = 1;
+                    String ln;
+                    while ((ln = modelReader.readLine()) != null) {
+                        String[] vals = ln.split("\\s+");
+                        CTNumVal numVal = numData.addNewPt();
+                        numVal.setIdx(idx);
+                        numVal.setV(vals[1]);
+
+                        CTStrVal sVal = strData.addNewPt();
+                        sVal.setIdx(idx);
+                        sVal.setV(vals[0]);
+
+                        idx++;
+                        XSSFRow row = sheet.createRow(rownum++);
+                        row.createCell(0).setCellValue(vals[0]);
+                        row.createCell(1).setCellValue(Double.valueOf(vals[1]));
+                    }
+                    numData.getPtCount().setVal(idx);
+                    strData.getPtCount().setVal(idx);
+
+                    String numDataRange = new CellRangeAddress(1, rownum - 1, 1, 1).formatAsString(sheet.getSheetName(), true);
+                    val.getNumRef().setF(numDataRange);
+                    String axisDataRange = new CellRangeAddress(1, rownum - 1, 0, 0).formatAsString(sheet.getSheetName(), true);
+                    cat.getStrRef().setF(axisDataRange);
+
+                    // updated the embedded workbook with the data
+                    try (OutputStream xlsOut = xlsPart.getPackagePart().getOutputStream()) {
+                        wb.write(xlsOut);
+                    }
+
+                    // save the result
+                    try (OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx")) {
+                        pptx.write(out);
+                    }
                 }
             }
-    
-            if(chart == null) throw new IllegalStateException("chart not found in the template");
-    
-            // embedded Excel workbook that holds the chart data
-            POIXMLDocumentPart xlsPart = chart.getRelations().get(0);
-            XSSFWorkbook wb = new XSSFWorkbook();
-            try {
-                XSSFSheet sheet = wb.createSheet();
-        
-                CTChart ctChart = chart.getCTChart();
-                CTPlotArea plotArea = ctChart.getPlotArea();
-        
-                CTPieChart pieChart = plotArea.getPieChartArray(0);
-                //Pie Chart Series
-                CTPieSer ser = pieChart.getSerArray(0);
-        
-                // Series Text
-                CTSerTx tx = ser.getTx();
-                tx.getStrRef().getStrCache().getPtArray(0).setV(chartTitle);
-                sheet.createRow(0).createCell(1).setCellValue(chartTitle);
-                String titleRef = new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
-                tx.getStrRef().setF(titleRef);
-        
-                // Category Axis Data
-                CTAxDataSource cat = ser.getCat();
-                CTStrData strData = cat.getStrRef().getStrCache();
-        
-                // Values
-                CTNumDataSource val = ser.getVal();
-                CTNumData numData = val.getNumRef().getNumCache();
-        
-                strData.setPtArray(null);  // unset old axis text
-                numData.setPtArray(null);  // unset old values
-        
-                // set model
-                int idx = 0;
-                int rownum = 1;
-                String ln;
-                while((ln = modelReader.readLine()) != null){
-                    String[] vals = ln.split("\\s+");
-                    CTNumVal numVal = numData.addNewPt();
-                    numVal.setIdx(idx);
-                    numVal.setV(vals[1]);
-        
-                    CTStrVal sVal = strData.addNewPt();
-                    sVal.setIdx(idx);
-                    sVal.setV(vals[0]);
-        
-                    idx++;
-                    XSSFRow row = sheet.createRow(rownum++);
-                    row.createCell(0).setCellValue(vals[0]);
-                    row.createCell(1).setCellValue(Double.valueOf(vals[1]));
-                }
-                numData.getPtCount().setVal(idx);
-                strData.getPtCount().setVal(idx);
-        
-                String numDataRange = new CellRangeAddress(1, rownum-1, 1, 1).formatAsString(sheet.getSheetName(), true);
-                val.getNumRef().setF(numDataRange);
-                String axisDataRange = new CellRangeAddress(1, rownum-1, 0, 0).formatAsString(sheet.getSheetName(), true);
-                cat.getStrRef().setF(axisDataRange);
-        
-                // updated the embedded workbook with the data
-                OutputStream xlsOut = xlsPart.getPackagePart().getOutputStream();
-                try {
-                    wb.write(xlsOut);
-                } finally {
-                    xlsOut.close();
-                }
-        
-                // save the result
-                OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx");
-                try {
-                    pptx.write(out);
-                } finally {
-                    out.close();
-                }
-            } finally {
-                wb.close();
-            }
-        } finally {
-            if (pptx != null) pptx.close();
-            modelReader.close();
         }
     }
 }

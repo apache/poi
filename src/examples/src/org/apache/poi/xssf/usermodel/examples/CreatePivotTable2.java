@@ -38,32 +38,32 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class CreatePivotTable2 {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, InvalidFormatException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
 
-        //Create some data to build the pivot table on
-        setCellData(sheet);
+            //Create some data to build the pivot table on
+            setCellData(sheet);
 
-        AreaReference source = new AreaReference("A1:E7", SpreadsheetVersion.EXCEL2007);
-        CellReference position = new CellReference("H1");
-        // Create a pivot table on this sheet, with H1 as the top-left cell..
-        // The pivot table's data source is on the same sheet in A1:E7
-        XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
-        //Configure the pivot table
-        //Use first column as row label
-        pivotTable.addRowLabel(0);
-        //Sum up the second column with column title and data format
-        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1, "Values", "#,##0.00");
-        //Use third column (month) as columns (side by side)
-        pivotTable.addColLabel(3, "DD.MM.YYYY");
+            AreaReference source = new AreaReference("A1:E7", SpreadsheetVersion.EXCEL2007);
+            CellReference position = new CellReference("H1");
+            // Create a pivot table on this sheet, with H1 as the top-left cell..
+            // The pivot table's data source is on the same sheet in A1:E7
+            XSSFPivotTable pivotTable = sheet.createPivotTable(source, position);
+            //Configure the pivot table
+            //Use first column as row label
+            pivotTable.addRowLabel(0);
+            //Sum up the second column with column title and data format
+            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1, "Values", "#,##0.00");
+            //Use third column (month) as columns (side by side)
+            pivotTable.addColLabel(3, "DD.MM.YYYY");
 
-        //Add filter on forth column
-        pivotTable.addReportFilter(4);
+            //Add filter on forth column
+            pivotTable.addReportFilter(4);
 
-        FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable2.xlsx");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+            try (FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable2.xlsx")) {
+                wb.write(fileOut);
+            }
+        }
     }
 
     public static void setCellData(XSSFSheet sheet){

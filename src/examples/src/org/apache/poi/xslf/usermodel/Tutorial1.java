@@ -29,25 +29,24 @@ import java.io.IOException;
 public class Tutorial1 {
 
     public static void main(String[] args) throws IOException{
-        XMLSlideShow ppt = new XMLSlideShow();
-
-        try {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
             // XSLFSlide#createSlide() with no arguments creates a blank slide
-            /*XSLFSlide blankSlide =*/ ppt.createSlide();
-    
-            
+            /*XSLFSlide blankSlide =*/
+            ppt.createSlide();
+
+
             XSLFSlideMaster master = ppt.getSlideMasters().get(0);
-    
+
             XSLFSlideLayout layout1 = master.getLayout(SlideLayout.TITLE);
-            XSLFSlide slide1 = ppt.createSlide(layout1) ;
+            XSLFSlide slide1 = ppt.createSlide(layout1);
             XSLFTextShape[] ph1 = slide1.getPlaceholders();
             XSLFTextShape titlePlaceholder1 = ph1[0];
             titlePlaceholder1.setText("This is a title");
             XSLFTextShape subtitlePlaceholder1 = ph1[1];
             subtitlePlaceholder1.setText("this is a subtitle");
-    
+
             XSLFSlideLayout layout2 = master.getLayout(SlideLayout.TITLE_AND_CONTENT);
-            XSLFSlide slide2 = ppt.createSlide(layout2) ;
+            XSLFSlide slide2 = ppt.createSlide(layout2);
             XSLFTextShape[] ph2 = slide2.getPlaceholders();
             XSLFTextShape titlePlaceholder2 = ph2[0];
             titlePlaceholder2.setText("This is a title");
@@ -63,12 +62,10 @@ public class Tutorial1 {
             XSLFTextParagraph p3 = bodyPlaceholder.addNewTextParagraph();
             p3.setIndentLevel(2);
             p3.addNewTextRun().setText("Level3 text");
-    
-            FileOutputStream out = new FileOutputStream("slides.pptx");
-            ppt.write(out);
-            out.close();
-        } finally {
-            ppt.close();
+
+            try (FileOutputStream out = new FileOutputStream("slides.pptx")) {
+                ppt.write(out);
+            }
         }
     }
 }

@@ -36,12 +36,7 @@ import org.apache.poi.ss.usermodel.CellType;
  */
 public class ReadWriteWorkbook {
     public static void main(String[] args) throws IOException {
-        FileInputStream fileIn = null;
-        FileOutputStream fileOut = null;
-
-        try
-        {
-            fileIn = new FileInputStream("workbook.xls");
+        try (FileInputStream fileIn = new FileInputStream("workbook.xls")) {
             POIFSFileSystem fs = new POIFSFileSystem(fileIn);
             HSSFWorkbook wb = new HSSFWorkbook(fs);
             HSSFSheet sheet = wb.getSheetAt(0);
@@ -55,13 +50,9 @@ public class ReadWriteWorkbook {
             cell.setCellValue("a test");
 
             // Write the output to a file
-            fileOut = new FileOutputStream("workbookout.xls");
-            wb.write(fileOut);
-        } finally {
-            if (fileOut != null)
-                fileOut.close();
-            if (fileIn != null)
-                fileIn.close();
+            try (FileOutputStream fileOut = new FileOutputStream("workbookout.xls")) {
+                wb.write(fileOut);
+            }
         }
     }
 }

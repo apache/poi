@@ -69,7 +69,7 @@ public class OOXMLPasswordsTry implements Closeable {
         
         // Try each password in turn, reporting progress
         String valid = null;
-        String password = null;
+        String password;
         while ((password = r.readLine()) != null) {
             if (isValid(password)) {
                 valid = password;

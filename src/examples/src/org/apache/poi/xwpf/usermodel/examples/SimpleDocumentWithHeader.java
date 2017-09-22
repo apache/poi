@@ -35,42 +35,36 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
  */
 public class SimpleDocumentWithHeader {
 
-	private static XWPFParagraph[] pars;
+	public static void main(String[] args) throws IOException {
+		try (XWPFDocument doc = new XWPFDocument()) {
 
-	public static void main(String[] args) {
-		XWPFDocument doc = new XWPFDocument();
+			XWPFParagraph p = doc.createParagraph();
 
-		XWPFParagraph p = doc.createParagraph();
+			XWPFRun r = p.createRun();
+			r.setText("Some Text");
+			r.setBold(true);
+			r = p.createRun();
+			r.setText("Goodbye");
 
-		XWPFRun r = p.createRun();
-		r.setText("Some Text");
-		r.setBold(true);
-		r = p.createRun();
-		r.setText("Goodbye");
+			CTP ctP = CTP.Factory.newInstance();
+			CTText t = ctP.addNewR().addNewT();
+			t.setStringValue("header");
+			XWPFParagraph[] pars = new XWPFParagraph[1];
+			p = new XWPFParagraph(ctP, doc);
+			pars[0] = p;
 
-		CTP ctP = CTP.Factory.newInstance();
-		CTText t = ctP.addNewR().addNewT();
-		t.setStringValue("header");
-		pars = new XWPFParagraph[1];
-		p = new XWPFParagraph(ctP, doc);
-		pars[0] = p;
+			XWPFHeaderFooterPolicy hfPolicy = doc.createHeaderFooterPolicy();
+			hfPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT, pars);
 
-		XWPFHeaderFooterPolicy hfPolicy = doc.createHeaderFooterPolicy();
-		hfPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT, pars);
-		
-		ctP = CTP.Factory.newInstance();
-		t = ctP.addNewR().addNewT();
-		t.setStringValue("My Footer");
-		pars[0] = new XWPFParagraph(ctP, doc);
-		hfPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT, pars);
-		
-		try {
-			OutputStream os = new FileOutputStream(new File("header.docx"));
-			doc.write(os);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ctP = CTP.Factory.newInstance();
+			t = ctP.addNewR().addNewT();
+			t.setStringValue("My Footer");
+			pars[0] = new XWPFParagraph(ctP, doc);
+			hfPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT, pars);
+
+			try (OutputStream os = new FileOutputStream(new File("header.docx"))) {
+				doc.write(os);
+			}
 		}
-		
 	}
 }

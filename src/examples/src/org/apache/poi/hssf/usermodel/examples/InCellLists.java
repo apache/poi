@@ -67,8 +67,7 @@ public class InCellLists {
      *                       the Excel spreadsheet file this code will create.
      */
     public void demonstrateMethodCalls(String outputFilename) throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             HSSFSheet sheet = workbook.createSheet("In Cell Lists");
             HSSFRow row = sheet.createRow(0);
 
@@ -89,7 +88,7 @@ public class InCellLists {
             this.listInCell(workbook, listItems, cell);
             // The row height and cell width are set here to ensure that the
             // list may be seen.
-            row.setHeight((short)1100);
+            row.setHeight((short) 1100);
             sheet.setColumnWidth(0, 9500);
 
             // Create a cell at A3 and insert a numbered list into that cell.
@@ -100,7 +99,7 @@ public class InCellLists {
             listItems.add("List Item Five.");
             listItems.add("List Item Six.");
             this.numberedListInCell(workbook, listItems, cell, 1, 2);
-            row.setHeight((short)1550);
+            row.setHeight((short) 1550);
 
             // Create a cell at A4 and insert a numbered list into that cell.
             // Note that a couple of items have been added to the listItems
@@ -112,7 +111,7 @@ public class InCellLists {
             listItems.add("List Item Nine.");
             listItems.add("List Item Ten.");
             this.bulletedListInCell(workbook, listItems, cell);
-            row.setHeight((short)2550);
+            row.setHeight((short) 2550);
 
             // Insert a plain, multi-level list into cell A5. Note that
             // the major difference here is that the list items are passed as
@@ -143,7 +142,7 @@ public class InCellLists {
             listItems.add("ML List Item Four - Sub Item Three.");
             multiLevelListItems.add(new MultiLevelListItem("List Item Four.", listItems));
             this.multiLevelListInCell(workbook, multiLevelListItems, cell);
-            row.setHeight((short)2800);
+            row.setHeight((short) 2800);
 
             // Insert a numbered multi-level list into cell A6. Note that the
             // same ArrayList as constructed for the above plain multi-level
@@ -151,8 +150,8 @@ public class InCellLists {
             row = sheet.createRow(5);
             cell = row.createCell(0);
             this.multiLevelNumberedListInCell(workbook, multiLevelListItems,
-                                              cell, 1, 1, 1, 2);
-            row.setHeight((short)2800);
+                    cell, 1, 1, 1, 2);
+            row.setHeight((short) 2800);
 
             // Insert a numbered multi-level list into cell A7. Note that the
             // same ArrayList as constructed for the plain multi-level list
@@ -160,30 +159,17 @@ public class InCellLists {
             row = sheet.createRow(6);
             cell = row.createCell(0);
             this.multiLevelBulletedListInCell(workbook, multiLevelListItems, cell);
-            row.setHeight((short)2800);
+            row.setHeight((short) 2800);
 
             // Save the completed workbook
-            FileOutputStream fos = new FileOutputStream(new File(outputFilename));
-            try {
+            try (FileOutputStream fos = new FileOutputStream(new File(outputFilename))) {
                 workbook.write(fos);
-            } finally {
-                fos.close();
             }
-        }
-        catch(FileNotFoundException fnfEx) {
-            System.out.println("Caught a: " + fnfEx.getClass().getName());
-            System.out.println("Message: " + fnfEx.getMessage());
-            System.out.println("Stacktrace follows...........");
-            fnfEx.printStackTrace(System.out);
-        }
-        catch(IOException ioEx) {
+        } catch (IOException ioEx) {
             System.out.println("Caught a: " + ioEx.getClass().getName());
             System.out.println("Message: " + ioEx.getMessage());
             System.out.println("Stacktrace follows...........");
             ioEx.printStackTrace(System.out);
-        }
-        finally {
-            workbook.close();
         }
     }
 

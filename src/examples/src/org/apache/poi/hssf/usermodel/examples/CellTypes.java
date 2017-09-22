@@ -28,8 +28,7 @@ import org.apache.poi.ss.usermodel.CellType;
 
 public class CellTypes {
     public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("new sheet");
             HSSFRow row = sheet.createRow(2);
             row.createCell(0).setCellValue(1.1);
@@ -37,13 +36,11 @@ public class CellTypes {
             row.createCell(2).setCellValue("a string");
             row.createCell(3).setCellValue(true);
             row.createCell(4).setCellType(CellType.ERROR);
-    
+
             // Write the output to a file
-            FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-            wb.write(fileOut);
-            fileOut.close();
-        } finally {
-            wb.close();
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
         }
     }
 }

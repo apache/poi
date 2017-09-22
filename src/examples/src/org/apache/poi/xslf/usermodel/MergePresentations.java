@@ -28,26 +28,22 @@ import java.io.FileOutputStream;
 public final class MergePresentations {
 
     public static void main(String args[]) throws Exception {
-        XMLSlideShow ppt = new XMLSlideShow();
-
-        try {
-            for (String arg : args){
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            for (String arg : args) {
                 FileInputStream is = new FileInputStream(arg);
                 XMLSlideShow src = new XMLSlideShow(is);
                 is.close();
-    
-                for(XSLFSlide srcSlide : src.getSlides()){
+
+                for (XSLFSlide srcSlide : src.getSlides()) {
                     ppt.createSlide().importContent(srcSlide);
                 }
-                
+
                 src.close();
             }
-    
-            FileOutputStream out = new FileOutputStream("merged.pptx");
-            ppt.write(out);
-            out.close();
-        } finally {
-            ppt.close();
+
+            try (FileOutputStream out = new FileOutputStream("merged.pptx")) {
+                ppt.write(out);
+            }
         }
     }
 }
