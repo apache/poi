@@ -47,7 +47,7 @@ public final class IOUtils {
      * the hard-coded maximum record lengths if they are willing to accept the risk
      * of an OutOfMemoryException.
      *
-     * @param maxOverride
+     * @param maxOverride The number of bytes that should be possible to be allocated in one step.
      * @since 4.0.0
      */
     public static void setByteArrayMaxOverride(int maxOverride) {
