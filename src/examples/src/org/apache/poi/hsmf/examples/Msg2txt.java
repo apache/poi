@@ -157,12 +157,12 @@ public class Msg2txt {
 		if(args.length <= 0) {
 			System.err.println("No files names provided");
 		} else {
-			for(int i = 0; i < args.length; i++) {
+			for (String arg : args) {
 				try {
-					Msg2txt processor = new Msg2txt(args[i]);
+					Msg2txt processor = new Msg2txt(arg);
 					processor.processMessage();
 				} catch (IOException e) {
-					System.err.println("Could not process "+args[i]+": "+e);
+					System.err.println("Could not process " + arg + ": " + e);
 				}
 			}
 		}

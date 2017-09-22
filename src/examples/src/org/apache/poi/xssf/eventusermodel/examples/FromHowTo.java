@@ -42,8 +42,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class FromHowTo {
 	public void processFirstSheet(String filename) throws Exception {
-		OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ);
-		try {
+		try (OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ)) {
 			XSSFReader r = new XSSFReader(pkg);
 			SharedStringsTable sst = r.getSharedStringsTable();
 
@@ -54,14 +53,11 @@ public class FromHowTo {
 			InputSource sheetSource = new InputSource(sheet2);
 			parser.parse(sheetSource);
 			sheet2.close();
-		} finally {
-			pkg.close();
 		}
 	}
 
 	public void processAllSheets(String filename) throws Exception {
-		OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ);
-		try {
+		try (OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ)) {
 			XSSFReader r = new XSSFReader(pkg);
 			SharedStringsTable sst = r.getSharedStringsTable();
 
@@ -76,8 +72,6 @@ public class FromHowTo {
 				sheet.close();
 				System.out.println("");
 			}
-		} finally {
-			pkg.close();
 		}
 	}
 

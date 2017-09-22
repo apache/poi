@@ -32,51 +32,51 @@ public class OfficeDrawingWithGraphics {
     public static void main( String[] args ) throws IOException {
         // Create a workbook with one sheet and size the first three somewhat
         // larger so we can fit the chemical structure diagram in.
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet( "my drawing" );
-        sheet.setColumnWidth(1, 256 * 27);
-        HSSFRow row1 = sheet.createRow(0);
-        row1.setHeightInPoints(10 * 15f);
-        HSSFRow row2 = sheet.createRow(1);
-        row2.setHeightInPoints(5 * 15f);
-        HSSFRow row3 = sheet.createRow(2);
-        row3.setHeightInPoints(10 * 15f);
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("my drawing");
+            sheet.setColumnWidth(1, 256 * 27);
+            HSSFRow row1 = sheet.createRow(0);
+            row1.setHeightInPoints(10 * 15f);
+            HSSFRow row2 = sheet.createRow(1);
+            row2.setHeightInPoints(5 * 15f);
+            HSSFRow row3 = sheet.createRow(2);
+            row3.setHeightInPoints(10 * 15f);
 
-        // Add some cells so we can test that the anchoring works when we
-        // sort them.
-        row1.createCell(0).setCellValue("C");
-        row2.createCell(0).setCellValue("A");
-        row3.createCell(0).setCellValue("B");
+            // Add some cells so we can test that the anchoring works when we
+            // sort them.
+            row1.createCell(0).setCellValue("C");
+            row2.createCell(0).setCellValue("A");
+            row3.createCell(0).setCellValue("B");
 
-        // Create the top level drawing patriarch.
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+            // Create the top level drawing patriarch.
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFClientAnchor a;
-        HSSFShapeGroup group;
-        EscherGraphics g;
-        EscherGraphics2d g2d;
-        // Anchor entirely within one cell.
-        a = new HSSFClientAnchor( 0, 0, 1023, 255, (short) 1, 0, (short) 1, 0 );
-        group = patriarch.createGroup( a );
-        group.setCoordinates( 0, 0, 320, 276 );
-        float verticalPointsPerPixel = a.getAnchorHeightInPoints(sheet) / Math.abs(group.getY2() - group.getY1());
-        g = new EscherGraphics( group, wb, Color.black, verticalPointsPerPixel );
-        g2d = new EscherGraphics2d( g );
-        drawStar( g2d );
+            HSSFClientAnchor a;
+            HSSFShapeGroup group;
+            EscherGraphics g;
+            EscherGraphics2d g2d;
+            // Anchor entirely within one cell.
+            a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 1, 0, (short) 1, 0);
+            group = patriarch.createGroup(a);
+            group.setCoordinates(0, 0, 320, 276);
+            float verticalPointsPerPixel = a.getAnchorHeightInPoints(sheet) / Math.abs(group.getY2() - group.getY1());
+            g = new EscherGraphics(group, wb, Color.black, verticalPointsPerPixel);
+            g2d = new EscherGraphics2d(g);
+            drawStar(g2d);
 
-        a = new HSSFClientAnchor( 0, 0, 1023, 255, (short) 1, 1, (short) 1, 1 );
-        group = patriarch.createGroup( a );
-        group.setCoordinates( 0, 0, 640, 276 );
-        verticalPointsPerPixel = a.getAnchorHeightInPoints(sheet) / Math.abs(group.getY2() - group.getY1());
+            a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 1, 1, (short) 1, 1);
+            group = patriarch.createGroup(a);
+            group.setCoordinates(0, 0, 640, 276);
+            verticalPointsPerPixel = a.getAnchorHeightInPoints(sheet) / Math.abs(group.getY2() - group.getY1());
 //        verticalPixelsPerPoint = (float)Math.abs(group.getY2() - group.getY1()) / a.getAnchorHeightInPoints(sheet);
-        g = new EscherGraphics( group, wb, Color.black, verticalPointsPerPixel );
-        g2d = new EscherGraphics2d( g );
-        drawStar( g2d );
+            g = new EscherGraphics(group, wb, Color.black, verticalPointsPerPixel);
+            g2d = new EscherGraphics2d(g);
+            drawStar(g2d);
 
-        FileOutputStream out = new FileOutputStream("workbook.xls");
-        wb.write(out);
-        out.close();
-
+            try (FileOutputStream out = new FileOutputStream("workbook.xls")) {
+                wb.write(out);
+            }
+        }
     }
 
     private static void drawStar( EscherGraphics2d g2d )

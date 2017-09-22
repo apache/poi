@@ -34,32 +34,32 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class FillsAndColors {
     public static void main(String[] args) throws IOException {
-        Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
-        Sheet sheet = wb.createSheet("new sheet");
+        try (Workbook wb = new XSSFWorkbook()) { //or new HSSFWorkbook();
+            Sheet sheet = wb.createSheet("new sheet");
 
-        // Create a row and put some cells in it. Rows are 0 based.
-        Row row = sheet.createRow(1);
+            // Create a row and put some cells in it. Rows are 0 based.
+            Row row = sheet.createRow(1);
 
-        // Aqua background
-        CellStyle style = wb.createCellStyle();
-        style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
-        style.setFillPattern(FillPatternType.BIG_SPOTS);
-        Cell cell = row.createCell(1);
-        cell.setCellValue(new XSSFRichTextString("X"));
-        cell.setCellStyle(style);
+            // Aqua background
+            CellStyle style = wb.createCellStyle();
+            style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
+            style.setFillPattern(FillPatternType.BIG_SPOTS);
+            Cell cell = row.createCell(1);
+            cell.setCellValue(new XSSFRichTextString("X"));
+            cell.setCellStyle(style);
 
-        // Orange "foreground", foreground being the fill foreground not the font color.
-        style = wb.createCellStyle();
-        style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        cell = row.createCell(2);
-        cell.setCellValue(new XSSFRichTextString("X"));
-        cell.setCellStyle(style);
+            // Orange "foreground", foreground being the fill foreground not the font color.
+            style = wb.createCellStyle();
+            style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
+            style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            cell = row.createCell(2);
+            cell.setCellValue(new XSSFRichTextString("X"));
+            cell.setCellStyle(style);
 
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("fill_colors.xlsx");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+            // Write the output to a file
+            try (FileOutputStream fileOut = new FileOutputStream("fill_colors.xlsx")) {
+                wb.write(fileOut);
+            }
+        }
     }
 }

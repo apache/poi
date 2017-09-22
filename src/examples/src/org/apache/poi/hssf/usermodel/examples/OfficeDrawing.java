@@ -30,24 +30,25 @@ import java.io.*;
 public class OfficeDrawing {
     public static void main(String[] args) throws IOException {
         // Create the workbook and sheets.
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("new sheet");
-        HSSFSheet sheet2 = wb.createSheet("second sheet");
-        HSSFSheet sheet3 = wb.createSheet("third sheet");
-        HSSFSheet sheet4 = wb.createSheet("fourth sheet");
-        HSSFSheet sheet5 = wb.createSheet("fifth sheet");
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet1 = wb.createSheet("new sheet");
+            HSSFSheet sheet2 = wb.createSheet("second sheet");
+            HSSFSheet sheet3 = wb.createSheet("third sheet");
+            HSSFSheet sheet4 = wb.createSheet("fourth sheet");
+            HSSFSheet sheet5 = wb.createSheet("fifth sheet");
 
-        // Draw stuff in them
-        drawSheet1( sheet1 );
-        drawSheet2( sheet2 );
-        drawSheet3( sheet3 );
-        drawSheet4( sheet4, wb );
-        drawSheet5( sheet5, wb );
+            // Draw stuff in them
+            drawSheet1(sheet1);
+            drawSheet2(sheet2);
+            drawSheet3(sheet3);
+            drawSheet4(sheet4, wb);
+            drawSheet5(sheet5, wb);
 
-        // Write the file out.
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
+            // Write the file out.
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 
     private static void drawSheet1( HSSFSheet sheet1 )

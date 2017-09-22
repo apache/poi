@@ -187,11 +187,7 @@ public class WriteAuthorAndTitle
                      * copy it unmodified to the destination POIFS. */
                     copy(poiFs, event.getPath(), event.getName(), stream);
                 }
-            } catch (MarkUnsupportedException ex) {
-                t = ex;
-            } catch (IOException ex) {
-                t = ex;
-            } catch (WritingNotSupportedException ex) {
+            } catch (MarkUnsupportedException | WritingNotSupportedException | IOException ex) {
                 t = ex;
             }
 
