@@ -58,10 +58,10 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true,
-                disabled: true // try to use the Gradle-based run so we can get rid of the Maven buildsystem
+        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true,
+                disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
