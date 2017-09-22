@@ -554,15 +554,15 @@ public final class ZipPackage extends OPCPackage {
 				}
 			}
 
+            // Save content type part.
+            LOG.log(POILogger.DEBUG,"Save content types part");
+            this.contentTypeManager.save(zos);
+
 			// Save package relationships part.
 			LOG.log(POILogger.DEBUG,"Save package relationships");
 			ZipPartMarshaller.marshallRelationshipPart(this.getRelationships(),
 					PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_PART_NAME,
 					zos);
-
-			// Save content type part.
-			LOG.log(POILogger.DEBUG,"Save content types part");
-			this.contentTypeManager.save(zos);
 
 			// Save parts.
 			for (PackagePart part : getParts()) {
