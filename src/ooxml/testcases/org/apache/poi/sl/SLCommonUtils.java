@@ -31,13 +31,10 @@ public class SLCommonUtils {
     
     /** a generic way to open a sample slideshow document **/
     public static SlideShow<?,?> openSampleSlideshow(String sampleName) throws IOException {
-        InputStream is = _slTests.openResourceAsStream(sampleName);
-        try {
+        try (InputStream is = _slTests.openResourceAsStream(sampleName)) {
             return SlideShowFactory.create(is);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            is.close();
         }
     }
 

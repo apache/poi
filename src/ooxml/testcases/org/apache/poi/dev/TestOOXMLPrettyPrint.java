@@ -22,14 +22,35 @@ package org.apache.poi.dev;
 
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
+import java.io.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestOOXMLPrettyPrint {
+
+    private static PrintStream SYSTEM_OUT;
+
+    @BeforeClass
+    public static void setUp() throws UnsupportedEncodingException {
+        SYSTEM_OUT = System.out;
+        System.setOut(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+
+            }
+        }, false, "UTF-8"));
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        System.setOut(SYSTEM_OUT);
+    }
+
     @Test
     public void testMain() throws Exception {
         File file = XSSFTestDataSamples.getSampleFile("Formatting.xlsx");

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -28,6 +29,10 @@ import org.apache.poi.util.LittleEndian;
  * with all sorts of special cases.  I'm hopeful I've got them all.
  */
 public final class EscherArrayProperty extends EscherComplexProperty implements Iterable<byte[]> {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     /**
      * The size of the header that goes at the
      *  start of the array, before the data
@@ -69,7 +74,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     public void setNumberOfElementsInArray(int numberOfElements) {
         int expectedArraySize = numberOfElements * getActualSizeOfElements(getSizeOfElements()) + FIXED_SIZE;
         if (expectedArraySize != getComplexData().length) {
-            byte[] newArray = new byte[expectedArraySize];
+            byte[] newArray = IOUtils.safelyAllocate(expectedArraySize, MAX_RECORD_LENGTH);
             System.arraycopy(getComplexData(), 0, newArray, 0, getComplexData().length);
             setComplexData(newArray);
         }
@@ -83,7 +88,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     public void setNumberOfElementsInMemory(int numberOfElements) {
         int expectedArraySize = numberOfElements * getActualSizeOfElements(getSizeOfElements()) + FIXED_SIZE;
         if (expectedArraySize != getComplexData().length) {
-            byte[] newArray = new byte[expectedArraySize];
+            byte[] newArray = IOUtils.safelyAllocate(expectedArraySize, MAX_RECORD_LENGTH);
             System.arraycopy(getComplexData(), 0, newArray, 0, expectedArraySize);
             setComplexData(newArray);
         }
@@ -100,7 +105,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         int expectedArraySize = getNumberOfElementsInArray() * getActualSizeOfElements(getSizeOfElements()) + FIXED_SIZE;
         if (expectedArraySize != getComplexData().length) {
             // Keep just the first 6 bytes.  The rest is no good to us anyway.
-            byte[] newArray = new byte[expectedArraySize];
+            byte[] newArray = IOUtils.safelyAllocate(expectedArraySize, MAX_RECORD_LENGTH);
             System.arraycopy( getComplexData(), 0, newArray, 0, 6 );
             setComplexData(newArray);
         }
@@ -108,7 +113,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     public byte[] getElement(int index) {
         int actualSize = getActualSizeOfElements(getSizeOfElements());
-        byte[] result = new byte[actualSize];
+        byte[] result = IOUtils.safelyAllocate(actualSize, MAX_RECORD_LENGTH);
         System.arraycopy(getComplexData(), FIXED_SIZE + index * actualSize, result, 0, result.length );
         return result;
     }

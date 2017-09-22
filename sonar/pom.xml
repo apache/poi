@@ -3,7 +3,7 @@
 	<groupId>org.apache.poi</groupId>
 	<artifactId>poi-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>4.0-beta1-SNAPSHOT</version>
+	<version>4.0.0-SNAPSHOT</version>
 	<name>Apache POI - the Java API for Microsoft Documents</name>
 	<description>Maven build of Apache POI for Sonar checks</description>
 	<url>http://poi.apache.org/</url>
@@ -156,7 +156,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>512m</maven.compiler.maxmem>
-                <argLine>-Xmx768m -XX:MaxPermSize=128m</argLine>
+                <argLine>-Xmx768m</argLine>
 			</properties>
 		</profile>
 		
@@ -170,7 +170,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>768m</maven.compiler.maxmem>
-                <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                <argLine>-Xmx1024m</argLine>
 			</properties>
 		</profile>
 

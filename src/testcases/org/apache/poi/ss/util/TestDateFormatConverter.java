@@ -110,7 +110,7 @@ public final class TestDateFormatConverter extends TestCase {
                 workbook.write(outputStream);
             }
 
-            System.out.println("Open " + outputFile.getAbsolutePath() + " in Excel");
+            //System.out.println("Open " + outputFile.getAbsolutePath() + " in Excel");
         }
     }
 

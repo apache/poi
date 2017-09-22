@@ -63,6 +63,9 @@ public class LittleEndian implements LittleEndianConsts
      * @param size
      *            Number of bytes to copy.
      * @return The byteArray value
+     *
+     * @see #getByteArray(byte[], int, int, int) if size is not a constant
+     *
      * @throws IndexOutOfBoundsException
      *             - if copying would cause access of data outside array bounds.
      */
@@ -73,6 +76,31 @@ public class LittleEndian implements LittleEndianConsts
 
         return copy;
     }
+
+    /**
+     * Copy a portion of a byte array
+     *
+     * @param data
+     *            the original byte array
+     * @param offset
+     *            Where to start copying from.
+     * @param size
+     *            Number of bytes to copy.
+     * @param maxSize
+     *            Size must be <= maxSize or an exception is thrown.
+     *            Use this to avoid potential OOMs on corrupt data.
+     * @return The byteArray value
+     * @throws IndexOutOfBoundsException
+     *             - if copying would cause access of data outside array bounds.
+     */
+    public static byte[] getByteArray( byte[] data, int offset, int size, int maxSize)
+    {
+        byte[] copy = IOUtils.safelyAllocate(size, maxSize);
+        System.arraycopy( data, offset, copy, 0, size );
+
+        return copy;
+    }
+
 
     /**
      * get a double value from a byte array, reads it in little endian format

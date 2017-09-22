@@ -24,12 +24,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 public final class EscherPictBlip extends EscherBlipRecord {
     private static final POILogger log = POILogFactory.getLogger(EscherPictBlip.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short RECORD_ID_EMF = (short) 0xF018 + 2;
     public static final short RECORD_ID_WMF = (short) 0xF018 + 3;
@@ -68,7 +71,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
         field_6_fCompression = data[pos]; pos++;
         field_7_fFilter = data[pos]; pos++;
 
-        raw_pictureData = new byte[field_5_cbSave];
+        raw_pictureData = IOUtils.safelyAllocate(field_5_cbSave, MAX_RECORD_LENGTH);
         System.arraycopy( data, pos, raw_pictureData, 0, field_5_cbSave );
 
         // 0 means DEFLATE compression

@@ -57,7 +57,7 @@ public class ReadTitle
         @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
-            SummaryInformation si = null;
+            SummaryInformation si;
             try
             {
                 si = (SummaryInformation)

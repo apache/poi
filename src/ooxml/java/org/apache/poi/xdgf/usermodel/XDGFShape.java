@@ -819,7 +819,7 @@ public class XDGFShape extends XDGFSheet {
      */
     public Path2D.Double getPath() {
         for (GeometrySection geoSection : getGeometrySections()) {
-            if (geoSection.getNoShow() == true)
+            if (geoSection.getNoShow())
                 continue;
 
             return geoSection.getPath(this);
@@ -833,7 +833,7 @@ public class XDGFShape extends XDGFSheet {
      */
     public boolean hasGeometry() {
         for (GeometrySection geoSection : getGeometrySections()) {
-            if (geoSection.getNoShow() == false)
+            if (!geoSection.getNoShow())
                 return true;
         }
         return false;

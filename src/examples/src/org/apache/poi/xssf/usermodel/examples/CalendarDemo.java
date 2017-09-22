@@ -55,80 +55,80 @@ public class CalendarDemo {
 
         int year = calendar.get(Calendar.YEAR);
 
-        XSSFWorkbook wb = new XSSFWorkbook();
-        Map<String, XSSFCellStyle> styles = createStyles(wb);
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            Map<String, XSSFCellStyle> styles = createStyles(wb);
 
-        for (int month = 0; month < 12; month++) {
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, 1);
-            //create a sheet for each month
-            XSSFSheet sheet = wb.createSheet(months[month]);
+            for (int month = 0; month < 12; month++) {
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                //create a sheet for each month
+                XSSFSheet sheet = wb.createSheet(months[month]);
 
-            //turn off gridlines
-            sheet.setDisplayGridlines(false);
-            sheet.setPrintGridlines(false);
-            XSSFPrintSetup printSetup = sheet.getPrintSetup();
-            printSetup.setOrientation(PrintOrientation.LANDSCAPE);
-            sheet.setFitToPage(true);
-            sheet.setHorizontallyCenter(true);
+                //turn off gridlines
+                sheet.setDisplayGridlines(false);
+                sheet.setPrintGridlines(false);
+                XSSFPrintSetup printSetup = sheet.getPrintSetup();
+                printSetup.setOrientation(PrintOrientation.LANDSCAPE);
+                sheet.setFitToPage(true);
+                sheet.setHorizontallyCenter(true);
 
-            //the header row: centered text in 48pt font
-            XSSFRow headerRow = sheet.createRow(0);
-            headerRow.setHeightInPoints(80);
-            XSSFCell titleCell = headerRow.createCell(0);
-            titleCell.setCellValue(months[month] + " " + year);
-            titleCell.setCellStyle(styles.get("title"));
-            sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$N$1"));
+                //the header row: centered text in 48pt font
+                XSSFRow headerRow = sheet.createRow(0);
+                headerRow.setHeightInPoints(80);
+                XSSFCell titleCell = headerRow.createCell(0);
+                titleCell.setCellValue(months[month] + " " + year);
+                titleCell.setCellStyle(styles.get("title"));
+                sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$N$1"));
 
-            //header with month titles
-            XSSFRow monthRow = sheet.createRow(1);
-            for (int i = 0; i < days.length; i++) {
-                //for compatibility with HSSF we have to set column width in units of 1/256th of a character width
-                sheet.setColumnWidth(i*2, 5*256); //the column is 5 characters wide
-                sheet.setColumnWidth(i*2 + 1, 13*256); //the column is 13 characters wide
-                sheet.addMergedRegion(new CellRangeAddress(1, 1, i*2, i*2+1));
-                XSSFCell monthCell = monthRow.createCell(i*2);
-                monthCell.setCellValue(days[i]);
-                monthCell.setCellStyle(styles.get("month"));
-            }
-
-            int cnt = 1, day=1;
-            int rownum = 2;
-            for (int j = 0; j < 6; j++) {
-                XSSFRow row = sheet.createRow(rownum++);
-                row.setHeightInPoints(100);
+                //header with month titles
+                XSSFRow monthRow = sheet.createRow(1);
                 for (int i = 0; i < days.length; i++) {
-                    XSSFCell dayCell_1 = row.createCell(i*2);
-                    XSSFCell dayCell_2 = row.createCell(i*2 + 1);
-
-                    int day_of_week = calendar.get(Calendar.DAY_OF_WEEK);
-                    if(cnt >= day_of_week && calendar.get(Calendar.MONTH) == month) {
-                        dayCell_1.setCellValue(day);
-                        calendar.set(Calendar.DAY_OF_MONTH, ++day);
-
-                        if(i == 0 || i == days.length-1) {
-                            dayCell_1.setCellStyle(styles.get("weekend_left"));
-                            dayCell_2.setCellStyle(styles.get("weekend_right"));
-                        } else {
-                            dayCell_1.setCellStyle(styles.get("workday_left"));
-                            dayCell_2.setCellStyle(styles.get("workday_right"));
-                        }
-                    } else {
-                        dayCell_1.setCellStyle(styles.get("grey_left"));
-                        dayCell_2.setCellStyle(styles.get("grey_right"));
-                    }
-                    cnt++;
+                    //for compatibility with HSSF we have to set column width in units of 1/256th of a character width
+                    sheet.setColumnWidth(i * 2, 5 * 256); //the column is 5 characters wide
+                    sheet.setColumnWidth(i * 2 + 1, 13 * 256); //the column is 13 characters wide
+                    sheet.addMergedRegion(new CellRangeAddress(1, 1, i * 2, i * 2 + 1));
+                    XSSFCell monthCell = monthRow.createCell(i * 2);
+                    monthCell.setCellValue(days[i]);
+                    monthCell.setCellStyle(styles.get("month"));
                 }
-                if(calendar.get(Calendar.MONTH) > month) break;
-            }
-        }
 
-        // Write the output to a file
-        FileOutputStream out = new FileOutputStream("calendar-"+year+".xlsx");
-        wb.write(out);
-        out.close();
-        
-        wb.close();
+                int cnt = 1, day = 1;
+                int rownum = 2;
+                for (int j = 0; j < 6; j++) {
+                    XSSFRow row = sheet.createRow(rownum++);
+                    row.setHeightInPoints(100);
+                    for (int i = 0; i < days.length; i++) {
+                        XSSFCell dayCell_1 = row.createCell(i * 2);
+                        XSSFCell dayCell_2 = row.createCell(i * 2 + 1);
+
+                        int day_of_week = calendar.get(Calendar.DAY_OF_WEEK);
+                        if (cnt >= day_of_week && calendar.get(Calendar.MONTH) == month) {
+                            dayCell_1.setCellValue(day);
+                            calendar.set(Calendar.DAY_OF_MONTH, ++day);
+
+                            if (i == 0 || i == days.length - 1) {
+                                dayCell_1.setCellStyle(styles.get("weekend_left"));
+                                dayCell_2.setCellStyle(styles.get("weekend_right"));
+                            } else {
+                                dayCell_1.setCellStyle(styles.get("workday_left"));
+                                dayCell_2.setCellStyle(styles.get("workday_right"));
+                            }
+                        } else {
+                            dayCell_1.setCellStyle(styles.get("grey_left"));
+                            dayCell_2.setCellStyle(styles.get("grey_right"));
+                        }
+                        cnt++;
+                    }
+                    if (calendar.get(Calendar.MONTH) > month) break;
+                }
+            }
+
+            // Write the output to a file
+            try (FileOutputStream out = new FileOutputStream("calendar-" + year + ".xlsx")) {
+                wb.write(out);
+            }
+
+        }
     }
 
     /**

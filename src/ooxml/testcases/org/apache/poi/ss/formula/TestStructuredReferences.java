@@ -113,7 +113,7 @@ public class TestStructuredReferences {
     private static void confirm(FormulaEvaluator fe, Cell cell, double expectedResult) {
         fe.clearAllCachedResultValues();
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellTypeEnum() != CellType.NUMERIC) {
+        if (cv.getCellType() != CellType.NUMERIC) {
             fail("expected numeric cell type but got " + cv.formatAsString());
         }
         assertEquals(expectedResult, cv.getNumberValue(), 0.0);
@@ -122,7 +122,7 @@ public class TestStructuredReferences {
     private static void confirm(FormulaEvaluator fe, Cell cell, String expectedResult) {
         fe.clearAllCachedResultValues();
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellTypeEnum() != CellType.STRING) {
+        if (cv.getCellType() != CellType.STRING) {
             fail("expected String cell type but got " + cv.formatAsString());
         }
         assertEquals(expectedResult, cv.getStringValue());

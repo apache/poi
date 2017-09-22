@@ -42,7 +42,7 @@ import org.junit.After;
  * Testing for {@link HSSFEventFactory}
  */
 public final class TestHSSFEventFactory extends TestCase {
-    private static final InputStream openSample(String sampleFileName) {
+    private static InputStream openSample(String sampleFileName) {
         return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
     }
 

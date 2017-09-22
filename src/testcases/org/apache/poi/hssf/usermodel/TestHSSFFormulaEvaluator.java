@@ -35,7 +35,6 @@ import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.Test;
 
 public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
@@ -55,40 +54,8 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		HSSFCell cell = sheet.getRow(8).getCell(0);
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv = fe.evaluate(cell);
-		assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
+		assertEquals(CellType.NUMERIC, cv.getCellType());
 		assertEquals(3.72, cv.getNumberValue(), 0.0);
-		wb.close();
-	}
-
-	/**
-	 * Test for bug due to attempt to convert a cached formula error result to a boolean
-	 */
-    @Test
-	@Override
-	public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() throws IOException {
-
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cellA1 = row.createCell(0);
-		HSSFCell cellB1 = row.createCell(1);
-		cellB1.setCellFormula("A1+1");
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-
-		cellA1.setCellErrorValue(FormulaError.NAME.getCode());
-		fe.evaluateFormulaCellEnum(cellB1);
-
-		cellA1.setCellValue(2.5);
-		fe.notifyUpdateCell(cellA1);
-		try {
-			fe.evaluateInCell(cellB1);
-		} catch (IllegalStateException e) {
-			if (e.getMessage().equals("Cannot get a numeric value from a error formula cell")) {
-				fail("Identified bug 46479a");
-			}
-		}
-		assertEquals(3.5, cellB1.getNumericCellValue(), 0.0);
-		
 		wb.close();
 	}
 
@@ -127,7 +94,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		try {
 			value = hsf.evaluate(cellA1);
 
-	        assertEquals(CellType.NUMERIC, value.getCellTypeEnum());
+	        assertEquals(CellType.NUMERIC, value.getCellType());
 	        assertEquals(5.33, value.getNumberValue(), 0.0);
 	        
 		} catch (RuntimeException e) {
@@ -159,7 +126,6 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 	 */
 	@Test
 	public void testShortCircuitIfEvaluation() throws IOException {
-
 		// Set up a simple IF() formula that has measurable evaluation cost for its operands.
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -183,10 +149,10 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		}
 		assertEquals(3, evalCount);
 		assertEquals(2.0, ((NumberEval)ve).getNumberValue(), 0D);
-		
+
 		wb.close();
 	}
-	
+
 	/**
 	 * Ensures that we can handle NameXPtgs in the formulas
 	 *  we parse.
@@ -199,8 +165,8 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       
       // VLookup on a name in another file
       cell = wb1.getSheetAt(0).getRow(1).getCell(2);
-      assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
-      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultTypeEnum());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(12.30, cell.getNumericCellValue(), 0.0001);
       // WARNING - this is wrong!
       // The file name should be showing, but bug #45970 is fixed
@@ -210,8 +176,8 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       
       // Simple reference to a name in another file
       cell = wb1.getSheetAt(0).getRow(1).getCell(4);
-      assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
-      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultTypeEnum());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
       // TODO Correct this!
       // The file name should be shown too, see bug #56742
@@ -227,24 +193,24 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
                   new HSSFFormulaEvaluator(wb2)
             }
       );
-      eval.evaluateFormulaCellEnum(
+      eval.evaluateFormulaCell(
             wb1.getSheetAt(0).getRow(1).getCell(2)
       );      
-      eval.evaluateFormulaCellEnum(
+      eval.evaluateFormulaCell(
             wb1.getSheetAt(0).getRow(1).getCell(4)
       );      
       
 
       // Re-check VLOOKUP one
       cell = wb1.getSheetAt(0).getRow(1).getCell(2);
-      assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
-      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultTypeEnum());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(12.30, cell.getNumericCellValue(), 0.0001);
       
       // Re-check ref one
       cell = wb1.getSheetAt(0).getRow(1).getCell(4);
-      assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
-      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultTypeEnum());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
       
       
@@ -256,7 +222,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       assertEquals("Cost*[XRefCalcData.xls]MarkupSheet!$B$1", cell.getCellFormula());
       
       // Check it evaluates correctly
-      eval.evaluateFormulaCellEnum(cell);
+      eval.evaluateFormulaCell(cell);
       assertEquals(24.60*1.8, cell.getNumericCellValue(), 0);
       
       
@@ -265,7 +231,9 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
           cell = wb1.getSheetAt(0).getRow(1).createCell(42);
           cell.setCellFormula("[alt.xls]Sheet0!$A$1");
           fail("New workbook not linked, shouldn't be able to add");
-      } catch(Exception e) {}
+      } catch(Exception e) {
+      	// expected here
+	  }
       
       // Link our new workbook
       HSSFWorkbook wb3 = new HSSFWorkbook();
@@ -280,7 +248,9 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       try {
           eval.evaluate(cell);
           fail("No cached value and no link to workbook, shouldn't evaluate");
-      } catch(Exception e) {}
+      } catch(Exception e) {
+		  // expected here
+	  }
       
       // Add a link, check it does
       HSSFFormulaEvaluator.setupEnvironment(
@@ -291,7 +261,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
                     new HSSFFormulaEvaluator(wb3)
               }
       );
-      eval.evaluateFormulaCellEnum(cell);
+      eval.evaluateFormulaCell(cell);
       assertEquals("In another workbook", cell.getStringCellValue());
       
       
@@ -310,13 +280,13 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       // Check the one referring to the previously existing workbook behaves
       cell = wb4.getSheetAt(0).getRow(1).getCell(40);
       assertEquals("Cost*[XRefCalcData.xls]MarkupSheet!$B$1", cell.getCellFormula());
-      eval.evaluateFormulaCellEnum(cell);
+      eval.evaluateFormulaCell(cell);
       assertEquals(24.60*1.8, cell.getNumericCellValue(), 0);
       
       // Now check the newly added reference
       cell = wb4.getSheetAt(0).getRow(1).getCell(42);
       assertEquals("[alt.xls]Sheet0!$A$1", cell.getCellFormula());
-      eval.evaluateFormulaCellEnum(cell);
+      eval.evaluateFormulaCell(cell);
       assertEquals("In another workbook", cell.getStringCellValue());
       
       wb4.close();
@@ -329,5 +299,4 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
     public void testSharedFormulas() throws IOException {
         baseTestSharedFormulas("shared_formulas.xls");
     }
-
 }

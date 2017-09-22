@@ -247,12 +247,9 @@ public final class TestPackage {
         // Save and re-load
         pkg.close();
         File tmp = TempFile.createTempFile("testCreatePackageWithCoreDocument", ".zip");
-        OutputStream fout = new FileOutputStream(tmp);
-        try {
-            fout.write(baos.toByteArray());
-        } finally {
-            fout.close();
-        }
+		try (OutputStream fout = new FileOutputStream(tmp)) {
+			fout.write(baos.toByteArray());
+		}
         pkg = OPCPackage.open(tmp.getPath());
         //tmp.delete();
 
@@ -368,12 +365,9 @@ public final class TestPackage {
 		@SuppressWarnings("resource")
         OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		try {
-    		FileOutputStream fout = new FileOutputStream(targetFile);
-    		try {
-    		    p.save(fout);
-    		} finally {
-    		    fout.close();
-    		}
+			try (FileOutputStream fout = new FileOutputStream(targetFile)) {
+				p.save(fout);
+			}
     
     		// Compare the original and newly saved document
     		assertTrue(targetFile.exists());
@@ -630,34 +624,31 @@ public final class TestPackage {
     @Test
     public void getPartSize() throws IOException, InvalidFormatException {
        String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
-       OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ);
-       try {
-           int checked = 0;
-           for (PackagePart part : pkg.getParts()) {
-              // Can get the size of zip parts
-              if (part.getPartName().getName().equals("/word/document.xml")) {
-                 checked++;
-                 assertEquals(ZipPackagePart.class, part.getClass());
-                 assertEquals(6031L, part.getSize());
-              }
-              if (part.getPartName().getName().equals("/word/fontTable.xml")) {
-                 checked++;
-                 assertEquals(ZipPackagePart.class, part.getClass());
-                 assertEquals(1312L, part.getSize());
-              }
-              
-              // But not from the others
-              if (part.getPartName().getName().equals("/docProps/core.xml")) {
-                 checked++;
-                 assertEquals(PackagePropertiesPart.class, part.getClass());
-                 assertEquals(-1, part.getSize());
-              }
-           }
-           // Ensure we actually found the parts we want to check
-           assertEquals(3, checked);
-       } finally {
-           pkg.close();
-       }
+		try (OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ)) {
+			int checked = 0;
+			for (PackagePart part : pkg.getParts()) {
+				// Can get the size of zip parts
+				if (part.getPartName().getName().equals("/word/document.xml")) {
+					checked++;
+					assertEquals(ZipPackagePart.class, part.getClass());
+					assertEquals(6031L, part.getSize());
+				}
+				if (part.getPartName().getName().equals("/word/fontTable.xml")) {
+					checked++;
+					assertEquals(ZipPackagePart.class, part.getClass());
+					assertEquals(1312L, part.getSize());
+				}
+
+				// But not from the others
+				if (part.getPartName().getName().equals("/docProps/core.xml")) {
+					checked++;
+					assertEquals(PackagePropertiesPart.class, part.getClass());
+					assertEquals(-1, part.getSize());
+				}
+			}
+			// Ensure we actually found the parts we want to check
+			assertEquals(3, checked);
+		}
     }
 
     @Test
@@ -695,11 +686,8 @@ public final class TestPackage {
         
         // OLE2 - Stream
         try {
-			InputStream stream = files.openResourceAsStream("SampleSS.xls");
-			try {
+			try (InputStream stream = files.openResourceAsStream("SampleSS.xls")) {
 				OPCPackage.open(stream);
-			} finally {
-				stream.close();
 			}
             fail("Shouldn't be able to open OLE2");
         } catch (OLE2NotOfficeXmlFileException e) {
@@ -717,11 +705,8 @@ public final class TestPackage {
         
         // Raw XML - Stream
         try {
-			InputStream stream = files.openResourceAsStream("SampleSS.xml");
-			try {
+			try (InputStream stream = files.openResourceAsStream("SampleSS.xml")) {
 				OPCPackage.open(stream);
-			} finally {
-				stream.close();
 			}
             fail("Shouldn't be able to open XML");
         } catch (NotOfficeXmlFileException e) {
@@ -739,11 +724,8 @@ public final class TestPackage {
         
         // ODF / ODS - Stream
         try {
-			InputStream stream = files.openResourceAsStream("SampleSS.ods");
-			try {
+			try (InputStream stream = files.openResourceAsStream("SampleSS.ods")) {
 				OPCPackage.open(stream);
-			} finally {
-				stream.close();
 			}
             fail("Shouldn't be able to open ODS");
         } catch (ODFNotOfficeXmlFileException e) {
@@ -761,11 +743,8 @@ public final class TestPackage {
         
         // Plain Text - Stream
         try {
-			InputStream stream = files.openResourceAsStream("SampleSS.txt");
-			try {
+			try (InputStream stream = files.openResourceAsStream("SampleSS.txt")) {
 				OPCPackage.open(stream);
-			} finally {
-				stream.close();
 			}
             fail("Shouldn't be able to open Plain Text");
         } catch (NotOfficeXmlFileException e) {
@@ -850,12 +829,9 @@ public final class TestPackage {
 			Workbook wb = XSSFTestDataSamples.openSampleWorkbook(file);
 			wb.close();
 
-			POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"));
-			try  {
+			try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"))) {
 				assertNotNull(extractor);
 				extractor.getText();
-			} finally {
-				extractor.close();
 			}
 
 			fail("Should catch an exception because of a ZipBomb");
@@ -901,23 +877,19 @@ public final class TestPackage {
                 // this is a bit strange, as there will be different exceptions thrown
                 // depending if this executed via "ant test" or within eclipse
                 // maybe a difference in JDK ...
-            } catch (InvalidFormatException e) {
-                checkForZipBombException(e);
-            } catch (POIXMLException e) {
+            } catch (InvalidFormatException | POIXMLException e) {
                 checkForZipBombException(e);
             }
-    
-            // check max entry size ouf of bounds
+
+			// check max entry size ouf of bounds
             ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
             ZipSecureFile.setMaxEntrySize(max_size-1);
             try {
                 WorkbookFactory.create(file, null, true).close();
-            } catch (InvalidFormatException e) {
-                checkForZipBombException(e);
-            } catch (POIXMLException e) {
+            } catch (InvalidFormatException | POIXMLException e) {
                 checkForZipBombException(e);
             }
-        } finally {
+		} finally {
             // reset otherwise a lot of ooxml tests will fail
             ZipSecureFile.setMinInflateRatio(0.01d);
             ZipSecureFile.setMaxEntrySize(0xFFFFFFFFL);

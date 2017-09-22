@@ -21,12 +21,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.apache.poi.hdgf.HDGFLZW;
+import org.apache.poi.util.IOUtils;
 
 /**
  * A StreamStore where the data on-disk is compressed,
  *  using the crazy Visio LZW
  */
 public final class CompressedStreamStore extends StreamStore {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	/** The raw, compressed contents */
 	private byte[] compressedContents;
 	/**
@@ -46,7 +51,7 @@ public final class CompressedStreamStore extends StreamStore {
 	protected CompressedStreamStore(byte[] data, int offset, int length) throws IOException {
 		this(decompress(data,offset,length));
 
-		compressedContents = new byte[length];
+		compressedContents = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
 		System.arraycopy(data, offset, compressedContents, 0, length);
 	}
 	/**

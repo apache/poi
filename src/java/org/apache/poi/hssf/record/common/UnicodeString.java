@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -45,6 +46,10 @@ import org.apache.poi.util.StringUtil;
 public class UnicodeString implements Comparable<UnicodeString> {
     // TODO - make this final when the compatibility version is removed
     private static POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
 
     private short             field_1_charCount;
     private byte              field_2_optionflags;
@@ -196,7 +201,7 @@ public class UnicodeString implements Comparable<UnicodeString> {
         	 _logger.log( POILogger.WARN, "Warning - ExtRst overran by " + (0-extraDataLength) + " bytes");
              extraDataLength = 0;
           }
-          extraData = new byte[extraDataLength];
+          extraData = IOUtils.safelyAllocate(extraDataLength, MAX_RECORD_LENGTH);
           for(int i=0; i<extraData.length; i++) {
              extraData[i] = in.readByte();
           }

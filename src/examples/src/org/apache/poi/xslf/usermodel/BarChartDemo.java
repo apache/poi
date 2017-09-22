@@ -55,46 +55,37 @@ public class BarChartDemo {
             return;
         }
 
-        BufferedReader modelReader = new BufferedReader(new FileReader(args[1]));
-        XMLSlideShow pptx = null;
-        try {
+        try (BufferedReader modelReader = new BufferedReader(new FileReader(args[1]))) {
             String chartTitle = modelReader.readLine();  // first line is chart title
 
-            // Category Axis Data
-            List<String> listCategories = new ArrayList<String>(3);
+            try (XMLSlideShow pptx = new XMLSlideShow(new FileInputStream(args[0]))) {
+                // Category Axis Data
+                List<String> listCategories = new ArrayList<String>(3);
 
-            // Values
-            List<Double> listValues = new ArrayList<Double>(3);
+                // Values
+                List<Double> listValues = new ArrayList<Double>(3);
 
-            // set model
-            String ln;
-            while((ln = modelReader.readLine()) != null){
-                String[] vals = ln.split("\\s+");
-                listCategories.add(vals[0]);
-                listValues.add(Double.valueOf(vals[1]));
+                // set model
+                String ln;
+                while((ln = modelReader.readLine()) != null){
+                    String[] vals = ln.split("\\s+");
+                    listCategories.add(vals[0]);
+                    listValues.add(Double.valueOf(vals[1]));
+                }
+                String[] categories = listCategories.toArray(new String[listCategories.size()]);
+                Double[] values = listValues.toArray(new Double[listValues.size()]);
+
+                XSLFSlide slide = pptx.getSlides().get(0);
+                setBarData(findChart(slide), chartTitle, categories, values);
+
+                XSLFChart chart = findChart(pptx.createSlide().importContent(slide));
+                setColumnData(chart, "Column variant");
+
+                // save the result
+                try (OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx")) {
+                    pptx.write(out);
+                }
             }
-            String[] categories = listCategories.toArray(new String[listCategories.size()]);
-            Double[] values = listValues.toArray(new Double[listValues.size()]);
-
-            pptx = new XMLSlideShow(new FileInputStream(args[0]));
-            XSLFSlide slide = pptx.getSlides().get(0);
-            setBarData(findChart(slide), chartTitle, categories, values);
-
-            XSLFChart chart = findChart(pptx.createSlide().importContent(slide));
-            setColumnData(chart, "Column variant");
-
-            // save the result
-            OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx");
-            try {
-                pptx.write(out);
-            } finally {
-                out.close();
-            }
-        } finally {
-            if (pptx != null) {
-                pptx.close();
-            }
-            modelReader.close();
         }
     }
 

@@ -58,7 +58,17 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
     public static SXSSFFormulaEvaluator create(SXSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
         return new SXSSFFormulaEvaluator(workbook, stabilityClassifier, udfFinder);
     }
-    
+    public void notifySetFormula(Cell cell) {
+        _bookEvaluator.notifyUpdateCell(new SXSSFEvaluationCell((SXSSFCell)cell));
+    }
+    public void notifyDeleteCell(Cell cell) {
+        _bookEvaluator.notifyDeleteCell(new SXSSFEvaluationCell((SXSSFCell)cell));
+    }
+    public void notifyUpdateCell(Cell cell) {
+        _bookEvaluator.notifyUpdateCell(new SXSSFEvaluationCell((SXSSFCell)cell));
+    }
+
+
     /**
      * Turns a SXSSFCell into a SXSSFEvaluationCell
      */
@@ -106,8 +116,8 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
             // Evaluate what we have
             for (Row r : sheet) {
                 for (Cell c : r) {
-                    if (c.getCellTypeEnum() == CellType.FORMULA) {
-                        eval.evaluateFormulaCellEnum(c);
+                    if (c.getCellType() == CellType.FORMULA) {
+                        eval.evaluateFormulaCell(c);
                     }
                 }
             }

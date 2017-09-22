@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -32,6 +33,10 @@ import org.apache.poi.util.LittleEndian;
  * See page 184 of official documentation for details
  */
 public final class PlexOfCps {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private int _iMac;
     private int _cbStruct;
     private List<GenericPropertyNode> _props;
@@ -99,7 +104,7 @@ public final class PlexOfCps {
         int structBufSize = +(_cbStruct * size);
         int bufSize = cpBufSize + structBufSize;
 
-        byte[] buf = new byte[bufSize];
+        byte[] buf = IOUtils.safelyAllocate(bufSize, MAX_RECORD_LENGTH);
 
         int nodeEnd = 0;
         for (int x = 0; x < size; x++) {
@@ -122,7 +127,7 @@ public final class PlexOfCps {
         int start = LittleEndian.getInt(buf, offset + getIntOffset(index));
         int end = LittleEndian.getInt(buf, offset + getIntOffset(index + 1));
 
-        byte[] struct = new byte[_cbStruct];
+        byte[] struct = IOUtils.safelyAllocate(_cbStruct, MAX_RECORD_LENGTH);
         System.arraycopy(buf, offset + getStructOffset(index), struct, 0,
                 _cbStruct);
 

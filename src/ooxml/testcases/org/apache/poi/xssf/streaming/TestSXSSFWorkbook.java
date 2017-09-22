@@ -385,7 +385,6 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         File out = new File("Test.xlsx");
         out.delete();
         for (int i = 0; i < 2; i++) {
-            System.out.println("Iteration " + i);
             final SXSSFWorkbook wb;
             if (out.exists()) {
                 wb = new SXSSFWorkbook(

@@ -17,15 +17,12 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Common superclass for testing implementation of {@link FormulaEvaluator}
@@ -57,8 +54,8 @@ public abstract class BaseTestFormulaEvaluator {
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-        fe.evaluateFormulaCellEnum(c1);
-        fe.evaluateFormulaCellEnum(c2);
+        fe.evaluateFormulaCell(c1);
+        fe.evaluateFormulaCell(c2);
 
         assertEquals(6.0, c1.getNumericCellValue(), 0.0001);
         assertEquals(5.0, c2.getNumericCellValue(), 0.0001);
@@ -98,10 +95,10 @@ public abstract class BaseTestFormulaEvaluator {
         // Evaluate and test
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-        fe.evaluateFormulaCellEnum(c1);
-        fe.evaluateFormulaCellEnum(c2);
-        fe.evaluateFormulaCellEnum(c3);
-        fe.evaluateFormulaCellEnum(c4);
+        fe.evaluateFormulaCell(c1);
+        fe.evaluateFormulaCell(c2);
+        fe.evaluateFormulaCell(c3);
+        fe.evaluateFormulaCell(c4);
 
         assertEquals(3.6, c1.getNumericCellValue(), 0.0001);
         assertEquals(17.5, c2.getNumericCellValue(), 0.0001);
@@ -280,30 +277,29 @@ public abstract class BaseTestFormulaEvaluator {
      */
     @Test
     public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("Sheet1");
+            Row row = sheet.createRow(0);
+            Cell cellA1 = row.createCell(0);
+            Cell cellB1 = row.createCell(1);
+            cellB1.setCellFormula("A1+1");
+            FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1");
-        Row row = sheet.createRow(0);
-        Cell cellA1 = row.createCell(0);
-        Cell cellB1 = row.createCell(1);
-        cellB1.setCellFormula("A1+1");
-        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+            cellA1.setCellErrorValue(FormulaError.NAME.getCode());
+            assertEquals(CellType.ERROR, fe.evaluateFormulaCell(cellB1));
+            assertEquals(CellType.FORMULA, cellB1.getCellType());
 
-        cellA1.setCellErrorValue(FormulaError.NAME.getCode());
-        fe.evaluateFormulaCellEnum(cellB1);
-
-        cellA1.setCellValue(2.5);
-        fe.notifyUpdateCell(cellA1);
-        try {
-            fe.evaluateInCell(cellB1);
-        } catch (IllegalStateException e) {
-            if (e.getMessage().equals("Cannot get a numeric value from a error formula cell")) {
-                fail("Identified bug 46479a");
+            cellA1.setCellValue(2.5);
+            fe.notifyUpdateCell(cellA1);
+            try {
+                fe.evaluateInCell(cellB1);
+            } catch (IllegalStateException e) {
+                if (e.getMessage().equalsIgnoreCase("Cannot get a numeric value from a error formula cell")) {
+                    fail("Identified bug 46479a");
+                }
             }
+            assertEquals(3.5, cellB1.getNumericCellValue(), 0.0);
         }
-        assertEquals(3.5, cellB1.getNumericCellValue(), 0.0);
-        
-        wb.close();
     }
 
     @Test
@@ -330,12 +326,302 @@ public abstract class BaseTestFormulaEvaluator {
     
     @Test
     public void evaluateInCellReturnsSameCell() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        wb.createSheet().createRow(0).createCell(0);
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
-        Cell same = evaluator.evaluateInCell(cell);
-        assertSame(cell, same);
-        wb.close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            wb.createSheet().createRow(0).createCell(0);
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+            Cell same = evaluator.evaluateInCell(cell);
+            assertSame(cell, same);
+        }
+    }
+
+    @Test
+    public void testBug61148() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            final Cell cell = wb.createSheet().createRow(0).createCell(0);
+            cell.setCellFormula("1+2");
+
+            assertEquals(0, (int)cell.getNumericCellValue());
+            assertEquals("1+2", cell.toString());
+
+            FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+
+            eval.evaluateInCell(cell);
+
+            assertEquals("3.0", cell.toString());
+        }
+    }
+
+    @Test
+    public void testMultisheetFormulaEval() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet1 = wb.createSheet("Sheet1");
+            Sheet sheet2 = wb.createSheet("Sheet2");
+            Sheet sheet3 = wb.createSheet("Sheet3");
+
+            // sheet1 A1
+            Cell cell = sheet1.createRow(0).createCell(0);
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue(1.0);
+
+            // sheet2 A1
+            cell = sheet2.createRow(0).createCell(0);
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue(1.0);
+
+            // sheet2 B1
+            cell = sheet2.getRow(0).createCell(1);
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue(1.0);
+
+            // sheet3 A1
+            cell = sheet3.createRow(0).createCell(0);
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue(1.0);
+
+            // sheet1 A2 formulae
+            cell = sheet1.createRow(1).createCell(0);
+            cell.setCellType(CellType.FORMULA);
+            cell.setCellFormula("SUM(Sheet1:Sheet3!A1)");
+
+            // sheet1 A3 formulae
+            cell = sheet1.createRow(2).createCell(0);
+            cell.setCellType(CellType.FORMULA);
+            cell.setCellFormula("SUM(Sheet1:Sheet3!A1:B1)");
+
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+            cell = sheet1.getRow(1).getCell(0);
+            assertEquals(3.0, cell.getNumericCellValue(), 0);
+
+            cell = sheet1.getRow(2).getCell(0);
+            assertEquals(4.0, cell.getNumericCellValue(), 0);
+        }
+    }
+
+    @Test
+    public void testBug55843() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Row row2 = sheet.createRow(1);
+            Cell cellA2 = row2.createCell(0, CellType.FORMULA);
+            Cell cellB1 = row.createCell(1, CellType.NUMERIC);
+            cellB1.setCellValue(10);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW()-ROW(A$1))*12))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            assertEquals("12.0", evaluate.formatAsString());
+
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW()-ROW(A$1))*12),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+
+            assertEquals(evaluate.toString(), evaluateN.toString());
+            assertEquals("12.0", evaluateN.formatAsString());
+        }
+    }
+
+    @Test
+    public void testBug55843a() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Row row2 = sheet.createRow(1);
+            Cell cellA2 = row2.createCell(0, CellType.FORMULA);
+            Cell cellB1 = row.createCell(1, CellType.NUMERIC);
+            cellB1.setCellValue(10);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW(A$1))))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            assertEquals("1.0", evaluate.formatAsString());
+
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW(A$1))),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+
+            assertEquals(evaluate.toString(), evaluateN.toString());
+            assertEquals("1.0", evaluateN.formatAsString());
+        }
+    }
+
+    @Test
+    public void testBug55843b() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Row row2 = sheet.createRow(1);
+            Cell cellA2 = row2.createCell(0, CellType.FORMULA);
+            Cell cellB1 = row.createCell(1, CellType.NUMERIC);
+            cellB1.setCellValue(10);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW())))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            assertEquals("2.0", evaluate.formatAsString());
+
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW())),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+
+            assertEquals(evaluate.toString(), evaluateN.toString());
+            assertEquals("2.0", evaluateN.formatAsString());
+        }
+    }
+
+    @Test
+    public void testBug55843c() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Row row2 = sheet.createRow(1);
+            Cell cellA2 = row2.createCell(0, CellType.FORMULA);
+            Cell cellB1 = row.createCell(1, CellType.NUMERIC);
+            cellB1.setCellValue(10);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW())))");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+            assertEquals("2.0", evaluateN.formatAsString());
+        }
+    }
+
+    @Test
+    public void testBug55843d() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Row row2 = sheet.createRow(1);
+            Cell cellA2 = row2.createCell(0, CellType.FORMULA);
+            Cell cellB1 = row.createCell(1, CellType.NUMERIC);
+            cellB1.setCellValue(10);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW())),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+            assertEquals("2.0", evaluateN.formatAsString());
+        }
+    }
+
+    @Test
+    public void testBug55843e() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Row row2 = sheet.createRow(1);
+            Cell cellA2 = row2.createCell(0, CellType.FORMULA);
+            Cell cellB1 = row.createCell(1, CellType.NUMERIC);
+            cellB1.setCellValue(10);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW())))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            assertEquals("2.0", evaluate.formatAsString());
+        }
+    }
+
+    @Test
+    public void testBug55843f() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Row row2 = sheet.createRow(1);
+            Cell cellA2 = row2.createCell(0, CellType.FORMULA);
+            Cell cellB1 = row.createCell(1, CellType.NUMERIC);
+            cellB1.setCellValue(10);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(B1=0,\"\",IF(B1=10,3,4))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            assertEquals("3.0", evaluate.formatAsString());
+        }
+    }
+
+    @Test
+    public void testBug56655() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+
+            setCellFormula(sheet, 0, 0, "#VALUE!");
+            setCellFormula(sheet, 0, 1, "SUMIFS(A:A,A:A,#VALUE!)");
+
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+            assertEquals(CellType.ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
+            assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 0).getErrorCellValue());
+            assertEquals(CellType.ERROR, getCell(sheet, 0, 1).getCachedFormulaResultType());
+            assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 1).getErrorCellValue());
+        }
+    }
+
+    @Test
+    public void testBug56655a() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+
+            setCellFormula(sheet, 0, 0, "B1*C1");
+            sheet.getRow(0).createCell(1).setCellValue("A");
+            setCellFormula(sheet, 1, 0, "B1*C1");
+            sheet.getRow(1).createCell(1).setCellValue("A");
+            setCellFormula(sheet, 0, 3, "SUMIFS(A:A,A:A,A2)");
+
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+            assertEquals(CellType.ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
+            assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 0).getErrorCellValue());
+            assertEquals(CellType.ERROR, getCell(sheet, 1, 0).getCachedFormulaResultType());
+            assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 1, 0).getErrorCellValue());
+            assertEquals(CellType.ERROR, getCell(sheet, 0, 3).getCachedFormulaResultType());
+            assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 3).getErrorCellValue());
+        }
+    }
+
+    /**
+     * @param row 0-based
+     * @param column 0-based
+     */
+    private void setCellFormula(Sheet sheet, int row, int column, String formula) {
+        Row r = sheet.getRow(row);
+        if (r == null) {
+            r = sheet.createRow(row);
+        }
+        Cell cell = r.getCell(column);
+        if (cell == null) {
+            cell = r.createCell(column);
+        }
+        cell.setCellType(CellType.FORMULA);
+        cell.setCellFormula(formula);
+    }
+
+    /**
+     * @param rowNo 0-based
+     * @param column 0-based
+     */
+    private Cell getCell(Sheet sheet, int rowNo, int column) {
+        return sheet.getRow(rowNo).getCell(column);
+    }
+
+    @Test
+    public void testBug61532() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            final Cell cell = wb.createSheet().createRow(0).createCell(0);
+            cell.setCellFormula("1+2");
+
+            assertEquals(0, (int)cell.getNumericCellValue());
+            assertEquals("1+2", cell.toString());
+
+            FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+
+            CellValue value = eval.evaluate(cell);
+
+            assertEquals(CellType.NUMERIC, value.getCellType());
+            assertEquals(3.0, value.getNumberValue(), 0.01);
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals("1+2", cell.getCellFormula());
+            assertEquals("1+2", cell.toString());
+
+            assertNotNull(eval.evaluateInCell(cell));
+
+            assertEquals("3.0", cell.toString());
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertEquals(3.0, cell.getNumericCellValue(), 0.01);
+        }
     }
 }

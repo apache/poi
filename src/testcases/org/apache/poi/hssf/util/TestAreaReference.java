@@ -126,19 +126,19 @@ public final class TestAreaReference extends TestCase {
         new AreaReference(ref2D, SpreadsheetVersion.EXCEL97);
         try {
             new AreaReference(refDCSimple, SpreadsheetVersion.EXCEL97);
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
         	// expected during successful test
         }
         try {
             new AreaReference(refDC2D, SpreadsheetVersion.EXCEL97);
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
         	// expected during successful test
         }
         try {
             new AreaReference(refDC3D, SpreadsheetVersion.EXCEL97);
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
         	// expected during successful test
         }

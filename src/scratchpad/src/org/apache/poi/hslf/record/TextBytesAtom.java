@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -33,6 +34,9 @@ import org.apache.poi.util.StringUtil;
 
 public final class TextBytesAtom extends RecordAtom {
     public static final long _type = RecordTypes.TextBytesAtom.typeID;
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	private byte[] _header;
 
 	/** The bytes that make up the text */
@@ -66,7 +70,7 @@ public final class TextBytesAtom extends RecordAtom {
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the text
-		_text = new byte[len-8];
+		_text = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+8,_text,0,len-8);
 	}
 

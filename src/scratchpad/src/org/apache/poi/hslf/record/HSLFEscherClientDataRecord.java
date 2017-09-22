@@ -27,6 +27,7 @@ import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.EscherSerializationListener;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -37,6 +38,9 @@ import org.apache.poi.util.LittleEndian;
  * @since POI 3.14-Beta2
  */
 public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private final List<Record> _childRecords = new ArrayList<>();
     
@@ -60,7 +64,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
-        byte remainingData[] = new byte[bytesRemaining];
+        byte remainingData[] = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy(data, offset+8, remainingData, 0, bytesRemaining);
         setRemainingData(remainingData);
         return bytesRemaining + 8;

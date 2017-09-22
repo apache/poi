@@ -57,7 +57,9 @@ import org.apache.poi.xssf.usermodel.XSSFObjectData;
 @Beta
 public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     private static final POILogger LOG = POILogFactory.getLogger(EmbeddedExtractor.class);
-    
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     // contentType
     private static final String CONTENT_TYPE_BYTES = "binary/octet-stream";
     private static final String CONTENT_TYPE_PDF = "application/pdf";
@@ -252,7 +254,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             }
             
             int pictureBytesLen = idxEnd-idxStart+6;
-            byte[] pdfBytes = new byte[pictureBytesLen];
+            byte[] pdfBytes = IOUtils.safelyAllocate(pictureBytesLen, MAX_RECORD_LENGTH);
             System.arraycopy(pictureBytes, idxStart, pdfBytes, 0, pictureBytesLen);
             String filename = source.getShapeName().trim();
             if (!endsWithIgnoreCase(filename, ".pdf")) {

@@ -70,7 +70,7 @@ public class SVTableUtils {
   /** This method retrieves the AWT Color representation from the colour hash table
    *
    */
-  /* package */ static final Color getAWTColor(int index, Color deflt) {
+  /* package */ static Color getAWTColor(int index, Color deflt) {
     HSSFColor clr = colors.get(index);
     if (clr == null) {
       return deflt;
@@ -79,7 +79,7 @@ public class SVTableUtils {
     return new Color(rgb[0],rgb[1],rgb[2]);
   }
 
-  /* package */ static final Color getAWTColor(HSSFColorPredefined clr) {
+  /* package */ static Color getAWTColor(HSSFColorPredefined clr) {
     short[] rgb = clr.getTriplet();
     return new Color(rgb[0],rgb[1],rgb[2]);
   }

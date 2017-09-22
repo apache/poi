@@ -693,7 +693,7 @@ public class DataFormatter implements Observer {
         private BigDecimal divider;
         private static final BigDecimal ONE_THOUSAND = new BigDecimal(1000);
         private final DecimalFormat df;
-        private static final String trimTrailingCommas(String s) {
+        private static String trimTrailingCommas(String s) {
             return s.replaceAll(",+$", "");
         }
 
@@ -978,12 +978,12 @@ public class DataFormatter implements Observer {
             return "";
         }
 
-        CellType cellType = cell.getCellTypeEnum();
+        CellType cellType = cell.getCellType();
         if (cellType == CellType.FORMULA) {
             if (evaluator == null) {
                 return cell.getCellFormula();
             }
-            cellType = evaluator.evaluateFormulaCellEnum(cell);
+            cellType = evaluator.evaluateFormulaCell(cell);
         }
         switch (cellType) {
             case NUMERIC :

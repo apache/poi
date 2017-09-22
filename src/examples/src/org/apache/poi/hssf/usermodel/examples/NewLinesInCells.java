@@ -33,31 +33,27 @@ import org.apache.poi.ss.usermodel.CellType;
  */
 public class NewLinesInCells {
     public static void main( String[] args ) throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFSheet s = wb.createSheet();
+			HSSFFont f2 = wb.createFont();
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet s = wb.createSheet();
-		HSSFRow r = null;
-		HSSFCell c = null;
-		HSSFCellStyle cs = wb.createCellStyle();
-		HSSFFont f2 = wb.createFont();
+			HSSFCellStyle cs = wb.createCellStyle();
 
-		cs = wb.createCellStyle();
+			cs.setFont(f2);
+			// Word Wrap MUST be turned on
+			cs.setWrapText(true);
 
-		cs.setFont(f2);
-		// Word Wrap MUST be turned on
-		cs.setWrapText(true);
+			HSSFRow r = s.createRow(2);
+			r.setHeight((short) 0x349);
+			HSSFCell c = r.createCell(2);
+			c.setCellType(CellType.STRING);
+			c.setCellValue("Use \n with word wrap on to create a new line");
+			c.setCellStyle(cs);
+			s.setColumnWidth(2, (int) ((50 * 8) / ((double) 1 / 20)));
 
-		r = s.createRow(2);
-		r.setHeight((short) 0x349);
-		c = r.createCell(2);
-		c.setCellType(CellType.STRING);
-		c.setCellValue("Use \n with word wrap on to create a new line");
-		c.setCellStyle(cs);
-		s.setColumnWidth(2, (int) ((50 * 8) / ((double) 1 / 20)));
-
-		FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-		wb.write(fileOut);
-		fileOut.close();
-		wb.close();
+			try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+				wb.write(fileOut);
+			}
+		}
     }
 }

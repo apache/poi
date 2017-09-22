@@ -51,7 +51,7 @@ public class TestExternalReferenceChange extends TestCase {
 		HSSFSheet lSheet = mainWorkbook.getSheetAt(0);
 		HSSFCell lA1Cell = lSheet.getRow(0).getCell(0);
 		
-		assertEquals(CellType.FORMULA, lA1Cell.getCellTypeEnum());
+		assertEquals(CellType.FORMULA, lA1Cell.getCellType());
 		
 		HSSFFormulaEvaluator lMainWorkbookEvaluator = new HSSFFormulaEvaluator(mainWorkbook);
 		HSSFFormulaEvaluator lSourceEvaluator = new HSSFFormulaEvaluator(sourceWorkbook);
@@ -59,7 +59,7 @@ public class TestExternalReferenceChange extends TestCase {
 				new String[]{MAIN_WORKBOOK_FILENAME, SOURCE_WORKBOOK_FILENAME}, 
 				new HSSFFormulaEvaluator[] {lMainWorkbookEvaluator, lSourceEvaluator});
 		
-		assertEquals(CellType.NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCellEnum(lA1Cell));
+		assertEquals(CellType.NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCell(lA1Cell));
 
 		assertEquals(20.0d, lA1Cell.getNumericCellValue(), 0.00001d);
 

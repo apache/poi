@@ -41,7 +41,11 @@ import org.apache.poi.util.ShortField;
  * The block containing the archive header
  */
 public final class HeaderBlock implements HeaderBlockConstants {
-    private static final byte _default_value = ( byte ) 0xFF;
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 100_000;
+
+	private static final byte _default_value = ( byte ) 0xFF;
 
     /**
 	 * What big block size the file uses. Most files
@@ -104,7 +108,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
 		// Fetch the rest of the block if needed
 		if(bigBlockSize.getBigBlockSize() != 512) {
 		   int rest = bigBlockSize.getBigBlockSize() - 512;
-		   byte[] tmp = new byte[rest];
+		   byte[] tmp = IOUtils.safelyAllocate(rest, MAX_RECORD_LENGTH);
 		   IOUtils.readFully(stream, tmp);
 		}
 	}

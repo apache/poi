@@ -56,16 +56,17 @@ public interface Hyperlink {
      *
      * @return the type of this hyperlink
      * @see HyperlinkType#forInt(int)
-     * @deprecated POI 3.15 beta 3. Use {@link #getTypeEnum()}
-     * getType will return a HyperlinkType enum in the future.
      */
-    public int getType();
+    public HyperlinkType getType();
     
     /**
      * Return the type of this hyperlink
      *
      * @return the type of this hyperlink
      * @since POI 3.15 beta 3
+     * @deprecated use <code>getType()</code> instead
      */
+    @Deprecated
+    @Removal(version = "4.2")
     public HyperlinkType getTypeEnum();
 }

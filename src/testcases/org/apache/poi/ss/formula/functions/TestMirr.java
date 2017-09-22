@@ -121,7 +121,7 @@ public final class TestMirr extends TestCase {
 
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCellEnum(cell);
+        fe.evaluateFormulaCell(cell);
         double res = cell.getNumericCellValue();
         assertEquals(0.18736225093, res, 0.00000001);
     }
@@ -162,7 +162,7 @@ public final class TestMirr extends TestCase {
     private static void assertFormulaResult(CellValue cv, HSSFCell cell) {
         double actualValue = cv.getNumberValue();
         double expectedValue = cell.getNumericCellValue(); // cached formula result calculated by Excel
-        assertEquals("Invalid formula result: " + cv, CellType.NUMERIC, cv.getCellTypeEnum());
+        assertEquals("Invalid formula result: " + cv, CellType.NUMERIC, cv.getCellType());
         assertEquals(expectedValue, actualValue, 1E-8);
     }
 }

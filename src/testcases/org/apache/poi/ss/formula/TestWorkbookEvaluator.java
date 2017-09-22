@@ -199,7 +199,7 @@ public class TestWorkbookEvaluator {
         } catch (RuntimeException e) {
             fail("Missing arg result not being handled correctly.");
         }
-        assertEquals(CellType.NUMERIC, cv.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, cv.getCellType());
         // adding blank to 1.0 gives 1.0
         assertEquals(1.0, cv.getNumberValue(), 0.0);
 
@@ -207,7 +207,7 @@ public class TestWorkbookEvaluator {
         cell.setCellFormula("\"abc\"&IF(1,,)");
         fe.notifySetFormula(cell);
         cv = fe.evaluate(cell);
-        assertEquals(CellType.STRING, cv.getCellTypeEnum());
+        assertEquals(CellType.STRING, cv.getCellType());
         // adding blank to "abc" gives "abc"
         assertEquals("abc", cv.getStringValue());
 
@@ -215,7 +215,7 @@ public class TestWorkbookEvaluator {
         cell.setCellFormula("\"abc\"&CHOOSE(2,5,,9)");
         fe.notifySetFormula(cell);
         cv = fe.evaluate(cell);
-        assertEquals(CellType.STRING, cv.getCellTypeEnum());
+        assertEquals(CellType.STRING, cv.getCellType());
         // adding blank to "abc" gives "abc"
         assertEquals("abc", cv.getStringValue());
     }
@@ -240,14 +240,14 @@ public class TestWorkbookEvaluator {
                 }
                 throw new RuntimeException(e);
             }
-            assertEquals(CellType.ERROR, cv.getCellTypeEnum());
+            assertEquals(CellType.ERROR, cv.getCellType());
             assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), cv.getErrorValue());
 
             // verify circular refs are still detected properly
             fe.clearAllCachedResultValues();
             cell.setCellFormula("OFFSET(A1,0,0)");
             cv = fe.evaluate(cell);
-            assertEquals(CellType.ERROR, cv.getCellTypeEnum());
+            assertEquals(CellType.ERROR, cv.getCellType());
             assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cv.getErrorValue());
         } finally {
             wb.close();
@@ -387,10 +387,10 @@ public class TestWorkbookEvaluator {
         CellValue result = eval.evaluate(D1);
         
         // Call should not modify the contents
-        assertEquals(CellType.FORMULA, D1.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, D1.getCellType());
         assertEquals(expectedFormula, D1.getCellFormula());
         
-        assertEquals(CellType.NUMERIC, result.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, result.getCellType());
         assertEquals(expectedResult, result.getNumberValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);
@@ -533,13 +533,13 @@ public class TestWorkbookEvaluator {
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
         
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
-        CellType resultCellType = eval.evaluateFormulaCellEnum(D1);
+        CellType resultCellType = eval.evaluateFormulaCell(D1);
         
         // Call should modify the contents, but leave the formula intact
-        assertEquals(CellType.FORMULA, D1.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, D1.getCellType());
         assertEquals(expectedFormula, D1.getCellFormula());
         assertEquals(CellType.NUMERIC, resultCellType);
-        assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);
@@ -561,7 +561,7 @@ public class TestWorkbookEvaluator {
         } catch (final IllegalStateException expected) {
             // expected here
         }
-        assertEquals(CellType.NUMERIC, D1.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, D1.getCellType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);
@@ -576,10 +576,10 @@ public class TestWorkbookEvaluator {
         eval.evaluateAll();
         
         // Call should modify the contents
-        assertEquals(CellType.FORMULA, D1.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, D1.getCellType());
         assertEquals(expectedFormula, D1.getCellFormula());
         
-        assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);
@@ -593,11 +593,11 @@ public class TestWorkbookEvaluator {
         HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
         
         // Call should modify the contents
-        assertEquals(CellType.FORMULA, D1.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, D1.getCellType());
         // whitespace gets deleted because formula is parsed and re-rendered
         assertEquals(expectedFormula, D1.getCellFormula());
         
-        assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultTypeEnum());
+        assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);

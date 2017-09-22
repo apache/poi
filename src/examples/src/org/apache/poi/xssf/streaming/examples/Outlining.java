@@ -31,26 +31,24 @@ public class Outlining {
 	}
 
 	private void collapseRow() throws IOException {
-		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
-		SXSSFSheet sheet2 = wb2.createSheet("new sheet");
+		try (SXSSFWorkbook wb2 = new SXSSFWorkbook(100)) {
+			SXSSFSheet sheet2 = wb2.createSheet("new sheet");
 
-		int rowCount = 20;
-		for (int i = 0; i < rowCount; i++) {
-			sheet2.createRow(i);
-		}
+			int rowCount = 20;
+			for (int i = 0; i < rowCount; i++) {
+				sheet2.createRow(i);
+			}
 
-		sheet2.groupRow(4, 9);
-		sheet2.groupRow(11, 19);
+			sheet2.groupRow(4, 9);
+			sheet2.groupRow(11, 19);
 
-		sheet2.setRowGroupCollapsed(4, true);
+			sheet2.setRowGroupCollapsed(4, true);
 
-		FileOutputStream fileOut = new FileOutputStream("outlining_collapsed.xlsx");
-		try {
-		    wb2.write(fileOut);
-		} finally {
-    		fileOut.close();
-    		wb2.dispose();
-    		wb2.close();
+			try (FileOutputStream fileOut = new FileOutputStream("outlining_collapsed.xlsx")) {
+				wb2.write(fileOut);
+			} finally {
+				wb2.dispose();
+			}
 		}
 	}
 }

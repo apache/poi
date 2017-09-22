@@ -40,7 +40,7 @@ import org.apache.poi.util.RecordFormatException;
 public class HemfText {
 
     private static final Charset UTF16LE = Charset.forName("UTF-16LE");
-    private static final int MAX_RECORD_LENGTH = 1000000;
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     public static class ExtCreateFontIndirectW extends UnimplementedHemfRecord {
     }

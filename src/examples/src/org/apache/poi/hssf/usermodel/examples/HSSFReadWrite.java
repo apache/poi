@@ -47,12 +47,9 @@ public final class HSSFReadWrite {
 	 * creates an {@link HSSFWorkbook} with the specified OS filename.
 	 */
 	private static HSSFWorkbook readFile(String filename) throws IOException {
-	    FileInputStream fis = new FileInputStream(filename);
-	    try {
-	        return new HSSFWorkbook(fis);		// NOSONAR - should not be closed here
-	    } finally {
-	        fis.close();
-	    }
+		try (FileInputStream fis = new FileInputStream(filename)) {
+			return new HSSFWorkbook(fis);        // NOSONAR - should not be closed here
+		}
 	}
 
 	/**
@@ -60,8 +57,7 @@ public final class HSSFReadWrite {
 	 * rows/cells.
 	 */
 	private static void testCreateSampleSheet(String outputFilename) throws IOException {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		try {
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			HSSFSheet s = wb.createSheet();
 			HSSFCellStyle cs = wb.createCellStyle();
 			HSSFCellStyle cs2 = wb.createCellStyle();
@@ -125,14 +121,9 @@ public final class HSSFReadWrite {
 			wb.removeSheetAt(1);
 
 			// end deleted sheet
-			FileOutputStream out = new FileOutputStream(outputFilename);
-			try {
+			try (FileOutputStream out = new FileOutputStream(outputFilename)) {
 				wb.write(out);
-			} finally {
-				out.close();
 			}
-		} finally {
-			wb.close();
 		}
 	}
 
@@ -166,9 +157,7 @@ public final class HSSFReadWrite {
 		try {
 			if (args.length < 2) {
 
-				HSSFWorkbook wb = HSSFReadWrite.readFile(fileName);
-
-				try {
+				try (HSSFWorkbook wb = HSSFReadWrite.readFile(fileName)) {
 					System.out.println("Data dump:\n");
 
 					for (int k = 0; k < wb.getNumberOfSheets(); k++) {
@@ -187,8 +176,8 @@ public final class HSSFReadWrite {
 								HSSFCell cell = row.getCell(c);
 								String value;
 
-								if(cell != null) {
-									switch (cell.getCellTypeEnum()) {
+								if (cell != null) {
+									switch (cell.getCellType()) {
 
 										case FORMULA:
 											value = "FORMULA value=" + cell.getCellFormula();
@@ -215,7 +204,7 @@ public final class HSSFReadWrite {
 											break;
 
 										default:
-											value = "UNKNOWN value of type " + cell.getCellTypeEnum();
+											value = "UNKNOWN value of type " + cell.getCellType();
 									}
 									System.out.println("CELL col=" + cell.getColumnIndex() + " VALUE="
 											+ value);
@@ -223,8 +212,6 @@ public final class HSSFReadWrite {
 							}
 						}
 					}
-				} finally {
-					wb.close();
 				}
 			} else if (args.length == 2) {
 				if (args[1].toLowerCase(Locale.ROOT).equals("write")) {
@@ -236,23 +223,16 @@ public final class HSSFReadWrite {
 							+ " ms generation time");
 				} else {
 					System.out.println("readwrite test");
-					HSSFWorkbook wb = HSSFReadWrite.readFile(fileName);
-					try {
-						FileOutputStream stream = new FileOutputStream(args[1]);
-						try {
+					try (HSSFWorkbook wb = HSSFReadWrite.readFile(fileName)) {
+						try (FileOutputStream stream = new FileOutputStream(args[1])) {
 							wb.write(stream);
-						} finally {
-							stream.close();
 						}
-					} finally {
-						wb.close();
 					}
 				}
 			} else if (args.length == 3 && args[2].equalsIgnoreCase("modify1")) {
 				// delete row 0-24, row 74 - 99 && change cell 3 on row 39 to string "MODIFIED CELL!!"
 
-				HSSFWorkbook wb = HSSFReadWrite.readFile(fileName);
-				try {
+				try (HSSFWorkbook wb = HSSFReadWrite.readFile(fileName)) {
 					HSSFSheet sheet = wb.getSheetAt(0);
 
 					for (int k = 0; k < 25; k++) {
@@ -269,14 +249,9 @@ public final class HSSFReadWrite {
 					HSSFCell cell = row.getCell(3);
 					cell.setCellValue("MODIFIED CELL!!!!!");
 
-					FileOutputStream stream = new FileOutputStream(args[1]);
-					try {
+					try (FileOutputStream stream = new FileOutputStream(args[1])) {
 						wb.write(stream);
-					} finally {
-						stream.close();
 					}
-				} finally {
-					wb.close();
 				}
 			}
 		} catch (Exception e) {

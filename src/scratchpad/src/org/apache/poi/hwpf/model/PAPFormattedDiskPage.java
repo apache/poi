@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -167,7 +168,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
             size--;
         }
 
-        byte[] papx = new byte[size];
+        byte[] papx = IOUtils.safelyAllocate(size, 512);
         System.arraycopy(_fkp, _offset + ++papxOffset, papx, 0, size);
         return papx;
     }

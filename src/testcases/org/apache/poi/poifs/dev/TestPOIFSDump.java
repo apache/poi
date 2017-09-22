@@ -23,17 +23,33 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.util.TempFile;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 import static org.junit.Assert.*;
 
 public class TestPOIFSDump {
+
+    private static PrintStream SYSTEM;
+    @BeforeClass
+    public static void setUp() throws UnsupportedEncodingException {
+        SYSTEM = System.out;
+        System.setOut(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+
+            }
+        }, false, "UTF-8"));
+    }
+
+    @AfterClass
+    public static void resetSystemOut() {
+        System.setOut(SYSTEM);
+    }
 
     private static final String TEST_FILE = HSSFTestDataSamples.getSampleFile("46515.xls").getAbsolutePath();
     private static final String INVALID_FILE = HSSFTestDataSamples.getSampleFile("48936-strings.txt").getAbsolutePath();

@@ -151,12 +151,12 @@ public abstract class BaseTestExternalFunctions {
         Cell cell2 = sh.getRow(2).getCell(1);
         assertEquals("ISODD(2)", cell2.getCellFormula());
         assertEquals(false, evaluator.evaluate(cell2).getBooleanValue());
-        assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCellEnum(cell2));
+        assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCell(cell2));
 
         Cell cell3 = sh.getRow(3).getCell(1);
         assertEquals("ISEVEN(2)", cell3.getCellFormula());
         assertEquals(true, evaluator.evaluate(cell3).getBooleanValue());
-        assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCellEnum(cell3));
+        assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCell(cell3));
 
         wb.close();
     }

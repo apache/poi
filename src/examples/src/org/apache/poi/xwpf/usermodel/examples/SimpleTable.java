@@ -69,9 +69,7 @@ public class SimpleTable {
     }
 
     public static void createSimpleTable() throws Exception {
-        XWPFDocument doc = new XWPFDocument();
-
-        try {
+        try (XWPFDocument doc = new XWPFDocument()) {
             XWPFTable table = doc.createTable(3, 3);
 
             table.getRow(1).getCell(1).setText("EXAMPLE OF TABLE");
@@ -93,14 +91,9 @@ public class SimpleTable {
 
             table.getRow(2).getCell(2).setText("only text");
 
-            OutputStream out = new FileOutputStream("simpleTable.docx");
-            try {
+            try (OutputStream out = new FileOutputStream("simpleTable.docx")) {
                 doc.write(out);
-            } finally {
-                out.close();
             }
-        } finally {
-            doc.close();
         }
     }
 
@@ -115,14 +108,11 @@ public class SimpleTable {
      * I make no claims that this is the "right" way to do it, but it worked
      * for me. Given the scarcity of XWPF examples, I thought this may prove
      * instructive and give you ideas for your own solutions.
-
-     * @throws Exception
      */
     public static void createStyledTable() throws Exception {
     	// Create a new document from scratch
-        XWPFDocument doc = new XWPFDocument();
 
-        try {
+        try (XWPFDocument doc = new XWPFDocument()) {
             // -- OR --
             // open an existing empty document with styles already defined
             //XWPFDocument doc = new XWPFDocument(new FileInputStream("base_document.docx"));
@@ -201,14 +191,9 @@ public class SimpleTable {
             } // for row
 
             // write the file
-            OutputStream out = new FileOutputStream("styledTable.docx");
-            try {
+            try (OutputStream out = new FileOutputStream("styledTable.docx")) {
                 doc.write(out);
-            } finally {
-                out.close();
             }
-        } finally {
-            doc.close();
         }
     }
 }

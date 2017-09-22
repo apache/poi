@@ -20,6 +20,7 @@ package org.apache.poi.ddf;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 
@@ -30,6 +31,10 @@ import org.apache.poi.util.RecordFormatException;
  *  they will be in the parent's format, not Escher format.
  */
 public final class EscherTextboxRecord extends EscherRecord implements Cloneable {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public static final short RECORD_ID = (short)0xF00D;
     public static final String RECORD_DESCRIPTION = "msofbtClientTextbox";
 
@@ -48,7 +53,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
 
         // Save the data, ready for the calling code to do something
         //  useful with it
-        thedata = new byte[bytesRemaining];
+        thedata = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
         return bytesRemaining + 8;
     }
@@ -97,7 +102,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
      */
     public void setData(byte[] b, int start, int length)
     {
-        thedata = new byte[length];
+        thedata = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
         System.arraycopy(b,start,thedata,0,length);
     }
     

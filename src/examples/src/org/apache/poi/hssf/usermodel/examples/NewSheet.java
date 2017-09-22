@@ -28,16 +28,17 @@ import org.apache.poi.ss.util.WorkbookUtil;
  */
 public abstract class NewSheet {
     public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        wb.createSheet("new sheet");
-        // create with default name
-        wb.createSheet();
-        final String name = "second sheet";
-        // setting sheet name later
-        wb.setSheetName(1, WorkbookUtil.createSafeSheetName(name));
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet("new sheet");
+            // create with default name
+            wb.createSheet();
+            final String name = "second sheet";
+            // setting sheet name later
+            wb.setSheetName(1, WorkbookUtil.createSafeSheetName(name));
+
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 }

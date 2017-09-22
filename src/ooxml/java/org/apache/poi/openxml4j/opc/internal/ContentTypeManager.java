@@ -393,14 +393,10 @@ public abstract class ContentTypeManager {
 				String contentType = element.getAttribute(CONTENT_TYPE_ATTRIBUTE_NAME);
 				addOverrideContentType(partName, contentType);
 			}
-		} catch (URISyntaxException urie) {
-			throw new InvalidFormatException(urie.getMessage());
-        } catch (SAXException e) {
-            throw new InvalidFormatException(e.getMessage());
-        } catch (IOException e) {
-            throw new InvalidFormatException(e.getMessage());
+		} catch (URISyntaxException | IOException | SAXException e) {
+			throw new InvalidFormatException(e.getMessage());
         }
-    }
+	}
 
 	/**
 	 * Save the contents type part.

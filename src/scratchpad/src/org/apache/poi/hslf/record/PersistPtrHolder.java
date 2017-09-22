@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -46,6 +47,10 @@ import org.apache.poi.util.POILogger;
 
 public final class PersistPtrHolder extends PositionDependentRecordAtom
 {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 100_000;
+
 	private final byte[] _header;
 	private byte[] _ptrData; // Will need to update this once we allow updates to _slideLocations
 	private long _type;
@@ -109,7 +114,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		//   count * 32 bit offsets
 		// Repeat as many times as you have data
 		_slideLocations = new HashMap<>();
-		_ptrData = new byte[len-8];
+		_ptrData = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+8,_ptrData,0,_ptrData.length);
 
 		int pos = 0;

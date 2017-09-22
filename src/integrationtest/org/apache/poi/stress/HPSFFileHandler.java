@@ -62,7 +62,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
     );
         
     
-    private static final Set<String> unmodifiableHashSet(String... a) {
+    private static Set<String> unmodifiableHashSet(String... a) {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 

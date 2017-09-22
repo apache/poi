@@ -26,6 +26,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Units;
 
 /**
@@ -38,7 +39,7 @@ public abstract class Bitmap extends HSLFPictureData {
     public byte[] getData(){
         byte[] rawdata = getRawData();
         int prefixLen = 16*getUIDInstanceCount()+1;
-        byte[] imgdata = new byte[rawdata.length-prefixLen];
+        byte[] imgdata = IOUtils.safelyAllocate(rawdata.length-prefixLen, rawdata.length);
         System.arraycopy(rawdata, prefixLen, imgdata, 0, imgdata.length);
         return imgdata;
     }

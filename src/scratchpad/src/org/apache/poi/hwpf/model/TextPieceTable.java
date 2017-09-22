@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -41,6 +42,9 @@ import org.apache.poi.util.POILogger;
 public class TextPieceTable implements CharIndexTranslator {
     private static final POILogger logger = POILogFactory
             .getLogger(TextPieceTable.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
 
     // int _multiple;
     int _cpMin;
@@ -97,7 +101,7 @@ public class TextPieceTable implements CharIndexTranslator {
             int textSizeBytes = textSizeChars * multiple;
 
             // Grab the data that makes up the piece
-            byte[] buf = new byte[textSizeBytes];
+            byte[] buf = IOUtils.safelyAllocate(textSizeBytes, MAX_RECORD_LENGTH);
             System.arraycopy(documentStream, start, buf, 0, textSizeBytes);
 
             // And now build the piece
@@ -424,7 +428,7 @@ public class TextPieceTable implements CharIndexTranslator {
             int mod = (offset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
             if (mod != 0) {
                 mod = POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod;
-                byte[] buf = new byte[mod];
+                byte[] buf = IOUtils.safelyAllocate(mod, MAX_RECORD_LENGTH);
                 docStream.write(buf);
             }
 

@@ -251,10 +251,10 @@ public class AddDimensionedImage {
             String imageFile, double reqImageWidthMM, double reqImageHeightMM,
             int resizeBehaviour) throws FileNotFoundException, IOException,
                                                      IllegalArgumentException  {
-        HSSFClientAnchor anchor = null;
-        HSSFPatriarch patriarch = null;
-        ClientAnchorDetail rowClientAnchorDetail = null;
-        ClientAnchorDetail colClientAnchorDetail = null;
+        HSSFClientAnchor anchor;
+        HSSFPatriarch patriarch;
+        ClientAnchorDetail rowClientAnchorDetail;
+        ClientAnchorDetail colClientAnchorDetail;
 
         // Validate the resizeBehaviour parameter.
         if((resizeBehaviour != AddDimensionedImage.EXPAND_COLUMN) &&
@@ -334,9 +334,9 @@ public class AddDimensionedImage {
     private ClientAnchorDetail fitImageToColumns(HSSFSheet sheet, int colNumber,
             double reqImageWidthMM, int resizeBehaviour) {
 
-        double colWidthMM = 0.0D;
-        double colCoordinatesPerMM = 0.0D;
-        int pictureWidthCoordinates = 0;
+        double colWidthMM;
+        double colCoordinatesPerMM;
+        int pictureWidthCoordinates;
         ClientAnchorDetail colClientAnchorDetail = null;
 
         // Get the colum's width in millimetres
@@ -417,21 +417,19 @@ public class AddDimensionedImage {
      */
     private ClientAnchorDetail fitImageToRows(HSSFSheet sheet, int rowNumber,
             double reqImageHeightMM, int resizeBehaviour) {
-        HSSFRow row = null;
-        double rowHeightMM = 0.0D;
-        double rowCoordinatesPerMM = 0.0D;
-        int pictureHeightCoordinates = 0;
+        double rowCoordinatesPerMM;
+        int pictureHeightCoordinates;
         ClientAnchorDetail rowClientAnchorDetail = null;
 
         // Get the row and it's height
-        row = sheet.getRow(rowNumber);
+        HSSFRow row = sheet.getRow(rowNumber);
         if(row == null) {
             // Create row if it does not exist.
             row = sheet.createRow(rowNumber);
         }
 
         // Get the row's height in millimetres
-        rowHeightMM = row.getHeightInPoints() / ConvertImageUnits.POINTS_PER_MILLIMETRE;
+        double rowHeightMM = row.getHeightInPoints() / ConvertImageUnits.POINTS_PER_MILLIMETRE;
 
         // Check that the row's height will accomodate the image at the required
         // dimensions. If the height of the row is LESS than the required height
@@ -494,13 +492,13 @@ public class AddDimensionedImage {
     private ClientAnchorDetail calculateColumnLocation(HSSFSheet sheet,
                                                        int startingColumn,
                                                        double reqImageWidthMM) {
-        ClientAnchorDetail anchorDetail = null;
+        ClientAnchorDetail anchorDetail;
         double totalWidthMM = 0.0D;
         double colWidthMM = 0.0D;
-        double overlapMM = 0.0D;
-        double coordinatePositionsPerMM = 0.0D;
+        double overlapMM;
+        double coordinatePositionsPerMM;
         int toColumn = startingColumn;
-        int inset = 0;
+        int inset;
 
         // Calculate how many columns the image will have to
         // span in order to be presented at the required size.
@@ -593,14 +591,14 @@ public class AddDimensionedImage {
      */
     private ClientAnchorDetail calculateRowLocation(HSSFSheet sheet,
             int startingRow, double reqImageHeightMM) {
-        ClientAnchorDetail clientAnchorDetail = null;
-        HSSFRow row = null;
+        ClientAnchorDetail clientAnchorDetail;
+        HSSFRow row;
         double rowHeightMM = 0.0D;
         double totalRowHeightMM = 0.0D;
-        double overlapMM = 0.0D;
-        double rowCoordinatesPerMM = 0.0D;
+        double overlapMM;
+        double rowCoordinatesPerMM;
         int toRow = startingRow;
-        int inset = 0;
+        int inset;
 
         // Step through the rows in the sheet and accumulate a total of their
         // heights.
@@ -672,10 +670,10 @@ public class AddDimensionedImage {
      *                             interrupted.
      */
     private byte[] imageToBytes(String imageFilename) throws IOException {
-        File imageFile = null;
+        File imageFile;
         FileInputStream fis = null;
-        ByteArrayOutputStream bos = null;
-        int read = 0;
+        ByteArrayOutputStream bos;
+        int read;
         try {
             imageFile = new File(imageFilename);
             fis = new FileInputStream(imageFile);
@@ -718,10 +716,10 @@ public class AddDimensionedImage {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String imageFile = null;
-        String outputFile = null;
+        String imageFile;
+        String outputFile;
         FileOutputStream fos = null;
-        HSSFSheet sheet = null;
+        HSSFSheet sheet;
         try {
             if(args.length < 2){
                 System.err.println("Usage: AddDimensionedImage imageFile outputFile");
@@ -730,25 +728,15 @@ public class AddDimensionedImage {
             imageFile = args[0];
             outputFile = args[1];
 
-            HSSFWorkbook workbook = new HSSFWorkbook();
-            try  {
+            try (HSSFWorkbook workbook = new HSSFWorkbook()) {
                 sheet = workbook.createSheet("Picture Test");
                 new AddDimensionedImage().addImageToSheet("A1", sheet,
                         imageFile, 125, 125,
                         AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
                 fos = new FileOutputStream(outputFile);
                 workbook.write(fos);
-            } finally {
-                workbook.close();
             }
-        }
-        catch(FileNotFoundException fnfEx) {
-            System.out.println("Caught an: " + fnfEx.getClass().getName());
-            System.out.println("Message: " + fnfEx.getMessage());
-            System.out.println("Stacktrace follows...........");
-            fnfEx.printStackTrace(System.out);
-        }
-        catch(IOException ioEx) {
+        } catch(IOException ioEx) {
             System.out.println("Caught an: " + ioEx.getClass().getName());
             System.out.println("Message: " + ioEx.getMessage());
             System.out.println("Stacktrace follows...........");

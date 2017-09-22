@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.IndentProp;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -31,6 +32,10 @@ import org.apache.poi.util.POILogger;
  * Specifies the Indent Level for the text
  */
 public final class MasterTextPropAtom extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     /**
      * Record header.
      */
@@ -71,7 +76,7 @@ public final class MasterTextPropAtom extends RecordAtom {
         System.arraycopy(source,start,_header,0,8);
 
         // Get the record data.
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,len-8);
 
         try {
@@ -108,7 +113,7 @@ public final class MasterTextPropAtom extends RecordAtom {
      */
     private void write() {
         int pos = 0;
-        _data = new byte[indents.size()*6];
+        _data = IOUtils.safelyAllocate(indents.size()*6, MAX_RECORD_LENGTH);
         for (IndentProp prop : indents) {
             LittleEndian.putInt(_data, pos, prop.getCharactersCovered());
             LittleEndian.putShort(_data, pos+4, (short)prop.getIndentLevel());

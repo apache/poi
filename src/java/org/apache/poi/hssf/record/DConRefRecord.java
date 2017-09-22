@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -68,6 +69,9 @@ import org.apache.poi.util.StringUtil;
  */
 public class DConRefRecord extends StandardRecord
 {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
     /**
      * The id of the record type,
@@ -142,7 +146,7 @@ public class DConRefRecord extends StandardRecord
          */
         int byteLength = charCount * ((charType & 1) + 1);
 
-        path = LittleEndian.getByteArray(data, offset, byteLength);
+        path = LittleEndian.getByteArray(data, offset, byteLength, MAX_RECORD_LENGTH);
         offset += byteLength;
 
         /*
@@ -150,7 +154,7 @@ public class DConRefRecord extends StandardRecord
          * unused field. Not sure If i need to bother with this...
          */
         if (path[0] == 0x02)
-            _unused = LittleEndian.getByteArray(data, offset, (charType + 1));
+            _unused = LittleEndian.getByteArray(data, offset, (charType + 1), MAX_RECORD_LENGTH);
 
     }
 
@@ -175,7 +179,7 @@ public class DConRefRecord extends StandardRecord
         // byteLength depends on whether we are using single- or double-byte chars.
         int byteLength = charCount * (charType + 1);
 
-        path = new byte[byteLength];
+        path = IOUtils.safelyAllocate(byteLength, MAX_RECORD_LENGTH);
         inStream.readFully(path);
 
         if (path[0] == 0x02)

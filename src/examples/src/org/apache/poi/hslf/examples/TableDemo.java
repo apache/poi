@@ -54,18 +54,14 @@ public final class TableDemo {
 
 
     public static void main(String[] args) throws Exception {
-        HSLFSlideShow ppt = new HSLFSlideShow();
-
-        try {
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
             create1stTable(slide);
             create2ndTable(slide);
-    
-            FileOutputStream out = new FileOutputStream("hslf-table.ppt");
-            ppt.write(out);
-            out.close();
-        } finally {
-            ppt.close();
+
+            try (FileOutputStream out = new FileOutputStream("hslf-table.ppt")) {
+                ppt.write(out);
+            }
         }
     }
     

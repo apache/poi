@@ -49,10 +49,13 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
+import org.apache.poi.xssf.usermodel.TestMatrixFormulasFromXMLSpreadsheet;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,6 +64,9 @@ import org.junit.Test;
  * Test that the extractor factory plays nicely
  */
 public class TestExtractorFactory {
+
+    private static final POILogger LOG = POILogFactory.getLogger(TestExtractorFactory.class);
+
     private static File txt;
 
     private static File xls;
@@ -326,7 +332,7 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(txt);
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
             // Good
         }
@@ -474,14 +480,9 @@ public class TestExtractorFactory {
         extractor.close();
 
         // Text
-        try {
-            FileInputStream stream = new FileInputStream(txt);
-            try {
-                ExtractorFactory.createExtractor(stream);
-                fail();
-            } finally {
-                IOUtils.closeQuietly(stream);
-            }
+        try (FileInputStream stream = new FileInputStream(txt)) {
+            ExtractorFactory.createExtractor(stream);
+            fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
             // Good
         }
@@ -562,7 +563,7 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(txt)));
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IOException e) {
             // Good
         }
@@ -644,7 +645,7 @@ public class TestExtractorFactory {
         // Text
         try {
             ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(txt)));
-            fail();
+            fail("expected IllegalArgumentException");
         } catch(IOException e) {
             // Good
         }
@@ -691,7 +692,7 @@ public class TestExtractorFactory {
         } catch(UnsupportedFileFormatException e) {
             // Good
         } catch (Exception e) {
-            System.out.println("TestExtractorFactory.testPackage() failed on " + txt);
+            LOG.log(POILogger.WARN, "TestExtractorFactory.testPackage() failed on " + txt);
             throw e;
         }
     }

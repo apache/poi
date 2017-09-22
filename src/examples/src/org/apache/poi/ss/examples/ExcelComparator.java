@@ -179,7 +179,7 @@ public class ExcelComparator {
 
     private void compareDataInCell(Locator loc1, Locator loc2) {
         if (isCellTypeMatches(loc1, loc2)) {
-            final CellType loc1cellType = loc1.cell.getCellTypeEnum();
+            final CellType loc1cellType = loc1.cell.getCellType();
             switch(loc1cellType) {
                 case BLANK:
                 case STRING:
@@ -579,8 +579,8 @@ public class ExcelComparator {
      * Checks if cell type matches.
      */
     private boolean isCellTypeMatches(Locator loc1, Locator loc2) {
-        CellType type1 = loc1.cell.getCellTypeEnum();
-        CellType type2 = loc2.cell.getCellTypeEnum();
+        CellType type1 = loc1.cell.getCellType();
+        CellType type2 = loc2.cell.getCellType();
         if (type1 == type2) return true;
         addMessage(loc1, loc2,
             "Cell Data-Type does not Match in :: ",

@@ -133,7 +133,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
         for(Cell acell : cells){
             assertTrue(acell.isPartOfArrayFormulaGroup());
-            assertEquals(CellType.FORMULA, acell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, acell.getCellType());
             assertEquals("SUM(A1:A3*B1:B3)", acell.getCellFormula());
             //retrieve the range and check it is the same
             assertEquals(range.formatAsString(), acell.getArrayFormulaRange().formatAsString());
@@ -210,7 +210,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
         for(Cell acell : cr){
             assertFalse(acell.isPartOfArrayFormulaGroup());
-            assertEquals(CellType.BLANK, acell.getCellTypeEnum());
+            assertEquals(CellType.BLANK, acell.getCellType());
         }
 
         // cells C4:C6 are not included in array formula,
@@ -279,7 +279,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         CellRange<? extends Cell> srange =
                 sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
         Cell scell = srange.getTopLeftCell();
-        assertEquals(CellType.FORMULA, scell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, scell.getCellType());
         assertEquals(0.0, scell.getNumericCellValue(), 0);
         scell.setCellValue(1.1);
         assertEquals(1.1, scell.getNumericCellValue(), 0);
@@ -288,7 +288,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         CellRange<? extends Cell> mrange =
                 sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
         for(Cell mcell : mrange){
-            assertEquals(CellType.FORMULA, mcell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, mcell.getCellType());
             assertEquals(0.0, mcell.getNumericCellValue(), 0);
             double fmlaResult = 1.2;
             mcell.setCellValue(fmlaResult);
@@ -307,10 +307,10 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         CellRange<? extends Cell> srange =
                 sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
         Cell scell = srange.getTopLeftCell();
-        assertEquals(CellType.FORMULA, scell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, scell.getCellType());
         assertEquals(0.0, scell.getNumericCellValue(), 0);
         scell.setCellType(CellType.STRING);
-        assertEquals(CellType.STRING, scell.getCellTypeEnum());
+        assertEquals(CellType.STRING, scell.getCellType());
         scell.setCellValue("string cell");
         assertEquals("string cell", scell.getStringCellValue());
 
@@ -319,7 +319,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
                 sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
         for(Cell mcell : mrange){
             try {
-                assertEquals(CellType.FORMULA, mcell.getCellTypeEnum());
+                assertEquals(CellType.FORMULA, mcell.getCellType());
                 mcell.setCellType(CellType.NUMERIC);
                 fail("expected exception");
             } catch (IllegalStateException e){
@@ -329,7 +329,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             }
             // a failed invocation of Cell.setCellType leaves the cell
             // in the state that it was in prior to the invocation
-            assertEquals(CellType.FORMULA, mcell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, mcell.getCellType());
             assertTrue(mcell.isPartOfArrayFormulaGroup());
         }
         workbook.close();
@@ -344,13 +344,13 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
                 sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
         Cell scell = srange.getTopLeftCell();
         assertEquals("SUM(A4:A6,B4:B6)", scell.getCellFormula());
-        assertEquals(CellType.FORMULA, scell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, scell.getCellType());
         assertTrue(scell.isPartOfArrayFormulaGroup());
         scell.setCellFormula("SUM(A4,A6)");
         //we are now a normal formula cell
         assertEquals("SUM(A4,A6)", scell.getCellFormula());
         assertFalse(scell.isPartOfArrayFormulaGroup());
-        assertEquals(CellType.FORMULA, scell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, scell.getCellType());
         //check that setting formula result works
         assertEquals(0.0, scell.getNumericCellValue(), 0);
         scell.setCellValue(33.0);
@@ -396,7 +396,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
         //re-create the removed cell
         scell = srow.createCell(cra.getFirstColumn());
-        assertEquals(CellType.BLANK, scell.getCellTypeEnum());
+        assertEquals(CellType.BLANK, scell.getCellType());
         assertFalse(scell.isPartOfArrayFormulaGroup());
 
         //we cannot remove cells included in a multi-cell array formula
@@ -417,7 +417,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             // in the state that it was in prior to the invocation
             assertSame(mcell, mrow.getCell(columnIndex));
             assertTrue(mcell.isPartOfArrayFormulaGroup());
-            assertEquals(CellType.FORMULA, mcell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, mcell.getCellType());
         }
         
         workbook.close();
@@ -433,7 +433,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         CellRange<? extends Cell> srange =
                 sheet.setArrayFormula("SUM(A4:A6,B4:B6)", cra);
         Cell scell = srange.getTopLeftCell();
-        assertEquals(CellType.FORMULA, scell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, scell.getCellType());
 
         Row srow = scell.getRow();
         assertSame(srow, sheet.getRow(cra.getFirstRow()));
@@ -442,7 +442,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
         //re-create the removed row and cell
         scell = sheet.createRow(cra.getFirstRow()).createCell(cra.getFirstColumn());
-        assertEquals(CellType.BLANK, scell.getCellTypeEnum());
+        assertEquals(CellType.BLANK, scell.getCellType());
         assertFalse(scell.isPartOfArrayFormulaGroup());
 
         //we cannot remove rows with cells included in a multi-cell array formula
@@ -463,7 +463,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             assertSame(mrow, sheet.getRow(mrow.getRowNum()));
             assertSame(mcell, mrow.getCell(columnIndex));
             assertTrue(mcell.isPartOfArrayFormulaGroup());
-            assertEquals(CellType.FORMULA, mcell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, mcell.getCellType());
         }
         
         workbook.close();
@@ -481,7 +481,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         Cell scell = srange.getTopLeftCell();
         sheet.addMergedRegion(CellRangeAddress.valueOf("B5:C6"));
         //we are still an array formula
-        assertEquals(CellType.FORMULA, scell.getCellTypeEnum());
+        assertEquals(CellType.FORMULA, scell.getCellType());
         assertTrue(scell.isPartOfArrayFormulaGroup());
         assertEquals(1, sheet.getNumMergedRegions());
         
@@ -570,7 +570,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             assertEquals(cra.formatAsString(), mcell.getArrayFormulaRange().formatAsString());
             assertEquals("A2:A4*B2:B4", mcell.getCellFormula());
             assertTrue(mcell.isPartOfArrayFormulaGroup());
-            assertEquals(CellType.FORMULA, mcell.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, mcell.getCellType());
         }
 
         */

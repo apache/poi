@@ -74,22 +74,20 @@ public class SettingExternalFunction {
 
     public static void main( String[] args ) throws IOException {
 
-        Workbook wb = new XSSFWorkbook();  // or new HSSFWorkbook()
+        try (Workbook wb = new XSSFWorkbook()) {  // or new HSSFWorkbook()
 
-        // register the add-in
-        wb.addToolPack(new BloombergAddIn());
+            // register the add-in
+            wb.addToolPack(new BloombergAddIn());
 
-        Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
-        row.createCell(0).setCellFormula("BDP(\"GOOG Equity\",\"CHG_PCT_YTD\")/100");
-        row.createCell(1).setCellFormula("BDH(\"goog us equity\",\"EBIT\",\"1/1/2005\",\"12/31/2009\",\"per=cy\",\"curr=USD\") ");
-        row.createCell(2).setCellFormula("BDS(\"goog us equity\",\"top_20_holders_public_filings\") ");
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            row.createCell(0).setCellFormula("BDP(\"GOOG Equity\",\"CHG_PCT_YTD\")/100");
+            row.createCell(1).setCellFormula("BDH(\"goog us equity\",\"EBIT\",\"1/1/2005\",\"12/31/2009\",\"per=cy\",\"curr=USD\") ");
+            row.createCell(2).setCellFormula("BDS(\"goog us equity\",\"top_20_holders_public_filings\") ");
 
-        FileOutputStream out = new FileOutputStream("bloomberg-demo.xlsx");
-        wb.write(out);
-        out.close();
-        
-        wb.close();
+            try (FileOutputStream out = new FileOutputStream("bloomberg-demo.xlsx")) {
+                wb.write(out);
+            }
+        }
     }
-
 }

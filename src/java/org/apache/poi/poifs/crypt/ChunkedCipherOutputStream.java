@@ -47,6 +47,9 @@ import org.apache.poi.util.TempFile;
 @Internal
 public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private static final POILogger LOG = POILogFactory.getLogger(ChunkedCipherOutputStream.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private static final int STREAMING = -1;
 
     private final int chunkSize;
@@ -70,7 +73,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         super(null);
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        this.chunk = new byte[cs];
+        this.chunk = IOUtils.safelyAllocate(cs, MAX_RECORD_LENGTH);
         this.plainByteFlags = new BitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
@@ -84,7 +87,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         super(stream);
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
-        this.chunk = new byte[cs];
+        this.chunk = IOUtils.safelyAllocate(cs, MAX_RECORD_LENGTH);
         this.plainByteFlags = new BitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = null;

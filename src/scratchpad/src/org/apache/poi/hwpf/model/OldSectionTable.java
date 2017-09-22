@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Collections;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -72,7 +73,7 @@ public final class OldSectionTable extends SectionTable
         //  section properties, and we're trying to decode them as if they
         //  were the new ones, we sometimes "need" more data than we have.
         // As a workaround, have a few extra 0 bytes on the end!
-        byte[] buf = new byte[sepxSize+2];
+        byte[] buf = IOUtils.safelyAllocate(sepxSize+2, Short.MAX_VALUE+2);
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
         sepx = new SEPX(sed, startAt, endAt, buf);

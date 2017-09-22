@@ -623,12 +623,12 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
 
     private ValueAndFormat getCellValue(Cell cell) {
         if (cell != null) {
-            final CellType type = cell.getCellTypeEnum();
-            if (type == CellType.NUMERIC || (type == CellType.FORMULA && cell.getCachedFormulaResultTypeEnum() == CellType.NUMERIC) ) {
+            final CellType type = cell.getCellType();
+            if (type == CellType.NUMERIC || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.NUMERIC) ) {
                 return new ValueAndFormat(new Double(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString());
-            } else if (type == CellType.STRING || (type == CellType.FORMULA && cell.getCachedFormulaResultTypeEnum() == CellType.STRING) ) {
+            } else if (type == CellType.STRING || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.STRING) ) {
                 return new ValueAndFormat(cell.getStringCellValue(), cell.getCellStyle().getDataFormatString());
-            } else if (type == CellType.BOOLEAN || (type == CellType.FORMULA && cell.getCachedFormulaResultTypeEnum() == CellType.BOOLEAN) ) {
+            } else if (type == CellType.BOOLEAN || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.BOOLEAN) ) {
                 return new ValueAndFormat(cell.getStringCellValue(), cell.getCellStyle().getDataFormatString());
             }
         }

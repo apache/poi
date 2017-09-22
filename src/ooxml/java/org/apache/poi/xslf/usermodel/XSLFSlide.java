@@ -255,7 +255,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         if (bgThis != null) {
             if (bgThis.isSetBgPr() && bgThis.getBgPr().isSetBlipFill()) {
                 String oldId = bgThis.getBgPr().getBlipFill().getBlip().getEmbed();
-                removeRelation(getRelationById(oldId));
+                removeRelation(oldId);
             }
             _slide.getCSld().unsetBg();
         }

@@ -29,12 +29,17 @@ import org.apache.poi.hmef.attribute.TNEFDateAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hmef.attribute.TNEFStringAttribute;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Developer focused raw dumper
  */
 public final class HMEFDumper {
+
+   //arbitrarily selected; may need to increase
+   private static final int MAX_RECORD_LENGTH = 1_000_000;
+
    public static void main(String[] args) throws Exception {
       if(args.length < 1) {
          throw new IllegalArgumentException("Filename must be given");
@@ -138,7 +143,7 @@ public final class HMEFDumper {
                   thisLen = len - offset;
                }
 
-               byte data[] = new byte[thisLen];
+               byte data[] = IOUtils.safelyAllocate(thisLen, MAX_RECORD_LENGTH);
                System.arraycopy(attr.getData(), offset, data, 0, thisLen);
                
                System.out.print(

@@ -34,10 +34,10 @@ import org.apache.poi.hssf.OldExcelFormatException;
  *  checks 
  */
 public class TestNotOLE2Exception extends TestCase {
-	private static final InputStream openXLSSampleStream(String sampleFileName) {
+	private static InputStream openXLSSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
-    private static final InputStream openDOCSampleStream(String sampleFileName) {
+    private static InputStream openDOCSampleStream(String sampleFileName) {
         return POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);
     }
     

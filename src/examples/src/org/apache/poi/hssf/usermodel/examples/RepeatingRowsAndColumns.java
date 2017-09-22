@@ -30,35 +30,35 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 public class RepeatingRowsAndColumns {
     public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("first sheet");
-        HSSFSheet sheet2 = wb.createSheet("second sheet");
-        HSSFSheet sheet3 = wb.createSheet("third sheet");
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet1 = wb.createSheet("first sheet");
+            HSSFSheet sheet2 = wb.createSheet("second sheet");
+            HSSFSheet sheet3 = wb.createSheet("third sheet");
 
-        HSSFFont boldFont = wb.createFont();
-        boldFont.setFontHeightInPoints((short)22);
-        boldFont.setBold(true);
+            HSSFFont boldFont = wb.createFont();
+            boldFont.setFontHeightInPoints((short) 22);
+            boldFont.setBold(true);
 
-        HSSFCellStyle boldStyle = wb.createCellStyle();
-        boldStyle.setFont(boldFont);
+            HSSFCellStyle boldStyle = wb.createCellStyle();
+            boldStyle.setFont(boldFont);
 
-        HSSFRow row = sheet1.createRow(1);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellValue("This quick brown fox");
-        cell.setCellStyle(boldStyle);
+            HSSFRow row = sheet1.createRow(1);
+            HSSFCell cell = row.createCell(0);
+            cell.setCellValue("This quick brown fox");
+            cell.setCellStyle(boldStyle);
 
-        // Set the columns to repeat from column 0 to 2 on the first sheet
-        sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
-        // Set the rows to repeat from row 0 to 2 on the second sheet.
-        sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:3"));
-        // Set the the repeating rows and columns on the third sheet.
-        CellRangeAddress cra = CellRangeAddress.valueOf("D1:E2"); 
-        sheet3.setRepeatingColumns(cra);
-        sheet3.setRepeatingRows(cra);
+            // Set the columns to repeat from column 0 to 2 on the first sheet
+            sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
+            // Set the rows to repeat from row 0 to 2 on the second sheet.
+            sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:3"));
+            // Set the the repeating rows and columns on the third sheet.
+            CellRangeAddress cra = CellRangeAddress.valueOf("D1:E2");
+            sheet3.setRepeatingColumns(cra);
+            sheet3.setRepeatingRows(cra);
 
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 }

@@ -23,6 +23,10 @@ import java.io.OutputStream;
 import org.apache.poi.util.*;
 
 public class TextSpecInfoRun {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     /**
      * A enum that specifies the spelling status of a run of text.
      */
@@ -153,7 +157,7 @@ public class TextSpecInfoRun {
         if (smartTagFld.isSet(mask)) {
             // An unsigned integer specifies the count of items in rgSmartTagIndex.
             int count = source.readInt();
-            smartTagsBytes = new byte[4+count*4];
+            smartTagsBytes = IOUtils.safelyAllocate(4+count*4, MAX_RECORD_LENGTH);
             LittleEndian.putInt(smartTagsBytes, 0, count);
             // An array of SmartTagIndex that specifies the indices.
             // The count of items in the array is specified by count.

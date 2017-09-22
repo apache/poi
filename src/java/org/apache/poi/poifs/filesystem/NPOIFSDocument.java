@@ -31,13 +31,18 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 
 /**
  * This class manages a document in the NIO POIFS filesystem.
  * This is the {@link NPOIFSFileSystem} version.
  */
 public final class NPOIFSDocument implements POIFSViewable {
-   private DocumentProperty _property;
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
+    private DocumentProperty _property;
 
    private NPOIFSFileSystem _filesystem;
    private NPOIFSStream _stream;
@@ -147,7 +152,7 @@ public final class NPOIFSDocument implements POIFSViewable {
        int usedInBlock = length % _block_size;
        if (usedInBlock != 0 && usedInBlock != _block_size) {
            int toBlockEnd = _block_size - usedInBlock;
-           byte[] padding = new byte[toBlockEnd];
+           byte[] padding = IOUtils.safelyAllocate(toBlockEnd, MAX_RECORD_LENGTH);
            Arrays.fill(padding, (byte)0xFF);
            os.write(padding);
        }
@@ -214,7 +219,7 @@ public final class NPOIFSDocument implements POIFSViewable {
 
       if(getSize() > 0) {
          // Get all the data into a single array
-         byte[] data = new byte[getSize()];
+         byte[] data = IOUtils.safelyAllocate(getSize(), MAX_RECORD_LENGTH);
          int offset = 0;
          for(ByteBuffer buffer : _stream) {
             int length = Math.min(_block_size, data.length-offset); 

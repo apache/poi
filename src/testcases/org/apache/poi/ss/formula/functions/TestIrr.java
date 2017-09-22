@@ -81,7 +81,7 @@ public final class TestIrr extends TestCase {
 
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCellEnum(cell);
+        fe.evaluateFormulaCell(cell);
         double res = cell.getNumericCellValue();
         assertEquals(0.143d, Math.round(res * 1000d) / 1000d);
     }
@@ -128,7 +128,7 @@ public final class TestIrr extends TestCase {
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){
         double actualValue = cv.getNumberValue();
         double expectedValue = cell.getNumericCellValue(); // cached formula result calculated by Excel
-        assertEquals("Invalid formula result: " + cv, CellType.NUMERIC, cv.getCellTypeEnum());
+        assertEquals("Invalid formula result: " + cv, CellType.NUMERIC, cv.getCellType());
         assertEquals(expectedValue, actualValue, 1E-4); // should agree within 0.01%
     }
 }

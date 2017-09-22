@@ -17,13 +17,7 @@
 
 package org.apache.poi.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PushbackInputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.CRC32;
@@ -40,10 +34,24 @@ public final class IOUtils {
      * The default buffer size to use for the skip() methods.
      */
     private static final int SKIP_BUFFER_SIZE = 2048;
+    private static int BYTE_ARRAY_MAX_OVERRIDE = -1;
     private static byte[] SKIP_BYTE_BUFFER;
 
     private IOUtils() {
         // no instances of this class
+    }
+
+    /**
+     * If this value is set to > 0, {@link #safelyAllocate(long, int)} will ignore the
+     * maximum record length parameter.  This is designed to allow users to bypass
+     * the hard-coded maximum record lengths if they are willing to accept the risk
+     * of an OutOfMemoryException.
+     *
+     * @param maxOverride The number of bytes that should be possible to be allocated in one step.
+     * @since 4.0.0
+     */
+    public static void setByteArrayMaxOverride(int maxOverride) {
+        BYTE_ARRAY_MAX_OVERRIDE = maxOverride;
     }
 
     /**
@@ -211,6 +219,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void write(POIDocument doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
@@ -233,6 +242,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void write(Workbook doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
@@ -256,6 +266,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(POIDocument doc, OutputStream out) throws IOException {
         try {
             write(doc, out);
@@ -278,6 +289,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(POIDocument doc, File out) throws IOException {
         try {
             doc.write(out);
@@ -299,6 +311,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(POIDocument doc) throws IOException {
         try {
             doc.write();
@@ -314,6 +327,7 @@ public final class IOUtils {
      * @deprecated since 4.0, use try-with-resources, will be removed in 4.2
      */
     @Deprecated
+    @Removal(version="4.2")
     public static void writeAndClose(Workbook doc, OutputStream out) throws IOException {
         try {
             doc.write(out);
@@ -325,6 +339,10 @@ public final class IOUtils {
     /**
      * Copies all the data from the given InputStream to the OutputStream. It
      * leaves both streams open, so you will still need to close them once done.
+     *
+     * @param inp The {@link InputStream} which provides the data
+     * @param out The {@link OutputStream} to write the data to
+     * @throws IOException If copying the data fails.
      */
     public static void copy(InputStream inp, OutputStream out) throws IOException {
         byte[] buff = new byte[4096];
@@ -336,6 +354,24 @@ public final class IOUtils {
             if (count > 0) {
                 out.write(buff, 0, count);
             }
+        }
+    }
+
+    /**
+     * Copy the contents of the stream to a new file.
+     *
+     * @param srcStream The {@link InputStream} which provides the data
+     * @param destFile The file where the data should be stored
+     * @throws IOException If the target directory does not exist and cannot be created
+     *      or if copying the data fails.
+     */
+    public static void copy(InputStream srcStream, File destFile) throws IOException {
+        File destDirectory = destFile.getParentFile();
+        if (!(destDirectory.exists() || destDirectory.mkdirs())) {
+            throw new RuntimeException("Can't create destination directory: "+destDirectory);
+        }
+        try (OutputStream destStream = new FileOutputStream(destFile)) {
+            IOUtils.copy(srcStream, destStream);
         }
     }
 
@@ -458,12 +494,23 @@ public final class IOUtils {
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
         }
-        if (length > maxLength) {
-            throw new RecordFormatException("Not allowed to allocate an array > "+
-                    maxLength+" for this record type." +
-                    "If the file is not corrupt, please open an issue on bugzilla to request " +
-                    "increasing the maximum allowable size for this record type");
+        if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
+            if (length > BYTE_ARRAY_MAX_OVERRIDE) {
+                throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+            }
+        } else if (length > maxLength) {
+            throwRFE(length, maxLength);
         }
         return new byte[(int)length];
+    }
+
+    private static void throwRFE(long length, int maxLength) {
+        throw new RecordFormatException("Tried to allocate an array of length "+length +
+                ", but "+ maxLength+" is the maximum for this record type.\n" +
+                "If the file is not corrupt, please open an issue on bugzilla to request \n" +
+                "increasing the maximum allowable size for this record type.\n"+
+                "As a temporary workaround, consider setting a higher override value with " +
+                "IOUtils.setByteArrayMaxOverride()");
+
     }
 }

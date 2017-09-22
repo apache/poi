@@ -37,8 +37,8 @@ import org.apache.poi.hslf.usermodel.HSLFTextRun;
 public final class Hyperlinks {
 
     public static void main(String[] args) throws Exception {
-        for (int i = 0; i < args.length; i++) {
-            FileInputStream is = new FileInputStream(args[i]);
+        for (String arg : args) {
+            FileInputStream is = new FileInputStream(arg);
             HSLFSlideShow ppt = new HSLFSlideShow(is);
             is.close();
 
@@ -64,7 +64,7 @@ public final class Hyperlinks {
                 System.out.println("- reading hyperlinks from the slide's shapes");
                 for (HSLFShape sh : slide.getShapes()) {
                     if (sh instanceof HSLFSimpleShape) {
-                        HSLFHyperlink link = ((HSLFSimpleShape)sh).getHyperlink();
+                        HSLFHyperlink link = ((HSLFSimpleShape) sh).getHyperlink();
                         if (link != null) {
                             System.out.println(toStr(link, null));
                         }

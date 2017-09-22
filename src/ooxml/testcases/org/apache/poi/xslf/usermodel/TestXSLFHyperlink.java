@@ -147,13 +147,13 @@ public class TestXSLFHyperlink {
         hl1 = tb1.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(hl1);
         assertEquals("dev@poi.apache.org", hl1.getLabel());
-        assertEquals(HyperlinkType.EMAIL, hl1.getTypeEnum());
+        assertEquals(HyperlinkType.EMAIL, hl1.getType());
 
         tb2 = (XSLFTextBox)slides.get(1).getShapes().get(0);
         hl2 = tb2.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(hl2);
         assertEquals("lastslide", hl2.getXmlObject().getAction().split("=")[1]);
-        assertEquals(HyperlinkType.DOCUMENT, hl2.getTypeEnum());
+        assertEquals(HyperlinkType.DOCUMENT, hl2.getType());
 
         tb3 = (XSLFTextBox)slides.get(2).getShapes().get(0);
         XSLFHyperlink hl3 = tb3.getTextParagraphs().get(0).getTextRuns().get(1).getHyperlink();
@@ -161,19 +161,19 @@ public class TestXSLFHyperlink {
         hl3 = tb3.getTextParagraphs().get(0).getTextRuns().get(3).getHyperlink();
         assertNotNull(hl3);
         assertEquals("/ppt/slides/slide1.xml", hl3.getAddress());
-        assertEquals(HyperlinkType.DOCUMENT, hl3.getTypeEnum());
+        assertEquals(HyperlinkType.DOCUMENT, hl3.getType());
 
         tb4 = (XSLFTextBox)slides.get(3).getShapes().get(0);
         hl4 = tb4.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(hl4);
         assertEquals("http://poi.apache.org", hl4.getLabel());
-        assertEquals(HyperlinkType.URL, hl4.getTypeEnum());
+        assertEquals(HyperlinkType.URL, hl4.getType());
 
         tb5 = (XSLFTextBox)slides.get(4).getShapes().get(0);
         hl5 = tb5.getHyperlink();
         assertNotNull(hl5);
         assertEquals("firstslide", hl5.getXmlObject().getAction().split("=")[1]);
-        assertEquals(HyperlinkType.DOCUMENT, hl5.getTypeEnum());
+        assertEquals(HyperlinkType.DOCUMENT, hl5.getType());
         
         ppt2.close();
     }

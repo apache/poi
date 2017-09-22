@@ -48,7 +48,7 @@ public class DataSources {
             @Override
             public Number getPointAt(int index) {
                 CellValue cellValue = getCellValueAt(index);
-                if (cellValue != null && cellValue.getCellTypeEnum() == CellType.NUMERIC) {
+                if (cellValue != null && cellValue.getCellType() == CellType.NUMERIC) {
                     return Double.valueOf(cellValue.getNumberValue());
                 } else {
                     return null;
@@ -67,7 +67,7 @@ public class DataSources {
             @Override
             public String getPointAt(int index) {
                 CellValue cellValue = getCellValueAt(index);
-                if (cellValue != null && cellValue.getCellTypeEnum() == CellType.STRING) {
+                if (cellValue != null && cellValue.getCellType() == CellType.STRING) {
                     return cellValue.getStringValue();
                 } else {
                     return null;

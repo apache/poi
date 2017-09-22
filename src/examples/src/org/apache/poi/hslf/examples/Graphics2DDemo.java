@@ -39,36 +39,34 @@ public final class Graphics2DDemo {
      * A simple bar chart demo
      */
     public static void main(String[] args) throws Exception {
-        HSLFSlideShow ppt = new HSLFSlideShow();
-
-        try {
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             //bar chart data. The first value is the bar color, the second is the width
             Object[] def = new Object[]{
-                Color.yellow, 40,
-                Color.green, 60,
-                Color.gray, 30,
-                Color.red, 80,
+                    Color.yellow, 40,
+                    Color.green, 60,
+                    Color.gray, 30,
+                    Color.red, 80,
             };
-    
+
             HSLFSlide slide = ppt.createSlide();
-    
+
             HSLFGroupShape group = new HSLFGroupShape();
             //define position of the drawing in the slide
-            Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);
+            Rectangle bounds = new Rectangle(200, 100, 350, 300);
             group.setAnchor(bounds);
-            group.setInteriorAnchor(new java.awt.Rectangle(0, 0, 100, 100));
+            group.setInteriorAnchor(new Rectangle(0, 0, 100, 100));
             slide.addShape(group);
             Graphics2D graphics = new PPGraphics2D(group);
-    
+
             //draw a simple bar graph
             int x = 10, y = 10;
             graphics.setFont(new Font("Arial", Font.BOLD, 10));
-            for (int i = 0, idx = 1; i < def.length; i+=2, idx++) {
+            for (int i = 0, idx = 1; i < def.length; i += 2, idx++) {
                 graphics.setColor(Color.black);
-                int width = ((Integer)def[i+1]).intValue();
-                graphics.drawString("Q" + idx, x-5, y+10);
-                graphics.drawString(width + "%", x + width+3, y + 10);
-                graphics.setColor((Color)def[i]);
+                int width = ((Integer) def[i + 1]).intValue();
+                graphics.drawString("Q" + idx, x - 5, y + 10);
+                graphics.drawString(width + "%", x + width + 3, y + 10);
+                graphics.setColor((Color) def[i]);
                 graphics.fill(new Rectangle(x, y, width, 10));
                 y += 15;
             }
@@ -76,12 +74,10 @@ public final class Graphics2DDemo {
             graphics.setFont(new Font("Arial", Font.BOLD, 14));
             graphics.draw(group.getInteriorAnchor());
             graphics.drawString("Performance", x + 30, y + 10);
-    
-            FileOutputStream out = new FileOutputStream("hslf-graphics.ppt");
-            ppt.write(out);
-            out.close();
-        } finally {
-            ppt.close();
+
+            try (FileOutputStream out = new FileOutputStream("hslf-graphics.ppt")) {
+                ppt.write(out);
+            }
         }
     }
 }

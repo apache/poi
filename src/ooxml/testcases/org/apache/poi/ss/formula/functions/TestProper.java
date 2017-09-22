@@ -95,7 +95,7 @@ public final class TestProper {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellTypeEnum() != CellType.STRING) {
+        if (cv.getCellType() != CellType.STRING) {
             throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
         }
         String actualValue = cv.getStringValue();
@@ -129,8 +129,8 @@ public final class TestProper {
             final ValueEval ret = TextFunction.PROPER.evaluate(new ValueEval[]{strArg}, 0, 0);
             assertEquals("Some Longer Text That Needs A Number Of Replacements To Check For Runtime Of Different Implementations", ((StringEval)ret).getStringValue());
         }
-        // Took aprox. 600ms on a decent Laptop in July 2016
-        System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+        // Took approx. 600ms on a decent Laptop in July 2016
+        //System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
     }
 
     private void checkProper(String input, String expected) {
