@@ -147,9 +147,9 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 		xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
 
 		PackagePart part = getPackagePart();
-		OutputStream out = part.getOutputStream();
-		chartSpace.save(out, xmlOptions);
-		out.close();
+		try (OutputStream out = part.getOutputStream()) {
+		    chartSpace.save(out, xmlOptions);
+		}
 	}
 
 	/**

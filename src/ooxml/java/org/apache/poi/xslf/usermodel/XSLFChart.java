@@ -199,11 +199,8 @@ public final class XSLFChart extends XDDFChart {
         if (worksheetPart == null) {
             worksheetPart = createWorksheetPart();
         }
-        OutputStream xlsOut = worksheetPart.getOutputStream();
-        try {
+        try (OutputStream xlsOut = worksheetPart.getOutputStream()) {
             workbook.write(xlsOut);
-        } finally {
-            xlsOut.close();
         }
     }
 
@@ -300,8 +297,8 @@ public final class XSLFChart extends XDDFChart {
         }
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        chartSpace.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            chartSpace.save(out, xmlOptions);
+        }
     }
 }
