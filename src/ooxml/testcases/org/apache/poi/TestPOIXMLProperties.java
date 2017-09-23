@@ -229,6 +229,7 @@ public final class TestPOIXMLProperties {
         return utcString.equals(dateTimeUtcString);
     }
 
+    //@Test
     public void testThumbnails() throws Exception {
         POIXMLProperties noThumbProps = sampleNoThumb.getProperties();
 
@@ -241,19 +242,23 @@ public final class TestPOIXMLProperties {
         assertNotNull(_props.getThumbnailImage());
         assertNull(noThumbProps.getThumbnailImage());
 
-        assertEquals("thumbnail.jpeg", _props.getThumbnailFilename());
+        assertEquals("/thumbnail.jpeg", _props.getThumbnailFilename());
 
 
         // Adding / changing
-        noThumbProps.setThumbnail("Testing.png", new ByteArrayInputStream(new byte[1]));
+        ByteArrayInputStream imageData = new ByteArrayInputStream(new byte[1]);
+        assertEquals(1, imageData.available());
+        noThumbProps.setThumbnail("Testing.png", imageData);
         assertNotNull(noThumbProps.getThumbnailPart());
-        assertEquals("Testing.png", noThumbProps.getThumbnailFilename());
+        assertEquals("/Testing.png", noThumbProps.getThumbnailFilename());
         assertNotNull(noThumbProps.getThumbnailImage());
         assertEquals(1, noThumbProps.getThumbnailImage().available());
 
-        noThumbProps.setThumbnail("Testing2.png", new ByteArrayInputStream(new byte[2]));
+        imageData = new ByteArrayInputStream(new byte[2]);
+        assertEquals(2, imageData.available());
+        noThumbProps.setThumbnail("Testing2.png", imageData);
         assertNotNull(noThumbProps.getThumbnailPart());
-        assertEquals("Testing.png", noThumbProps.getThumbnailFilename());
+        assertEquals("/Testing.png", noThumbProps.getThumbnailFilename());
         assertNotNull(noThumbProps.getThumbnailImage());
         assertEquals(2, noThumbProps.getThumbnailImage().available());
     }
