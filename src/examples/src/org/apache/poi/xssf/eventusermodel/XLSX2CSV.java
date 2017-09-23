@@ -140,6 +140,10 @@ public class XLSX2CSV {
         public void headerFooter(String text, boolean isHeader, String tagName) {
             // Skip, no headers or footers in CSV
         }
+
+        @Override
+        public void endSheet() {
+        }
     }
 
 

@@ -29,6 +29,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NPOIFSStream;
 import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -40,6 +41,9 @@ import org.apache.poi.util.POILogger;
 public final class NPropertyTable extends PropertyTableBase {
     private static final POILogger _logger =
        POILogFactory.getLogger(NPropertyTable.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private POIFSBigBlockSize _bigBigBlockSize;
 
     public NPropertyTable(HeaderBlock headerBlock)
@@ -86,7 +90,7 @@ public final class NPropertyTable extends PropertyTableBase {
                 bb.array().length == bigBlockSize.getBigBlockSize()) {
              data = bb.array();
           } else {
-             data = new byte[bigBlockSize.getBigBlockSize()];
+             data = IOUtils.safelyAllocate(bigBlockSize.getBigBlockSize(), MAX_RECORD_LENGTH);
              
              int toRead = data.length;
              if (bb.remaining() < bigBlockSize.getBigBlockSize()) {

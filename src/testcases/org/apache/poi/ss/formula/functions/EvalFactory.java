@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
@@ -28,6 +29,7 @@ import org.apache.poi.ss.formula.ptg.AreaI;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.util.AreaReference;
 
 /**
  * Test helper class for creating mock <code>Eval</code> objects
@@ -45,7 +47,7 @@ public final class EvalFactory {
 	 * @param values empty (<code>null</code>) entries in this array will be converted to NumberEval.ZERO
 	 */
 	public static AreaEval createAreaEval(String areaRefStr, ValueEval[] values) {
-		AreaPtg areaPtg = new AreaPtg(areaRefStr);
+		AreaPtg areaPtg = new AreaPtg(new AreaReference(areaRefStr, SpreadsheetVersion.EXCEL2007));
 		return createAreaEval(areaPtg, values);
 	}
 

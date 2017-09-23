@@ -211,8 +211,6 @@ public class TestAutoSizeColumnTracker {
     private static void assumeRequiredFontsAreInstalled(final Workbook workbook, final Cell cell) {
         // autoSize will fail if required fonts are not installed, skip this test then
         Font font = workbook.getFontAt(cell.getCellStyle().getFontIndex());
-        System.out.println(font.getFontHeightInPoints());
-        System.out.println(font.getFontName());
         Assume.assumeTrue("Cannot verify autoSizeColumn() because the necessary Fonts are not installed on this machine: " + font,
                           SheetUtil.canComputeColumnWidth(font));
     }

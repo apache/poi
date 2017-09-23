@@ -66,6 +66,9 @@ public abstract class HWPFDocumentCore extends POIDocument {
     protected static final String STREAM_TABLE_0 = "0Table";
     protected static final String STREAM_TABLE_1 = "1Table";
 
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     /**
      * Size of the not encrypted part of the FIB
      */
@@ -333,7 +336,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
                     is = dec.getDataStream(dis, streamSize, 0);
                     if (encryptionOffset > 0) {
                         ChunkedCipherInputStream cis = (ChunkedCipherInputStream)is;
-                        byte plain[] = new byte[encryptionOffset];
+                        byte plain[] = IOUtils.safelyAllocate(encryptionOffset, MAX_RECORD_LENGTH);
                         cis.readPlain(plain, 0, encryptionOffset);
                         bos.write(plain);
                     }

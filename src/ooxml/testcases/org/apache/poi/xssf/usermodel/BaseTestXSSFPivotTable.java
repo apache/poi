@@ -86,16 +86,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddRowLabelOutOfRangeThrowsException() {
-        int columnIndex = 5;
-
-        try {
-            pivotTable.addRowLabel(columnIndex);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addRowLabel(5);
     }
 
     /**
@@ -193,20 +186,30 @@ public abstract class BaseTestXSSFPivotTable {
         assertEquals(defintion.getDataFields().getDataFieldArray(0).getFld(), columnIndex);
         assertEquals(defintion.getDataFields().getDataFieldArray(0).getName(), customName);
     }
+    
+    /**
+     * Verify that it's possible to set the format to the data column
+     */
+    @Test
+    public void testColumnLabelSetDataFormat() {
+        int columnIndex = 0;
+
+        String format = "#,##0.0";
+        
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex, null, format);
+
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
+
+        assertEquals(defintion.getDataFields().getDataFieldArray(0).getFld(), columnIndex);
+        assertEquals(defintion.getDataFields().getDataFieldArray(0).getNumFmtId(), wb.createDataFormat().getFormat(format));
+    }
 
     /**
      * Verify that it's not possible to create a column label outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddColumnLabelOutOfRangeThrowsException() {
-        int columnIndex = 5;
-
-        try {
-            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 5);
     }
 
      /**
@@ -226,17 +229,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a data column outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddDataColumnOutOfRangeThrowsException() {
-        int columnIndex = 5;
-        boolean isDataField = true;
-
-        try {
-            pivotTable.addDataColumn(columnIndex, isDataField);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addDataColumn(5, true);
     }
 
      /**
@@ -257,15 +252,9 @@ public abstract class BaseTestXSSFPivotTable {
      /**
      * Verify that it's not possible to create a new filter outside of the referenced area.
      */
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testAddReportFilterOutOfRangeThrowsException() {
-        int columnIndex = 5;
-        try {
-            pivotTable.addReportFilter(columnIndex);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        fail();
+        pivotTable.addReportFilter(5);
     }
     
     /**
@@ -295,5 +284,39 @@ public abstract class BaseTestXSSFPivotTable {
         original.createPivotTable(source, new CellReference("W1"));
         // create a pivot table on a different sheet, case insensitive
         offset.createPivotTable(source, new CellReference("W1"));
+    }
+
+
+    /**
+     * Verify that when creating a col label it's  created on the correct column
+     * and the count is increased by one.
+     */
+    @Test
+    public void testAddColLabelToPivotTable() {
+        int columnIndex = 0;
+
+        assertEquals(0, pivotTable.getColLabelColumns().size());
+        
+        pivotTable.addColLabel(columnIndex);
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
+
+        assertEquals(defintion.getColFields().getFieldArray(0).getX(), columnIndex);
+        assertEquals(defintion.getColFields().getCount(), 1);
+        assertEquals(1, pivotTable.getColLabelColumns().size());
+        
+        columnIndex = 1;
+        pivotTable.addColLabel(columnIndex);
+        assertEquals(2, pivotTable.getColLabelColumns().size());
+        
+        assertEquals(0, (int)pivotTable.getColLabelColumns().get(0));
+        assertEquals(1, (int)pivotTable.getColLabelColumns().get(1));
+    }
+
+    /**
+     * Verify that it's not possible to create a col label outside of the referenced area.
+     */
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testAddColLabelOutOfRangeThrowsException() {
+        pivotTable.addColLabel(5);
     }
 }

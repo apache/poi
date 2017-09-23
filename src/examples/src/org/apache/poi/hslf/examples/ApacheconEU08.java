@@ -51,28 +51,28 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 public final class ApacheconEU08 {
 
     public static void main(String[] args) throws IOException {
-        SlideShow<?,?> ppt = new HSLFSlideShow();
-        // SlideShow<?,?> ppt = new XMLSlideShow();
-        ppt.setPageSize(new Dimension(720, 540));
+        try (SlideShow<?,?> ppt = new HSLFSlideShow()) {
+            // SlideShow<?,?> ppt = new XMLSlideShow();
+            ppt.setPageSize(new Dimension(720, 540));
 
-        slide1(ppt);
-        slide2(ppt);
-        slide3(ppt);
-        slide4(ppt);
-        slide5(ppt);
-        slide6(ppt);
-        slide7(ppt);
-        slide8(ppt);
-        slide9(ppt);
-        slide10(ppt);
-        slide11(ppt);
-        slide12(ppt);
+            slide1(ppt);
+            slide2(ppt);
+            slide3(ppt);
+            slide4(ppt);
+            slide5(ppt);
+            slide6(ppt);
+            slide7(ppt);
+            slide8(ppt);
+            slide9(ppt);
+            slide10(ppt);
+            slide11(ppt);
+            slide12(ppt);
 
-        String ext = ppt.getClass().getName().contains("HSLF") ? "ppt" : "pptx";
-        FileOutputStream out = new FileOutputStream("apachecon_eu_08."+ext);
-        ppt.write(out);
-        out.close();
-        ppt.close();
+            String ext = ppt.getClass().getName().contains("HSLF") ? "ppt" : "pptx";
+            try (FileOutputStream out = new FileOutputStream("apachecon_eu_08." + ext)) {
+                ppt.write(out);
+            }
+        }
     }
 
     public static void slide1(SlideShow<?,?> ppt) throws IOException {

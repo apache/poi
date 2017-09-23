@@ -38,6 +38,10 @@ import org.apache.poi.util.StringUtil;
  *  or one of its {@link Attachment}s.
  */
 public class MAPIAttribute {
+
+   //arbitrarily selected; may need to increase
+   private static final int MAX_RECORD_LENGTH = 1_000_000;
+
    private final MAPIProperty property;
    private final int type;
    private final byte[] data;
@@ -144,7 +148,7 @@ public class MAPIAttribute {
             } else {
                // Custom name was stored
                int mplen = LittleEndian.readInt(inp);
-               byte[] mpdata = new byte[mplen];
+               byte[] mpdata = IOUtils.safelyAllocate(mplen, MAX_RECORD_LENGTH);
                IOUtils.readFully(inp, mpdata);
                name = StringUtil.getFromUnicodeLE(mpdata, 0, (mplen/2)-1);
                skipToBoundary(mplen, inp);
@@ -164,7 +168,7 @@ public class MAPIAttribute {
          }
          for(int j=0; j<values; j++) {
             int len = getLength(type, inp);
-            byte[] data = new byte[len];
+            byte[] data = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
             IOUtils.readFully(inp, data);
             skipToBoundary(len, inp);
             
@@ -203,9 +207,11 @@ public class MAPIAttribute {
    private static void skipToBoundary(int length, InputStream inp) throws IOException {
       // Data is always padded out to a 4 byte boundary
       if(length % 4 != 0) {
-         int skip = 4 - (length % 4);
-         byte[] padding = new byte[skip];
-         IOUtils.readFully(inp, padding);
+         int toSkip = 4 - (length % 4);
+         long skipped = IOUtils.skipFully(inp, toSkip);
+         if (skipped != toSkip) {
+            throw new IOException("tried to skip "+toSkip +" but only skipped:"+skipped);
+         }
       }
    }
 }

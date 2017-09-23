@@ -26,10 +26,10 @@ import org.apache.poi.util.Removal;
 
 /**
  * Various utility functions that make working with a region of cells easier.
- * @deprecated POI 3.18
+ * @deprecated POI 4.0.0
  * @see RegionUtil
  */
-@Removal(version="3.20")
+@Removal(version="4.2")
 public final class HSSFRegionUtil {
 
 	private HSSFRegionUtil() {

@@ -31,19 +31,19 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public class MergedCells {
    public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("new sheet");
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+             HSSFSheet sheet = wb.createSheet("new sheet");
 
-        HSSFRow row = sheet.createRow(1);
-        HSSFCell cell = row.createCell(1);
-        cell.setCellValue("This is a test of merging");
+             HSSFRow row = sheet.createRow(1);
+             HSSFCell cell = row.createCell(1);
+             cell.setCellValue("This is a test of merging");
 
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 2));
+             sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 2));
 
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+             // Write the output to a file
+             try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                  wb.write(fileOut);
+             }
+        }
     }
 }

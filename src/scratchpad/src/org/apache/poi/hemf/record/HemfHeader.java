@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianInputStream;
 @Internal
 public class HemfHeader implements HemfRecord {
 
-    private static final int MAX_RECORD_LENGTH = 1000000;
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 
     private Rectangle boundsRectangle;

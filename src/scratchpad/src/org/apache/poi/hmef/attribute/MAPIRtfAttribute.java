@@ -24,6 +24,7 @@ import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.CompressedRTF;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -31,6 +32,10 @@ import org.apache.poi.util.StringUtil;
  *  to a {@link HMEFMessage} or one of its {@link Attachment}s.
  */
 public final class MAPIRtfAttribute extends MAPIAttribute {
+
+   //arbitrarily selected; may need to increase
+   private static final int MAX_RECORD_LENGTH = 1_000_000;
+
    private final byte[] decompressed;
    private final String data;
    
@@ -41,7 +46,7 @@ public final class MAPIRtfAttribute extends MAPIAttribute {
       CompressedRTF rtf = new CompressedRTF();
       byte[] tmp = rtf.decompress(new ByteArrayInputStream(data));
       if(tmp.length > rtf.getDeCompressedSize()) {
-         this.decompressed = new byte[rtf.getDeCompressedSize()];
+         this.decompressed = IOUtils.safelyAllocate(rtf.getDeCompressedSize(), MAX_RECORD_LENGTH);
          System.arraycopy(tmp, 0, decompressed, 0, decompressed.length);
       } else {
          this.decompressed = tmp;

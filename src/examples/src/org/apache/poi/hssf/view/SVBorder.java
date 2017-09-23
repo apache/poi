@@ -498,13 +498,13 @@ public void paintBorder(Component c, Graphics g, int x, int y, int width,
     *  @param y the y origin of the line
     *  @param thickness the thickness of the line
     *  @param horizontal or vertical (true for horizontal)
-    *  @param right/bottom or left/top thickness (true for right or top),
+    *  @param rightBottom or left/top thickness (true for right or top),
     *         if true then the x or y origin will be incremented to provide
     *         thickness, if false, they'll be decremented.  For vertical
     *         borders, x is incremented or decremented, for horizontal its y.
     *         Just set to true for north and west, and false for east and
     *         south.
-    *  @returns length - returns the length of the line.
+    *  @return length - returns the length of the line.
     */
    private int drawDashDotDot(Graphics g,int x, int y, int thickness,
                               boolean horizontal,
@@ -529,7 +529,7 @@ public void paintBorder(Component c, Graphics g, int x, int y, int width,
    }
 
    /**
-    * @returns the line thickness for a border based on border type
+    * @return the line thickness for a border based on border type
     */
    private int getThickness(BorderStyle thickness) {
        switch (thickness) {

@@ -25,12 +25,16 @@ import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
 import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 import org.apache.poi.hwpf.usermodel.TableProperties;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 @Internal
 public final class TableSprmCompressor
 {
+  //arbitrarily selected; may need to increase
+  private static final int MAX_RECORD_LENGTH = 100_000;
+
   public TableSprmCompressor()
   {
   }
@@ -76,7 +80,9 @@ public final class TableSprmCompressor
     if (newTAP.getItcMac() > 0)
     {
       int itcMac = newTAP.getItcMac();
-      byte[] buf = new byte[1 + (LittleEndian.SHORT_SIZE*(itcMac + 1)) + (TableCellDescriptor.SIZE*itcMac)];
+      byte[] buf = IOUtils.safelyAllocate(
+              1 + (LittleEndian.SHORT_SIZE*(itcMac + 1)) + (TableCellDescriptor.SIZE*itcMac),
+              MAX_RECORD_LENGTH);
       buf[0] = (byte)itcMac;
 
       short[] dxaCenters = newTAP.getRgdxaCenter();

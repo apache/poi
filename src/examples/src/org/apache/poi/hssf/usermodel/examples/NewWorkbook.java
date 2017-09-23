@@ -29,10 +29,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public class NewWorkbook {
     public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
-        wb.close();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 }

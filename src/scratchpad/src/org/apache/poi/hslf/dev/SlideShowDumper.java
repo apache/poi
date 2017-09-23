@@ -48,7 +48,11 @@ import org.apache.poi.util.LittleEndian;
  *  from hslf.record.RecordTypes also)
  */
 public final class SlideShowDumper {
-  private byte[] docstream;
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 100_000;
+
+	private byte[] docstream;
 
   /** Do we try to use DDF to understand the escher objects? */
   private boolean ddfEscher;
@@ -209,7 +213,7 @@ public void walkTree(int depth, int startPos, int maxLen) throws IOException {
 
 	final String ind = (indent == 0) ? "%1$s" : "%1$"+indent+"s";
 
-	byte[] contents = new byte[len];
+	byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
 	System.arraycopy(docstream,pos,contents,0,len);
 	DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
 	EscherRecord record = erf.createRecord(contents,0);

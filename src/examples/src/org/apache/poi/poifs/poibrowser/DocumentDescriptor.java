@@ -19,6 +19,7 @@ package org.apache.poi.poifs.poibrowser;
 
 import java.io.*;
 import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.util.IOUtils;
 
 /**
  * <p>Describes the most important (whatever that is) features of a
@@ -26,6 +27,10 @@ import org.apache.poi.poifs.filesystem.*;
  */
 public class DocumentDescriptor
 {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     String name;
     POIFSDocumentPath path;
     DocumentInputStream stream;
@@ -60,7 +65,7 @@ public class DocumentDescriptor
             if (stream.markSupported())
             {
                 stream.mark(nrOfBytes);
-                final byte[] b = new byte[nrOfBytes];
+                final byte[] b = IOUtils.safelyAllocate(nrOfBytes, MAX_RECORD_LENGTH);
                 final int read = stream.read(b, 0, Math.min(size, b.length));
                 bytes = new byte[read];
                 System.arraycopy(b, 0, bytes, 0, read);

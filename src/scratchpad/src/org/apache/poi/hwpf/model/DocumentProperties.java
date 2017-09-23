@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -32,6 +33,9 @@ import org.apache.poi.util.LittleEndian;
 @Internal
 public final class DocumentProperties extends DOPAbstractType
 {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private byte[] _preserved;
 
@@ -51,7 +55,7 @@ public final class DocumentProperties extends DOPAbstractType
         if ( length != supportedSize )
         {
             this._preserved = LittleEndian.getByteArray( tableStream, offset
-                    + supportedSize, length - supportedSize );
+                    + supportedSize, length - supportedSize, MAX_RECORD_LENGTH );
         }
         else
         {

@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogger;
 
@@ -50,6 +51,10 @@ import org.apache.poi.util.POILogger;
  *  this is only used for the other types
  */
 public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cloneable {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public static final short sid = 0x087A;
 
     private FtrHeader futureHeader;
@@ -92,7 +97,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         priority = 0;
         template_type = getConditionType();
         template_param_length = 16;
-        template_params = new byte[template_param_length];
+        template_params = IOUtils.safelyAllocate(template_param_length, MAX_RECORD_LENGTH);
     }
 
     /**
@@ -236,7 +241,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         } else {
             int len = readFormatOptions(in);
             if (len < ext_formatting_length) {
-                ext_formatting_data = new byte[ext_formatting_length-len];
+                ext_formatting_data = IOUtils.safelyAllocate(ext_formatting_length-len, MAX_RECORD_LENGTH);
                 in.readFully(ext_formatting_data);
             }
         }
@@ -252,7 +257,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         template_type = in.readUShort();
         template_param_length = in.readByte();
         if (template_param_length == 0 || template_param_length == 16) {
-            template_params = new byte[template_param_length];
+            template_params = IOUtils.safelyAllocate(template_param_length, MAX_RECORD_LENGTH);
             in.readFully(template_params);
         } else {
             logger.log(POILogger.WARN, "CF Rule v12 template params length should be 0 or 16, found " + template_param_length);
@@ -465,7 +470,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         // use min() to gracefully handle cases where the length-property and the array-length do not match
         // we saw some such files in circulation
         rec.ext_formatting_length = Math.min(ext_formatting_length, ext_formatting_data.length);
-        rec.ext_formatting_data = new byte[ext_formatting_length];
+        rec.ext_formatting_data = IOUtils.safelyAllocate(ext_formatting_length, MAX_RECORD_LENGTH);
         System.arraycopy(ext_formatting_data, 0, rec.ext_formatting_data, 0, rec.ext_formatting_length);
         
         rec.formula_scale = formula_scale.copy();
@@ -474,7 +479,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         rec.priority = priority;
         rec.template_type = template_type;
         rec.template_param_length = template_param_length;
-        rec.template_params = new byte[template_param_length];
+        rec.template_params = IOUtils.safelyAllocate(template_param_length, MAX_RECORD_LENGTH);
         System.arraycopy(template_params, 0, rec.template_params, 0, template_param_length);
 
         if (color_gradient != null) {
@@ -487,7 +492,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
             rec.data_bar = (DataBarFormatting)data_bar.clone();
         }
         if (filter_data != null) {
-            rec.filter_data = new byte[filter_data.length];
+            rec.filter_data = IOUtils.safelyAllocate(filter_data.length, MAX_RECORD_LENGTH);
             System.arraycopy(filter_data, 0, rec.filter_data, 0, filter_data.length);
         }
         

@@ -19,12 +19,17 @@ package org.apache.poi.hslf.blip;
 
 import java.io.IOException;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Represents a DIB picture data in a PPT file
  */
 public final class DIB extends Bitmap {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     /**
      * Size of the BITMAPFILEHEADER structure preceding the actual DIB bytes
      */
@@ -87,7 +92,7 @@ public final class DIB extends Bitmap {
         LittleEndian.putInt(header, 10, offset);
         
         //DIB data is the header + dib bytes
-        byte[] dib = new byte[header.length + data.length];
+        byte[] dib = IOUtils.safelyAllocate(header.length + data.length, MAX_RECORD_LENGTH);
         System.arraycopy(header, 0, dib, 0, header.length);
         System.arraycopy(data, 0, dib, header.length, data.length);
 
@@ -97,7 +102,7 @@ public final class DIB extends Bitmap {
     @Override
     public void setData(byte[] data) throws IOException {
         //cut off the bitmap file-header
-        byte[] dib = new byte[data.length-HEADER_SIZE];
+        byte[] dib = IOUtils.safelyAllocate(data.length-HEADER_SIZE, data.length);
         System.arraycopy(data, HEADER_SIZE, dib, 0, dib.length);
         super.setData(dib);
     }

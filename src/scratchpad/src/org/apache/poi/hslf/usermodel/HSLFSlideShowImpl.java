@@ -65,6 +65,9 @@ import org.apache.poi.util.POILogger;
 public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public static final int UNSET_OFFSET = -1;
 
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 10_000_000;
+
     // For logging
     private POILogger logger = POILogFactory.getLogger(this.getClass());
 
@@ -412,7 +415,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         pict.setSignature(signature);
     
                         // Copy the data, ready to pass to PictureData
-                        byte[] imgdata = new byte[imgsize];
+                        byte[] imgdata = IOUtils.safelyAllocate(imgsize, MAX_RECORD_LENGTH);
                         System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
                         pict.setRawData(imgdata);
     

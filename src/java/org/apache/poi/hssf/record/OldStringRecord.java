@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.hpsf.Property;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.IOUtils;
 
 
 /**
@@ -28,6 +29,10 @@ import org.apache.poi.util.CodePageUtil;
  *  formula string results.
  */
 public final class OldStringRecord {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public final static short biff2_sid = 0x0007;
     public final static short biff345_sid = 0x0207;
 
@@ -49,7 +54,7 @@ public final class OldStringRecord {
         }
 
         // Can only decode properly later when you know the codepage
-        field_2_bytes = new byte[field_1_string_len];
+        field_2_bytes = IOUtils.safelyAllocate(field_1_string_len, MAX_RECORD_LENGTH);
         in.read(field_2_bytes, 0, field_1_string_len);
     }
 

@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.apache.poi.poifs.property.DocumentProperty;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -224,7 +225,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
 		long rval = new_offset - _current_offset;
 		
 		// TODO Do this better
-		byte[] skip = new byte[(int)rval];
+		byte[] skip = IOUtils.safelyAllocate(rval, Integer.MAX_VALUE);
 		readFully(skip);
 		return rval;
 	}

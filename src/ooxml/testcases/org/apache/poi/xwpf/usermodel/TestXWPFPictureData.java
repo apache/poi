@@ -167,9 +167,10 @@ public class TestXWPFPictureData extends TestCase {
             for (XWPFRun run : paragraph.getRuns()) {
                 for (XWPFPicture picture : run.getEmbeddedPictures()) {
                     if (paragraph.getDocument() != null) {
-                        //System.out.println(picture.getCTPicture());
                         XWPFPictureData data = picture.getPictureData();
-                        if (data != null) System.out.println(data.getFileName());
+                        if (data != null) {
+                            fail("Should have returned null: "+ data.getFileName());
+                        }
                     }
                 }
             }

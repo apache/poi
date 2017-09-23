@@ -246,8 +246,8 @@ public abstract class BaseTestCell {
 
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet s = wb1.createSheet("testSheet1");
-        Row r = null;
-        Cell c = null;
+        Row r;
+        Cell c;
         CellStyle cs = wb1.createCellStyle();
         Font f = wb1.createFont();
         f.setFontHeightInPoints((short) 20);
@@ -380,8 +380,6 @@ public abstract class BaseTestCell {
     /**
      * bug 58452: Copy cell formulas containing unregistered function names
      * Make sure that formulas with unknown/unregistered UDFs can be written to and read back from a file.
-     *
-     * @throws IOException
      */
     @Test
     public void testFormulaWithUnknownUDF() throws IOException {
@@ -735,6 +733,8 @@ public abstract class BaseTestCell {
         style = cell.getCellStyle();
         assertFalse(style2.getLocked());
         assertTrue(style2.getHidden());
+        assertTrue(style.getLocked());
+        assertFalse(style.getHidden());
 
         style2.setLocked(true);
         style2.setHidden(false);
@@ -809,20 +809,16 @@ public abstract class BaseTestCell {
     /**
      * Cell with the formula that returns error must return error code(There was
      * an problem that cell could not return error value form formula cell).
-     * @throws IOException 
      */
     @Test
     public void testGetErrorCellValueFromFormulaCell() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
             Cell cell = row.createCell(0);
             cell.setCellFormula("SQRT(-1)");
             wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
             assertEquals(36, cell.getErrorCellValue());
-        } finally {
-            wb.close();
         }
     }
     
@@ -893,6 +889,7 @@ public abstract class BaseTestCell {
      * Setting a cell value of a null RichTextString should set
      *  the cell to Blank, test case for 58558
      */
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testSetCellValueNullRichTextString() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -932,7 +929,6 @@ public abstract class BaseTestCell {
 
     /**
      *  The maximum length of cell contents (text) is 32,767 characters.
-     * @throws IOException 
      */
     @Test
     public void testMaxTextLength() throws IOException{
@@ -945,7 +941,7 @@ public abstract class BaseTestCell {
                 : SpreadsheetVersion.EXCEL2007.getMaxTextLength();
         assertEquals(32767, maxlen);
 
-        StringBuffer b = new StringBuffer() ;
+        StringBuilder b = new StringBuilder() ;
 
         // 32767 is okay
         for( int i = 0 ; i < maxlen ; i++ )
@@ -1013,5 +1009,49 @@ public abstract class BaseTestCell {
         assertEquals(comment, cell.getCellComment());
 
         wb.close();
+    }
+
+    @Test
+    public void testSetErrorValue() throws Exception {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+
+            cell.setCellFormula("A2");
+            cell.setCellErrorValue(FormulaError.NAME.getCode());
+
+            assertEquals("Should still be a formula even after we set an error value",
+                    CellType.FORMULA, cell.getCellType());
+            assertEquals("Should still be a formula even after we set an error value",
+                    CellType.ERROR, cell.getCachedFormulaResultType());
+            assertEquals("A2", cell.getCellFormula());
+            try {
+                cell.getNumericCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            try {
+                cell.getStringCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            try {
+                cell.getRichStringCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            try {
+                cell.getDateCellValue();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                // expected here
+            }
+            assertEquals(FormulaError.NAME.getCode(), cell.getErrorCellValue());
+            assertNull(cell.getHyperlink());
+        }
     }
 }

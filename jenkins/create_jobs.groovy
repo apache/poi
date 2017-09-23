@@ -10,20 +10,10 @@ def triggerSundays = '''
 H H * * 0
 '''
 
-def findbugs2Url = 'http://downloads.sourceforge.net/project/findbugs/findbugs/2.0.3/findbugs-noUpdateChecks-2.0.3.zip?download='
-def findbugs2Lib = 'lib/findbugs-noUpdateChecks-2.0.3.zip'
-def findbugs3Url = 'http://downloads.sourceforge.net/project/findbugs/findbugs/3.0.1/findbugs-noUpdateChecks-3.0.1.zip?download='
-def findbugs3Lib = 'lib/findbugs-noUpdateChecks-3.0.1.zip'
 def xercesUrl = 'http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar'
 def xercesLib = 'compile-lib/xercesImpl-2.6.1.jar'
 
 def poijobs = [
-        [ name: 'POI-DSL-1.6', jdk: '1.6',
-          // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
-          // as part of the Ant build
-          addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}",
-          disabled: true
-        ],
         [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
@@ -54,10 +44,7 @@ def poijobs = [
         [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
           shell: "mkdir -p compile-lib && test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
-          properties: ["-Dadditionaljar=${xercesLib}"],
-          // workaround as Sourceforge does not accept any of the SSL ciphers in JDK 6 any more and thus we cannot download this jar
-          // as part of the Ant build
-          addShell: "wget -O ${findbugs2Lib} ${findbugs2Url}"
+          properties: ["-Dadditionaljar=${xercesLib}"]
         ],
         [ name: 'POI-DSL-Maven', trigger: 'H */4 * * *', maven: true
         ],
@@ -71,18 +58,10 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true,
-                disabled: true // try to use the Gradle-based run so we can get rid of the Maven buildsystem
+        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true
-        ],
-        [ name: 'POI-DSL-Windows-1.6', jdk: '1.6', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
-          addShell: "@if not exist ${findbugs2Lib} powershell -Command wget -Uri \"${findbugs2Url}\" -OutFile ${findbugs2Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
-          disabled: true
-        ],
-        [ name: 'POI-DSL-Windows-1.7', jdk: '1.7', trigger: 'H */12 * * *', windows: true, slaves: 'Windows',
-          addShell: "@if not exist ${findbugs3Lib} powershell -Command wget -Uri \"${findbugs3Url}\" -OutFile ${findbugs3Lib} -UserAgent [Microsoft.PowerShell.Commands.PSUsergAgent]::Chrome",
-          disabled: true
+        [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true,
+                disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
@@ -97,8 +76,6 @@ def defaultAnt = 'Ant 1.9.9'
 def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
 
 def jdkMapping = [
-        '1.6': 'JDK 1.6 (latest)',
-        '1.7': 'JDK 1.7 (latest)',
         '1.8': 'JDK 1.8 (latest)',
         '1.9': 'JDK 1.9 (latest)',
         'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!

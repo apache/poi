@@ -31,6 +31,10 @@ import org.apache.poi.util.StringUtil;
 
 @Internal
 public class ComplexFileTable {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private static final byte GRPPRL_TYPE = 1;
     private static final byte TEXT_PIECE_TABLE_TYPE = 2;
 
@@ -51,7 +55,7 @@ public class ComplexFileTable {
             offset++;
             int size = LittleEndian.getShort(tableStream, offset);
             offset += LittleEndian.SHORT_SIZE;
-            byte[] bs = LittleEndian.getByteArray(tableStream, offset, size);
+            byte[] bs = LittleEndian.getByteArray(tableStream, offset, size, MAX_RECORD_LENGTH);
             offset += size;
 
             SprmBuffer sprmBuffer = new SprmBuffer(bs, false, 0);

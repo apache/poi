@@ -27,6 +27,7 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -46,6 +47,9 @@ import org.apache.poi.util.POILogger;
 
 public final class StyleTextPropAtom extends RecordAtom {
     public static final long _type = RecordTypes.StyleTextPropAtom.typeID;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     private byte[] _header;
     private byte[] reserved;
 
@@ -132,7 +136,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         // Save the contents of the atom, until we're asked to go and
         //  decode them (via a call to setParentTextSize(int)
-        rawContents = new byte[len-8];
+        rawContents = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,rawContents,0,rawContents.length);
         reserved = new byte[0];
 
@@ -286,7 +290,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         // Handle anything left over
         if(pos < rawContents.length) {
-            reserved = new byte[rawContents.length-pos];
+            reserved = IOUtils.safelyAllocate(rawContents.length-pos, rawContents.length);
             System.arraycopy(rawContents,pos,reserved,0,reserved.length);
         }
 
@@ -395,7 +399,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         out.append("  original byte stream \n");
         
-        byte buf[] = new byte[rawContents.length+reserved.length];
+        byte buf[] = IOUtils.safelyAllocate(rawContents.length+reserved.length, MAX_RECORD_LENGTH);
         System.arraycopy(rawContents, 0, buf, 0, rawContents.length);
         System.arraycopy(reserved, 0, buf, rawContents.length, reserved.length);
         out.append( HexDump.dump(buf, 0, 0) );

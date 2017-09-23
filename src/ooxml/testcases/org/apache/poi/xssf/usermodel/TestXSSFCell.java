@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -179,6 +181,42 @@ public final class TestXSSFCell extends BaseTestXCell {
             assertEquals(CellType.BLANK, cell.getCellType());
             assertEquals(STCellType.N, ctCell.getT());
             assertEquals("", cell.getStringCellValue());
+
+            // check behavior with setCellFormulaValidation
+            final String invalidFormula = "A", validFormula = "A2";
+            FormulaParseException fpe = null;
+            // check that default is true
+            assertTrue(wb.getCellFormulaValidation());
+
+            // check that valid formula does not throw exception
+            try {
+                cell.setCellFormula(validFormula);
+            } catch(FormulaParseException e) {
+                fpe = e;
+            }
+            assertNull(fpe);
+
+            // check that invalid formula does throw exception
+            try {
+                cell.setCellFormula(invalidFormula);
+            } catch(FormulaParseException e) {
+                fpe = e;
+            }
+            assertNotNull(fpe);
+            fpe = null;
+
+            // set cell formula validation to false
+            wb.setCellFormulaValidation(false);
+            assertFalse(wb.getCellFormulaValidation());
+
+            // check that neither valid nor invalid formula throw an exception
+            try {
+                cell.setCellFormula(validFormula);
+                cell.setCellFormula(invalidFormula);
+            } catch(FormulaParseException e) {
+                fpe = e;
+            }
+            assertNull(fpe);
         } finally {
             wb.close();
         }

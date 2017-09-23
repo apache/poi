@@ -2649,7 +2649,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             Cell cell = aRow.getCell(1);
             if (cell.getCellType() == CellType.FORMULA) {
                 String formula = cell.getCellFormula();
-                //System.out.println("formula: " + formula);
                 assertNotNull(formula);
                 assertTrue(formula.contains("WORKDAY"));
             } else {
@@ -2786,7 +2785,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             Sheet newSheet = wb.createSheet();
             //Sheet newSheet = wb.createSheet(sheetName);
             int newSheetIndex = wb.getSheetIndex(newSheet);
-            //System.out.println(newSheetIndex);
             wb.setSheetName(newSheetIndex, sheetName);
             wb.setSheetOrder(sheetName, sheetIndex);
         }
@@ -2873,8 +2871,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
                     Cell cell = row.getCell(cellNum);
                     String fmtCellValue = formatter.formatCellValue(cell);
-
-                    System.out.println("Cell: " + fmtCellValue);
                     assertNotNull(fmtCellValue);
                     assertFalse(fmtCellValue.equals("0"));
                 }
@@ -3178,7 +3174,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Row r = s.getRow(3);
         Cell c = r.getCell(0);
         assertEquals(CellType.FORMULA, c.getCellType());
-        System.out.println(c.getCellFormula());
         eval.setDebugEvaluationOutputForNextEval(true);
         CellValue cv = eval.evaluate(c);
         assertNotNull(cv);

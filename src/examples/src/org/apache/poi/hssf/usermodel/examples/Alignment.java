@@ -36,23 +36,22 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
  */
 public class Alignment {
     public static void main(String[] args) throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("new sheet");
-        HSSFRow row = sheet.createRow(2);
-        createCell(wb, row, 0, HorizontalAlignment.CENTER);
-        createCell(wb, row, 1, HorizontalAlignment.CENTER_SELECTION);
-        createCell(wb, row, 2, HorizontalAlignment.FILL);
-        createCell(wb, row, 3, HorizontalAlignment.GENERAL);
-        createCell(wb, row, 4, HorizontalAlignment.JUSTIFY);
-        createCell(wb, row, 5, HorizontalAlignment.LEFT);
-        createCell(wb, row, 6, HorizontalAlignment.RIGHT);
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("new sheet");
+            HSSFRow row = sheet.createRow(2);
+            createCell(wb, row, 0, HorizontalAlignment.CENTER);
+            createCell(wb, row, 1, HorizontalAlignment.CENTER_SELECTION);
+            createCell(wb, row, 2, HorizontalAlignment.FILL);
+            createCell(wb, row, 3, HorizontalAlignment.GENERAL);
+            createCell(wb, row, 4, HorizontalAlignment.JUSTIFY);
+            createCell(wb, row, 5, HorizontalAlignment.LEFT);
+            createCell(wb, row, 6, HorizontalAlignment.RIGHT);
 
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
-        
-        wb.close();
+            // Write the output to a file
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 
     /**

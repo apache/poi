@@ -111,11 +111,9 @@ public final class CellValue {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(formatAsString());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + " [" +
+				formatAsString() +
+				"]";
 	}
 
 	public String formatAsString() {

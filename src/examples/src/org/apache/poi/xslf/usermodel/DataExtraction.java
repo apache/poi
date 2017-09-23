@@ -43,53 +43,52 @@ public final class DataExtraction {
         }
         
         FileInputStream is = new FileInputStream(args[0]);
-        XMLSlideShow ppt = new XMLSlideShow(is);
-        is.close();
+        try (XMLSlideShow ppt = new XMLSlideShow(is)) {
+            is.close();
 
-        // Get the document's embedded files.
-        for (PackagePart p : ppt.getAllEmbedds()) {
-            String type = p.getContentType();
-            // typically file name
-            String name = p.getPartName().getName();  
-            out.println("Embedded file ("+type+"): "+name);
-            
-            InputStream pIs = p.getInputStream();
-            // make sense of the part data
-            pIs.close();
-            
-        }
+            // Get the document's embedded files.
+            for (PackagePart p : ppt.getAllEmbedds()) {
+                String type = p.getContentType();
+                // typically file name
+                String name = p.getPartName().getName();
+                out.println("Embedded file (" + type + "): " + name);
 
-        // Get the document's embedded files.
-        for (XSLFPictureData data : ppt.getPictureData()) {
-            String type = data.getContentType();
-            String name = data.getFileName();
-            out.println("Picture ("+type+"): "+name);
+                InputStream pIs = p.getInputStream();
+                // make sense of the part data
+                pIs.close();
 
-            InputStream pIs = data.getInputStream();
-            // make sense of the image data
-            pIs.close();
-        }
+            }
 
-        // size of the canvas in points
-        Dimension pageSize = ppt.getPageSize();
-        out.println("Pagesize: "+pageSize);
-        
-        for(XSLFSlide slide : ppt.getSlides()) {
-            for(XSLFShape shape : slide){
-                if(shape instanceof XSLFTextShape) {
-                    XSLFTextShape txShape = (XSLFTextShape)shape;
-                    out.println(txShape.getText());
-                } else if (shape instanceof XSLFPictureShape){
-                    XSLFPictureShape pShape = (XSLFPictureShape)shape;
-                    XSLFPictureData pData = pShape.getPictureData();
-                    out.println(pData.getFileName());
-                } else {
-                    out.println("Process me: " + shape.getClass());
+            // Get the document's embedded files.
+            for (XSLFPictureData data : ppt.getPictureData()) {
+                String type = data.getContentType();
+                String name = data.getFileName();
+                out.println("Picture (" + type + "): " + name);
+
+                InputStream pIs = data.getInputStream();
+                // make sense of the image data
+                pIs.close();
+            }
+
+            // size of the canvas in points
+            Dimension pageSize = ppt.getPageSize();
+            out.println("Pagesize: " + pageSize);
+
+            for (XSLFSlide slide : ppt.getSlides()) {
+                for (XSLFShape shape : slide) {
+                    if (shape instanceof XSLFTextShape) {
+                        XSLFTextShape txShape = (XSLFTextShape) shape;
+                        out.println(txShape.getText());
+                    } else if (shape instanceof XSLFPictureShape) {
+                        XSLFPictureShape pShape = (XSLFPictureShape) shape;
+                        XSLFPictureData pData = pShape.getPictureData();
+                        out.println(pData.getFileName());
+                    } else {
+                        out.println("Process me: " + shape.getClass());
+                    }
                 }
             }
         }
-        
-        ppt.close();
     }
 
 }

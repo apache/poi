@@ -107,7 +107,6 @@ public class BaseTestCellUtil {
 
     @Test
     public void setCellStyleProperties() throws IOException {
-        System.out.println("setCellStyleProps start");
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -130,7 +129,6 @@ public class BaseTestCellUtil {
         c = r.createCell(1);
         CellUtil.setCellStyleProperties(c, props);
         int styCnt3 = wb.getNumCellStyles();
-        System.out.println("setCellStyleProps nearing end");
         assertEquals("No additional styles should have been created", styCnt2, styCnt3);
 
         wb.close();

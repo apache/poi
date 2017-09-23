@@ -40,7 +40,6 @@ import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -94,11 +93,8 @@ public class TestZipPackage {
 
     private void assertEntityLimitReached(Exception e) throws UnsupportedEncodingException {
         ByteArrayOutputStream str = new ByteArrayOutputStream();
-        PrintWriter writer = new PrintWriter(new OutputStreamWriter(str, "UTF-8"));
-        try {
+        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(str, "UTF-8"))) {
             e.printStackTrace(writer);
-        } finally {
-            writer.close();
         }
         String string = new String(str.toByteArray(), "UTF-8");
         assertTrue("Had: " + string, string.contains("The parser has encountered more than"));
@@ -115,17 +111,14 @@ public class TestZipPackage {
         }
 
         try {
-            POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-xmlbomb.xlsx"));
-            try  {
+            try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-xmlbomb.xlsx"))) {
                 assertNotNull(extractor);
-    
+
                 try {
                     extractor.getText();
                 } catch (IllegalStateException e) {
                     // expected due to shared strings expansion
                 }
-            } finally {
-                extractor.close();
             }
         } catch (POIXMLException e) {
             assertEntityLimitReached(e);
@@ -136,9 +129,8 @@ public class TestZipPackage {
     public void testZipEntityExpansionSharedStringTable() throws Exception {
         Workbook wb = WorkbookFactory.create(XSSFTestDataSamples.openSamplePackage("poc-shared-strings.xlsx"));
         wb.close();
-        
-        POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"));
-        try  {
+
+        try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"))) {
             assertNotNull(extractor);
 
             try {
@@ -146,8 +138,6 @@ public class TestZipPackage {
             } catch (IllegalStateException e) {
                 // expected due to shared strings expansion
             }
-        } finally {
-            extractor.close();
         }
     }
 
@@ -156,17 +146,14 @@ public class TestZipPackage {
         boolean before = ExtractorFactory.getThreadPrefersEventExtractors();
         ExtractorFactory.setThreadPrefersEventExtractors(true);
         try {
-            POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"));
-            try  {
+            try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"))) {
                 assertNotNull(extractor);
-    
+
                 try {
                     extractor.getText();
                 } catch (IllegalStateException e) {
                     // expected due to shared strings expansion
                 }
-            } finally {
-                extractor.close();
             }
         } catch (XmlException e) {
             assertEntityLimitReached(e);
@@ -232,8 +219,9 @@ public class TestZipPackage {
             try {
                 pkg.getParts();
                 fail("Shouldn't work");
-            } catch (ODFNotOfficeXmlFileException e) {
-            } catch (NotOfficeXmlFileException ne) {}
+            } catch (NotOfficeXmlFileException e) {
+                // expected here
+            }
             pkg.close();
             
             assertNotNull(pkg.getZipArchive());
@@ -246,8 +234,9 @@ public class TestZipPackage {
             try {
                 pkg.getParts();
                 fail("Shouldn't work");
-            } catch (ODFNotOfficeXmlFileException e) {
-            } catch (NotOfficeXmlFileException ne) {}
+            } catch (NotOfficeXmlFileException e) {
+                // expected here
+            }
             pkg.close();
             
             assertNotNull(pkg.getZipArchive());

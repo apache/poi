@@ -41,16 +41,6 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         return new XSSFRichTextString(str);
     }
 
-    public void notifySetFormula(Cell cell) {
-        _bookEvaluator.notifyUpdateCell(new XSSFEvaluationCell((XSSFCell)cell));
-    }
-    public void notifyDeleteCell(Cell cell) {
-        _bookEvaluator.notifyDeleteCell(new XSSFEvaluationCell((XSSFCell)cell));
-    }
-    public void notifyUpdateCell(Cell cell) {
-        _bookEvaluator.notifyUpdateCell(new XSSFEvaluationCell((XSSFCell)cell));
-    }
-
     /**
      * Turns a XSSFCell / SXSSFCell into a XSSFEvaluationCell
      */

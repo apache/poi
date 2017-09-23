@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 
+import org.apache.poi.poifs.crypt.TestSignatureInfo;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,6 +37,8 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -48,7 +51,9 @@ import junit.framework.AssertionFailedError;
 
 @RunWith(Parameterized.class)
 public final class TestMatrixFormulasFromXMLSpreadsheet {
-    
+
+    private static final POILogger LOG = POILogFactory.getLogger(TestMatrixFormulasFromXMLSpreadsheet.class);
+
     private static XSSFWorkbook workbook;
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
@@ -213,13 +218,13 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
      */
     private static String getTargetFunctionName(Row r) {
         if(r == null) {
-            System.err.println("Warning - given null row, can't figure out function name");
+            LOG.log(POILogger.WARN, "Warning - given null row, can't figure out function name");
             return null;
         }
         Cell cell = r.getCell(Navigator.START_OPERATORS_COL_INDEX);
-        System.err.println(String.valueOf(Navigator.START_OPERATORS_COL_INDEX));
+        LOG.log(POILogger.DEBUG, String.valueOf(Navigator.START_OPERATORS_COL_INDEX));
         if(cell == null) {
-            System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + Navigator.START_OPERATORS_COL_INDEX + ", can't figure out function name");
+            LOG.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + Navigator.START_OPERATORS_COL_INDEX + ", can't figure out function name");
             return null;
         }
         if(cell.getCellType() == CellType.BLANK) {

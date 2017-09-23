@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -36,6 +37,9 @@ import org.apache.poi.util.StringUtil;
 public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x01B8;
     private static POILogger logger = POILogFactory.getLogger(HyperlinkRecord.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
 
     static final class GUID {
 		/*
@@ -525,7 +529,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
                 int len = in.readInt();
 
-                byte[] path_bytes = new byte[len];
+                byte[] path_bytes = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
                 in.readFully(path_bytes);
 
                 _address = new String(path_bytes, StringUtil.UTF8);

@@ -79,23 +79,21 @@ public class WriteTitle
         ms.setProperty(p);
 
         /* Create the POI file system the property set is to be written to. */
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
+        try (final POIFSFileSystem poiFs = new POIFSFileSystem()) {
+            /* For writing the property set into a POI file system it has to be
+             * handed over to the POIFS.createDocument() method as an input stream
+             * which produces the bytes making out the property set stream. */
+            final InputStream is = mps.toInputStream();
 
-        /* For writing the property set into a POI file system it has to be
-         * handed over to the POIFS.createDocument() method as an input stream
-         * which produces the bytes making out the property set stream. */
-        final InputStream is = mps.toInputStream();
+            /* Create the summary information property set in the POI file
+             * system. It is given the default name most (if not all) summary
+             * information property sets have. */
+            poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);
 
-        /* Create the summary information property set in the POI file
-         * system. It is given the default name most (if not all) summary
-         * information property sets have. */
-        poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);
-
-        /* Write the whole POI file system to a disk file. */
-        FileOutputStream fos = new FileOutputStream(fileName);
-        poiFs.writeFilesystem(fos);
-        fos.close();
-        poiFs.close();
+            /* Write the whole POI file system to a disk file. */
+            try (FileOutputStream fos = new FileOutputStream(fileName)) {
+                poiFs.writeFilesystem(fos);
+            }
+        }
     }
-
 }

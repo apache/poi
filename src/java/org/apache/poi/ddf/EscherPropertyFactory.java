@@ -20,12 +20,17 @@ package org.apache.poi.ddf;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Generates a property given a reference into the byte array storing that property.
  */
 public final class EscherPropertyFactory {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
     /**
      * Create new properties from a byte array.
      *
@@ -64,9 +69,9 @@ public final class EscherPropertyFactory {
                     if ( !isComplex ) {
                         ep = new EscherSimpleProperty( propId, propData );
                     } else if ( propertyType == EscherPropertyMetaData.TYPE_ARRAY) {
-                        ep = new EscherArrayProperty( propId, new byte[propData]);
+                        ep = new EscherArrayProperty( propId, IOUtils.safelyAllocate(propData, MAX_RECORD_LENGTH));
                     } else {
-                        ep = new EscherComplexProperty( propId, new byte[propData]);
+                        ep = new EscherComplexProperty( propId, IOUtils.safelyAllocate(propData, MAX_RECORD_LENGTH));
                     }
                     break;
             }

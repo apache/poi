@@ -220,10 +220,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            }
            // pack.originalPackagePath = file.getAbsolutePath();
            return pack;
-       } catch (InvalidFormatException e) {
-		   IOUtils.closeQuietly(pack);
-           throw e;
-       } catch (RuntimeException e) {
+       } catch (InvalidFormatException | RuntimeException e) {
 		   IOUtils.closeQuietly(pack);
            throw e;
        }
@@ -299,10 +296,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		   }
 		   pack.originalPackagePath = file.getAbsolutePath();
 		   return pack;
-	   } catch (InvalidFormatException e) {
-		   IOUtils.closeQuietly(pack);
-		   throw e;
-	   } catch (RuntimeException e) {
+	   } catch (InvalidFormatException | RuntimeException e) {
 		   IOUtils.closeQuietly(pack);
 		   throw e;
 	   }
@@ -326,10 +320,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			if (pack.partList == null) {
 				pack.getParts();
 			}
-		} catch (InvalidFormatException e) {
-			IOUtils.closeQuietly(pack);
-			throw e;
-		} catch (RuntimeException e) {
+		} catch (InvalidFormatException | RuntimeException e) {
 			IOUtils.closeQuietly(pack);
 			throw e;
 		}
@@ -512,12 +503,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
         String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
 
-        FileInputStream is = new FileInputStream(path);
-        try {
-            addThumbnail(name, is);
-        } finally {
-            is.close();
-        }
+		try (FileInputStream is = new FileInputStream(path)) {
+			addThumbnail(name, is);
+		}
     }
     /**
      * Add a thumbnail to the package. This method is provided to make easier

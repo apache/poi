@@ -63,7 +63,6 @@ public class ConditionalFormats {
      * generates a sample workbook with conditional formatting,
      * and prints out a summary of applied formats for one sheet
      * @param args pass "-xls" to generate an HSSF workbook, default is XSSF
-     * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         Workbook wb;
@@ -656,8 +655,6 @@ public class ConditionalFormats {
     /**
      * Print out a summary of the conditional formatting rules applied to cells on the given sheet.
      * Only cells with a matching rule are printed, and for those, all matching rules are sumarized.
-     * @param wb
-     * @param sheetName
      */
     static void evaluateRules(Workbook wb, String sheetName) {
         final WorkbookEvaluatorProvider wbEvalProv = (WorkbookEvaluatorProvider) wb.getCreationHelper().createFormulaEvaluator();

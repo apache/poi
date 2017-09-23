@@ -19,12 +19,17 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.Arrays;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 @Internal
 public final class SprmBuffer implements Cloneable
 {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     byte[] _buf;
     boolean _istd;
     int _offset;
@@ -73,7 +78,7 @@ public final class SprmBuffer implements Cloneable
 
     public SprmBuffer( int sprmsStartOffset )
     {
-        _buf = new byte[sprmsStartOffset + 4];
+        _buf = IOUtils.safelyAllocate(sprmsStartOffset + 4, MAX_RECORD_LENGTH);
         _offset = sprmsStartOffset;
         _sprmsStartOffset = sprmsStartOffset;
     }
@@ -148,7 +153,7 @@ public final class SprmBuffer implements Cloneable
         // commented - buffer shall not contain any additional bytes --
         // sergey
         // byte[] newBuf = new byte[_offset + addition + 6];
-         byte[] newBuf = new byte[_offset + addition];
+         byte[] newBuf = IOUtils.safelyAllocate(_offset + addition, MAX_RECORD_LENGTH);
         System.arraycopy( _buf, 0, newBuf, 0, _buf.length );
         _buf = newBuf;
     }

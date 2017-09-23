@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
@@ -58,6 +59,9 @@ public class VariantSupport extends Variant {
 
     
     private static final POILogger logger = POILogFactory.getLogger(VariantSupport.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     private static boolean logUnsupportedTypes;
 
     /**
@@ -172,7 +176,7 @@ public class VariantSupport extends Variant {
             typedPropertyValue.readValue(lei);
         } catch ( UnsupportedOperationException exc ) {
             int propLength = Math.min( length, lei.available() );
-            final byte[] v = new byte[propLength];
+            final byte[] v = IOUtils.safelyAllocate(propLength, MAX_RECORD_LENGTH);
             lei.readFully(v, 0, propLength);
             throw new ReadingNotSupportedException( type, v );
         }
@@ -248,7 +252,7 @@ public class VariantSupport extends Variant {
             default:
                 final int unpadded = lei.getReadIndex()-offset;
                 lei.setReadIndex(offset);
-                final byte[] v = new byte[unpadded];
+                final byte[] v = IOUtils.safelyAllocate(unpadded, MAX_RECORD_LENGTH);
                 lei.readFully( v, 0, unpadded );
                 throw new ReadingNotSupportedException( type, v );
         }

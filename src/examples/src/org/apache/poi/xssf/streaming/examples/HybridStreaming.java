@@ -75,6 +75,11 @@ public class HybridStreaming {
             @Override
             public void cell(String cellReference, String formattedValue, XSSFComment comment) {
             }
+
+            @Override
+            public void endSheet() {
+
+            }
         };
     }
 

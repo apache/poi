@@ -40,31 +40,30 @@ public class Step1 {
         }
 
         FileInputStream fis = new FileInputStream(args[0]);
-        XMLSlideShow ppt = new XMLSlideShow(fis);
-        fis.close();
+        try (XMLSlideShow ppt = new XMLSlideShow(fis)) {
+            fis.close();
 
-        for(XSLFSlide slide : ppt.getSlides()){
-            System.out.println("Title: " + slide.getTitle());
+            for (XSLFSlide slide : ppt.getSlides()) {
+                System.out.println("Title: " + slide.getTitle());
 
-            for(XSLFShape shape : slide.getShapes()){
-                if(shape instanceof XSLFTextShape) {
-                    XSLFTextShape tsh = (XSLFTextShape)shape;
-                    for(XSLFTextParagraph p : tsh){
-                        System.out.println("Paragraph level: " + p.getIndentLevel());
-                        for(XSLFTextRun r : p){
-                            System.out.println(r.getRawText());
-                            System.out.println("  bold: " + r.isBold());
-                            System.out.println("  italic: " + r.isItalic());
-                            System.out.println("  underline: " + r.isUnderlined());
-                            System.out.println("  font.family: " + r.getFontFamily());
-                            System.out.println("  font.size: " + r.getFontSize());
-                            System.out.println("  font.color: " + r.getFontColor());
+                for (XSLFShape shape : slide.getShapes()) {
+                    if (shape instanceof XSLFTextShape) {
+                        XSLFTextShape tsh = (XSLFTextShape) shape;
+                        for (XSLFTextParagraph p : tsh) {
+                            System.out.println("Paragraph level: " + p.getIndentLevel());
+                            for (XSLFTextRun r : p) {
+                                System.out.println(r.getRawText());
+                                System.out.println("  bold: " + r.isBold());
+                                System.out.println("  italic: " + r.isItalic());
+                                System.out.println("  underline: " + r.isUnderlined());
+                                System.out.println("  font.family: " + r.getFontFamily());
+                                System.out.println("  font.size: " + r.getFontSize());
+                                System.out.println("  font.color: " + r.getFontColor());
+                            }
                         }
                     }
                 }
             }
         }
-        
-        ppt.close();
     }
 }

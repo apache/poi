@@ -26,21 +26,20 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public abstract class SelectedSheet {
     
     public static void main(String[]args) throws IOException {
-        Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
+        try (Workbook wb = new XSSFWorkbook()) { //or new HSSFWorkbook();
 
-        wb.createSheet("row sheet");
-        wb.createSheet("another sheet");
-        Sheet sheet3 = wb.createSheet(" sheet 3 ");
-        sheet3.setSelected(true);
-        wb.setActiveSheet(2);
+            wb.createSheet("row sheet");
+            wb.createSheet("another sheet");
+            Sheet sheet3 = wb.createSheet(" sheet 3 ");
+            sheet3.setSelected(true);
+            wb.setActiveSheet(2);
 
-        // Create various cells and rows for spreadsheet.
+            // Create various cells and rows for spreadsheet.
 
-        FileOutputStream fileOut = new FileOutputStream("selectedSheet.xlsx");
-        wb.write(fileOut);
-        fileOut.close();
-        
-        wb.close();
+            try (FileOutputStream fileOut = new FileOutputStream("selectedSheet.xlsx")) {
+                wb.write(fileOut);
+            }
+        }
     }
 
 }

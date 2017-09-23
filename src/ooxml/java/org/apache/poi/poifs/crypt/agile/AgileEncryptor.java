@@ -58,6 +58,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier.AgileCertificateEntry;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
@@ -76,6 +77,10 @@ import com.microsoft.schemas.office.x2006.keyEncryptor.certificate.CTCertificate
 import com.microsoft.schemas.office.x2006.keyEncryptor.password.CTPasswordKeyEncryptor;
 
 public class AgileEncryptor extends Encryptor implements Cloneable {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     private byte integritySalt[];
 	private byte pwHash[];
     
@@ -91,11 +96,11 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
         int keySize = header.getKeySize()/8;
         int hashSize = header.getHashAlgorithm().hashSize;
         
-        byte[] newVerifierSalt = new byte[blockSize]
-             , newVerifier = new byte[blockSize]
-             , newKeySalt = new byte[blockSize]
-             , newKeySpec = new byte[keySize]
-             , newIntegritySalt = new byte[hashSize];
+        byte[] newVerifierSalt = IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH)
+             , newVerifier = IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH)
+             , newKeySalt = IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH)
+             , newKeySpec = IOUtils.safelyAllocate(keySize, MAX_RECORD_LENGTH)
+             , newIntegritySalt = IOUtils.safelyAllocate(hashSize, MAX_RECORD_LENGTH);
         r.nextBytes(newVerifierSalt); // blocksize
         r.nextBytes(newVerifier); // blocksize
         r.nextBytes(newKeySalt); // blocksize

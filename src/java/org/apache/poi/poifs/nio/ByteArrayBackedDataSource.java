@@ -17,6 +17,8 @@
 
 package org.apache.poi.poifs.nio;
 
+import org.apache.poi.util.IOUtils;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -25,6 +27,9 @@ import java.nio.ByteBuffer;
  * A POIFS {@link DataSource} backed by a byte array.
  */
 public class ByteArrayBackedDataSource extends DataSource {
+   //Can we make this shorter?
+   private static final int MAX_RECORD_LENGTH = Integer.MAX_VALUE;
+
    private byte[] buffer;
    private long size;
    
@@ -76,7 +81,8 @@ public class ByteArrayBackedDataSource extends DataSource {
          difference = 4096;
       }
 
-      byte[] nb = new byte[(int)(difference+buffer.length)];
+      long totalLen = difference+buffer.length;
+      byte[] nb = IOUtils.safelyAllocate(totalLen, MAX_RECORD_LENGTH);
       System.arraycopy(buffer, 0, nb, 0, (int)size);
       buffer = nb;
    }

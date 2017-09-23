@@ -216,13 +216,9 @@ public final class Word2Forrest
 
 
     public static void main(String[] args) throws IOException {
-        InputStream is = new FileInputStream(args[0]);
-        OutputStream out = new FileOutputStream("test.xml");
-        try {
-            new Word2Forrest(new HWPFDocument(is), out);
-        } finally {
-            out.close();
-            is.close();
-        }
+      try (InputStream is = new FileInputStream(args[0]);
+           OutputStream out = new FileOutputStream("test.xml")) {
+        new Word2Forrest(new HWPFDocument(is), out);
+      }
     }
 }

@@ -34,7 +34,7 @@ import org.apache.poi.util.POILogger;
 
 public class HwmfText {
     private static final POILogger logger = POILogFactory.getLogger(HwmfText.class);
-    private static final int MAX_RECORD_LENGTH = 1000000;
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
      * The META_SETTEXTCHAREXTRA record defines inter-character spacing for text justification in the 

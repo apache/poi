@@ -1509,7 +1509,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         assertEquals("J7", new CellReference(cell).formatAsString());
         assertEquals("[Cell Formula] J7 cell type", CellType.FORMULA, cell.getCellType());
         assertEquals("[Cell Formula] J7 cell formula", "5+2", cell.getCellFormula());
-        System.out.println("Cell formula evaluation currently unsupported");
+        //System.out.println("Cell formula evaluation currently unsupported");
         
         // Cell Formula with Reference
         // Formula row references should be adjusted by destRowNum-srcRowNum
@@ -1536,7 +1536,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         
         // Array Formula
         cell = CellUtil.getCell(destRow, col++);
-        System.out.println("Array formulas currently unsupported");
+        //System.out.println("Array formulas currently unsupported");
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
         /*
         assertEquals("[Array Formula] N7 cell type", CellType.FORMULA, cell.getCellType());

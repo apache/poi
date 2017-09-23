@@ -36,6 +36,7 @@ import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -52,6 +53,11 @@ import org.apache.poi.util.POILogger;
 // For now, pretending to be an atom. Might not always be, but that
 //  would require a wrapping class
 public final class PPDrawing extends RecordAtom {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
+
 	private byte[] _header;
 	private long _type;
 
@@ -100,7 +106,7 @@ public final class PPDrawing extends RecordAtom {
 		_type = LittleEndian.getUShort(_header,2);
 
 		// Get the contents for now
-		final byte[] contents = new byte[len];
+		final byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start,contents,0,len);
 
 		// Build up a tree of Escher records contained within

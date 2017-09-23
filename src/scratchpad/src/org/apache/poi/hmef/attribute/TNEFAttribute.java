@@ -33,6 +33,10 @@ import org.apache.poi.util.LittleEndian;
  *  ones, so we can't just re-use the HSMF ones.
  */
 public class TNEFAttribute {
+
+   //arbitrarily selected; may need to increase
+   private static final int MAX_RECORD_LENGTH = 1_000_000;
+
    private final TNEFProperty property;
    private final int type;
    private final byte[] data;
@@ -47,7 +51,7 @@ public class TNEFAttribute {
       int length = LittleEndian.readInt(inp);
       
       property = TNEFProperty.getBest(id, type);
-      data = new byte[length];
+      data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
       IOUtils.readFully(inp, data);
       
       checksum = LittleEndian.readUShort(inp);

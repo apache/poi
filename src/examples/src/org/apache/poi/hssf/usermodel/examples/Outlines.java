@@ -37,14 +37,11 @@ public class Outlines implements Closeable {
     throws IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         POILogger LOGGER = POILogFactory.getLogger(Outlines.class);
         for (int i=1; i<=13; i++) {
-            Outlines o = new Outlines();
-            try {
-                String log = (String)Outlines.class.getDeclaredMethod("test"+i).invoke(o);
-                String filename = "outline"+i+".xls";
+            try (Outlines o = new Outlines()) {
+                String log = (String) Outlines.class.getDeclaredMethod("test" + i).invoke(o);
+                String filename = "outline" + i + ".xls";
                 o.writeOut(filename);
-                LOGGER.log(POILogger.INFO, filename+" written. "+log);
-            } finally {
-                o.close();
+                LOGGER.log(POILogger.INFO, filename + " written. " + log);
             }
         }
     }
@@ -53,11 +50,8 @@ public class Outlines implements Closeable {
     private final HSSFSheet sheet1 = wb.createSheet("new sheet");
 
     public void writeOut(String filename) throws IOException {
-        FileOutputStream fileOut = new FileOutputStream(filename);
-        try {
+        try (FileOutputStream fileOut = new FileOutputStream(filename)) {
             wb.write(fileOut);
-        } finally {
-            fileOut.close();
         }
     }
     

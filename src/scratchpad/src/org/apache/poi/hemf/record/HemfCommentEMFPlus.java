@@ -34,7 +34,7 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfCommentEMFPlus extends AbstractHemfComment {
 
-    private static final int MAX_RECORD_LENGTH = 1000000;
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 
     long dataSize;
