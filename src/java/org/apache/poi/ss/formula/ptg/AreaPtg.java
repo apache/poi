@@ -17,10 +17,8 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.Removal;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -36,15 +34,6 @@ public final class AreaPtg extends Area2DPtgBase {
 	public AreaPtg(LittleEndianInput in)  {
 		super(in);
 	}
-
-	/**
-     * @deprecated use {@link #AreaPtg(AreaReference)} instead
-	 */
-	@Deprecated()
-	@Removal(version="3.19")
-    public AreaPtg(String arearef) {
-        this(new AreaReference(arearef, SpreadsheetVersion.EXCEL97));
-    }
 	
     public AreaPtg(AreaReference arearef) {
         super(arearef);

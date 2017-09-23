@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.util.Removal;
 
 public class AreaReference {
 
@@ -104,16 +103,6 @@ public class AreaReference {
             }
         }
         return true;
-    }
-
-    /**
-     * Creates an area ref from a pair of Cell References.
-     * @deprecated use {@link #AreaReference(CellReference, CellReference, SpreadsheetVersion)} instead
-     */
-    @Deprecated
-    @Removal(version="3.19")
-    public AreaReference(CellReference topLeft, CellReference botRight) {
-        this(topLeft, botRight, DEFAULT_SPREADSHEET_VERSION);
     }
     
     /**
@@ -215,17 +204,6 @@ public class AreaReference {
     }
     public boolean isWholeColumnReference() {
         return isWholeColumnReference(_version, _firstCell, _lastCell);
-    }
-
-    /**
-     * Takes a non-contiguous area reference, and returns an array of contiguous area references
-     * @return an array of contiguous area references.
-     * @deprecated use {@link #generateContiguous(SpreadsheetVersion, String)} instead
-     */
-    @Deprecated
-    @Removal(version="3.19")
-    public static AreaReference[] generateContiguous(String reference) {
-        return generateContiguous(DEFAULT_SPREADSHEET_VERSION, reference);
     }
 
     /**

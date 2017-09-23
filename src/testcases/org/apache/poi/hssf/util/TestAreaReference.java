@@ -274,16 +274,6 @@ public final class TestAreaReference extends TestCase {
         confirmWholeColumnRef("AD:$AE", 29, 30, false, true);
     }
     
-    @SuppressWarnings("deprecation")
-    public void testDeprecatedMethod() {
-        String refSimple = "$C$10:$C$10";
-        AreaReference[] arefs1 = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refSimple);
-        AreaReference[] arefs2 = AreaReference.generateContiguous(refSimple);
-        assertEquals(1, arefs1.length);
-        assertEquals(arefs1.length, arefs2.length);
-        assertEquals(arefs1[0].formatAsString(), arefs2[0].formatAsString());
-    }
-
     private static void confirmWholeColumnRef(String ref, int firstCol, int lastCol, boolean firstIsAbs, boolean lastIsAbs) {
         AreaReference ar = new AreaReference(ref, SpreadsheetVersion.EXCEL97);
         confirmCell(ar.getFirstCell(), 0, firstCol, true, firstIsAbs);
