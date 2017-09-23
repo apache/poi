@@ -22,6 +22,8 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.util.AreaReference;
 
 /**
  * Tests for {@link AreaPtg}.
@@ -44,7 +46,7 @@ public final class TestAreaPtg extends TestCase {
 	}
 	
 	public static void testSortTopLeftToBottomRight() {
-	    AreaPtg ptg = new AreaPtg("A$1:$B5");
+	    AreaPtg ptg = new AreaPtg(new AreaReference("A$1:$B5", SpreadsheetVersion.EXCEL2007));
 	    assertEquals("A$1:$B5", ptg.toFormulaString());
 	    ptg.setFirstColumn(3);
 	    assertEquals("Area Ptg should not implicitly re-sort itself (except during construction)",
