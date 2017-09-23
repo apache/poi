@@ -178,7 +178,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     /**
      * Concatenate text from &lt;rPh&gt; text elements in SharedStringsTable
      * Default is true;
-     * @param concatenatePhoneticRuns
+     * @param concatenatePhoneticRuns true if runs should be concatenated, false otherwise
      */
     public void setConcatenatePhoneticRuns(boolean concatenatePhoneticRuns) {
         this.concatenatePhoneticRuns = concatenatePhoneticRuns;
@@ -293,14 +293,8 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
           }
           
           return text.toString();
-       } catch(IOException e) {
+       } catch(IOException | OpenXML4JException | SAXException e) {
           LOGGER.log(POILogger.WARN, e);
-          return null;
-       } catch(SAXException se) {
-           LOGGER.log(POILogger.WARN, se);
-          return null;
-       } catch(OpenXML4JException o4je) {
-           LOGGER.log(POILogger.WARN, o4je);
           return null;
        }
    }
@@ -346,6 +340,10 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         @Override
         public void endRow(int rowNum) {
             output.append('\n');
+        }
+
+        @Override
+        public void endSheet() {
         }
 
         @Override
