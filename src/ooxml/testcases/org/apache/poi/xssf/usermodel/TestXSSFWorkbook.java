@@ -180,8 +180,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void getCellStyleAt() throws IOException{
-         XSSFWorkbook workbook = new XSSFWorkbook();
-         try {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             short i = 0;
             //get default style
             CellStyle cellStyleAt = workbook.getCellStyleAt(i);
@@ -194,17 +193,14 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             font.setFontName("Verdana");
             customStyle.setFont(font);
             int x = styleSource.putStyle(customStyle);
-            cellStyleAt = workbook.getCellStyleAt((short)x);
+            cellStyleAt = workbook.getCellStyleAt((short) x);
             assertNotNull(cellStyleAt);
-         } finally {
-             workbook.close();
-         }
+        }
     }
 
     @Test
     public void getFontAt() throws IOException{
-         XSSFWorkbook workbook = new XSSFWorkbook();
-         try {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             StylesTable styleSource = workbook.getStylesSource();
             short i = 0;
             //get default font
@@ -215,22 +211,17 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             XSSFFont customFont = new XSSFFont();
             customFont.setItalic(true);
             int x = styleSource.putFont(customFont);
-            fontAt = workbook.getFontAt((short)x);
+            fontAt = workbook.getFontAt((short) x);
             assertNotNull(fontAt);
-         } finally {
-             workbook.close();
-         }
+        }
     }
 
     @Test
     public void getNumCellStyles() throws IOException{
-         XSSFWorkbook workbook = new XSSFWorkbook();
-         try {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             //get default cellStyles
             assertEquals(1, workbook.getNumCellStyles());
-         } finally {
-             workbook.close();
-         }
+        }
     }
 
     @Test
@@ -303,35 +294,27 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void incrementSheetId() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
-            int sheetId = (int)wb.createSheet().sheet.getSheetId();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            int sheetId = (int) wb.createSheet().sheet.getSheetId();
             assertEquals(1, sheetId);
-            sheetId = (int)wb.createSheet().sheet.getSheetId();
+            sheetId = (int) wb.createSheet().sheet.getSheetId();
             assertEquals(2, sheetId);
 
             //test file with gaps in the sheetId sequence
-            XSSFWorkbook wbBack = XSSFTestDataSamples.openSampleWorkbook("47089.xlsm");
-            try {
-                int lastSheetId = (int)wbBack.getSheetAt(wbBack.getNumberOfSheets() - 1).sheet.getSheetId();
-                sheetId = (int)wbBack.createSheet().sheet.getSheetId();
-                assertEquals(lastSheetId+1, sheetId);
-            } finally {
-                wbBack.close();
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.openSampleWorkbook("47089.xlsm")) {
+                int lastSheetId = (int) wbBack.getSheetAt(wbBack.getNumberOfSheets() - 1).sheet.getSheetId();
+                sheetId = (int) wbBack.createSheet().sheet.getSheetId();
+                assertEquals(lastSheetId + 1, sheetId);
             }
-        } finally {
-            wb.close();
         }
     }
 
     /**
      *  Test setting of core properties such as Title and Author
-     * @throws IOException
      */
     @Test
     public void workbookProperties() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             POIXMLProperties props = workbook.getProperties();
             assertNotNull(props);
             //the Application property must be set for new workbooks, see Bugzilla #47559
@@ -350,8 +333,6 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
             assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());
             wbBack.close();
-        } finally {
-            workbook.close();
         }
     }
 
@@ -396,6 +377,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     /**
      * When deleting a sheet make sure that we adjust sheet indices of named ranges
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void bug47737() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47737.xlsx");
@@ -500,8 +482,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void recalcId() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             assertFalse(wb.getForceFormulaRecalculation());
             CTWorkbook ctWorkbook = wb.getCTWorkbook();
             assertFalse(ctWorkbook.isSetCalcPr());
@@ -523,8 +504,6 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             calcPr.setCalcMode(STCalcMode.MANUAL);
             wb.setForceFormulaRecalculation(true);
             assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
-        } finally {
-            wb.close();
         }
     }
 
@@ -549,11 +528,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
         accessWorkbook(workbook);
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             workbook.write(stream);
-        } finally {
-            stream.close();
         }
 
         accessWorkbook(workbook);
@@ -703,8 +679,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     public void bug51158a() throws IOException {
         // create a workbook
-        final XSSFWorkbook workbook = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             workbook.createSheet("Test Sheet");
 
             XSSFSheet sheetBack = workbook.getSheetAt(0);
@@ -713,7 +688,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             sheetBack.commit();
 
             // ensure that a memory based package part does not have lingering data from previous commit() calls
-            if(sheetBack.getPackagePart() instanceof MemoryPackagePart) {
+            if (sheetBack.getPackagePart() instanceof MemoryPackagePart) {
                 sheetBack.getPackagePart().clear();
             }
 
@@ -722,8 +697,6 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()), "UTF-8");
 
             assertEquals(1, countMatches(str, "<worksheet"));
-        } finally {
-            workbook.close();
         }
     }
 
@@ -752,16 +725,13 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void testAddPivotCache() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             CTWorkbook ctWb = wb.getCTWorkbook();
             CTPivotCache pivotCache = wb.addPivotCache("0");
             //Ensures that pivotCaches is initiated
             assertTrue(ctWb.isSetPivotCaches());
             assertSame(pivotCache, ctWb.getPivotCaches().getPivotCacheArray(0));
             assertEquals("0", pivotCache.getId());
-        } finally {
-            wb.close();
         }
     }
 
@@ -801,22 +771,16 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     public void testLoadWorkbookWithPivotTable() throws Exception {
         File file = TempFile.createTempFile("ooxml-pivottable", ".xlsx");
 
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             setPivotData(wb);
 
             FileOutputStream fileOut = new FileOutputStream(file);
             wb.write(fileOut);
             fileOut.close();
-        } finally {
-            wb.close();
         }
 
-        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file);
-        try {
+        try (XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file)) {
             assertTrue(wb2.getPivotTables().size() == 1);
-        } finally {
-            wb2.close();
         }
 
         assertTrue(file.delete());
@@ -826,26 +790,17 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     public void testAddPivotTableToWorkbookWithLoadedPivotTable() throws Exception {
         File file = TempFile.createTempFile("ooxml-pivottable", ".xlsx");
 
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             setPivotData(wb);
 
-            FileOutputStream fileOut = new FileOutputStream(file);
-            try {
+            try (FileOutputStream fileOut = new FileOutputStream(file)) {
                 wb.write(fileOut);
-            } finally {
-                fileOut.close();
             }
-        } finally {
-            wb.close();
         }
 
-        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file);
-        try {
+        try (XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file)) {
             setPivotData(wb2);
             assertTrue(wb2.getPivotTables().size() == 2);
-        } finally {
-            wb2.close();
         }
 
         assertTrue(file.delete());
@@ -853,17 +808,17 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void testSetFirstVisibleTab_57373() throws IOException {
-        Workbook wb = new XSSFWorkbook();
 
-        try {
-            /*Sheet sheet1 =*/ wb.createSheet();
+        try (Workbook wb = new XSSFWorkbook()) {
+            /*Sheet sheet1 =*/
+            wb.createSheet();
             Sheet sheet2 = wb.createSheet();
             int idx2 = wb.getSheetIndex(sheet2);
             Sheet sheet3 = wb.createSheet();
             int idx3 = wb.getSheetIndex(sheet3);
 
             // add many sheets so "first visible" is relevant
-            for(int i = 0; i < 30;i++) {
+            for (int i = 0; i < 30; i++) {
                 wb.createSheet();
             }
 
@@ -878,12 +833,12 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
 
             sheet2 = wbBack.getSheetAt(idx2);
+            assertNotNull(sheet2);
             sheet3 = wbBack.getSheetAt(idx3);
+            assertNotNull(sheet3);
             assertEquals(idx2, wb.getFirstVisibleTab());
             assertEquals(idx3, wb.getActiveSheetIndex());
             wbBack.close();
-        } finally {
-            wb.close();
         }
     }
 
@@ -947,8 +902,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
      *  In order to make code for looping over sheets in workbooks standard, regardless
      *  of the type of workbook (HSSFWorkbook, XSSFWorkbook, SXSSFWorkbook), the previously
      *  available Iterator<XSSFSheet> iterator and Iterator<XSSFSheet> sheetIterator
-     *  have been replaced with Iterator<Sheet>  {@link #iterator} and
-     *  Iterator<Sheet> {@link #sheetIterator}. This makes iterating over sheets in a workbook
+     *  have been replaced with Iterator<Sheet>  {@link Sheet#iterator} and
+     *  Iterator<Sheet> {@link Workbook#sheetIterator}. This makes iterating over sheets in a workbook
      *  similar to iterating over rows in a sheet and cells in a row.
      *
      *  Note: this breaks backwards compatibility! Existing codebases will need to
@@ -1124,6 +1079,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
        wb.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testRemoveSheet() throws IOException {
         // Test removing a sheet maintains the named ranges correctly

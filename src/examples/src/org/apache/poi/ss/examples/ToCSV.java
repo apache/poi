@@ -285,8 +285,8 @@ public class ToCSV {
                               IllegalArgumentException, InvalidFormatException {
         File source = new File(strSource);
         File destination = new File(strDestination);
-        File[] filesList = null;
-        String destinationFilename = null;
+        File[] filesList;
+        String destinationFilename;
 
         // Check that the source file/folder exists.
         if(!source.exists()) {
@@ -406,9 +406,9 @@ public class ToCSV {
      * a CSV file.
      */
     private void convertToCSV() {
-        Sheet sheet = null;
-        Row row = null;
-        int lastRowNum = 0;
+        Sheet sheet;
+        Row row;
+        int lastRowNum;
         this.csvData = new ArrayList<>();
 
         System.out.println("Converting files contents to CSV format.");
@@ -451,11 +451,11 @@ public class ToCSV {
      */
     private void saveCSVFile(File file)
                                      throws FileNotFoundException, IOException {
-        FileWriter fw = null;
+        FileWriter fw;
         BufferedWriter bw = null;
-        ArrayList<String> line = null;
-        StringBuffer buffer = null;
-        String csvLineElement = null;
+        ArrayList<String> line;
+        StringBuffer buffer;
+        String csvLineElement;
         try {
 
             System.out.println("Saving the CSV file [" + file.getName() + "]");
@@ -524,8 +524,8 @@ public class ToCSV {
      *            an Excel workbook.
      */
     private void rowToCSV(Row row) {
-        Cell cell = null;
-        int lastCellNum = 0;
+        Cell cell;
+        int lastCellNum;
         ArrayList<String> csvLine = new ArrayList<>();
 
         // Check to ensure that a row was recovered from the sheet as it is
@@ -603,7 +603,7 @@ public class ToCSV {
      *         speech mark characters correctly escaped.
      */
     private String escapeEmbeddedCharacters(String field) {
-        StringBuffer buffer = null;
+        StringBuffer buffer;
 
         // If the fields contents should be formatted to confrom with Excel's
         // convention....
@@ -671,7 +671,7 @@ public class ToCSV {
         // with matching names but different extensions - Test.xls and Test.xlsx
         // for example - then the CSV file generated from one will overwrite
         // that generated from the other.
-        ToCSV converter = null;
+        ToCSV converter;
         boolean converted = true;
         long startTime = System.currentTimeMillis();
         try {

@@ -169,7 +169,6 @@ public class CopyCompare
      * @exception NoPropertySetStreamException if the application tries to
      * create a property set from a POI document stream that is not a property
      * set stream.
-     * @throws UnsupportedEncodingException 
      * @exception IOException if any I/O exception occurs.
      */
     private static boolean equal(final DirectoryEntry d1,
@@ -233,7 +232,6 @@ public class CopyCompare
      * @exception NoPropertySetStreamException if the application tries to
      * create a property set from a POI document stream that is not a property
      * set stream.
-     * @throws UnsupportedEncodingException 
      * @exception IOException if any I/O exception occurs.
      */
     private static boolean equal(final DocumentEntry d1, final DocumentEntry d2,
@@ -355,8 +353,6 @@ public class CopyCompare
          * @param path The file's path in the POI filesystem.
          * @param name The file's name in the POI filesystem.
          * @param ps The property set to write.
-         * @throws WritingNotSupportedException 
-         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
@@ -378,7 +374,6 @@ public class CopyCompare
          * @param path The source document's path.
          * @param name The source document's name.
          * @param stream The stream containing the source document.
-         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
@@ -407,9 +402,6 @@ public class CopyCompare
 
         /**
          * <p>Writes the POI file system to a disk file.</p>
-         *
-         * @throws FileNotFoundException
-         * @throws IOException
          */
         public void close() throws FileNotFoundException, IOException {
             out = new FileOutputStream(dstName);

@@ -193,7 +193,7 @@ public class WriteAuthorAndTitle
 
             /* According to the definition of the processPOIFSReaderEvent method
              * we cannot pass checked exceptions to the caller. The following
-             * lines check whether a checked exception occured and throws an
+             * lines check whether a checked exception occurred and throws an
              * unchecked exception. The message of that exception is that of
              * the underlying checked exception. */
             if (t != null) {
@@ -212,8 +212,6 @@ public class WriteAuthorAndTitle
          * @param name The original (and destination) stream's name.
          * @param si The property set. It should be a summary information
          * property set.
-         * @throws IOException 
-         * @throws WritingNotSupportedException 
          */
         public void editSI(final POIFSFileSystem poiFs,
                            final POIFSDocumentPath path,
@@ -257,8 +255,6 @@ public class WriteAuthorAndTitle
          * @param path The file's path in the POI filesystem.
          * @param name The file's name in the POI filesystem.
          * @param ps The property set to write.
-         * @throws WritingNotSupportedException 
-         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
@@ -281,7 +277,6 @@ public class WriteAuthorAndTitle
          * @param path The source document's path.
          * @param name The source document's name.
          * @param stream The stream containing the source document.
-         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
@@ -303,9 +298,6 @@ public class WriteAuthorAndTitle
 
         /**
          * <p>Writes the POI file system to a disk file.</p>
-         *
-         * @throws FileNotFoundException
-         * @throws IOException
          */
         public void close() throws FileNotFoundException, IOException
         {

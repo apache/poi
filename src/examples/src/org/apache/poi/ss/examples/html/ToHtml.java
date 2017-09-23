@@ -328,12 +328,9 @@ public class ToHtml {
             style = wb.getCellStyleAt((short) 0);
         }
         StringBuilder sb = new StringBuilder();
-        Formatter fmt = new Formatter(sb);
-        try {
+        try (Formatter fmt = new Formatter(sb)) {
             fmt.format("style_%02x", style.getIndex());
             return fmt.toString();
-        } finally {
-            fmt.close();
         }
     }
 
@@ -371,14 +368,14 @@ public class ToHtml {
     /**
      * computes the column widths, defined by the sheet. 
      * 
-     * @param sheet
+     * @param sheet The sheet for which to compute widths
      * @return Map with key: column index; value: column width in pixels
      *     <br>special keys: 
      *     <br>{@link #IDX_HEADER_COL_WIDTH} - width of the header column
      *     <br>{@link #IDX_TABLE_WIDTH} - width of the entire table 
      */
     private Map<Integer, Integer> computeWidths(Sheet sheet) {
-        Map<Integer, Integer> ret = new TreeMap<Integer, Integer>();
+        Map<Integer, Integer> ret = new TreeMap<>();
         int tableWidth = 0;
 
         ensureColumnBounds(sheet);

@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel.examples;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 

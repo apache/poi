@@ -84,9 +84,7 @@ public class POIBrowser extends JFrame
 
         /* Add the POI filesystems to the tree. */
         int displayedFiles = 0;
-        for (int i = 0; i < args.length; i++)
-        {
-            final String filename = args[i];
+        for (final String filename : args) {
             try {
                 FileInputStream fis = new FileInputStream(filename);
                 POIFSReader r = new POIFSReader();
@@ -98,7 +96,7 @@ public class POIBrowser extends JFrame
                 System.err.println(filename + ": " + ex);
             } catch (Exception t) {
                 System.err.println("Unexpected exception while reading \"" +
-                                   filename + "\":");
+                        filename + "\":");
                 t.printStackTrace(System.err);
             }
         }
