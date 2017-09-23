@@ -57,23 +57,16 @@ public class DocumentDescriptorRenderer extends DefaultTreeCellRenderer
     /**
      * <p>Renders {@link DocumentDescriptor} as a string.</p>
      */
-    protected String renderAsString(final DocumentDescriptor d)
-    {
-        final StringBuilder b = new StringBuilder();
-        b.append("Name: ");
-        b.append(d.name);
-        b.append(" ");
-        b.append(HexDump.toHex(d.name));
-        b.append("\n");
-
-        b.append("Size: ");
-        b.append(d.size);
-        b.append(" bytes\n");
-
-        b.append("First bytes: ");
-        b.append(HexDump.toHex(d.bytes));
-
-        return b.toString();
+    protected String renderAsString(final DocumentDescriptor d) {
+        return "Name: " +
+                d.name +
+                " " +
+                HexDump.toHex(d.name) +
+                "\n" +
+                "Size: " +
+                d.size +
+                " bytes\n" +
+                "First bytes: " +
+                HexDump.toHex(d.bytes);
     }
-
 }

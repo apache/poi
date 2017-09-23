@@ -333,10 +333,10 @@ public class AddDimensionedImage {
             URL imageFile, double reqImageWidthMM, double reqImageHeightMM,
             int resizeBehaviour) throws IOException,
                                                      IllegalArgumentException {
-        ClientAnchor anchor = null;
-        ClientAnchorDetail rowClientAnchorDetail = null;
-        ClientAnchorDetail colClientAnchorDetail = null;
-        int imageType = 0;
+        ClientAnchor anchor;
+        ClientAnchorDetail rowClientAnchorDetail;
+        ClientAnchorDetail colClientAnchorDetail;
+        int imageType;
 
         // Validate the resizeBehaviour parameter.
         if((resizeBehaviour != AddDimensionedImage.EXPAND_COLUMN) &&
@@ -427,9 +427,9 @@ public class AddDimensionedImage {
     private ClientAnchorDetail fitImageToColumns(Sheet sheet, int colNumber,
             double reqImageWidthMM, int resizeBehaviour) {
 
-        double colWidthMM = 0.0D;
-        double colCoordinatesPerMM = 0.0D;
-        int pictureWidthCoordinates = 0;
+        double colWidthMM;
+        double colCoordinatesPerMM;
+        int pictureWidthCoordinates;
         ClientAnchorDetail colClientAnchorDetail = null;
 
         // Get the colum's width in millimetres
@@ -522,10 +522,10 @@ public class AddDimensionedImage {
      */
     private ClientAnchorDetail fitImageToRows(Sheet sheet, int rowNumber,
             double reqImageHeightMM, int resizeBehaviour) {
-        Row row = null;
-        double rowHeightMM = 0.0D;
-        double rowCoordinatesPerMM = 0.0D;
-        int pictureHeightCoordinates = 0;
+        Row row;
+        double rowHeightMM;
+        double rowCoordinatesPerMM;
+        int pictureHeightCoordinates;
         ClientAnchorDetail rowClientAnchorDetail = null;
 
         // Get the row and it's height
@@ -612,13 +612,13 @@ public class AddDimensionedImage {
     private ClientAnchorDetail calculateColumnLocation(Sheet sheet,
                                                        int startingColumn,
                                                        double reqImageWidthMM) {
-        ClientAnchorDetail anchorDetail = null;
+        ClientAnchorDetail anchorDetail;
         double totalWidthMM = 0.0D;
         double colWidthMM = 0.0D;
-        double overlapMM = 0.0D;
-        double coordinatePositionsPerMM = 0.0D;
+        double overlapMM;
+        double coordinatePositionsPerMM;
         int toColumn = startingColumn;
-        int inset = 0;
+        int inset;
 
         // Calculate how many columns the image will have to
         // span in order to be presented at the required size.
@@ -722,14 +722,14 @@ public class AddDimensionedImage {
      */
     private ClientAnchorDetail calculateRowLocation(Sheet sheet,
             int startingRow, double reqImageHeightMM) {
-        ClientAnchorDetail clientAnchorDetail = null;
-        Row row = null;
+        ClientAnchorDetail clientAnchorDetail;
+        Row row;
         double rowHeightMM = 0.0D;
         double totalRowHeightMM = 0.0D;
-        double overlapMM = 0.0D;
-        double rowCoordinatesPerMM = 0.0D;
+        double overlapMM;
+        double rowCoordinatesPerMM;
         int toRow = startingRow;
-        int inset = 0;
+        int inset;
 
         // Step through the rows in the sheet and accumulate a total of their
         // heights.
@@ -813,11 +813,11 @@ public class AddDimensionedImage {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-    	String imageFile = null;
-    	String outputFile = null;
-        FileOutputStream fos = null;
-        Workbook workbook = null;
-        Sheet sheet = null;
+    	String imageFile;
+    	String outputFile;
+        FileOutputStream fos;
+        Workbook workbook;
+        Sheet sheet;
 
         if(args.length < 2){
     		System.err.println("Usage: AddDimensionedImage imageFile outputFile");
@@ -962,8 +962,6 @@ public class AddDimensionedImage {
 
         /**
         * pixel units to excel width units(units of 1/256th of a character width)
-        * @param pxs
-        * @return
         */
         public static short pixel2WidthUnits(int pxs) {
             short widthUnits = (short) (EXCEL_COLUMN_WIDTH_FACTOR *
@@ -975,9 +973,6 @@ public class AddDimensionedImage {
         /**
          * excel width units(units of 1/256th of a character width) to pixel
          * units.
-         *
-         * @param widthUnits
-         * @return
          */
         public static int widthUnits2Pixel(short widthUnits) {
             int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)
