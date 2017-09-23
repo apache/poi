@@ -40,7 +40,6 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -128,7 +127,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
     * Retreives the text contents of the file
     */
    public String getText() {
-       String text = null;
+       String text;
        try {
            TextListener tl = triggerExtraction();
 
