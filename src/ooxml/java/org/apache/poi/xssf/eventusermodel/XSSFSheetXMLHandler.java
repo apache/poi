@@ -515,9 +515,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
       public void cell(String cellReference, String formattedValue, XSSFComment comment);
 
       /** A header or footer has been encountered */
-      public void headerFooter(String text, boolean isHeader, String tagName);
+      public default void headerFooter(String text, boolean isHeader, String tagName) {}
 
       /** Signal that the end of a sheet was been reached */
-      public void endSheet();
+      public default void endSheet() {}
    }
 }
