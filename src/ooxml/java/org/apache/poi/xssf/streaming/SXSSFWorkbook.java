@@ -140,8 +140,8 @@ public class SXSSFWorkbook implements Workbook {
      * <ul>
      *   <li>
      *   Access initial cells and rows in the template. After constructing
-     *   {@link #SXSSFWorkbook(XSSFWorkbook)} all internal windows are empty and
-     *   {@link SXSSFSheet#getRow} and {@link SXSSFRow#getCell} return <code>null</code>.
+     *   all internal windows are empty and {@link SXSSFSheet#getRow} and
+     *   {@link SXSSFRow#getCell} return <code>null</code>.
      *   </li>
      *   <li>
      *    Override existing cells and rows. The API silently allows that but
@@ -369,30 +369,24 @@ public class SXSSFWorkbook implements Workbook {
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
         try {
-            ZipOutputStream zos = new ZipOutputStream(out);
-            try {
+            try (ZipOutputStream zos = new ZipOutputStream(out)) {
                 Enumeration<? extends ZipEntry> en = zipEntrySource.getEntries();
                 while (en.hasMoreElements()) {
                     ZipEntry ze = en.nextElement();
                     zos.putNextEntry(new ZipEntry(ze.getName()));
                     InputStream is = zipEntrySource.getInputStream(ze);
-                    XSSFSheet xSheet=getSheetFromZipEntryName(ze.getName());
+                    XSSFSheet xSheet = getSheetFromZipEntryName(ze.getName());
                     // See bug 56557, we should not inject data into the special ChartSheets
-                    if(xSheet!=null && !(xSheet instanceof XSSFChartSheet)) {
-                        SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
-                        InputStream xis = sxSheet.getWorksheetXMLInputStream();
-                        try {
-                            copyStreamAndInjectWorksheet(is,zos,xis);
-                        } finally {
-                            xis.close();
+                    if (xSheet != null && !(xSheet instanceof XSSFChartSheet)) {
+                        SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
+                        try (InputStream xis = sxSheet.getWorksheetXMLInputStream()) {
+                            copyStreamAndInjectWorksheet(is, zos, xis);
                         }
                     } else {
                         IOUtils.copy(is, zos);
                     }
                     is.close();
                 }
-            } finally {
-                zos.close();
             }
         } finally {
             zipEntrySource.close();
@@ -918,11 +912,8 @@ public class SXSSFWorkbook implements Workbook {
         File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
         boolean deleted;
         try {
-            FileOutputStream os = new FileOutputStream(tmplFile);
-            try {
+            try (FileOutputStream os = new FileOutputStream(tmplFile)) {
                 _wb.write(os);
-            } finally {
-                os.close();
             }
 
             //Substitute the template entries with the generated sheet data files

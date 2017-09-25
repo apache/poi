@@ -94,15 +94,15 @@ public class BigGridDemo {
             String sheetRef = sheet.getPackagePart().getPartName().getName();
 
             //save the template
-            FileOutputStream os = new FileOutputStream("template.xlsx");
-            wb.write(os);
-            os.close();
+            try (FileOutputStream os = new FileOutputStream("template.xlsx")) {
+                wb.write(os);
+            }
 
             //Step 2. Generate XML file.
             File tmp = File.createTempFile("sheet", ".xml");
-            Writer fw = new OutputStreamWriter(new FileOutputStream(tmp), XML_ENCODING);
-            generate(fw, styles);
-            fw.close();
+            try (Writer fw = new OutputStreamWriter(new FileOutputStream(tmp), XML_ENCODING)) {
+                generate(fw, styles);
+            }
 
             //Step 3. Substitute the template entry with the generated data
             try (FileOutputStream out = new FileOutputStream("big-grid.xlsx")) {

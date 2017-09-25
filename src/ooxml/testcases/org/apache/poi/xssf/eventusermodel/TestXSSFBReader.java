@@ -203,9 +203,9 @@ public class TestXSSFBReader {
         @Override
         public void headerFooter(String text, boolean isHeader, String tagName) {
             if (isHeader) {
-                sb.append("<header tagName=\"" + tagName + "\">" + text + "</header>");
+                sb.append("<header tagName=\"").append(tagName).append("\">").append(text).append("</header>");
             } else {
-                sb.append("<footer tagName=\"" + tagName + "\">" + text + "</footer>");
+                sb.append("<footer tagName=\"").append(tagName).append("\">").append(text).append("</footer>");
 
             }
         }
