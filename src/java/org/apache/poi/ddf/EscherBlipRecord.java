@@ -23,7 +23,7 @@ import org.apache.poi.util.LittleEndian;
 public class EscherBlipRecord extends EscherRecord {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000_000;
+    private static final int MAX_RECORD_LENGTH = 104_857_600;
 
     public static final short  RECORD_ID_START    = (short) 0xF018;
     public static final short  RECORD_ID_END      = (short) 0xF117;

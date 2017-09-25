@@ -35,7 +35,7 @@ import org.apache.poi.util.LittleEndian;
 public final class PlexOfCps {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final int MAX_RECORD_LENGTH = 10_485_760;
 
     private int _iMac;
     private int _cbStruct;

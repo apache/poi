@@ -67,7 +67,7 @@ import org.apache.poi.util.LittleEndian;
 public class ExOleObjAtom extends RecordAtom {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int MAX_RECORD_LENGTH = 10_485_760;
 
     /**
      * The object) is displayed as an embedded object inside of a container,
