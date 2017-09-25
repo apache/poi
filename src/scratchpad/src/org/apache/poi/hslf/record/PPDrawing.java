@@ -55,7 +55,7 @@ import org.apache.poi.util.POILogger;
 public final class PPDrawing extends RecordAtom {
 
 	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+	private static final int MAX_RECORD_LENGTH = 10_485_760;
 
 
 	private byte[] _header;
