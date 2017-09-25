@@ -343,10 +343,6 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         }
 
         @Override
-        public void endSheet() {
-        }
-
-        @Override
         public void cell(String cellRef, String formattedValue, XSSFComment comment) {
             if(firstCellOfRow) {
                 firstCellOfRow = false;
