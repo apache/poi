@@ -271,13 +271,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     public static String getWorkbookDirEntryName(DirectoryNode directory) {
-
-        for (String wbName : WORKBOOK_DIR_ENTRY_NAMES) {
-            try {
-                directory.getEntry(wbName);
+        for(String wbName : WORKBOOK_DIR_ENTRY_NAMES) {
+            if(directory.hasEntry(wbName)) {
                 return wbName;
-            } catch (FileNotFoundException e) {
-                // continue - to try other options
             }
         }
 
