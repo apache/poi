@@ -28,7 +28,7 @@ import java.util.Date;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -52,8 +52,8 @@ public final class TestFormulas {
 
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         //get our minimum values
         r = s.createRow(1);
@@ -165,8 +165,8 @@ public final class TestFormulas {
     private static void floatTest(String operator) throws IOException {
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         //get our minimum values
 
@@ -240,8 +240,8 @@ public final class TestFormulas {
     private static void operationRefTest(String operator) throws IOException {
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         //get our minimum values
         r = s.createRow(0);
@@ -253,12 +253,12 @@ public final class TestFormulas {
 
             for (int y = 1; y < 256 && y > 0; y++) {
 
-                String ref=null;
-                String ref2=null;
-                short refx1=0;
-                short refy1=0;
-                short refx2=0;
-                short refy2=0;
+                String ref;
+                String ref2;
+                short refx1;
+                short refy1;
+                short refx2;
+                short refy2;
                 if (x +50 < Short.MAX_VALUE) {
                     refx1=(short)(x+50);
                     refx2=(short)(x+46);
@@ -309,8 +309,8 @@ public final class TestFormulas {
     private static void operationalRefVerify(String operator, HSSFWorkbook wb) {
 
         HSSFSheet        s      = wb.getSheetAt(0);
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         //get our minimum values
         r = s.getRow(0);
@@ -376,8 +376,8 @@ public final class TestFormulas {
     private static void orderTest(String formula) throws IOException {
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         //get our minimum values
         r = s.createRow(0);
@@ -403,8 +403,8 @@ public final class TestFormulas {
     private static void binomialOperator(String operator) throws IOException {
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         //get our minimum values
         r = s.createRow(0);
@@ -440,8 +440,8 @@ public final class TestFormulas {
      */
     private static void binomialVerify(String operator, HSSFWorkbook wb) {
         HSSFSheet        s      = wb.getSheetAt(0);
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         //get our minimum values
         r = s.getRow(0);
@@ -481,8 +481,8 @@ public final class TestFormulas {
 
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
 
         r = s.createRow(0);
@@ -509,8 +509,8 @@ public final class TestFormulas {
 
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
 
         r = s.createRow(0);
@@ -539,8 +539,8 @@ public final class TestFormulas {
 
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
 
         r = s.createRow(0);
@@ -608,8 +608,8 @@ public final class TestFormulas {
     public void testSheetFunctions() throws IOException {
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet("A");
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
         r = s.createRow(0);
         c = r.createCell(0);c.setCellValue(1);
         c = r.createCell(1);c.setCellValue(2);
@@ -638,8 +638,8 @@ public final class TestFormulas {
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
 
         r = s.createRow(0);
@@ -676,8 +676,8 @@ public final class TestFormulas {
     public void testStringFormulas() throws IOException {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet("A");
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
         r = s.createRow(0);
         c=r.createCell(1); c.setCellFormula("UPPER(\"abc\")");
         c=r.createCell(2); c.setCellFormula("LOWER(\"ABC\")");
@@ -699,8 +699,8 @@ public final class TestFormulas {
 
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet("A");
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
         r = s.createRow(0);
         c=r.createCell(1); c.setCellFormula("IF(A1<A2,B1,B2)");
 
@@ -717,8 +717,8 @@ public final class TestFormulas {
     public void testDateFormulas() throws IOException {
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet("testSheet1");
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
 
         r = s.createRow(0 );
         c = r.createCell(0 );
@@ -746,8 +746,8 @@ public final class TestFormulas {
     public void testIfFormulas() throws IOException {
         HSSFWorkbook     wb1    = new HSSFWorkbook();
         HSSFSheet        s      = wb1.createSheet("testSheet1");
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
+        HSSFRow          r;
+        HSSFCell         c;
         r = s.createRow(0);
         c=r.createCell(1); c.setCellValue(1);
         c=r.createCell(2); c.setCellValue(2);
@@ -906,22 +906,16 @@ public final class TestFormulas {
     /** test for bug 34021*/
     @Test
     public void testComplexSheetRefs () throws IOException {
-         HSSFWorkbook sb = new HSSFWorkbook();
-         try {
-             HSSFSheet s1 = sb.createSheet("Sheet a.1");
-             HSSFSheet s2 = sb.createSheet("Sheet.A");
-             s2.createRow(1).createCell(2).setCellFormula("'Sheet a.1'!A1");
-             s1.createRow(1).createCell(2).setCellFormula("'Sheet.A'!A1");
-             File file = TempFile.createTempFile("testComplexSheetRefs",".xls");
-             FileOutputStream stream = new FileOutputStream(file);
-             try {
-                 sb.write(stream);
-             } finally {
-                 stream.close();
-             }
-         } finally {
-             sb.close();
-         }
+        try (HSSFWorkbook sb = new HSSFWorkbook()) {
+            HSSFSheet s1 = sb.createSheet("Sheet a.1");
+            HSSFSheet s2 = sb.createSheet("Sheet.A");
+            s2.createRow(1).createCell(2).setCellFormula("'Sheet a.1'!A1");
+            s1.createRow(1).createCell(2).setCellFormula("'Sheet.A'!A1");
+            File file = TempFile.createTempFile("testComplexSheetRefs", ".xls");
+            try (FileOutputStream stream = new FileOutputStream(file)) {
+                sb.write(stream);
+            }
+        }
     }
 
     /** Unknown Ptg 3C*/
@@ -931,25 +925,20 @@ public final class TestFormulas {
         wb.getSheetAt(0);
         assertEquals("Reference for named range ", "Compliance!#REF!",wb.getNameAt(0).getRefersToFormula());
         File outF = TempFile.createTempFile("bug27272_1",".xls");
-        FileOutputStream stream = new FileOutputStream(outF);
-        try {
+        try (FileOutputStream stream = new FileOutputStream(outF)) {
             wb.write(stream);
-        } finally {
-            stream.close();
         }
         wb.close();
     }
+
     /** Unknown Ptg 3D*/
     @Test
     public void test27272_2() throws IOException {
         HSSFWorkbook wb = openSample("27272_2.xls");
         assertEquals("Reference for named range ", "LOAD.POD_HISTORIES!#REF!",wb.getNameAt(0).getRefersToFormula());
         File outF = TempFile.createTempFile("bug27272_2",".xls");
-        FileOutputStream stream = new FileOutputStream(outF);
-        try {
+        try (FileOutputStream stream = new FileOutputStream(outF)) {
             wb.write(stream);
-        } finally {
-            stream.close();
         }
         wb.close();
     }
@@ -957,12 +946,9 @@ public final class TestFormulas {
     /** MissingArgPtg */
     @Test
     public void testMissingArgPtg() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell(0);
             cell.setCellFormula("IF(A1=\"A\",1,)");
-        } finally {
-            wb.close();
         }
     }
 
@@ -1032,22 +1018,19 @@ public final class TestFormulas {
      */
     @Test
     public void testFormulasWithUnderscore() throws IOException{
-        HSSFWorkbook wb = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             Name nm1 = wb.createName();
             nm1.setNameName("_score1");
             nm1.setRefersToFormula("A1");
-    
+
             Name nm2 = wb.createName();
             nm2.setNameName("_score2");
             nm2.setRefersToFormula("A2");
-    
+
             Sheet sheet = wb.createSheet();
             Cell cell = sheet.createRow(0).createCell(2);
             cell.setCellFormula("_score1*SUM(_score1+_score2)");
             assertEquals("_score1*SUM(_score1+_score2)", cell.getCellFormula());
-        } finally {
-            wb.close();
         }
     }
 }
