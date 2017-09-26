@@ -82,7 +82,6 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -110,6 +109,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
@@ -1367,12 +1367,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public void write(File newFile) throws IOException {
-        POIFSFileSystem fs = POIFSFileSystem.create(newFile);
-        try {
+        try (POIFSFileSystem fs = POIFSFileSystem.create(newFile)) {
             write(fs);
             fs.writeFilesystem();
-        } finally {
-            fs.close();
         }
     }
     
@@ -1393,12 +1390,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
 	public void write(OutputStream stream) throws IOException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem();
-        try {
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem()) {
             write(fs);
             fs.writeFilesystem(stream);
-        } finally {
-            fs.close();
         }
     }
     
