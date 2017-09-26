@@ -65,22 +65,12 @@ public class HybridStreaming {
             }
             
             @Override
-            public void headerFooter(String text, boolean isHeader, String tagName) {
-            }
-            
-            @Override
             public void endRow(int rowNum) {
             }
             
             @Override
             public void cell(String cellReference, String formattedValue, XSSFComment comment) {
             }
-
-            @Override
-            public void endSheet() {
-
-            }
         };
     }
-
 }

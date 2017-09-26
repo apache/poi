@@ -482,7 +482,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     protected static OPCPackage newPackage(XSSFWorkbookType workbookType) {
         try {
-            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());
+            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
             // Create main part relationship
@@ -2361,7 +2361,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     @Override
     public int addOlePackage(byte[] oleData, String label, String fileName, String command)
-    throws IOException {
+                throws IOException {
         // find an unused part name
         OPCPackage opc = getPackage();
         PackagePartName pnOLE;
@@ -2381,17 +2381,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500);
         ole10.writeOut(bos);
         
-        POIFSFileSystem poifs = new POIFSFileSystem();
-        DirectoryNode root = poifs.getRoot();
-        root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
-        root.setStorageClsid(ClassID.OLE10_PACKAGE);
+        try (POIFSFileSystem poifs = new POIFSFileSystem()) {
+            DirectoryNode root = poifs.getRoot();
+            root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+            root.setStorageClsid(ClassID.OLE10_PACKAGE);
 
-        // TODO: generate CombObj stream
+            // TODO: generate CombObj stream
 
-        OutputStream os = pp.getOutputStream();
-        poifs.writeFilesystem(os);
-        os.close();
-        poifs.close();
+            try (OutputStream os = pp.getOutputStream()) {
+                poifs.writeFilesystem(os);
+            }
+        }
 
         return oleId;
     }
