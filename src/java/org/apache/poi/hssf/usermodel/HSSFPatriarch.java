@@ -125,7 +125,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         Set<String> coordinates = new HashSet<>(tailRecords.size());
         for(NoteRecord rec : tailRecords.values()){
             String noteRef = new CellReference(rec.getRow(),
-                    rec.getColumn()).formatAsString(); // A1-style notation
+                    rec.getColumn(), true, true).formatAsString(); // A1-style notation
             if(coordinates.contains(noteRef )){
                 throw new IllegalStateException("found multiple cell comments for cell " + noteRef );
             } else {
