@@ -137,36 +137,33 @@ public final class TestHSSFComment extends BaseTestCellComment {
 
     @Test
     public void testBug56380InsertTooManyComments() throws Exception {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
             Sheet sheet = workbook.createSheet();
             Drawing<?> drawing = sheet.createDrawingPatriarch();
             String comment = "c";
-    
-            for(int rowNum = 0;rowNum < 258;rowNum++) {
-            	sheet.createRow(rowNum);
+
+            for (int rowNum = 0; rowNum < 258; rowNum++) {
+                sheet.createRow(rowNum);
             }
-            
+
             // should still work, for some reason DrawingManager2.allocateShapeId() skips the first 1024...
-            for(int count = 1025;count < 65535;count++) {
-            	int rowNum = count / 255;
-            	int cellNum = count % 255;
+            for (int count = 1025; count < 65535; count++) {
+                int rowNum = count / 255;
+                int cellNum = count % 255;
                 Cell cell = sheet.getRow(rowNum).createCell(cellNum);
                 try {
-                	Comment commentObj = insertComment(drawing, cell, comment + cellNum);
-                	
-                	assertEquals(count, ((HSSFComment)commentObj).getNoteRecord().getShapeId());
+                    Comment commentObj = insertComment(drawing, cell, comment + cellNum);
+
+                    assertEquals(count, ((HSSFComment) commentObj).getNoteRecord().getShapeId());
                 } catch (IllegalArgumentException e) {
-                	throw new IllegalArgumentException("While adding shape number " + count, e);
+                    throw new IllegalArgumentException("While adding shape number " + count, e);
                 }
-            }        	
-            
+            }
+
             // this should now fail to insert
             Row row = sheet.createRow(257);
             Cell cell = row.createCell(0);
             insertComment(drawing, cell, comment + 0);
-        } finally {
-        	workbook.close();
         }
     }
 

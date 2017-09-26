@@ -62,7 +62,6 @@ import org.apache.poi.hssf.record.TabIdRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -1637,13 +1636,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             ));
         }
         try {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(
-                    HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"));
-            try {
+            try (NPOIFSFileSystem fs = new NPOIFSFileSystem(
+                    HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"))) {
                 new HSSFWorkbook(fs.getRoot(), false).close();
                 fail("Should catch exception here");
-            } finally {
-                fs.close();
             }
         } catch (OldExcelFormatException e) {
             assertTrue(e.getMessage().startsWith(
@@ -2497,12 +2493,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFSheet sh = wb.getSheetAt(0);
         InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
         PageSettingsBlock psb = (PageSettingsBlock) ish.getRecords().get(13);
-        psb.visitContainedRecords(new RecordAggregate.RecordVisitor() {
-            @Override
-            public void visitRecord(Record r) {
-                list.add(r.getSid());
-            }
-        });
+        psb.visitContainedRecords(r -> list.add(r.getSid()));
         assertEquals(UnknownRecord.BITMAP_00E9, list.get(list.size() - 1).intValue());
         assertEquals(UnknownRecord.HEADER_FOOTER_089C, list.get(list.size() - 2).intValue());
         wb.close();
@@ -2664,12 +2655,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         POIFSFileSystem fs;
 
         File file = HSSFTestDataSamples.getSampleFile("56325.xls");
-        InputStream stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             fs = new POIFSFileSystem(stream);
             wb1 = new HSSFWorkbook(fs);
-        } finally {
-            stream.close();
         }
 
         assertEquals(3, wb1.getNumberOfSheets());
@@ -2836,22 +2824,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Read, write, read for formulas point to cells in other files.
      * See {@link #bug46670()} for the main test, this just
      * covers reading an existing file and checking it.
-     * TODO Fix this so that it works - formulas are ending up as
-     * #REF when being changed
+     *
+     * See base-test-class for some related tests that still fail
      */
     @Test
-    @Ignore
     public void bug46670_existing() throws Exception {
-        Sheet s;
-        Cell c;
-
         // Expected values
-        String refLocal = "'[refs/airport.xls]Sheet1'!$A$2";
+        String refLocal = "'[refs" + File.separator + "airport.xls]Sheet1'!$A$2";
         String refHttp = "'[9http://www.principlesofeconometrics.com/excel/airline.xls]Sheet1'!$A$2";
 
         // Check we can read them correctly
-        HSSFWorkbook wb1 = openSample("46670_local.xls");
-        s = wb1.getSheetAt(0);
+        Workbook wb1 = openSample("46670_local.xls");
+        Sheet s = wb1.getSheetAt(0);
         assertEquals(refLocal, s.getRow(0).getCell(0).getCellFormula());
         wb1.close();
 
@@ -2864,7 +2848,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         //  they end up as they did before, even with a save and re-load
         HSSFWorkbook wb3 = openSample("46670_local.xls");
         s = wb3.getSheetAt(0);
-        c = s.getRow(0).getCell(0);
+        Cell c = s.getRow(0).getCell(0);
         c.setCellFormula(refLocal);
         assertEquals(refLocal, c.getCellFormula());
 
@@ -2880,7 +2864,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         c.setCellFormula(refHttp);
         assertEquals(refHttp, c.getCellFormula());
 
-        HSSFWorkbook wb6 = HSSFTestDataSamples.writeOutAndReadBack(wb5);
+        Workbook wb6 = HSSFTestDataSamples.writeOutAndReadBack(wb5);
         wb5.close();
         s = wb6.getSheetAt(0);
         assertEquals(refHttp, s.getRow(0).getCell(0).getCellFormula());
@@ -3149,9 +3133,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         DocumentEntry entry =
                 (DocumentEntry) npoifs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        PropertySet properties =
-                new PropertySet(new DocumentInputStream(entry));
 
+        // this will throw an Exception "RuntimeException: Can't read negative number of bytes"
+        new PropertySet(new DocumentInputStream(entry));
     }
-
 }
