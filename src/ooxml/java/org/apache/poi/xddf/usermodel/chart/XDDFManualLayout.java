@@ -65,8 +65,24 @@ public final class XDDFManualLayout {
      * @return the underlying CTManualLayout bean.
      */
     @Internal
-    public CTManualLayout getCTManualLayout() {
+    protected CTManualLayout getXmlObject() {
         return layout;
+    }
+
+    public void setExtensionList(XDDFChartExtensionList list) {
+        if (list == null) {
+            layout.unsetExtLst();
+        } else {
+            layout.setExtLst(list.getXmlObject());
+        }
+    }
+
+    public XDDFChartExtensionList getExtensionList() {
+        if (layout.isSetExtLst()) {
+            return new XDDFChartExtensionList(layout.getExtLst());
+        } else {
+            return null;
+        }
     }
 
     public void setWidthRatio(double ratio) {

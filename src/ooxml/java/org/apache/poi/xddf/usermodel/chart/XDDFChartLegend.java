@@ -17,10 +17,15 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLegend;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Represents a DrawingML chart legend
@@ -58,8 +63,90 @@ public final class XDDFChartLegend {
      * @return the underlying CTLegend bean
      */
     @Internal
-    public CTLegend getCTLegend() {
+    protected CTLegend getXmlObject() {
         return legend;
+    }
+
+    @Internal  // will later replace with XDDFShapeProperties
+    public CTShapeProperties getShapeProperties() {
+        if (legend.isSetSpPr()) {
+            return legend.getSpPr();
+        } else {
+            return null;
+        }
+    }
+
+    @Internal  // will later replace with XDDFShapeProperties
+    public void setShapeProperties(CTShapeProperties properties) {
+        if (properties == null) {
+            legend.unsetSpPr();
+        } else {
+            legend.setSpPr(properties);
+        }
+    }
+
+    public XDDFTextBody getTextBody() {
+        if (legend.isSetTxPr()) {
+            return new XDDFTextBody(legend.getTxPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setTextBody(XDDFTextBody body) {
+        if (body == null) {
+            legend.unsetTxPr();
+        } else {
+            legend.setTxPr(body.getXmlObject());
+        }
+    }
+
+    public XDDFLegendEntry addEntry() {
+        return new XDDFLegendEntry(legend.addNewLegendEntry());
+    }
+
+    public XDDFLegendEntry getEntry(int index) {
+        return new XDDFLegendEntry(legend.getLegendEntryArray(index));
+    }
+
+    public List<XDDFLegendEntry> getEntries() {
+        return legend
+            .getLegendEntryList()
+            .stream()
+            .map(entry -> new XDDFLegendEntry(entry))
+            .collect(Collectors.toList());
+    }
+
+    public void setExtensionList(XDDFChartExtensionList list) {
+        if (list == null) {
+            legend.unsetExtLst();
+        } else {
+            legend.setExtLst(list.getXmlObject());
+        }
+    }
+
+    public XDDFChartExtensionList getExtensionList() {
+        if (legend.isSetExtLst()) {
+            return new XDDFChartExtensionList(legend.getExtLst());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLayout(XDDFLayout layout) {
+        if (layout == null) {
+            legend.unsetLayout();
+        } else {
+            legend.setLayout(layout.getXmlObject());
+        }
+    }
+
+    public XDDFLayout getLayout() {
+        if (legend.isSetLayout()) {
+            return new XDDFLayout(legend.getLayout());
+        } else {
+            return null;
+        }
     }
 
     public void setPosition(LegendPosition position) {
