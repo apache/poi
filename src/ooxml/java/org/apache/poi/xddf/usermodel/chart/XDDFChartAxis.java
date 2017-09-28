@@ -21,7 +21,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
@@ -53,7 +52,7 @@ public abstract class XDDFChartAxis {
     protected abstract CTTickMark getMinorCTTickMark();
 
     @Internal
-    public abstract CTChartLines getMajorGridLines();
+    public abstract CTShapeProperties getMajorGridLines();
 
     @Internal
     public abstract CTShapeProperties getLine();

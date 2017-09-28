@@ -26,7 +26,7 @@ public class XDDFChartExtensionList {
     private CTExtensionList list;
 
     public XDDFChartExtensionList() {
-        this.list = CTExtensionList.Factory.newInstance();
+        this(CTExtensionList.Factory.newInstance());
     }
 
     @Internal

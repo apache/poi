@@ -26,7 +26,7 @@ public class XDDFTextBody {
     private CTTextBody body;
 
     public XDDFTextBody() {
-        this.body = CTTextBody.Factory.newInstance();
+        this(CTTextBody.Factory.newInstance());
     }
 
     @Internal

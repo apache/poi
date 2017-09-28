@@ -21,7 +21,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
@@ -51,8 +50,14 @@ public class XDDFDateAxis extends XDDFChartAxis {
 
     @Override
     @Internal
-    public CTChartLines getMajorGridLines() {
-        return ctDateAx.getMajorGridlines();
+    public CTShapeProperties getMajorGridLines() {
+        if (!ctDateAx.isSetMajorGridlines()) {
+            ctDateAx.addNewMajorGridlines();
+        }
+        if (!ctDateAx.getMajorGridlines().isSetSpPr()) {
+            ctDateAx.getMajorGridlines().addNewSpPr();
+        }
+        return ctDateAx.getMajorGridlines().getSpPr();
     }
 
     @Override

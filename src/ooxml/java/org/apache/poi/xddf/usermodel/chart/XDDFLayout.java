@@ -26,7 +26,7 @@ public class XDDFLayout {
     private CTLayout layout;
 
     public XDDFLayout() {
-        this.layout = CTLayout.Factory.newInstance();
+        this(CTLayout.Factory.newInstance());
     }
 
     @Internal

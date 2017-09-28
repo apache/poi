@@ -21,7 +21,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
@@ -47,8 +46,14 @@ public class XDDFValueAxis extends XDDFChartAxis {
 
     @Override
     @Internal
-    public CTChartLines getMajorGridLines() {
-        return ctValAx.getMajorGridlines();
+    public CTShapeProperties getMajorGridLines() {
+        if (!ctValAx.isSetMajorGridlines()) {
+            ctValAx.addNewMajorGridlines();
+        }
+        if (!ctValAx.getMajorGridlines().isSetSpPr()) {
+            ctValAx.getMajorGridlines().addNewSpPr();
+        }
+        return ctValAx.getMajorGridlines().getSpPr();
     }
 
     @Override
