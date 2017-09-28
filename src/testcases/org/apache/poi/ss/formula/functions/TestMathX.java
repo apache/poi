@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.functions.XYNumericFunction.Accumulator;
 public class TestMathX extends AbstractNumericTestCase {
 
     public void testAcosh() {
-        double d = 0;
+        double d;
 
         d = MathX.acosh(0);
         assertTrue("Acosh 0 is NaN", Double.isNaN(d));
@@ -53,7 +53,7 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testAsinh() {
-        double d = 0;
+        double d;
 
         d = MathX.asinh(0);
         assertEquals("asinh 0", d, 0);
@@ -79,7 +79,7 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testAtanh() {
-        double d = 0;
+        double d;
         d = MathX.atanh(0);
         assertEquals("atanh 0", d, 0);
 
@@ -110,7 +110,7 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testCosh() {
-        double d = 0;
+        double d;
         d = MathX.cosh(0);
         assertEquals("cosh 0", 1, d);
 
@@ -141,7 +141,7 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testTanh() {
-        double d = 0;
+        double d;
         d = MathX.tanh(0);
         assertEquals("tanh 0", 0, d);
 
@@ -366,7 +366,7 @@ public class TestMathX extends AbstractNumericTestCase {
         final short minus = -1;
         final short zero = 0;
         final short plus = 1;
-        double d = 0;
+        double d;
         
         
         assertEquals("Sign ", minus, MathX.sign(minus));
@@ -415,7 +415,7 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testSinh() {
-        double d = 0;
+        double d;
         d = MathX.sinh(0);
         assertEquals("sinh 0", 0, d);
 
@@ -511,8 +511,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testFactorial() {
-        int n = 0;
-        double s = 0;
+        int n;
+        double s;
         
         n = 0;
         s = MathX.factorial(n);
@@ -540,8 +540,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testSumx2my2() {
-        double[] xarr = null;
-        double[] yarr = null;
+        double[] xarr;
+        double[] yarr;
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -565,8 +565,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testSumx2py2() {
-        double[] xarr = null;
-        double[] yarr = null;
+        double[] xarr;
+        double[] yarr;
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -590,8 +590,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testSumxmy2() {
-        double[] xarr = null;
-        double[] yarr = null;
+        double[] xarr;
+        double[] yarr;
         
         xarr = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         yarr = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -634,8 +634,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
     
     public void testRound() {
-        double d = 0;
-        int p = 0;
+        double d;
+        int p;
         
         d = 0; p = 0;
         assertEquals("round ", 0, MathX.round(d, p));
@@ -705,8 +705,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testRoundDown() {
-        double d = 0;
-        int p = 0;
+        double d;
+        int p;
         
         d = 0; p = 0;
         assertEquals("roundDown ", 0, MathX.roundDown(d, p));
@@ -776,8 +776,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testRoundUp() {
-        double d = 0;
-        int p = 0;
+        double d;
+        int p;
         
         d = 0; p = 0;
         assertEquals("roundUp ", 0, MathX.roundUp(d, p));
@@ -852,8 +852,8 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testCeiling() {
-        double d = 0;
-        double s = 0;
+        double d;
+        double s;
         
         d = 0; s = 0;
         assertEquals("ceiling ", 0, MathX.ceiling(d, s));
@@ -902,11 +902,43 @@ public class TestMathX extends AbstractNumericTestCase {
         
         d = 2d/3; s = 3.33;
         assertEquals("ceiling ", 3.33, MathX.ceiling(d, s));
+
+        // samples from http://www.excelfunctions.net/Excel-Ceiling-Function.html
+        // and https://support.office.com/en-us/article/CEILING-function-0a5cd7c8-0720-4f0a-bd2c-c943e510899f
+        d = 22.25; s = 0.1;
+        assertEquals("ceiling ", 22.3, MathX.ceiling(d, s));
+        d = 22.25; s = 0.5;
+        assertEquals("ceiling ", 22.5, MathX.ceiling(d, s));
+        d = 22.25; s = 1;
+        assertEquals("ceiling ", 23, MathX.ceiling(d, s));
+        d = 22.25; s = 10;
+        assertEquals("ceiling ", 30, MathX.ceiling(d, s));
+        d = 22.25; s = 20;
+        assertEquals("ceiling ", 40, MathX.ceiling(d, s));
+        d = -22.25; s = -0.1;
+        assertEquals("ceiling ", -22.3, MathX.ceiling(d, s));
+        d = -22.25; s = -1;
+        assertEquals("ceiling ", -23, MathX.ceiling(d, s));
+        d = -22.25; s = -5;
+        assertEquals("ceiling ", -25, MathX.ceiling(d, s));
+
+        d = 22.25; s = 1;
+        assertEquals("ceiling ", 23, MathX.ceiling(d, s));
+        d = 22.25; s = -1;
+        assertEquals("ceiling ", Double.NaN, MathX.ceiling(d, s));
+        d = -22.25; s = 1;
+        assertEquals("ceiling ", -22, MathX.ceiling(d, s)); // returns an error in Excel 2007 & earlier
+        d = -22.25; s = -1;
+        assertEquals("ceiling ", -23, MathX.ceiling(d, s));
+
+        // test cases for newer versions of Excel where d can be negative for
+        d = -11.12333; s = 0.03499;
+        assertEquals("ceiling ", -11.09183, MathX.ceiling(d, s));
     }
 
     public void testFloor() {
-        double d = 0;
-        double s = 0;
+        double d;
+        double s;
         
         d = 0; s = 0;
         assertEquals("floor ", 0, MathX.floor(d, s));
@@ -955,5 +987,18 @@ public class TestMathX extends AbstractNumericTestCase {
         
         d = 2d/3; s = 3.33;
         assertEquals("floor ", 0, MathX.floor(d, s));
+
+        // samples from http://www.excelfunctions.net/Excel-Ceiling-Function.html
+        // and https://support.office.com/en-us/article/CEILING-function-0a5cd7c8-0720-4f0a-bd2c-c943e510899f
+        d = 3.7; s = 2;
+        assertEquals("floor ", 2, MathX.floor(d, s));
+        d = -2.5; s = -2;
+        assertEquals("floor ", -2, MathX.floor(d, s));
+        d = 2.5; s = -2;
+        assertEquals("floor ", Double.NaN, MathX.floor(d, s));
+        d = 1.58; s = 0.1;
+        assertEquals("floor ", 1.5, MathX.floor(d, s));
+        d = 0.234; s = 0.01;
+        assertEquals("floor ", 0.23, MathX.floor(d, s));
     }
 }
