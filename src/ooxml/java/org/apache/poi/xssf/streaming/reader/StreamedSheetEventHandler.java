@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.List;
 import java.util.Map;
 
@@ -176,7 +177,7 @@ public class StreamedSheetEventHandler {
                 cellPositions = new ArrayList<String>();
             }
         } else if (name.equals("c")) {
-            String cellPosition = attributes.get("r").toUpperCase();
+            String cellPosition = attributes.get("r").toUpperCase(Locale.ROOT);
             cellPosition = cellPosition.replaceAll(String.valueOf(rowNumber + 1), "").trim();
             currentCellPosition = cellPosition;
             if (rowNumber == 0) {
