@@ -118,6 +118,11 @@ public interface Row extends Iterable<Cell> {
     /**
      * Get the number of the first cell contained in this row.
      *
+     * Note: cells which had content before and were set to empty later might
+     * still be counted as cells by Excel and Apache POI, so the result of this
+     * method will include such rows and thus the returned value might be lower
+     * than expected!
+     *
      * @return short representing the first logical cell in the row,
      *  or -1 if the row does not contain any cells.
      */
@@ -138,6 +143,11 @@ public interface Row extends Iterable<Cell> {
      *   //... do something with cell
      * }
      * </pre>
+     *
+     * Note: cells which had content before and were set to empty later might
+     * still be counted as cells by Excel and Apache POI, so the result of this
+     * method will include such rows and thus the returned value might be higher
+     * than expected!
      *
      * @return short representing the last logical cell in the row <b>PLUS ONE</b>,
      *   or -1 if the row does not contain any cells.

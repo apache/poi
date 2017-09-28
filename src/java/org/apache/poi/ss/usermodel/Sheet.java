@@ -91,7 +91,12 @@ public interface Sheet extends Iterable<Row> {
     int getPhysicalNumberOfRows();
 
     /**
-     * Gets the first row on the sheet
+     * Gets the first row on the sheet.
+     *
+     * Note: rows which had content before and were set to empty later might
+     * still be counted as rows by Excel and Apache POI, so the result of this
+     * method will include such rows and thus the returned value might be lower
+     * than expected!
      *
      * @return the number of the first logical row on the sheet (0-based)
      */
@@ -99,6 +104,11 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Gets the last row on the sheet
+     *
+     * Note: rows which had content before and were set to empty later might
+     * still be counted as rows by Excel and Apache POI, so the result of this
+     * method will include such rows and thus the returned value might be higher
+     * than expected!
      *
      * @return last row contained n this sheet (0-based)
      */
