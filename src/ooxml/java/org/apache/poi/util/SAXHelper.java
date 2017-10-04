@@ -95,7 +95,7 @@ public final class SAXHelper {
     private static void trySetXercesSecurityManager(XMLReader xmlReader) {
         // Try built-in JVM one first, standalone if not
         for (String securityManagerClassName : new String[] {
-                "com.sun.org.apache.xerces.internal.util.SecurityManager",
+                //"com.sun.org.apache.xerces.internal.util.SecurityManager",
                 "org.apache.xerces.util.SecurityManager"
         }) {
             try {
@@ -105,12 +105,25 @@ public final class SAXHelper {
                 xmlReader.setProperty("http://apache.org/xml/properties/security-manager", mgr);
                 // Stop once one can be setup without error
                 return;
+            } catch (ClassNotFoundException e) {
+                // continue without log, this is expected in some setups
             } catch (Throwable e) {     // NOSONAR - also catch things like NoClassDefError here
                 // throttle the log somewhat as it can spam the log otherwise
                 if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
                     logger.log(POILogger.WARN, "SAX Security Manager could not be setup [log suppressed for 5 minutes]", e);
                     lastLog = System.currentTimeMillis();
                 }
+            }
+        }
+
+        // separate old version of Xerces not found => use the builtin way of setting the property
+        try {
+            xmlReader.setProperty("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit", 4096);
+        } catch (SAXException e) {     // NOSONAR - also catch things like NoClassDefError here
+            // throttle the log somewhat as it can spam the log otherwise
+            if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
+                logger.log(POILogger.WARN, "SAX Security Manager could not be setup [log suppressed for 5 minutes]", e);
+                lastLog = System.currentTimeMillis();
             }
         }
     }
