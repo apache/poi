@@ -33,6 +33,8 @@ public class TestSAXHelper {
         assertNotSame(reader, SAXHelper.newXMLReader());
         assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
         assertEquals(SAXHelper.IGNORING_ENTITY_RESOLVER, reader.getEntityResolver());
+        assertNotNull(reader.getProperty("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit"));
+        assertEquals("4096", reader.getProperty("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit"));
         assertNotNull(reader.getProperty("http://apache.org/xml/properties/security-manager"));
 
         reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
