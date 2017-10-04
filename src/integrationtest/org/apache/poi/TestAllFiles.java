@@ -91,13 +91,13 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
 
-    static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found", "**/.git/**" };
+    public static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found", "**/.git/**" };
 
     private static final Map<String,String> FILE_PASSWORD;
 
     
     // map file extensions to the actual mappers
-    static final Map<String, FileHandler> HANDLERS = new HashMap<>();
+    public static final Map<String, FileHandler> HANDLERS = new HashMap<>();
     static {
         // Excel
         HANDLERS.put(".xls", new HSSFFileHandler());
@@ -443,7 +443,7 @@ public class TestAllFiles {
         handler.handleAdditional(inputFile);
     }
 
-    static String getExtension(String file) {
+    public static String getExtension(String file) {
         int pos = file.lastIndexOf('.');
         if(pos == -1 || pos == file.length()-1) {
             return file;
@@ -452,7 +452,7 @@ public class TestAllFiles {
         return file.substring(pos).toLowerCase(Locale.ROOT);
     }
 
-    private static class NullFileHandler implements FileHandler {
+    public static class NullFileHandler implements FileHandler {
         @Override
         public void handleFile(InputStream stream, String path) throws Exception {
         }
