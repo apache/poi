@@ -33,8 +33,9 @@ public enum LayoutTarget {
 
     private final static HashMap<STLayoutTarget.Enum, LayoutTarget> reverse = new HashMap<STLayoutTarget.Enum, LayoutTarget>();
     static {
-        reverse.put(STLayoutTarget.INNER, LayoutTarget.INNER);
-        reverse.put(STLayoutTarget.OUTER, LayoutTarget.OUTER);
+        for (LayoutTarget value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static LayoutTarget valueOf(STLayoutTarget.Enum layoutTarget) {

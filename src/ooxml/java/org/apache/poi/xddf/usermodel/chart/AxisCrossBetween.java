@@ -33,8 +33,9 @@ public enum AxisCrossBetween {
 
     private final static HashMap<STCrossBetween.Enum, AxisCrossBetween> reverse = new HashMap<STCrossBetween.Enum, AxisCrossBetween>();
     static {
-        reverse.put(STCrossBetween.BETWEEN, AxisCrossBetween.BETWEEN);
-        reverse.put(STCrossBetween.MID_CAT, AxisCrossBetween.MIDPOINT_CATEGORY);
+        for (AxisCrossBetween value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static AxisCrossBetween valueOf(STCrossBetween.Enum crossBetween) {

@@ -35,10 +35,9 @@ public enum AxisTickMark {
 
     private final static HashMap<STTickMark.Enum, AxisTickMark> reverse = new HashMap<STTickMark.Enum, AxisTickMark>();
     static {
-        reverse.put(STTickMark.CROSS, AxisTickMark.CROSS);
-        reverse.put(STTickMark.IN, AxisTickMark.IN);
-        reverse.put(STTickMark.NONE, AxisTickMark.NONE);
-        reverse.put(STTickMark.OUT, AxisTickMark.OUT);
+        for (AxisTickMark value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static AxisTickMark valueOf(STTickMark.Enum tickMark) {

@@ -34,9 +34,9 @@ public enum AxisLabelAlignment {
 
     private final static HashMap<STLblAlgn.Enum, AxisLabelAlignment> reverse = new HashMap<STLblAlgn.Enum, AxisLabelAlignment>();
     static {
-        reverse.put(STLblAlgn.CTR, AxisLabelAlignment.CENTER);
-        reverse.put(STLblAlgn.L, AxisLabelAlignment.LEFT);
-        reverse.put(STLblAlgn.R, AxisLabelAlignment.RIGHT);
+        for (AxisLabelAlignment value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static AxisLabelAlignment valueOf(STLblAlgn.Enum alignment) {

@@ -37,12 +37,9 @@ public enum ScatterStyle {
 
     private final static HashMap<STScatterStyle.Enum, ScatterStyle> reverse = new HashMap<STScatterStyle.Enum, ScatterStyle>();
     static {
-        reverse.put(STScatterStyle.LINE, ScatterStyle.LINE);
-        reverse.put(STScatterStyle.LINE_MARKER, ScatterStyle.LINE_MARKER);
-        reverse.put(STScatterStyle.MARKER, ScatterStyle.MARKER);
-        reverse.put(STScatterStyle.NONE, ScatterStyle.NONE);
-        reverse.put(STScatterStyle.SMOOTH, ScatterStyle.SMOOTH);
-        reverse.put(STScatterStyle.SMOOTH_MARKER, ScatterStyle.SMOOTH_MARKER);
+        for (ScatterStyle value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static ScatterStyle valueOf(STScatterStyle.Enum style) {

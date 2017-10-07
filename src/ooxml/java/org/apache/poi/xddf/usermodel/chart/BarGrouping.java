@@ -35,10 +35,9 @@ public enum BarGrouping {
 
     private final static HashMap<STBarGrouping.Enum, BarGrouping> reverse = new HashMap<STBarGrouping.Enum, BarGrouping>();
     static {
-        reverse.put(STBarGrouping.STANDARD, BarGrouping.STANDARD);
-        reverse.put(STBarGrouping.CLUSTERED, BarGrouping.CLUSTERED);
-        reverse.put(STBarGrouping.STACKED, BarGrouping.STACKED);
-        reverse.put(STBarGrouping.PERCENT_STACKED, BarGrouping.PERCENT_STACKED);
+        for (BarGrouping value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static BarGrouping valueOf(STBarGrouping.Enum grouping) {

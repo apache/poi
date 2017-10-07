@@ -34,9 +34,9 @@ public enum AxisCrosses {
 
     private final static HashMap<STCrosses.Enum, AxisCrosses> reverse = new HashMap<STCrosses.Enum, AxisCrosses>();
     static {
-        reverse.put(STCrosses.AUTO_ZERO, AxisCrosses.AUTO_ZERO);
-        reverse.put(STCrosses.MAX, AxisCrosses.MAX);
-        reverse.put(STCrosses.MIN, AxisCrosses.MIN);
+        for (AxisCrosses value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static AxisCrosses valueOf(STCrosses.Enum crosses) {

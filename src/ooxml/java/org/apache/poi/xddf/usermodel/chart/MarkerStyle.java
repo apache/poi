@@ -42,17 +42,9 @@ public enum MarkerStyle {
 
     private final static HashMap<STMarkerStyle.Enum, MarkerStyle> reverse = new HashMap<STMarkerStyle.Enum, MarkerStyle>();
     static {
-        reverse.put(STMarkerStyle.CIRCLE, MarkerStyle.CIRCLE);
-        reverse.put(STMarkerStyle.DASH, MarkerStyle.DASH);
-        reverse.put(STMarkerStyle.DIAMOND, MarkerStyle.DIAMOND);
-        reverse.put(STMarkerStyle.NONE, MarkerStyle.NONE);
-        reverse.put(STMarkerStyle.DOT, MarkerStyle.DOT);
-        reverse.put(STMarkerStyle.PICTURE, MarkerStyle.PICTURE);
-        reverse.put(STMarkerStyle.PLUS, MarkerStyle.PLUS);
-        reverse.put(STMarkerStyle.SQUARE, MarkerStyle.SQUARE);
-        reverse.put(STMarkerStyle.STAR, MarkerStyle.STAR);
-        reverse.put(STMarkerStyle.TRIANGLE, MarkerStyle.TRIANGLE);
-        reverse.put(STMarkerStyle.X, MarkerStyle.X);
+        for (MarkerStyle value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static MarkerStyle valueOf(STMarkerStyle.Enum style) {

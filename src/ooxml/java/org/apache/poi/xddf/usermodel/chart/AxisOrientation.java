@@ -33,8 +33,9 @@ public enum AxisOrientation {
 
     private final static HashMap<STOrientation.Enum, AxisOrientation> reverse = new HashMap<STOrientation.Enum, AxisOrientation>();
     static {
-        reverse.put(STOrientation.MIN_MAX, AxisOrientation.MIN_MAX);
-        reverse.put(STOrientation.MAX_MIN, AxisOrientation.MAX_MIN);
+        for (AxisOrientation value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static AxisOrientation valueOf(STOrientation.Enum orientation) {

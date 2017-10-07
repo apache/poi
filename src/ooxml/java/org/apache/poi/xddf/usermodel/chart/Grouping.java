@@ -34,9 +34,9 @@ public enum Grouping {
 
     private final static HashMap<STGrouping.Enum, Grouping> reverse = new HashMap<STGrouping.Enum, Grouping>();
     static {
-        reverse.put(STGrouping.STANDARD, Grouping.STANDARD);
-        reverse.put(STGrouping.STACKED, Grouping.STACKED);
-        reverse.put(STGrouping.PERCENT_STACKED, Grouping.PERCENT_STACKED);
+        for (Grouping value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static Grouping valueOf(STGrouping.Enum grouping) {

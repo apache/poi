@@ -34,9 +34,9 @@ public enum RadarStyle {
 
     private final static HashMap<STRadarStyle.Enum, RadarStyle> reverse = new HashMap<STRadarStyle.Enum, RadarStyle>();
     static {
-        reverse.put(STRadarStyle.FILLED, RadarStyle.FILLED);
-        reverse.put(STRadarStyle.MARKER, RadarStyle.MARKER);
-        reverse.put(STRadarStyle.STANDARD, RadarStyle.STANDARD);
+        for (RadarStyle value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
     static RadarStyle valueOf(STRadarStyle.Enum style) {
