@@ -1098,6 +1098,7 @@ under the License.
             <include name="org/apache/poi/ss/**/*.java"/>
             <include name="org/apache/poi/xssf/**/*.java"/>
             <include name="org/apache/poi/extractor/**/*.java"/>
+            <include name="org/apache/poi/poifs/crypt/**/*.java"/>
         </javac>
         <!-- compile the tests -->
         <javac target="${jdk.version.class}"
