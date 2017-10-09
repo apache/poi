@@ -129,7 +129,19 @@ svn status
 # print out information about which exact version of java we are using
 echo Java-Home: $JAVA_HOME
 ls -al $JAVA_HOME/
+ls -al $JAVA_HOME/bin
 $JAVA_HOME/bin/java -version
+
+echo which java
+which java
+java -version
+
+echo which javac
+which javac
+javac -version
+
+echo '<project default="test"><target name="test"><echo>Java ${ant.java.version}/${java.version}</echo><exec executable="javac"><arg value="-version"/></exec></target></project>' > build.javacheck.xml
+ant -f build.javacheck.xml -v
 
 POIJOBSHELL
 
