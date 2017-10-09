@@ -3137,4 +3137,32 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // this will throw an Exception "RuntimeException: Can't read negative number of bytes"
         new PropertySet(new DocumentInputStream(entry));
     }
+
+    @Test
+    public void test51262() throws IOException {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("51262.xls")) {
+            Sheet sheet = wb.getSheetAt(0);
+            Row row = sheet.getRow(2);
+
+            Cell cell = row.getCell(1);
+            CellStyle style = cell.getCellStyle();
+            assertEquals(26, style.getFontIndex());
+
+            row = sheet.getRow(3);
+            cell = row.getCell(1);
+            style = cell.getCellStyle();
+            assertEquals(28, style.getFontIndex());
+
+            // check the two fonts
+            HSSFFont font = wb.getFontAt((short) 26);
+            assertTrue(font.getBold());
+            assertEquals(10, font.getFontHeightInPoints());
+            assertEquals("\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF", font.getFontName());
+
+            font = wb.getFontAt((short) 28);
+            assertTrue(font.getBold());
+            assertEquals(10, font.getFontHeightInPoints());
+            assertEquals("\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF", font.getFontName());
+        }
+    }
 }
