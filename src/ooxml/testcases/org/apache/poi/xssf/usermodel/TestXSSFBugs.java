@@ -2524,20 +2524,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
         CalculationChain chain = ((XSSFWorkbook) wb).getCalculationChain();
-        for (CTCalcCell calc : chain.getCTCalcChain().getCList()) {
-            // A2 to A6 should be gone
-            assertFalse(calc.getR().equals("A2"));
-            assertFalse(calc.getR().equals("A3"));
-            assertFalse(calc.getR().equals("A4"));
-            assertFalse(calc.getR().equals("A5"));
-            assertFalse(calc.getR().equals("A6"));
-        }
+        checkCellsAreGone(chain);
 
         Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
         Sheet sheetBack = wbBack.getSheet("Func");
         assertNotNull(sheetBack);
 
         chain = ((XSSFWorkbook) wbBack).getCalculationChain();
+        checkCellsAreGone(chain);
+
+        wbBack.close();
+        wb.close();
+    }
+
+    private void checkCellsAreGone(CalculationChain chain) {
         for (CTCalcCell calc : chain.getCTCalcChain().getCList()) {
             // A2 to A6 should be gone
             assertFalse(calc.getR().equals("A2"));
@@ -2546,9 +2546,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertFalse(calc.getR().equals("A5"));
             assertFalse(calc.getR().equals("A6"));
         }
-
-        wbBack.close();
-        wb.close();
     }
 
     /**
@@ -2569,22 +2566,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!11:11", "5.0");
         assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!11:12", null);
         wb.close();
-    }
-
-    private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
-        assertEquals(CellType.FORMULA, intF.getCellType());
-        if (null == expectedResultOrNull) {
-            assertEquals(CellType.ERROR, intF.getCachedFormulaResultType());
-            expectedResultOrNull = "#VALUE!";
-        } else {
-            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultType());
-        }
-
-        assertEquals(expectedFormula, intF.getCellFormula());
-
-        // Check we can evaluate it correctly
-        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
     }
 
     @Test

@@ -269,7 +269,7 @@ public class StylesTable extends POIXMLDocumentPart {
     }
     
     private short getNumberFormatId(String fmt) {
-     // Find the key, and return that
+        // Find the key, and return that
         for (Entry<Short,String> numFmt : numberFormats.entrySet()) {
             if(numFmt.getValue().equals(fmt)) {
                 return numFmt.getKey();

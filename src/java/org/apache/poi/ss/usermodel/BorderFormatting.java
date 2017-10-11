@@ -130,7 +130,7 @@ public interface BorderFormatting {
     /**
      * Set bottom border.
      *
-     * @param border
+     * @param border The style of border to set.
      */
     void setBorderBottom(BorderStyle border);
     
@@ -145,7 +145,7 @@ public interface BorderFormatting {
     /**
      * Set diagonal border.
      *
-     * @param border
+     * @param border The style of border to set.
      */
     void setBorderDiagonal(BorderStyle border);
 
@@ -160,7 +160,7 @@ public interface BorderFormatting {
     /**
      * Set left border.
      *
-     * @param border
+     * @param border The style of border to set.
      */
     void setBorderLeft(BorderStyle border);
 
@@ -175,7 +175,7 @@ public interface BorderFormatting {
     /**
      * Set right border.
      *
-     * @param border
+     * @param border The style of border to set.
      */
     void setBorderRight(BorderStyle border);
 
@@ -190,7 +190,7 @@ public interface BorderFormatting {
     /**
      * Set top border.
      *
-     * @param border
+     * @param border The style of border to set.
      */
     void setBorderTop(BorderStyle border);
     
@@ -198,7 +198,7 @@ public interface BorderFormatting {
      * Set range internal horizontal borders.
      *
      * @since 3.17 beta 1
-     * @param border
+     * @param border The style of border to set.
      */
     void setBorderHorizontal(BorderStyle border);
     
@@ -206,7 +206,7 @@ public interface BorderFormatting {
      * Set range internal vertical borders.
      *
      * @since 3.17 beta 1
-     * @param border
+     * @param border The style of border to set.
      */
     void setBorderVertical(BorderStyle border);
 

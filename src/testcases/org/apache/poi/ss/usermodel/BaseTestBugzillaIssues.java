@@ -1896,4 +1896,20 @@ public abstract class BaseTestBugzillaIssues {
 
         wb.close();
     }
+
+    protected void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
+        assertEquals(CellType.FORMULA, intF.getCellType());
+        if (null == expectedResultOrNull) {
+            assertEquals(CellType.ERROR, intF.getCachedFormulaResultType());
+            expectedResultOrNull = "#VALUE!";
+        } else {
+            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultType());
+        }
+
+        assertEquals(expectedFormula, intF.getCellFormula());
+
+        // Check we can evaluate it correctly
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
+    }
 }

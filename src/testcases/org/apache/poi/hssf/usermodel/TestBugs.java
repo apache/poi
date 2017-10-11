@@ -1872,7 +1872,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Link our new workbook
         Workbook externalWb1 = new HSSFWorkbook();
         externalWb1.createSheet("Sheet1");
-        wb1.linkExternalWorkbook("$http://gagravarr.org/FormulaRefs2.xls", externalWb1);
+        assertEquals(4, wb1.linkExternalWorkbook("$http://gagravarr.org/FormulaRefs2.xls", externalWb1));
 
         // Change 4
         row.getCell(1).setCellFormula("'[$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2");
@@ -1881,7 +1881,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Link our new workbook
         Workbook externalWb2 = new HSSFWorkbook();
         externalWb2.createSheet("Sheet1");
-        wb1.linkExternalWorkbook("$http://example.com/FormulaRefs.xls", externalWb2);
+        assertEquals(5, wb1.linkExternalWorkbook("$http://example.com/FormulaRefs.xls", externalWb2));
 
         // Add 5
         row = s.createRow(5);
@@ -2780,22 +2780,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!$A11:$IV11", "5.0");
         assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!$A11:$IV12", null);
         wb.close();
-    }
-
-    private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
-        assertEquals(CellType.FORMULA, intF.getCellType());
-        if (null == expectedResultOrNull) {
-            assertEquals(CellType.ERROR, intF.getCachedFormulaResultType());
-            expectedResultOrNull = "#VALUE!";
-        } else {
-            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultType());
-        }
-
-        assertEquals(expectedFormula, intF.getCellFormula());
-
-        // Check we can evaluate it correctly
-        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
     }
 
     @Test
