@@ -159,7 +159,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
     @Override
     public short getTopBorderColor() {
-        return getIndexedColor(getRightBorderColorColor());
+        return getIndexedColor(getTopBorderColorColor());
     }
 
     /**
@@ -416,7 +416,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
     
     /**
-     * @param borderPr
      * @return BorderStyle from the given element's style, or NONE if border is null
      */
     private BorderStyle getBorderStyle(CTBorderPr borderPr) {
