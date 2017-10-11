@@ -93,8 +93,8 @@ public class TestXSSFCellStyle {
 		cellXf.setBorderId(1);
 		cellXf.setFillId(1);
 		cellXf.setFontId(1);
-		stylesTable.putCellStyleXf(cellStyleXf);
-		stylesTable.putCellXf(cellXf);
+		assertEquals(2, stylesTable.putCellStyleXf(cellStyleXf));
+		assertEquals(2, stylesTable.putCellXf(cellXf));
 		cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
 
 		assertNotNull(stylesTable.getFillAt(1).getCTFill().getPatternFill());
@@ -537,7 +537,8 @@ public class TestXSSFCellStyle {
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
 	}
 
-	@Test
+	@SuppressWarnings("deprecation")
+    @Test
     public void testDefaultStyles() throws IOException {
 
 		XSSFWorkbook wb1 = new XSSFWorkbook();
@@ -569,7 +570,8 @@ public class TestXSSFCellStyle {
         wb2.close();
 	}
 
-	@Test
+	@SuppressWarnings("deprecation")
+    @Test
     public void testGetFillForegroundColor() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable styles = wb.getStylesSource();
@@ -610,6 +612,7 @@ public class TestXSSFCellStyle {
         wb.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetFillPattern() {
 
@@ -674,7 +677,8 @@ public class TestXSSFCellStyle {
 		assertEquals((short)13, cellStyle.getIndention());
 	}
 
-	@Test
+	@SuppressWarnings("deprecation")
+    @Test
     public void testGetSetAlignment() {
 		assertNull(cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 		assertEquals(HorizontalAlignment.GENERAL, cellStyle.getAlignmentEnum());
@@ -695,7 +699,8 @@ public class TestXSSFCellStyle {
 		assertEquals(STHorizontalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 	}
 
-	@Test
+	@SuppressWarnings("deprecation")
+    @Test
     public void testGetSetVerticalAlignment() {
 		assertEquals(VerticalAlignment.BOTTOM, cellStyle.getVerticalAlignmentEnum());
 		assertEquals(VerticalAlignment.BOTTOM.getCode(), cellStyle.getVerticalAlignment());
@@ -958,6 +963,7 @@ public class TestXSSFCellStyle {
         assertEquals(HorizontalAlignment.RIGHT, styleBack.getAlignmentEnum());
         assertEquals(VerticalAlignment.TOP, styleBack.getVerticalAlignmentEnum());
         assertEquals(FillPatternType.SOLID_FOREGROUND, styleBack.getFillPatternEnum());
+        //noinspection deprecation
         assertEquals(FillPatternType.SOLID_FOREGROUND.getCode(), styleBack.getFillPattern());
         
         wbBack.close();

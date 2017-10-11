@@ -34,7 +34,7 @@ public class XSSFColor extends ExtendedColor {
 
     /**
      * Create an instance of XSSFColor from the supplied XML bean, with default color indexes
-     * @param color 
+     * @param color The {@link CTColor} to use as color-value.
      * @deprecated 3.17 beta 1 - pass the workbook styles indexed color map, if any
      */
     @Deprecated
@@ -45,8 +45,8 @@ public class XSSFColor extends ExtendedColor {
     
     /**
      * Create an instance of XSSFColor from the supplied XML bean, with the given color indexes
-     * @param color
-     * @param map
+     * @param color The {@link CTColor} to use as color-value.
+     * @param map The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(CTColor color, IndexedColorMap map) {
         this.ctColor = color;
@@ -72,8 +72,8 @@ public class XSSFColor extends ExtendedColor {
 
     /**
      *
-     * @param rgb bytes
-     * @param colorMap 
+     * @param rgb The RGB-byte-values for the Color
+     * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(byte[] rgb, IndexedColorMap colorMap) {
         this(CTColor.Factory.newInstance(), colorMap);
@@ -82,7 +82,7 @@ public class XSSFColor extends ExtendedColor {
     
     /**
      * @param indexedColor color index (Enum named for default colors)
-     * @param colorMap 
+     * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(IndexedColors indexedColor, IndexedColorMap colorMap) {
         this(CTColor.Factory.newInstance(), colorMap);
@@ -131,20 +131,14 @@ public class XSSFColor extends ExtendedColor {
      * @return true if the ctColor has a alpha
      */
     public boolean hasAlpha() {
-        if (! ctColor.isSetRgb()) {
-            return false;
-        }
-        return ctColor.getRgb().length == 4;
+        return ctColor.isSetRgb() && ctColor.getRgb().length == 4;
     }
 
     /**
      * @return true if the ctColor has a tint
      */
     public boolean hasTint() {
-        if (!ctColor.isSetTint()) {
-            return false;
-        }
-        return ctColor.getTint() != 0;
+        return ctColor.isSetTint() && ctColor.getTint() != 0;
     }
 
     /**
@@ -377,37 +371,25 @@ public class XSSFColor extends ExtendedColor {
     // Helper methods for {@link #equals(Object)}
     private boolean sameIndexed(XSSFColor other) {
         if (isIndexed() == other.isIndexed()) {
-            if (isIndexed()) {
-                return getIndexed() == other.getIndexed();
-            }
-            return true;
+            return !isIndexed() || getIndexed() == other.getIndexed();
         }
         return false;
     }
     private boolean sameARGB(XSSFColor other) {
         if (isRGB() == other.isRGB()) {
-            if (isRGB()) {
-                return Arrays.equals(getARGB(), other.getARGB());
-            }
-            return true;
+            return !isRGB() || Arrays.equals(getARGB(), other.getARGB());
         }
         return false;
     }
     private boolean sameTheme(XSSFColor other) {
         if (isThemed() == other.isThemed()) {
-            if (isThemed()) {
-                return getTheme() == other.getTheme();
-            }
-            return true;
+            return !isThemed() || getTheme() == other.getTheme();
         }
         return false;
     }
     private boolean sameTint(XSSFColor other) {
         if (hasTint() == other.hasTint()) {
-            if (hasTint()) {
-                return getTint() == other.getTint();
-            }
-            return true;
+            return !hasTint() || getTint() == other.getTint();
         }
         return false;
     }

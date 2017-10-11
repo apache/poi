@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,14 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 package org.apache.poi;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,6 +36,7 @@ import org.junit.Test;
  * Class to test that HXF correctly detects OOXML
  *  documents
  */
+@SuppressWarnings("deprecation")
 public class TestDetectAsOOXML {
     @Test
 	public void testOpensProperly() throws IOException, InvalidFormatException {
@@ -59,10 +56,9 @@ public class TestDetectAsOOXML {
 	        is = FileMagic.prepareToCheckMagic(is);
 	        FileMagic act = FileMagic.valueOf(is);
 	        
-	        if (act == FileMagic.OOXML) {
-	            assertTrue(DocumentFactoryHelper.hasOOXMLHeader(is));
-	        }
-	        
+			assertEquals("OOXML files should be detected, others not",
+					act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is));
+
 	        assertEquals("file magic failed for "+fm[0], fm[1], act);
 	        is.close();
 	    }
@@ -70,7 +66,6 @@ public class TestDetectAsOOXML {
     
     @Test
     public void testFileCorruption() throws Exception {
-	    
 	    // create test InputStream
 	    byte[] testData = { 1, 2, 3 };
         ByteArrayInputStream testInput = new ByteArrayInputStream(testData);

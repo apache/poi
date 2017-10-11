@@ -224,8 +224,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       // Check it evaluates correctly
       eval.evaluateFormulaCell(cell);
       assertEquals(24.60*1.8, cell.getNumericCellValue(), 0);
-      
-      
+
       // Try to add a formula for a new external workbook, won't be allowed to start
       try {
           cell = wb1.getSheetAt(0).getRow(1).createCell(42);
@@ -238,7 +237,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       // Link our new workbook
       HSSFWorkbook wb3 = new HSSFWorkbook();
       wb3.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
-      wb1.linkExternalWorkbook("alt.xls", wb3);
+      assertEquals(2, wb1.linkExternalWorkbook("alt.xls", wb3));
       
       // Now add a formula that refers to our new workbook
       cell.setCellFormula("[alt.xls]Sheet0!$A$1");

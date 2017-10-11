@@ -133,6 +133,7 @@ public abstract class BaseTestFont {
         Workbook wb3 = _testDataProvider.writeOutAndReadBack(wb2);
         wb2.close();
         s1 = wb3.getSheetAt(0);
+        assertNotNull(s1);
 
         assertEquals(num0 + 2, wb3.getNumberOfFonts());
         assertNotNull(wb3.getFontAt(font1Idx));
@@ -145,8 +146,6 @@ public abstract class BaseTestFont {
 
     /**
      * Test that fonts get added properly
-     *
-     * @see org.apache.poi.hssf.usermodel.TestBugs#test45338()
      */
     @Test
     public final void test45338() throws IOException {
