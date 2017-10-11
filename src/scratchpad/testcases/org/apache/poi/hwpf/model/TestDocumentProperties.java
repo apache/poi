@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
-import static org.apache.poi.POITestCase.assertReflectEquals;
-
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.poi.POITestCase.assertReflectEquals;
 
 // TODO: Add DocumentProperties#equals ???
 
@@ -31,19 +31,9 @@ public final class TestDocumentProperties {
     private DocumentProperties _documentProperties;
     private HWPFDocFixture _hWPFDocFixture;
 
-    @Test
-    public void testReadWrite() throws Exception  {
-        int size = DOPAbstractType.getSize();
-        byte[] buf = new byte[size];
-        _documentProperties.serialize(buf, 0);
-        DocumentProperties newDocProperties = new DocumentProperties(buf, 0, size);
-
-        assertReflectEquals(_documentProperties, newDocProperties);
-    }
-
     @Before
     public void setUp() throws Exception {
-        /** TODO verify the constructors*/
+        // TODO verify the constructors
         _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
         _hWPFDocFixture.setUp();
         _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop(), _hWPFDocFixture._fib.getLcbDop());
@@ -54,5 +44,15 @@ public final class TestDocumentProperties {
         _documentProperties = null;
         _hWPFDocFixture.tearDown();
         _hWPFDocFixture = null;
+    }
+
+    @Test
+    public void testReadWrite() throws Exception  {
+        int size = DOPAbstractType.getSize();
+        byte[] buf = new byte[size];
+        _documentProperties.serialize(buf, 0);
+        DocumentProperties newDocProperties = new DocumentProperties(buf, 0, size);
+
+        assertReflectEquals(_documentProperties, newDocProperties);
     }
 }

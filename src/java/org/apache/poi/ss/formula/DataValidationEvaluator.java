@@ -96,7 +96,8 @@ public class DataValidationEvaluator {
     
     /**
      * Lazy load validations by sheet, since reading the CT* types is expensive
-     * @param sheet
+     *
+     * @param sheet The {@link Sheet} to load validations for.
      * @return The {@link DataValidation}s for the sheet
      */
     private List<? extends DataValidation> getValidations(Sheet sheet) {
@@ -250,8 +251,9 @@ public class DataValidationEvaluator {
 
     /**
     * Note that this assumes the cell cached value is up to date and in sync with data edits
-    * @param cell
-    * @param type
+     *
+    * @param cell The {@link Cell} to check.
+    * @param type The {@link CellType} to check for.
     * @return true if the cell or cached cell formula result type match the given type
     */
     public static boolean isType(Cell cell, CellType type) {
@@ -278,7 +280,7 @@ public class DataValidationEvaluator {
                 if (super.isValidValue(cell, context)) {
                     // we know it is a number in the proper range, now check if it is an int
                     final double value = cell.getNumericCellValue(); // can't get here without a valid numeric value
-                    return Double.valueOf(value).compareTo(Double.valueOf((int) value)) == 0;
+                    return Double.compare(value, (int) value) == 0;
                 }
                 return false;
             }
@@ -342,7 +344,7 @@ public class DataValidationEvaluator {
             /**
              * Note the formula result must either be a boolean result, or anything not in error.
              * If boolean, value must be true to pass, anything else valid is also passing, errors fail.
-             * @see org.apache.poi.ss.formula.DataValidationEvaluator.ValidationEnum#isValidValue(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.DataValidationConstraint, org.apache.poi.ss.formula.WorkbookEvaluator)
+             * @see org.apache.poi.ss.formula.DataValidationEvaluator.ValidationEnum#isValidValue(Cell, DataValidationContext)
              */
             public boolean isValidValue(Cell cell, DataValidationContext context) {
                 // unwrapped single value
@@ -409,8 +411,9 @@ public class DataValidationEvaluator {
          * Evaluate a numeric formula value as either a constant or numeric expression.
          * Note that Excel treats validations with constraint formulas that evaluate to null as valid,
          * but evaluations in error or non-numeric are marked invalid.
-         * @param formula
-         * @param context
+         *
+         * @param formula The text of the formula or a numeric value
+         * @param context The {@link DataValidationContext} which is used for evaluation
          * @return numeric value or null if not defined or the formula evaluates to an empty/missing cell.
          * @throws NumberFormatException if the formula is non-numeric when it should be
          */
@@ -522,11 +525,7 @@ public class DataValidationEvaluator {
         private final CellReference target;
         
         /**
-         *
-         * @param dv
-         * @param dve
-         * @param region
-         * @param target
+         * Populate the context with the necessary values.
          */
         public DataValidationContext(DataValidation dv, DataValidationEvaluator dve, CellRangeAddressBase region, CellReference target) {
             this.dv = dv;

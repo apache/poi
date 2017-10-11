@@ -17,15 +17,21 @@
 
 package org.apache.poi.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Class to test IntList
  *
  * @author Marc Johnson
  */
-public final class TestIntList extends TestCase {
-
+public final class TestIntList {
+    @Test
     public void testConstructors() {
         IntList list = new IntList();
 
@@ -40,6 +46,7 @@ public final class TestIntList extends TestCase {
         assertTrue(list3.isEmpty());
     }
 
+    @Test
     public void testAdd() {
         IntList list      = new IntList();
         int[]   testArray =
@@ -117,6 +124,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testAddAll() {
         IntList list = new IntList();
 
@@ -191,6 +199,17 @@ public final class TestIntList extends TestCase {
         assertEquals(list.get(4), empty.get(14));
     }
 
+    @Test
+    public void testAddAllGrow() {
+        IntList list = new IntList(0);
+        IntList addList = new IntList(0);
+        addList.add(1);
+        addList.add(2);
+
+        assertTrue(list.addAll(0, addList));
+    }
+
+    @Test
     public void testClear() {
         IntList list = new IntList();
 
@@ -212,6 +231,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testContains() {
         IntList list = new IntList();
 
@@ -227,11 +247,12 @@ public final class TestIntList extends TestCase {
             }
             else
             {
-                assertTrue(!list.contains(j));
+                assertFalse(list.contains(j));
             }
         }
     }
 
+    @Test
     public void testContainsAll() {
         IntList list = new IntList();
 
@@ -246,18 +267,19 @@ public final class TestIntList extends TestCase {
         assertTrue(list.containsAll(list2));
         list2.add(10);
         assertTrue(list2.containsAll(list));
-        assertTrue(!list.containsAll(list2));
+        assertFalse(list.containsAll(list2));
         list.add(11);
-        assertTrue(!list2.containsAll(list));
-        assertTrue(!list.containsAll(list2));
+        assertFalse(list2.containsAll(list));
+        assertFalse(list.containsAll(list2));
     }
 
+    @Test
     public void testEquals() {
         IntList list = new IntList();
 
         assertEquals(list, list);
         //noinspection ObjectEqualsNull
-        assertTrue(!list.equals(null));
+        assertFalse(list.equals(null));
         IntList list2 = new IntList(200);
 
         assertEquals(list, list2);
@@ -267,16 +289,18 @@ public final class TestIntList extends TestCase {
         list.add(1);
         list2.add(1);
         list2.add(0);
-        assertTrue(!list.equals(list2));
+        assertFalse(list.equals(list2));
         list2.removeValue(1);
         list2.add(1);
         assertEquals(list, list2);
         assertEquals(list2, list);
+        assertEquals(list.hashCode(), list2.hashCode());
         list2.add(2);
-        assertTrue(!list.equals(list2));
-        assertTrue(!list2.equals(list));
+        assertFalse(list.equals(list2));
+        assertFalse(list2.equals(list));
     }
 
+    @Test
     public void testGet() {
         IntList list = new IntList();
 
@@ -304,6 +328,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testIndexOf() {
         IntList list = new IntList();
 
@@ -324,6 +349,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testIsEmpty() {
         IntList list1 = new IntList();
         IntList list2 = new IntList(1000);
@@ -335,9 +361,9 @@ public final class TestIntList extends TestCase {
         list1.add(1);
         list2.add(2);
         list3 = new IntList(list2);
-        assertTrue(!list1.isEmpty());
-        assertTrue(!list2.isEmpty());
-        assertTrue(!list3.isEmpty());
+        assertFalse(list1.isEmpty());
+        assertFalse(list2.isEmpty());
+        assertFalse(list3.isEmpty());
         list1.clear();
         list2.remove(0);
         list3.removeValue(2);
@@ -346,6 +372,7 @@ public final class TestIntList extends TestCase {
         assertTrue(list3.isEmpty());
     }
 
+    @Test
     public void testLastIndexOf() {
         IntList list = new IntList();
 
@@ -366,6 +393,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testRemove() {
         IntList list = new IntList();
 
@@ -399,6 +427,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testRemoveValue() {
         IntList list = new IntList();
 
@@ -413,10 +442,11 @@ public final class TestIntList extends TestCase {
                 assertTrue(list.removeValue(j));
                 assertTrue(list.removeValue(j));
             }
-            assertTrue(!list.removeValue(j));
+            assertFalse(list.removeValue(j));
         }
     }
 
+    @Test
     public void testRemoveAll() {
         IntList list = new IntList();
 
@@ -439,16 +469,26 @@ public final class TestIntList extends TestCase {
                 listOdd.add(j);
             }
         }
-        list.removeAll(listEven);
+
+        assertTrue(list.removeAll(listEven));
         assertEquals(list, listOdd);
-        list.removeAll(listOdd);
+
+        assertTrue(list.removeAll(listOdd));
         assertTrue(list.isEmpty());
-        listCopy.removeAll(listOdd);
+
+        assertTrue(listCopy.removeAll(listOdd));
         assertEquals(listCopy, listEven);
-        listCopy.removeAll(listEven);
+
+        assertTrue(listCopy.removeAll(listEven));
         assertTrue(listCopy.isEmpty());
+
+        assertFalse(list.removeAll(listEven));
+        assertFalse(list.removeAll(listOdd));
+        assertFalse(listCopy.removeAll(listEven));
+        assertFalse(listCopy.removeAll(listEven));
     }
 
+    @Test
     public void testRetainAll() {
         IntList list = new IntList();
 
@@ -471,16 +511,25 @@ public final class TestIntList extends TestCase {
                 listOdd.add(j);
             }
         }
-        list.retainAll(listOdd);
+        assertTrue(list.retainAll(listOdd));
         assertEquals(list, listOdd);
-        list.retainAll(listEven);
+
+        assertTrue(list.retainAll(listEven));
         assertTrue(list.isEmpty());
-        listCopy.retainAll(listEven);
+
+        assertTrue(listCopy.retainAll(listEven));
         assertEquals(listCopy, listEven);
-        listCopy.retainAll(listOdd);
+
+        assertTrue(listCopy.retainAll(listOdd));
         assertTrue(listCopy.isEmpty());
+
+        assertFalse(list.retainAll(listOdd));
+        assertFalse(list.retainAll(listEven));
+        assertFalse(listCopy.retainAll(listEven));
+        assertFalse(listCopy.retainAll(listOdd));
     }
 
+    @Test
     public void testSet() {
         IntList list = new IntList();
 
@@ -509,6 +558,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testSize() {
         IntList list = new IntList();
 
@@ -526,6 +576,7 @@ public final class TestIntList extends TestCase {
         }
     }
 
+    @Test
     public void testToArray() {
         IntList list = new IntList();
 

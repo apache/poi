@@ -47,7 +47,6 @@ public class IntList
 {
     private int[]            _array;
     private int              _limit;
-    private int              fillval;
     private static final int _default_size = 128;
 
     /**
@@ -61,7 +60,8 @@ public class IntList
 
     public IntList(final int initialCapacity)
     {
-        this(initialCapacity,0);
+        _array = new int[ initialCapacity ];
+        _limit = 0;
     }
 
 
@@ -79,29 +79,7 @@ public class IntList
     }
 
     /**
-     * create an IntList with a predefined initial size
-     *
-     * @param initialCapacity the size for the internal array
-     */
-
-    public IntList(final int initialCapacity, int fillvalue)
-    {
-        _array = new int[ initialCapacity ];
-        if (fillval != 0) {
-            fillval = fillvalue;
-            fillArray(fillval, _array, 0);
-        }
-        _limit = 0;
-    }
-
-    private void fillArray(int val, int[] array, int index) {
-      for (int k = index; k < array.length; k++) {
-        array[k] = val;
-      }
-    }
-
-    /**
-     * add the specfied value at the specified index
+     * add the specified value at the specified index
      *
      * @param index the index where the new value is to be added
      * @param value the new value
@@ -651,12 +629,7 @@ public class IntList
                                                       : new_size;
         int[] new_array = new int[ size ];
 
-        if (fillval != 0) {
-          fillArray(fillval, new_array, _array.length);
-        }
-
         System.arraycopy(_array, 0, new_array, 0, _limit);
         _array = new_array;
     }
-}   // end public class IntList
-
+}
