@@ -31,64 +31,62 @@ import java.nio.channels.FileChannel;
  */
 public final class FileHelper {
 
-	/**
-	 * Get the directory part of the specified file path.
-	 *
-	 * @param f
-	 *            File to process.
-	 * @return The directory path from the specified
-	 */
-	public static File getDirectory(File f) {
-		if (f != null) {
-			String path = f.getPath();
+    /**
+     * Get the directory part of the specified file path.
+     *
+     * @param f
+     *            File to process.
+     * @return The directory path from the specified
+     */
+    public static File getDirectory(File f) {
+        if (f != null) {
+            String path = f.getPath();
             int num2 = path.length();
-			while (--num2 >= 0) {
-				char ch1 = path.charAt(num2);
-				if (ch1 == File.separatorChar) {
-					return new File(path.substring(0, num2));
-				}
-			}
-		}
-		return null;
-	}
+            while (--num2 >= 0) {
+                char ch1 = path.charAt(num2);
+                if (ch1 == File.separatorChar) {
+                    return new File(path.substring(0, num2));
+                }
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * Copy a file.
-	 *
-	 * @param in
-	 *            The source file.
-	 * @param out
-	 *            The target location.
-	 * @throws IOException
-	 *             If an I/O error occur.
-	 */
-	public static void copyFile(File in, File out) throws IOException {
-	    FileInputStream fis = new FileInputStream(in);
-	    FileOutputStream fos = new FileOutputStream(out);
-		FileChannel sourceChannel = fis.getChannel();
-		FileChannel destinationChannel = fos.getChannel();
-		sourceChannel.transferTo(0, sourceChannel.size(), destinationChannel);
-		sourceChannel.close();
-		destinationChannel.close();
-		fos.close();
-		fis.close();
-	}
+    /**
+     * Copy a file.
+     *
+     * @param in
+     *            The source file.
+     * @param out
+     *            The target location.
+     * @throws IOException
+     *             If an I/O error occur.
+     */
+    public static void copyFile(File in, File out) throws IOException {
+        try (FileInputStream fis = new FileInputStream(in);
+             FileOutputStream fos = new FileOutputStream(out);
+             FileChannel sourceChannel = fis.getChannel();
+             FileChannel destinationChannel = fos.getChannel()) {
+            
+            sourceChannel.transferTo(0, sourceChannel.size(), destinationChannel);
+            sourceChannel.close();
+        }
+    }
 
-	/**
-	 * Get file name from the specified File object.
-	 */
-	public static String getFilename(File file) {
-		if (file != null) {
-			String path = file.getPath();
-			int len = path.length();
-			int num2 = len;
-			while (--num2 >= 0) {
-				char ch1 = path.charAt(num2);
-				if (ch1 == File.separatorChar)
-					return path.substring(num2 + 1, len);
-			}
-		}
-		return "";
-	}
-
+    /**
+     * Get file name from the specified File object.
+     */
+    public static String getFilename(File file) {
+        if (file != null) {
+            String path = file.getPath();
+            int len = path.length();
+            int num2 = len;
+            while (--num2 >= 0) {
+                char ch1 = path.charAt(num2);
+                if (ch1 == File.separatorChar)
+                    return path.substring(num2 + 1, len);
+            }
+        }
+        return "";
+    }
 }
