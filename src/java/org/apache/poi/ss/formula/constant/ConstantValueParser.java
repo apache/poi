@@ -61,7 +61,7 @@ public final class ConstantValueParser {
 				in.readLong(); // 8 byte 'not used' field
 				return EMPTY_REPRESENTATION; 
 			case TYPE_NUMBER:
-				return new Double(in.readDouble());
+				return Double.valueOf(in.readDouble());
 			case TYPE_STRING:
 				return StringUtil.readUnicodeString(in);
 			case TYPE_BOOLEAN:

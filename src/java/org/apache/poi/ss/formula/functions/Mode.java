@@ -129,7 +129,7 @@ public final class Mode implements Function {
 			return;
 		}
 		if (arg instanceof NumberEval) {
-			temp.add(new Double(((NumberEval) arg).getNumberValue()));
+			temp.add(Double.valueOf(((NumberEval) arg).getNumberValue()));
 			return;
 		}
 		throw new RuntimeException("Unexpected value type (" + arg.getClass().getName() + ")");
