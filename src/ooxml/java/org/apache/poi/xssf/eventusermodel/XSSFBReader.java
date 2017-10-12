@@ -253,7 +253,7 @@ public class XSSFBReader extends XSSFReader {
             String relId = sb.toString(); sb.setLength(0);
             offset += XSSFBUtils.readXLWideString(data, offset, sb);
             String name = sb.toString();
-            if (relId != null && relId.trim().length() > 0) {
+            if (relId.trim().length() > 0) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
         }
@@ -272,7 +272,7 @@ public class XSSFBReader extends XSSFReader {
             sb.setLength(0);
             offset += XSSFBUtils.readXLWideString(data, offset, sb);
             String name = sb.toString();
-            if (relId != null && relId.trim().length() > 0) {
+            if (relId.trim().length() > 0) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
             if (offset == data.length) {
