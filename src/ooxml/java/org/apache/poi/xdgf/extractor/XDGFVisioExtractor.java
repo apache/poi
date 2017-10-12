@@ -48,7 +48,7 @@ public class XDGFVisioExtractor extends POIXMLTextExtractor {
             page.getContent().visitShapes(visitor);
         }
         
-        return visitor.getText().toString();
+        return visitor.getText();
     }
     
     public static void main(String [] args) throws IOException {
