@@ -843,7 +843,7 @@ public class DataFormatter implements Observer {
         if (numberFormat == null) {
             return String.valueOf(d);
         }
-        String formatted = numberFormat.format(new Double(d));
+        String formatted = numberFormat.format(Double.valueOf(d));
         return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
     }
 
@@ -894,7 +894,7 @@ public class DataFormatter implements Observer {
         String result;
         final String textValue = NumberToTextConverter.toText(value);
         if (textValue.indexOf('E') > -1) {
-            result = numberFormat.format(new Double(value));
+            result = numberFormat.format(Double.valueOf(value));
         }
         else {
             result = numberFormat.format(new BigDecimal(textValue));

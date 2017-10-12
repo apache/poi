@@ -505,10 +505,10 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                     }
 
                     final Set<ValueAndFormat> avgSet = new LinkedHashSet<>(1);
-                    avgSet.add(new ValueAndFormat(new Double(allValues.size() == 0 ? 0 : total / allValues.size()), null));
+                    avgSet.add(new ValueAndFormat(Double.valueOf(allValues.size() == 0 ? 0 : total / allValues.size()), null));
 
                     final double stdDev = allValues.size() <= 1 ? 0 : ((NumberEval) AggregateFunction.STDEV.evaluate(pop, 0, 0)).getNumberValue();
-                    avgSet.add(new ValueAndFormat(new Double(stdDev), null));
+                    avgSet.add(new ValueAndFormat(Double.valueOf(stdDev), null));
                     return avgSet;
                 }
             }));
@@ -527,7 +527,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
              * operator type
              */
             
-            Double comp = new Double(conf.getStdDev() > 0 ? (avg + (conf.getAboveAverage() ? 1 : -1) * stdDev * conf.getStdDev()) : avg) ;
+            Double comp = Double.valueOf(conf.getStdDev() > 0 ? (avg + (conf.getAboveAverage() ? 1 : -1) * stdDev * conf.getStdDev()) : avg) ;
             
             OperatorEnum op = null;
             if (conf.getAboveAverage()) {
@@ -625,7 +625,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         if (cell != null) {
             final CellType type = cell.getCellType();
             if (type == CellType.NUMERIC || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.NUMERIC) ) {
-                return new ValueAndFormat(new Double(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString());
+                return new ValueAndFormat(Double.valueOf(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString());
             } else if (type == CellType.STRING || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.STRING) ) {
                 return new ValueAndFormat(cell.getStringCellValue(), cell.getCellStyle().getDataFormatString());
             } else if (type == CellType.BOOLEAN || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.BOOLEAN) ) {
