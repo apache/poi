@@ -74,7 +74,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
             // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-            final Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
+            final Integer colI = Integer.valueOf(cell.getColumnIndex()); // NOSONAR
             _cells.put(colI, cell);
             sheet.onReadCell(cell);
         }
@@ -230,7 +230,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     @Override
     public XSSFCell createCell(int columnIndex, CellType type) {
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-        final Integer colI = new Integer(columnIndex); // NOSONAR
+        final Integer colI = Integer.valueOf(columnIndex); // NOSONAR
         CTCell ctCell;
         XSSFCell prev = _cells.get(colI);
         if(prev != null){
@@ -270,7 +270,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-    	final Integer colI = new Integer(cellnum); // NOSONAR
+    	final Integer colI = Integer.valueOf(cellnum); // NOSONAR
         XSSFCell cell = _cells.get(colI);
         switch (policy) {
             case RETURN_NULL_AND_BLANK:
@@ -500,7 +500,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
            _sheet.getWorkbook().onDeleteFormula(xcell);
         }
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-        final Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
+        final Integer colI = Integer.valueOf(cell.getColumnIndex()); // NOSONAR
         _cells.remove(colI);
     }
 

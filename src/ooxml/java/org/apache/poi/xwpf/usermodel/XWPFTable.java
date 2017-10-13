@@ -146,7 +146,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
          * CTTblGrid tblgrid=table.addNewTblGrid();
          * tblgrid.addNewGridCol().setW(new BigInteger("2000"));
          */
-        getRows();
+        //getRows();
     }
 
     /**

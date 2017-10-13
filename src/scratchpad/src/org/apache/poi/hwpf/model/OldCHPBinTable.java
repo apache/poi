@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.Collections;
-
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -65,6 +63,6 @@ public final class OldCHPBinTable extends CHPBinTable
                     _textRuns.add( chpx );
             }
     }
-    Collections.sort( _textRuns, PropertyNode.StartComparator.instance );
+    _textRuns.sort(PropertyNode.StartComparator.instance);
   }
 }

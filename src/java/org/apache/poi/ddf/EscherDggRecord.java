@@ -20,7 +20,6 @@ package org.apache.poi.ddf;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -260,7 +259,7 @@ public final class EscherDggRecord extends EscherRecord {
     }
 
     private void sortCluster() {
-        Collections.sort(field_5_fileIdClusters, new Comparator<FileIdCluster>() {
+        field_5_fileIdClusters.sort(new Comparator<FileIdCluster>() {
             @Override
             public int compare(FileIdCluster f1, FileIdCluster f2) {
                 int dgDif = f1.getDrawingGroupId() - f2.getDrawingGroupId();

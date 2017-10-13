@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.Collections;
-
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -81,6 +79,6 @@ public final class OldSectionTable extends SectionTable
 
             _sections.add( sepx );
     }
-    Collections.sort( _sections, PropertyNode.StartComparator.instance );
+    _sections.sort(PropertyNode.StartComparator.instance);
   }
 }

@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -71,7 +70,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 			throw new RuntimeException("No column info records found");
 		}
 		if (!isInOrder) {
-			Collections.sort(records, CIRComparator.instance);
+			records.sort(CIRComparator.instance);
 		}
 	}
 
@@ -89,7 +88,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	 */
 	public void insertColumn(ColumnInfoRecord col) {
 		records.add(col);
-		Collections.sort(records, CIRComparator.instance);
+		records.sort(CIRComparator.instance);
 	}
 
 	/**
@@ -110,8 +109,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 			return;
 		}
 		ColumnInfoRecord cirPrev = null;
-		for(int i=0; i<nItems; i++) {
-			ColumnInfoRecord cir = records.get(i);
+		for (ColumnInfoRecord cir : records) {
 			rv.visitRecord(cir);
 			if (cirPrev != null && CIRComparator.compareColInfos(cirPrev, cir) > 0) {
 				// Excel probably wouldn't mind, but there is much logic in this class
@@ -299,8 +297,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	public void setColumn(int targetColumnIx, Short xfIndex, Integer width,
 					Integer level, Boolean hidden, Boolean collapsed) {
 		ColumnInfoRecord ci = null;
-		int k  = 0;
-
+		int k;
 		for (k = 0; k < records.size(); k++) {
 			ColumnInfoRecord tci = records.get(k);
 			if (tci.containsColumn(targetColumnIx)) {

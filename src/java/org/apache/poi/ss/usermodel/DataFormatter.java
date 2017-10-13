@@ -128,7 +128,7 @@ public class DataFormatter implements Observer {
     private static final Pattern daysAsText = Pattern.compile("([d]{3,})", Pattern.CASE_INSENSITIVE);
 
     /** Pattern to find "AM/PM" marker */
-    private static final Pattern amPmPattern = Pattern.compile("((A|P)[M/P]*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern amPmPattern = Pattern.compile("(([AP])[M/P]*)", Pattern.CASE_INSENSITIVE);
     
     /** Pattern to find formats with condition ranges e.g. [>=100] */
     private static final Pattern rangeConditionalPattern = Pattern.compile(".*\\[\\s*(>|>=|<|<=|=)\\s*[0-9]*\\.*[0-9].*");
@@ -843,7 +843,7 @@ public class DataFormatter implements Observer {
         if (numberFormat == null) {
             return String.valueOf(d);
         }
-        String formatted = numberFormat.format(new Double(d));
+        String formatted = numberFormat.format(Double.valueOf(d));
         return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
     }
 
@@ -894,7 +894,7 @@ public class DataFormatter implements Observer {
         String result;
         final String textValue = NumberToTextConverter.toText(value);
         if (textValue.indexOf('E') > -1) {
-            result = numberFormat.format(new Double(value));
+            result = numberFormat.format(Double.valueOf(value));
         }
         else {
             result = numberFormat.format(new BigDecimal(textValue));

@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
@@ -96,11 +95,10 @@ public class SectionTable
         //    is getting on for black magic...
         boolean matchAt = false;
         boolean matchHalf = false;
-        for (int i=0; i<_sections.size(); i++) {
-            SEPX s = _sections.get(i);
+        for (SEPX s : _sections) {
             if (s.getEnd() == mainLength) {
                 matchAt = true;
-            } else if(s.getEnd() == mainLength || s.getEnd() == mainLength -1) {
+            } else if (s.getEnd() == mainLength || s.getEnd() == mainLength - 1) {
                 matchHalf = true;
             }
         }
@@ -119,7 +117,7 @@ public class SectionTable
             }
         }
 
-        Collections.sort( _sections, PropertyNode.StartComparator.instance );
+        _sections.sort(PropertyNode.StartComparator.instance);
     }
 
     public void adjustForInsert(int listIndex, int length)
@@ -187,15 +185,13 @@ public class SectionTable
         int len = _sections.size();
         PlexOfCps plex = new PlexOfCps(SED_SIZE);
 
-        for (int x = 0; x < len; x++)
-        {
-            SEPX sepx = _sections.get(x);
+        for (SEPX sepx : _sections) {
             byte[] grpprl = sepx.getGrpprl();
 
             // write the sepx to the document stream. starts with a 2 byte size
             // followed by the grpprl
             byte[] shortBuf = new byte[2];
-            LittleEndian.putShort(shortBuf, 0, (short)grpprl.length);
+            LittleEndian.putShort(shortBuf, 0, (short) grpprl.length);
 
             wordDocumentStream.write(shortBuf);
             wordDocumentStream.write(grpprl);
@@ -208,7 +204,7 @@ public class SectionTable
 
             /* original line */
             GenericPropertyNode property = new GenericPropertyNode(
-                            sepx.getStart(), sepx.getEnd(), sed.toByteArray() );
+                    sepx.getStart(), sepx.getEnd(), sed.toByteArray());
             /*
              * Line using Ryan's FCtoCP() conversion method - unable to observe
              * any effect on our testcases when using this code - piers

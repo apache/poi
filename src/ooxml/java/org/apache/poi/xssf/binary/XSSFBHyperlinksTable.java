@@ -132,29 +132,25 @@ public class XSSFBHyperlinksTable {
                 return;
             }
             int offset = 0;
-            String relId = "";
-            String location = "";
-            String toolTip = "";
-            String display = "";
 
             hyperlinkCellRange = XSSFBCellRange.parse(data, offset, hyperlinkCellRange);
             offset += XSSFBCellRange.length;
             xlWideStringBuffer.setLength(0);
             offset += XSSFBUtils.readXLNullableWideString(data, offset, xlWideStringBuffer);
-            relId = xlWideStringBuffer.toString();
+            String relId = xlWideStringBuffer.toString();
             xlWideStringBuffer.setLength(0);
             offset += XSSFBUtils.readXLWideString(data, offset, xlWideStringBuffer);
-            location = xlWideStringBuffer.toString();
+            String location = xlWideStringBuffer.toString();
             xlWideStringBuffer.setLength(0);
             offset += XSSFBUtils.readXLWideString(data, offset, xlWideStringBuffer);
-            toolTip = xlWideStringBuffer.toString();
+            String toolTip = xlWideStringBuffer.toString();
             xlWideStringBuffer.setLength(0);
-            offset += XSSFBUtils.readXLWideString(data, offset, xlWideStringBuffer);
-            display = xlWideStringBuffer.toString();
+            /*offset +=*/ XSSFBUtils.readXLWideString(data, offset, xlWideStringBuffer);
+            String display = xlWideStringBuffer.toString();
             CellRangeAddress cellRangeAddress = new CellRangeAddress(hyperlinkCellRange.firstRow, hyperlinkCellRange.lastRow, hyperlinkCellRange.firstCol, hyperlinkCellRange.lastCol);
 
             String url = relIdToHyperlink.get(relId);
-            if (location == null || location.length() == 0) {
+            if (location.length() == 0) {
                 location = url;
             }
 
