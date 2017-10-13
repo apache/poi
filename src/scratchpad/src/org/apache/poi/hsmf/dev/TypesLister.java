@@ -19,7 +19,6 @@ package org.apache.poi.hsmf.dev;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
@@ -32,19 +31,19 @@ public class TypesLister {
    
    public void listByName(PrintStream out) {
       ArrayList<MAPIProperty> all = new ArrayList<>(MAPIProperty.getAll());
-      Collections.sort(all, new Comparator<MAPIProperty>() {
-         public int compare(MAPIProperty a, MAPIProperty b) {
-            return a.name.compareTo(b.name);
-         }
+      all.sort(new Comparator<MAPIProperty>() {
+          public int compare(MAPIProperty a, MAPIProperty b) {
+              return a.name.compareTo(b.name);
+          }
       });
       list(all, out);
    }
    public void listById(PrintStream out) {
       ArrayList<MAPIProperty> all = new ArrayList<>(MAPIProperty.getAll());
-      Collections.sort(all, new Comparator<MAPIProperty>() {
-         public int compare(MAPIProperty a, MAPIProperty b) {
-             return Integer.compare(a.id, b.id);
-         }
+      all.sort(new Comparator<MAPIProperty>() {
+          public int compare(MAPIProperty a, MAPIProperty b) {
+              return Integer.compare(a.id, b.id);
+          }
       });
       list(all, out);
    }

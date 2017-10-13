@@ -130,5 +130,12 @@
         <Bug pattern="DM_NUMBER_CTOR" />
     </Match>
 
+	<!-- On purpose -->
+    <Match>
+        <Or>
+            <Class name="org.apache.poi.xssf.usermodel.XSSFComment"/>
+        </Or>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" />
+    </Match>
 
 </FindBugsFilter>

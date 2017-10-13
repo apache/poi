@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -147,7 +146,7 @@ public class XSSFExportToXml implements Comparator<String>{
             tableMappings.put(commonXPath, table);
         }
 
-        Collections.sort(xpaths,this);
+        xpaths.sort(this);
 
         for(String xpath : xpaths) {
 

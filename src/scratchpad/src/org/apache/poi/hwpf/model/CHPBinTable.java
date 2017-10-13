@@ -172,8 +172,7 @@ public class CHPBinTable
         }
 
         List<CHPX> oldChpxSortedByStartPos = new ArrayList<>(_textRuns);
-        Collections.sort( oldChpxSortedByStartPos,
-                PropertyNode.StartComparator.instance );
+        oldChpxSortedByStartPos.sort(PropertyNode.StartComparator.instance);
 
         logger.log( POILogger.DEBUG, "CHPX sorted by start position in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
@@ -278,7 +277,7 @@ public class CHPBinTable
                 }
             }
 
-            Collections.sort( chpxs, chpxFileOrderComparator );
+            chpxs.sort(chpxFileOrderComparator);
 
             SprmBuffer sprmBuffer = new SprmBuffer( 0 );
             for ( CHPX chpx : chpxs )

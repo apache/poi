@@ -1670,7 +1670,7 @@ public final class FormulaParser {
         if (!isPositive) {
             value = -value;
         }
-        return new Double(value);
+        return Double.valueOf(value);
     }
 
     private Ptg parseNumber() {

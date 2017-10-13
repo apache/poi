@@ -115,7 +115,7 @@ public class TextPieceTable implements CharIndexTranslator {
         // into order, if they're not already
         Collections.sort(_textPieces);
         _textPiecesFCOrder = new ArrayList<>(_textPieces);
-        Collections.sort(_textPiecesFCOrder, new FCComparator());
+        _textPiecesFCOrder.sort(new FCComparator());
     }
 
     protected TextPiece newTextPiece(int nodeStartChars, int nodeEndChars, byte[] buf, PieceDescriptor pd) {
@@ -126,7 +126,7 @@ public class TextPieceTable implements CharIndexTranslator {
         _textPieces.add(piece);
         _textPiecesFCOrder.add(piece);
         Collections.sort(_textPieces);
-        Collections.sort(_textPiecesFCOrder, new FCComparator());
+        _textPiecesFCOrder.sort(new FCComparator());
     }
 
     /**

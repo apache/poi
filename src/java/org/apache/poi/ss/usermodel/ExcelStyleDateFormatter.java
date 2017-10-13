@@ -192,6 +192,6 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
     
     @Override
     public int hashCode() {
-        return new Double(dateToBeFormatted).hashCode();
+        return Double.valueOf(dateToBeFormatted).hashCode();
     }
 }

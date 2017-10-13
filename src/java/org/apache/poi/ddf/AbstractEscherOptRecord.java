@@ -17,7 +17,6 @@
 package org.apache.poi.ddf;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -135,16 +134,14 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
      */
     public void sortProperties()
     {
-        Collections.sort( properties, new Comparator<EscherProperty>()
-        {
+        properties.sort(new Comparator<EscherProperty>() {
             @Override
-            public int compare( EscherProperty p1, EscherProperty p2 )
-            {
+            public int compare(EscherProperty p1, EscherProperty p2) {
                 short s1 = p1.getPropertyNumber();
                 short s2 = p2.getPropertyNumber();
                 return Short.compare(s1, s2);
             }
-        } );
+        });
     }
 
     /**

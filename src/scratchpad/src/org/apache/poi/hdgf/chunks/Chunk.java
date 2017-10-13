@@ -137,7 +137,7 @@ public final class Chunk {
 				command = new Command(cdef);
 			}
 
-			// Bizarely, many of the offsets are from the start of the
+			// Bizarrely, many of the offsets are from the start of the
 			//  header, not from the start of the chunk body
 			switch(type) {
 			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
@@ -172,7 +172,7 @@ public final class Chunk {
 					command.value = Byte.valueOf(contents[offset]);
 					break;
 				case 9:
-					command.value = new Double(
+					command.value = Double.valueOf(
 							LittleEndian.getDouble(contents, offset)
 					);
 					break;

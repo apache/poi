@@ -66,23 +66,23 @@ public class DVConstraint implements DataValidationConstraint {
 
 	
 	private DVConstraint(int validationType, int comparisonOperator, String formulaA,
-			String formulaB, Double value1, Double value2, String[] excplicitListValues) {
+			String formulaB, Double value1, Double value2, String[] explicitListValues) {
 		_validationType = validationType;
 		_operator = comparisonOperator;
 		_formula1 = formulaA;
 		_formula2 = formulaB;
 		_value1 = value1;
 		_value2 = value2;
-		_explicitListValues = (excplicitListValues == null) ? null : excplicitListValues.clone();
+		_explicitListValues = (explicitListValues == null) ? null : explicitListValues.clone();
 	}
 	
 	
 	/**
 	 * Creates a list constraint
 	 */
-	private DVConstraint(String listFormula, String[] excplicitListValues) {
+	private DVConstraint(String listFormula, String[] explicitListValues) {
 		this(ValidationType.LIST, OperatorType.IGNORED,
-			listFormula, null, null, null, excplicitListValues);
+			listFormula, null, null, null, explicitListValues);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class DVConstraint implements DataValidationConstraint {
 			return null;
 		}
 		try {
-			return new Double(numberStr);
+			return Double.valueOf(numberStr);
 		} catch (NumberFormatException e) {
 			throw new RuntimeException("The supplied text '" + numberStr 
 					+ "' could not be parsed as a number");
@@ -242,7 +242,7 @@ public class DVConstraint implements DataValidationConstraint {
 		if (timeStr == null) {
 			return null;
 		}
-		return new Double(HSSFDateUtil.convertTime(timeStr));
+		return Double.valueOf(HSSFDateUtil.convertTime(timeStr));
 	}
 	/**
 	 * @param dateFormat pass <code>null</code> for default YYYYMMDD
@@ -263,7 +263,7 @@ public class DVConstraint implements DataValidationConstraint {
 						+ "' using specified format '" + dateFormat + "'", e);
 			}
 		}
-		return new Double(HSSFDateUtil.getExcelDate(dateVal));
+		return Double.valueOf(HSSFDateUtil.getExcelDate(dateVal));
 	}
 
 	public static DVConstraint createCustomFormulaConstraint(String formula) {
@@ -363,7 +363,7 @@ public class DVConstraint implements DataValidationConstraint {
 	 */
 	public void setValue1(double value1) {
 		_formula1 = null;
-		_value1 = new Double(value1);
+		_value1 = Double.valueOf(value1);
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class DVConstraint implements DataValidationConstraint {
 	 */
 	public void setValue2(double value2) {
 		_formula2 = null;
-		_value2 = new Double(value2);
+		_value2 = Double.valueOf(value2);
 	}
 	
 	/**
@@ -407,7 +407,7 @@ public class DVConstraint implements DataValidationConstraint {
 			// Some things like union and intersection are not allowed.
 		}
 		// explicit list was provided
-		StringBuffer sb = new StringBuffer(_explicitListValues.length * 16);
+		StringBuilder sb = new StringBuilder(_explicitListValues.length * 16);
 		for (int i = 0; i < _explicitListValues.length; i++) {
 			if (i > 0) {
 				sb.append('\0'); // list delimiter is the nul char
@@ -484,7 +484,7 @@ public class DVConstraint implements DataValidationConstraint {
             if (_value == null) {
                 return null;
             }
-            return new Double(_value);
+            return Double.valueOf(_value);
         }
 
         public String string() {
