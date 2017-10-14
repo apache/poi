@@ -41,7 +41,7 @@ public class SVTableUtils {
   /**  Description of the Field */
   public final static Color white = getAWTColor(HSSFColorPredefined.WHITE);
   /**  Description of the Field */
-  public static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+  public static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
 
   /**
