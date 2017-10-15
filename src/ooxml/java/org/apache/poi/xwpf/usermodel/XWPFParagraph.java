@@ -352,7 +352,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 }
                 if (level != null && level.getLvlText() != null
                         && level.getLvlText().getVal() != null) {
-                    return level.getLvlText().getVal().toString();
+                    return level.getLvlText().getVal();
                 }
             }
         }
