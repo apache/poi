@@ -52,7 +52,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 public class SVTableCellRenderer extends JLabel
     implements TableCellRenderer, Serializable
 {
-    protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+    protected static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
     protected SVBorder cellBorder = new SVBorder();
 
 
