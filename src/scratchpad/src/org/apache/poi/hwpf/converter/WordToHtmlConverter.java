@@ -333,8 +333,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
         final int aspectRatioX = picture.getHorizontalScalingFactor();
         final int aspectRatioY = picture.getVerticalScalingFactor();
 
-        StringBuilder style = new StringBuilder();
-
         final float imageWidth;
         final float imageHeight;
 
@@ -402,7 +400,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
                             + imageHeight + "in;" );
             inner.appendChild( image );
 
-            style.append( "overflow:hidden;" );
         }
         else
         {
