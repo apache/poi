@@ -63,19 +63,6 @@ public final class XSSFRowShifter extends RowShifter {
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);
     }
-    
-    /**
-     * Shift merged regions
-     * 
-     * @param startRow the row to start shifting
-     * @param endRow   the row to end shifting
-     * @param n        the number of rows to shift
-     * @return an array of merged cell regions
-     * @deprecated POI 3.15 beta 2. Use {@link #shiftMergedRegions(int, int, int)} instead.
-     */
-    public List<CellRangeAddress> shiftMerged(int startRow, int endRow, int n) {
-        return shiftMergedRegions(startRow, endRow, n);
-    }
 
     /**
      * Updated named ranges
