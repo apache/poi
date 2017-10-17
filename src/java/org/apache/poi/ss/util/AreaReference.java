@@ -196,11 +196,10 @@ public class AreaReference {
         // These are represented as something like
         //   C$1:C$65535 or D$1:F$0
         // i.e. absolute from 1st row to 0th one
-        if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
-            botRight.getRow() == version.getLastRowIndex() && botRight.isRowAbsolute()) {
-            return true;
-        }
-        return false;
+        return (topLeft.getRow() == 0
+                && topLeft.isRowAbsolute()
+                && botRight.getRow() == version.getLastRowIndex()
+                && botRight.isRowAbsolute());
     }
     public boolean isWholeColumnReference() {
         return isWholeColumnReference(_version, _firstCell, _lastCell);
