@@ -478,7 +478,7 @@ public class ToHtml {
                         CellFormat cf = CellFormat.getInstance(
                                 style.getDataFormatString());
                         CellFormatResult result = cf.apply(cell);
-                        content = result.text;
+                        content = result.text; //never null
                         if (content.isEmpty()) {
                             content = "&nbsp;";
                         }
