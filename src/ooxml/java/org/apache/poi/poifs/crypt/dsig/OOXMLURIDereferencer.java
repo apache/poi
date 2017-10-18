@@ -112,7 +112,7 @@ public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigura
         LOG.log(POILogger.DEBUG, "dereference", uri);
 
         String path = uri.getPath();
-        if (path == null || "".equals(path)) {
+        if (path == null || path.isEmpty()) {
             LOG.log(POILogger.DEBUG, "illegal part name (expected)", uri);
             return null;
         }

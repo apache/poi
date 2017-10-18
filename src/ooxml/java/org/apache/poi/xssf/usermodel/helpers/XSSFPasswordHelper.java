@@ -127,7 +127,7 @@ public final class XSSFPasswordHelper {
     
     
     private static QName getAttrName(String prefix, String name) {
-        if (prefix == null || "".equals(prefix)) {
+        if (prefix == null || prefix.isEmpty()) {
             return new QName(name);
         } else {
             return new QName(prefix+Character.toUpperCase(name.charAt(0))+name.substring(1));

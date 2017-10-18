@@ -348,7 +348,7 @@ public class StringUtil {
     * @see <a href="http://www.alanwood.net/demos/symbol.html">Symbol font - Unicode alternatives for Greek and special characters in HTML</a>
     */
    public static String mapMsCodepointString(String string) {
-       if (string == null || "".equals(string)) return string;
+       if (string == null || string.isEmpty()) return string;
        initMsCodepointMap();
        
        StringBuilder sb = new StringBuilder();

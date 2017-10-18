@@ -260,7 +260,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 								+ partUri.getPath());
 			}
 
-			if ("".equals(seg.replaceAll("\\\\.", ""))) {
+			if (seg.replaceAll("\\\\.", "").isEmpty()) {
 				// Normally will never been invoked with the previous
 				// implementation rule [M1.9]
 				throw new InvalidFormatException(

@@ -51,7 +51,7 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
     @Override
     public String getAddress() {
         String id = _link.getId();
-        if (id == null || "".equals(id)) {
+        if (id == null || id.isEmpty()) {
             return _link.getAction();
         }
 

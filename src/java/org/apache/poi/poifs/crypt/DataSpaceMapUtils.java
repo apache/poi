@@ -356,7 +356,7 @@ public class DataSpaceMapUtils {
     }
     
     public static void writeUtf8LPP4(LittleEndianOutput os, String str) {
-        if (str == null || "".equals(str)) {
+        if (str == null || str.isEmpty()) {
             os.writeInt(str == null ? 0 : 4);
             os.writeInt(0);
         } else {
