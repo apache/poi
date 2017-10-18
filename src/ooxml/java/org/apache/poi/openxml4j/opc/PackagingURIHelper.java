@@ -330,7 +330,7 @@ public final class PackagingURIHelper {
 			}
 			for (int i = 0; i < segmentsTarget.length; i++) {
 				if (segmentsTarget[i].isEmpty())
-					continue;i
+					continue;
 				retVal.append(segmentsTarget[i]);
 				if (i != segmentsTarget.length - 1)
 					retVal.append("/");
