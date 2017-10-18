@@ -169,8 +169,8 @@ public abstract class BaseTestCellComment {
             assertNotNull("Cells in the second column have comments", sheet.getCellComment(new CellAddress(rownum, 1)));
 
             assertEquals("Yegor Kozlov", comment.getAuthor());
-            assertFalse("cells in the second column have not empyy notes",
-                    comment.getString().getString().isEmpty());
+            assertTrue("cells in the second column should have non-empty notes",
+                    !comment.getString().getString().isEmpty());
             assertEquals(rownum, comment.getRow());
             assertEquals(cell.getColumnIndex(), comment.getColumn());
         }
