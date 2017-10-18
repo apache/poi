@@ -374,6 +374,10 @@ public class CryptoFunctions {
      * @return the verifier (actually a short value)
      */
     public static int createXorVerifier1(String password) {
+        if (password == null) {
+            throw new IllegalArgumentException("Password cannot be null");
+        }
+
         byte[] arrByteChars = toAnsiPassword(password);
         
         // SET Verifier TO 0x0000
@@ -412,6 +416,10 @@ public class CryptoFunctions {
      * @see <a href="http://www.aspose.com/blogs/aspose-blogs/vladimir-averkin/archive/2007/08/20/funny-how-the-new-powerful-cryptography-implemented-in-word-2007-turns-it-into-a-perfect-tool-for-document-password-removal.html">Funny: How the new powerful cryptography implemented in Word 2007 turns it into a perfect tool for document password removal.</a>
      */
     public static int createXorVerifier2(String password) {
+        if (password == null) {
+            throw new IllegalArgumentException("Password cannot be null");
+        }
+
         //Array to hold Key Values
         byte[] generatedKey = new byte[4];
 
