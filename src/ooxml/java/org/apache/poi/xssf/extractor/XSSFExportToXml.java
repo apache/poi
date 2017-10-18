@@ -163,8 +163,8 @@ public class XSSFExportToXml implements Comparator<String>{
                         mapCellOnNode(cell,currentNode);
                         
                         //remove nodes which are empty in order to keep the output xml valid
-                        if("".equals(currentNode.getTextContent()) && currentNode.getParentNode() != null) {
-                        	currentNode.getParentNode().removeChild(currentNode);
+                        if (currentNode.getTextContent().isEmpty() && currentNode.getParentNode() != null) {
+                            currentNode.getParentNode().removeChild(currentNode);
                         }
                     }
                 }
@@ -440,14 +440,11 @@ public class XSSFExportToXml implements Comparator<String>{
 
         for(int i=0; i< list.getLength();i++) {
             Node node = list.item(i);
-            if (node instanceof Element) {
-                if (node.getLocalName().equals("element")) {
-                    Node element = getNameOrRefElement(node);
-                    if (element.getNodeValue().equals(removeNamespace(elementName))) {
-                        indexOf = i;
-                        break;
-                    }
-
+            if (node instanceof Element && "element".equals(node.getLocalName())) {
+                Node element = getNameOrRefElement(node);
+                if (element.getNodeValue().equals(removeNamespace(elementName))) {
+                    indexOf = i;
+                    break;
                 }
             }
         }
@@ -470,7 +467,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
         // Note: we expect that all the complex types are defined at root level
         Node complexTypeNode = null;
-        if (!"".equals(complexTypeName)) {
+        if (!complexTypeName.isEmpty()) {
             complexTypeNode = getComplexTypeNodeFromSchemaChildren(xmlSchema, null, complexTypeName);
         }
 
@@ -488,15 +485,13 @@ public class XSSFExportToXml implements Comparator<String>{
 
         for(int i=0; i< list.getLength();i++) {
             Node node = list.item(i);
-            if ( node instanceof Element) {
-                if (node.getLocalName().equals("element")) {
-                    Node nameAttribute = getNameOrRefElement(node);
-                    if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
-                        Node complexTypeAttribute = node.getAttributes().getNamedItem("type");
-                        if (complexTypeAttribute!=null) {
-                            complexTypeName = complexTypeAttribute.getNodeValue();
-                            break;
-                        }
+            if ( node instanceof Element && "element".equals(node.getLocalName())) {
+                Node nameAttribute = getNameOrRefElement(node);
+                if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
+                    Node complexTypeAttribute = node.getAttributes().getNamedItem("type");
+                    if (complexTypeAttribute!=null) {
+                        complexTypeName = complexTypeAttribute.getNodeValue();
+                        break;
                     }
                 }
             }
@@ -510,7 +505,7 @@ public class XSSFExportToXml implements Comparator<String>{
         for(int i=0; i< complexTypeList.getLength();i++) {
             Node node = complexTypeList.item(i);
             if ( node instanceof Element) {
-                if (node.getLocalName().equals("complexType")) {
+                if ("complexType".equals(node.getLocalName())) {
                     Node nameAttribute = getNameOrRefElement(node);
                     if (nameAttribute.getNodeValue().equals(complexTypeName)) {
 
@@ -519,7 +514,8 @@ public class XSSFExportToXml implements Comparator<String>{
                             Node sequence = complexTypeChildList.item(j);
 
                             if ( sequence instanceof Element) {
-                                if (sequence.getLocalName().equals("sequence") || sequence.getLocalName().equals("all")) {
+                                final String localName = sequence.getLocalName();
+                                if ("sequence".equals(localName) || "all".equals(localName)) {
                                     complexTypeNode = sequence;
                                     break;
                                 }
