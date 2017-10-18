@@ -436,29 +436,32 @@ public class XSSFExportToXml implements Comparator<String>{
             return -1;
         }
 
-        NodeList list  = complexType.getChildNodes();
         int indexOf = -1;
+        int i = 0;
+        Node node = complexType.getFirstChild();
+        final String elementNameWithoutNamespace = removeNamespace(elementName);
 
-        for(int i=0; i< list.getLength();i++) {
-            Node node = list.item(i);
+        while (node != null) {
             if (node instanceof Element && "element".equals(node.getLocalName())) {
                 Node element = getNameOrRefElement(node);
-                if (element.getNodeValue().equals(removeNamespace(elementName))) {
+                if (element.getNodeValue().equals(elementNameWithoutNamespace)) {
                     indexOf = i;
                     break;
                 }
             }
+            i++;
+            node = node.getNextSibling();
         }
         return indexOf;
     }
 
 	private Node getNameOrRefElement(Node node) {
-		Node returnNode = node.getAttributes().getNamedItem("name");
+		Node returnNode = node.getAttributes().getNamedItem("ref");
         if(returnNode != null) {
             return returnNode;
 		}
 		
-        return node.getAttributes().getNamedItem("ref");
+        return node.getAttributes().getNamedItem("name");
 	}
 
     private Node getComplexTypeForElement(String elementName,Node xmlSchema,Node localComplexTypeRootNode) {
@@ -482,11 +485,10 @@ public class XSSFExportToXml implements Comparator<String>{
             return "";
         }
 
-        NodeList  list  = localComplexTypeRootNode.getChildNodes();
+        Node node  = localComplexTypeRootNode.getFirstChild();
         String complexTypeName = "";
 
-        for(int i=0; i<list.getLength(); i++) {
-            final Node node = list.item(i);
+        while (node != null) {
             if ( node instanceof Element && "element".equals(node.getLocalName())) {
                 Node nameAttribute = getNameOrRefElement(node);
                 if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
@@ -497,23 +499,21 @@ public class XSSFExportToXml implements Comparator<String>{
                     }
                 }
             }
+            node = node.getNextSibling();
         }
         return complexTypeName;
     }
 
     private Node getComplexTypeNodeFromSchemaChildren(Node xmlSchema, Node complexTypeNode,
             String complexTypeName) {
-        NodeList  complexTypeList  = xmlSchema.getChildNodes();
-        for(int i=0; i< complexTypeList.getLength();i++) {
-            Node node = complexTypeList.item(i);
+        Node node = xmlSchema.getFirstChild();
+        while (node != null) {
             if ( node instanceof Element) {
                 if ("complexType".equals(node.getLocalName())) {
                     Node nameAttribute = getNameOrRefElement(node);
                     if (nameAttribute.getNodeValue().equals(complexTypeName)) {
-
-                        NodeList complexTypeChildList  =node.getChildNodes();
-                        for(int j=0; j<complexTypeChildList.getLength();j++) {
-                            Node sequence = complexTypeChildList.item(j);
+                        Node sequence = node.getFirstChild();
+                        while(sequence != null) {
 
                             if ( sequence instanceof Element) {
                                 final String localName = sequence.getLocalName();
@@ -522,6 +522,7 @@ public class XSSFExportToXml implements Comparator<String>{
                                     break;
                                 }
                             }
+                            sequence = sequence.getNextSibling();
                         }
                         if (complexTypeNode!=null) {
                             break;
@@ -530,6 +531,7 @@ public class XSSFExportToXml implements Comparator<String>{
                     }
                 }
             }
+            node = node.getNextSibling();
         }
         return complexTypeNode;
     }
