@@ -847,7 +847,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			throw new IllegalArgumentException("partName");
 		}
 
-		if (contentType == null || contentType.equals("")) {
+		if (contentType == null || contentType.isEmpty()) {
 			throw new IllegalArgumentException("contentType");
 		}
 

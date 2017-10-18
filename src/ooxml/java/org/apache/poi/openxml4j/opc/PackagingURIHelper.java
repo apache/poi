@@ -35,6 +35,9 @@ import org.apache.poi.util.POILogger;
  * @version 0.1
  */
 public final class PackagingURIHelper {
+    // FIXME: this class implements a lot of path joining and splitting logic that
+    // is already implemented in java.nio.file.Path.
+    // This class should heavily leverage Java library code to reduce the number of lines of code that POI has to maintain and test
     private final static POILogger _logger = POILogFactory.getLogger(PackagingURIHelper.class);
 
 	/**
@@ -321,13 +324,13 @@ public final class PackagingURIHelper {
 
 		// If we didn't have a good match or at least except a first empty element
 		if ((segmentsTheSame == 0 || segmentsTheSame == 1) &&
-				segmentsSource[0].equals("") && segmentsTarget[0].equals("")) {
+				segmentsSource[0].isEmpty() && segmentsTarget[0].isEmpty()) {
 			for (int i = 0; i < segmentsSource.length - 2; i++) {
 				retVal.append("../");
 			}
 			for (int i = 0; i < segmentsTarget.length; i++) {
-				if (segmentsTarget[i].equals(""))
-					continue;
+				if (segmentsTarget[i].isEmpty())
+					continue;i
 				retVal.append(segmentsTarget[i]);
 				if (i != segmentsTarget.length - 1)
 					retVal.append("/");

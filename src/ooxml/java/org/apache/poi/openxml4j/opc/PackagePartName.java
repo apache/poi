@@ -241,14 +241,14 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 		// Split the URI into several part and analyze each
 		String[] segments = partUri.toASCIIString().split("/");
-		if (segments.length <= 1 || !segments[0].equals(""))
+		if (segments.length <= 1 || !segments[0].isEmpty())
 			throw new InvalidFormatException(
 					"A part name shall not have empty segments [M1.3]: "
 							+ partUri.getPath());
 
 		for (int i = 1; i < segments.length; ++i) {
 			String seg = segments[i];
-			if (seg == null || "".equals(seg)) {
+			if (seg == null || seg.isEmpty()) {
 				throw new InvalidFormatException(
 						"A part name shall not have empty segments [M1.3]: "
 								+ partUri.getPath());

@@ -382,7 +382,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
     private boolean isNamespaceDeclared() {
         String schemaNamespace = getNamespace();
-        return schemaNamespace!=null && !schemaNamespace.equals("");
+        return schemaNamespace!=null && !schemaNamespace.isEmpty();
     }
 
     private String getNamespace() {

@@ -76,7 +76,7 @@ public final class TestXSSFExportToXML {
 			String xml = os.toString("UTF-8");
 
 			assertNotNull(xml);
-			assertFalse(xml.equals(""));
+			assertFalse(xml.isEmpty());
 
 			String docente = xml.split("<DOCENTE>")[1].split("</DOCENTE>")[0].trim();
 			String nome = xml.split("<NOME>")[1].split("</NOME>")[0].trim();
@@ -124,7 +124,7 @@ public final class TestXSSFExportToXML {
 			String xml = os.toString("UTF-8");
 
 			assertNotNull(xml);
-			assertFalse(xml.equals(""));
+			assertFalse(xml.isEmpty());
 
 			String docente = xml.split("<DOCENTE>")[1].split("</DOCENTE>")[0].trim();
 			String nome = xml.split("<NOME>")[1].split("</NOME>")[0].trim();
@@ -256,7 +256,7 @@ public final class TestXSSFExportToXML {
             String xmlData = os.toString("UTF-8");
 
             assertNotNull(xmlData);
-            assertFalse(xmlData.equals(""));
+            assertFalse(xmlData.isEmpty());
 
             String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
             String b = a.split("<B>")[1].split("</B>")[0].trim();
@@ -299,7 +299,7 @@ public final class TestXSSFExportToXML {
             String xmlData = os.toString("UTF-8");
 
             assertNotNull(xmlData);
-            assertFalse(xmlData.equals(""));
+            assertFalse(xmlData.isEmpty());
 
             assertEquals("2012-01-13", xmlData.split("<DATE>")[1].split("</DATE>")[0].trim());
             assertEquals("2012-02-16", xmlData.split("<FORMULA_DATE>")[1].split("</FORMULA_DATE>")[0].trim());
@@ -333,7 +333,7 @@ public final class TestXSSFExportToXML {
             String xmlData = os.toString("UTF-8");
 
             assertNotNull(xmlData);
-            assertFalse(xmlData.equals(""));
+            assertFalse(xmlData.isEmpty());
 
             String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
             String doubleValue = a.split("<DOUBLE>")[1].split("</DOUBLE>")[0].trim();
@@ -372,7 +372,7 @@ public final class TestXSSFExportToXML {
            String xmlData = os.toString("UTF-8");
 
            assertNotNull(xmlData);
-           assertFalse(xmlData.equals(""));
+           assertFalse(xmlData.isEmpty());
 
            String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
            String euro = a.split("<EUR>")[1].split("</EUR>")[0].trim();
@@ -397,7 +397,7 @@ public final class TestXSSFExportToXML {
            String xmlData = os.toString("UTF-8");
 
            assertNotNull(xmlData);
-           assertTrue(!xmlData.equals(""));
+           assertTrue(!xmlData.isEmpty());
 
            String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
            String a_b = a.split("<B>")[1].split("</B>")[0].trim();
@@ -472,7 +472,7 @@ public final class TestXSSFExportToXML {
            String xmlData = os.toString("UTF-8");
 
            assertNotNull(xmlData);
-           assertFalse(xmlData.equals(""));
+           assertFalse(xmlData.isEmpty());
            
            String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
            String a_b = a.split("<B>")[1].split("</B>")[0].trim();
@@ -569,7 +569,7 @@ public final class TestXSSFExportToXML {
            String xmlData = os.toString("UTF-8");
 
            assertNotNull(xmlData);
-           assertFalse(xmlData.equals(""));
+           assertFalse(xmlData.isEmpty());
            
            parseXML(xmlData);
            
@@ -600,7 +600,7 @@ public final class TestXSSFExportToXML {
            String xmlData = os.toString("UTF-8");
 
            assertNotNull(xmlData);
-           assertFalse(xmlData.equals(""));
+           assertFalse(xmlData.isEmpty());
            
            parseXML(xmlData);
            
@@ -631,7 +631,7 @@ public final class TestXSSFExportToXML {
            String xmlData = os.toString("UTF-8");
            
            assertNotNull(xmlData);
-           assertFalse(xmlData.equals(""));
+           assertFalse(xmlData.isEmpty());
            
            assertEquals("2014-12-31", xmlData.split("<DATE>")[1].split("</DATE>")[0].trim());
            assertEquals("12.5", xmlData.split("<REFELEMENT>")[1].split("</REFELEMENT>")[0].trim());

@@ -479,7 +479,7 @@ public class ToHtml {
                                 style.getDataFormatString());
                         CellFormatResult result = cf.apply(cell);
                         content = result.text;
-                        if (content.equals("")) {
+                        if ("".equals(content)) {
                             content = "&nbsp;";
                         }
                     }

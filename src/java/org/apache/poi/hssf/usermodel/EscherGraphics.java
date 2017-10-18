@@ -296,7 +296,7 @@ public class EscherGraphics extends Graphics
     @Override
     public void drawString(String str, int x, int y)
     {
-        if (str == null || str.equals(""))
+        if (str == null || str.isEmpty())
             return;
 
         Font excelFont = font;
