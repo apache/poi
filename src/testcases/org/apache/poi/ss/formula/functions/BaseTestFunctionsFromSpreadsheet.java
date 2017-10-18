@@ -127,7 +127,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
             String rowComment = getCellTextValue(r, SS.COLUMN_ROW_COMMENT, "row comment");
 
             String testName = (currentGroupComment+'\n'+rowComment).replace("null", "").trim().replace("\n", " - ");
-            if ("".equals(testName)) {
+            if (testName.isEmpty()) {
                 testName = evalCell.getCellFormula();
             }
             
