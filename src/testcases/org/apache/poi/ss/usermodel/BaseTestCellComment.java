@@ -170,7 +170,7 @@ public abstract class BaseTestCellComment {
 
             assertEquals("Yegor Kozlov", comment.getAuthor());
             assertFalse("cells in the second column have not empyy notes",
-                    "".equals(comment.getString().getString()));
+                    comment.getString().getString().isEmpty());
             assertEquals(rownum, comment.getRow());
             assertEquals(cell.getColumnIndex(), comment.getColumn());
         }
