@@ -26,7 +26,7 @@
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-security-1.1.jar" sourcepath="ooxml-lib/ooxml-security-1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jmh-core-1.19.jar"/>
 	<classpathentry kind="lib" path="lib/jmh-generator-annprocess-1.19.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry exported="true" kind="lib" path="compile-lib/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="compile-lib/bcpkix-jdk15on-1.58.jar"/>
 	<classpathentry kind="lib" path="compile-lib/bcprov-ext-jdk15on-1.58.jar"/>
