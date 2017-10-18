@@ -323,7 +323,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         }
 
         name = name.replace("adj", "");
-        if ("".equals(name)) {
+        if (name.isEmpty()) {
             name = "1";
         }
 

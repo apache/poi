@@ -138,14 +138,14 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             String extension = (filename == null || filename.lastIndexOf('.') == -1) ? ".bin" : filename.substring(filename.lastIndexOf('.'));
             
             // try to find an alternative name
-            if (filename == null || "".equals(filename) || filename.startsWith("MBD") || filename.startsWith("Root Entry")) {
+            if (filename == null || filename.isEmpty() || filename.startsWith("MBD") || filename.startsWith("Root Entry")) {
                 filename = shape.getShapeName();
                 if (filename != null) {
                     filename += extension;
                 }
             }
             // default to dummy name
-            if (filename == null || "".equals(filename)) {
+            if (filename == null || filename.isEmpty()) {
                 filename = "picture_" + embeddings.size() + extension;
             }
             filename = filename.trim();

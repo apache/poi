@@ -430,7 +430,7 @@ public final class ZipPackage extends OPCPackage {
         // Flush the package
         flush();
 
-		if (this.originalPackagePath == null || "".equals(this.originalPackagePath)) {
+		if (this.originalPackagePath == null || this.originalPackagePath.isEmpty()) {
 		    return;
 		}
 

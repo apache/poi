@@ -125,7 +125,7 @@ public class HSLFFontInfo implements FontInfo {
 
     @Override
     public void setTypeface(String typeface){
-        if (typeface == null || "".equals(typeface)) {
+        if (typeface == null || typeface.isEmpty()) {
             throw new IllegalArgumentException("typeface can't be null nor empty");
         }
         this.typeface = typeface;

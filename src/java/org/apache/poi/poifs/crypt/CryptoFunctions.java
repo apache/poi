@@ -379,7 +379,7 @@ public class CryptoFunctions {
         // SET Verifier TO 0x0000
         short verifier = 0;
 
-        if (!"".equals(password)) {
+        if (!password.isEmpty()) {
             // FOR EACH PasswordByte IN PasswordArray IN REVERSE ORDER
             for (int i = arrByteChars.length-1; i >= 0; i--) {
                 // SET Verifier TO Intermediate3 BITWISE XOR PasswordByte
@@ -418,7 +418,7 @@ public class CryptoFunctions {
         //Maximum length of the password is 15 chars.
         final int maxPasswordLength = 15; 
         
-        if (!"".equals(password)) {
+        if (!password.isEmpty()) {
             // Truncate the password to 15 characters
             password = password.substring(0, Math.min(password.length(), maxPasswordLength));
 
