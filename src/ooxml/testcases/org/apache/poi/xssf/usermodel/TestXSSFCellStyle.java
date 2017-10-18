@@ -698,6 +698,24 @@ public class TestXSSFCellStyle {
 		assertEquals(HorizontalAlignment.CENTER, cellStyle.getAlignmentEnum());
 		assertEquals(STHorizontalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 	}
+	
+	@Test
+    public void testGetSetReadingOrder() {
+	    assertEquals(ReadingOrder.CONTEXT, cellStyle.getReadingOrder());
+	    assertEquals(ReadingOrder.CONTEXT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
+
+        cellStyle.setReadingOrder(ReadingOrder.LEFT_TO_RIGHT);
+        assertEquals(ReadingOrder.LEFT_TO_RIGHT, cellStyle.getReadingOrder());
+        assertEquals(ReadingOrder.LEFT_TO_RIGHT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
+
+        cellStyle.setReadingOrder(ReadingOrder.RIGHT_TO_LEFT);
+        assertEquals(ReadingOrder.RIGHT_TO_LEFT, cellStyle.getReadingOrder());
+        assertEquals(ReadingOrder.RIGHT_TO_LEFT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
+        
+        cellStyle.setReadingOrder(ReadingOrder.CONTEXT);
+        assertEquals(ReadingOrder.CONTEXT, cellStyle.getReadingOrder());
+        assertEquals(ReadingOrder.CONTEXT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
+    }
 
 	@SuppressWarnings("deprecation")
     @Test
