@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
@@ -84,7 +85,30 @@ public class XSSFCellAlignment {
     public void setHorizontal(HorizontalAlignment align) {
         cellAlignement.setHorizontal(STHorizontalAlignment.Enum.forInt(align.ordinal() + 1));
     }
-
+    
+    /**
+     * Set the type of reading order for the cell
+     *
+     * @param order - the type of reading order
+     * @see ReadingOrder
+     */
+    public void setReadingOrder(ReadingOrder order) {
+        cellAlignement.setReadingOrder(order.getCode());
+    }
+    
+    /**
+     * Get the reading order for the cell
+     *
+     * @return the value of reading order
+     * @see ReadingOrder
+     */
+    public ReadingOrder getReadingOrder() {
+        if(cellAlignement != null && cellAlignement.isSetReadingOrder()) {
+            return ReadingOrder.forLong(cellAlignement.getReadingOrder());
+        }
+        return ReadingOrder.CONTEXT;
+    }
+    
     /**
      * Get the number of spaces to indent the text in the cell
      *

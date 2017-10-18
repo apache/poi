@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
@@ -1002,6 +1003,24 @@ public class XSSFCellStyle implements CellStyle {
             ct = CTFill.Factory.newInstance();
         }
         return ct;
+    }
+    
+    /**
+     * Set reading order for the cell
+     *
+     * @param order - the reading order
+     */
+    public void setReadingOrder(ReadingOrder order) {
+        getCellAlignment().setReadingOrder(order);
+    }
+
+    /**
+     * Get reading order of the cell
+     *
+     * @return ReadingOrder - the reading order
+     */
+    public ReadingOrder getReadingOrder() {
+        return getCellAlignment().getReadingOrder();
     }
 
     /**
