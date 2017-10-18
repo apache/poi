@@ -163,7 +163,8 @@ public class XSSFExportToXml implements Comparator<String>{
                         mapCellOnNode(cell,currentNode);
                         
                         //remove nodes which are empty in order to keep the output xml valid
-                        if (currentNode.getTextContent().isEmpty() && currentNode.getParentNode() != null) {
+                        // FIXME: what should be done if currentNode.getTextContent() is null?
+                        if ("".equals(currentNode.getTextContent()) && currentNode.getParentNode() != null) {
                             currentNode.getParentNode().removeChild(currentNode);
                         }
                     }
@@ -467,7 +468,8 @@ public class XSSFExportToXml implements Comparator<String>{
 
         // Note: we expect that all the complex types are defined at root level
         Node complexTypeNode = null;
-        if (!complexTypeName.isEmpty()) {
+        // FIXME: what should be done if complexTypeName is null?
+        if (!"".equals(complexTypeName)) {
             complexTypeNode = getComplexTypeNodeFromSchemaChildren(xmlSchema, null, complexTypeName);
         }
 
@@ -483,8 +485,7 @@ public class XSSFExportToXml implements Comparator<String>{
         NodeList  list  = localComplexTypeRootNode.getChildNodes();
         String complexTypeName = "";
 
-        for(int i=0; i< list.getLength();i++) {
-            Node node = list.item(i);
+        for(final Node node : list) {
             if ( node instanceof Element && "element".equals(node.getLocalName())) {
                 Node nameAttribute = getNameOrRefElement(node);
                 if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
