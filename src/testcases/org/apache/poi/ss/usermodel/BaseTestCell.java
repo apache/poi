@@ -505,7 +505,7 @@ public abstract class BaseTestCell {
         assertEquals("abc", cellA1.getStringCellValue());
 
         fe.evaluateInCell(cellA1);
-        assertFalse("Identified bug with writing back formula result of type string", cellA1.getStringCellValue().equals(""));
+        assertFalse("Identified bug with writing back formula result of type string", cellA1.getStringCellValue().isEmpty());
         assertEquals("abc", cellA1.getStringCellValue());
         
         wb.close();

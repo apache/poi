@@ -56,7 +56,7 @@ public final class PackagePartCollection implements Serializable {
 				PackagingURIHelper.FORWARD_SLASH_STRING);
 		StringBuilder concatSeg = new StringBuilder();
 		for (String seg : segments) {
-			if (!seg.equals(""))
+			if (!seg.isEmpty())
 				concatSeg.append(PackagingURIHelper.FORWARD_SLASH_CHAR);
 			concatSeg.append(seg);
 			if (this.registerPartNameStr.contains(concatSeg.toString())) {
