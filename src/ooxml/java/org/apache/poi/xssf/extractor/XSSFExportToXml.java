@@ -485,7 +485,8 @@ public class XSSFExportToXml implements Comparator<String>{
         NodeList  list  = localComplexTypeRootNode.getChildNodes();
         String complexTypeName = "";
 
-        for(final Node node : list) {
+        for(int i=0; i<list.getLength(); i++) {
+            final Node node = list.item(i);
             if ( node instanceof Element && "element".equals(node.getLocalName())) {
                 Node nameAttribute = getNameOrRefElement(node);
                 if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
