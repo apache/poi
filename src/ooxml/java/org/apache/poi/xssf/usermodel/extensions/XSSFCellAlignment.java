@@ -84,7 +84,27 @@ public class XSSFCellAlignment {
     public void setHorizontal(HorizontalAlignment align) {
         cellAlignement.setHorizontal(STHorizontalAlignment.Enum.forInt(align.ordinal() + 1));
     }
-
+    
+    /**
+     * Set the type of reading order for the cell
+     *
+     * @param order - the type of reading order
+     * @see ReadingOrder
+     */
+    public void setReadingOrder(long order) {
+        cellAlignement.setReadingOrder(order);
+    }
+    
+    /**
+     * Get the reading order for the cell
+     *
+     * @return the value of reading order
+     * @see ReadingOrder
+     */
+    public long getReadingOrder() {
+        return cellAlignement.getReadingOrder();
+    }
+    
     /**
      * Get the number of spaces to indent the text in the cell
      *
