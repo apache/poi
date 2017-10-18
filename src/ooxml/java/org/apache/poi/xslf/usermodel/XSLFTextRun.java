@@ -845,7 +845,7 @@ public class XSLFTextRun implements TextRun {
                 }
                 // SYMBOL is missing
                 
-                if (font == null || !font.isSetTypeface() || font.getTypeface().isEmpty()) {
+                if (font == null || !font.isSetTypeface() || "".equals(font.getTypeface())) {
                     font = coll.getLatin();
                 }
             }

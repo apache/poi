@@ -150,7 +150,7 @@ public class FractionFormat extends Format {
         }
         
         //if whole part has to go into the numerator
-        if (wholePartFormatString.isEmpty()){
+        if (wholePartFormatString == null || wholePartFormatString.isEmpty()){
             int trueNum = (fract.getDenominator()*(int)wholePart)+fract.getNumerator();
             sb.append(trueNum).append("/").append(fract.getDenominator());
             return sb.toString();
