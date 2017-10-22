@@ -3057,7 +3057,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFBorderFormatting bord = rule.createBorderFormatting();
         bord.setBorderDiagonal(BorderStyle.THICK);
-        assertEquals(BorderStyle.THICK, bord.getBorderDiagonalEnum());
+        assertEquals(BorderStyle.THICK, bord.getBorderDiagonal());
 
         bord.setBackwardDiagonalOn(true);
         assertTrue(bord.isBackwardDiagonalOn());
@@ -3070,7 +3070,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Create the bottom border style so we know what a border is supposed to look like
         bord.setBorderBottom(BorderStyle.THICK);
-        assertEquals(BorderStyle.THICK, bord.getBorderBottomEnum());
+        assertEquals(BorderStyle.THICK, bord.getBorderBottom());
         bord.setBottomBorderColor(BLUE);
         assertEquals(BLUE, bord.getBottomBorderColor());
 

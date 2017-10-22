@@ -358,10 +358,10 @@ public abstract class BaseTestConditionalFormatting {
 
         BorderFormatting  r1bf = rule1.getBorderFormatting();
         assertNotNull(r1bf);
-        assertEquals(BorderStyle.THIN, r1bf.getBorderBottomEnum());
-        assertEquals(BorderStyle.THICK,r1bf.getBorderTopEnum());
-        assertEquals(BorderStyle.DASHED,r1bf.getBorderLeftEnum());
-        assertEquals(BorderStyle.DOTTED,r1bf.getBorderRightEnum());
+        assertEquals(BorderStyle.THIN, r1bf.getBorderBottom());
+        assertEquals(BorderStyle.THICK,r1bf.getBorderTop());
+        assertEquals(BorderStyle.DASHED,r1bf.getBorderLeft());
+        assertEquals(BorderStyle.DOTTED,r1bf.getBorderRight());
 
         PatternFormatting r1pf = rule1.getPatternFormatting();
         assertNotNull(r1pf);
@@ -1013,19 +1013,19 @@ public abstract class BaseTestConditionalFormatting {
 
         for (BorderStyle border : BorderStyle.values()) {
             borderFmt.setBorderTop(border);
-            assertEquals(border, borderFmt.getBorderTopEnum());
+            assertEquals(border, borderFmt.getBorderTop());
 
             borderFmt.setBorderBottom(border);
-            assertEquals(border, borderFmt.getBorderBottomEnum());
+            assertEquals(border, borderFmt.getBorderBottom());
 
             borderFmt.setBorderLeft(border);
-            assertEquals(border, borderFmt.getBorderLeftEnum());
+            assertEquals(border, borderFmt.getBorderLeft());
 
             borderFmt.setBorderRight(border);
-            assertEquals(border, borderFmt.getBorderRightEnum());
+            assertEquals(border, borderFmt.getBorderRight());
 
             borderFmt.setBorderDiagonal(border);
-            assertEquals(border, borderFmt.getBorderDiagonalEnum());
+            assertEquals(border, borderFmt.getBorderDiagonal());
         }
 
         workbook.close();
@@ -1041,37 +1041,37 @@ public abstract class BaseTestConditionalFormatting {
         ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(ComparisonOperator.EQUAL, "7");
         BorderFormatting borderFmt = rule1.createBorderFormatting();
 
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderBottomEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderBottom());
         borderFmt.setBorderBottom(BorderStyle.DOTTED);
-        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderBottomEnum());
+        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderBottom());
         borderFmt.setBorderBottom(BorderStyle.NONE);
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderBottomEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderBottom());
         borderFmt.setBorderBottom(BorderStyle.THICK);
-        assertEquals(BorderStyle.THICK, borderFmt.getBorderBottomEnum());
+        assertEquals(BorderStyle.THICK, borderFmt.getBorderBottom());
 
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderTopEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderTop());
         borderFmt.setBorderTop(BorderStyle.DOTTED);
-        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderTopEnum());
+        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderTop());
         borderFmt.setBorderTop(BorderStyle.NONE);
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderTopEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderTop());
         borderFmt.setBorderTop(BorderStyle.THICK);
-        assertEquals(BorderStyle.THICK, borderFmt.getBorderTopEnum());
+        assertEquals(BorderStyle.THICK, borderFmt.getBorderTop());
 
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderLeftEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderLeft());
         borderFmt.setBorderLeft(BorderStyle.DOTTED);
-        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderLeftEnum());
+        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderLeft());
         borderFmt.setBorderLeft(BorderStyle.NONE);
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderLeftEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderLeft());
         borderFmt.setBorderLeft(BorderStyle.THIN);
-        assertEquals(BorderStyle.THIN, borderFmt.getBorderLeftEnum());
+        assertEquals(BorderStyle.THIN, borderFmt.getBorderLeft());
 
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderRightEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderRight());
         borderFmt.setBorderRight(BorderStyle.DOTTED);
-        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderRightEnum());
+        assertEquals(BorderStyle.DOTTED, borderFmt.getBorderRight());
         borderFmt.setBorderRight(BorderStyle.NONE);
-        assertEquals(BorderStyle.NONE, borderFmt.getBorderRightEnum());
+        assertEquals(BorderStyle.NONE, borderFmt.getBorderRight());
         borderFmt.setBorderRight(BorderStyle.HAIR);
-        assertEquals(BorderStyle.HAIR, borderFmt.getBorderRightEnum());
+        assertEquals(BorderStyle.HAIR, borderFmt.getBorderRight());
 
         ConditionalFormattingRule [] cfRules = { rule1 };
 
@@ -1087,10 +1087,10 @@ public abstract class BaseTestConditionalFormatting {
 
         BorderFormatting  r1fp = cf.getRule(0).getBorderFormatting();
         assertNotNull(r1fp);
-        assertEquals(BorderStyle.THICK, r1fp.getBorderBottomEnum());
-        assertEquals(BorderStyle.THICK, r1fp.getBorderTopEnum());
-        assertEquals(BorderStyle.THIN, r1fp.getBorderLeftEnum());
-        assertEquals(BorderStyle.HAIR, r1fp.getBorderRightEnum());
+        assertEquals(BorderStyle.THICK, r1fp.getBorderBottom());
+        assertEquals(BorderStyle.THICK, r1fp.getBorderTop());
+        assertEquals(BorderStyle.THIN, r1fp.getBorderLeft());
+        assertEquals(BorderStyle.HAIR, r1fp.getBorderRight());
         
         workbook.close();
     }
