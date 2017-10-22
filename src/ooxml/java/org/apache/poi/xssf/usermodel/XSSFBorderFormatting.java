@@ -37,83 +37,45 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         _colorMap = colorMap;
     }
 
-    /**
-     * @deprecated POI 3.15. Use {@link #getBorderBottomEnum()}.
-     * This method will return an BorderStyle enum in the future.
-     */
     @Override
-    public short getBorderBottom() {
-        return getBorderBottomEnum().getCode();
-    }
-    /**
-     * @since POI 3.15
-     */
-    @Override
-    public BorderStyle getBorderBottomEnum() {
+    public BorderStyle getBorderBottom() {
         return getBorderStyle(_border.getBottom());
     }
 
-    /**
-     * @deprecated POI 3.15. Use {@link #getBorderDiagonalEnum()}.
-     * This method will return an BorderStyle enum in the future.
-     */
     @Override
-    public short getBorderDiagonal() {
-        return getBorderDiagonalEnum().getCode();
-    }
-    /**
-     * @since POI 3.15
-     */
-    @Override
-    public BorderStyle getBorderDiagonalEnum() {
+    public BorderStyle getBorderDiagonal() {
         return getBorderStyle(_border.getDiagonal());
     }
 
-    /**
-     * @deprecated POI 3.15. Use {@link #getBorderLeftEnum()}.
-     * This method will return an BorderStyle enum in the future.
-     */
     @Override
-    public short getBorderLeft() {
-        return getBorderLeftEnum().getCode();
-    }
-    /**
-     * @since POI 3.15
-     */
-    @Override
-    public BorderStyle getBorderLeftEnum() {
+    public BorderStyle getBorderLeft() {
         return getBorderStyle(_border.getLeft());
     }
 
-    /**
-     * @deprecated POI 3.15. Use {@link #getBorderRightEnum()}.
-     * This method will return an BorderStyle enum in the future.
-     */
     @Override
-    public short getBorderRight() {
-        return getBorderRightEnum().getCode();
-    }
-    /**
-     * @since POI 3.15
-     */
-    @Override
-    public BorderStyle getBorderRightEnum() {
+    public BorderStyle getBorderRight() {
         return getBorderStyle(_border.getRight());
     }
 
-    /**
-     * @deprecated POI 3.15. Use {@link #getBorderTopEnum()}.
-     * This method will return an BorderStyle enum in the future.
-     */
     @Override
-    public short getBorderTop() {
-        return getBorderTopEnum().getCode();
+    public BorderStyle getBorderTopEnum() { return getBorderTop(); }
+
+    @Override
+    public BorderStyle getBorderBottomEnum() { return getBorderBottom(); }
+
+    @Override
+    public BorderStyle getBorderDiagonalEnum() { return getBorderDiagonal(); }
+
+    @Override
+    public BorderStyle getBorderLeftEnum() {
+        return getBorderLeft();
     }
-    /**
-     * @since POI 3.15
-     */
+
     @Override
-    public BorderStyle getBorderTopEnum() {
+    public BorderStyle getBorderRightEnum() { return getBorderRight(); }
+
+    @Override
+    public BorderStyle getBorderTop() {
         return getBorderStyle(_border.getTop());
     }
 
@@ -162,13 +124,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         return getIndexedColor(getTopBorderColorColor());
     }
 
-    /**
-     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle)}
-     */
-    @Override
-    public void setBorderBottom(short border) {
-        setBorderBottom(BorderStyle.valueOf(border));
-    }
     @Override
     public void setBorderBottom(BorderStyle border) {
         CTBorderPr pr = _border.isSetBottom() ? _border.getBottom() : _border.addNewBottom();
@@ -176,13 +131,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
     }
 
-    /**
-     * @deprecated 3.15 beta 2. Use {@link #setBorderDiagonal(BorderStyle)}
-     */
-    @Override
-    public void setBorderDiagonal(short border) {
-        setBorderDiagonal(BorderStyle.valueOf(border));
-    }
     @Override
     public void setBorderDiagonal(BorderStyle border) {
         CTBorderPr pr = _border.isSetDiagonal() ? _border.getDiagonal() : _border.addNewDiagonal();
@@ -190,13 +138,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
     }
 
-    /**
-     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle)}
-     */
-    @Override
-    public void setBorderLeft(short border) {
-        setBorderLeft(BorderStyle.valueOf(border));
-    }
     @Override
     public void setBorderLeft(BorderStyle border) {
         CTBorderPr pr = _border.isSetLeft() ? _border.getLeft() : _border.addNewLeft();
@@ -204,13 +145,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
     }
 
-    /**
-     * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle)}
-     */
-    @Override
-    public void setBorderRight(short border) {
-        setBorderRight(BorderStyle.valueOf(border));
-    }
     @Override
     public void setBorderRight(BorderStyle border) {
         CTBorderPr pr = _border.isSetRight() ? _border.getRight() : _border.addNewRight();
@@ -218,13 +152,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
     }
 
-    /**
-     * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle)}
-     */
-    @Override
-    public void setBorderTop(short border) {
-        setBorderTop(BorderStyle.valueOf(border));
-    }
     @Override
     public void setBorderTop(BorderStyle border) {
         CTBorderPr pr = _border.isSetTop() ? _border.getTop() : _border.addNewTop();
@@ -337,13 +264,21 @@ public class XSSFBorderFormatting implements BorderFormatting  {
         }
     }
 
-    public BorderStyle getBorderVerticalEnum() {
+    @Override
+    public BorderStyle getBorderVertical() {
         return getBorderStyle(_border.getVertical());
     }
 
-    public BorderStyle getBorderHorizontalEnum() {
+    @Override
+    public BorderStyle getBorderHorizontal() {
         return getBorderStyle(_border.getHorizontal());
     }
+
+    @Override
+    public BorderStyle getBorderVerticalEnum() { return getBorderVertical(); }
+
+    @Override
+    public BorderStyle getBorderHorizontalEnum() { return getBorderHorizontal(); }
 
     public short getVerticalBorderColor() {
         return getIndexedColor(getVerticalBorderColorColor());

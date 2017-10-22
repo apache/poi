@@ -26,14 +26,12 @@ public interface CellStyle {
      * @return unique index number of the underlying record this style represents (probably you don't care
      *  unless you're comparing which one is which)
      */
-
     short getIndex();
 
     /**
      * set the data format (must be a valid format). Built in formats are defined at {@link BuiltinFormats}.
      * @see DataFormat
      */
-
     void setDataFormat(short fmt);
 
     /**
@@ -53,7 +51,6 @@ public interface CellStyle {
      * @see Workbook#createFont()
      * @see Workbook#getFontAt(short)
      */
-
     void setFont(Font font);
 
     /**
@@ -66,28 +63,24 @@ public interface CellStyle {
      * set the cell's using this style to be hidden
      * @param hidden - whether the cell using this style should be hidden
      */
-
     void setHidden(boolean hidden);
 
     /**
      * get whether the cell's using this style are to be hidden
      * @return hidden - whether the cell using this style should be hidden
      */
-
     boolean getHidden();
 
     /**
      * set the cell's using this style to be locked
      * @param locked - whether the cell using this style should be locked
      */
-
     void setLocked(boolean locked);
 
     /**
      * get whether the cell's using this style are to be locked
      * @return hidden - whether the cell using this style should be locked
      */
-
     boolean getLocked();
     
     /**
@@ -124,6 +117,7 @@ public interface CellStyle {
      * @deprecated use <code>getAlignment()</code> instead
      */
     @Removal(version = "4.2")
+    @Deprecated
     HorizontalAlignment getAlignmentEnum();
 
     /**
@@ -159,6 +153,7 @@ public interface CellStyle {
      * @deprecated use <code>getVerticalAlignment()</code> instead
      */
     @Removal(version = "4.2")
+    @Deprecated
     VerticalAlignment getVerticalAlignmentEnum();
 
     /**
@@ -188,14 +183,12 @@ public interface CellStyle {
      * set the number of spaces to indent the text in the cell
      * @param indent - number of spaces
      */
-
     void setIndention(short indent);
 
     /**
      * get the number of spaces to indent the text in the cell
      * @return indent - number of spaces
      */
-
     short getIndention();
 
     /**
@@ -219,6 +212,7 @@ public interface CellStyle {
      * @deprecated use <code>getBorderLeft()</code> instead
      */
     @Removal(version = "4.2")
+    @Deprecated
     BorderStyle getBorderLeftEnum();
 
     /**
@@ -242,6 +236,7 @@ public interface CellStyle {
      * @deprecated use <code>getBorderRight()</code> instead
      */
     @Removal(version = "4.2")
+    @Deprecated
     BorderStyle getBorderRightEnum();
 
     /**
@@ -265,6 +260,7 @@ public interface CellStyle {
      * @deprecated use <code>getBorderTop()</code> instead
      */
     @Removal(version = "4.2")
+    @Deprecated
     BorderStyle getBorderTopEnum();
 
     /**
@@ -288,6 +284,7 @@ public interface CellStyle {
      * @deprecated use <code>getBorderBottom()</code> instead
      */
     @Removal(version = "4.2")
+    @Deprecated
     BorderStyle getBorderBottomEnum();
 
     /**
@@ -362,6 +359,7 @@ public interface CellStyle {
      * @deprecated use <code>getFillPattern()</code> instead
      */
     @Removal(version = "4.2")
+    @Deprecated
     FillPatternType getFillPatternEnum();
 
     /**
