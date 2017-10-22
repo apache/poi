@@ -196,10 +196,10 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     protected boolean isEmptyStyle( CellStyle cellStyle ) {
         return cellStyle == null || (
                cellStyle.getFillPattern() == FillPatternType.NO_FILL
-            && cellStyle.getBorderTopEnum() == BorderStyle.NONE
-            && cellStyle.getBorderRightEnum() == BorderStyle.NONE
-            && cellStyle.getBorderBottomEnum() == BorderStyle.NONE
-            && cellStyle.getBorderLeftEnum() == BorderStyle.NONE
+            && cellStyle.getBorderTop() == BorderStyle.NONE
+            && cellStyle.getBorderRight() == BorderStyle.NONE
+            && cellStyle.getBorderBottom() == BorderStyle.NONE
+            && cellStyle.getBorderLeft() == BorderStyle.NONE
         );
     }
 
@@ -363,13 +363,13 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         }
 
         processCellStyleBorder( workbook, cellTarget, "top",
-                cellStyle.getBorderTopEnum(), cellStyle.getTopBorderColor() );
+                cellStyle.getBorderTop(), cellStyle.getTopBorderColor() );
         processCellStyleBorder( workbook, cellTarget, "right",
-                cellStyle.getBorderRightEnum(), cellStyle.getRightBorderColor() );
+                cellStyle.getBorderRight(), cellStyle.getRightBorderColor() );
         processCellStyleBorder( workbook, cellTarget, "bottom",
-                cellStyle.getBorderBottomEnum(), cellStyle.getBottomBorderColor() );
+                cellStyle.getBorderBottom(), cellStyle.getBottomBorderColor() );
         processCellStyleBorder( workbook, cellTarget, "left",
-                cellStyle.getBorderLeftEnum(), cellStyle.getLeftBorderColor() );
+                cellStyle.getBorderLeft(), cellStyle.getLeftBorderColor() );
 
         HSSFFont font = cellStyle.getFont( workbook );
         processCellStyleFont( workbook, blockTarget, font );

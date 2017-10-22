@@ -337,10 +337,10 @@ public final class CellUtil {
         Map<String, Object> properties = new HashMap<>();
         put(properties, ALIGNMENT, style.getAlignment());
         put(properties, VERTICAL_ALIGNMENT, style.getVerticalAlignment());
-        put(properties, BORDER_BOTTOM, style.getBorderBottomEnum());
-        put(properties, BORDER_LEFT, style.getBorderLeftEnum());
-        put(properties, BORDER_RIGHT, style.getBorderRightEnum());
-        put(properties, BORDER_TOP, style.getBorderTopEnum());
+        put(properties, BORDER_BOTTOM, style.getBorderBottom());
+        put(properties, BORDER_LEFT, style.getBorderLeft());
+        put(properties, BORDER_RIGHT, style.getBorderRight());
+        put(properties, BORDER_TOP, style.getBorderTop());
         put(properties, BOTTOM_BORDER_COLOR, style.getBottomBorderColor());
         put(properties, DATA_FORMAT, style.getDataFormat());
         put(properties, FILL_PATTERN, style.getFillPattern());

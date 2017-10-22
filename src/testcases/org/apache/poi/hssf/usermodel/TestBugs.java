@@ -2595,7 +2595,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Row row = sheet.getRow(0);
         CellStyle rstyle = row.getRowStyle();
         assertNotNull(rstyle);
-        assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottomEnum());
+        assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottom());
         wb.close();
     }
 

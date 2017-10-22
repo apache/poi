@@ -49,13 +49,13 @@ public class TestXSSFPropertyTemplate {
         for (Row row: sheet) {
             for (Cell cell: row) {
                 CellStyle cs = cell.getCellStyle();
-                assertEquals(BorderStyle.THIN, cs.getBorderTopEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderTop());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getTopBorderColor());
-                assertEquals(BorderStyle.THIN, cs.getBorderBottomEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderBottom());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getBottomBorderColor());
-                assertEquals(BorderStyle.THIN, cs.getBorderLeftEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderLeft());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getLeftBorderColor());
-                assertEquals(BorderStyle.THIN, cs.getBorderRightEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderRight());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getRightBorderColor());
             }
         }
@@ -67,28 +67,28 @@ public class TestXSSFPropertyTemplate {
             for (Cell cell: row) {
                 CellStyle cs = cell.getCellStyle();
                 if (cell.getColumnIndex() != 1 || row.getRowNum() == 0) {
-                assertEquals(BorderStyle.THIN, cs.getBorderTopEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderTop());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getTopBorderColor());
                 } else {
-                    assertEquals(BorderStyle.NONE, cs.getBorderTopEnum());
+                    assertEquals(BorderStyle.NONE, cs.getBorderTop());
                 }
                 if (cell.getColumnIndex() != 1 || row.getRowNum() == 2) {
-                assertEquals(BorderStyle.THIN, cs.getBorderBottomEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderBottom());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getBottomBorderColor());
                 } else {
-                    assertEquals(BorderStyle.NONE, cs.getBorderBottomEnum());
+                    assertEquals(BorderStyle.NONE, cs.getBorderBottom());
                 }
                 if (cell.getColumnIndex() == 0 || row.getRowNum() != 1) {
-                assertEquals(BorderStyle.THIN, cs.getBorderLeftEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderLeft());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getLeftBorderColor());
                 } else {
-                    assertEquals(BorderStyle.NONE, cs.getBorderLeftEnum());
+                    assertEquals(BorderStyle.NONE, cs.getBorderLeft());
                 }
                 if (cell.getColumnIndex() == 2 || row.getRowNum() != 1) {
-                assertEquals(BorderStyle.THIN, cs.getBorderRightEnum());
+                assertEquals(BorderStyle.THIN, cs.getBorderRight());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getRightBorderColor());
                 } else {
-                    assertEquals(BorderStyle.NONE, cs.getBorderRightEnum());
+                    assertEquals(BorderStyle.NONE, cs.getBorderRight());
                 }
             }
         }
@@ -120,10 +120,10 @@ public class TestXSSFPropertyTemplate {
         for (Row row : sheet) {
             for (Cell cell : row) {
                 CellStyle cs = cell.getCellStyle();
-                assertEquals(BorderStyle.MEDIUM, cs.getBorderTopEnum());
-                assertEquals(BorderStyle.MEDIUM, cs.getBorderBottomEnum());
-                assertEquals(BorderStyle.MEDIUM, cs.getBorderLeftEnum());
-                assertEquals(BorderStyle.MEDIUM, cs.getBorderRightEnum());
+                assertEquals(BorderStyle.MEDIUM, cs.getBorderTop());
+                assertEquals(BorderStyle.MEDIUM, cs.getBorderBottom());
+                assertEquals(BorderStyle.MEDIUM, cs.getBorderLeft());
+                assertEquals(BorderStyle.MEDIUM, cs.getBorderRight());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getTopBorderColor());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getBottomBorderColor());
                 assertEquals(IndexedColors.RED.getIndex(), cs.getLeftBorderColor());

@@ -350,40 +350,40 @@ public final class TestCellStyle extends TestCase {
     	HSSFCellStyle cs;
 
     	cs = s.getRow(0).getCell(0).getCellStyle();
-    	assertEquals(BorderStyle.HAIR, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.HAIR, cs.getBorderRight());
 
     	cs = s.getRow(1).getCell(1).getCellStyle();
-    	assertEquals(BorderStyle.DOTTED, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.DOTTED, cs.getBorderRight());
 
     	cs = s.getRow(2).getCell(2).getCellStyle();
-    	assertEquals(BorderStyle.DASH_DOT_DOT, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.DASH_DOT_DOT, cs.getBorderRight());
 
     	cs = s.getRow(3).getCell(3).getCellStyle();
-    	assertEquals(BorderStyle.DASHED, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.DASHED, cs.getBorderRight());
 
     	cs = s.getRow(4).getCell(4).getCellStyle();
-    	assertEquals(BorderStyle.THIN, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.THIN, cs.getBorderRight());
 
     	cs = s.getRow(5).getCell(5).getCellStyle();
-    	assertEquals(BorderStyle.MEDIUM_DASH_DOT_DOT, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.MEDIUM_DASH_DOT_DOT, cs.getBorderRight());
 
     	cs = s.getRow(6).getCell(6).getCellStyle();
-    	assertEquals(BorderStyle.SLANTED_DASH_DOT, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.SLANTED_DASH_DOT, cs.getBorderRight());
 
     	cs = s.getRow(7).getCell(7).getCellStyle();
-    	assertEquals(BorderStyle.MEDIUM_DASH_DOT, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.MEDIUM_DASH_DOT, cs.getBorderRight());
 
     	cs = s.getRow(8).getCell(8).getCellStyle();
-    	assertEquals(BorderStyle.MEDIUM_DASHED, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.MEDIUM_DASHED, cs.getBorderRight());
 
     	cs = s.getRow(9).getCell(9).getCellStyle();
-    	assertEquals(BorderStyle.MEDIUM, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.MEDIUM, cs.getBorderRight());
 
     	cs = s.getRow(10).getCell(10).getCellStyle();
-    	assertEquals(BorderStyle.THICK, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.THICK, cs.getBorderRight());
 
     	cs = s.getRow(11).getCell(11).getCellStyle();
-    	assertEquals(BorderStyle.DOUBLE, cs.getBorderRightEnum());
+    	assertEquals(BorderStyle.DOUBLE, cs.getBorderRight());
     }
 
     public void testShrinkToFit() {
@@ -502,7 +502,7 @@ public final class TestCellStyle extends TestCase {
         newCell.setCellValue("2testtext2");
 
         CellStyle newStyle = newCell.getCellStyle();
-        assertEquals(BorderStyle.DOTTED, newStyle.getBorderBottomEnum());
+        assertEquals(BorderStyle.DOTTED, newStyle.getBorderBottom());
         assertEquals(Font.COLOR_RED, ((HSSFCellStyle)newStyle).getFont(wb).getColor());
         
 //        OutputStream out = new FileOutputStream("/tmp/56959.xls");

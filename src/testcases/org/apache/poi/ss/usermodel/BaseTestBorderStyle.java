@@ -73,10 +73,10 @@ public class BaseTestBorderStyle {
     
     protected void assertBorderStyleEquals(BorderStyle expected, Cell cell) {
         CellStyle style = cell.getCellStyle();
-        assertEquals(expected, style.getBorderTopEnum());
-        assertEquals(expected, style.getBorderBottomEnum());
-        assertEquals(expected, style.getBorderLeftEnum());
-        assertEquals(expected, style.getBorderRightEnum());
+        assertEquals(expected, style.getBorderTop());
+        assertEquals(expected, style.getBorderBottom());
+        assertEquals(expected, style.getBorderLeft());
+        assertEquals(expected, style.getBorderRight());
     }
 
 }

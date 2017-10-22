@@ -297,10 +297,10 @@ public class ToHtml {
     }
 
     private void borderStyles(CellStyle style) {
-        styleOut("border-left", style.getBorderLeftEnum(), BORDER);
-        styleOut("border-right", style.getBorderRightEnum(), BORDER);
-        styleOut("border-top", style.getBorderTopEnum(), BORDER);
-        styleOut("border-bottom", style.getBorderBottomEnum(), BORDER);
+        styleOut("border-left", style.getBorderLeft(), BORDER);
+        styleOut("border-right", style.getBorderRight(), BORDER);
+        styleOut("border-top", style.getBorderTop(), BORDER);
+        styleOut("border-bottom", style.getBorderBottom(), BORDER);
     }
 
     private void fontStyle(CellStyle style) {

@@ -408,28 +408,15 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setBorderLeft(border.getCode());
     }
 
-    /**
-     * get the type of border to use for the left border of the cell
-     * @return border type
-     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderLeftEnum()}.
-     */
-    @Deprecated
     @Override
-    public short getBorderLeft()
-    {
-        return _format.getBorderLeft();
-    }
-    /**
-     * get the type of border to use for the left border of the cell
-     * @return border type
-     * @since POI 3.15
-     */
-    @Override
-    public BorderStyle getBorderLeftEnum()
+    public BorderStyle getBorderLeft()
     {
         return BorderStyle.valueOf(_format.getBorderLeft());
     }
-    
+
+    @Override
+    public BorderStyle getBorderLeftEnum() { return getBorderLeft(); }
+
     /**
      * set the type of border to use for the right border of the cell
      * @param border type
@@ -442,28 +429,15 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setBorderRight(border.getCode());
     }
 
-    /**
-     * get the type of border to use for the right border of the cell
-     * @return border type
-     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderRightEnum()}.
-     */
-    @Deprecated
     @Override
-    public short getBorderRight()
-    {
-        return _format.getBorderRight();
-    }
-    /**
-     * get the type of border to use for the right border of the cell
-     * @return border type
-     * @since POI 3.15
-     */
-    @Override
-    public BorderStyle getBorderRightEnum()
+    public BorderStyle getBorderRight()
     {
         return BorderStyle.valueOf(_format.getBorderRight());
     }
-    
+
+    @Override
+    public BorderStyle getBorderRightEnum() { return getBorderRight(); }
+
     /**
      * set the type of border to use for the top border of the cell
      * @param border type
@@ -476,28 +450,15 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setBorderTop(border.getCode());
     }
 
-    /**
-     * get the type of border to use for the top border of the cell
-     * @return border type
-     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderTopEnum()}.
-     */
-    @Deprecated
     @Override
-    public short getBorderTop()
-    {
-        return _format.getBorderTop();
-    }
-    /**
-     * get the type of border to use for the top border of the cell
-     * @return border type
-     * @since 3.15
-     */
-    @Override
-    public BorderStyle getBorderTopEnum()
+    public BorderStyle getBorderTop()
     {
         return BorderStyle.valueOf(_format.getBorderTop());
     }
-    
+
+    @Override
+    public BorderStyle getBorderTopEnum() { return getBorderTop(); }
+
     /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
@@ -510,27 +471,14 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setBorderBottom(border.getCode());
     }
 
-    /**
-     * get the type of border to use for the bottom border of the cell
-     * @return border type
-     * @deprecated POI 3.15. Will return a BorderStyle enum in the future. Use {@link #getBorderBottomEnum()}.
-     */
-    @Deprecated
     @Override
-    public short getBorderBottom()
-    {
-        return _format.getBorderBottom();
-    }
-    /**
-     * get the type of border to use for the bottom border of the cell
-     * @return border type
-     * @since 3.15
-     */
-    @Override
-    public BorderStyle getBorderBottomEnum()
+    public BorderStyle getBorderBottom()
     {
         return BorderStyle.valueOf(_format.getBorderBottom());
     }
+
+    @Override
+    public BorderStyle getBorderBottomEnum() { return getBorderBottom(); }
 
     /**
      * set the color to use for the left border

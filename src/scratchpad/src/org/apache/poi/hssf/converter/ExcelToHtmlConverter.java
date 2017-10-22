@@ -209,13 +209,13 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
                 break;
         }
 
-        buildStyle_border( workbook, style, "top", cellStyle.getBorderTopEnum(),
+        buildStyle_border( workbook, style, "top", cellStyle.getBorderTop(),
                 cellStyle.getTopBorderColor() );
         buildStyle_border( workbook, style, "right",
-                cellStyle.getBorderRightEnum(), cellStyle.getRightBorderColor() );
+                cellStyle.getBorderRight(), cellStyle.getRightBorderColor() );
         buildStyle_border( workbook, style, "bottom",
-                cellStyle.getBorderBottomEnum(), cellStyle.getBottomBorderColor() );
-        buildStyle_border( workbook, style, "left", cellStyle.getBorderLeftEnum(),
+                cellStyle.getBorderBottom(), cellStyle.getBottomBorderColor() );
+        buildStyle_border( workbook, style, "left", cellStyle.getBorderLeft(),
                 cellStyle.getLeftBorderColor() );
 
         HSSFFont font = cellStyle.getFont( workbook );
