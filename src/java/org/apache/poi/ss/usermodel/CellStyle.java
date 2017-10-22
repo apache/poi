@@ -208,15 +208,17 @@ public interface CellStyle {
     /**
      * get the type of border to use for the left border of the cell
      * @return border type
-     * @deprecated POI 3.15. Use {@link #getBorderLeftEnum()} instead.
-     * This will return a BorderStyle enum in the future.
+     * @since POI 4.0.0
      */
-    short getBorderLeft();
+    BorderStyle getBorderLeft();
+
     /**
      * get the type of border to use for the left border of the cell
      * @return border type
      * @since POI 3.15
+     * @deprecated use <code>getBorderLeft()</code> instead
      */
+    @Removal(version = "4.2")
     BorderStyle getBorderLeftEnum();
 
     /**
@@ -229,15 +231,17 @@ public interface CellStyle {
     /**
      * get the type of border to use for the right border of the cell
      * @return border type
-     * @deprecated POI 3.15. Use {@link #getBorderRightEnum()} instead.
-     * This will return a BorderStyle enum in the future.
+     * @since POI 4.0.0
      */
-    short getBorderRight();
+    BorderStyle getBorderRight();
+
     /**
      * get the type of border to use for the right border of the cell
      * @return border type
      * @since POI 3.15
+     * @deprecated use <code>getBorderRight()</code> instead
      */
+    @Removal(version = "4.2")
     BorderStyle getBorderRightEnum();
 
     /**
@@ -250,17 +254,19 @@ public interface CellStyle {
     /**
      * get the type of border to use for the top border of the cell
      * @return border type
-     * @deprecated POI 3.15. Use {@link #getBorderTopEnum()} instead.
-     * This will return a BorderStyle enum in the future.
+     * @since POI 4.0.0
      */
-    short getBorderTop();
+    BorderStyle getBorderTop();
+
     /**
      * get the type of border to use for the top border of the cell
      * @return border type
      * @since POI 3.15
+     * @deprecated use <code>getBorderTop()</code> instead
      */
+    @Removal(version = "4.2")
     BorderStyle getBorderTopEnum();
-    
+
     /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
@@ -271,15 +277,17 @@ public interface CellStyle {
     /**
      * get the type of border to use for the bottom border of the cell
      * @return border type
-     * @deprecated POI 3.15. Use {@link #getBorderBottomEnum()} instead.
-     * This will return a BorderStyle enum in the future.
+     * @since POI 4.0.0
      */
-    short getBorderBottom();
+    BorderStyle getBorderBottom();
+
     /**
      * get the type of border to use for the bottom border of the cell
      * @return border type
      * @since POI 3.15
+     * @deprecated use <code>getBorderBottom()</code> instead
      */
+    @Removal(version = "4.2")
     BorderStyle getBorderBottomEnum();
 
     /**
