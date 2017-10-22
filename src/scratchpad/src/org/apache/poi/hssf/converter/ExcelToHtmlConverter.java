@@ -190,12 +190,12 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         StringBuilder style = new StringBuilder();
 
         style.append( "white-space:pre-wrap;" );
-        ExcelToHtmlUtils.appendAlign( style, cellStyle.getAlignment() );
+        ExcelToHtmlUtils.appendAlign( style, cellStyle.getAlignmentEnum() );
 
-        switch (cellStyle.getFillPattern()) {
+        switch (cellStyle.getFillPatternEnum()) {
             // no fill
-            case 0: break;
-            case 1:
+            case NO_FILL: break;
+            case SOLID_FOREGROUND:
                 final HSSFColor foregroundColor = cellStyle.getFillForegroundColorColor();
                 if ( foregroundColor == null ) break;
                 String fgCol = ExcelToHtmlUtils.getColor( foregroundColor );
@@ -444,7 +444,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             innerDivStyle.append( "overflow:hidden;max-height:" );
             innerDivStyle.append( normalHeightPt );
             innerDivStyle.append( "pt;white-space:nowrap;" );
-            ExcelToHtmlUtils.appendAlign( innerDivStyle, cellStyle.getAlignment() );
+            ExcelToHtmlUtils.appendAlign( innerDivStyle, cellStyle.getAlignmentEnum() );
             htmlDocumentFacade.addStyleClass( outerDiv, cssClassPrefixDiv,
                     innerDivStyle.toString() );
 

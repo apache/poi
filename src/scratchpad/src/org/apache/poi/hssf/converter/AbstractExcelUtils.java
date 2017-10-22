@@ -43,16 +43,7 @@ public class AbstractExcelUtils
     /*package*/ static final String EMPTY = "";
     private static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
     private static final int UNIT_OFFSET_LENGTH = 7;
-    
-    /**
-     * @param alignment The horizontal alignment. See {@link HorizontalAlignment}.
-     * @return a friendly string representation of the alignment code
-     * @deprecated POI 3.15 beta 3. Use {@link #getAlign(HorizontalAlignment)} instead.
-     */
-    public static String getAlign( short alignment )
-    {
-        return getAlign(HorizontalAlignment.forInt(alignment));
-    }
+
     public static String getAlign( HorizontalAlignment alignment )
     {
         switch ( alignment )

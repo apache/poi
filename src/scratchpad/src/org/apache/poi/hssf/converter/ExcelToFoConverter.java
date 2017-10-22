@@ -40,6 +40,7 @@ import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
@@ -335,17 +336,16 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     {
         blockTarget.setAttribute( "white-space-collapse", "false" );
         {
-            String textAlign = ExcelToFoUtils.getAlign( cellStyle
-                    .getAlignment() );
+            String textAlign = ExcelToFoUtils.getAlign( cellStyle.getAlignmentEnum() );
             if ( ExcelToFoUtils.isNotEmpty( textAlign ) )
                 blockTarget.setAttribute( "text-align", textAlign );
         }
 
-        if ( cellStyle.getFillPattern() == 0 )
+        if ( cellStyle.getFillPatternEnum() == FillPatternType.NO_FILL )
         {
             // no fill
         }
-        else if ( cellStyle.getFillPattern() == 1 )
+        else if ( cellStyle.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND )
         {
             final HSSFColor foregroundColor = cellStyle
                     .getFillForegroundColorColor();
