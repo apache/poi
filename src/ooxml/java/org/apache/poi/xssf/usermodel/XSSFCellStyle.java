@@ -217,24 +217,8 @@ public class XSSFCellStyle implements CellStyle {
         _cellXf.setApplyBorder(true);
     }
 
-    /**
-     * Get the type of horizontal alignment for the cell
-     *
-     * @return short - the type of alignment
-     * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
-     */
     @Override
-    public short getAlignment() {
-        return getAlignmentEnum().getCode();
-    }
-
-    /**
-     * Get the type of horizontal alignment for the cell
-     *
-     * @return HorizontalAlignment - the type of alignment
-     */
-    @Override
-    public HorizontalAlignment getAlignmentEnum() {
+    public HorizontalAlignment getAlignment() {
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetHorizontal()) {
             return HorizontalAlignment.forInt(align.getHorizontal().intValue()-1);
@@ -242,6 +226,10 @@ public class XSSFCellStyle implements CellStyle {
         return HorizontalAlignment.GENERAL;
     }
 
+    @Override
+    public HorizontalAlignment getAlignmentEnum() {
+        return getAlignment();
+    }
     /**
      * Get the type of border to use for the bottom border of the cell
      * Will be removed when {@link #getBorderBottom()} returns a BorderStyle enum
@@ -494,24 +482,9 @@ public class XSSFCellStyle implements CellStyle {
         return fillForegroundColor;
     }
 
-    /**
-     * Get the fill pattern
-     * @return fill pattern, default value is the code for {@link org.apache.poi.ss.usermodel.FillPatternType#NO_FILL}
-     * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead.
-     */
     @Override
-    public short getFillPattern() {
-        return getFillPatternEnum().getCode();
-    }
-
-    /**
-     * Get the fill pattern
-     *
-     * @return the fill pattern, default value is {@link FillPatternType#NO_FILL}
-     */
-    @Override
-    public FillPatternType getFillPatternEnum() {
-     // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+    public FillPatternType getFillPattern() {
+        // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return FillPatternType.NO_FILL;
 
         int fillIndex = (int)_cellXf.getFillId();
@@ -522,10 +495,15 @@ public class XSSFCellStyle implements CellStyle {
         return FillPatternType.forInt(ptrn.intValue() - 1);
     }
 
+    @Override
+    public FillPatternType getFillPatternEnum() {
+        return getFillPattern();
+    }
+
     /**
-    * Gets the font for this style
-    * @return Font - font
-    */
+     * Gets the font for this style
+     * @return Font - font
+     */
     public XSSFFont getFont() {
         if (_font == null) {
             _font = _stylesSource.getFontAt(getFontId());
@@ -708,29 +686,18 @@ public class XSSFCellStyle implements CellStyle {
         return border.getBorderColor(BorderSide.TOP);
     }
 
-    /**
-     * Get the type of vertical alignment for the cell
-     *
-     * @return align the type of alignment, default value is {@link org.apache.poi.ss.usermodel.VerticalAlignment}
-     * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
-     */
     @Override
-    public short getVerticalAlignment() {
-        return getVerticalAlignmentEnum().getCode();
-    }
-
-    /**
-     * Get the type of vertical alignment for the cell
-     *
-     * @return the type of alignment, default value is {@link VerticalAlignment#BOTTOM}
-     */
-    @Override
-    public VerticalAlignment getVerticalAlignmentEnum() {
+    public VerticalAlignment getVerticalAlignment() {
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetVertical()) {
             return VerticalAlignment.forInt(align.getVertical().intValue()-1);
         }
         return VerticalAlignment.BOTTOM;
+    }
+
+    @Override
+    public VerticalAlignment getVerticalAlignmentEnum() {
+        return getVerticalAlignment();
     }
 
     /**

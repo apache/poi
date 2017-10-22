@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Removal;
+
 public interface CellStyle {
 
     /**
@@ -113,13 +115,15 @@ public interface CellStyle {
     /**
      * get the type of horizontal alignment for the cell
      * @return align - the type of alignment
-     * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
      */
-    short getAlignment();
+    HorizontalAlignment getAlignment();
+
     /**
      * get the type of horizontal alignment for the cell
      * @return align - the type of alignment
+     * @deprecated use <code>getAlignment()</code> instead
      */
+    @Removal(version = "4.2")
     HorizontalAlignment getAlignmentEnum();
 
     /**
@@ -129,14 +133,12 @@ public interface CellStyle {
      *
      * @param wrapped  wrap text or not
      */
-
     void setWrapText(boolean wrapped);
 
     /**
      * get whether the text should be wrapped
      * @return wrap text or not
      */
-
     boolean getWrapText();
 
     /**
@@ -148,13 +150,15 @@ public interface CellStyle {
     /**
      * get the type of vertical alignment for the cell
      * @return align the type of alignment
-     * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
      */
-    short getVerticalAlignment();
+    VerticalAlignment getVerticalAlignment();
+
     /**
      * get the type of vertical alignment for the cell
      * @return align the type of alignment
+     * @deprecated use <code>getVerticalAlignment()</code> instead
      */
+    @Removal(version = "4.2")
     VerticalAlignment getVerticalAlignmentEnum();
 
     /**
@@ -335,16 +339,21 @@ public interface CellStyle {
     void setFillPattern(FillPatternType fp);
 
     /**
-     * get the fill pattern (??) - set to 1 to fill with foreground color
-     * @return fill pattern
-     * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead.
+     * Get the fill pattern
+     *
+     * @return the fill pattern, default value is {@link FillPatternType#NO_FILL}
+     * @since POI 4.0.0
      */
-    short getFillPattern();
+    FillPatternType getFillPattern();
+
     /**
-     * get the fill pattern (??) - set to 1 to fill with foreground color
-     * @return fill pattern
+     * Get the fill pattern
+     *
+     * @return the fill pattern, default value is {@link FillPatternType#NO_FILL}
      * @since POI 3.15 beta 3
+     * @deprecated use <code>getFillPattern()</code> instead
      */
+    @Removal(version = "4.2")
     FillPatternType getFillPatternEnum();
 
     /**
@@ -352,7 +361,6 @@ public interface CellStyle {
      *
      * @param bg  color
      */
-
     void setFillBackgroundColor(short bg);
 
     /**

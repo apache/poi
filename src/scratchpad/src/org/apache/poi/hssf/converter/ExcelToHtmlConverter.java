@@ -190,9 +190,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         StringBuilder style = new StringBuilder();
 
         style.append( "white-space:pre-wrap;" );
-        ExcelToHtmlUtils.appendAlign( style, cellStyle.getAlignmentEnum() );
+        ExcelToHtmlUtils.appendAlign( style, cellStyle.getAlignment() );
 
-        switch (cellStyle.getFillPatternEnum()) {
+        switch (cellStyle.getFillPattern()) {
             // no fill
             case NO_FILL: break;
             case SOLID_FOREGROUND:
@@ -444,7 +444,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             innerDivStyle.append( "overflow:hidden;max-height:" );
             innerDivStyle.append( normalHeightPt );
             innerDivStyle.append( "pt;white-space:nowrap;" );
-            ExcelToHtmlUtils.appendAlign( innerDivStyle, cellStyle.getAlignmentEnum() );
+            ExcelToHtmlUtils.appendAlign( innerDivStyle, cellStyle.getAlignment() );
             htmlDocumentFacade.addStyleClass( outerDiv, cssClassPrefixDiv,
                     innerDivStyle.toString() );
 

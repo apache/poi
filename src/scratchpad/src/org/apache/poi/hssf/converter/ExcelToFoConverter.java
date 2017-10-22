@@ -195,7 +195,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
      */
     protected boolean isEmptyStyle( CellStyle cellStyle ) {
         return cellStyle == null || (
-               cellStyle.getFillPattern() == 0
+               cellStyle.getFillPattern() == FillPatternType.NO_FILL
             && cellStyle.getBorderTopEnum() == BorderStyle.NONE
             && cellStyle.getBorderRightEnum() == BorderStyle.NONE
             && cellStyle.getBorderBottomEnum() == BorderStyle.NONE
@@ -336,16 +336,16 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     {
         blockTarget.setAttribute( "white-space-collapse", "false" );
         {
-            String textAlign = ExcelToFoUtils.getAlign( cellStyle.getAlignmentEnum() );
+            String textAlign = ExcelToFoUtils.getAlign( cellStyle.getAlignment() );
             if ( ExcelToFoUtils.isNotEmpty( textAlign ) )
                 blockTarget.setAttribute( "text-align", textAlign );
         }
 
-        if ( cellStyle.getFillPatternEnum() == FillPatternType.NO_FILL )
+        if ( cellStyle.getFillPattern() == FillPatternType.NO_FILL )
         {
             // no fill
         }
-        else if ( cellStyle.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND )
+        else if ( cellStyle.getFillPattern() == FillPatternType.SOLID_FOREGROUND )
         {
             final HSSFColor foregroundColor = cellStyle
                     .getFillForegroundColorColor();

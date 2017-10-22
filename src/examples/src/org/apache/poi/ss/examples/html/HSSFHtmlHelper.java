@@ -44,7 +44,7 @@ public class HSSFHtmlHelper implements HtmlHelper {
     @Override
     public void colorStyles(CellStyle style, Formatter out) {
         HSSFCellStyle cs = (HSSFCellStyle) style;
-        out.format("  /* fill pattern = %d */%n", cs.getFillPatternEnum().getCode());
+        out.format("  /* fill pattern = %d */%n", cs.getFillPattern().getCode());
         styleColor(out, "background-color", cs.getFillForegroundColor());
         styleColor(out, "color", cs.getFont(wb).getColor());
         styleColor(out, "border-left-color", cs.getLeftBorderColor());

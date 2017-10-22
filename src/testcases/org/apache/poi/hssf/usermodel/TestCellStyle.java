@@ -232,17 +232,17 @@ public final class TestCellStyle extends TestCase {
         orig.setFont(fnt);
         orig.setDataFormat((short)18);
         
-        assertEquals(HorizontalAlignment.JUSTIFY, orig.getAlignmentEnum());
+        assertEquals(HorizontalAlignment.JUSTIFY, orig.getAlignment());
         assertEquals(fnt, orig.getFont(wb));
         assertEquals(18, orig.getDataFormat());
         
         HSSFCellStyle clone = wb.createCellStyle();
-        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignmentEnum());
+        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignment());
         assertFalse(fnt == clone.getFont(wb));
         assertFalse(18 == clone.getDataFormat());
         
         clone.cloneStyleFrom(orig);
-        assertEquals(HorizontalAlignment.JUSTIFY, clone.getAlignmentEnum());
+        assertEquals(HorizontalAlignment.JUSTIFY, clone.getAlignment());
         assertEquals(fnt, clone.getFont(wb));
         assertEquals(18, clone.getDataFormat());
         assertEquals(5, wb.getNumberOfFonts());
@@ -268,7 +268,7 @@ public final class TestCellStyle extends TestCase {
         orig.setFont(fnt);
         orig.setDataFormat(fmt.getFormat("Test##"));
         
-        assertEquals(HorizontalAlignment.RIGHT, orig.getAlignmentEnum());
+        assertEquals(HorizontalAlignment.RIGHT, orig.getAlignment());
         assertEquals(fnt, orig.getFont(wbOrig));
         assertEquals(fmt.getFormat("Test##"), orig.getDataFormat());
         
@@ -280,11 +280,11 @@ public final class TestCellStyle extends TestCase {
         HSSFCellStyle clone = wbClone.createCellStyle();
         assertEquals(4, wbClone.getNumberOfFonts());
         
-        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignmentEnum());
+        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignment());
         assertFalse("TestingFont" == clone.getFont(wbClone).getFontName());
         
         clone.cloneStyleFrom(orig);
-        assertEquals(HorizontalAlignment.RIGHT, clone.getAlignmentEnum());
+        assertEquals(HorizontalAlignment.RIGHT, clone.getAlignment());
         assertEquals("TestingFont", clone.getFont(wbClone).getFontName());
         assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
         assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));

@@ -156,7 +156,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
           Font font = new Font(f.getFontName(),fontstyle,fontheight);
           editor.setFont(font);
 
-          if (style.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND) {
+          if (style.getFillPattern() == FillPatternType.SOLID_FOREGROUND) {
             editor.setBackground(getAWTColor(style.getFillForegroundColor(), white));
           } else {
             editor.setBackground(white);
@@ -187,7 +187,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
         default:
           editor.setText("?");
       }
-      switch (style.getAlignmentEnum()) {
+      switch (style.getAlignment()) {
         case LEFT:
         case JUSTIFY:
         case FILL:

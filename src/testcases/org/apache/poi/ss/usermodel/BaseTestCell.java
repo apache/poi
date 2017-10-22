@@ -715,7 +715,7 @@ public abstract class BaseTestCell {
         assertFalse(style.getHidden());
         assertEquals(0, style.getIndention());
         assertEquals(0, style.getFontIndex());
-        assertEquals(HorizontalAlignment.GENERAL, style.getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, style.getAlignment());
         assertEquals(0, style.getDataFormat());
         assertEquals(false, style.getWrapText());
 
