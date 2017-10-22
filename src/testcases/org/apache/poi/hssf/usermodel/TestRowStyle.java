@@ -160,7 +160,7 @@ public final class TestRowStyle extends TestCase {
             assertEquals("Right Border Style for row:",  BorderStyle.THIN, cs.getBorderRightEnum());
             assertEquals("Top Border Style for row:",    BorderStyle.THIN, cs.getBorderTopEnum());
             assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
-            assertEquals("FillPattern for row:",         FillPatternType.BRICKS, cs.getFillPatternEnum());
+            assertEquals("FillPattern for row:",         FillPatternType.BRICKS, cs.getFillPattern());
             
             rownum++;
             if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/ 
@@ -169,7 +169,7 @@ public final class TestRowStyle extends TestCase {
             assertNotNull("Row is not null", r);
             cs2 = r.getRowStyle();
             assertEquals("FillForegroundColor for row: ", cs2.getFillForegroundColor(), (short) 0x0);
-            assertEquals("FillPattern for row: ", cs2.getFillPatternEnum(), FillPatternType.BRICKS);
+            assertEquals("FillPattern for row: ", cs2.getFillPattern(), FillPatternType.BRICKS);
         }
         IOUtils.closeQuietly(wb2);
     }

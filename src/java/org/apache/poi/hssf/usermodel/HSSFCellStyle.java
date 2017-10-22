@@ -272,25 +272,16 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setAlignment(align.getCode());
     }
 
-    /**
-     * get the type of horizontal alignment for the cell
-     * @return align - the type of alignment
-     * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
-     */
-    @Deprecated
     @Override
-    public short getAlignment()
+    public HorizontalAlignment getAlignment()
     {
-        return _format.getAlignment();
+        return HorizontalAlignment.forInt(_format.getAlignment());
     }
-    /**
-     * get the type of horizontal alignment for the cell
-     * @return align - the type of alignment
-     */
+
     @Override
     public HorizontalAlignment getAlignmentEnum()
     {
-        return HorizontalAlignment.forInt(_format.getAlignment());
+        return getAlignment();
     }
 
     /**
@@ -324,27 +315,15 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setVerticalAlignment(align.getCode());
     }
 
-    /**
-     * get the type of vertical alignment for the cell
-     * @return align the type of alignment
-     * @see VerticalAlignment
-     * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
-     */
-    @Deprecated
     @Override
-    public short getVerticalAlignment()
-    {
-        return _format.getVerticalAlignment();
+    public VerticalAlignment getVerticalAlignment() {
+        return VerticalAlignment.forInt(_format.getVerticalAlignment());
     }
-   /**
-    * get the type of vertical alignment for the cell
-    * @return align the type of alignment
-    */
-   @Override
-   public VerticalAlignment getVerticalAlignmentEnum()
-   {
-       return VerticalAlignment.forInt(_format.getVerticalAlignment());
-   }
+
+    @Override
+    public VerticalAlignment getVerticalAlignmentEnum() {
+        return getVerticalAlignment();
+    }
 
     /**
      * set the degree of rotation for the text in the cell
@@ -649,27 +628,14 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setAdtlFillPattern(fp.getCode());
     }
 
-    /**
-     * get the fill pattern
-     * @return fill pattern
-     * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead. 
-     */
-    @Deprecated
     @Override
-    public short getFillPattern()
-    {
-        return getFillPatternEnum().getCode();
-    }
-    
-    /**
-     * get the fill pattern
-     * @return fill pattern
-     */
-    @Override
-    public FillPatternType getFillPatternEnum()
+    public FillPatternType getFillPattern()
     {
         return FillPatternType.forInt(_format.getAdtlFillPattern());
     }
+
+    @Override
+    public FillPatternType getFillPatternEnum() { return getFillPattern(); }
 
     /**
      * Checks if the background and foreground fills are set correctly when one

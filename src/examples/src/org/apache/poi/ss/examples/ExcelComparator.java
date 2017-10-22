@@ -330,8 +330,8 @@ public class ExcelComparator {
      */
     private void isCellAlignmentMatches(Locator loc1, Locator loc2) {
         // TODO: check for NPE
-        HorizontalAlignment align1 = loc1.cell.getCellStyle().getAlignmentEnum();
-        HorizontalAlignment align2 = loc2.cell.getCellStyle().getAlignmentEnum();
+        HorizontalAlignment align1 = loc1.cell.getCellStyle().getAlignment();
+        HorizontalAlignment align2 = loc2.cell.getCellStyle().getAlignment();
         if (align1 != align2) {
             addMessage(loc1, loc2,
                 "Cell Alignment does not Match ::",
@@ -460,8 +460,8 @@ public class ExcelComparator {
      */
     private void isCellFillPatternMatches(Locator loc1, Locator loc2) {
         // TOOO: Check for NPE
-        FillPatternType fill1 = loc1.cell.getCellStyle().getFillPatternEnum();
-        FillPatternType fill2 = loc2.cell.getCellStyle().getFillPatternEnum();
+        FillPatternType fill1 = loc1.cell.getCellStyle().getFillPattern();
+        FillPatternType fill2 = loc2.cell.getCellStyle().getFillPattern();
         if (fill1 != fill2) {
             addMessage(loc1, loc2,
                 "Cell Fill pattern does not Match ::",

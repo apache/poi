@@ -224,17 +224,17 @@ public class BaseTestCellUtil {
         // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
         // HSSFCellStyle wraps an underlying style record, and the underlying
         // style record is the same between multiple getCellStyle() calls.
-        assertEquals(HorizontalAlignment.GENERAL, A1.getCellStyle().getAlignmentEnum());
-        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, A1.getCellStyle().getAlignment());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignment());
 
         // get/set alignment modifies the cell's style
         CellUtil.setAlignment(A1, HorizontalAlignment.RIGHT);
-        assertEquals(HorizontalAlignment.RIGHT, A1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.RIGHT, A1.getCellStyle().getAlignment());
 
         // get/set alignment doesn't affect the style of cells with
         // the same style prior to modifying the style
         assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
-        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignment());
 
         wb.close();
     }
@@ -252,17 +252,17 @@ public class BaseTestCellUtil {
         // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
         // HSSFCellStyle wraps an underlying style record, and the underlying
         // style record is the same between multiple getCellStyle() calls.
-        assertEquals(HorizontalAlignment.GENERAL, A1.getCellStyle().getAlignmentEnum());
-        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, A1.getCellStyle().getAlignment());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignment());
 
         // get/set alignment modifies the cell's style
         CellUtil.setAlignment(A1, HorizontalAlignment.RIGHT);
-        assertEquals(HorizontalAlignment.RIGHT, A1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.RIGHT, A1.getCellStyle().getAlignment());
 
         // get/set alignment doesn't affect the style of cells with
         // the same style prior to modifying the style
         assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
-        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignment());
 
         wb.close();
     }
@@ -280,17 +280,17 @@ public class BaseTestCellUtil {
         // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
         // HSSFCellStyle wraps an underlying style record, and the underlying
         // style record is the same between multiple getCellStyle() calls.
-        assertEquals(VerticalAlignment.BOTTOM, A1.getCellStyle().getVerticalAlignmentEnum());
-        assertEquals(VerticalAlignment.BOTTOM, B1.getCellStyle().getVerticalAlignmentEnum());
+        assertEquals(VerticalAlignment.BOTTOM, A1.getCellStyle().getVerticalAlignment());
+        assertEquals(VerticalAlignment.BOTTOM, B1.getCellStyle().getVerticalAlignment());
 
         // get/set alignment modifies the cell's style
         CellUtil.setVerticalAlignment(A1, VerticalAlignment.TOP);
-        assertEquals(VerticalAlignment.TOP, A1.getCellStyle().getVerticalAlignmentEnum());
+        assertEquals(VerticalAlignment.TOP, A1.getCellStyle().getVerticalAlignment());
 
         // get/set alignment doesn't affect the style of cells with
         // the same style prior to modifying the style
         assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
-        assertEquals(VerticalAlignment.BOTTOM, B1.getCellStyle().getVerticalAlignmentEnum());
+        assertEquals(VerticalAlignment.BOTTOM, B1.getCellStyle().getVerticalAlignment());
 
         wb.close();
     }
@@ -375,7 +375,7 @@ public class BaseTestCellUtil {
         
         CellUtil.setCellStyleProperties(A1, properties);
         CellStyle style = A1.getCellStyle();
-        assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPatternEnum());
+        assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPattern());
         assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
         assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
         wb1.close();
@@ -395,7 +395,7 @@ public class BaseTestCellUtil {
         
         CellUtil.setCellStyleProperties(A1, properties);
         CellStyle style = A1.getCellStyle();
-        assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPatternEnum());
+        assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPattern());
         assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
         assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
 

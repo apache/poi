@@ -151,7 +151,7 @@ public class SVTableCellRenderer extends JLabel
           HSSFFont f = wb.getFontAt(s.getFontIndex());
           setFont(SVTableUtils.makeFont(f));
 
-          if (s.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND) {
+          if (s.getFillPattern() == FillPatternType.SOLID_FOREGROUND) {
             setBackground(SVTableUtils.getAWTColor(s.getFillForegroundColor(), SVTableUtils.white));
           } else setBackground(SVTableUtils.white);
 
@@ -195,7 +195,7 @@ public class SVTableCellRenderer extends JLabel
                 setValue("?");
             }
             //Set the text alignment of the cell
-            switch (s.getAlignmentEnum()) {
+            switch (s.getAlignment()) {
               case LEFT:
               case JUSTIFY:
               case FILL:

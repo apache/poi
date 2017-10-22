@@ -289,8 +289,8 @@ public class ToHtml {
     }
 
     private void styleContents(CellStyle style) {
-        styleOut("text-align", style.getAlignmentEnum(), HALIGN);
-        styleOut("vertical-align", style.getVerticalAlignmentEnum(), VALIGN);
+        styleOut("text-align", style.getAlignment(), HALIGN);
+        styleOut("vertical-align", style.getVerticalAlignment(), VALIGN);
         fontStyle(style);
         borderStyles(style);
         helper.colorStyles(style, out);
@@ -493,7 +493,7 @@ public class ToHtml {
     }
 
     private String tagStyle(Cell cell, CellStyle style) {
-        if (style.getAlignmentEnum() == HorizontalAlignment.GENERAL) {
+        if (style.getAlignment() == HorizontalAlignment.GENERAL) {
             switch (ultimateCellType(cell)) {
             case STRING:
                 return "style=\"text-align: left;\"";
