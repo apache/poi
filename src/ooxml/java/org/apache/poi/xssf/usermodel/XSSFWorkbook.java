@@ -123,7 +123,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
-     * Width of one character of the default font in pixels. Same for Calibry and Arial.
+     * Width of one character of the default font in pixels. Same for Calibri and Arial.
      * @deprecated POI 3.17 beta 1
      * @see Units#DEFAULT_CHARACTER_WIDTH
      */

@@ -47,11 +47,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 public class XSSFFont implements Font {
 
     /**
-     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     * By default, Microsoft Office Excel 2007 uses the Calibri font in font size 11
      */
     public static final String DEFAULT_FONT_NAME = "Calibri";
     /**
-     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     * By default, Microsoft Office Excel 2007 uses the Calibri font in font size 11
      */
     public static final short DEFAULT_FONT_SIZE = 11;
     /**
