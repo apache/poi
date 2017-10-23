@@ -35,13 +35,13 @@ import org.apache.poi.util.LittleEndian;
  * <p>
  * Fields documentation is quotes from Microsoft Office Word 97-2007 Binary File
  * Format (.doc) Specification, page 36 of 210
- * 
+ *
  * @author Ryan Ackley
  */
 @Internal
-public final class StyleSheet implements HDFType {
+public final class StyleSheet {
 
-  public static final int NIL_STYLE = 4095;
+    public static final int NIL_STYLE = 4095;
 //  private static final int PAP_TYPE = 1;
 //  private static final int CHP_TYPE = 2;
 //  private static final int SEP_TYPE = 4;
@@ -52,8 +52,8 @@ public final class StyleSheet implements HDFType {
     @Deprecated
     private final static CharacterProperties NIL_CHP = new CharacterProperties();
 
-  private final static byte[] NIL_CHPX = new byte[] {};
-  private final static byte[] NIL_PAPX = new byte[] {0, 0};
+    private final static byte[] NIL_CHPX = new byte[]{};
+    private final static byte[] NIL_PAPX = new byte[]{0, 0};
 
     /**
      * Size of the STSHI structure
@@ -64,20 +64,19 @@ public final class StyleSheet implements HDFType {
      * General information about a stylesheet
      */
     private Stshif _stshif;
-    
-  StyleDescription[] _styleDescriptions;
 
-  /**
-   * StyleSheet constructor. Loads a document's stylesheet information,
-   *
-   * @param tableStream A byte array containing a document's raw stylesheet
-   *        info. Found by using FileInformationBlock.getFcStshf() and
-   *        FileInformationBLock.getLcbStshf()
-   */
-  public StyleSheet(byte[] tableStream, int offset)
-  {
+    StyleDescription[] _styleDescriptions;
+
+    /**
+     * StyleSheet constructor. Loads a document's stylesheet information,
+     *
+     * @param tableStream A byte array containing a document's raw stylesheet
+     *                    info. Found by using FileInformationBlock.getFcStshf() and
+     *                    FileInformationBLock.getLcbStshf()
+     */
+    public StyleSheet(byte[] tableStream, int offset) {
         int startOffset = offset;
-        _cbStshi = LittleEndian.getShort( tableStream, offset );
+        _cbStshi = LittleEndian.getShort(tableStream, offset);
         offset += LittleEndian.SHORT_SIZE;
 
         /*
@@ -87,47 +86,42 @@ public final class StyleSheet implements HDFType {
          * (cbSTD, STD) pairs in the file following the STSHI. Note: styles can
          * be empty, i.e. cbSTD==0.
          */
-        
-        _stshif = new Stshif( tableStream, offset );
+
+        _stshif = new Stshif(tableStream, offset);
         offset += Stshif.getSize();
 
         // shall we discard cbLSD and mpstilsd?
-        
-      offset = startOffset + LittleEndian.SHORT_SIZE + _cbStshi;
-      _styleDescriptions = new StyleDescription[_stshif.getCstd()];
-      for(int x = 0; x < _stshif.getCstd(); x++)
-      {
-          int stdSize = LittleEndian.getShort(tableStream, offset);
-          //get past the size
-          offset += 2;
-          if(stdSize > 0)
-          {
-              //byte[] std = new byte[stdSize];
 
-              StyleDescription aStyle = new StyleDescription(tableStream,
-                      _stshif.getCbSTDBaseInFile(), offset, true);
+        offset = startOffset + LittleEndian.SHORT_SIZE + _cbStshi;
+        _styleDescriptions = new StyleDescription[_stshif.getCstd()];
+        for (int x = 0; x < _stshif.getCstd(); x++) {
+            int stdSize = LittleEndian.getShort(tableStream, offset);
+            //get past the size
+            offset += 2;
+            if (stdSize > 0) {
+                //byte[] std = new byte[stdSize];
 
-              _styleDescriptions[x] = aStyle;
-          }
+                StyleDescription aStyle = new StyleDescription(tableStream,
+                        _stshif.getCbSTDBaseInFile(), offset, true);
 
-          offset += stdSize;
+                _styleDescriptions[x] = aStyle;
+            }
 
-      }
-      for(int x = 0; x < _styleDescriptions.length; x++)
-      {
-          if(_styleDescriptions[x] != null)
-          {
-              createPap(x);
-              createChp(x);
-          }
-      }
-  }
+            offset += stdSize;
 
-  public void writeTo(OutputStream out)
-    throws IOException
-  {
+        }
+        for (int x = 0; x < _styleDescriptions.length; x++) {
+            if (_styleDescriptions[x] != null) {
+                createPap(x);
+                createChp(x);
+            }
+        }
+    }
 
-    int offset = 0;
+    public void writeTo(OutputStream out)
+            throws IOException {
+
+        int offset = 0;
 
         /*
          * we don't support 2003 Word extensions in STSHI (but may be we should
@@ -136,270 +130,239 @@ public final class StyleSheet implements HDFType {
          */
         this._cbStshi = 18;
 
-    // add two bytes so we can prepend the stylesheet w/ its size
-    byte[] buf = new byte[_cbStshi + 2];
+        // add two bytes so we can prepend the stylesheet w/ its size
+        byte[] buf = new byte[_cbStshi + 2];
 
-    LittleEndian.putUShort(buf, offset, (short)_cbStshi);
-    offset += LittleEndian.SHORT_SIZE;
+        LittleEndian.putUShort(buf, offset, (short) _cbStshi);
+        offset += LittleEndian.SHORT_SIZE;
 
-    _stshif.setCstd( _styleDescriptions.length );
-    _stshif.serialize( buf, offset );
-    // offset += Stshif.getSize();
+        _stshif.setCstd(_styleDescriptions.length);
+        _stshif.serialize(buf, offset);
+        // offset += Stshif.getSize();
 
-    out.write(buf);
+        out.write(buf);
 
-    byte[] sizeHolder = new byte[2];
-    for (int x = 0; x < _styleDescriptions.length; x++)
-    {
-      if(_styleDescriptions[x] != null)
-      {
-          byte[] std = _styleDescriptions[x].toByteArray();
+        byte[] sizeHolder = new byte[2];
+        for (int x = 0; x < _styleDescriptions.length; x++) {
+            if (_styleDescriptions[x] != null) {
+                byte[] std = _styleDescriptions[x].toByteArray();
 
-          // adjust the size so it is always on a word boundary
-          LittleEndian.putShort(sizeHolder, 0, (short)((std.length) + (std.length % 2)));
-          out.write(sizeHolder);
-          out.write(std);
+                // adjust the size so it is always on a word boundary
+                LittleEndian.putShort(sizeHolder, 0, (short) ((std.length) + (std.length % 2)));
+                out.write(sizeHolder);
+                out.write(std);
 
-          // Must always start on a word boundary.
-          if (std.length % 2 == 1)
-          {
-            out.write('\0');
-          }
-      }
-      else
-      {
-        sizeHolder[0] = 0;
-        sizeHolder[1] = 0;
-        out.write(sizeHolder);
-      }
-    }
-  }
-
-  @Override
-  public boolean equals(Object o)
-  {
-    if (!(o instanceof StyleSheet)) return false;
-    StyleSheet ss = (StyleSheet)o;
-
-    if (!ss._stshif.equals( this._stshif )
-        || ss._cbStshi != this._cbStshi
-        || ss._styleDescriptions.length != this._styleDescriptions.length
-    ) return false;
-    
-    for (int i=0; i<_styleDescriptions.length; i++) {
-        StyleDescription tsd = this._styleDescriptions[i];
-        StyleDescription osd = ss._styleDescriptions[i];
-        if (tsd == null && osd == null) continue;
-        if (tsd == null || osd == null || !osd.equals(tsd)) return false;
+                // Must always start on a word boundary.
+                if (std.length % 2 == 1) {
+                    out.write('\0');
+                }
+            } else {
+                sizeHolder[0] = 0;
+                sizeHolder[1] = 0;
+                out.write(sizeHolder);
+            }
+        }
     }
 
-    return true;
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StyleSheet)) return false;
+        StyleSheet ss = (StyleSheet) o;
 
-  @Override
-  public int hashCode() {
-      assert false : "hashCode not designed";
-      return 42; // any arbitrary constant will do
-  }
+        if (!ss._stshif.equals(this._stshif)
+                || ss._cbStshi != this._cbStshi
+                || ss._styleDescriptions.length != this._styleDescriptions.length
+                ) return false;
 
-  /**
-   * Creates a PartagraphProperties object from a papx stored in the
-   * StyleDescription at the index istd in the StyleDescription array. The PAP
-   * is placed in the StyleDescription at istd after its been created. Not
-   * every StyleDescription will contain a papx. In these cases this function
-   * does nothing
-   *
-   * @param istd The index of the StyleDescription to create the
-   *        ParagraphProperties  from (and also place the finished PAP in)
-   */
-  @Deprecated
-  private void createPap(int istd)
-  {
-      StyleDescription sd = _styleDescriptions[istd];
-      ParagraphProperties pap = sd.getPAP();
-      byte[] papx = sd.getPAPX();
-      int baseIndex = sd.getBaseStyle();
-      if(pap == null && papx != null)
-      {
-          ParagraphProperties parentPAP = new ParagraphProperties();
-          if(baseIndex != NIL_STYLE)
-          {
+        for (int i = 0; i < _styleDescriptions.length; i++) {
+            StyleDescription tsd = this._styleDescriptions[i];
+            StyleDescription osd = ss._styleDescriptions[i];
+            if (tsd == null && osd == null) continue;
+            if (tsd == null || osd == null || !osd.equals(tsd)) return false;
+        }
 
-              parentPAP = _styleDescriptions[baseIndex].getPAP();
-              if(parentPAP == null) {
-                  if(baseIndex == istd) {
-                      // Oh dear, style claims that it is its own parent
-                      throw new IllegalStateException("Pap style " + istd + " claimed to have itself as its parent, which isn't allowed");
-                  }
-                  // Create the parent style
-                  createPap(baseIndex);
-                  parentPAP = _styleDescriptions[baseIndex].getPAP();
-              }
+        return true;
+    }
 
-          }
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
 
-          if (parentPAP == null) {
-              parentPAP = new ParagraphProperties();
-          }
+    /**
+     * Creates a PartagraphProperties object from a papx stored in the
+     * StyleDescription at the index istd in the StyleDescription array. The PAP
+     * is placed in the StyleDescription at istd after its been created. Not
+     * every StyleDescription will contain a papx. In these cases this function
+     * does nothing
+     *
+     * @param istd The index of the StyleDescription to create the
+     *             ParagraphProperties  from (and also place the finished PAP in)
+     */
+    @Deprecated
+    private void createPap(int istd) {
+        StyleDescription sd = _styleDescriptions[istd];
+        ParagraphProperties pap = sd.getPAP();
+        byte[] papx = sd.getPAPX();
+        int baseIndex = sd.getBaseStyle();
+        if (pap == null && papx != null) {
+            ParagraphProperties parentPAP = new ParagraphProperties();
+            if (baseIndex != NIL_STYLE) {
 
-          pap = ParagraphSprmUncompressor.uncompressPAP(parentPAP, papx, 2);
-          sd.setPAP(pap);
-      }
-  }
-  /**
-   * Creates a CharacterProperties object from a chpx stored in the
-   * StyleDescription at the index istd in the StyleDescription array. The
-   * CharacterProperties object is placed in the StyleDescription at istd after
-   * its been created. Not every StyleDescription will contain a chpx. In these
-   * cases this function does nothing.
-   *
-   * @param istd The index of the StyleDescription to create the
-   *        CharacterProperties object from.
-   */
-  @Deprecated
-  private void createChp(int istd)
-  {
-      StyleDescription sd = _styleDescriptions[istd];
-      CharacterProperties chp = sd.getCHP();
-      byte[] chpx = sd.getCHPX();
-      int baseIndex = sd.getBaseStyle();
-      
-      if(baseIndex == istd) {
-         // Oh dear, this isn't allowed...
-         // The word file seems to be corrupted
-         // Switch to using the nil style so that
-         //  there's a chance we can read it
-         baseIndex = NIL_STYLE;
-      }
-      
-      // Build and decompress the Chp if required 
-      if(chp == null && chpx != null)
-      {
-          CharacterProperties parentCHP = new CharacterProperties();
-          if(baseIndex != NIL_STYLE)
-          {
-              parentCHP = _styleDescriptions[baseIndex].getCHP();
-              if(parentCHP == null)
-              {
-                  createChp(baseIndex);
-                  parentCHP = _styleDescriptions[baseIndex].getCHP();
-              }
-              if(parentCHP == null) {
-                  parentCHP = new CharacterProperties();
-              }
-          }
+                parentPAP = _styleDescriptions[baseIndex].getPAP();
+                if (parentPAP == null) {
+                    if (baseIndex == istd) {
+                        // Oh dear, style claims that it is its own parent
+                        throw new IllegalStateException("Pap style " + istd + " claimed to have itself as its parent, which isn't allowed");
+                    }
+                    // Create the parent style
+                    createPap(baseIndex);
+                    parentPAP = _styleDescriptions[baseIndex].getPAP();
+                }
 
-          chp = CharacterSprmUncompressor.uncompressCHP(parentCHP, chpx, 0);
-          sd.setCHP(chp);
-      }
-  }
+            }
 
-  /**
-   * Gets the number of styles in the style sheet.
-   * @return The number of styles in the style sheet.
-   */
-  public int numStyles() {
-      return _styleDescriptions.length;
-  }
+            if (parentPAP == null) {
+                parentPAP = new ParagraphProperties();
+            }
+
+            pap = ParagraphSprmUncompressor.uncompressPAP(parentPAP, papx, 2);
+            sd.setPAP(pap);
+        }
+    }
+
+    /**
+     * Creates a CharacterProperties object from a chpx stored in the
+     * StyleDescription at the index istd in the StyleDescription array. The
+     * CharacterProperties object is placed in the StyleDescription at istd after
+     * its been created. Not every StyleDescription will contain a chpx. In these
+     * cases this function does nothing.
+     *
+     * @param istd The index of the StyleDescription to create the
+     *             CharacterProperties object from.
+     */
+    @Deprecated
+    private void createChp(int istd) {
+        StyleDescription sd = _styleDescriptions[istd];
+        CharacterProperties chp = sd.getCHP();
+        byte[] chpx = sd.getCHPX();
+        int baseIndex = sd.getBaseStyle();
+
+        if (baseIndex == istd) {
+            // Oh dear, this isn't allowed...
+            // The word file seems to be corrupted
+            // Switch to using the nil style so that
+            //  there's a chance we can read it
+            baseIndex = NIL_STYLE;
+        }
+
+        // Build and decompress the Chp if required
+        if (chp == null && chpx != null) {
+            CharacterProperties parentCHP = new CharacterProperties();
+            if (baseIndex != NIL_STYLE) {
+                parentCHP = _styleDescriptions[baseIndex].getCHP();
+                if (parentCHP == null) {
+                    createChp(baseIndex);
+                    parentCHP = _styleDescriptions[baseIndex].getCHP();
+                }
+                if (parentCHP == null) {
+                    parentCHP = new CharacterProperties();
+                }
+            }
+
+            chp = CharacterSprmUncompressor.uncompressCHP(parentCHP, chpx, 0);
+            sd.setCHP(chp);
+        }
+    }
+
+    /**
+     * Gets the number of styles in the style sheet.
+     *
+     * @return The number of styles in the style sheet.
+     */
+    public int numStyles() {
+        return _styleDescriptions.length;
+    }
 
     /**
      * Gets the StyleDescription at index x.
-     * 
-     * @param styleIndex
-     *            the index of the desired StyleDescription.
+     *
+     * @param styleIndex the index of the desired StyleDescription.
      */
-    public StyleDescription getStyleDescription( int styleIndex )
-    {
+    public StyleDescription getStyleDescription(int styleIndex) {
         return _styleDescriptions[styleIndex];
     }
 
     @Deprecated
-    public CharacterProperties getCharacterStyle( int styleIndex )
-    {
-        if ( styleIndex == NIL_STYLE )
-        {
+    public CharacterProperties getCharacterStyle(int styleIndex) {
+        if (styleIndex == NIL_STYLE) {
             return NIL_CHP;
         }
 
-        if ( styleIndex >= _styleDescriptions.length )
-        {
+        if (styleIndex >= _styleDescriptions.length) {
             return NIL_CHP;
         }
 
-        return ( _styleDescriptions[styleIndex] != null ? _styleDescriptions[styleIndex]
-                .getCHP() : NIL_CHP );
+        return (_styleDescriptions[styleIndex] != null ? _styleDescriptions[styleIndex]
+                .getCHP() : NIL_CHP);
     }
 
     @Deprecated
-    public ParagraphProperties getParagraphStyle( int styleIndex )
-    {
-        if ( styleIndex == NIL_STYLE )
-        {
+    public ParagraphProperties getParagraphStyle(int styleIndex) {
+        if (styleIndex == NIL_STYLE) {
             return NIL_PAP;
         }
 
-        if ( styleIndex >= _styleDescriptions.length )
-        {
+        if (styleIndex >= _styleDescriptions.length) {
             return NIL_PAP;
         }
 
-        if ( _styleDescriptions[styleIndex] == null )
-        {
+        if (_styleDescriptions[styleIndex] == null) {
             return NIL_PAP;
         }
 
-        if ( _styleDescriptions[styleIndex].getPAP() == null )
-        {
+        if (_styleDescriptions[styleIndex].getPAP() == null) {
             return NIL_PAP;
         }
 
         return _styleDescriptions[styleIndex].getPAP();
     }
 
-    public byte[] getCHPX( int styleIndex )
-    {
-        if ( styleIndex == NIL_STYLE )
-        {
+    public byte[] getCHPX(int styleIndex) {
+        if (styleIndex == NIL_STYLE) {
             return NIL_CHPX;
         }
 
-        if ( styleIndex >= _styleDescriptions.length )
-        {
+        if (styleIndex >= _styleDescriptions.length) {
             return NIL_CHPX;
         }
 
-        if ( _styleDescriptions[styleIndex] == null )
-        {
+        if (_styleDescriptions[styleIndex] == null) {
             return NIL_CHPX;
         }
 
-        if ( _styleDescriptions[styleIndex].getCHPX() == null )
-        {
+        if (_styleDescriptions[styleIndex].getCHPX() == null) {
             return NIL_CHPX;
         }
 
         return _styleDescriptions[styleIndex].getCHPX();
     }
 
-    public byte[] getPAPX( int styleIndex )
-    {
-        if ( styleIndex == NIL_STYLE )
-        {
+    public byte[] getPAPX(int styleIndex) {
+        if (styleIndex == NIL_STYLE) {
             return NIL_PAPX;
         }
 
-        if ( styleIndex >= _styleDescriptions.length )
-        {
+        if (styleIndex >= _styleDescriptions.length) {
             return NIL_PAPX;
         }
 
-        if ( _styleDescriptions[styleIndex] == null )
-        {
+        if (_styleDescriptions[styleIndex] == null) {
             return NIL_PAPX;
         }
 
-        if ( _styleDescriptions[styleIndex].getPAPX() == null )
-        {
+        if (_styleDescriptions[styleIndex].getPAPX() == null) {
             return NIL_PAPX;
         }
 
