@@ -571,6 +571,7 @@ public class TestXSSFCellStyle {
 	}
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testGetFillForegroundColor() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable styles = wb.getStylesSource();
@@ -581,11 +582,13 @@ public class TestXSSFCellStyle {
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), defaultStyle.getFillForegroundColor());
         assertEquals(null, defaultStyle.getFillForegroundXSSFColor());
         assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPattern());
+        assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPatternEnum());
 
         XSSFCellStyle customStyle = wb.createCellStyle();
 
         customStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         assertEquals(FillPatternType.SOLID_FOREGROUND, customStyle.getFillPattern());
+        assertEquals(FillPatternType.SOLID_FOREGROUND, customStyle.getFillPatternEnum());
         assertEquals(3, styles.getFills().size());
 
         customStyle.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());

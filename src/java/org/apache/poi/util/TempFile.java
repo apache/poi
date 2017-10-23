@@ -69,9 +69,4 @@ public final class TempFile {
     public static File createTempDirectory(String name) throws IOException {
         return strategy.createTempDirectory(name);
     }
-    
-    /**
-     * @deprecated POI 3.15 beta 3. Moved to {@link org.apache.poi.util.DefaultTempFileCreationStrategy}.
-     */
-    public static class DefaultTempFileCreationStrategy extends org.apache.poi.util.DefaultTempFileCreationStrategy {}
 }

@@ -30,28 +30,8 @@ package org.apache.poi.hwpf.model;
 public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends
         PropertyNode<T>
 {
-        private final int startBytes;
-        private final int endBytes;
-
-	/**
-	 * @param fcStart The start of the text for this property, in _bytes_
-	 * @param fcEnd The end of the text for this property, in _bytes_
-	 * @deprecated
-	 */
-	public BytePropertyNode(int fcStart, int fcEnd, CharIndexTranslator translator, Object buf) {
-		super(
-				translator.getCharIndex(fcStart),
-				translator.getCharIndex(fcEnd, translator.getCharIndex(fcStart)),
-				buf
-		);
-
-        if ( fcStart > fcEnd )
-            throw new IllegalArgumentException( "fcStart (" + fcStart
-                    + ") > fcEnd (" + fcEnd + ")" );
-
-                this.startBytes = fcStart;
-                this.endBytes = fcEnd;
-	}
+    private final int startBytes;
+    private final int endBytes;
 
     public BytePropertyNode( int charStart, int charEnd, Object buf )
     {
