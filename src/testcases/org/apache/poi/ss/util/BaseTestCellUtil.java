@@ -356,30 +356,7 @@ public class BaseTestCellUtil {
             wb2.close();
         }
     }
-    
-    /**
-     * bug 55555
-     * @deprecated Replaced by {@link #setFillForegroundColorBeforeFillBackgroundColorEnum()}
-     * @since POI 3.15 beta 3
-     */
-    @Deprecated
-    // bug 55555
-    @Test
-    public void setFillForegroundColorBeforeFillBackgroundColor() throws IOException {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Cell A1 = wb1.createSheet().createRow(0).createCell(0);
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
-        properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
-        properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
-        
-        CellUtil.setCellStyleProperties(A1, properties);
-        CellStyle style = A1.getCellStyle();
-        assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPattern());
-        assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
-        assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
-        wb1.close();
-    }
+
     /**
      * bug 55555
      * @since POI 3.15 beta 3
