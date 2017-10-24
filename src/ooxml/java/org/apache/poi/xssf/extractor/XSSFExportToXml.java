@@ -82,7 +82,7 @@ public class XSSFExportToXml implements Comparator<String>{
     private static final POILogger LOG = POILogFactory.getLogger(XSSFExportToXml.class);
 
     private XSSFMap map;
-    private final HashMap<String, Integer> indexMap = new HashMap<>();
+
     /**
      * Creates a new exporter and sets the mapping to be used when generating the XML output document
      *
@@ -146,10 +146,8 @@ public class XSSFExportToXml implements Comparator<String>{
             tableMappings.put(commonXPath, table);
         }
 
-        indexMap.clear();
         xpaths.sort(this);
-        indexMap.clear();
-        
+
         for(String xpath : xpaths) {
 
             XSSFSingleXmlCell simpleXmlCell = singleXmlCellsMappings.get(xpath);
@@ -403,7 +401,6 @@ public class XSSFExportToXml implements Comparator<String>{
 
         String[] leftTokens = leftXpath.split("/");
         String[] rightTokens = rightXpath.split("/");
-        String samePath = "/";
 
         int minLength = leftTokens.length< rightTokens.length? leftTokens.length : rightTokens.length;
 
@@ -415,47 +412,47 @@ public class XSSFExportToXml implements Comparator<String>{
             String rightElementName = rightTokens[i];
 
             if (leftElementName.equals(rightElementName)) {
-                samePath += "/" + leftElementName;
                 localComplexTypeRootNode = getComplexTypeForElement(leftElementName, xmlSchema, localComplexTypeRootNode);
             } else {
-                return indexOfElementInComplexType(samePath, leftElementName, rightElementName,localComplexTypeRootNode);
+                int leftIndex = indexOfElementInComplexType(leftElementName,localComplexTypeRootNode);
+                int rightIndex = indexOfElementInComplexType(rightElementName,localComplexTypeRootNode);
+                if (leftIndex!=-1 && rightIndex!=-1) {
+                    if ( leftIndex < rightIndex) {
+                        return -1;
+                    }if ( leftIndex > rightIndex) {
+                        return 1;
+                    }
+                } /*else {
+                    // NOTE: the xpath doesn't match correctly in the schema
+                }*/
             }
         }
 
         return 0;
     }
 
-    private int indexOfElementInComplexType(String samePath,String leftElementName,String rightElementName,Node complexType) {
+    private int indexOfElementInComplexType(String elementName,Node complexType) {
         if(complexType == null) {
             return -1;
         }
 
+        int indexOf = -1;
         int i = 0;
         Node node = complexType.getFirstChild();
-        final String leftWithoutNamespace = removeNamespace(leftElementName);
-        int leftIndexOf = getAndStoreIndex(samePath, leftWithoutNamespace);
-        final String rightWithoutNamespace = removeNamespace(rightElementName);
-        int rightIndexOf = getAndStoreIndex(samePath, rightWithoutNamespace);
+        final String elementNameWithoutNamespace = removeNamespace(elementName);
 
-        while (node != null && (rightIndexOf==-1||leftIndexOf==-1)) {
+        while (node != null) {
             if (node instanceof Element && "element".equals(node.getLocalName())) {
-                String elementValue = getNameOrRefElement(node).getNodeValue();
-                if (elementValue.equals(leftWithoutNamespace)) {
-                    leftIndexOf = i;
-                }
-                if (elementValue.equals(rightWithoutNamespace)) {
-                    rightIndexOf = i;
+                Node element = getNameOrRefElement(node);
+                if (element.getNodeValue().equals(elementNameWithoutNamespace)) {
+                    indexOf = i;
+                    break;
                 }
             }
             i++;
             node = node.getNextSibling();
         }
-        return Integer.compare(leftIndexOf, rightIndexOf);
-    }
-    
-    private int getAndStoreIndex(String samePath,String withoutNamespace) {
-        String withPath = samePath+"/"+withoutNamespace;
-        return indexMap.getOrDefault(withPath, -1);
+        return indexOf;
     }
 
 	private Node getNameOrRefElement(Node node) {
