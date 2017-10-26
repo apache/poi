@@ -446,7 +446,7 @@ public class XSSFExportToXml implements Comparator<String>{
                 }
                 if (elementValue.equals(rightWithoutNamespace)) {
                     rightIndexOf = i;
-                    indexMap.put(samePath+"/"+rightWithoutNamespace, leftIndexOf);
+                    indexMap.put(samePath+"/"+rightWithoutNamespace, rightIndexOf);
                 }
             }
             i++;
