@@ -52,10 +52,10 @@ import org.xml.sax.XMLReader;
 
 /**
  * Implementation of a text extractor from OOXML Excel
- *  files that uses SAX event based parsing.
+ * files that uses SAX event based parsing.
  */
-public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor 
-       implements org.apache.poi.ss.extractor.ExcelExtractor {
+public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
+        implements org.apache.poi.ss.extractor.ExcelExtractor {
 
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFEventBasedExcelExtractor.class);
 
@@ -73,6 +73,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
         this(OPCPackage.open(path));
     }
+
     public XSSFEventBasedExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
         super(null);
         this.container = container;
@@ -81,13 +82,13 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     }
 
     public static void main(String[] args) throws Exception {
-        if(args.length < 1) {
+        if (args.length < 1) {
             System.err.println("Use:");
             System.err.println("  XSSFEventBasedExcelExtractor <filename.xlsx>");
             System.exit(1);
         }
         POIXMLTextExtractor extractor =
-            new XSSFEventBasedExcelExtractor(args[0]);
+                new XSSFEventBasedExcelExtractor(args[0]);
         System.out.println(extractor.getText());
         extractor.close();
     }
@@ -101,9 +102,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
 
 
     /**
-     *
      * @return whether to include sheet names
-     *
      * @since 3.16-beta3
      */
     public boolean getIncludeSheetNames() {
@@ -112,16 +111,14 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
 
     /**
      * Should we return the formula itself, and not
-     *  the result it produces? Default is false
+     * the result it produces? Default is false
      */
     public void setFormulasNotResults(boolean formulasNotResults) {
         this.formulasNotResults = formulasNotResults;
     }
 
     /**
-     *
      * @return whether to include formulas but not results
-     *
      * @since 3.16-beta3
      */
     public boolean getFormulasNotResults() {
@@ -136,14 +133,13 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     }
 
     /**
-     *
      * @return whether or not to include headers and footers
-     *
      * @since 3.16-beta3
      */
     public boolean getIncludeHeadersFooters() {
         return includeHeadersFooters;
     }
+
     /**
      * Should text from textboxes be included? Default is true
      */
@@ -152,14 +148,13 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     }
 
     /**
-     *
      * @return whether or not to extract textboxes
-     *
      * @since 3.16-beta3
      */
     public boolean getIncludeTextBoxes() {
         return includeTextBoxes;
     }
+
     /**
      * Should cell comments be included? Default is false
      */
@@ -169,32 +164,34 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
 
     /**
      * @return whether cell comments should be included
-     *
      * @since 3.16-beta3
      */
     public boolean getIncludeCellComments() {
         return includeCellComments;
     }
+
     /**
      * Concatenate text from &lt;rPh&gt; text elements in SharedStringsTable
      * Default is true;
+     *
      * @param concatenatePhoneticRuns true if runs should be concatenated, false otherwise
      */
     public void setConcatenatePhoneticRuns(boolean concatenatePhoneticRuns) {
         this.concatenatePhoneticRuns = concatenatePhoneticRuns;
     }
+
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
 
     /**
      * @return locale
-     *
      * @since 3.16-beta3
      */
     public Locale getLocale() {
         return locale;
     }
+
     /**
      * Returns the opened OPCPackage container.
      */
@@ -210,6 +207,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public CoreProperties getCoreProperties() {
         return properties.getCoreProperties();
     }
+
     /**
      * Returns the extended document properties
      */
@@ -217,6 +215,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public ExtendedProperties getExtendedProperties() {
         return properties.getExtendedProperties();
     }
+
     /**
      * Returns the custom document properties
      */
@@ -224,7 +223,6 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public CustomProperties getCustomProperties() {
         return properties.getCustomProperties();
     }
-
 
 
     /**
@@ -238,96 +236,95 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
             InputStream sheetInputStream)
             throws IOException, SAXException {
 
-       DataFormatter formatter;
-       if(locale == null) {
-          formatter = new DataFormatter();
-       } else  {
-          formatter = new DataFormatter(locale);
-       }
-      
-       InputSource sheetSource = new InputSource(sheetInputStream);
-       try {
-          XMLReader sheetParser = SAXHelper.newXMLReader();
-          ContentHandler handler = new XSSFSheetXMLHandler(
-                styles, comments, strings, sheetContentsExtractor, formatter, formulasNotResults);
-          sheetParser.setContentHandler(handler);
-          sheetParser.parse(sheetSource);
-       } catch(ParserConfigurationException e) {
-          throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
-       }
-   }
+        DataFormatter formatter;
+        if (locale == null) {
+            formatter = new DataFormatter();
+        } else {
+            formatter = new DataFormatter(locale);
+        }
 
-   /**
-    * Processes the file and returns the text
-    */
-   public String getText() {
-       try {
-          ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
-          XSSFReader xssfReader = new XSSFReader(container);
-          StylesTable styles = xssfReader.getStylesTable();
-          XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
-   
-          StringBuffer text = new StringBuffer();
-          SheetTextExtractor sheetExtractor = new SheetTextExtractor();
-          
-          while (iter.hasNext()) {
-              InputStream stream = iter.next();
-              if(includeSheetNames) {
-                 text.append(iter.getSheetName());
-                 text.append('\n');
-              }
-              CommentsTable comments = includeCellComments ? iter.getSheetComments() : null;
-              processSheet(sheetExtractor, styles, comments, strings, stream);
-              if (includeHeadersFooters) {
-                  sheetExtractor.appendHeaderText(text);
-              }
-              sheetExtractor.appendCellText(text);
-              if (includeTextBoxes){
-                  processShapes(iter.getShapes(), text);
-              }
-              if (includeHeadersFooters) {
-                  sheetExtractor.appendFooterText(text);
-              }
-              sheetExtractor.reset();
-              stream.close();
-          }
-          
-          return text.toString();
-       } catch(IOException | OpenXML4JException | SAXException e) {
-          LOGGER.log(POILogger.WARN, e);
-          return null;
-       }
-   }
-   
-    void processShapes(List<XSSFShape> shapes, StringBuffer text) {
-        if (shapes == null){
+        InputSource sheetSource = new InputSource(sheetInputStream);
+        try {
+            XMLReader sheetParser = SAXHelper.newXMLReader();
+            ContentHandler handler = new XSSFSheetXMLHandler(
+                    styles, comments, strings, sheetContentsExtractor, formatter, formulasNotResults);
+            sheetParser.setContentHandler(handler);
+            sheetParser.parse(sheetSource);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
+        }
+    }
+
+    /**
+     * Processes the file and returns the text
+     */
+    public String getText() {
+        try {
+            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
+            XSSFReader xssfReader = new XSSFReader(container);
+            StylesTable styles = xssfReader.getStylesTable();
+            XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
+            StringBuilder text = new StringBuilder(64);
+            SheetTextExtractor sheetExtractor = new SheetTextExtractor();
+
+            while (iter.hasNext()) {
+                InputStream stream = iter.next();
+                if (includeSheetNames) {
+                    text.append(iter.getSheetName());
+                    text.append('\n');
+                }
+                CommentsTable comments = includeCellComments ? iter.getSheetComments() : null;
+                processSheet(sheetExtractor, styles, comments, strings, stream);
+                if (includeHeadersFooters) {
+                    sheetExtractor.appendHeaderText(text);
+                }
+                sheetExtractor.appendCellText(text);
+                if (includeTextBoxes) {
+                    processShapes(iter.getShapes(), text);
+                }
+                if (includeHeadersFooters) {
+                    sheetExtractor.appendFooterText(text);
+                }
+                sheetExtractor.reset();
+                stream.close();
+            }
+
+            return text.toString();
+        } catch (IOException | OpenXML4JException | SAXException e) {
+            LOGGER.log(POILogger.WARN, e);
+            return null;
+        }
+    }
+
+    void processShapes(List<XSSFShape> shapes, StringBuilder text) {
+        if (shapes == null) {
             return;
         }
-        for (XSSFShape shape : shapes){
-            if (shape instanceof XSSFSimpleShape){
-                String sText = ((XSSFSimpleShape)shape).getText();
-                if (sText != null && sText.length() > 0){
+        for (XSSFShape shape : shapes) {
+            if (shape instanceof XSSFSimpleShape) {
+                String sText = ((XSSFSimpleShape) shape).getText();
+                if (sText != null && sText.length() > 0) {
                     text.append(sText).append('\n');
                 }
             }
         }
     }
+
     @Override
-	public void close() throws IOException {
-		if (container != null) {
-			container.close();
-			container = null;
-		}
-		super.close();
-	}
+    public void close() throws IOException {
+        if (container != null) {
+            container.close();
+            container = null;
+        }
+        super.close();
+    }
 
     protected class SheetTextExtractor implements SheetContentsHandler {
-        private final StringBuffer output;
+        private final StringBuilder output = new StringBuilder(64);
         private boolean firstCellOfRow;
         private final Map<String, String> headerFooterMap;
 
         protected SheetTextExtractor() {
-            this.output = new StringBuffer();
             this.firstCellOfRow = true;
             this.headerFooterMap = includeHeadersFooters ? new HashMap<>() : null;
         }
@@ -344,7 +341,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
 
         @Override
         public void cell(String cellRef, String formattedValue, XSSFComment comment) {
-            if(firstCellOfRow) {
+            if (firstCellOfRow) {
                 firstCellOfRow = false;
             } else {
                 output.append('\t');
@@ -375,7 +372,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         /**
          * Append the text for the named header or footer if found.
          */
-        private void appendHeaderFooterText(StringBuffer buffer, String name) {
+        private void appendHeaderFooterText(StringBuilder buffer, String name) {
             String text = headerFooterMap.get(name);
             if (text != null && text.length() > 0) {
                 // this is a naive way of handling the left, center, and right
@@ -387,6 +384,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
                 buffer.append(text).append('\n');
             }
         }
+
         /**
          * Remove the delimiter if its found at the beginning of the text,
          * or replace it with a tab if its in the middle.
@@ -405,10 +403,11 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         /**
          * Append the text for each header type in the same order
          * they are appended in XSSFExcelExtractor.
+         *
          * @see XSSFExcelExtractor#getText()
          * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
          */
-        void appendHeaderText(StringBuffer buffer) {
+        void appendHeaderText(StringBuilder buffer) {
             appendHeaderFooterText(buffer, "firstHeader");
             appendHeaderFooterText(buffer, "oddHeader");
             appendHeaderFooterText(buffer, "evenHeader");
@@ -417,10 +416,11 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         /**
          * Append the text for each footer type in the same order
          * they are appended in XSSFExcelExtractor.
+         *
          * @see XSSFExcelExtractor#getText()
          * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
          */
-        void appendFooterText(StringBuffer buffer) {
+        void appendFooterText(StringBuilder buffer) {
             // append the text for each footer type in the same order
             // they are appended in XSSFExcelExtractor
             appendHeaderFooterText(buffer, "firstFooter");
@@ -431,7 +431,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         /**
          * Append the cell contents we have collected.
          */
-        void appendCellText(StringBuffer buffer) {
+        void appendCellText(StringBuilder buffer) {
             checkMaxTextSize(buffer, output.toString());
             buffer.append(output);
         }

@@ -71,7 +71,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         stBorderTypeMap.put(STBorder.INT_DOT_DASH, XWPFBorderType.DOT_DASH);
     }
 
-    protected StringBuffer text = new StringBuffer();
+    protected StringBuilder text = new StringBuilder(64);
     protected List<XWPFTableRow> tableRows;
 
     // Unused: UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD
