@@ -292,7 +292,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		// TODO Do properly
 		CTTitle title = chart.getTitle();
 
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder(64);
 		XmlObject[] t = title
 			.selectPath("declare namespace a='"+XSSFDrawing.NAMESPACE_A+"' .//a:t");
 		for (int m = 0; m < t.length; m++) {

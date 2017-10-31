@@ -435,7 +435,7 @@ public class XWPFTableCell implements IBody, ICell {
      */
     public String getTextRecursively() {
 
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder(64);
         for (int i = 0; i < bodyElements.size(); i++) {
             boolean isLast = (i == bodyElements.size() - 1);
             appendBodyElementText(text, bodyElements.get(i), isLast);
@@ -444,7 +444,7 @@ public class XWPFTableCell implements IBody, ICell {
         return text.toString();
     }
 
-    private void appendBodyElementText(StringBuffer text, IBodyElement e, boolean isLast) {
+    private void appendBodyElementText(StringBuilder text, IBodyElement e, boolean isLast) {
         if (e instanceof XWPFParagraph) {
             text.append(((XWPFParagraph) e).getText());
             if (!isLast) {

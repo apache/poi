@@ -27,10 +27,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 public class XWPFComment {
     protected String id;
     protected String author;
-    protected StringBuffer text;
+    protected StringBuilder text;
 
     public XWPFComment(CTComment comment, XWPFDocument document) {
-        text = new StringBuffer();
+        text = new StringBuilder(64);
         id = comment.getId().toString();
         author = comment.getAuthor();
 

@@ -98,7 +98,7 @@ public class HeaderFooterHelper {
     	return joinParts(parts[0], parts[1], parts[2]);
     }
     private String joinParts(String l, String c, String r) {
-    	StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder(64);
 
     	// Join as c, l, r
     	if(c.length() > 0) {

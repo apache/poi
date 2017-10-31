@@ -1060,7 +1060,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * carriage returns in place of their xml equivalents.
      */
     public String text() {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder(64);
 
         // Grab the text and tabs of the text run
         // Do so in a way that preserves the ordering
@@ -1084,7 +1084,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @return the phonetic (ruby) string associated with this run or an empty String if none exists
      */
     public String getPhonetic() {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder(64);
 
         // Grab the text and tabs of the text run
         // Do so in a way that preserves the ordering
@@ -1110,7 +1110,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param text buffer to which to append the content
      * @param extractPhonetic extract the phonetic (rt) component or the base component
      */
-    private void handleRuby(XmlObject rubyObj, StringBuffer text, boolean extractPhonetic) {
+    private void handleRuby(XmlObject rubyObj, StringBuilder text, boolean extractPhonetic) {
         XmlCursor c = rubyObj.newCursor();
 
         //according to the spec, a ruby object
@@ -1141,7 +1141,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         c.dispose();
     }
 
-    private void _getText(XmlObject o, StringBuffer text) {
+    private void _getText(XmlObject o, StringBuilder text) {
 
         if (o instanceof CTText) {
             String tagName = o.getDomNode().getNodeName();
@@ -1170,10 +1170,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
 
         if (o instanceof CTPTab) {
-            text.append("\t");
+            text.append('\t');
         }
         if (o instanceof CTBr) {
-            text.append("\n");
+            text.append('\n');
         }
         if (o instanceof CTEmpty) {
             // Some inline text elements get returned not as
@@ -1183,13 +1183,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             //  rules for that case
             String tagName = o.getDomNode().getNodeName();
             if ("w:tab".equals(tagName) || "tab".equals(tagName)) {
-                text.append("\t");
+                text.append('\t');
             }
             if ("w:br".equals(tagName) || "br".equals(tagName)) {
-                text.append("\n");
+                text.append('\n');
             }
             if ("w:cr".equals(tagName) || "cr".equals(tagName)) {
-                text.append("\n");
+                text.append('\n');
             }
         }
         if (o instanceof CTFtnEdnRef) {
