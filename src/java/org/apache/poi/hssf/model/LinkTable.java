@@ -547,8 +547,8 @@ final class LinkTable {
 		    // Workbook scoped name, not actually external after all
 		    NameRecord nr = getNameRecord(definedNameIndex);
 		    int sheetNumber = nr.getSheetNumber();
-		    
-		    StringBuffer text = new StringBuffer();
+
+			StringBuilder text = new StringBuilder(64);
 		    if (sheetNumber > 0) {
 		        String sheetName = workbook.getSheetName(sheetNumber-1);
 		        SheetNameFormatter.appendFormat(text, sheetName);

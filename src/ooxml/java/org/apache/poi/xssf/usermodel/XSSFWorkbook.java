@@ -1490,13 +1490,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         //short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
         //name.setExternSheetNumber(externSheetIndex);
         String[] parts = COMMA_PATTERN.split(reference);
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         for (int i = 0; i < parts.length; i++) {
             if(i>0) {
-                sb.append(",");
+                sb.append(',');
             }
             SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
-            sb.append("!");
+            sb.append('!');
             sb.append(parts[i]);
         }
         name.setRefersToFormula(sb.toString());
