@@ -112,3 +112,7 @@ java.util.concurrent.Future#cancel(boolean)
 
 @defaultMessage Unnecessary, inefficient, and confusing conversion of String.toString
 java.lang.String#toString()
+
+#@defaultMessage Deprecated Java APIs
+#java.lang.StringBuffer
+#java.util.Hashtable
