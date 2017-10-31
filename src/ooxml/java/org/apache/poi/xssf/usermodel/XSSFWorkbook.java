@@ -275,11 +275,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         load(XSSFFactory.getInstance());
         
         // some broken Workbooks miss this...
-        if(!workbook.isSetBookViews()) {
-            CTBookViews bvs = workbook.addNewBookViews();
-            CTBookView bv = bvs.addNewWorkbookView();
-            bv.setActiveTab(0);
-        }
+        setBookViewsIfMissing();
     }
 
     /**
@@ -297,19 +293,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *   </code></pre>
      */
     public XSSFWorkbook(InputStream is) throws IOException {
-        super(PackageHelper.open(is));
-
-        beforeDocumentRead();
-        
-        // Build a tree of POIXMLDocumentParts, this workbook being the root
-        load(XSSFFactory.getInstance());
-
-        // some broken Workbooks miss this...
-        if(!workbook.isSetBookViews()) {
-            CTBookViews bvs = workbook.addNewBookViews();
-            CTBookView bv = bvs.addNewWorkbookView();
-            bv.setActiveTab(0);
-        }
+        this(PackageHelper.open(is));
     }
 
     /**
@@ -459,9 +443,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         CTWorkbookPr workbookPr = workbook.addNewWorkbookPr();
         workbookPr.setDate1904(false);
 
-        CTBookViews bvs = workbook.addNewBookViews();
-        CTBookView bv = bvs.addNewWorkbookView();
-        bv.setActiveTab(0);
+        setBookViewsIfMissing();
         workbook.addNewSheets();
 
         POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
@@ -475,6 +457,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         namedRangesByName = new ArrayListValuedHashMap<>();
         sheets = new ArrayList<>();
         pivotTables = new ArrayList<>();
+    }
+    
+    private void setBookViewsIfMissing() {
+        if(!workbook.isSetBookViews()) {
+            CTBookViews bvs = workbook.addNewBookViews();
+            CTBookView bv = bvs.addNewWorkbookView();
+            bv.setActiveTab(0);
+        }
     }
 
     /**
