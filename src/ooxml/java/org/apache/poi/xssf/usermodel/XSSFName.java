@@ -283,7 +283,7 @@ public final class XSSFName implements Name {
      * Get the sheets name which this named range is referenced to
      *
      * @return sheet name, which this named range referred to.
-     * Empty string if the referenced sheet name weas not found.
+     * Empty string if the referenced sheet name was not found.
      */
     public String getSheetName() {
         if (_ctName.isSetLocalSheetId()) {

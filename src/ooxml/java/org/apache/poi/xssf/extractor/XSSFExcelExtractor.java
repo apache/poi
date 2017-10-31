@@ -135,7 +135,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
             formatter = new DataFormatter(locale);
         }
 
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder(64);
         for(Sheet sh : workbook) {
             XSSFSheet sheet = (XSSFSheet) sh;
             if(includeSheetNames) {
@@ -229,13 +229,13 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
         return text.toString();
     }
 
-    private void handleStringCell(StringBuffer text, Cell cell) {
+    private void handleStringCell(StringBuilder text, Cell cell) {
         String contents = cell.getRichStringCellValue().getString();
         checkMaxTextSize(text, contents);
         text.append(contents);
     }
 
-    private void handleNonStringCell(StringBuffer text, Cell cell, DataFormatter formatter) {
+    private void handleNonStringCell(StringBuilder text, Cell cell, DataFormatter formatter) {
         CellType type = cell.getCellType();
         if (type == CellType.FORMULA) {
             type = cell.getCachedFormulaResultType();

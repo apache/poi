@@ -121,7 +121,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     {
         return createCell(column, CellType.BLANK);
     }
-    
+
     /**
      * Use this to create new cells within the row and return it.
      * <p>
