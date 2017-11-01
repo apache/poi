@@ -36,11 +36,17 @@ import org.apache.poi.util.Internal;
 public abstract class RowShifter {
     protected final Sheet sheet;
 
-    public RowShifter(Sheet sh) {
-        sheet = sh;
-    }
-
-    /**
+    protected FormulaShifter shifter; 
+    
+    public RowShifter(Sheet sh) { 
+        sheet = sh; 
+    } 
+ 
+    public RowShifter(Sheet sh, FormulaShifter shifter) { 
+        sheet = sh; 
+        this.shifter = shifter; 
+    } 
+  /**
      * Shifts, grows, or shrinks the merged regions due to a row shift.
      * Merged regions that are completely overlaid by shifting will be deleted.
      *

@@ -702,6 +702,7 @@ public interface Sheet extends Iterable<Row> {
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
     void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight);
+    void shiftColumns(int startColumn, int endColumn, int n);
 
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.

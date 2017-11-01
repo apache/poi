@@ -84,8 +84,10 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter;
 import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.apache.poi.xssf.usermodel.helpers.XSSFShiftingManager;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -2985,7 +2987,70 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         XSSFVMLDrawing vml = getVMLDrawing(false);
 
-        // first remove all rows which will be overwritten
+        int sheetIndex = getWorkbook().getSheetIndex(this);
+        String sheetName = getWorkbook().getSheetName(sheetIndex);
+        FormulaShifter shifter = FormulaShifter.createForRowShift(
+                                   sheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL2007);
+        removeOverwritten(vml, startRow, endRow, n);
+
+        XSSFRowShifter rowShifter = new XSSFRowShifter(this, shifter);
+        rowShifter.doShiftingAndProcessComments(vml, startRow, endRow, n, copyRowHeight, rowIterator(), sheetComments); 
+        rowShifter.shiftMergedRegions(startRow, endRow, n);
+
+        XSSFShiftingManager shiftingManager = new XSSFShiftingManager(this, shifter);
+        shiftingManager.updateNamedRanges();
+        shiftingManager.updateFormulas();
+        shiftingManager.updateConditionalFormatting();
+        shiftingManager.updateHyperlinks();
+
+        //rebuild the _rows map
+        Map<Integer, XSSFRow> map = new HashMap<Integer, XSSFRow>();
+        for(XSSFRow r : _rows.values()) {
+            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
+            map.put(rownumI, r);
+        }
+        _rows.clear();
+        _rows.putAll(map);
+    }
+    
+    /**
+     * Shifts columns between startColumn and endColumn n number of columns.
+     * If you use a negative number, it will shift columns left.
+     * Code ensures that columns don't wrap around
+     *
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param n the number of columns to shift
+     */    
+    @Override
+    public void shiftColumns(int startColumn, int endColumn, final int n) {
+        XSSFVMLDrawing vml = getVMLDrawing(false);
+        
+        FormulaShifter shifter = FormulaShifter.createForItemShift(this, false, startColumn, endColumn, n);
+        XSSFColumnShifter columnShifter = new XSSFColumnShifter(this, shifter);
+        columnShifter.shiftColumns(startColumn, endColumn, n);
+        columnShifter.shiftMergedRegions(startColumn, startColumn, n);
+        columnShifter.shiftComments(vml, startColumn, endColumn, n, sheetComments);
+
+        XSSFShiftingManager shiftingManager = new XSSFShiftingManager(this, shifter);
+        shiftingManager.updateFormulas();
+        shiftingManager.updateConditionalFormatting();
+        shiftingManager.updateHyperlinks();
+        shiftingManager.updateNamedRanges();
+
+        //rebuild the _rows map
+        Map<Integer, XSSFRow> map = new HashMap<Integer, XSSFRow>();
+        for(XSSFRow r : _rows.values()) {
+            final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
+            map.put(rownumI, r);
+        }
+        _rows.clear();
+        _rows.putAll(map);
+    }
+    
+    // remove all rows which will be overwritten
+     private void removeOverwritten(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
@@ -3086,12 +3151,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             if(rownum < startRow || rownum > endRow) {
                 continue;
             }
-
-            if (!copyRowHeight) {
-                row.setHeight((short)-1);
-            }
-
-            row.shift(n);
         }
         
         // adjust all the affected comment-structures now
@@ -3101,12 +3160,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             entry.getKey().setRow(entry.getValue());
         }
         
-        XSSFRowShifter rowShifter = new XSSFRowShifter(this);
-
         int sheetIndex = getWorkbook().getSheetIndex(this);
         String sheetName = getWorkbook().getSheetName(sheetIndex);
         FormulaShifter shifter = FormulaShifter.createForRowShift(
                                    sheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL2007);
+        XSSFRowShifter rowShifter = new XSSFRowShifter(this, shifter);
+
 
         rowShifter.updateNamedRanges(shifter);
         rowShifter.updateFormulas(shifter);

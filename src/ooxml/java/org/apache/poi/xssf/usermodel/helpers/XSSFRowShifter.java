@@ -17,40 +17,28 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.ptg.AreaErrPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Internal;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.apache.poi.xssf.usermodel.XSSFVMLDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 
 /**
  * Helper for shifting rows up or down
@@ -60,228 +48,130 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 public final class XSSFRowShifter extends RowShifter {
     private static final POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
 
+    private XSSFShiftingManager formulaShiftingManager;
+    
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);
     }
+    public XSSFRowShifter(Sheet sh, FormulaShifter shifter) {
+        super(sh, shifter);
+        formulaShiftingManager = new XSSFShiftingManager(sh, shifter);
+    }
+    
+    // do the actual moving and also adjust comments/rowHeight
+    // we need to sort it in a way so the shifting does not mess up the structures, 
+    // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
+    public void doShiftingAndProcessComments(XSSFVMLDrawing vml, int startRow, int endRow, final int n, 
+    		boolean copyRowHeight, Iterator<Row> rowIterator, CommentsTable sheetComments){
+        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
+            @Override
+            public int compare(XSSFComment o1, XSSFComment o2) {
+                int row1 = o1.getRow();
+                int row2 = o2.getRow();
+                
+                if(row1 == row2) {
+                    // ordering is not important when row is equal, but don't return zero to still 
+                    // get multiple comments per row into the map
+                    return o1.hashCode() - o2.hashCode();
+                }
 
-    /**
-     * Updated named ranges
-     */
-    public void updateNamedRanges(FormulaShifter shifter) {
-        Workbook wb = sheet.getWorkbook();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
-        for (Name name : wb.getAllNames()) {
-            String formula = name.getRefersToFormula();
-            int sheetIndex = name.getSheetIndex();
-            final int rowIndex = -1; //don't care, named ranges are not allowed to include structured references
-
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex, rowIndex);
-            if (shifter.adjustFormula(ptgs, sheetIndex)) {
-                String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
-                name.setRefersToFormula(shiftedFmla);
+                // when shifting down, sort higher row-values first
+                if(n > 0) {
+                    return row1 < row2 ? 1 : -1;
+                } else {
+                    // sort lower-row values first when shifting up
+                    return row1 > row2 ? 1 : -1;
+                }
             }
-        }
-    }
+        });
+        
+        for (Iterator<Row> it = rowIterator; it.hasNext() ; ) {
+            XSSFRow row = (XSSFRow)it.next();
+            int rownum = row.getRowNum();
 
-    /**
-     * Update formulas.
-     */
-    public void updateFormulas(FormulaShifter shifter) {
-        //update formulas on the parent sheet
-        updateSheetFormulas(sheet, shifter);
-
-        //update formulas on other sheets
-        Workbook wb = sheet.getWorkbook();
-        for (Sheet sh : wb) {
-            if (sheet == sh) continue;
-            updateSheetFormulas(sh, shifter);
-        }
-    }
-
-    private void updateSheetFormulas(Sheet sh, FormulaShifter shifter) {
-        for (Row r : sh) {
-            XSSFRow row = (XSSFRow) r;
-            updateRowFormulas(row, shifter);
-        }
-    }
-
-    /**
-     * Update the formulas in specified row using the formula shifting policy specified by shifter
-     *
-     * @param row the row to update the formulas on
-     * @param shifter the formula shifting policy
-     */
-    @Internal
-    public void updateRowFormulas(Row row, FormulaShifter shifter) {
-        XSSFSheet sheet = (XSSFSheet) row.getSheet();
-        for (Cell c : row) {
-            XSSFCell cell = (XSSFCell) c;
-
-            CTCell ctCell = cell.getCTCell();
-            if (ctCell.isSetF()) {
-                CTCellFormula f = ctCell.getF();
-                String formula = f.getStringValue();
-                if (formula.length() > 0) {
-                    String shiftedFormula = shiftFormula(row, formula, shifter);
-                    if (shiftedFormula != null) {
-                        f.setStringValue(shiftedFormula);
-                        if(f.getT() == STCellFormulaType.SHARED){
-                            int si = (int)f.getSi();
-                            CTCellFormula sf = sheet.getSharedFormula(si);
-                            sf.setStringValue(shiftedFormula);
-                            updateRefInCTCellFormula(row, shifter, sf);
+            if(sheetComments != null){
+                // calculate the new rownum
+                int newrownum = XSSFShiftingManager.shiftedItemIndex(startRow, endRow, n, rownum);
+                
+                // is there a change necessary for the current row?
+                if(newrownum != rownum) {
+                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                    for (CTComment comment : lst.getCommentArray()) {
+                        String oldRef = comment.getRef();
+                        CellReference ref = new CellReference(oldRef);
+                        
+                        // is this comment part of the current row?
+                        if(ref.getRow() == rownum) {
+                            XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
+                                    vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
+                            
+                            // we should not perform the shifting right here as we would then find
+                            // already shifted comments and would shift them again...
+                            commentsToShift.put(xssfComment, newrownum);
                         }
                     }
-
                 }
-
-                //Range of cells which the formula applies to.
-                updateRefInCTCellFormula(row, shifter, f);
             }
 
+            if(rownum < startRow || rownum > endRow) {
+                continue;
+            }
+            if (!copyRowHeight) {
+                row.setHeight((short)-1);
+            }
+            row.shift(n);
         }
-    }
-
-    private void updateRefInCTCellFormula(Row row, FormulaShifter shifter, CTCellFormula f) {
-        if (f.isSetRef()) { //Range of cells which the formula applies to.
-            String ref = f.getRef();
-            String shiftedRef = shiftFormula(row, ref, shifter);
-            if (shiftedRef != null) f.setRef(shiftedRef);
-        }
-    }
-
-    /**
-     * Shift a formula using the supplied FormulaShifter
-     *
-     * @param row     the row of the cell this formula belongs to. Used to get a reference to the parent workbook.
-     * @param formula the formula to shift
-     * @param shifter the FormulaShifter object that operates on the parsed formula tokens
-     * @return the shifted formula if the formula was changed,
-     *         <code>null</code> if the formula wasn't modified
-     */
-    private static String shiftFormula(Row row, String formula, FormulaShifter shifter) {
-        Sheet sheet = row.getSheet();
-        Workbook wb = sheet.getWorkbook();
-        int sheetIndex = wb.getSheetIndex(sheet);
-        final int rowIndex = row.getRowNum();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
         
-        try {
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
-            String shiftedFmla = null;
-            if (shifter.adjustFormula(ptgs, sheetIndex)) {
-                shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
-            }
-            return shiftedFmla;
-        } catch (FormulaParseException fpe) {
-            // Log, but don't change, rather than breaking
-            logger.log(POILogger.WARN, "Error shifting formula on row ", row.getRowNum(), fpe);
-            return formula;
+        // adjust all the affected comment-structures now
+        // the Map is sorted and thus provides them in the order that we need here, 
+        // i.e. from down to up if shifting down, vice-versa otherwise
+        for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
+            entry.getKey().setRow(entry.getValue());
         }
+    	
     }
+    
 
-    public void updateConditionalFormatting(FormulaShifter shifter) {
-        XSSFSheet xsheet = (XSSFSheet) sheet;
-        XSSFWorkbook wb = xsheet.getWorkbook();
-        int sheetIndex = wb.getSheetIndex(sheet);
-        final int rowIndex = -1; //don't care, structured references not allowed in conditional formatting
-
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        CTWorksheet ctWorksheet = xsheet.getCTWorksheet();
-        CTConditionalFormatting[] conditionalFormattingArray = ctWorksheet.getConditionalFormattingArray();
-        // iterate backwards due to possible calls to ctWorksheet.removeConditionalFormatting(j)
-        for (int j = conditionalFormattingArray.length - 1; j >= 0; j--) {
-            CTConditionalFormatting cf = conditionalFormattingArray[j];
-
-            ArrayList<CellRangeAddress> cellRanges = new ArrayList<>();
-            for (Object stRef : cf.getSqref()) {
-                String[] regions = stRef.toString().split(" ");
-                for (String region : regions) {
-                    cellRanges.add(CellRangeAddress.valueOf(region));
-                }
-            }
-
-            boolean changed = false;
-            List<CellRangeAddress> temp = new ArrayList<>();
-            for (CellRangeAddress craOld : cellRanges) {
-                CellRangeAddress craNew = shiftRange(shifter, craOld, sheetIndex);
-                if (craNew == null) {
-                    changed = true;
-                    continue;
-                }
-                temp.add(craNew);
-                if (craNew != craOld) {
-                    changed = true;
-                }
-            }
-
-            if (changed) {
-                int nRanges = temp.size();
-                if (nRanges == 0) {
-                    ctWorksheet.removeConditionalFormatting(j);
-                    continue;
-                }
-                List<String> refs = new ArrayList<>();
-                for(CellRangeAddress a : temp) refs.add(a.formatAsString());
-                cf.setSqref(refs);
-            }
-
-            for(CTCfRule cfRule : cf.getCfRuleArray()){
-                String[] formulaArray = cfRule.getFormulaArray();
-                for (int i = 0; i < formulaArray.length; i++) {
-                    String formula = formulaArray[i];
-                    Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
-                    if (shifter.adjustFormula(ptgs, sheetIndex)) {
-                        String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
-                        cfRule.setFormulaArray(i, shiftedFmla);
-                    }
-                }
-            }
-        }
+    
+    /**
+     * Shift merged regions
+     * 
+     * @param startRow the row to start shifting
+     * @param endRow   the row to end shifting
+     * @param n        the number of rows to shift
+     * @return an array of merged cell regions
+     * @deprecated POI 3.15 beta 2. Use {@link #shiftMergedRegions(int, int, int)} instead.
+     */
+    public List<CellRangeAddress> shiftMerged(int startRow, int endRow, int n) {
+        return shiftMergedRegions(startRow, endRow, n);
     }
     
     /**
-     * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
-     * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
-     * do not track the content they point to.
-     *
-     * @param shifter
-     */
+        @deprecated, use FormulaShiftingManager.updateNamedRanges() directly instead
+    */
+    public void updateNamedRanges(FormulaShifter shifter) {
+        formulaShiftingManager.updateNamedRanges();
+    }
+    /**
+        @deprecated, use FormulaShiftingManager.updateFormulas() directly instead
+    */ 
+    public void updateFormulas(FormulaShifter shifter) {
+        formulaShiftingManager.updateFormulas();
+    }
+    /**
+        @deprecated, use FormulaShiftingManager.updateConditionalFormatting() directly instead
+     */ 
+    public void updateConditionalFormatting(FormulaShifter shifter) {
+        formulaShiftingManager.updateConditionalFormatting();
+    }    
+    /**
+        @deprecated, use FormulaShiftingManager.updateHyperlinks() directly instead
+     */ 
     public void updateHyperlinks(FormulaShifter shifter) {
-        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
-        List<? extends Hyperlink> hyperlinkList = sheet.getHyperlinkList();
+        formulaShiftingManager.updateHyperlinks();
+    }
+    public void updateRowFormulas(Row row, FormulaShifter shifter) {
+        // TODO Auto-generated method stub
         
-        for (Hyperlink hyperlink : hyperlinkList) {
-            XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
-            String cellRef = xhyperlink.getCellRef();
-            CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
-            CellRangeAddress shiftedRange = shiftRange(shifter, cra, sheetIndex);
-            if (shiftedRange != null && shiftedRange != cra) {
-                // shiftedRange should not be null. If shiftedRange is null, that means
-                // that a hyperlink wasn't deleted at the beginning of shiftRows when
-                // identifying rows that should be removed because they will be overwritten
-                xhyperlink.setCellReference(shiftedRange.formatAsString());
-            }
-        }
     }
-
-    private static CellRangeAddress shiftRange(FormulaShifter shifter, CellRangeAddress cra, int currentExternSheetIx) {
-        // FormulaShifter works well in terms of Ptgs - so convert CellRangeAddress to AreaPtg (and back) here
-        AreaPtg aptg = new AreaPtg(cra.getFirstRow(), cra.getLastRow(), cra.getFirstColumn(), cra.getLastColumn(), false, false, false, false);
-        Ptg[] ptgs = { aptg, };
-
-        if (!shifter.adjustFormula(ptgs, currentExternSheetIx)) {
-            return cra;
-        }
-        Ptg ptg0 = ptgs[0];
-        if (ptg0 instanceof AreaPtg) {
-            AreaPtg bptg = (AreaPtg) ptg0;
-            return new CellRangeAddress(bptg.getFirstRow(), bptg.getLastRow(), bptg.getFirstColumn(), bptg.getLastColumn());
-        }
-        if (ptg0 instanceof AreaErrPtg) {
-            return null;
-        }
-        throw new IllegalStateException("Unexpected shifted ptg class (" + ptg0.getClass().getName() + ")");
-    }
-
 }

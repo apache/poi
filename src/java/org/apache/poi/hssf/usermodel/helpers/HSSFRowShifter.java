@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
@@ -38,7 +39,9 @@ public final class HSSFRowShifter extends RowShifter {
     public HSSFRowShifter(HSSFSheet sh) {
         super(sh);
     }
-
+    public HSSFRowShifter(Sheet sh, FormulaShifter shifter) {
+        super(sh, shifter);
+    }
     @NotImplemented
     public void updateNamedRanges(FormulaShifter shifter) {
         throw new NotImplementedException("HSSFRowShifter.updateNamedRanges");

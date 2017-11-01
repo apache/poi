@@ -35,6 +35,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.helpers.XSSFShiftingManager;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
@@ -198,6 +199,26 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         return createCell(columnIndex, CellType.BLANK);
     }
 
+    /**
+     * Use this to create new cells within the row and return it.
+     *
+     * @param columnIndex - the column number this cell represents
+     * @param type - the cell's data type
+     * @return XSSFCell a high level representation of the created cell.
+     * @throws IllegalArgumentException if the specified cell type is invalid, columnIndex < 0
+     *   or greater than 16384, the maximum number of columns supported by the SpreadsheetML format (.xlsx)
+     * @see CellType#BLANK
+     * @see CellType#BOOLEAN
+     * @see CellType#ERROR
+     * @see CellType#FORMULA
+     * @see CellType#NUMERIC
+     * @see CellType#STRING
+     * @deprecated POI 3.15 beta 3. Use {@link #createCell(int, CellType)} instead.
+     */
+    @Override
+    public XSSFCell createCell(int columnIndex, int type) {
+        return createCell(columnIndex, CellType.forInt(type));
+    }
     /**
      * Use this to create new cells within the row and return it.
      *
@@ -552,25 +573,13 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param n the number of rows to move
      */
-    protected void shift(int n) {
+    public void shift(int n) {
         int rownum = getRowNum() + n;
-        CalculationChain calcChain = _sheet.getWorkbook().getCalculationChain();
-        int sheetId = (int)_sheet.sheet.getSheetId();
         String msg = "Row[rownum="+getRowNum()+"] contains cell(s) included in a multi-cell array formula. " +
                 "You cannot change part of an array.";
         for(Cell c : this){
-            XSSFCell cell = (XSSFCell)c;
-            if(cell.isPartOfArrayFormulaGroup()){
-                cell.notifyArrayFormulaChanging(msg);
-            }
-
-            //remove the reference in the calculation chain
-            if(calcChain != null) calcChain.removeItem(sheetId, cell.getReference());
-
-            CTCell ctCell = cell.getCTCell();
-            String r = new CellReference(rownum, cell.getColumnIndex()).formatAsString();
-            ctCell.setR(r);
-        }
+            ((XSSFCell)c).updateCellReferencesForShifting(msg);
+          }
         setRowNum(rownum);
     }
     
@@ -620,14 +629,14 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
                 destCell.copyCellFrom(srcCell, policy);
             }
 
-            final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
             final int sheetIndex = _sheet.getWorkbook().getSheetIndex(_sheet);
             final String sheetName = _sheet.getWorkbook().getSheetName(sheetIndex);
             final int srcRowNum = srcRow.getRowNum();
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
             final FormulaShifter shifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
-            rowShifter.updateRowFormulas(this, shifter);
+            final XSSFShiftingManager formulaShiftingManager = new XSSFShiftingManager(_sheet, shifter); 
+            formulaShiftingManager.updateRowFormulas(this);
 
             // Copy merged regions that are fully contained on the row
             // FIXME: is this something that rowShifter could be doing?

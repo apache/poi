@@ -950,7 +950,7 @@ public class HSSFCell implements Cell {
      * @return CellValueRecordInterface representing the cell via the low level api.
      */
 
-    protected CellValueRecordInterface getCellValueRecord()
+    public CellValueRecordInterface getCellValueRecord()
     {
         return _record;
     }
