@@ -101,7 +101,7 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
     }
     
     public String toFormulaString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder(64);
         if (externalWorkbookNumber >= 0) {
             sb.append('[');
             sb.append(externalWorkbookNumber);

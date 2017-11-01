@@ -97,7 +97,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
     }
 
     public String getText() {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder(64);
         XWPFHeaderFooterPolicy hfPolicy = document.getHeaderFooterPolicy();
 
         // Start out with all headers
@@ -115,7 +115,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         return text.toString();
     }
 
-    public void appendBodyElementText(StringBuffer text, IBodyElement e) {
+    public void appendBodyElementText(StringBuilder text, IBodyElement e) {
         if (e instanceof XWPFParagraph) {
             appendParagraphText(text, (XWPFParagraph) e);
         } else if (e instanceof XWPFTable) {
@@ -125,7 +125,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         }
     }
 
-    public void appendParagraphText(StringBuffer text, XWPFParagraph paragraph) {
+    public void appendParagraphText(StringBuilder text, XWPFParagraph paragraph) {
         CTSectPr ctSectPr = null;
         if (paragraph.getCTP().getPPr() != null) {
             ctSectPr = paragraph.getCTP().getPPr().getSectPr();
@@ -170,7 +170,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         }
     }
 
-    private void appendTableText(StringBuffer text, XWPFTable table) {
+    private void appendTableText(StringBuilder text, XWPFTable table) {
         //this works recursively to pull embedded tables from tables
         for (XWPFTableRow row : table.getRows()) {
             List<ICell> cells = row.getTableICells();
@@ -189,7 +189,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         }
     }
 
-    private void extractFooters(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+    private void extractFooters(StringBuilder text, XWPFHeaderFooterPolicy hfPolicy) {
         if (hfPolicy == null) return;
 
         if (hfPolicy.getFirstPageFooter() != null) {
@@ -203,7 +203,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         }
     }
 
-    private void extractHeaders(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+    private void extractHeaders(StringBuilder text, XWPFHeaderFooterPolicy hfPolicy) {
         if (hfPolicy == null) return;
 
         if (hfPolicy.getFirstPageHeader() != null) {

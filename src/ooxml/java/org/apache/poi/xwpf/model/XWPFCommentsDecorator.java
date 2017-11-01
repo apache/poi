@@ -27,7 +27,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTMarkupRange;
  * @author Yury Batrakov (batrakov at gmail.com)
  */
 public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
-    private StringBuffer commentText;
+    private StringBuilder commentText;
 
     public XWPFCommentsDecorator(XWPFParagraphDecorator nextDecorator) {
         this(nextDecorator.paragraph, nextDecorator);
@@ -37,11 +37,15 @@ public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
         super(paragraph, nextDecorator);
 
         XWPFComment comment;
-        commentText = new StringBuffer();
+        commentText = new StringBuilder(64);
 
         for (CTMarkupRange anchor : paragraph.getCTP().getCommentRangeStartArray()) {
-            if ((comment = paragraph.getDocument().getCommentByID(anchor.getId().toString())) != null)
-                commentText.append("\tComment by " + comment.getAuthor() + ": " + comment.getText());
+            if ((comment = paragraph.getDocument().getCommentByID(anchor.getId().toString())) != null) {
+                commentText.append("\tComment by ")
+                    .append(comment.getAuthor())
+                    .append(": ")
+                    .append(comment.getText());
+            }
         }
     }
 

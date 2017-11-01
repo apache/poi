@@ -33,9 +33,11 @@ import org.apache.poi.util.LittleEndian;
  *  handles decompressing it for you.
  */
 public final class CompressedRTF extends LZWDecompresser {
-   public static final byte[] COMPRESSED_SIGNATURE =
+   // github-77: mutable static fields could be changed by malicious code or by accident.
+   // These byte arrays should be package protected.
+   /*package*/ static final byte[] COMPRESSED_SIGNATURE =
       new byte[] { (byte)'L', (byte)'Z', (byte)'F', (byte)'u' };
-   public static final byte[] UNCOMPRESSED_SIGNATURE =
+   /*package*/ static final byte[] UNCOMPRESSED_SIGNATURE =
       new byte[] { (byte)'M', (byte)'E', (byte)'L', (byte)'A' };
    public static final int COMPRESSED_SIGNATURE_INT =
       LittleEndian.getInt(COMPRESSED_SIGNATURE);

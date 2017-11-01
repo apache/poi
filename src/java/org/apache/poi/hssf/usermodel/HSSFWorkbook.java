@@ -1650,7 +1650,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             // adding one here because 0 indicates a global named region; doesn't make sense for print areas
         }
         String[] parts = COMMA_PATTERN.split(reference);
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         for (int i = 0; i < parts.length; i++) {
             if(i>0) {
                 sb.append(",");

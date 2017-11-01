@@ -223,7 +223,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
 
     //// ContentHandler methods ////
 
-    private StringBuffer characters;
+    private StringBuilder characters;
     private boolean tIsOpen;
     private boolean inRPh;
 
@@ -241,7 +241,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
 
             this.strings = new ArrayList<>(this.uniqueCount);
             this.phoneticStrings = new HashMap<>();
-            characters = new StringBuffer();
+            characters = new StringBuilder(64);
         } else if ("si".equals(localName)) {
             characters.setLength(0);
         } else if ("t".equals(localName)) {

@@ -206,7 +206,7 @@ public final class POIDataSamples {
         }
         File dataDir = new File(dataDirName, _moduleDir);
         if (!dataDir.exists()) {
-            throw new RuntimeException("Data dir '" + _moduleDir + " does not exist");
+            throw new RuntimeException("Data dir '" + _moduleDir + "' does not exist");
         }
         // convert to canonical file, to make any subsequent error messages
         // clearer.

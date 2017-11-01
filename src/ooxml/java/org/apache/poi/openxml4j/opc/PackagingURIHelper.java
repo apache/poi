@@ -601,7 +601,7 @@ public final class PackagingURIHelper {
 	 *         characters.
 	 */
 	public static String decodeURI(URI uri) {
-		StringBuffer retVal = new StringBuffer();
+		StringBuilder retVal = new StringBuilder(64);
 		String uriStr = uri.toASCIIString();
 		char c;
 		final int length = uriStr.length();

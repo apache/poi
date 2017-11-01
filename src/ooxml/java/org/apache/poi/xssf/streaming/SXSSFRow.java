@@ -139,6 +139,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     {
         return createCell(column, CellType.forInt(type));
     }
+
     /**
      * Use this to create new cells within the row and return it.
      * <p>
