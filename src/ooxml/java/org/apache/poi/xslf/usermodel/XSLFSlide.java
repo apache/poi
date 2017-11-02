@@ -124,6 +124,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return "sld";        
     }
 
+    @Override
     public XSLFSlideLayout getMasterSheet(){
         return getSlideLayout();
     }
@@ -162,6 +163,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
        return _comments;
     }
 
+    @Override
     public XSLFNotes getNotes() {
        if(_notes == null) {
           for (POIXMLDocumentPart p : getRelations()) {
@@ -217,10 +219,12 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
 
+    @Override
     public boolean getFollowMasterObjects() {
         return getFollowMasterGraphics();
     }
     
+    @Override
     public void setFollowMasterObjects(boolean follow) {
         setFollowMasterGraphics(follow);
     }
@@ -260,20 +264,24 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return this;
     }
 
+    @Override
     public boolean getFollowMasterBackground() {
         return false;
     }
     
+    @Override
     @NotImplemented
     public void setFollowMasterBackground(boolean follow) {
         // not implemented ... also not in the specs
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean getFollowMasterColourScheme() {
         return false;
     }
     
+    @Override
     @NotImplemented
     public void setFollowMasterColourScheme(boolean follow) {
         // not implemented ... only for OLE objects in the specs
@@ -309,4 +317,24 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getDisplayPlaceholder(Placeholder placeholder) {
         return false;
     }
+
+    
+    @Override
+    public void setHidden(boolean hidden) {
+        CTSlide sld = getXmlObject();
+        if (hidden) {
+            sld.setShow(false);
+        } else {
+            // if the attribute does not exist, the slide is shown
+            if (sld.isSetShow()) {
+                sld.unsetShow();
+            }
+        }
+    }
+    
+    @Override
+    public boolean isHidden() {
+        CTSlide sld = getXmlObject();
+        return sld.isSetShow() && !sld.getShow();
+    }    
 }
