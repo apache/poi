@@ -102,9 +102,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private boolean formulasNotResults;
 
    // Gathers characters as they are seen.
-   private StringBuffer value = new StringBuffer();
-   private StringBuffer formula = new StringBuffer();
-   private StringBuffer headerFooter = new StringBuffer();
+   private StringBuilder value = new StringBuilder(64);
+   private StringBuilder formula = new StringBuilder(64);
+   private StringBuilder headerFooter = new StringBuilder(64);
 
    private Queue<CellAddress> commentCellRefs;
 

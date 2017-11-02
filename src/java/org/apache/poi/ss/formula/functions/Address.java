@@ -87,7 +87,7 @@ public class Address implements Function {
             }
 
             CellReference ref = new CellReference(row - 1, col - 1, pAbsRow, pAbsCol);
-            StringBuffer sb = new StringBuffer(32);
+            StringBuilder sb = new StringBuilder(32);
             if(sheetName != null) {
                 SheetNameFormatter.appendFormat(sb, sheetName);
                 sb.append('!');

@@ -18,7 +18,6 @@
 package org.apache.poi.xssf;
 
 import org.apache.poi.ss.format.TestCellFormatPart;
-import org.apache.poi.xssf.eventusermodel.TestXSSFReader;
 import org.apache.poi.xssf.extractor.TestXSSFExcelExtractor;
 import org.apache.poi.xssf.io.TestLoadSaveXSSF;
 import org.apache.poi.xssf.model.TestCommentsTable;
@@ -29,14 +28,13 @@ import org.apache.poi.xssf.util.TestNumericRanges;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-
 /**
  * Collects all tests for <tt>org.apache.poi.xssf</tt> and sub-packages.
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     AllXSSFUsermodelTests.class,
-    TestXSSFReader.class,
+    //TestXSSFReader.class, //converted to junit4
     TestXSSFExcelExtractor.class,
     TestLoadSaveXSSF.class,
     TestCommentsTable.class,

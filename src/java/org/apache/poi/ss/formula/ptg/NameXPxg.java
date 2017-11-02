@@ -76,7 +76,7 @@ public final class NameXPxg extends OperandPtg implements Pxg {
     }
 
     public String toFormulaString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder(64);
         boolean needsExclamation = false;
         if (externalWorkbookNumber >= 0) {
             sb.append('[');

@@ -275,11 +275,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         load(XSSFFactory.getInstance());
         
         // some broken Workbooks miss this...
-        if(!workbook.isSetBookViews()) {
-            CTBookViews bvs = workbook.addNewBookViews();
-            CTBookView bv = bvs.addNewWorkbookView();
-            bv.setActiveTab(0);
-        }
+        setBookViewsIfMissing();
     }
 
     /**
@@ -297,19 +293,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *   </code></pre>
      */
     public XSSFWorkbook(InputStream is) throws IOException {
-        super(PackageHelper.open(is));
-
-        beforeDocumentRead();
-        
-        // Build a tree of POIXMLDocumentParts, this workbook being the root
-        load(XSSFFactory.getInstance());
-
-        // some broken Workbooks miss this...
-        if(!workbook.isSetBookViews()) {
-            CTBookViews bvs = workbook.addNewBookViews();
-            CTBookView bv = bvs.addNewWorkbookView();
-            bv.setActiveTab(0);
-        }
+        this(PackageHelper.open(is));
     }
 
     /**
@@ -459,9 +443,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         CTWorkbookPr workbookPr = workbook.addNewWorkbookPr();
         workbookPr.setDate1904(false);
 
-        CTBookViews bvs = workbook.addNewBookViews();
-        CTBookView bv = bvs.addNewWorkbookView();
-        bv.setActiveTab(0);
+        setBookViewsIfMissing();
         workbook.addNewSheets();
 
         POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
@@ -475,6 +457,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         namedRangesByName = new ArrayListValuedHashMap<>();
         sheets = new ArrayList<>();
         pivotTables = new ArrayList<>();
+    }
+    
+    private void setBookViewsIfMissing() {
+        if(!workbook.isSetBookViews()) {
+            CTBookViews bvs = workbook.addNewBookViews();
+            CTBookView bv = bvs.addNewWorkbookView();
+            bv.setActiveTab(0);
+        }
     }
 
     /**
@@ -1500,13 +1490,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         //short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
         //name.setExternSheetNumber(externSheetIndex);
         String[] parts = COMMA_PATTERN.split(reference);
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         for (int i = 0; i < parts.length; i++) {
             if(i>0) {
-                sb.append(",");
+                sb.append(',');
             }
             SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
-            sb.append("!");
+            sb.append('!');
             sb.append(parts[i]);
         }
         name.setRefersToFormula(sb.toString());
