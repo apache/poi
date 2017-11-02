@@ -132,23 +132,6 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @return Cell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex < 0 or greate than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
-     * @deprecated POI 3.15 beta 3. Use {@link #createCell(int, CellType)} instead.
-     */
-    @Override
-    public SXSSFCell createCell(int column, int type)
-    {
-        return createCell(column, CellType.forInt(type));
-    }
-    /**
-     * Use this to create new cells within the row and return it.
-     * <p>
-     * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
-     * either through calling setCellValue or setCellType.
-     *
-     * @param column - the column number this cell represents
-     * @return Cell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or greate than a maximum number of supported columns
-     * (255 for *.xls, 1048576 for *.xlsx)
      */
     @Override
     public SXSSFCell createCell(int column, CellType type)

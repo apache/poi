@@ -702,6 +702,16 @@ public interface Sheet extends Iterable<Row> {
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
     void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight);
+
+    /**
+     * Shifts columns between startColumn and endColumn, n number of columns.
+     * If you use a negative number, it will shift columns left.
+     * Code ensures that columns don't wrap around
+     *
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param n the number of columns to shift
+     */
     void shiftColumns(int startColumn, int endColumn, int n);
 
     /**

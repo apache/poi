@@ -147,31 +147,33 @@ public final class XSSFRowShifter extends RowShifter {
     }
     
     /**
-        @deprecated, use FormulaShiftingManager.updateNamedRanges() directly instead
+        @deprecated in POI 4.0.0, use FormulaShiftingManager.updateNamedRanges() directly instead
     */
+    @Deprecated
     public void updateNamedRanges(FormulaShifter shifter) {
         formulaShiftingManager.updateNamedRanges();
     }
     /**
-        @deprecated, use FormulaShiftingManager.updateFormulas() directly instead
+        @deprecated in POI 4.0.0, use FormulaShiftingManager.updateFormulas() directly instead
     */ 
+    @Deprecated
     public void updateFormulas(FormulaShifter shifter) {
         formulaShiftingManager.updateFormulas();
     }
     /**
-        @deprecated, use FormulaShiftingManager.updateConditionalFormatting() directly instead
+        @deprecated in POI 4.0.0, use FormulaShiftingManager.updateConditionalFormatting() directly instead
      */ 
+    @Deprecated
     public void updateConditionalFormatting(FormulaShifter shifter) {
         formulaShiftingManager.updateConditionalFormatting();
     }    
     /**
-        @deprecated, use FormulaShiftingManager.updateHyperlinks() directly instead
+        @deprecated in POI 4.0.0, use FormulaShiftingManager.updateHyperlinks() directly instead
      */ 
+    @Deprecated
     public void updateHyperlinks(FormulaShifter shifter) {
         formulaShiftingManager.updateHyperlinks();
     }
     public void updateRowFormulas(Row row, FormulaShifter shifter) {
-        // TODO Auto-generated method stub
-        
     }
 }

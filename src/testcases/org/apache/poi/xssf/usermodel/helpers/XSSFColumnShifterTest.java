@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class XSSFColumnShifterTest {
 
-	//private static Logger log = LoggerFactory.getLogger(XSSFColumnShifterTest.class + "_T");
+	private static Logger log = LoggerFactory.getLogger(XSSFColumnShifterTest.class + "_T");
 	private XSSFSheet sheet1, sheet2;
 	private Workbook wb07;
 
@@ -68,23 +68,21 @@ public class XSSFColumnShifterTest {
 		row.createCell(2, CellType.FORMULA).setCellFormula("$C1+C$2");
 		row = sheet1.createRow(5);
 		row.createCell(1, CellType.NUMERIC).setCellValue(1.5);
-		/*
-		 * sheet2 = (XSSFSheet)wb07.createSheet("sheet2"); row =
-		 * sheet2.createRow(0); row.createCell(0,
-		 * CellType.NUMERIC).setCellValue(10); row.createCell(1,
-		 * CellType.NUMERIC).setCellValue(11); row.createCell(2,
-		 * CellType.FORMULA).setCellFormula("SUM(Sheet1!B3:C3)"); row =
-		 * sheet2.createRow(1); row.createCell(0,
-		 * CellType.NUMERIC).setCellValue(21); row.createCell(1,
-		 * CellType.NUMERIC).setCellValue(22); row.createCell(2,
-		 * CellType.NUMERIC).setCellValue(23); row = sheet2.createRow(2);
-		 * row.createCell(0,
-		 * CellType.FORMULA).setCellFormula("Sheet1!A4+Sheet1!C2+A2");
-		 * row.createCell(1,
-		 * CellType.FORMULA).setCellFormula("SUM(Sheet1!A3:$C3)"); row =
-		 * sheet2.createRow(3); row.createCell(0,
-		 * CellType.STRING).setCellValue("dummy");
-		 */
+		
+	  sheet2 = (XSSFSheet)wb07.createSheet("sheet2"); row =
+	  sheet2.createRow(0); row.createCell(0, CellType.NUMERIC).setCellValue(10); 
+	  row.createCell(1, CellType.NUMERIC).setCellValue(11); 
+	  row.createCell(2, CellType.FORMULA).setCellFormula("SUM(Sheet1!B3:C3)"); 
+	  row = sheet2.createRow(1); 
+	  row.createCell(0, CellType.NUMERIC).setCellValue(21); 
+	  row.createCell(1, CellType.NUMERIC).setCellValue(22); 
+	  row.createCell(2, CellType.NUMERIC).setCellValue(23); 
+	  row = sheet2.createRow(2);
+	  row.createCell(0, CellType.FORMULA).setCellFormula("Sheet1!A4+Sheet1!C2+A2");
+	  row.createCell(1, CellType.FORMULA).setCellFormula("SUM(Sheet1!A3:$C3)"); 
+	  row = sheet2.createRow(3); 
+	  row.createCell(0, CellType.STRING).setCellValue("dummy");
+		 
 		// writeSheetToLog(sheet1);
 	}
 
@@ -125,10 +123,10 @@ public class XSSFColumnShifterTest {
 
 	public static void writeSheetToLog(Sheet sheet) {
 		int rowIndex = sheet.getFirstRowNum();
-		/*while (rowIndex <= sheet.getLastRowNum()) {
+		while (rowIndex <= sheet.getLastRowNum()) {
 			Row row = sheet.getRow(rowIndex);
 			if (row == null)
-				;//log.trace("null row!");
+				log.trace("null row");
 			else
 				log.trace(String.format(
 						"%1$12s; %2$12s; %3$12s; %4$12s; %5$12s; %6$12s; %7$12s; %8$12s; %9$12s; %10$12s; %11$12s",
@@ -145,7 +143,7 @@ public class XSSFColumnShifterTest {
 						row.getCell(10) != null ? row.getCell(10).getCellComment() : "null"));
 			rowIndex++;
 		}
-		log.trace("");*/
+		log.trace("");
 	}
 
 	@Test

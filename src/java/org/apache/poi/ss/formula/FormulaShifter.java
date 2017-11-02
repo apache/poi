@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Area2DPtgBase;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -643,10 +643,6 @@ public final class FormulaShifter {
     	return transposed.formatAsString();
     }
     
-	private int getSheetIndex(Sheet sheet){
-		return sheet.getWorkbook().getSheetIndex(sheet);
-	}
-
 	public static SpreadsheetVersion getSpreadsheetVersion(Sheet sheet){
 		if(sheet.getWorkbook() instanceof XSSFWorkbook)
 			return SpreadsheetVersion.EXCEL2007;

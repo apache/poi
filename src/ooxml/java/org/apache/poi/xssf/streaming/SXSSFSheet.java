@@ -2119,6 +2119,6 @@ public class SXSSFSheet implements Sheet
     @NotImplemented 
     @Override 
     public void shiftColumns(int startColumn, int endColumn, int n){ 
-      throw new RuntimeException("NotImplemented"); 
+      throw new UnsupportedOperationException("NotImplemented"); 
     }
 }

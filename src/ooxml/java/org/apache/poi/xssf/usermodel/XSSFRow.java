@@ -207,26 +207,6 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return XSSFCell a high level representation of the created cell.
      * @throws IllegalArgumentException if the specified cell type is invalid, columnIndex < 0
      *   or greater than 16384, the maximum number of columns supported by the SpreadsheetML format (.xlsx)
-     * @see CellType#BLANK
-     * @see CellType#BOOLEAN
-     * @see CellType#ERROR
-     * @see CellType#FORMULA
-     * @see CellType#NUMERIC
-     * @see CellType#STRING
-     * @deprecated POI 3.15 beta 3. Use {@link #createCell(int, CellType)} instead.
-     */
-    @Override
-    public XSSFCell createCell(int columnIndex, int type) {
-        return createCell(columnIndex, CellType.forInt(type));
-    }
-    /**
-     * Use this to create new cells within the row and return it.
-     *
-     * @param columnIndex - the column number this cell represents
-     * @param type - the cell's data type
-     * @return XSSFCell a high level representation of the created cell.
-     * @throws IllegalArgumentException if the specified cell type is invalid, columnIndex < 0
-     *   or greater than 16384, the maximum number of columns supported by the SpreadsheetML format (.xlsx)
      */
     @Override
     public XSSFCell createCell(int columnIndex, CellType type) {

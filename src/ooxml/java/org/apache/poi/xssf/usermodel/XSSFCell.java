@@ -49,11 +49,11 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
-import org.apache.poi.xssf.model.CalculationChain;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -1313,9 +1313,8 @@ public final class XSSFCell implements Cell {
         notifyArrayFormulaChanging(msg);
     }
     
-    /***
-     * Moved from XSSFRow.shift(). Not sure what is purpose. 
-     */
+    
+    //Moved from XSSFRow.shift(). Not sure what is purpose. 
     public void updateCellReferencesForShifting(String msg){
         if(isPartOfArrayFormulaGroup())
             notifyArrayFormulaChanging(msg);

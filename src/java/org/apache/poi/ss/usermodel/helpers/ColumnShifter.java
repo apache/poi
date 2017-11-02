@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.Cell;
 
 public class ColumnShifter {
     protected final Sheet shiftingSheet;
@@ -70,9 +71,9 @@ public class ColumnShifter {
         return shiftedRegions;
     }
     
-    public static void cloneCellValue(org.apache.poi.ss.usermodel.Cell oldCell, org.apache.poi.ss.usermodel.Cell newCell) {
+    public static void cloneCellValue(Cell oldCell, Cell newCell) {
         newCell.setCellComment(oldCell.getCellComment());
-        switch (oldCell.getCellTypeEnum()) {
+        switch (oldCell.getCellType()) {
             case STRING:
                 newCell.setCellValue(oldCell.getStringCellValue());
                 break;

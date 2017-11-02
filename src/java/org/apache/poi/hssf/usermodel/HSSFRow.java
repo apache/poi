@@ -127,26 +127,6 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @return HSSFCell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex < 0 or greater than 255,
      *   the maximum number of columns supported by the Excel binary format (.xls)
-     * @deprecated POI 3.15 beta 3
-     */
-    @Override
-    public HSSFCell createCell(int columnIndex, int type)
-    {
-        return createCell(columnIndex, CellType.forInt(type));
-    }
-    /**
-     * Use this to create new cells within the row and return it.
-     * <p>
-     * The cell that is returned will be of the requested type.
-     * The type can be changed either through calling setCellValue 
-     *  or setCellType, but there is a small overhead to doing this,
-     *  so it is best to create the required type up front.
-     *
-     * @param columnIndex - the column number this cell represents
-     *
-     * @return HSSFCell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or greater than 255,
-     *   the maximum number of columns supported by the Excel binary format (.xls)
      */
     @Override
     public HSSFCell createCell(int columnIndex, CellType type)
