@@ -127,7 +127,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * by flattening out the text of its paragraph(s)
      */
     public String getText() {
-        StringBuffer t = new StringBuffer();
+        StringBuilder t = new StringBuilder(64);
         //TODO: simplify this to get ibody elements in order
         for (int i = 0; i < paragraphs.size(); i++) {
             if (!paragraphs.get(i).isEmpty()) {

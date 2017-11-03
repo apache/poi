@@ -420,7 +420,7 @@ public class Variant
         }
         
         name += numberToName.get(vt);
-        return (name != null && !"".equals(name)) ? name : "unknown variant type";
+        return !name.isEmpty() ? name : "unknown variant type";
     }
 
     /**

@@ -65,10 +65,6 @@ public class HybridStreaming {
             }
             
             @Override
-            public void headerFooter(String text, boolean isHeader, String tagName) {
-            }
-            
-            @Override
             public void endRow(int rowNum) {
             }
             
@@ -77,5 +73,4 @@ public class HybridStreaming {
             }
         };
     }
-
 }

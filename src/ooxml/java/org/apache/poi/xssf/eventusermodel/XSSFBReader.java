@@ -167,9 +167,7 @@ public class XSSFBReader extends XSSFReader {
                     PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
                     return new XSSFBCommentsTable(commentsPart.getInputStream());
                 }
-            } catch (InvalidFormatException e) {
-                return null;
-            } catch (IOException e) {
+            } catch (InvalidFormatException | IOException e) {
                 return null;
             }
             return null;
@@ -241,7 +239,8 @@ public class XSSFBReader extends XSSFReader {
         private void tryToAddWorksheet(byte[] data) throws XSSFBParseException {
             int offset = 0;
             //this is the sheet state #2.5.142
-            long hsShtat = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+            /*long hsShtat =*/ //noinspection ResultOfMethodCallIgnored
+            LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
 
             long iTabID = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
             //according to #2.4.304
@@ -251,9 +250,9 @@ public class XSSFBReader extends XSSFReader {
             StringBuilder sb = new StringBuilder();
             offset += XSSFBUtils.readXLWideString(data, offset, sb);
             String relId = sb.toString(); sb.setLength(0);
-            offset += XSSFBUtils.readXLWideString(data, offset, sb);
+            /*offset +=*/ XSSFBUtils.readXLWideString(data, offset, sb);
             String name = sb.toString();
-            if (relId != null && relId.trim().length() > 0) {
+            if (relId.trim().length() > 0) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
         }
@@ -272,7 +271,7 @@ public class XSSFBReader extends XSSFReader {
             sb.setLength(0);
             offset += XSSFBUtils.readXLWideString(data, offset, sb);
             String name = sb.toString();
-            if (relId != null && relId.trim().length() > 0) {
+            if (relId.trim().length() > 0) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
             if (offset == data.length) {

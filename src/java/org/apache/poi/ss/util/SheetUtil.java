@@ -318,11 +318,7 @@ public class SheetUtil {
         copyAttributes(font, str, 0, "1w".length());
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        if(layout.getBounds().getWidth() > 0) {
-            return true;
-        }
-
-        return false;
+        return (layout.getBounds().getWidth() > 0);
     }
 
     /**

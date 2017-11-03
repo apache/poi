@@ -188,17 +188,14 @@ public class TestBugs{
         WordExtractor extractor1 = new WordExtractor(doc1);
         try {
             HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
-            
-            WordExtractor extractor2 = new WordExtractor(doc2);
-            try {
+
+            try (WordExtractor extractor2 = new WordExtractor(doc2)) {
                 assertEqualsIgnoreNewline(extractor1.getFooterText(), extractor2.getFooterText());
                 assertEqualsIgnoreNewline(extractor1.getHeaderText(), extractor2.getHeaderText());
-                assertEqualsIgnoreNewline(Arrays.toString(extractor1.getParagraphText() ),
+                assertEqualsIgnoreNewline(Arrays.toString(extractor1.getParagraphText()),
                         Arrays.toString(extractor2.getParagraphText()));
-        
+
                 assertEqualsIgnoreNewline(extractor1.getText(), extractor2.getText());
-            } finally {
-                extractor2.close();
             }
         } finally {
             extractor1.close();
@@ -451,16 +448,13 @@ public class TestBugs{
 
         // (2) read text from text document (retrieved by saving the word
         // document as text file using encoding UTF-8)
-        InputStream is = POIDataSamples.getDocumentInstance()
-                .openResourceAsStream("Bug47742-text.txt");
-        try {
+        try (InputStream is = POIDataSamples.getDocumentInstance()
+                .openResourceAsStream("Bug47742-text.txt")) {
             byte[] expectedBytes = IOUtils.toByteArray(is);
-            String expectedText = new String(expectedBytes, "utf-8" )
+            String expectedText = new String(expectedBytes, "utf-8")
                     .substring(1); // strip-off the unicode marker
-    
+
             assertEqualsIgnoreNewline(expectedText, foundText);
-        } finally {
-            is.close();
         }
     }
 
@@ -636,14 +630,11 @@ public class TestBugs{
     {
         InputStream is = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream("empty.doc");
-        NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(is);
-        try {
+        try (NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(is)) {
             HWPFDocument hwpfDocument = new HWPFDocument(
                     npoifsFileSystem.getRoot());
             hwpfDocument.write(new ByteArrayOutputStream());
             hwpfDocument.close();
-        } finally {
-            npoifsFileSystem.close();
         }
     }
 
@@ -663,11 +654,8 @@ public class TestBugs{
             HWPFDocument hwpfDocument = HWPFTestDataSamples
                     .openRemoteFile(href);
 
-            WordExtractor wordExtractor = new WordExtractor(hwpfDocument);
-            try {
+            try (WordExtractor wordExtractor = new WordExtractor(hwpfDocument)) {
                 wordExtractor.getText();
-            } finally {
-                wordExtractor.close();
             }
         }
     }
@@ -903,13 +891,10 @@ public class TestBugs{
     @Test(expected=ArrayIndexOutOfBoundsException.class)
     public void test57843() throws IOException {
         File f = POIDataSamples.getDocumentInstance().getFile("57843.doc");
-        POIFSFileSystem fs = new POIFSFileSystem(f, true);
-        try {
+        try (POIFSFileSystem fs = new POIFSFileSystem(f, true)) {
             HWPFOldDocument doc = new HWPFOldDocument(fs);
             assertNotNull(doc);
             doc.close();
-        } finally {
-            fs.close();
         }
     }
 

@@ -20,7 +20,6 @@
 package org.apache.poi.xssf.eventusermodel.examples;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.crypt.examples.EncryptionUtils;

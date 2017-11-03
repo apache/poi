@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hdgf.HDGFDiagram;
@@ -65,26 +66,25 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	 * @return An array of each Text item in the document
 	 */
 	public String[] getAllText() {
-		ArrayList<String> text = new ArrayList<>();
+		List<String> text = new ArrayList<>();
 		for(Stream stream : hdgf.getTopLevelStreams()) {
 			findText(stream, text);
 		}
 		return text.toArray( new String[text.size()] );
 	}
-	private void findText(Stream stream, ArrayList<String> text) {
+	private void findText(Stream stream, List<String> text) {
 		if(stream instanceof PointerContainingStream) {
 			PointerContainingStream ps = (PointerContainingStream)stream;
-			for(int i=0; i<ps.getPointedToStreams().length; i++) {
-				findText(ps.getPointedToStreams()[i], text);
+			for(final Stream substream : ps.getPointedToStreams()) {
+				findText(substream, text);
 			}
 		}
 		if(stream instanceof ChunkStream) {
 			ChunkStream cs = (ChunkStream)stream;
-			for(int i=0; i<cs.getChunks().length; i++) {
-				Chunk chunk = cs.getChunks()[i];
+			for(final Chunk chunk : cs.getChunks()) {
 				if(chunk != null &&
 						chunk.getName() != null &&
-						chunk.getName().equals("Text") &&
+						"Text".equals(chunk.getName()) &&
 						chunk.getCommands().length > 0) {
 
 					// First command
@@ -93,7 +93,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 						// Capture the text, as long as it isn't
 						//  simply an empty string
 						String str = cmd.getValue().toString();
-						if(str.equals("") || str.equals("\n")) {
+						if(str.isEmpty() || "\n".equals(str)) {
 							// Ignore empty strings
 						} else {
 							text.add( str );

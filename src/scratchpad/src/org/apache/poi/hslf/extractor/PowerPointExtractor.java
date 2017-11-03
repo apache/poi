@@ -230,7 +230,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
                         if(sh instanceof HSLFTextShape){
                             HSLFTextShape hsh = (HSLFTextShape)sh;
                             final String text = hsh.getText();
-                            if (text == null || "".equals(text) || "*".equals(text)) {
+                            if (text == null || text.isEmpty() || "*".equals(text)) {
                                 continue;
                             }
                             

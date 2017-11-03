@@ -17,14 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -57,6 +49,8 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
+
+import static org.junit.Assert.*;
 
 public final class TestXSSFCell extends BaseTestXCell {
 
@@ -149,17 +143,16 @@ public final class TestXSSFCell extends BaseTestXCell {
 
     @Test
     public void testFormulaString() throws IOException {
-        XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
-        try {
+        try (XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.createWorkbook()) {
             XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
-    
+
             cell.setCellFormula("A2");
             assertEquals(CellType.FORMULA, cell.getCellType());
             assertEquals("A2", cell.getCellFormula());
             //the value is not set and cell's type='N' which means blank
             assertEquals(STCellType.N, ctCell.getT());
-    
+
             //set cached formula value
             cell.setCellValue("t='str'");
             //we are still of 'formula' type
@@ -168,57 +161,44 @@ public final class TestXSSFCell extends BaseTestXCell {
             //cached formula value is set and cell's type='STR'
             assertEquals(STCellType.STR, ctCell.getT());
             assertEquals("t='str'", cell.getStringCellValue());
-    
+
             //now remove the formula, the cached formula result remains
             cell.setCellFormula(null);
             assertEquals(CellType.STRING, cell.getCellType());
             assertEquals(STCellType.STR, ctCell.getT());
             //the line below failed prior to fix of Bug #47889
             assertEquals("t='str'", cell.getStringCellValue());
-    
+
             //revert to a blank cell
-            cell.setCellValue((String)null);
+            cell.setCellValue((String) null);
             assertEquals(CellType.BLANK, cell.getCellType());
             assertEquals(STCellType.N, ctCell.getT());
             assertEquals("", cell.getStringCellValue());
 
             // check behavior with setCellFormulaValidation
             final String invalidFormula = "A", validFormula = "A2";
-            FormulaParseException fpe = null;
+
             // check that default is true
             assertTrue(wb.getCellFormulaValidation());
 
             // check that valid formula does not throw exception
-            try {
-                cell.setCellFormula(validFormula);
-            } catch(FormulaParseException e) {
-                fpe = e;
-            }
-            assertNull(fpe);
+            cell.setCellFormula(validFormula);
 
             // check that invalid formula does throw exception
             try {
                 cell.setCellFormula(invalidFormula);
-            } catch(FormulaParseException e) {
-                fpe = e;
+                fail("Should catch exception here");
+            } catch (FormulaParseException e) {
+                // expected here
             }
-            assertNotNull(fpe);
-            fpe = null;
 
             // set cell formula validation to false
             wb.setCellFormulaValidation(false);
             assertFalse(wb.getCellFormulaValidation());
 
             // check that neither valid nor invalid formula throw an exception
-            try {
-                cell.setCellFormula(validFormula);
-                cell.setCellFormula(invalidFormula);
-            } catch(FormulaParseException e) {
-                fpe = e;
-            }
-            assertNull(fpe);
-        } finally {
-            wb.close();
+            cell.setCellFormula(validFormula);
+            cell.setCellFormula(invalidFormula);
         }
     }
 
@@ -409,37 +389,34 @@ public final class TestXSSFCell extends BaseTestXCell {
     
     @Test
     public void test56170Reproduce() throws IOException {
-        final Workbook wb = new XSSFWorkbook();
-        try {
+        try (Workbook wb = new XSSFWorkbook()) {
             final Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
-            
+
             // by creating Cells out of order we trigger the handling in onDocumentWrite()
             Cell cell1 = row.createCell(1);
             Cell cell2 = row.createCell(0);
-    
+
             validateRow(row);
-            
+
             validateRow(row);
-    
+
             // once again with removing one cell
             row.removeCell(cell1);
-    
+
             validateRow(row);
-    
+
             // once again with removing one cell
             row.removeCell(cell1);
-    
+
             // now check again
             validateRow(row);
-    
+
             // once again with removing one cell
             row.removeCell(cell2);
-    
+
             // now check again
             validateRow(row);
-        } finally {
-            wb.close();
         }
     }
 
@@ -454,40 +431,31 @@ public final class TestXSSFCell extends BaseTestXCell {
 
     @Test
     public void testBug56644ReturnNull() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
-        try {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
             wb.setMissingCellPolicy(MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Sheet sheet = wb.getSheet("samplelist");
             Row row = sheet.getRow(20);
             row.createCell(2);
-        } finally {
-            wb.close();
         }
     }
 
     @Test
     public void testBug56644ReturnBlank() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
-        try {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
             wb.setMissingCellPolicy(MissingCellPolicy.RETURN_NULL_AND_BLANK);
             Sheet sheet = wb.getSheet("samplelist");
             Row row = sheet.getRow(20);
             row.createCell(2);
-        } finally {
-            wb.close();
         }
     }
 
     @Test
     public void testBug56644CreateBlank() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
-        try {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx")) {
             wb.setMissingCellPolicy(MissingCellPolicy.CREATE_NULL_AS_BLANK);
             Sheet sheet = wb.getSheet("samplelist");
             Row row = sheet.getRow(20);
             row.createCell(2);
-        } finally {
-            wb.close();
         }
     }
 

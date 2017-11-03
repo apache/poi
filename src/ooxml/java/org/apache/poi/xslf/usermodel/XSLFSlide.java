@@ -231,7 +231,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getFollowMasterObjects() {
         return getFollowMasterGraphics();
     }
-
+    
     @Override
     public void setFollowMasterObjects(boolean follow) {
         setFollowMasterGraphics(follow);
@@ -276,7 +276,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getFollowMasterBackground() {
         return false;
     }
-
+    
     @Override
     @NotImplemented
     public void setFollowMasterBackground(boolean follow) {
@@ -288,7 +288,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getFollowMasterColourScheme() {
         return false;
     }
-
+    
     @Override
     @NotImplemented
     public void setFollowMasterColourScheme(boolean follow) {
@@ -325,4 +325,24 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getDisplayPlaceholder(Placeholder placeholder) {
         return false;
     }
+
+    
+    @Override
+    public void setHidden(boolean hidden) {
+        CTSlide sld = getXmlObject();
+        if (hidden) {
+            sld.setShow(false);
+        } else {
+            // if the attribute does not exist, the slide is shown
+            if (sld.isSetShow()) {
+                sld.unsetShow();
+            }
+        }
+    }
+    
+    @Override
+    public boolean isHidden() {
+        CTSlide sld = getXmlObject();
+        return sld.isSetShow() && !sld.getShow();
+    }    
 }

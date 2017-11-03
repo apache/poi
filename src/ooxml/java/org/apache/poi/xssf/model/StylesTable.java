@@ -36,10 +36,7 @@ import java.util.TreeMap;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.FontFamily;
-import org.apache.poi.ss.usermodel.FontScheme;
-import org.apache.poi.ss.usermodel.TableStyle;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.CustomIndexedColorMap;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
@@ -269,7 +266,7 @@ public class StylesTable extends POIXMLDocumentPart {
     }
     
     private short getNumberFormatId(String fmt) {
-     // Find the key, and return that
+        // Find the key, and return that
         for (Entry<Short,String> numFmt : numberFormats.entrySet()) {
             if(numFmt.getValue().equals(fmt)) {
                 return numFmt.getKey();
@@ -828,7 +825,8 @@ public class StylesTable extends POIXMLDocumentPart {
     }
     
     /**
-     * Finds a font that matches the one with the supplied attributes
+     * Finds a font that matches the one with the supplied attributes,
+     * where color is the indexed-value, not the actual color.
      */
     public XSSFFont findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
         for (XSSFFont font : fonts) {
@@ -847,6 +845,27 @@ public class StylesTable extends POIXMLDocumentPart {
         return null;
     }
     
+    /**
+     * Finds a font that matches the one with the supplied attributes,
+     * where color is the actual Color-value, not the indexed color
+     */
+    public XSSFFont findFont(boolean bold, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+        for (XSSFFont font : fonts) {
+            if (    (font.getBold() == bold)
+                    && font.getXSSFColor().equals(color)
+                    && font.getFontHeight() == fontHeight
+                    && font.getFontName().equals(name)
+                    && font.getItalic() == italic
+                    && font.getStrikeout() == strikeout
+                    && font.getTypeOffset() == typeOffset
+                    && font.getUnderline() == underline)
+            {
+                return font;
+            }
+        }
+        return null;
+    }
+
     /**
      * @return default or custom indexed color to RGB mapping
      */

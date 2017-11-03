@@ -798,7 +798,7 @@ public class TestSignatureInfo {
 
     private static File copy(File input) throws IOException {
         String extension = input.getName().replaceAll(".*?(\\.[^.]+)?$", "$1");
-        if (extension == null || "".equals(extension)) {
+        if (extension == null || extension.isEmpty()) {
             extension = ".zip";
         }
 

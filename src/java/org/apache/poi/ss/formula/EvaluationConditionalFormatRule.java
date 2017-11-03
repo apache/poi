@@ -62,9 +62,6 @@ import org.apache.poi.ss.util.CellReference;
  * create whatever style objects they need, caching those at the application level.
  * Thus this class only caches values needed for evaluation, not display.
  */
-/**
- *
- */
 public class EvaluationConditionalFormatRule implements Comparable<EvaluationConditionalFormatRule> {
 
     private final WorkbookEvaluator workbookEvaluator;
@@ -75,7 +72,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     /* cached values */
     private final CellRangeAddress[] regions;
     /**
-     * Depending on the rule type, it may want to know about certain values in the region when evaluating {@link #matches(Cell)},
+     * Depending on the rule type, it may want to know about certain values in the region when evaluating {@link #matches(CellReference)},
      * such as top 10, unique, duplicate, average, etc.  This collection stores those if needed so they are not repeatedly calculated
      */
     private final Map<CellRangeAddress, Set<ValueAndFormat>> meaningfulRegionValues = new HashMap<>();
@@ -370,7 +367,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         return comp;
     }
     /**
-     * @param cell needed for offsets from region anchor - may be null!
+     * @param ref needed for offsets from region anchor - may be null!
      * @param region for adjusting relative formulas
      * @return true/false using the same rules as Data Validation evaluations
      */
@@ -424,7 +421,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                     final ConditionFilterData conf = rule.getFilterConfiguration();
                     
                     if (! conf.getBottom()) {
-                        Collections.sort(allValues, Collections.reverseOrder());
+                        allValues.sort(Collections.reverseOrder());
                     } else {
                         Collections.sort(allValues);
                     }
@@ -505,10 +502,10 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                     }
 
                     final Set<ValueAndFormat> avgSet = new LinkedHashSet<>(1);
-                    avgSet.add(new ValueAndFormat(new Double(allValues.size() == 0 ? 0 : total / allValues.size()), null));
+                    avgSet.add(new ValueAndFormat(Double.valueOf(allValues.size() == 0 ? 0 : total / allValues.size()), null));
 
                     final double stdDev = allValues.size() <= 1 ? 0 : ((NumberEval) AggregateFunction.STDEV.evaluate(pop, 0, 0)).getNumberValue();
-                    avgSet.add(new ValueAndFormat(new Double(stdDev), null));
+                    avgSet.add(new ValueAndFormat(Double.valueOf(stdDev), null));
                     return avgSet;
                 }
             }));
@@ -527,9 +524,9 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
              * operator type
              */
             
-            Double comp = new Double(conf.getStdDev() > 0 ? (avg + (conf.getAboveAverage() ? 1 : -1) * stdDev * conf.getStdDev()) : avg) ;
+            Double comp = Double.valueOf(conf.getStdDev() > 0 ? (avg + (conf.getAboveAverage() ? 1 : -1) * stdDev * conf.getStdDev()) : avg) ;
             
-            OperatorEnum op = null;
+            final OperatorEnum op;
             if (conf.getAboveAverage()) {
                 if (conf.getEqualAverage()) {
                     op = OperatorEnum.GREATER_OR_EQUAL;
@@ -543,7 +540,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                     op = OperatorEnum.LESS_THAN;
                 }
             }
-            return op != null && op.isValid(val, comp, null);
+            return op.isValid(val, comp, null);
         case CONTAINS_TEXT:
             // implemented both by a cfRule "text" attribute and a formula.  Use the formula.
             return checkFormula(ref, region);
@@ -625,7 +622,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         if (cell != null) {
             final CellType type = cell.getCellType();
             if (type == CellType.NUMERIC || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.NUMERIC) ) {
-                return new ValueAndFormat(new Double(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString());
+                return new ValueAndFormat(Double.valueOf(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString());
             } else if (type == CellType.STRING || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.STRING) ) {
                 return new ValueAndFormat(cell.getStringCellValue(), cell.getCellStyle().getDataFormatString());
             } else if (type == CellType.BOOLEAN || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.BOOLEAN) ) {

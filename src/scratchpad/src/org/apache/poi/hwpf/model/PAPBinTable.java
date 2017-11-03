@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
@@ -159,8 +158,7 @@ public class PAPBinTable
         }
 
         List<PAPX> oldPapxSortedByEndPos = new ArrayList<>(paragraphs);
-        Collections.sort( oldPapxSortedByEndPos,
-                PropertyNode.EndComparator.instance );
+        oldPapxSortedByEndPos.sort(PropertyNode.EndComparator.instance);
 
         logger.log( POILogger.DEBUG, "PAPX sorted by end position in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
@@ -255,7 +253,7 @@ public class PAPBinTable
             }
 
             // restore file order of PAPX
-            Collections.sort( papxs, papxFileOrderComparator );
+            papxs.sort(papxFileOrderComparator);
 
             SprmBuffer sprmBuffer = null;
             for ( PAPX papx : papxs )
@@ -281,7 +279,6 @@ public class PAPBinTable
         logger.log( POILogger.DEBUG, "PAPX rebuilded from document text in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
                 Integer.valueOf( paragraphs.size() ), " elements)" );
-        start = System.currentTimeMillis();
     }
 
     public void insert(int listIndex, int cpStart, SprmBuffer buf)

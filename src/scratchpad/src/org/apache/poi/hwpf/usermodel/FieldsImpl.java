@@ -43,7 +43,7 @@ public class FieldsImpl implements Fields
      * This is port and adaptation of Arrays.binarySearch from Java 6 (Apache
      * Harmony).
      */
-    private static <T> int binarySearch( List<PlexOfField> list,
+    private static int binarySearch( List<PlexOfField> list,
             int startIndex, int endIndex, int requiredStartOffset )
     {
         checkIndexForBinarySearch( list.size(), startIndex, endIndex );
@@ -136,7 +136,7 @@ public class FieldsImpl implements Fields
         if ( plexOfFields == null || plexOfFields.isEmpty() )
             return new HashMap<>();
 
-        Collections.sort( plexOfFields, comparator );
+        plexOfFields.sort(comparator);
         List<FieldImpl> fields = new ArrayList<>(
                 plexOfFields.size() / 3 + 1);
         parseFieldStructureImpl( plexOfFields, 0, plexOfFields.size(), fields );

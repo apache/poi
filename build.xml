@@ -103,9 +103,6 @@ under the License.
     <property name="main.reports.test" location="build/test-results"/>
     <property name="main.testokfile" location="build/main-testokfile.txt"/>
 
-    <!-- HSSF subset of Main: -->
-    <property name="main.hssf.testokfile" location="build/main-hssf-testokfile.txt"/>
-
     <!-- Scratchpad: -->
     <property name="scratchpad.resource1.dir" value="src/resources/scratchpad"/>
     <property name="scratchpad.src" location="src/scratchpad/src"/>
@@ -133,9 +130,6 @@ under the License.
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
     <property name="ooxml.lite.testokfile" location="build/ooxml-lite-testokfile.txt"/>
-
-    <!-- XSSF/SXSSF subset of OOXML: -->
-    <property name="ooxml.ss.testokfile" location="build/ooxml-ss-testokfile.txt"/>
 
     <!-- Integration testing: -->
     <property name="integration.src.test" location="src/integrationtest"/>
@@ -1080,49 +1074,6 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-ooxml-ss" depends="compile-main,compile-scratchpad,compile-ooxml-xsds">
-        <!-- depends: compile-scratchpad needed for extractor -->
-        <!-- compile the sources -->
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${ooxml.output.dir}"
-               srcdir="${ooxml.src}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes"
-               includeantruntime="false">
-            <classpath>
-                <path refid="ooxml.classpath"/>
-                <path refid="ooxml.xmlsec.classpath"/>
-            </classpath>
-            <include name="org/apache/poi/ss/**/*.java"/>
-            <include name="org/apache/poi/xssf/**/*.java"/>
-            <include name="org/apache/poi/extractor/**/*.java"/>
-        </javac>
-        <!-- compile the tests -->
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${ooxml.output.test.dir}"
-               srcdir="${ooxml.src.test}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes"
-               includeantruntime="false">
-            <classpath>
-                <path refid="ooxml.classpath"/>
-                <path refid="ooxml.xmlsec.classpath"/>
-                <path refid="test.ooxml.classpath"/>
-                <pathelement path="${ooxml.output.dir}"/>
-                <pathelement path="${main.output.test.dir}"/>
-            </classpath>
-            <include name="org/apache/poi/ss/**/*.java"/>
-            <include name="org/apache/poi/xssf/**/*.java"/>
-        </javac>
-        <copy todir="${ooxml.output.dir}">
-            <fileset dir="${ooxml.resource1.dir}"/>
-        </copy>
-    </target>
-
     <target name="compile-excelant" depends="compile-main,compile-ooxml">
         <!-- compile the sources -->
         <javac target="${jdk.version.class}"
@@ -1216,8 +1167,6 @@ under the License.
             description="Tests main, scratchpad and ooxml"/>
     <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"
             description="Tests main, scratchpad, ooxml, ooxml-lite, and coveragereport"/>
-    <target name="test-ss" depends="test-hssf, test-ooxml-ss"
-            description="Test POI Spreadsheet classes (SS, HSSF, XSSF, SXSSF)"/>
 
     <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
         <delete dir="${coverage.dir}"/>
@@ -1358,60 +1307,6 @@ under the License.
         <echo file="${main.testokfile}" append="false" message="testok"/>
     </target>
 
-    <!-- Section: test-hssf -->
-    <target name="-test-main-hssf-check">
-        <uptodate property="main.hssf.test.notRequired" targetfile="${main.hssf.testokfile}">
-            <srcfiles dir="${main.src}"/>
-            <srcfiles dir="${main.src.test}"/>
-        </uptodate>
-    </target>
-
-    <!-- HSSF subset of test-main
-    Purpose: quicker HSSF testing cycles. Skips some tests for speed reasons. This target is not sufficient for committing changes. -->
-    <target name="test-hssf" unless="main.hssf.test.notRequired"
-            depends="compile-main, -test-main-hssf-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant"
-            description="test HSSF classes only">
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-hssf.exec">
-            <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
-                   failureproperty="main.hssf.test.failed" showoutput="true">
-                <classpath refid="test.classpath"/>
-                <classpath refid="test.jar.classpath"/>
-                <syspropertyset refid="junit.properties"/>
-                <jvmarg value="-ea"/>
-                <jvmarg value="-Xmx256m"/>
-                <!-- jvmarg value="-Duser.timezone=UTC"/ -->
-                <jvmarg value="${java9addmods}" />
-                <jvmarg value="${java9addmodsvalue}" />
-                <jvmarg value="${java9addopens1}" />
-                <jvmarg value="${java9addopens2}" />
-                <jvmarg value="${java9addopens3}" />
-                <jvmarg value="${java9addopens4}" />
-                <jvmarg value="${java9addopens5}" />
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest todir="${main.reports.test}">
-                    <fileset dir="${main.src.test}">
-                        <include name="org/apache/poi/ss/**/${testpattern}.java"/>
-                        <include name="org/apache/poi/hssf/**/${testpattern}.java"/>
-                        <!-- skip slow dev tests, especially TestBiffViewer and TestReSave -->
-                        <exclude name="org/apache/poi/hssf/dev/**/${testpattern}.java"/>
-                        <exclude name="**/All*Tests.java"/>
-                        <exclude name="**/TestUnfixedBugs.java"/>
-                        <exclude name="**/TestcaseRecordInputStream.java"/>
-                        <exclude name="**/${testexcludepattern}.java"/>
-                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
-        <delete file="${main.hssf.testokfile}"/>
-        <antcall target="-test-main-hssf-write-testfile"/>
-    </target>
-
-    <target name="-test-main-hssf-write-testfile" unless="main.hssf.test.failed">
-        <echo file="${main.hssf.testokfile}" append="false" message="testok"/>
-    </target>
-
     <!-- Section: test-scratchpad -->
     <target name="-test-scratchpad-check">
         <uptodate property="scratchpad.test.notRequired" targetfile="${scratchpad.testokfile}">
@@ -1549,62 +1444,6 @@ under the License.
 
     <target name="-test-ooxml-write-testfile" unless="ooxml.test.failed">
         <echo file="${ooxml.testokfile}" append="false" message="testok"/>
-    </target>
-
-    <!-- Section: test-ooxml-ss -->
-    <target name="-test-ooxml-ss-check">
-        <uptodate property="ooxml.ss.test.notRequired" targetfile="${ooxml.ss.testokfile}">
-            <srcfiles dir="${ooxml.src}"/>
-            <srcfiles dir="${ooxml.src.test}"/>
-        </uptodate>
-    </target>
-
-    <macrodef name="ooxml-ss-test-runner" xmlns:jacoco="antlib:org.jacoco.ant">
-        <attribute name="classpath"/>
-        <attribute name="type"/>
-        <sequential>
-            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-ss.exec">
-              <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                     failureproperty="ooxml.ss.test.failed">
-                  <classpath refid="@{classpath}"/>
-                  <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="-Xmx768M"/>
-                  <jvmarg value="-ea"/>
-                  <jvmarg value="${java9addmods}" />
-                  <jvmarg value="${java9addmodsvalue}" />
-                  <jvmarg value="${java9addopens1}" />
-                  <jvmarg value="${java9addopens2}" />
-                  <jvmarg value="${java9addopens3}" />
-                  <jvmarg value="${java9addopens4}" />
-                  <jvmarg value="${java9addopens5}" />
-                  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
-                  <formatter type="plain"/>
-                  <formatter type="xml"/>
-                  <batchtest todir="${ooxml.reports.test}">
-                      <fileset dir="${ooxml.src.test}">
-                          <include name="**/org/apache/poi/ss/**/${testpattern}.java"/>
-                          <include name="**/org/apache/poi/xssf/**/${testpattern}.java"/>
-                          <exclude name="**/TestUnfixedBugs.java"/>
-                          <exclude name="**/All*Tests.java"/>
-                          <exclude name="**/${testexcludepattern}.java"/>
-                          <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                      </fileset>
-                  </batchtest>
-              </junit>
-            </jacoco:coverage>
-        </sequential>
-    </macrodef>
-
-    <!-- XSSF and SXSSF subset of test-ooxml -->
-    <target name="test-ooxml-ss" depends="compile-main,compile-ooxml-ss,-test-ooxml-ss-check,jacocotask" unless="ooxml.ss.test.notRequired"
-            description="test XSSF and SXSSF classes">
-        <ooxml-ss-test-runner classpath="test.ooxml.classpath" type="ooxml"/>
-        <delete file="${ooxml.ss.testokfile}"/>
-        <antcall target="-test-ooxml-ss-write-testfile"/>
-    </target>
-
-    <target name="-test-ooxml-ss-write-testfile" unless="ooxml.ss.test.failed">
-        <echo file="${ooxml.ss.testokfile}" append="false" message="testok"/>
     </target>
 
     <!-- Section: test-integration -->

@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
@@ -156,7 +156,7 @@ public final class TableRecord extends SharedValueRecordBase {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("[TABLE]\n");
 		buffer.append("    .range    = ").append(getRange()).append("\n");
 		buffer.append("    .flags    = ") .append(HexDump.byteToHex(field_5_flags)).append("\n");

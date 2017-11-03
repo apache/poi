@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.util.Removal;
 
 public class AreaReference {
 
@@ -104,16 +103,6 @@ public class AreaReference {
             }
         }
         return true;
-    }
-
-    /**
-     * Creates an area ref from a pair of Cell References.
-     * @deprecated use {@link #AreaReference(CellReference, CellReference, SpreadsheetVersion)} instead
-     */
-    @Deprecated
-    @Removal(version="3.19")
-    public AreaReference(CellReference topLeft, CellReference botRight) {
-        this(topLeft, botRight, DEFAULT_SPREADSHEET_VERSION);
     }
     
     /**
@@ -207,25 +196,13 @@ public class AreaReference {
         // These are represented as something like
         //   C$1:C$65535 or D$1:F$0
         // i.e. absolute from 1st row to 0th one
-        if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
-            botRight.getRow() == version.getLastRowIndex() && botRight.isRowAbsolute()) {
-            return true;
-        }
-        return false;
+        return (topLeft.getRow() == 0
+                && topLeft.isRowAbsolute()
+                && botRight.getRow() == version.getLastRowIndex()
+                && botRight.isRowAbsolute());
     }
     public boolean isWholeColumnReference() {
         return isWholeColumnReference(_version, _firstCell, _lastCell);
-    }
-
-    /**
-     * Takes a non-contiguous area reference, and returns an array of contiguous area references
-     * @return an array of contiguous area references.
-     * @deprecated use {@link #generateContiguous(SpreadsheetVersion, String)} instead
-     */
-    @Deprecated
-    @Removal(version="3.19")
-    public static AreaReference[] generateContiguous(String reference) {
-        return generateContiguous(DEFAULT_SPREADSHEET_VERSION, reference);
     }
 
     /**
@@ -318,8 +295,8 @@ public class AreaReference {
                 + ":" +
                 CellReference.convertNumToColString(_lastCell.getCol());
         }
-        
-        StringBuffer sb = new StringBuffer(32);
+
+        StringBuilder sb = new StringBuilder(32);
         sb.append(_firstCell.formatAsString());
         if(!_isSingleCell) {
             sb.append(CELL_DELIMITER);
@@ -334,10 +311,14 @@ public class AreaReference {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
+        StringBuilder sb = new StringBuilder(64);
         sb.append(getClass().getName()).append(" [");
-        sb.append(formatAsString());
-        sb.append("]");
+        try {
+            sb.append(formatAsString());
+        } catch(Exception e) {
+            sb.append(e.toString());
+        }
+        sb.append(']');
         return sb.toString();
     }
 

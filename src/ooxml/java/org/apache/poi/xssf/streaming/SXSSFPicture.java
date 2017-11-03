@@ -55,7 +55,7 @@ public final class SXSSFPicture implements Picture {
      * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
      * padding (two on each side), plus 1 pixel padding for the gridlines.
      *
-     * This value is the same for default font in Office 2007 (Calibry) and Office 2003 and earlier (Arial)
+     * This value is the same for default font in Office 2007 (Calibri) and Office 2003 and earlier (Arial)
      */
     private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
 

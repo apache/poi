@@ -35,6 +35,9 @@ import org.apache.poi.util.POILogger;
  * @version 0.1
  */
 public final class PackagingURIHelper {
+    // FIXME: this class implements a lot of path joining and splitting logic that
+    // is already implemented in java.nio.file.Path.
+    // This class should heavily leverage Java library code to reduce the number of lines of code that POI has to maintain and test
     private final static POILogger _logger = POILogFactory.getLogger(PackagingURIHelper.class);
 
 	/**
@@ -247,13 +250,9 @@ public final class PackagingURIHelper {
 	 * Combine a string URI with a prefix and a suffix.
 	 */
 	public static String combine(String prefix, String suffix) {
-		if (!prefix.endsWith("" + FORWARD_SLASH_CHAR)
-				&& !suffix.startsWith("" + FORWARD_SLASH_CHAR))
+		if (!prefix.endsWith(FORWARD_SLASH_STRING) && !suffix.startsWith(FORWARD_SLASH_STRING))
 			return prefix + FORWARD_SLASH_CHAR + suffix;
-		else if ((!prefix.endsWith("" + FORWARD_SLASH_CHAR)
-				&& suffix.startsWith("" + FORWARD_SLASH_CHAR) || (prefix
-				.endsWith("" + FORWARD_SLASH_CHAR) && !suffix.startsWith(""
-				+ FORWARD_SLASH_CHAR))))
+		else if (prefix.endsWith(FORWARD_SLASH_STRING) ^ suffix.startsWith(FORWARD_SLASH_STRING))
 			return prefix + suffix;
 		else
 			return "";
@@ -321,12 +320,12 @@ public final class PackagingURIHelper {
 
 		// If we didn't have a good match or at least except a first empty element
 		if ((segmentsTheSame == 0 || segmentsTheSame == 1) &&
-				segmentsSource[0].equals("") && segmentsTarget[0].equals("")) {
+				segmentsSource[0].isEmpty() && segmentsTarget[0].isEmpty()) {
 			for (int i = 0; i < segmentsSource.length - 2; i++) {
 				retVal.append("../");
 			}
 			for (int i = 0; i < segmentsTarget.length; i++) {
-				if (segmentsTarget[i].equals(""))
+				if (segmentsTarget[i].isEmpty())
 					continue;
 				retVal.append(segmentsTarget[i]);
 				if (i != segmentsTarget.length - 1)
@@ -602,7 +601,7 @@ public final class PackagingURIHelper {
 	 *         characters.
 	 */
 	public static String decodeURI(URI uri) {
-		StringBuffer retVal = new StringBuffer();
+		StringBuilder retVal = new StringBuilder(64);
 		String uriStr = uri.toASCIIString();
 		char c;
 		final int length = uriStr.length();

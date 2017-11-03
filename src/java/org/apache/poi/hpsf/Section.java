@@ -516,10 +516,7 @@ public class Section {
      */
     protected boolean getPropertyBooleanValue(final int id) {
         final Boolean b = (Boolean) getProperty(id);
-        if (b == null) {
-            return false;
-        }
-        return b.booleanValue();
+        return b != null && b.booleanValue();
     }
 
     /**
@@ -560,8 +557,8 @@ public class Section {
      * properties) and the properties themselves.
      *
      * @return the section's length in bytes.
-     * @throws WritingNotSupportedException
-     * @throws IOException
+     * @throws WritingNotSupportedException If the document is opened read-only.
+     * @throws IOException If an error happens while writing.
      */
     private int calcSize() throws WritingNotSupportedException, IOException {
         sectionBytes.reset();
@@ -765,9 +762,6 @@ public class Section {
                  * property. */
                 position += p.write(propertyStream, codepage);
             } else {
-                if (codepage == -1) {
-                    throw new IllegalPropertySetDataException("Codepage (property 1) is undefined.");
-                }
                 position += writeDictionary(propertyStream, codepage);
             }
         }
@@ -865,7 +859,6 @@ public class Section {
      * Writes the section's dictionary.
      *
      * @param out The output stream to write to.
-     * @param dictionary The dictionary.
      * @param codepage The codepage to be used to write the dictionary items.
      * @return The number of bytes written
      * @exception IOException if an I/O exception occurs.
@@ -956,8 +949,8 @@ public class Section {
         long hashCode = 0;
         hashCode += getFormatID().hashCode();
         final Property[] pa = getProperties();
-        for (int i = 0; i < pa.length; i++) {
-            hashCode += pa[i].hashCode();
+        for (Property aPa : pa) {
+            hashCode += aPa.hashCode();
         }
         return (int) (hashCode & 0x0ffffffffL);
     }
@@ -973,7 +966,7 @@ public class Section {
     }
     
     public String toString(PropertyIDMap idMap) {
-        final StringBuffer b = new StringBuffer();
+        final StringBuilder b = new StringBuilder();
         final Property[] pa = getProperties();
         b.append("\n\n\n");
         b.append(getClass().getName());

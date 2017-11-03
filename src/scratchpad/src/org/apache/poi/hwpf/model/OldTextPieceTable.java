@@ -23,16 +23,9 @@ import java.util.Collections;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
 
 @Internal
 public class OldTextPieceTable extends TextPieceTable {
-
-    private static final POILogger logger = POILogFactory
-            .getLogger(OldTextPieceTable.class);
-
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
@@ -103,7 +96,7 @@ public class OldTextPieceTable extends TextPieceTable {
         // into order, if they're not already
         Collections.sort(_textPieces);
         _textPiecesFCOrder = new ArrayList<>(_textPieces);
-        Collections.sort(_textPiecesFCOrder, new FCComparator());
+        _textPiecesFCOrder.sort(new FCComparator());
 
     }
 

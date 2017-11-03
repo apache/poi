@@ -102,9 +102,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private boolean formulasNotResults;
 
    // Gathers characters as they are seen.
-   private StringBuffer value = new StringBuffer();
-   private StringBuffer formula = new StringBuffer();
-   private StringBuffer headerFooter = new StringBuffer();
+   private StringBuilder value = new StringBuilder(64);
+   private StringBuilder formula = new StringBuilder(64);
+   private StringBuilder headerFooter = new StringBuilder(64);
 
    private Queue<CellAddress> commentCellRefs;
 
@@ -394,6 +394,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        } else if ("sheetData".equals(localName)) {
            // Handle any "missing" cells which had comments attached
            checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_SHEET_DATA);
+
+           // indicate that this sheet is now done
+           output.endSheet();
        }
        else if("oddHeader".equals(localName) || "evenHeader".equals(localName) ||
              "firstHeader".equals(localName)) {
@@ -502,13 +505,19 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    public interface SheetContentsHandler {
       /** A row with the (zero based) row number has started */
       public void startRow(int rowNum);
+
       /** A row with the (zero based) row number has ended */
       public void endRow(int rowNum);
-      /** 
+
+      /**
        * A cell, with the given formatted value (may be null), 
        *  and possibly a comment (may be null), was encountered */
       public void cell(String cellReference, String formattedValue, XSSFComment comment);
+
       /** A header or footer has been encountered */
-      public void headerFooter(String text, boolean isHeader, String tagName);
+      public default void headerFooter(String text, boolean isHeader, String tagName) {}
+
+      /** Signal that the end of a sheet was been reached */
+      public default void endSheet() {}
    }
 }

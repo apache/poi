@@ -122,14 +122,12 @@ public final class FormulaShifter {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append(getClass().getName());
-        sb.append(" [");
-        sb.append(_firstMovedIndex);
-        sb.append(_lastMovedIndex);
-        sb.append(_amountToMove);
-        return sb.toString();
+        return getClass().getName() +
+                " [" +
+                _firstMovedIndex +
+                _lastMovedIndex +
+                _amountToMove +
+                "]";
     }
 
     /**
@@ -463,18 +461,27 @@ public final class FormulaShifter {
     /**
      * Modifies rptg in-place and return a reference to rptg if the cell reference
      * would move due to a row copy operation
-     * Returns <code>null</code> or {@link #RefErrorPtg} if no change was made
+     * Returns <code>null</code> or {@link RefErrorPtg} if no change was made
      *
-     * @param aptg
+     * @param rptg The REF that is copied
      * @return The Ptg reference if the cell would move due to copy, otherwise null
      */
     private Ptg rowCopyRefPtg(RefPtgBase rptg) {
         final int refRow = rptg.getRow();
         if (rptg.isRowRelative()) {
+            // check new location where the ref is located
             final int destRowIndex = _firstMovedIndex + _amountToMove;
-            if (destRowIndex < 0 || _version.getLastRowIndex() < destRowIndex)
+            if (destRowIndex < 0 || _version.getLastRowIndex() < destRowIndex) {
                 return createDeletedRef(rptg);
-            rptg.setRow(refRow + _amountToMove);
+            }
+
+            // check new location where the ref points to
+            final int newRowIndex = refRow + _amountToMove;
+            if(newRowIndex < 0 || _version.getLastRowIndex() < newRowIndex) {
+                return createDeletedRef(rptg);
+            }
+
+            rptg.setRow(newRowIndex);
             return rptg;
         }
         return null;
@@ -483,9 +490,9 @@ public final class FormulaShifter {
     /**
      * Modifies aptg in-place and return a reference to aptg if the first or last row of
      * of the Area reference would move due to a row copy operation
-     * Returns <code>null</code> or {@link #AreaErrPtg} if no change was made
+     * Returns <code>null</code> or {@link AreaErrPtg} if no change was made
      *
-     * @param aptg
+     * @param aptg The Area that is copied
      * @return null, AreaErrPtg, or modified aptg
      */
     private Ptg rowCopyAreaPtg(AreaPtgBase aptg) {

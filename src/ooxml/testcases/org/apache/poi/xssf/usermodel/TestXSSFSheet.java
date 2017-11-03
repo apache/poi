@@ -85,7 +85,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnsignedShortHex;
 
 
 public final class TestXSSFSheet extends BaseTestXSheet {
-
     public TestXSSFSheet() {
         super(XSSFITestDataProvider.instance);
     }
@@ -319,7 +318,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         cellStyleXf.setFillId(0);
         cellStyleXf.setBorderId(0);
         cellStyleXf.setNumFmtId(0);
-        stylesTable.putCellStyleXf(cellStyleXf);
+        assertEquals(2, stylesTable.putCellStyleXf(cellStyleXf));
         CTXf cellXf = CTXf.Factory.newInstance();
         cellXf.setXfId(1);
         stylesTable.putCellXf(cellXf);
@@ -367,7 +366,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         sheet.ungroupColumn(8, 10);
         colArray = cols.getColArray();
-        //assertEquals(3, colArray[1].getOutlineLevel());
+        assertEquals(3, colArray[1].getOutlineLevel());
 
         sheet.ungroupColumn(4, 6);
         sheet.ungroupColumn(2, 2);
@@ -564,6 +563,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * @param fromColumnIndex 0-indexed
      * @param toColumnIndex 0-indexed
      */
+    @SuppressWarnings("SameParameterValue")
     private static void checkColumnGroup(
             CTCol col,
             int fromColumnIndex, int toColumnIndex,
@@ -615,6 +615,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * @param fromColumnIndex 0-indexed
      * @param toColumnIndex 0-indexed
      */
+    @SuppressWarnings("SameParameterValue")
     private static void checkColumnGroupIsExpanded(
             CTCol col,
             int fromColumnIndex, int toColumnIndex
@@ -992,6 +993,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         wb1.close();
         sheet = wb2.getSheetAt(0);
         wsh = sheet.getCTWorksheet();
+        assertNotNull(wsh);
         xrow = sheetData.getRowArray();
         assertEquals(3, xrow.length);
 
@@ -1888,52 +1890,43 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     
     @Test
     public void setTabColor() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
             sh.setTabColor(new XSSFColor(IndexedColors.RED, null));
             assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
             assertEquals(IndexedColors.RED.index,
                     sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
-        } finally {
-            wb.close();
         }
     }
     
     @Test
     public void getTabColor() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
             assertNull(sh.getTabColor());
             sh.setTabColor(new XSSFColor(IndexedColors.RED, null));
             XSSFColor expected = new XSSFColor(IndexedColors.RED, null);
             assertEquals(expected, sh.getTabColor());
-        } finally {
-            wb.close();
         }
     }
     
     // Test using an existing workbook saved by Excel
     @Test
     public void tabColor() throws IOException {
-        XSSFWorkbook wb = openSampleWorkbook("SheetTabColors.xlsx");
-        try {
+        try (XSSFWorkbook wb = openSampleWorkbook("SheetTabColors.xlsx")) {
             // non-colored sheets do not have a color
             assertNull(wb.getSheet("default").getTabColor());
-            
+
             // test indexed-colored sheet
             XSSFColor expected = new XSSFColor(IndexedColors.RED, null);
             assertEquals(expected, wb.getSheet("indexedRed").getTabColor());
-            
+
             // test regular-colored (non-indexed, ARGB) sheet
             expected = new XSSFColor();
             expected.setARGBHex("FF7F2700");
             assertEquals(expected, wb.getSheet("customOrange").getTabColor());
-        } finally {
-            wb.close();
         }
     }
     

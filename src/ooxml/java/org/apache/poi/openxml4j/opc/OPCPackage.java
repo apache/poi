@@ -242,7 +242,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 */
 	public static OPCPackage open(String path, PackageAccess access)
 			throws InvalidFormatException, InvalidOperationException {
-		if (path == null || "".equals(path.trim())) {
+		if (path == null || path.trim().isEmpty()) {
 			throw new IllegalArgumentException("'path' must be given");
 		}
 		
@@ -459,7 +459,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		try {
 			l.writeLock().lock();
 			if (this.originalPackagePath != null
-					&& !"".equals(this.originalPackagePath.trim())) {
+					&& !this.originalPackagePath.trim().isEmpty()) {
 				File targetFile = new File(this.originalPackagePath);
 				if (!targetFile.exists()
 						|| !(this.originalPackagePath
@@ -847,7 +847,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			throw new IllegalArgumentException("partName");
 		}
 
-		if (contentType == null || contentType.equals("")) {
+		if (contentType == null || contentType.isEmpty()) {
 			throw new IllegalArgumentException("contentType");
 		}
 

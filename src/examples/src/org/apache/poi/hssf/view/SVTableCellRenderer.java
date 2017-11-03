@@ -52,7 +52,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 public class SVTableCellRenderer extends JLabel
     implements TableCellRenderer, Serializable
 {
-    protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+    protected static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
     protected SVBorder cellBorder = new SVBorder();
 
 
@@ -151,7 +151,7 @@ public class SVTableCellRenderer extends JLabel
           HSSFFont f = wb.getFontAt(s.getFontIndex());
           setFont(SVTableUtils.makeFont(f));
 
-          if (s.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND) {
+          if (s.getFillPattern() == FillPatternType.SOLID_FOREGROUND) {
             setBackground(SVTableUtils.getAWTColor(s.getFillForegroundColor(), SVTableUtils.white));
           } else setBackground(SVTableUtils.white);
 
@@ -161,8 +161,8 @@ public class SVTableCellRenderer extends JLabel
                                SVTableUtils.getAWTColor(s.getRightBorderColor(), SVTableUtils.black),
                                SVTableUtils.getAWTColor(s.getBottomBorderColor(), SVTableUtils.black),
                                SVTableUtils.getAWTColor(s.getLeftBorderColor(), SVTableUtils.black),
-                               s.getBorderTopEnum(), s.getBorderRightEnum(),
-                               s.getBorderBottomEnum(), s.getBorderLeftEnum(),
+                               s.getBorderTop(), s.getBorderRight(),
+                               s.getBorderBottom(), s.getBorderLeft(),
                                hasFocus);
             setBorder(cellBorder);
             isBorderSet=true;
@@ -195,7 +195,7 @@ public class SVTableCellRenderer extends JLabel
                 setValue("?");
             }
             //Set the text alignment of the cell
-            switch (s.getAlignmentEnum()) {
+            switch (s.getAlignment()) {
               case LEFT:
               case JUSTIFY:
               case FILL:

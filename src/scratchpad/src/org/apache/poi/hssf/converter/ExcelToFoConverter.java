@@ -40,6 +40,7 @@ import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
@@ -194,11 +195,11 @@ public class ExcelToFoConverter extends AbstractExcelConverter
      */
     protected boolean isEmptyStyle( CellStyle cellStyle ) {
         return cellStyle == null || (
-               cellStyle.getFillPattern() == 0
-            && cellStyle.getBorderTopEnum() == BorderStyle.NONE
-            && cellStyle.getBorderRightEnum() == BorderStyle.NONE
-            && cellStyle.getBorderBottomEnum() == BorderStyle.NONE
-            && cellStyle.getBorderLeftEnum() == BorderStyle.NONE
+               cellStyle.getFillPattern() == FillPatternType.NO_FILL
+            && cellStyle.getBorderTop() == BorderStyle.NONE
+            && cellStyle.getBorderRight() == BorderStyle.NONE
+            && cellStyle.getBorderBottom() == BorderStyle.NONE
+            && cellStyle.getBorderLeft() == BorderStyle.NONE
         );
     }
 
@@ -335,17 +336,16 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     {
         blockTarget.setAttribute( "white-space-collapse", "false" );
         {
-            String textAlign = ExcelToFoUtils.getAlign( cellStyle
-                    .getAlignment() );
+            String textAlign = ExcelToFoUtils.getAlign( cellStyle.getAlignment() );
             if ( ExcelToFoUtils.isNotEmpty( textAlign ) )
                 blockTarget.setAttribute( "text-align", textAlign );
         }
 
-        if ( cellStyle.getFillPattern() == 0 )
+        if ( cellStyle.getFillPattern() == FillPatternType.NO_FILL )
         {
             // no fill
         }
-        else if ( cellStyle.getFillPattern() == 1 )
+        else if ( cellStyle.getFillPattern() == FillPatternType.SOLID_FOREGROUND )
         {
             final HSSFColor foregroundColor = cellStyle
                     .getFillForegroundColorColor();
@@ -363,13 +363,13 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         }
 
         processCellStyleBorder( workbook, cellTarget, "top",
-                cellStyle.getBorderTopEnum(), cellStyle.getTopBorderColor() );
+                cellStyle.getBorderTop(), cellStyle.getTopBorderColor() );
         processCellStyleBorder( workbook, cellTarget, "right",
-                cellStyle.getBorderRightEnum(), cellStyle.getRightBorderColor() );
+                cellStyle.getBorderRight(), cellStyle.getRightBorderColor() );
         processCellStyleBorder( workbook, cellTarget, "bottom",
-                cellStyle.getBorderBottomEnum(), cellStyle.getBottomBorderColor() );
+                cellStyle.getBorderBottom(), cellStyle.getBottomBorderColor() );
         processCellStyleBorder( workbook, cellTarget, "left",
-                cellStyle.getBorderLeftEnum(), cellStyle.getLeftBorderColor() );
+                cellStyle.getBorderLeft(), cellStyle.getLeftBorderColor() );
 
         HSSFFont font = cellStyle.getFont( workbook );
         processCellStyleFont( workbook, blockTarget, font );

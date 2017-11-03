@@ -205,7 +205,7 @@ public class RelationshipTransformService extends TransformService {
                 String id = el.getAttribute("Id");
                 if (sourceIds.contains(id)) {
                     String targetMode = el.getAttribute("TargetMode");
-                    if ("".equals(targetMode)) {
+                    if (targetMode == null || targetMode.isEmpty()) {
                         el.setAttribute("TargetMode", "Internal");
                     }
                     rsList.put(id, el);

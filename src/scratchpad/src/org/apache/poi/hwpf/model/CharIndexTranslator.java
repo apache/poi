@@ -31,32 +31,6 @@ public interface CharIndexTranslator {
     int getByteIndex( int charPos );
 
     /**
-     * Calculates the char index of the given byte index. Look forward if index
-     * is not in table
-     * 
-     * @param bytePos
-     *            The character offset to check
-     * @return the char index
-     * @deprecated This API were based on incorrect assumption that single byte
-     *             offset corresponds to single char offset
-     */
-    @Deprecated
-    int getCharIndex(int bytePos);
-
-    /**
-     * Calculates the char index of the given byte index.
-     * Look forward if index is not in table
-     *
-     * @param bytePos The character offset to check
-     * @param startCP look from this characted position 
-     * @return the char index
-     * @deprecated This API were based on incorrect assumption that single byte
-     *             offset corresponds to single char offset
-     */
-    @Deprecated
-    int getCharIndex(int bytePos, int startCP);
-
-    /**
      * Finds character ranges that includes specified byte range.
      * 
      * @param startBytePosInclusive

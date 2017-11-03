@@ -66,43 +66,43 @@ public final class TestRegionUtil {
     
     @Test
     public void setBorderTop() {
-        assertEquals(NONE, getCellStyle(0, 0).getBorderTopEnum());
-        assertEquals(NONE, getCellStyle(0, 1).getBorderTopEnum());
-        assertEquals(NONE, getCellStyle(0, 2).getBorderTopEnum());
+        assertEquals(NONE, getCellStyle(0, 0).getBorderTop());
+        assertEquals(NONE, getCellStyle(0, 1).getBorderTop());
+        assertEquals(NONE, getCellStyle(0, 2).getBorderTop());
         RegionUtil.setBorderTop(THIN, A1C3, sheet);
-        assertEquals(THIN, getCellStyle(0, 0).getBorderTopEnum());
-        assertEquals(THIN, getCellStyle(0, 1).getBorderTopEnum());
-        assertEquals(THIN, getCellStyle(0, 2).getBorderTopEnum());
+        assertEquals(THIN, getCellStyle(0, 0).getBorderTop());
+        assertEquals(THIN, getCellStyle(0, 1).getBorderTop());
+        assertEquals(THIN, getCellStyle(0, 2).getBorderTop());
     }
     @Test
     public void setBorderBottom() {
-        assertEquals(NONE, getCellStyle(2, 0).getBorderBottomEnum());
-        assertEquals(NONE, getCellStyle(2, 1).getBorderBottomEnum());
-        assertEquals(NONE, getCellStyle(2, 2).getBorderBottomEnum());
+        assertEquals(NONE, getCellStyle(2, 0).getBorderBottom());
+        assertEquals(NONE, getCellStyle(2, 1).getBorderBottom());
+        assertEquals(NONE, getCellStyle(2, 2).getBorderBottom());
         RegionUtil.setBorderBottom(THIN, A1C3, sheet);
-        assertEquals(THIN, getCellStyle(2, 0).getBorderBottomEnum());
-        assertEquals(THIN, getCellStyle(2, 1).getBorderBottomEnum());
-        assertEquals(THIN, getCellStyle(2, 2).getBorderBottomEnum());
+        assertEquals(THIN, getCellStyle(2, 0).getBorderBottom());
+        assertEquals(THIN, getCellStyle(2, 1).getBorderBottom());
+        assertEquals(THIN, getCellStyle(2, 2).getBorderBottom());
     }
     @Test
     public void setBorderRight() {
-        assertEquals(NONE, getCellStyle(0, 2).getBorderRightEnum());
-        assertEquals(NONE, getCellStyle(1, 2).getBorderRightEnum());
-        assertEquals(NONE, getCellStyle(2, 2).getBorderRightEnum());
+        assertEquals(NONE, getCellStyle(0, 2).getBorderRight());
+        assertEquals(NONE, getCellStyle(1, 2).getBorderRight());
+        assertEquals(NONE, getCellStyle(2, 2).getBorderRight());
         RegionUtil.setBorderRight(THIN, A1C3, sheet);
-        assertEquals(THIN, getCellStyle(0, 2).getBorderRightEnum());
-        assertEquals(THIN, getCellStyle(1, 2).getBorderRightEnum());
-        assertEquals(THIN, getCellStyle(2, 2).getBorderRightEnum());
+        assertEquals(THIN, getCellStyle(0, 2).getBorderRight());
+        assertEquals(THIN, getCellStyle(1, 2).getBorderRight());
+        assertEquals(THIN, getCellStyle(2, 2).getBorderRight());
     }
     @Test
     public void setBorderLeft() {
-        assertEquals(NONE, getCellStyle(0, 0).getBorderLeftEnum());
-        assertEquals(NONE, getCellStyle(1, 0).getBorderLeftEnum());
-        assertEquals(NONE, getCellStyle(2, 0).getBorderLeftEnum());
+        assertEquals(NONE, getCellStyle(0, 0).getBorderLeft());
+        assertEquals(NONE, getCellStyle(1, 0).getBorderLeft());
+        assertEquals(NONE, getCellStyle(2, 0).getBorderLeft());
         RegionUtil.setBorderLeft(THIN, A1C3, sheet);
-        assertEquals(THIN, getCellStyle(0, 0).getBorderLeftEnum());
-        assertEquals(THIN, getCellStyle(1, 0).getBorderLeftEnum());
-        assertEquals(THIN, getCellStyle(2, 0).getBorderLeftEnum());
+        assertEquals(THIN, getCellStyle(0, 0).getBorderLeft());
+        assertEquals(THIN, getCellStyle(1, 0).getBorderLeft());
+        assertEquals(THIN, getCellStyle(2, 0).getBorderLeft());
     }
     
     @Test
@@ -149,9 +149,9 @@ public final class TestRegionUtil {
     @Test
     public void bordersCanBeAddedToNonExistantCells() {
         RegionUtil.setBorderTop(THIN, A1C3, sheet);
-        assertEquals(THIN, getCellStyle(0, 0).getBorderTopEnum());
-        assertEquals(THIN, getCellStyle(0, 1).getBorderTopEnum());
-        assertEquals(THIN, getCellStyle(0, 2).getBorderTopEnum());
+        assertEquals(THIN, getCellStyle(0, 0).getBorderTop());
+        assertEquals(THIN, getCellStyle(0, 1).getBorderTop());
+        assertEquals(THIN, getCellStyle(0, 2).getBorderTop());
     }
     @Test
     public void borderColorsCanBeAddedToNonExistantCells() {

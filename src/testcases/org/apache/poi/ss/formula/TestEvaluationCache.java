@@ -43,7 +43,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
 import org.apache.poi.ss.usermodel.*;
@@ -162,7 +162,7 @@ public class TestEvaluationCache extends TestCase {
 			}
 		}
 		private void log(String tag, int rowIndex, int columnIndex, Object value) {
-			StringBuffer sb = new StringBuffer(64);
+			StringBuilder sb = new StringBuilder(64);
 			sb.append(tag).append(' ');
 			sb.append(new CellReference(rowIndex, columnIndex, false, false).formatAsString());
 			if (value != null) {
@@ -208,9 +208,8 @@ public class TestEvaluationCache extends TestCase {
 	 * Wrapper class to manage repetitive tasks from this test,
 	 *
 	 * Note - this class does a little bit more than just plain set-up of data. The method
-	 * {@link WorkbookEvaluator#clearCachedResultValue(HSSFSheet, int, int)} is called whenever a
+	 * {@link WorkbookEvaluator#notifyUpdateCell(EvaluationCell)} is called whenever a
 	 * cell value is changed.
-	 *
 	 */
 	private static final class MySheet {
 

@@ -484,7 +484,7 @@ public class CellReference {
      * @return the text representation of this cell reference as it would appear in a formula.
      */
     public String formatAsString() {
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         if(_sheetName != null) {
             SheetNameFormatter.appendFormat(sb, _sheetName);
             sb.append(SHEET_NAME_DELIMITER);
@@ -523,7 +523,7 @@ public class CellReference {
      * Appends cell reference with '$' markers for absolute values as required.
      * Sheet name is not included.
      */
-    /* package */ void appendCellReference(StringBuffer sb) {
+    /* package */ void appendCellReference(StringBuilder sb) {
         if (_colIndex != -1) {
             if(_isColAbs) {
                 sb.append(ABSOLUTE_REFERENCE_MARKER);

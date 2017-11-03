@@ -145,7 +145,7 @@ public class HSSFCell implements Cell {
      * @param row   - the row of this cell
      * @param col   - the column for this cell
      * @param type  - Type of cell
-     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(int,int)
+     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(int,CellType)
      */
     protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col,
                        CellType type)

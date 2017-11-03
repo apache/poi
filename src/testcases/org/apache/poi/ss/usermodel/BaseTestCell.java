@@ -277,10 +277,10 @@ public abstract class BaseTestCell {
 
         assertNotNull("Formula Cell Style", cs);
         assertEquals("Font Index Matches", f.getIndex(), cs.getFontIndex());
-        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTopEnum());
-        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeftEnum());
-        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRightEnum());
-        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottomEnum());
+        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
+        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
+        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
+        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottom());
         wb2.close();
     }
 
@@ -505,7 +505,7 @@ public abstract class BaseTestCell {
         assertEquals("abc", cellA1.getStringCellValue());
 
         fe.evaluateInCell(cellA1);
-        assertFalse("Identified bug with writing back formula result of type string", cellA1.getStringCellValue().equals(""));
+        assertFalse("Identified bug with writing back formula result of type string", cellA1.getStringCellValue().isEmpty());
         assertEquals("abc", cellA1.getStringCellValue());
         
         wb.close();
@@ -715,7 +715,7 @@ public abstract class BaseTestCell {
         assertFalse(style.getHidden());
         assertEquals(0, style.getIndention());
         assertEquals(0, style.getFontIndex());
-        assertEquals(HorizontalAlignment.GENERAL, style.getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, style.getAlignment());
         assertEquals(0, style.getDataFormat());
         assertEquals(false, style.getWrapText());
 

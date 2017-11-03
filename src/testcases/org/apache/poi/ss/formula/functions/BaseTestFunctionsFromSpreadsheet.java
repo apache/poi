@@ -34,7 +34,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -50,8 +50,6 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
      * This class defines constants for navigating around the test data spreadsheet used for these tests.
      */
     interface SS {
-        /** Name of the test spreadsheet (found in the standard test data folder) */
-
         /** Name of the first sheet in the spreadsheet (contains comments) */
         String README_SHEET_NAME = "Read Me";
 
@@ -70,7 +68,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
 
     }
 
-    @Parameter(value = 0)
+    @Parameter()
     public String testName;
     @Parameter(value = 1)
     public String filename;
@@ -92,7 +90,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         int nSheets = workbook.getNumberOfSheets();
         for(int sheetIdx=1; sheetIdx< nSheets; sheetIdx++) {
             HSSFSheet sheet = workbook.getSheetAt(sheetIdx);
-            processFunctionGroup(data, sheet, SS.START_TEST_CASES_ROW_INDEX, null, filename);
+            processFunctionGroup(data, sheet, SS.START_TEST_CASES_ROW_INDEX, filename);
         }
         
         workbook.close();
@@ -100,7 +98,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         return data;
     }
 
-    private static void processFunctionGroup(List<Object[]> data, HSSFSheet sheet, final int startRowIndex, String testFocusFunctionName, String filename) {
+    private static void processFunctionGroup(List<Object[]> data, HSSFSheet sheet, final int startRowIndex, String filename) {
         HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet.getWorkbook());
 
         String currentGroupComment = "";
@@ -129,7 +127,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
             String rowComment = getCellTextValue(r, SS.COLUMN_ROW_COMMENT, "row comment");
 
             String testName = (currentGroupComment+'\n'+rowComment).replace("null", "").trim().replace("\n", " - ");
-            if ("".equals(testName)) {
+            if (testName.isEmpty()) {
                 testName = evalCell.getCellFormula();
             }
             
@@ -224,13 +222,13 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         return "";
     }
 
-    private static String formatValue(HSSFCell expecedCell) {
-        switch (expecedCell.getCellType()) {
+    private static String formatValue(HSSFCell expectedCell) {
+        switch (expectedCell.getCellType()) {
             case BLANK: return "<blank>";
-            case BOOLEAN: return Boolean.toString(expecedCell.getBooleanCellValue());
-            case NUMERIC: return Double.toString(expecedCell.getNumericCellValue());
-            case STRING: return expecedCell.getRichStringCellValue().getString();
-            default: fail("Unexpected cell type of expected value (" + expecedCell.getCellType() + ")");
+            case BOOLEAN: return Boolean.toString(expectedCell.getBooleanCellValue());
+            case NUMERIC: return Double.toString(expectedCell.getNumericCellValue());
+            case STRING: return expectedCell.getRichStringCellValue().getString();
+            default: fail("Unexpected cell type of expected value (" + expectedCell.getCellType() + ")");
         }
         return "";
     }

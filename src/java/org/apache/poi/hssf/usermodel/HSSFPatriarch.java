@@ -42,7 +42,7 @@ import org.apache.poi.hssf.record.FtCfSubRecord;
 import org.apache.poi.hssf.record.FtPioGrbitSubRecord;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -117,13 +117,13 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
      */
     protected void preSerialize(){
         Map<Integer, NoteRecord> tailRecords = _boundAggregate.getTailRecords();
-        /**
+        /*
          * contains coordinates of comments we iterate over
          */
         Set<String> coordinates = new HashSet<>(tailRecords.size());
         for(NoteRecord rec : tailRecords.values()){
             String noteRef = new CellReference(rec.getRow(),
-                    rec.getColumn()).formatAsString(); // A1-style notation
+                    rec.getColumn(), true, true).formatAsString(); // A1-style notation
             if(coordinates.contains(noteRef )){
                 throw new IllegalStateException("found multiple cell comments for cell " + noteRef );
             } else {
@@ -390,8 +390,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
      */
     public int countOfAllChildren() {
         int count = _shapes.size();
-        for (Iterator<HSSFShape> iterator = _shapes.iterator(); iterator.hasNext(); ) {
-            HSSFShape shape = iterator.next();
+        for (HSSFShape shape : _shapes) {
             count += shape.countOfAllChildren();
         }
         return count;
@@ -448,8 +447,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
             return false;
         }
 
-        for (Iterator<EscherProperty> it = optRecord.getEscherProperties().iterator(); it.hasNext(); ) {
-            EscherProperty prop = it.next();
+        for (EscherProperty prop : optRecord.getEscherProperties()) {
             if (prop.getPropertyNumber() == 896 && prop.isComplex()) {
                 EscherComplexProperty cp = (EscherComplexProperty) prop;
                 String str = StringUtil.getFromUnicodeLE(cp.getComplexData());

@@ -566,7 +566,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * Convert a strig value into a Nullable<String>
 	 */
 	private Nullable<String> setStringValue(String s) {
-		if (s == null || s.equals("")) {
+		if (s == null || s.isEmpty()) {
 			return new Nullable<>();
 		}
 		return new Nullable<>(s);
@@ -579,7 +579,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *             Throws if the date format isnot valid.
 	 */
 	private Nullable<Date> setDateValue(String dateStr) throws InvalidFormatException {
-		if (dateStr == null || dateStr.equals("")) {
+		if (dateStr == null || dateStr.isEmpty()) {
 			return new Nullable<>();
 		}
 

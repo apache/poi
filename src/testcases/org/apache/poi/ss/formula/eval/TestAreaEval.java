@@ -20,8 +20,10 @@ package org.apache.poi.ss.formula.eval;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.functions.EvalFactory;
+import org.apache.poi.ss.util.AreaReference;
 
 /**
  * Tests for <tt>AreaEval</tt>
@@ -32,7 +34,7 @@ public final class TestAreaEval extends TestCase {
 
 	public void testGetValue_bug44950() {
 		// TODO - this test probably isn't testing much anymore
-		AreaPtg ptg = new AreaPtg("B2:D3");
+		AreaPtg ptg = new AreaPtg(new AreaReference("B2:D3", SpreadsheetVersion.EXCEL97));
 		NumberEval one = new NumberEval(1);
 		ValueEval[] values = {
 				one,

@@ -202,15 +202,12 @@ public class CustomProperties implements Map<String,Object> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CustomProperties)) {
-            return false;
-        }
-        return props.equals(((CustomProperties)obj).props);
+        return obj instanceof CustomProperties && props.equals(((CustomProperties) obj).props);
     }
 
     @Override
-    public void putAll(Map<? extends String, ? extends Object> m) {
-        for (Map.Entry<? extends String, ? extends Object> me : m.entrySet()) {
+    public void putAll(Map<? extends String, ?> m) {
+        for (Map.Entry<? extends String, ?> me : m.entrySet()) {
             put(me.getKey(), me.getValue());
         }
     }
@@ -365,7 +362,7 @@ public class CustomProperties implements Map<String,Object> {
      * <li>Otherwise find the highest ID and use its value plus one.
      * </ul>
      *
-     * @param customProperty
+     * @param customProperty The {@link CustomProperty} to add.
      * @return If there was already a property with the same name, the old property
      * @throws ClassCastException
      */

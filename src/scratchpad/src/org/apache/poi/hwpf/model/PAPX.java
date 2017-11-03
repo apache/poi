@@ -40,15 +40,6 @@ public final class PAPX extends BytePropertyNode<PAPX> {
 
     private ParagraphHeight _phe;
 
-    public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] papx, ParagraphHeight phe, byte[] dataStream)
-    {
-        super(fcStart, fcEnd, translator, new SprmBuffer(papx, 2));
-        _phe = phe;
-        SprmBuffer buf = findHuge(new SprmBuffer(papx, 2), dataStream);
-        if(buf != null)
-            _buf = buf;
-    }
-
     public PAPX( int charStart, int charEnd, byte[] papx, ParagraphHeight phe,
             byte[] dataStream )
     {
@@ -56,16 +47,6 @@ public final class PAPX extends BytePropertyNode<PAPX> {
         _phe = phe;
         SprmBuffer buf = findHuge( new SprmBuffer( papx, 2 ), dataStream );
         if ( buf != null )
-            _buf = buf;
-    }
-
-    @Deprecated
-    public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, SprmBuffer buf, byte[] dataStream)
-    {
-        super(fcStart, fcEnd, translator, buf);
-        _phe = new ParagraphHeight();
-        buf = findHuge(buf, dataStream);
-        if(buf != null)
             _buf = buf;
     }
 

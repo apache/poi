@@ -340,7 +340,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 		// TODO Do properly
 		CTTitle title = chart.getTitle();
 
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder(64);
 		XmlObject[] t = title
 			.selectPath("declare namespace a='"+XSSFDrawing.NAMESPACE_A+"' .//a:t");
 		for (XmlObject element : t) {

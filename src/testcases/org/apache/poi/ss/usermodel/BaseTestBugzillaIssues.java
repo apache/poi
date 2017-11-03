@@ -1517,8 +1517,7 @@ public abstract class BaseTestBugzillaIssues {
     
     @Ignore("bug 59393")
     @Test
-    public void bug59393_commentsCanHaveSameAnchor() throws IOException
-    {
+    public void bug59393_commentsCanHaveSameAnchor() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         
         Sheet sheet = wb.createSheet();
@@ -1597,7 +1596,7 @@ public abstract class BaseTestBugzillaIssues {
 
         workbook.close();
     }
-    
+
     @Ignore
     @Test
     public void test57929() throws IOException {
@@ -1631,11 +1630,10 @@ public abstract class BaseTestBugzillaIssues {
 
     @Test
     public void test55384() throws Exception {
-        Workbook wb = _testDataProvider.createWorkbook();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             for (int rownum = 0; rownum < 10; rownum++) {
-                org.apache.poi.ss.usermodel.Row row = sh.createRow(rownum);
+                Row row = sh.createRow(rownum);
                 for (int cellnum = 0; cellnum < 3; cellnum++) {
                     Cell cell = row.createCell(cellnum);
                     cell.setCellValue(rownum + cellnum);
@@ -1676,8 +1674,6 @@ public abstract class BaseTestBugzillaIssues {
             Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
             checkFormulaPreevaluatedString(wbBack);
             wbBack.close();
-        } finally {
-            wb.close();
         }
     }
 
@@ -1899,5 +1895,21 @@ public abstract class BaseTestBugzillaIssues {
         }*/
 
         wb.close();
+    }
+
+    protected void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
+        assertEquals(CellType.FORMULA, intF.getCellType());
+        if (null == expectedResultOrNull) {
+            assertEquals(CellType.ERROR, intF.getCachedFormulaResultType());
+            expectedResultOrNull = "#VALUE!";
+        } else {
+            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultType());
+        }
+
+        assertEquals(expectedFormula, intF.getCellFormula());
+
+        // Check we can evaluate it correctly
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
     }
 }

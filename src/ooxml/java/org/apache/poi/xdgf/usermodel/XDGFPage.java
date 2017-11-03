@@ -99,7 +99,7 @@ public class XDGFPage {
         if (xoffcell != null)
             xoffset = Double.parseDouble(xoffcell.getValue());
 
-        if (xoffcell != null)
+        if (yoffcell != null)
             yoffset = Double.parseDouble(yoffcell.getValue());
 
         return new Point2D.Double(xoffset, yoffset);

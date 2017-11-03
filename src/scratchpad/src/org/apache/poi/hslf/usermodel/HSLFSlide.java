@@ -460,6 +460,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 		return this.getPPDrawing().getTextboxWrappers();
 	}
 
+	@Override
 	public void setHidden(boolean hidden) {
 		org.apache.poi.hslf.record.Slide cont =	getSlideRecord();
 
@@ -473,7 +474,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 		slideInfo.setEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT, hidden);
 	}
 
-	public boolean getHidden() {
+    @Override
+	public boolean isHidden() {
 		SSSlideInfoAtom slideInfo =
 			(SSSlideInfoAtom)getSlideRecord().findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
 		return (slideInfo == null)

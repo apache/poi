@@ -77,8 +77,8 @@ public final class Mode implements Function {
 		double result;
 		try {
 			List<Double> temp = new ArrayList<>();
-			for (int i = 0; i < args.length; i++) {
-				collectValues(args[i], temp);
+			for (ValueEval arg : args) {
+				collectValues(arg, temp);
 			}
 			double[] values = new double[temp.size()];
 			for (int i = 0; i < values.length; i++) {
@@ -129,7 +129,7 @@ public final class Mode implements Function {
 			return;
 		}
 		if (arg instanceof NumberEval) {
-			temp.add(new Double(((NumberEval) arg).getNumberValue()));
+			temp.add(Double.valueOf(((NumberEval) arg).getNumberValue()));
 			return;
 		}
 		throw new RuntimeException("Unexpected value type (" + arg.getClass().getName() + ")");

@@ -256,6 +256,7 @@ public class XSSFComment implements Comment {
         // There is a very odd xmlbeans bug when changing the row
         //  arrays which can lead to corrupt pointer
         // This call seems to fix them again... See bug #50795
+        //noinspection ResultOfMethodCallIgnored
         vmlShape.getClientDataList().toString();
     }
 }

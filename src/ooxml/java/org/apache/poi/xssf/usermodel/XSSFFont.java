@@ -47,11 +47,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 public class XSSFFont implements Font {
 
     /**
-     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     * By default, Microsoft Office Excel 2007 uses the Calibri font in font size 11
      */
     public static final String DEFAULT_FONT_NAME = "Calibri";
     /**
-     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     * By default, Microsoft Office Excel 2007 uses the Calibri font in font size 11
      */
     public static final short DEFAULT_FONT_SIZE = 11;
     /**
@@ -118,7 +118,7 @@ public class XSSFFont implements Font {
      * get character-set to use.
      *
      * @return int - character-set (0-255)
-     * @see org.apache.poi.ss.usermodel.FontCharset
+     * @see FontCharset
      */
     public int getCharSet() {
         CTIntProperty charset = _ctFont.sizeOfCharsetArray() == 0 ? null : _ctFont.getCharsetArray(0);
@@ -297,7 +297,7 @@ public class XSSFFont implements Font {
     public void setBold(boolean bold) {
         if(bold){
             CTBooleanProperty ctBold = _ctFont.sizeOfBArray() == 0 ? _ctFont.addNewB() : _ctFont.getBArray(0);
-            ctBold.setVal(bold);
+            ctBold.setVal(true);
         } else {
             _ctFont.setBArray(null);
         }
@@ -448,7 +448,7 @@ public class XSSFFont implements Font {
     public void setItalic(boolean italic) {
         if(italic){
             CTBooleanProperty bool = _ctFont.sizeOfIArray() == 0 ? _ctFont.addNewI() : _ctFont.getIArray(0);
-            bool.setVal(italic);
+            bool.setVal(true);
         } else {
             _ctFont.setIArray(null);
         }
@@ -462,10 +462,11 @@ public class XSSFFont implements Font {
      * @param strikeout - value for strikeout or not
      */
     public void setStrikeout(boolean strikeout) {
-        if(!strikeout) _ctFont.setStrikeArray(null);
-        else {
+        if(strikeout) {
             CTBooleanProperty strike = _ctFont.sizeOfStrikeArray() == 0 ? _ctFont.addNewStrike() : _ctFont.getStrikeArray(0);
-            strike.setVal(strikeout);
+            strike.setVal(true);
+        } else {
+            _ctFont.setStrikeArray(null);
         }
     }
 

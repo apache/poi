@@ -123,7 +123,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
-     * Width of one character of the default font in pixels. Same for Calibry and Arial.
+     * Width of one character of the default font in pixels. Same for Calibri and Arial.
      * @deprecated POI 3.17 beta 1
      * @see Units#DEFAULT_CHARACTER_WIDTH
      */
@@ -275,11 +275,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         load(XSSFFactory.getInstance());
         
         // some broken Workbooks miss this...
-        if(!workbook.isSetBookViews()) {
-            CTBookViews bvs = workbook.addNewBookViews();
-            CTBookView bv = bvs.addNewWorkbookView();
-            bv.setActiveTab(0);
-        }
+        setBookViewsIfMissing();
     }
 
     /**
@@ -297,19 +293,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *   </code></pre>
      */
     public XSSFWorkbook(InputStream is) throws IOException {
-        super(PackageHelper.open(is));
-
-        beforeDocumentRead();
-        
-        // Build a tree of POIXMLDocumentParts, this workbook being the root
-        load(XSSFFactory.getInstance());
-
-        // some broken Workbooks miss this...
-        if(!workbook.isSetBookViews()) {
-            CTBookViews bvs = workbook.addNewBookViews();
-            CTBookView bv = bvs.addNewWorkbookView();
-            bv.setActiveTab(0);
-        }
+        this(PackageHelper.open(is));
     }
 
     /**
@@ -459,9 +443,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         CTWorkbookPr workbookPr = workbook.addNewWorkbookPr();
         workbookPr.setDate1904(false);
 
-        CTBookViews bvs = workbook.addNewBookViews();
-        CTBookView bv = bvs.addNewWorkbookView();
-        bv.setActiveTab(0);
+        setBookViewsIfMissing();
         workbook.addNewSheets();
 
         POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
@@ -476,13 +458,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         sheets = new ArrayList<>();
         pivotTables = new ArrayList<>();
     }
+    
+    private void setBookViewsIfMissing() {
+        if(!workbook.isSetBookViews()) {
+            CTBookViews bvs = workbook.addNewBookViews();
+            CTBookView bv = bvs.addNewWorkbookView();
+            bv.setActiveTab(0);
+        }
+    }
 
     /**
      * Create a new SpreadsheetML package and setup the default minimal content
      */
     protected static OPCPackage newPackage(XSSFWorkbookType workbookType) {
         try {
-            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());
+            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
             // Create main part relationship
@@ -1500,13 +1490,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         //short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
         //name.setExternSheetNumber(externSheetIndex);
         String[] parts = COMMA_PATTERN.split(reference);
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         for (int i = 0; i < parts.length; i++) {
             if(i>0) {
-                sb.append(",");
+                sb.append(',');
             }
             SheetNameFormatter.appendFormat(sb, getSheetName(sheetIndex));
-            sb.append("!");
+            sb.append('!');
             sb.append(parts[i]);
         }
         name.setRefersToFormula(sb.toString());
@@ -2361,7 +2351,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     @Override
     public int addOlePackage(byte[] oleData, String label, String fileName, String command)
-    throws IOException {
+                throws IOException {
         // find an unused part name
         OPCPackage opc = getPackage();
         PackagePartName pnOLE;
@@ -2381,17 +2371,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500);
         ole10.writeOut(bos);
         
-        POIFSFileSystem poifs = new POIFSFileSystem();
-        DirectoryNode root = poifs.getRoot();
-        root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
-        root.setStorageClsid(ClassID.OLE10_PACKAGE);
+        try (POIFSFileSystem poifs = new POIFSFileSystem()) {
+            DirectoryNode root = poifs.getRoot();
+            root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+            root.setStorageClsid(ClassID.OLE10_PACKAGE);
 
-        // TODO: generate CombObj stream
+            // TODO: generate CombObj stream
 
-        OutputStream os = pp.getOutputStream();
-        poifs.writeFilesystem(os);
-        os.close();
-        poifs.close();
+            try (OutputStream os = pp.getOutputStream()) {
+                poifs.writeFilesystem(os);
+            }
+        }
 
         return oleId;
     }

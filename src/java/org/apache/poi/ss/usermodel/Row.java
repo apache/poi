@@ -50,28 +50,6 @@ public interface Row extends Iterable<Cell> {
      * @return Cell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
-     * @see CellType#BLANK
-     * @see CellType#BOOLEAN
-     * @see CellType#ERROR
-     * @see CellType#FORMULA
-     * @see CellType#NUMERIC
-     * @see CellType#STRING
-     * @deprecated POI 3.15 beta 3. Use {@link #createCell(int, CellType)} instead.
-     */
-    Cell createCell(int column, int type);
-    /**
-     * Use this to create new cells within the row and return it.
-     * <p>
-     * The cell that is returned will be of the requested type.
-     * The type can be changed either through calling setCellValue 
-     *  or setCellType, but there is a small overhead to doing this,
-     *  so it is best to create of the required type up front.
-     *
-     * @param column - the column number this cell represents
-     * @param type - the cell's data type
-     * @return Cell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than a maximum number of supported columns
-     * (255 for *.xls, 1048576 for *.xlsx)
      */
     Cell createCell(int column, CellType type);
 
@@ -118,6 +96,11 @@ public interface Row extends Iterable<Cell> {
     /**
      * Get the number of the first cell contained in this row.
      *
+     * Note: cells which had content before and were set to empty later might
+     * still be counted as cells by Excel and Apache POI, so the result of this
+     * method will include such rows and thus the returned value might be lower
+     * than expected!
+     *
      * @return short representing the first logical cell in the row,
      *  or -1 if the row does not contain any cells.
      */
@@ -138,6 +121,11 @@ public interface Row extends Iterable<Cell> {
      *   //... do something with cell
      * }
      * </pre>
+     *
+     * Note: cells which had content before and were set to empty later might
+     * still be counted as cells by Excel and Apache POI, so the result of this
+     * method will include such rows and thus the returned value might be higher
+     * than expected!
      *
      * @return short representing the last logical cell in the row <b>PLUS ONE</b>,
      *   or -1 if the row does not contain any cells.

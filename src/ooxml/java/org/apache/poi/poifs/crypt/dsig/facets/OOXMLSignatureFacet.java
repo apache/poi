@@ -191,7 +191,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
             }
         }
         
-        Collections.sort(manifestReferences, new Comparator<Reference>() {
+        manifestReferences.sort(new Comparator<Reference>() {
             public int compare(Reference o1, Reference o2) {
                 return o1.getURI().compareTo(o2.getURI());
             }

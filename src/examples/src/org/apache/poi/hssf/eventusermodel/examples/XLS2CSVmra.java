@@ -99,8 +99,6 @@ public class XLS2CSVmra implements HSSFListener {
 	 * Creates a new XLS -> CSV converter
 	 * @param filename The file to process
 	 * @param minColumns The minimum number of columns to output, or -1 for no minimum
-	 * @throws IOException
-	 * @throws FileNotFoundException
 	 */
 	public XLS2CSVmra(String filename, int minColumns) throws IOException, FileNotFoundException {
 		this(

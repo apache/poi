@@ -45,7 +45,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     protected List<XWPFRun> runs;
     protected List<IRunElement> iruns;
 
-    private StringBuffer footnoteText = new StringBuffer();
+    private StringBuilder footnoteText = new StringBuilder(64);
 
     public XWPFParagraph(CTP prgrph, IBody part) {
         this.paragraph = prgrph;
@@ -184,7 +184,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * and sdt elements in it.
      */
     public String getText() {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder(64);
         for (IRunElement run : iruns) {
             if (run instanceof XWPFRun) {
                 XWPFRun xRun = (XWPFRun) run;
@@ -352,7 +352,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 }
                 if (level != null && level.getLvlText() != null
                         && level.getLvlText().getVal() != null) {
-                    return level.getLvlText().getVal().toString();
+                    return level.getLvlText().getVal();
                 }
             }
         }
@@ -398,7 +398,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * paragraph
      */
     public String getParagraphText() {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder(64);
         for (XWPFRun run : runs) {
             out.append(run);
         }
@@ -409,7 +409,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Returns any text from any suitable pictures in the paragraph
      */
     public String getPictureText() {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder(64);
         for (XWPFRun run : runs) {
             out.append(run.getPictureText());
         }

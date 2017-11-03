@@ -15,17 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
-
-import org.apache.poi.util.Internal;
+package org.apache.poi.poifs.macros;
 
 /**
- *
- * @author  andy
+ * Representation of Macro module in office file.
  */
-@Internal
-@Deprecated
-public interface HDFType {
+public interface Module {
+    /**
+     * Type of macro module
+     */
+    public enum ModuleType {
+        Document,
+        Module,
+        Class
+    }
 
+    /**
+     * Get the module content.
+     *
+     * @return the module content
+     */
+    public String getContent();
+
+    /**
+     * Get the module type.
+     *
+     * @return the module type
+     */
+    public ModuleType geModuleType();
 }
-

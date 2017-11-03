@@ -20,15 +20,8 @@ package org.apache.poi.poifs.macros;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -41,6 +34,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.poifs.macros.Module.ModuleType;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
@@ -115,6 +109,20 @@ public class VBAMacroReader implements Closeable {
         fs = null;
     }
 
+    public Map<String, Module> readMacroModules() throws IOException {
+        final ModuleMap modules = new ModuleMap();
+        findMacros(fs.getRoot(), modules);
+        findProjectProperties(fs.getRoot(), modules);
+
+        Map<String, Module> moduleSources = new HashMap<>();
+        for (Map.Entry<String, ModuleImpl> entry : modules.entrySet()) {
+            ModuleImpl module = entry.getValue();
+            module.charset = modules.charset;
+            moduleSources.put(entry.getKey(), module);
+        }
+        return moduleSources;
+    }
+
     /**
      * Reads all macros from all modules of the opened office file. 
      * @return All the macros and their contents
@@ -122,30 +130,33 @@ public class VBAMacroReader implements Closeable {
      * @since 3.15-beta2
      */
     public Map<String, String> readMacros() throws IOException {
-        final ModuleMap modules = new ModuleMap();
-        findMacros(fs.getRoot(), modules);
-        
+        Map<String, Module> modules = readMacroModules();
         Map<String, String> moduleSources = new HashMap<>();
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
-            Module module = entry.getValue();
-            if (module.buf != null && module.buf.length > 0) { // Skip empty modules
-                moduleSources.put(entry.getKey(), new String(module.buf, modules.charset));
-            }
+            moduleSources.put(entry.getKey(), entry.getValue().getContent());
         }
         return moduleSources;
     }
     
-    protected static class Module {
+    protected static class ModuleImpl implements Module {
         Integer offset;
         byte[] buf;
+        ModuleType moduleType;
+        Charset charset;
         void read(InputStream in) throws IOException {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             IOUtils.copy(in, out);
             out.close();
             buf = out.toByteArray();
         }
+        public String getContent() {
+            return new String(buf, charset);
+        }
+        public ModuleType geModuleType() {
+            return moduleType;
+        }
     }
-    protected static class ModuleMap extends HashMap<String, Module> {
+    protected static class ModuleMap extends HashMap<String, ModuleImpl> {
         Charset charset = StringUtil.WIN_1252; // default charset
     }
     
@@ -189,10 +200,10 @@ public class VBAMacroReader implements Closeable {
      */
     private static void readModuleMetadataFromDirStream(RLEDecompressingInputStream in, String streamName, ModuleMap modules) throws IOException {
         int moduleOffset = in.readInt();
-        Module module = modules.get(streamName);
+        ModuleImpl module = modules.get(streamName);
         if (module == null) {
             // First time we've seen the module. Add it to the ModuleMap and decompress it later
-            module = new Module();
+            module = new ModuleImpl();
             module.offset = moduleOffset;
             modules.put(streamName, module);
             // Would adding module.read(in) here be correct?
@@ -207,17 +218,14 @@ public class VBAMacroReader implements Closeable {
     }
     
     private static void readModuleFromDocumentStream(DocumentNode documentNode, String name, ModuleMap modules) throws IOException {
-        Module module = modules.get(name);
+        ModuleImpl module = modules.get(name);
         // TODO Refactor this to fetch dir then do the rest
         if (module == null) {
             // no DIR stream with offsets yet, so store the compressed bytes for later
-            module = new Module();
+            module = new ModuleImpl();
             modules.put(name, module);
-            InputStream dis = new DocumentInputStream(documentNode);
-            try {
+            try (InputStream dis = new DocumentInputStream(documentNode)) {
                 module.read(dis);
-            } finally {
-                dis.close();
             }
         } else if (module.buf == null) { //if we haven't already read the bytes for the module keyed off this name...
 
@@ -238,8 +246,7 @@ public class VBAMacroReader implements Closeable {
                 decompressed = new RLEDecompressingInputStream(compressed);
                 module.read(decompressed);
                 return;
-            } catch (IllegalArgumentException e) {
-            } catch (IllegalStateException e) {
+            } catch (IllegalArgumentException | IllegalStateException e) {
             } finally {
                 IOUtils.closeQuietly(compressed);
                 IOUtils.closeQuietly(decompressed);
@@ -247,7 +254,7 @@ public class VBAMacroReader implements Closeable {
 
             //bad module.offset, try brute force
             compressed = new DocumentInputStream(documentNode);
-            byte[] decompressedBytes = null;
+            byte[] decompressedBytes;
             try {
                 decompressedBytes = findCompressedStreamWBruteForce(compressed);
             } finally {
@@ -316,6 +323,23 @@ public class VBAMacroReader implements Closeable {
                         && !startsWithIgnoreCase(name, "_VBA_PROJECT")) {
                     // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
                     readModuleFromDocumentStream(document, name, modules);
+            }
+        }
+    }
+
+    protected void findProjectProperties(DirectoryNode node, ModuleMap modules) throws IOException {
+        for (Entry entry : node) {
+            if ("project".equalsIgnoreCase(entry.getName())) {
+                DocumentNode document = (DocumentNode)entry;
+                DocumentInputStream dis = new DocumentInputStream(document);
+                readProjectProperties(dis, modules);
+            } else {
+                for (Entry child : node) {
+                    if (child instanceof DirectoryNode) {
+                        findProjectProperties((DirectoryNode)child, modules);
+                    }
+                }
+
             }
         }
     }
@@ -419,14 +443,12 @@ public class VBAMacroReader implements Closeable {
 
     private void processDirStream(Entry dir, ModuleMap modules) throws IOException {
         DocumentNode dirDocumentNode = (DocumentNode)dir;
-        DocumentInputStream dis = new DocumentInputStream(dirDocumentNode);
         DIR_STATE dirState = DIR_STATE.INFORMATION_RECORD;
-        try {
-            RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis);
+        try (DocumentInputStream dis = new DocumentInputStream(dirDocumentNode)) {
             String streamName = null;
             int recordId = 0;
             boolean inReferenceTwiddled = false;
-            try {
+            try (RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis)) {
                 while (true) {
                     recordId = in.readShort();
                     if (recordId == -1) {
@@ -465,7 +487,7 @@ public class VBAMacroReader implements Closeable {
                             }
                             readStringPair(in, modules.charset, REFERENCE_NAME_RESERVED);
                             break;
-                        case MODULE_DOC_STRING :
+                        case MODULE_DOC_STRING:
                             int modDocStringLength = in.readInt();
                             readString(in, modDocStringLength, modules.charset);
                             int modDocStringReserved = in.readShort();
@@ -520,11 +542,7 @@ public class VBAMacroReader implements Closeable {
                 throw new IOException(
                         "Error occurred while reading macros at section id "
                                 + recordId + " (" + HexDump.shortToHex(recordId) + ")", e);
-            } finally {
-                in.close();
             }
-        } finally {
-            dis.close();
         }
     }
 
@@ -559,6 +577,37 @@ public class VBAMacroReader implements Closeable {
                     ", but could only read: "+bytesRead);
         }
         return new String(buffer, 0, length, charset);
+    }
+
+    protected void readProjectProperties(DocumentInputStream dis, ModuleMap modules) throws IOException {
+        InputStreamReader reader = new InputStreamReader(dis, modules.charset);
+        StringBuilder builder = new StringBuilder();
+        char[] buffer = new char[512];
+        int read;
+        while ((read = reader.read(buffer)) >= 0) {
+            builder.append(buffer, 0, read);
+        }
+        String properties = builder.toString();
+        for (String line : properties.split("\r\n|\n\r")) {
+            if (!line.startsWith("[")) {
+                String[] tokens = line.split("=");
+                if (tokens.length > 1 && tokens[1].length() > 1 && tokens[1].startsWith("\"")) {
+                    // Remove any double qouates
+                    tokens[1] = tokens[1].substring(1, tokens[1].length() - 2);
+                }
+                if ("Document".equals(tokens[0])) {
+                    String mn = tokens[1].substring(0, tokens[1].indexOf("/&H"));
+                    ModuleImpl module = modules.get(mn);
+                    module.moduleType = ModuleType.Document;
+                } else if ("Module".equals(tokens[0])) {
+                    ModuleImpl module = modules.get(tokens[1]);
+                    module.moduleType = ModuleType.Module;
+                } else if ("Class".equals(tokens[0])) {
+                    ModuleImpl module = modules.get(tokens[1]);
+                    module.moduleType = ModuleType.Class;
+                }
+            }
+        }
     }
 
     private String readUnicodeString(RLEDecompressingInputStream in, int unicodeNameRecordLength) throws IOException {
@@ -613,11 +662,7 @@ public class VBAMacroReader implements Closeable {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             IOUtils.copy(new RLEDecompressingInputStream(is), bos);
-        } catch (IllegalArgumentException e){
-            return null;
-        } catch (IllegalStateException e) {
-            return null;
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IOException | IllegalStateException e){
             return null;
         }
         return bos.toByteArray();

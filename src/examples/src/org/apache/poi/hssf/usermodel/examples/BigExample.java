@@ -43,9 +43,9 @@ public class BigExample {
             // create a new sheet
             HSSFSheet s = wb.createSheet();
             // declare a row object reference
-            HSSFRow r = null;
+            HSSFRow r;
             // declare a cell object reference
-            HSSFCell c = null;
+            HSSFCell c;
             // create 3 cell styles
             HSSFCellStyle cs = wb.createCellStyle();
             HSSFCellStyle cs2 = wb.createCellStyle();
@@ -69,9 +69,9 @@ public class BigExample {
             //make it bold
             f2.setBold(true);
 
-            //set cell stlye
+            //set cell style
             cs.setFont(f);
-            //set the cell format see HSSFDataFromat for a full list
+            //set the cell format see HSSFDataFormat for a full list
             cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
 
             //set a thin border

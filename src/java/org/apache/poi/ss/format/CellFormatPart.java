@@ -328,7 +328,7 @@ public class CellFormatPart {
      */
     private CellFormatType formatType(String fdesc) {
         fdesc = fdesc.trim();
-        if (fdesc.equals("") || fdesc.equalsIgnoreCase("General"))
+        if (fdesc.isEmpty() || fdesc.equalsIgnoreCase("General"))
             return CellFormatType.GENERAL;
 
         Matcher m = SPECIFICATION_PAT.matcher(fdesc);

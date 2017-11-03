@@ -19,13 +19,14 @@ package org.apache.poi.hssf.converter;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 
 @Beta
 public class ExcelToHtmlUtils extends AbstractExcelUtils
 {
-    public static void appendAlign( StringBuilder style, short alignment )
+    public static void appendAlign( StringBuilder style, HorizontalAlignment alignment )
     {
         String cssAlign = getAlign( alignment );
         if ( isEmpty( cssAlign ) )

@@ -104,7 +104,7 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 		super.close();
 	}
 
-	protected void checkMaxTextSize(StringBuffer text, String string) {
+	protected void checkMaxTextSize(CharSequence text, String string) {
         if(string == null) {
             return;
         }

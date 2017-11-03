@@ -122,7 +122,7 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
             XSSFBStylesTable styles = xssfbReader.getXSSFBStylesTable();
             XSSFBReader.SheetIterator iter = (XSSFBReader.SheetIterator) xssfbReader.getSheetsData();
 
-            StringBuffer text = new StringBuffer();
+            StringBuilder text = new StringBuilder(64);
             SheetTextExtractor sheetExtractor = new SheetTextExtractor();
             XSSFBHyperlinksTable hyperlinksTable = null;
             while (iter.hasNext()) {
@@ -151,14 +151,8 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
             }
 
             return text.toString();
-        } catch (IOException e) {
+        } catch (IOException | OpenXML4JException | SAXException e) {
             LOGGER.log(POILogger.WARN, e);
-            return null;
-        } catch (SAXException se) {
-            LOGGER.log(POILogger.WARN, se);
-            return null;
-        } catch (OpenXML4JException o4je) {
-            LOGGER.log(POILogger.WARN, o4je);
             return null;
         }
     }

@@ -82,7 +82,6 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -110,6 +109,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
@@ -271,13 +271,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     public static String getWorkbookDirEntryName(DirectoryNode directory) {
-
-        for (String wbName : WORKBOOK_DIR_ENTRY_NAMES) {
-            try {
-                directory.getEntry(wbName);
+        for(String wbName : WORKBOOK_DIR_ENTRY_NAMES) {
+            if(directory.hasEntry(wbName)) {
                 return wbName;
-            } catch (FileNotFoundException e) {
-                // continue - to try other options
             }
         }
 
@@ -1367,12 +1363,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public void write(File newFile) throws IOException {
-        POIFSFileSystem fs = POIFSFileSystem.create(newFile);
-        try {
+        try (POIFSFileSystem fs = POIFSFileSystem.create(newFile)) {
             write(fs);
             fs.writeFilesystem();
-        } finally {
-            fs.close();
         }
     }
     
@@ -1393,12 +1386,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
 	public void write(OutputStream stream) throws IOException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem();
-        try {
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem()) {
             write(fs);
             fs.writeFilesystem(stream);
-        } finally {
-            fs.close();
         }
     }
     
@@ -1660,7 +1650,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             // adding one here because 0 indicates a global named region; doesn't make sense for print areas
         }
         String[] parts = COMMA_PATTERN.split(reference);
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         for (int i = 0; i < parts.length; i++) {
             if(i>0) {
                 sb.append(",");

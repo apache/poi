@@ -289,18 +289,18 @@ public class ToHtml {
     }
 
     private void styleContents(CellStyle style) {
-        styleOut("text-align", style.getAlignmentEnum(), HALIGN);
-        styleOut("vertical-align", style.getVerticalAlignmentEnum(), VALIGN);
+        styleOut("text-align", style.getAlignment(), HALIGN);
+        styleOut("vertical-align", style.getVerticalAlignment(), VALIGN);
         fontStyle(style);
         borderStyles(style);
         helper.colorStyles(style, out);
     }
 
     private void borderStyles(CellStyle style) {
-        styleOut("border-left", style.getBorderLeftEnum(), BORDER);
-        styleOut("border-right", style.getBorderRightEnum(), BORDER);
-        styleOut("border-top", style.getBorderTopEnum(), BORDER);
-        styleOut("border-bottom", style.getBorderBottomEnum(), BORDER);
+        styleOut("border-left", style.getBorderLeft(), BORDER);
+        styleOut("border-right", style.getBorderRight(), BORDER);
+        styleOut("border-top", style.getBorderTop(), BORDER);
+        styleOut("border-bottom", style.getBorderBottom(), BORDER);
     }
 
     private void fontStyle(CellStyle style) {
@@ -328,12 +328,9 @@ public class ToHtml {
             style = wb.getCellStyleAt((short) 0);
         }
         StringBuilder sb = new StringBuilder();
-        Formatter fmt = new Formatter(sb);
-        try {
+        try (Formatter fmt = new Formatter(sb)) {
             fmt.format("style_%02x", style.getIndex());
             return fmt.toString();
-        } finally {
-            fmt.close();
         }
     }
 
@@ -371,14 +368,14 @@ public class ToHtml {
     /**
      * computes the column widths, defined by the sheet. 
      * 
-     * @param sheet
+     * @param sheet The sheet for which to compute widths
      * @return Map with key: column index; value: column width in pixels
      *     <br>special keys: 
      *     <br>{@link #IDX_HEADER_COL_WIDTH} - width of the header column
      *     <br>{@link #IDX_TABLE_WIDTH} - width of the entire table 
      */
     private Map<Integer, Integer> computeWidths(Sheet sheet) {
-        Map<Integer, Integer> ret = new TreeMap<Integer, Integer>();
+        Map<Integer, Integer> ret = new TreeMap<>();
         int tableWidth = 0;
 
         ensureColumnBounds(sheet);
@@ -481,8 +478,8 @@ public class ToHtml {
                         CellFormat cf = CellFormat.getInstance(
                                 style.getDataFormatString());
                         CellFormatResult result = cf.apply(cell);
-                        content = result.text;
-                        if (content.equals("")) {
+                        content = result.text; //never null
+                        if (content.isEmpty()) {
                             content = "&nbsp;";
                         }
                     }
@@ -496,7 +493,7 @@ public class ToHtml {
     }
 
     private String tagStyle(Cell cell, CellStyle style) {
-        if (style.getAlignmentEnum() == HorizontalAlignment.GENERAL) {
+        if (style.getAlignment() == HorizontalAlignment.GENERAL) {
             switch (ultimateCellType(cell)) {
             case STRING:
                 return "style=\"text-align: left;\"";

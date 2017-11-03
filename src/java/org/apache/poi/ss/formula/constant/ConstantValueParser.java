@@ -61,7 +61,7 @@ public final class ConstantValueParser {
 				in.readLong(); // 8 byte 'not used' field
 				return EMPTY_REPRESENTATION; 
 			case TYPE_NUMBER:
-				return new Double(in.readDouble());
+				return Double.valueOf(in.readDouble());
 			case TYPE_STRING:
 				return StringUtil.readUnicodeString(in);
 			case TYPE_BOOLEAN:
@@ -91,8 +91,8 @@ public final class ConstantValueParser {
 	public static int getEncodedSize(Object[] values) {
 		// start with one byte 'type' code for each value
 		int result = values.length * 1;
-		for (int i = 0; i < values.length; i++) {
-			result += getEncodedSize(values[i]);
+		for (Object value : values) {
+			result += getEncodedSize(value);
 		}
 		return result;
 	}
@@ -114,8 +114,8 @@ public final class ConstantValueParser {
 	}
 
 	public static void encode(LittleEndianOutput out, Object[] values) {
-		for (int i = 0; i < values.length; i++) {
-			encodeSingleValue(out, values[i]);
+		for (Object value : values) {
+			encodeSingleValue(out, value);
 		}
 	}
 

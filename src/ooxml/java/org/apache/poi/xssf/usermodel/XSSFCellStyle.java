@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
@@ -216,24 +217,8 @@ public class XSSFCellStyle implements CellStyle {
         _cellXf.setApplyBorder(true);
     }
 
-    /**
-     * Get the type of horizontal alignment for the cell
-     *
-     * @return short - the type of alignment
-     * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
-     */
     @Override
-    public short getAlignment() {
-        return getAlignmentEnum().getCode();
-    }
-
-    /**
-     * Get the type of horizontal alignment for the cell
-     *
-     * @return HorizontalAlignment - the type of alignment
-     */
-    @Override
-    public HorizontalAlignment getAlignmentEnum() {
+    public HorizontalAlignment getAlignment() {
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetHorizontal()) {
             return HorizontalAlignment.forInt(align.getHorizontal().intValue()-1);
@@ -241,15 +226,13 @@ public class XSSFCellStyle implements CellStyle {
         return HorizontalAlignment.GENERAL;
     }
 
-    /**
-     * Get the type of border to use for the bottom border of the cell
-     * Will be removed when {@link #getBorderBottom()} returns a BorderStyle enum
-     *
-     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @since POI 3.15
-     */
     @Override
-    public BorderStyle getBorderBottomEnum() {
+    public HorizontalAlignment getAlignmentEnum() {
+        return getAlignment();
+    }
+
+    @Override
+    public BorderStyle getBorderBottom() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
         int idx = (int)_cellXf.getBorderId();
@@ -260,26 +243,14 @@ public class XSSFCellStyle implements CellStyle {
         }
         return BorderStyle.valueOf((short)(ptrn.intValue() - 1));
     }
-    /**
-     * Get the type of border to use for the bottom border of the cell
-     * This will return a BorderStyle enum in the future.
-     *
-     * @return border type code
-     * @deprecated 3.15 beta 2. Use {@link #getBorderBottomEnum()}
-     */
-    public short getBorderBottom() {
-        return getBorderBottomEnum().getCode();
+
+    @Override
+    public BorderStyle getBorderBottomEnum() {
+        return getBorderBottom();
     }
 
-    /**
-     * Get the type of border to use for the left border of the cell
-     * Will be removed when {@link #getBorderLeft()} returns a BorderStyle enum
-     *
-     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @since POI 3.15
-     */
     @Override
-    public BorderStyle getBorderLeftEnum() {
+    public BorderStyle getBorderLeft() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
         int idx = (int)_cellXf.getBorderId();
@@ -291,26 +262,11 @@ public class XSSFCellStyle implements CellStyle {
         return BorderStyle.valueOf((short)(ptrn.intValue() - 1));
     }
 
-    /**
-     * Get the type of border to use for the left border of the cell
-     * This will return a BorderStyle enum in the future.
-     *
-     * @return border type code
-     * @deprecated 3.15 beta 2. Use {@link #getBorderLeftEnum()}
-     */
-    public short getBorderLeft() {
-        return getBorderLeftEnum().getCode();
-    }
-
-    /**
-     * Get the type of border to use for the right border of the cell
-     * Will be removed when {@link #getBorderRight()} returns a BorderStyle enum
-     *
-     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @since POI 3.15
-     */
     @Override
-    public BorderStyle getBorderRightEnum() {
+    public BorderStyle getBorderLeftEnum() { return getBorderLeft(); }
+
+    @Override
+    public BorderStyle getBorderRight() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
         int idx = (int)_cellXf.getBorderId();
@@ -321,26 +277,14 @@ public class XSSFCellStyle implements CellStyle {
         }
         return BorderStyle.valueOf((short)(ptrn.intValue() - 1));
     }
-    /**
-     * Get the type of border to use for the right border of the cell
-     * This will return a BorderStyle enum in the future.
-     *
-     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @deprecated 3.15 beta 2. Use {@link #getBorderRightEnum()} instead
-     */
-    public short getBorderRight() {
-        return getBorderRightEnum().getCode();
+
+    @Override
+    public BorderStyle getBorderRightEnum() {
+        return getBorderRight();
     }
 
-    /**
-     * Get the type of border to use for the top border of the cell
-     * Will be removed when {@link #getBorderTop()} returns a BorderStyle enum
-     *
-     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @since POI 3.15
-     */
     @Override
-    public BorderStyle getBorderTopEnum() {
+    public BorderStyle getBorderTop() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
         int idx = (int)_cellXf.getBorderId();
@@ -351,15 +295,10 @@ public class XSSFCellStyle implements CellStyle {
         }
         return BorderStyle.valueOf((short) (ptrn.intValue() - 1));
     }
-     /**
-     * Get the type of border to use for the top border of the cell
-     * This will return a BorderStyle enum in the future.
-     *
-     * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @deprecated 3.15 beta 2. Use {@link #getBorderTopEnum()} instead.
-     */
-    public short getBorderTop() {
-         return getBorderTopEnum().getCode();
+
+    @Override
+    public BorderStyle getBorderTopEnum() {
+         return getBorderTop();
     }
 
     /**
@@ -493,24 +432,9 @@ public class XSSFCellStyle implements CellStyle {
         return fillForegroundColor;
     }
 
-    /**
-     * Get the fill pattern
-     * @return fill pattern, default value is the code for {@link org.apache.poi.ss.usermodel.FillPatternType#NO_FILL}
-     * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead.
-     */
     @Override
-    public short getFillPattern() {
-        return getFillPatternEnum().getCode();
-    }
-
-    /**
-     * Get the fill pattern
-     *
-     * @return the fill pattern, default value is {@link FillPatternType#NO_FILL}
-     */
-    @Override
-    public FillPatternType getFillPatternEnum() {
-     // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+    public FillPatternType getFillPattern() {
+        // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return FillPatternType.NO_FILL;
 
         int fillIndex = (int)_cellXf.getFillId();
@@ -521,10 +445,15 @@ public class XSSFCellStyle implements CellStyle {
         return FillPatternType.forInt(ptrn.intValue() - 1);
     }
 
+    @Override
+    public FillPatternType getFillPatternEnum() {
+        return getFillPattern();
+    }
+
     /**
-    * Gets the font for this style
-    * @return Font - font
-    */
+     * Gets the font for this style
+     * @return Font - font
+     */
     public XSSFFont getFont() {
         if (_font == null) {
             _font = _stylesSource.getFontAt(getFontId());
@@ -707,29 +636,18 @@ public class XSSFCellStyle implements CellStyle {
         return border.getBorderColor(BorderSide.TOP);
     }
 
-    /**
-     * Get the type of vertical alignment for the cell
-     *
-     * @return align the type of alignment, default value is {@link org.apache.poi.ss.usermodel.VerticalAlignment}
-     * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
-     */
     @Override
-    public short getVerticalAlignment() {
-        return getVerticalAlignmentEnum().getCode();
-    }
-
-    /**
-     * Get the type of vertical alignment for the cell
-     *
-     * @return the type of alignment, default value is {@link VerticalAlignment#BOTTOM}
-     */
-    @Override
-    public VerticalAlignment getVerticalAlignmentEnum() {
+    public VerticalAlignment getVerticalAlignment() {
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetVertical()) {
             return VerticalAlignment.forInt(align.getVertical().intValue()-1);
         }
         return VerticalAlignment.BOTTOM;
+    }
+
+    @Override
+    public VerticalAlignment getVerticalAlignmentEnum() {
+        return getVerticalAlignment();
     }
 
     /**
@@ -1002,6 +920,24 @@ public class XSSFCellStyle implements CellStyle {
             ct = CTFill.Factory.newInstance();
         }
         return ct;
+    }
+    
+    /**
+     * Set reading order for the cell
+     *
+     * @param order - the reading order
+     */
+    public void setReadingOrder(ReadingOrder order) {
+        getCellAlignment().setReadingOrder(order);
+    }
+
+    /**
+     * Get reading order of the cell
+     *
+     * @return ReadingOrder - the reading order
+     */
+    public ReadingOrder getReadingOrder() {
+        return getCellAlignment().getReadingOrder();
     }
 
     /**

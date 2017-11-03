@@ -32,15 +32,15 @@ final class ExternSheetNameResolver {
 
     public static String prependSheetName(FormulaRenderingWorkbook book, int field_1_index_extern_sheet, String cellRefText) {
         ExternalSheet externalSheet = book.getExternalSheet(field_1_index_extern_sheet);
-        StringBuffer sb;
+        StringBuilder sb;
         if (externalSheet != null) {
             String wbName = externalSheet.getWorkbookName();
             String sheetName = externalSheet.getSheetName();
             if (wbName != null) {
-                sb = new StringBuffer(wbName.length() + sheetName.length() + cellRefText.length() + 4);
+                sb = new StringBuilder(wbName.length() + sheetName.length() + cellRefText.length() + 4);
                 SheetNameFormatter.appendFormat(sb, wbName, sheetName);
             } else {
-                sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
+                sb = new StringBuilder(sheetName.length() + cellRefText.length() + 4);
                 SheetNameFormatter.appendFormat(sb, sheetName);
             }
             if (externalSheet instanceof ExternalSheetRange) {
@@ -53,7 +53,7 @@ final class ExternSheetNameResolver {
         } else {
             String firstSheetName = book.getSheetFirstNameByExternSheet(field_1_index_extern_sheet);
             String lastSheetName = book.getSheetLastNameByExternSheet(field_1_index_extern_sheet);
-            sb = new StringBuffer(firstSheetName.length() + cellRefText.length() + 4);
+            sb = new StringBuilder(firstSheetName.length() + cellRefText.length() + 4);
             if (firstSheetName.length() < 1) {
                 // What excel does if sheet has been deleted
                 sb.append("#REF"); // note - '!' added just once below

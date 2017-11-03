@@ -52,37 +52,15 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     private ArrayList<PAPX> _papxList = new ArrayList<>();
     private ArrayList<PAPX> _overFlow;
 
-    /**
-     * @deprecated Use {@link #PAPFormattedDiskPage()} instead
-     */
-    public PAPFormattedDiskPage( byte[] dataStream )
-    {
-        this();
-    }
 
-    public PAPFormattedDiskPage()
-    {
-    }
 
-    /**
-     * Creates a PAPFormattedDiskPage from a 512 byte array
-     * 
-     * @deprecated Use
-     *             {@link #PAPFormattedDiskPage(byte[], byte[], int, CharIndexTranslator)}
-     *             instead
-     */
-    public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,
-            int offset, int fcMin, TextPieceTable tpt )
-    {
-        this( documentStream, dataStream, offset, tpt );
-    }
+    public PAPFormattedDiskPage() { }
 
     /**
      * Creates a PAPFormattedDiskPage from a 512 byte array
      */
     public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,
-            int offset, CharIndexTranslator translator )
-    {
+            int offset, CharIndexTranslator translator ) {
         super( documentStream, offset );
         for ( int x = 0; x < _crun; x++ )
         {

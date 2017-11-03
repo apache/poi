@@ -113,8 +113,8 @@ public final class DocumentHelper {
     
     private static void trySetXercesSecurityManager(DocumentBuilderFactory dbf) {
         // Try built-in JVM one first, standalone if not
-        for (String securityManagerClassName : new String[] {
-                "com.sun.org.apache.xerces.internal.util.SecurityManager",
+        for (String securityManagerClassName : new String[]{
+                //"com.sun.org.apache.xerces.internal.util.SecurityManager",
                 "org.apache.xerces.util.SecurityManager"
         }) {
             try {
@@ -124,10 +124,15 @@ public final class DocumentHelper {
                 dbf.setAttribute("http://apache.org/xml/properties/security-manager", mgr);
                 // Stop once one can be setup without error
                 return;
+            } catch (ClassNotFoundException e) {
+                // continue without log, this is expected in some setups
             } catch (Throwable e) {     // NOSONAR - also catch things like NoClassDefError here
                 logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
             }
         }
+
+        // separate old version of Xerces not found => use the builtin way of setting the property
+        dbf.setAttribute("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit", 4096);
     }
 
     /**
