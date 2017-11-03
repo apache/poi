@@ -42,9 +42,9 @@ public class XSSFShiftingManager {
     protected FormulaShifter shifter;
 
     public XSSFShiftingManager(Sheet shiftingSheet, FormulaShifter shifter){
-    	this.shiftingSheet = shiftingSheet;
+        this.shiftingSheet = shiftingSheet;
         this.shifter = shifter;
-	}
+    }
     
     public void updateFormulas() {
         //update formulas on the parent sheet
@@ -74,7 +74,7 @@ public class XSSFShiftingManager {
     @Internal
     public void updateRowFormulas(Row row) {
         for (Cell c : row) {
-           	updateCellFormula(row, (XSSFCell) c);
+               updateCellFormula(row, (XSSFCell) c);
         }
     }
     

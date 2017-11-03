@@ -62,7 +62,7 @@ public final class XSSFRowShifter extends RowShifter {
     // we need to sort it in a way so the shifting does not mess up the structures, 
     // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
     public void doShiftingAndProcessComments(XSSFVMLDrawing vml, int startRow, int endRow, final int n, 
-    		boolean copyRowHeight, Iterator<Row> rowIterator, CommentsTable sheetComments){
+            boolean copyRowHeight, Iterator<Row> rowIterator, CommentsTable sheetComments){
         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
             @Override
             public int compare(XSSFComment o1, XSSFComment o2) {
@@ -128,7 +128,7 @@ public final class XSSFRowShifter extends RowShifter {
         for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
             entry.getKey().setRow(entry.getValue());
         }
-    	
+        
     }
     
 

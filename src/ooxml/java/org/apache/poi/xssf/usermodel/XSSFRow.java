@@ -114,7 +114,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     @SuppressWarnings("unchecked")
-	public Iterator<Cell> cellIterator() {
+    public Iterator<Cell> cellIterator() {
         return (Iterator<Cell>)(Iterator<? extends Cell>)_cells.values().iterator();
     }
 
@@ -130,7 +130,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public Iterator<Cell> iterator() {
-    	return cellIterator();
+        return cellIterator();
     }
 
     /**
@@ -257,7 +257,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public XSSFCell getCell(int cellnum) {
-    	return getCell(cellnum, _sheet.getWorkbook().getMissingCellPolicy());
+        return getCell(cellnum, _sheet.getWorkbook().getMissingCellPolicy());
     }
 
     /**
@@ -268,10 +268,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
-    	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
+        if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-    	final Integer colI = Integer.valueOf(cellnum); // NOSONAR
+        final Integer colI = Integer.valueOf(cellnum); // NOSONAR
         XSSFCell cell = _cells.get(colI);
         switch (policy) {
             case RETURN_NULL_AND_BLANK:
@@ -294,7 +294,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public short getFirstCellNum() {
-    	return (short)(_cells.size() == 0 ? -1 : _cells.firstKey());
+        return (short)(_cells.size() == 0 ? -1 : _cells.firstKey());
     }
 
     /**
@@ -318,7 +318,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public short getLastCellNum() {
-    	return (short)(_cells.size() == 0 ? -1 : (_cells.lastKey() + 1));
+        return (short)(_cells.size() == 0 ? -1 : (_cells.lastKey() + 1));
     }
 
     /**
@@ -371,7 +371,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public void setHeightInPoints(float height) {
-	    setHeight((short)(height == -1 ? -1 : (height*20)));
+        setHeight((short)(height == -1 ? -1 : (height*20)));
     }
 
     /**
@@ -382,7 +382,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public int getPhysicalNumberOfCells() {
-    	return _cells.size();
+        return _cells.size();
     }
 
     /**
@@ -418,7 +418,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public boolean getZeroHeight() {
-    	return this._row.getHidden();
+        return this._row.getHidden();
     }
 
     /**
@@ -428,7 +428,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public void setZeroHeight(boolean height) {
-    	this._row.setHidden(height);
+        this._row.setHidden(height);
 
     }
 
@@ -512,7 +512,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Internal
     public CTRow getCTRow(){
-    	return _row;
+        return _row;
     }
 
     /**

@@ -14,7 +14,7 @@ public class ColumnShifter {
     protected FormulaShifter shifter;
 
     public ColumnShifter(Sheet sheet, FormulaShifter shifter) {
-    	shiftingSheet = sheet;
+        shiftingSheet = sheet;
         this.shifter = shifter;
     }
 

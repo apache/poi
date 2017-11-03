@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 
 public class XSSFColumnShifter extends ColumnShifter{
-	
+    
     private static final POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
     
     private int firstShiftColumnIndex; 
@@ -46,83 +46,83 @@ public class XSSFColumnShifter extends ColumnShifter{
         formulaShiftingManager = new XSSFShiftingManager(sh, shifter);
     }
 
-	public void shiftColumns(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
-		this.firstShiftColumnIndex = firstShiftColumnIndex;
-		this.lastShiftColumnIndex = lastShiftColumnIndex;
-		this.shiftStep = step;
-		if(shiftStep > 0)
-			shiftColumnsRight();
-		else if(shiftStep < 0)
-			shiftColumnsLeft();
-//	      formulaShiftingManager.updateFormulas();
-	}
-	/**
-	 * Inserts shiftStep empty columns at firstShiftColumnIndex-th position, and shifts rest columns to the right 
-	 * (see constructor for parameters)
-	 */
+    public void shiftColumns(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        this.firstShiftColumnIndex = firstShiftColumnIndex;
+        this.lastShiftColumnIndex = lastShiftColumnIndex;
+        this.shiftStep = step;
+        if(shiftStep > 0)
+            shiftColumnsRight();
+        else if(shiftStep < 0)
+            shiftColumnsLeft();
+//          formulaShiftingManager.updateFormulas();
+    }
+    /**
+     * Inserts shiftStep empty columns at firstShiftColumnIndex-th position, and shifts rest columns to the right 
+     * (see constructor for parameters)
+     */
 
-	private void shiftColumnsRight(){
-		for(int rowNo = 0; rowNo <= shiftingSheet.getLastRowNum(); rowNo++)
-		{	
-			Row row = shiftingSheet.getRow(rowNo);
-			if(row == null)
-				continue;
-		    for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
-		    	XSSFCell oldCell = (XSSFCell)row.getCell(columnIndex);
-		    	Cell newCell = null;
-		    	if(oldCell == null){
-		    		newCell = row.getCell(columnIndex + shiftStep);
-		    		newCell = null;
-		    		continue;
-		    	}
-		    	else {
-		    		newCell = row.createCell(columnIndex + shiftStep, oldCell.getCellTypeEnum());
-		    		cloneCellValue(oldCell,newCell);
-		    		if(columnIndex <= firstShiftColumnIndex + shiftStep - 1){ // clear existing cells on place of insertion
-		    			oldCell.setCellValue("");
-		    			oldCell.setCellType(CellType.STRING);
-		    		}
-		    	}
-		    }
-		}
-	}
-	private void shiftColumnsLeft(){
-		for(int rowNo = 0; rowNo <= shiftingSheet.getLastRowNum(); rowNo++)
-		{	
-		    XSSFRow row = (XSSFRow)shiftingSheet.getRow(rowNo);
-			if(row == null)
-				continue;
-		    for (int columnIndex = 0; columnIndex < row.getLastCellNum(); columnIndex++){ 
-		        XSSFCell oldCell = (XSSFCell)row.getCell(columnIndex);
-		    	if(columnIndex >= firstShiftColumnIndex + shiftStep && columnIndex < row.getLastCellNum() - shiftStep){ // shift existing cell 
-			    	org.apache.poi.ss.usermodel.Cell newCell = null;
-		    		newCell = row.getCell(columnIndex - shiftStep);
-		    		if(oldCell != null){
-			    		if(newCell != null){
-			    			oldCell.setCellType(newCell.getCellType());
-			    			cloneCellValue(newCell, oldCell);
-			    		}
-			    		else {
-			    			oldCell.setCellType(CellType.STRING);
-			    			oldCell.setCellValue("");
-			    		}
-		    		}
-		    		else {
-		    			oldCell = row.createCell(columnIndex);
-			    		if(newCell != null){
-			    			oldCell.setCellType(newCell.getCellType());
-			    			cloneCellValue(newCell, oldCell);
-			    		}
-			    		else {
-			    			oldCell.setCellType(CellType.STRING);
-			    			oldCell.setCellValue("");
-			    		}
-		    		}
-		    	}
-    		}
-		}
-	}
-	
+    private void shiftColumnsRight(){
+        for(int rowNo = 0; rowNo <= shiftingSheet.getLastRowNum(); rowNo++)
+        {    
+            Row row = shiftingSheet.getRow(rowNo);
+            if(row == null)
+                continue;
+            for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
+                XSSFCell oldCell = (XSSFCell)row.getCell(columnIndex);
+                Cell newCell = null;
+                if(oldCell == null){
+                    newCell = row.getCell(columnIndex + shiftStep);
+                    newCell = null;
+                    continue;
+                }
+                else {
+                    newCell = row.createCell(columnIndex + shiftStep, oldCell.getCellTypeEnum());
+                    cloneCellValue(oldCell,newCell);
+                    if(columnIndex <= firstShiftColumnIndex + shiftStep - 1){ // clear existing cells on place of insertion
+                        oldCell.setCellValue("");
+                        oldCell.setCellType(CellType.STRING);
+                    }
+                }
+            }
+        }
+    }
+    private void shiftColumnsLeft(){
+        for(int rowNo = 0; rowNo <= shiftingSheet.getLastRowNum(); rowNo++)
+        {    
+            XSSFRow row = (XSSFRow)shiftingSheet.getRow(rowNo);
+            if(row == null)
+                continue;
+            for (int columnIndex = 0; columnIndex < row.getLastCellNum(); columnIndex++){ 
+                XSSFCell oldCell = (XSSFCell)row.getCell(columnIndex);
+                if(columnIndex >= firstShiftColumnIndex + shiftStep && columnIndex < row.getLastCellNum() - shiftStep){ // shift existing cell 
+                    org.apache.poi.ss.usermodel.Cell newCell = null;
+                    newCell = row.getCell(columnIndex - shiftStep);
+                    if(oldCell != null){
+                        if(newCell != null){
+                            oldCell.setCellType(newCell.getCellType());
+                            cloneCellValue(newCell, oldCell);
+                        }
+                        else {
+                            oldCell.setCellType(CellType.STRING);
+                            oldCell.setCellValue("");
+                        }
+                    }
+                    else {
+                        oldCell = row.createCell(columnIndex);
+                        if(newCell != null){
+                            oldCell.setCellType(newCell.getCellType());
+                            cloneCellValue(newCell, oldCell);
+                        }
+                        else {
+                            oldCell.setCellType(CellType.STRING);
+                            oldCell.setCellValue("");
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     public void shiftComments(XSSFVMLDrawing vml, int startColumnIndex, int endColumnIndex, final int n, CommentsTable sheetComments){
         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<XSSFComment, Integer>(new Comparator<XSSFComment>() {
             @Override
@@ -161,10 +161,10 @@ public class XSSFColumnShifter extends ColumnShifter{
                     commentsToShift.put(xssfComment, newColumnIndex);
                 }
             }
-	        for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) 
-	            entry.getKey().setColumn(entry.getValue());
+            for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) 
+                entry.getKey().setColumn(entry.getValue());
         }
-    	
+        
     }
 
 }
