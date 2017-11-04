@@ -49,6 +49,7 @@ public abstract class ColumnShifter extends BaseRowColShifter {
      * @param n        the number of columns to shift
      * @return an array of affected merged regions, doesn't contain deleted ones
      */
+    // Keep this code in sync with {@link RowShifter#shiftMergedRegions}
     public List<CellRangeAddress> shiftMergedRegions(int startColumn, int endColumn, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<>();
         Set<Integer> removedIndices = new HashSet<>();
@@ -93,6 +94,7 @@ public abstract class ColumnShifter extends BaseRowColShifter {
         return shiftedRegions;
     }
 
+    // Keep in sync with {@link RowShifter#removalNeeded}
     private boolean removalNeeded(CellRangeAddress merged, int startColumn, int endColumn, int n) {
         final int movedColumns = endColumn - startColumn + 1;
 
@@ -101,10 +103,14 @@ public abstract class ColumnShifter extends BaseRowColShifter {
         final CellRangeAddress overwrite;
         if(n > 0) {
             // area is moved down => overwritten area is [endColumn + n - movedColumns, endColumn + n]
-            overwrite = new CellRangeAddress(Math.max(endColumn + 1, endColumn + n - movedColumns), endColumn + n, 0, 0);
+            final int firstCol = Math.max(endColumn + 1, endColumn + n - movedColumns);
+            final int lastCol = endColumn + n;
+            overwrite = new CellRangeAddress(0, 0, firstCol, lastCol);
         } else {
             // area is moved up => overwritten area is [startColumn + n, startColumn + n + movedColumns]
-            overwrite = new CellRangeAddress(startColumn + n, Math.min(startColumn - 1, startColumn + n + movedColumns), 0, 0);
+            final int firstCol = startColumn + n;
+            final int lastCol = Math.min(startColumn - 1, startColumn + n + movedColumns);
+            overwrite = new CellRangeAddress(0, 0, firstCol, lastCol);
         }
 
         // if the merged-region and the overwritten area intersect, we need to remove it
