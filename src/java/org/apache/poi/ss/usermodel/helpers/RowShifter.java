@@ -49,6 +49,7 @@ public abstract class RowShifter extends BaseRowColShifter {
      * @return an array of affected merged regions, doesn't contain deleted ones
      */
     // Keep this code in sync with {@link ColumnShifter#shiftMergedRegions}
+    @Override
     public List<CellRangeAddress> shiftMergedRegions(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<>();
         Set<Integer> removedIndices = new HashSet<>();
