@@ -65,19 +65,7 @@ public final class XSSFRowShifter extends RowShifter {
      */
     @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
-        Workbook wb = sheet.getWorkbook();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
-        for (Name name : wb.getAllNames()) {
-            String formula = name.getRefersToFormula();
-            int sheetIndex = name.getSheetIndex();
-            final int rowIndex = -1; //don't care, named ranges are not allowed to include structured references
-
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex, rowIndex);
-            if (formulaShifter.adjustFormula(ptgs, sheetIndex)) {
-                String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
-                name.setRefersToFormula(shiftedFmla);
-            }
-        }
+        XSSFRowColShifter.updateNamedRanges(sheet, formulaShifter);
     }
 
     /**
