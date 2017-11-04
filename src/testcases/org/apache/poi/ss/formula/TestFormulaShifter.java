@@ -33,8 +33,6 @@ import org.junit.Test;
 
 /**
  * Tests for {@link FormulaShifter}.
- *
- * @author Josh Micich
  */
 public final class TestFormulaShifter {
     // Note - the expected result row coordinates here were determined/verified
@@ -176,6 +174,61 @@ public final class TestFormulaShifter {
         confirmAreaRowCopy(aptg,  0, 30, 20, 10, 20, false);
         confirmAreaRowCopy(aptg,  15, 25, -15, 10, 20, false);
     }
+
+    @Test
+    public void testCopyAreasSourceColumnsRelRel() {
+
+        // all these operations are on an area ref spanning columns 10 to 20
+        final AreaPtg aptg  = createAreaPtgColumn(10, 20, true, true);
+
+        confirmAreaColumnCopy(aptg,  0, 30, 20, 30, 40, true);
+        confirmAreaColumnCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
+    }
+
+    @Test
+    public void testCopyAreasSourceColumnsRelAbs() {
+
+        // all these operations are on an area ref spanning columns 10 to 20
+        final AreaPtg aptg  = createAreaPtgColumn(10, 20, true, false);
+
+        // Only first column should move
+        confirmAreaColumnCopy(aptg,  0, 30, 20, 20, 30, true);
+        confirmAreaColumnCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
+    }
+
+    @Test
+    public void testCopyAreasSourceColumnsAbsRel() {
+        // aptg is part of a formula in a cell that was just copied to another column
+        // aptg column references should be updated by the difference in columns that the cell was copied
+        // No other references besides the cells that were involved in the copy need to be updated
+        // this makes the column copy significantly different from the column shift, where all references
+        // in the workbook need to track the column shift
+
+        // all these operations are on an area ref spanning columns 10 to 20
+        final AreaPtg aptg  = createAreaPtgColumn(10, 20, false, true);
+
+        // Only last column should move
+        confirmAreaColumnCopy(aptg,  0, 30, 20, 10, 40, true);
+        confirmAreaColumnCopy(aptg,  15, 25, -15, 5, 10, true); //sortTopLeftToBottomRight swapped firstColumn and lastColumn because firstColumn is absolute
+    }
+
+    @Test
+    public void testCopyAreasSourceColumnsAbsAbs() {
+        // aptg is part of a formula in a cell that was just copied to another column
+        // aptg column references should be updated by the difference in columns that the cell was copied
+        // No other references besides the cells that were involved in the copy need to be updated
+        // this makes the column copy significantly different from the column shift, where all references
+        // in the workbook need to track the column shift
+
+        // all these operations are on an area ref spanning columns 10 to 20
+        final AreaPtg aptg  = createAreaPtgColumn(10, 20, false, false);
+
+        //AbsFirstColumn AbsLastColumn references should't change when copied to a different column
+        confirmAreaColumnCopy(aptg,  0, 30, 20, 10, 20, false);
+        confirmAreaColumnCopy(aptg,  15, 25, -15, 10, 20, false);
+    }
+    
+    
     
     /**
      * Tests what happens to an area ref when some outside rows are moved to overlap
@@ -282,6 +335,29 @@ public final class TestFormulaShifter {
         assertEquals("AreaPtgs should be modified in-place when a row containing the AreaPtg is copied", copyPtg, ptgs[0]);  // expected to change in place (although this is not a strict requirement)
         assertEquals("AreaPtg first row", expectedFirstRow, copyPtg.getFirstRow());
         assertEquals("AreaPtg last row", expectedLastRow, copyPtg.getLastRow());
+
+    }
+
+    private static void confirmAreaColumnCopy(AreaPtg aptg,
+                                           int firstColumnCopied, int lastColumnCopied, int columnOffset,
+                                           int expectedFirstColumn, int expectedLastColumn, boolean expectedChanged) {
+
+        final AreaPtg copyPtg = (AreaPtg) aptg.copy(); // clone so we can re-use aptg in calling method
+        final Ptg[] ptgs = { copyPtg, };
+        final FormulaShifter fs = FormulaShifter.createForColumnCopy(0, null, firstColumnCopied, lastColumnCopied, columnOffset, SpreadsheetVersion.EXCEL2007);
+        final boolean actualChanged = fs.adjustFormula(ptgs, 0);
+
+        // DeletedAreaRef
+        if (expectedFirstColumn < 0 || expectedLastColumn < 0) {
+            assertEquals("Reference should have shifted off worksheet, producing #REF! error: " + ptgs[0],
+                    AreaErrPtg.class, ptgs[0].getClass());
+            return;
+        }
+
+        assertEquals("Should this AreaPtg change due to column copy?", expectedChanged, actualChanged);
+        assertEquals("AreaPtgs should be modified in-place when a column containing the AreaPtg is copied", copyPtg, ptgs[0]);  // expected to change in place (although this is not a strict requirement)
+        assertEquals("AreaPtg first column", expectedFirstColumn, copyPtg.getFirstColumn());
+        assertEquals("AreaPtg last column", expectedLastColumn, copyPtg.getLastColumn());
 
     }
     
