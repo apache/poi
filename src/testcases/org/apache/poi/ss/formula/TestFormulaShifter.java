@@ -48,61 +48,101 @@ public final class TestFormulaShifter {
     public void testShiftAreasSourceRows() {
 
         // all these operations are on an area ref spanning rows 10 to 20
-        AreaPtg aptg  = createAreaPtg(10, 20);
+        AreaPtg aptg  = createAreaPtgRow(10, 20);
 
-        confirmAreaShift(aptg,  9, 21, 20, 30, 40);
-        confirmAreaShift(aptg, 10, 21, 20, 30, 40);
-        confirmAreaShift(aptg,  9, 20, 20, 30, 40);
+        confirmAreaRowShift(aptg,  9, 21, 20, 30, 40);
+        confirmAreaRowShift(aptg, 10, 21, 20, 30, 40);
+        confirmAreaRowShift(aptg,  9, 20, 20, 30, 40);
 
-        confirmAreaShift(aptg, 8, 11,  -3, 7, 20); // simple expansion of top
+        confirmAreaRowShift(aptg, 8, 11,  -3, 7, 20); // simple expansion of top
         // rows containing area top being shifted down:
-        confirmAreaShift(aptg, 8, 11,  3, 13, 20);
-        confirmAreaShift(aptg, 8, 11,  7, 17, 20);
-        confirmAreaShift(aptg, 8, 11,  8, 18, 20);
-        confirmAreaShift(aptg, 8, 11,  9, 12, 20); // note behaviour changes here
-        confirmAreaShift(aptg, 8, 11, 10, 12, 21);
-        confirmAreaShift(aptg, 8, 11, 12, 12, 23);
-        confirmAreaShift(aptg, 8, 11, 13, 10, 20);  // ignored
+        confirmAreaRowShift(aptg, 8, 11,  3, 13, 20);
+        confirmAreaRowShift(aptg, 8, 11,  7, 17, 20);
+        confirmAreaRowShift(aptg, 8, 11,  8, 18, 20);
+        confirmAreaRowShift(aptg, 8, 11,  9, 12, 20); // note behaviour changes here
+        confirmAreaRowShift(aptg, 8, 11, 10, 12, 21);
+        confirmAreaRowShift(aptg, 8, 11, 12, 12, 23);
+        confirmAreaRowShift(aptg, 8, 11, 13, 10, 20);  // ignored
 
         // rows from within being moved:
-        confirmAreaShift(aptg, 12, 16,  3, 10, 20);  // stay within - no change
-        confirmAreaShift(aptg, 11, 19, 20, 10, 20);  // move completely out - no change
-        confirmAreaShift(aptg, 16, 17, -6, 10, 20);  // moved exactly to top - no change
-        confirmAreaShift(aptg, 16, 17, -7, 11, 20);  // truncation at top
-        confirmAreaShift(aptg, 12, 16,  4, 10, 20);  // moved exactly to bottom - no change
-        confirmAreaShift(aptg, 12, 16,  6, 10, 17);  // truncation at bottom
+        confirmAreaRowShift(aptg, 12, 16,  3, 10, 20);  // stay within - no change
+        confirmAreaRowShift(aptg, 11, 19, 20, 10, 20);  // move completely out - no change
+        confirmAreaRowShift(aptg, 16, 17, -6, 10, 20);  // moved exactly to top - no change
+        confirmAreaRowShift(aptg, 16, 17, -7, 11, 20);  // truncation at top
+        confirmAreaRowShift(aptg, 12, 16,  4, 10, 20);  // moved exactly to bottom - no change
+        confirmAreaRowShift(aptg, 12, 16,  6, 10, 17);  // truncation at bottom
 
         // rows containing area bottom being shifted up:
-        confirmAreaShift(aptg, 18, 22, -1, 10, 19); // simple contraction at bottom
-        confirmAreaShift(aptg, 18, 22, -7, 10, 13); // simple contraction at bottom
-        confirmAreaShift(aptg, 18, 22, -8, 10, 17); // top calculated differently here
-        confirmAreaShift(aptg, 18, 22, -9,  9, 17);
-        confirmAreaShift(aptg, 18, 22,-15, 10, 20); // no change because range would be turned inside out
-        confirmAreaShift(aptg, 15, 19, -7, 13, 20); // dest truncates top (even though src is from inside range)
-        confirmAreaShift(aptg, 19, 23,-12,  7, 18); // complex: src encloses bottom, dest encloses top
+        confirmAreaRowShift(aptg, 18, 22, -1, 10, 19); // simple contraction at bottom
+        confirmAreaRowShift(aptg, 18, 22, -7, 10, 13); // simple contraction at bottom
+        confirmAreaRowShift(aptg, 18, 22, -8, 10, 17); // top calculated differently here
+        confirmAreaRowShift(aptg, 18, 22, -9,  9, 17);
+        confirmAreaRowShift(aptg, 18, 22,-15, 10, 20); // no change because range would be turned inside out
+        confirmAreaRowShift(aptg, 15, 19, -7, 13, 20); // dest truncates top (even though src is from inside range)
+        confirmAreaRowShift(aptg, 19, 23,-12,  7, 18); // complex: src encloses bottom, dest encloses top
 
-        confirmAreaShift(aptg, 18, 22,  5, 10, 25); // simple expansion at bottom
+        confirmAreaRowShift(aptg, 18, 22,  5, 10, 25); // simple expansion at bottom
+    }
+
+    @Test
+    public void testShiftAreasSourceColumns() {
+
+        // all these operations are on an area ref spanning columns 10 to 20
+        AreaPtg aptg  = createAreaPtgColumn(10, 20);
+
+        confirmAreaColumnShift(aptg,  9, 21, 20, 30, 40);
+        confirmAreaColumnShift(aptg, 10, 21, 20, 30, 40);
+        confirmAreaColumnShift(aptg,  9, 20, 20, 30, 40);
+
+        confirmAreaColumnShift(aptg, 8, 11,  -3, 7, 20); // simple expansion of top
+        // columns containing area top being shifted down:
+        confirmAreaColumnShift(aptg, 8, 11,  3, 13, 20);
+        confirmAreaColumnShift(aptg, 8, 11,  7, 17, 20);
+        confirmAreaColumnShift(aptg, 8, 11,  8, 18, 20);
+        confirmAreaColumnShift(aptg, 8, 11,  9, 12, 20); // note behaviour changes here
+        confirmAreaColumnShift(aptg, 8, 11, 10, 12, 21);
+        confirmAreaColumnShift(aptg, 8, 11, 12, 12, 23);
+        confirmAreaColumnShift(aptg, 8, 11, 13, 10, 20);  // ignored
+
+        // columns from within being moved:
+        confirmAreaColumnShift(aptg, 12, 16,  3, 10, 20);  // stay within - no change
+        confirmAreaColumnShift(aptg, 11, 19, 20, 10, 20);  // move completely out - no change
+        confirmAreaColumnShift(aptg, 16, 17, -6, 10, 20);  // moved exactly to top - no change
+        confirmAreaColumnShift(aptg, 16, 17, -7, 11, 20);  // truncation at top
+        confirmAreaColumnShift(aptg, 12, 16,  4, 10, 20);  // moved exactly to bottom - no change
+        confirmAreaColumnShift(aptg, 12, 16,  6, 10, 17);  // truncation at bottom
+
+        // columns containing area bottom being shifted up:
+        confirmAreaColumnShift(aptg, 18, 22, -1, 10, 19); // simple contraction at bottom
+        confirmAreaColumnShift(aptg, 18, 22, -7, 10, 13); // simple contraction at bottom
+        confirmAreaColumnShift(aptg, 18, 22, -8, 10, 17); // top calculated differently here
+        confirmAreaColumnShift(aptg, 18, 22, -9,  9, 17);
+        confirmAreaColumnShift(aptg, 18, 22,-15, 10, 20); // no change because range would be turned inside out
+        confirmAreaColumnShift(aptg, 15, 19, -7, 13, 20); // dest truncates top (even though src is from inside range)
+        confirmAreaColumnShift(aptg, 19, 23,-12,  7, 18); // complex: src encloses bottom, dest encloses top
+
+        confirmAreaColumnShift(aptg, 18, 22,  5, 10, 25); // simple expansion at bottom
     }
     
     @Test
     public void testCopyAreasSourceRowsRelRel() {
 
         // all these operations are on an area ref spanning rows 10 to 20
-        final AreaPtg aptg  = createAreaPtg(10, 20, true, true);
+        final AreaPtg aptg  = createAreaPtgRow(10, 20, true, true);
 
-        confirmAreaCopy(aptg,  0, 30, 20, 30, 40, true);
-        confirmAreaCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
+        confirmAreaRowCopy(aptg,  0, 30, 20, 30, 40, true);
+        confirmAreaRowCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
     }
     
     @Test
     public void testCopyAreasSourceRowsRelAbs() {
 
         // all these operations are on an area ref spanning rows 10 to 20
-        final AreaPtg aptg  = createAreaPtg(10, 20, true, false);
+        final AreaPtg aptg  = createAreaPtgRow(10, 20, true, false);
 
         // Only first row should move
-        confirmAreaCopy(aptg,  0, 30, 20, 20, 30, true);
-        confirmAreaCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
+        confirmAreaRowCopy(aptg,  0, 30, 20, 20, 30, true);
+        confirmAreaRowCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
     }
     
     @Test
@@ -114,11 +154,11 @@ public final class TestFormulaShifter {
         // in the workbook need to track the row shift
 
         // all these operations are on an area ref spanning rows 10 to 20
-        final AreaPtg aptg  = createAreaPtg(10, 20, false, true);
+        final AreaPtg aptg  = createAreaPtgRow(10, 20, false, true);
 
         // Only last row should move
-        confirmAreaCopy(aptg,  0, 30, 20, 10, 40, true);
-        confirmAreaCopy(aptg,  15, 25, -15, 5, 10, true); //sortTopLeftToBottomRight swapped firstRow and lastRow because firstRow is absolute
+        confirmAreaRowCopy(aptg,  0, 30, 20, 10, 40, true);
+        confirmAreaRowCopy(aptg,  15, 25, -15, 5, 10, true); //sortTopLeftToBottomRight swapped firstRow and lastRow because firstRow is absolute
     }
     
     @Test
@@ -130,11 +170,11 @@ public final class TestFormulaShifter {
         // in the workbook need to track the row shift
         
         // all these operations are on an area ref spanning rows 10 to 20
-        final AreaPtg aptg  = createAreaPtg(10, 20, false, false);
+        final AreaPtg aptg  = createAreaPtgRow(10, 20, false, false);
 
         //AbsFirstRow AbsLastRow references should't change when copied to a different row
-        confirmAreaCopy(aptg,  0, 30, 20, 10, 20, false);
-        confirmAreaCopy(aptg,  15, 25, -15, 10, 20, false);
+        confirmAreaRowCopy(aptg,  0, 30, 20, 10, 20, false);
+        confirmAreaRowCopy(aptg,  15, 25, -15, 10, 20, false);
     }
     
     /**
@@ -144,20 +184,41 @@ public final class TestFormulaShifter {
     @Test
     public void testShiftAreasDestRows() {
         // all these operations are on an area ref spanning rows 20 to 25
-        AreaPtg aptg  = createAreaPtg(20, 25);
+        AreaPtg aptg  = createAreaPtgRow(20, 25);
 
         // no change because no overlap:
-        confirmAreaShift(aptg,  5, 10,  9, 20, 25);
-        confirmAreaShift(aptg,  5, 10, 21, 20, 25);
+        confirmAreaRowShift(aptg,  5, 10,  9, 20, 25);
+        confirmAreaRowShift(aptg,  5, 10, 21, 20, 25);
 
-        confirmAreaShift(aptg, 11, 14, 10, 20, 25);
+        confirmAreaRowShift(aptg, 11, 14, 10, 20, 25);
 
-        confirmAreaShift(aptg,   7, 17, 10, -1, -1); // converted to DeletedAreaRef
-        confirmAreaShift(aptg,   5, 15,  7, 23, 25); // truncation at top
-        confirmAreaShift(aptg,  13, 16, 10, 20, 22); // truncation at bottom
+        confirmAreaRowShift(aptg,   7, 17, 10, -1, -1); // converted to DeletedAreaRef
+        confirmAreaRowShift(aptg,   5, 15,  7, 23, 25); // truncation at top
+        confirmAreaRowShift(aptg,  13, 16, 10, 20, 22); // truncation at bottom
     }
 
-    private static void confirmAreaShift(AreaPtg aptg,
+    /**
+     * Tests what happens to an area ref when some outside columns are moved to overlap
+     * that area ref
+     */
+    @Test
+    public void testShiftAreasDestColumns() {
+        // all these operations are on an area ref spanning columns 20 to 25
+        AreaPtg aptg  = createAreaPtgColumn(20, 25);
+
+        // no change because no overlap:
+        confirmAreaColumnShift(aptg,  5, 10,  9, 20, 25);
+        confirmAreaColumnShift(aptg,  5, 10, 21, 20, 25);
+
+        confirmAreaColumnShift(aptg, 11, 14, 10, 20, 25);
+
+        confirmAreaColumnShift(aptg,   7, 17, 10, -1, -1); // converted to DeletedAreaRef
+        confirmAreaColumnShift(aptg,   5, 15,  7, 23, 25); // truncation at top
+        confirmAreaColumnShift(aptg,  13, 16, 10, 20, 22); // truncation at bottom
+    }
+
+    private static void confirmAreaRowShift(
+            AreaPtg aptg,
             int firstRowMoved, int lastRowMoved, int numberRowsMoved,
             int expectedAreaFirstRow, int expectedAreaLastRow) {
 
@@ -177,11 +238,33 @@ public final class TestFormulaShifter {
         assertEquals(expectedAreaLastRow, copyPtg.getLastRow());
 
     }
+
+    private static void confirmAreaColumnShift(
+            AreaPtg aptg,
+            int firstColumnMoved, int lastColumnMoved, int numberColumnsMoved,
+            int expectedAreaFirstColumn, int expectedAreaLastColumn) {
+
+        FormulaShifter fs = FormulaShifter.createForColumnShift(0, "", firstColumnMoved, lastColumnMoved, numberColumnsMoved, SpreadsheetVersion.EXCEL2007);
+        boolean expectedChanged = aptg.getFirstColumn() != expectedAreaFirstColumn || aptg.getLastColumn() != expectedAreaLastColumn;
+
+        AreaPtg copyPtg = (AreaPtg) aptg.copy(); // clone so we can re-use aptg in calling method
+        Ptg[] ptgs = { copyPtg, };
+        boolean actualChanged = fs.adjustFormula(ptgs, 0);
+        if (expectedAreaFirstColumn < 0) {
+            assertEquals(AreaErrPtg.class, ptgs[0].getClass());
+            return;
+        }
+        assertEquals(expectedChanged, actualChanged);
+        assertEquals(copyPtg, ptgs[0]);  // expected to change in place (although this is not a strict requirement)
+        assertEquals(expectedAreaFirstColumn, copyPtg.getFirstColumn());
+        assertEquals(expectedAreaLastColumn, copyPtg.getLastColumn());
+
+    }
     
     
-    private static void confirmAreaCopy(AreaPtg aptg,
-            int firstRowCopied, int lastRowCopied, int rowOffset,
-            int expectedFirstRow, int expectedLastRow, boolean expectedChanged) {
+    private static void confirmAreaRowCopy(AreaPtg aptg,
+                                           int firstRowCopied, int lastRowCopied, int rowOffset,
+                                           int expectedFirstRow, int expectedLastRow, boolean expectedChanged) {
 
         final AreaPtg copyPtg = (AreaPtg) aptg.copy(); // clone so we can re-use aptg in calling method
         final Ptg[] ptgs = { copyPtg, };
@@ -202,12 +285,20 @@ public final class TestFormulaShifter {
 
     }
     
-    private static AreaPtg createAreaPtg(int initialAreaFirstRow, int initialAreaLastRow) {
-        return createAreaPtg(initialAreaFirstRow, initialAreaLastRow, false, false);
+    private static AreaPtg createAreaPtgRow(int initialAreaFirstRow, int initialAreaLastRow) {
+        return createAreaPtgRow(initialAreaFirstRow, initialAreaLastRow, false, false);
+    }
+
+    private static AreaPtg createAreaPtgColumn(int initialAreaFirstColumn, int initialAreaLastColumn) {
+        return createAreaPtgColumn(initialAreaFirstColumn, initialAreaLastColumn, false, false);
     }
     
-    private static AreaPtg createAreaPtg(int initialAreaFirstRow, int initialAreaLastRow, boolean firstRowRelative, boolean lastRowRelative) {
+    private static AreaPtg createAreaPtgRow(int initialAreaFirstRow, int initialAreaLastRow, boolean firstRowRelative, boolean lastRowRelative) {
         return new AreaPtg(initialAreaFirstRow, initialAreaLastRow, 2, 5, firstRowRelative, lastRowRelative, false, false);
+    }
+
+    private static AreaPtg createAreaPtgColumn(int initialAreaFirstColumn, int initialAreaLastColumn, boolean firstColumnRelative, boolean lastColumnRelative) {
+        return new AreaPtg(2, 5, initialAreaFirstColumn, initialAreaLastColumn, false, false, firstColumnRelative, lastColumnRelative);
     }
 
     @Test
