@@ -61,10 +61,9 @@ public final class XSSFColumnShifter extends ColumnShifter {
         throw new NotImplementedException("updateSheetFormulas");
     }
 
-    @NotImplemented
     @Override
     public void updateConditionalFormatting(FormulaShifter formulaShifter) {
-        throw new NotImplementedException("updateConditionalformatting");
+        XSSFRowColShifter.updateConditionalFormatting(sheet, formulaShifter);
     }
     
     /**
