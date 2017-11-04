@@ -15,59 +15,69 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel.helpers;
+package org.apache.poi.xssf.usermodel.helpers;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.*;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.helpers.RowShifter;
-import org.apache.poi.util.Internal;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.usermodel.*;
 
 /**
- * Helper for shifting rows up or down
+ * Helper for shifting columns up or down
  */
-// non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
-// {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter}
-public final class HSSFRowShifter extends RowShifter {
-    private static final POILogger logger = POILogFactory.getLogger(HSSFRowShifter.class);
+// non-Javadoc: When possible, code should be implemented in the ColumnShifter abstract class to avoid duplication with
+// {@link org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter}
+@Beta
+public final class XSSFColumnShifter extends ColumnShifter {
+    private static final POILogger logger = POILogFactory.getLogger(XSSFColumnShifter.class);
 
-    public HSSFRowShifter(HSSFSheet sh) {
+    public XSSFColumnShifter(XSSFSheet sh) {
         super(sh);
     }
 
-    @Override
+    /**
+     * Updated named ranges
+     */
     @NotImplemented
+    @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
-        throw new NotImplementedException("HSSFRowShifter.updateNamedRanges");
+        throw new NotImplementedException("updateNamedRanges");
     }
 
-    @Override
+    /**
+     * Update formulas.
+     */
     @NotImplemented
+    @Override
     public void updateFormulas(FormulaShifter formulaShifter) {
         throw new NotImplementedException("updateFormulas");
     }
 
-    @Override
-    @Internal
-    @NotImplemented
-    public void updateRowFormulas(Row row, FormulaShifter formulaShifter) {
-        throw new NotImplementedException("updateRowFormulas");
+    private void updateSheetFormulas(Sheet sh, FormulaShifter formulaShifter) {
+        throw new NotImplementedException("updateSheetFormulas");
     }
 
-    @Override
     @NotImplemented
+    @Override
     public void updateConditionalFormatting(FormulaShifter formulaShifter) {
-        throw new NotImplementedException("updateConditionalFormatting");
+        throw new NotImplementedException("updateConditionalformatting");
     }
-
+    
+    /**
+     * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
+     * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
+     * do not track the content they point to.
+     *
+     * @param formulaShifter
+     */
     @Override
-    @NotImplemented
     public void updateHyperlinks(FormulaShifter formulaShifter) {
-        throw new NotImplementedException("updateHyperlinks");
+        XSSFRowColShifter.updateHyperlinks(sheet, formulaShifter);
     }
 
 }
