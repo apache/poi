@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
@@ -50,8 +49,10 @@ public abstract class ColumnShifter extends BaseRowColShifter {
      * @param endColumn   the column to end shifting
      * @param n        the number of columns to shift
      * @return an array of affected merged regions, doesn't contain deleted ones
+     * @since POI 4.0.0
      */
     // Keep this code in sync with {@link RowShifter#shiftMergedRegions}
+    @Override
     public List<CellRangeAddress> shiftMergedRegions(int startColumn, int endColumn, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<>();
         Set<Integer> removedIndices = new HashSet<>();
@@ -118,27 +119,4 @@ public abstract class ColumnShifter extends BaseRowColShifter {
         // if the merged-region and the overwritten area intersect, we need to remove it
         return merged.intersects(overwrite);
     }
-
-    /**
-     * Updated named ranges
-     */
-    public abstract void updateNamedRanges(FormulaShifter formulaShifter);
-
-    /**
-     * Update formulas.
-     */
-    public abstract void updateFormulas(FormulaShifter formulaShifter);
-
-
-    public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
-    
-    /**
-     * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
-     * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
-     * do not track the content they point to.
-     *
-     * @param formulaShifter the formula shifting policy
-     */
-    public abstract void updateHyperlinks(FormulaShifter formulaShifter);
-
 }

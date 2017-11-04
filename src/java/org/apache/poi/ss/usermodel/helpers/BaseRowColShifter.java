@@ -25,6 +25,8 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
 
+import java.util.List;
+
 /**
  * Class for code common to {@link RowShifter} and {@link ColumnShifter}
  * Helper for shifting rows up or down and columns left and right
@@ -44,7 +46,22 @@ public abstract class BaseRowColShifter {
      */
     public abstract void updateFormulas(FormulaShifter formulaShifter);
 
+    /**
+     * Shifts, grows, or shrinks the merged regions due to a row shift
+     * ({@link RowShifter}) or column shift ({@link ColumnShifter}).
+     * Merged regions that are completely overlaid by shifting will be deleted.
+     *
+     * @param start the first row or column to be shifted
+     * @param end   the last row or column to be shifted
+     * @param n     the number of rows or columns to shift
+     * @return a list of affected merged regions, excluding contain deleted ones
+     */
+    public abstract List<CellRangeAddress> shiftMergedRegions(int start, int end, int n);
 
+    /**
+     * Update conditional formatting
+     * @param formulaShifter
+     */
     public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
 
     /**
