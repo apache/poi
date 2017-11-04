@@ -67,7 +67,8 @@ public final class XSSFRowShifter extends RowShifter {
     /**
      * Updated named ranges
      */
-    public void updateNamedRanges(FormulaShifter shifter) {
+    @Override
+    public void updateNamedRanges(FormulaShifter formulaShifter) {
         Workbook wb = sheet.getWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
         for (Name name : wb.getAllNames()) {
@@ -76,7 +77,7 @@ public final class XSSFRowShifter extends RowShifter {
             final int rowIndex = -1; //don't care, named ranges are not allowed to include structured references
 
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex, rowIndex);
-            if (shifter.adjustFormula(ptgs, sheetIndex)) {
+            if (formulaShifter.adjustFormula(ptgs, sheetIndex)) {
                 String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
                 name.setRefersToFormula(shiftedFmla);
             }
@@ -86,22 +87,23 @@ public final class XSSFRowShifter extends RowShifter {
     /**
      * Update formulas.
      */
-    public void updateFormulas(FormulaShifter shifter) {
+    @Override
+    public void updateFormulas(FormulaShifter formulaShifter) {
         //update formulas on the parent sheet
-        updateSheetFormulas(sheet, shifter);
+        updateSheetFormulas(sheet, formulaShifter);
 
         //update formulas on other sheets
         Workbook wb = sheet.getWorkbook();
         for (Sheet sh : wb) {
             if (sheet == sh) continue;
-            updateSheetFormulas(sh, shifter);
+            updateSheetFormulas(sh, formulaShifter);
         }
     }
 
-    private void updateSheetFormulas(Sheet sh, FormulaShifter shifter) {
+    private void updateSheetFormulas(Sheet sh, FormulaShifter formulashifter) {
         for (Row r : sh) {
             XSSFRow row = (XSSFRow) r;
-            updateRowFormulas(row, shifter);
+            updateRowFormulas(row, formulashifter);
         }
     }
 
@@ -109,10 +111,11 @@ public final class XSSFRowShifter extends RowShifter {
      * Update the formulas in specified row using the formula shifting policy specified by shifter
      *
      * @param row the row to update the formulas on
-     * @param shifter the formula shifting policy
+     * @param formulaShifter the formula shifting policy
      */
     @Internal
-    public void updateRowFormulas(Row row, FormulaShifter shifter) {
+    @Override
+    public void updateRowFormulas(Row row, FormulaShifter formulaShifter) {
         XSSFSheet sheet = (XSSFSheet) row.getSheet();
         for (Cell c : row) {
             XSSFCell cell = (XSSFCell) c;
@@ -122,30 +125,30 @@ public final class XSSFRowShifter extends RowShifter {
                 CTCellFormula f = ctCell.getF();
                 String formula = f.getStringValue();
                 if (formula.length() > 0) {
-                    String shiftedFormula = shiftFormula(row, formula, shifter);
+                    String shiftedFormula = shiftFormula(row, formula, formulaShifter);
                     if (shiftedFormula != null) {
                         f.setStringValue(shiftedFormula);
                         if(f.getT() == STCellFormulaType.SHARED){
                             int si = (int)f.getSi();
                             CTCellFormula sf = sheet.getSharedFormula(si);
                             sf.setStringValue(shiftedFormula);
-                            updateRefInCTCellFormula(row, shifter, sf);
+                            updateRefInCTCellFormula(row, formulaShifter, sf);
                         }
                     }
 
                 }
 
                 //Range of cells which the formula applies to.
-                updateRefInCTCellFormula(row, shifter, f);
+                updateRefInCTCellFormula(row, formulaShifter, f);
             }
 
         }
     }
 
-    private void updateRefInCTCellFormula(Row row, FormulaShifter shifter, CTCellFormula f) {
+    private void updateRefInCTCellFormula(Row row, FormulaShifter formulaShifter, CTCellFormula f) {
         if (f.isSetRef()) { //Range of cells which the formula applies to.
             String ref = f.getRef();
-            String shiftedRef = shiftFormula(row, ref, shifter);
+            String shiftedRef = shiftFormula(row, ref, formulaShifter);
             if (shiftedRef != null) f.setRef(shiftedRef);
         }
     }
@@ -155,11 +158,11 @@ public final class XSSFRowShifter extends RowShifter {
      *
      * @param row     the row of the cell this formula belongs to. Used to get a reference to the parent workbook.
      * @param formula the formula to shift
-     * @param shifter the FormulaShifter object that operates on the parsed formula tokens
+     * @param formulaShifter the FormulaShifter object that operates on the parsed formula tokens
      * @return the shifted formula if the formula was changed,
      *         <code>null</code> if the formula wasn't modified
      */
-    private static String shiftFormula(Row row, String formula, FormulaShifter shifter) {
+    private static String shiftFormula(Row row, String formula, FormulaShifter formulaShifter) {
         Sheet sheet = row.getSheet();
         Workbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
@@ -169,7 +172,7 @@ public final class XSSFRowShifter extends RowShifter {
         try {
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
             String shiftedFmla = null;
-            if (shifter.adjustFormula(ptgs, sheetIndex)) {
+            if (formulaShifter.adjustFormula(ptgs, sheetIndex)) {
                 shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
             }
             return shiftedFmla;
@@ -180,7 +183,8 @@ public final class XSSFRowShifter extends RowShifter {
         }
     }
 
-    public void updateConditionalFormatting(FormulaShifter shifter) {
+    @Override
+    public void updateConditionalFormatting(FormulaShifter formulaShifter) {
         XSSFSheet xsheet = (XSSFSheet) sheet;
         XSSFWorkbook wb = xsheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
@@ -204,7 +208,7 @@ public final class XSSFRowShifter extends RowShifter {
             boolean changed = false;
             List<CellRangeAddress> temp = new ArrayList<>();
             for (CellRangeAddress craOld : cellRanges) {
-                CellRangeAddress craNew = shiftRange(shifter, craOld, sheetIndex);
+                CellRangeAddress craNew = shiftRange(formulaShifter, craOld, sheetIndex);
                 if (craNew == null) {
                     changed = true;
                     continue;
@@ -231,7 +235,7 @@ public final class XSSFRowShifter extends RowShifter {
                 for (int i = 0; i < formulaArray.length; i++) {
                     String formula = formulaArray[i];
                     Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
-                    if (shifter.adjustFormula(ptgs, sheetIndex)) {
+                    if (formulaShifter.adjustFormula(ptgs, sheetIndex)) {
                         String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
                         cfRule.setFormulaArray(i, shiftedFmla);
                     }
@@ -245,9 +249,10 @@ public final class XSSFRowShifter extends RowShifter {
      * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
      * do not track the content they point to.
      *
-     * @param shifter
+     * @param formulaShifter
      */
-    public void updateHyperlinks(FormulaShifter shifter) {
+    @Override
+    public void updateHyperlinks(FormulaShifter formulaShifter) {
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         List<? extends Hyperlink> hyperlinkList = sheet.getHyperlinkList();
         
@@ -255,7 +260,7 @@ public final class XSSFRowShifter extends RowShifter {
             XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
             String cellRef = xhyperlink.getCellRef();
             CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
-            CellRangeAddress shiftedRange = shiftRange(shifter, cra, sheetIndex);
+            CellRangeAddress shiftedRange = shiftRange(formulaShifter, cra, sheetIndex);
             if (shiftedRange != null && shiftedRange != cra) {
                 // shiftedRange should not be null. If shiftedRange is null, that means
                 // that a hyperlink wasn't deleted at the beginning of shiftRows when
@@ -265,12 +270,12 @@ public final class XSSFRowShifter extends RowShifter {
         }
     }
 
-    private static CellRangeAddress shiftRange(FormulaShifter shifter, CellRangeAddress cra, int currentExternSheetIx) {
+    private static CellRangeAddress shiftRange(FormulaShifter formulaShifter, CellRangeAddress cra, int currentExternSheetIx) {
         // FormulaShifter works well in terms of Ptgs - so convert CellRangeAddress to AreaPtg (and back) here
         AreaPtg aptg = new AreaPtg(cra.getFirstRow(), cra.getLastRow(), cra.getFirstColumn(), cra.getLastColumn(), false, false, false, false);
         Ptg[] ptgs = { aptg, };
 
-        if (!shifter.adjustFormula(ptgs, currentExternSheetIx)) {
+        if (!formulaShifter.adjustFormula(ptgs, currentExternSheetIx)) {
             return cra;
         }
         Ptg ptg0 = ptgs[0];
