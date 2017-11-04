@@ -17,15 +17,12 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import org.apache.poi.ss.formula.*;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  * Helper for shifting columns up or down
@@ -40,42 +37,23 @@ public final class XSSFColumnShifter extends ColumnShifter {
         super(sh);
     }
 
-    /**
-     * Updated named ranges
-     */
     @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateNamedRanges(sheet, formulaShifter);
     }
 
-    /**
-     * Update formulas.
-     */
-    @NotImplemented
     @Override
     public void updateFormulas(FormulaShifter formulaShifter) {
-        throw new NotImplementedException("updateFormulas");
-    }
-
-    private void updateSheetFormulas(Sheet sh, FormulaShifter formulaShifter) {
-        throw new NotImplementedException("updateSheetFormulas");
+        XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
     }
 
     @Override
     public void updateConditionalFormatting(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateConditionalFormatting(sheet, formulaShifter);
     }
-    
-    /**
-     * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
-     * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
-     * do not track the content they point to.
-     *
-     * @param formulaShifter
-     */
+
     @Override
     public void updateHyperlinks(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateHyperlinks(sheet, formulaShifter);
     }
-
 }
