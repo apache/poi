@@ -23,35 +23,33 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Internal;
+import org.apache.poi.util.Beta;
 
 /**
- * Helper for shifting rows up or down
+ * Helper for shifting columns up or down
  */
-// non-Javadoc: This abstract class exists to consolidate duplicated code between
-// {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter} and
-// {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter}
+// non-Javadoc: This abstract class exists to consolidate duplicated code between XSSFColumnShifter and HSSFColumnShifter
 // (currently methods sprinkled throughout HSSFSheet)
-public abstract class RowShifter extends BaseRowColShifter {
+@Beta
+public abstract class ColumnShifter extends BaseRowColShifter {
     protected final Sheet sheet;
 
-    public RowShifter(Sheet sh) {
+    public ColumnShifter(Sheet sh) {
         sheet = sh;
     }
 
     /**
-     * Shifts, grows, or shrinks the merged regions due to a row shift.
+     * Shifts, grows, or shrinks the merged regions due to a column shift.
      * Merged regions that are completely overlaid by shifting will be deleted.
      *
-     * @param startRow the row to start shifting
-     * @param endRow   the row to end shifting
-     * @param n        the number of rows to shift
+     * @param startColumn the column to start shifting
+     * @param endColumn   the column to end shifting
+     * @param n        the number of columns to shift
      * @return an array of affected merged regions, doesn't contain deleted ones
      */
-    public List<CellRangeAddress> shiftMergedRegions(int startRow, int endRow, int n) {
+    public List<CellRangeAddress> shiftMergedRegions(int startColumn, int endColumn, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<>();
         Set<Integer> removedIndices = new HashSet<>();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
@@ -61,23 +59,23 @@ public abstract class RowShifter extends BaseRowColShifter {
 
             // remove merged region that are replaced by the shifting,
             // i.e. where the area includes something in the overwritten area
-            if(removalNeeded(merged, startRow, endRow, n)) {
+            if(removalNeeded(merged, startColumn, endColumn, n)) {
                 removedIndices.add(i);
                 continue;
             }
 
-            boolean inStart = (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
-            boolean inEnd = (merged.getFirstRow() <= endRow || merged.getLastRow() <= endRow);
+            boolean inStart = (merged.getFirstColumn() >= startColumn || merged.getLastColumn() >= startColumn);
+            boolean inEnd = (merged.getFirstColumn() <= endColumn || merged.getLastColumn() <= endColumn);
 
             //don't check if it's not within the shifted area
             if (!inStart || !inEnd) {
                 continue;
             }
 
-            //only shift if the region outside the shifted rows is not merged too
-            if (!merged.containsRow(startRow - 1) && !merged.containsRow(endRow + 1)) {
-                merged.setFirstRow(merged.getFirstRow() + n);
-                merged.setLastRow(merged.getLastRow() + n);
+            //only shift if the region outside the shifted columns is not merged too
+            if (!merged.containsColumn(startColumn - 1) && !merged.containsColumn(endColumn + 1)) {
+                merged.setFirstColumn(merged.getFirstColumn() + n);
+                merged.setLastColumn(merged.getLastColumn() + n);
                 //have to remove/add it back
                 shiftedRegions.add(merged);
                 removedIndices.add(i);
@@ -95,18 +93,18 @@ public abstract class RowShifter extends BaseRowColShifter {
         return shiftedRegions;
     }
 
-    private boolean removalNeeded(CellRangeAddress merged, int startRow, int endRow, int n) {
-        final int movedRows = endRow - startRow + 1;
+    private boolean removalNeeded(CellRangeAddress merged, int startColumn, int endColumn, int n) {
+        final int movedColumns = endColumn - startColumn + 1;
 
-        // build a range of the rows that are overwritten, i.e. the target-area, but without
-        // rows that are moved along
+        // build a range of the columns that are overwritten, i.e. the target-area, but without
+        // columns that are moved along
         final CellRangeAddress overwrite;
         if(n > 0) {
-            // area is moved down => overwritten area is [endRow + n - movedRows, endRow + n]
-            overwrite = new CellRangeAddress(Math.max(endRow + 1, endRow + n - movedRows), endRow + n, 0, 0);
+            // area is moved down => overwritten area is [endColumn + n - movedColumns, endColumn + n]
+            overwrite = new CellRangeAddress(Math.max(endColumn + 1, endColumn + n - movedColumns), endColumn + n, 0, 0);
         } else {
-            // area is moved up => overwritten area is [startRow + n, startRow + n + movedRows]
-            overwrite = new CellRangeAddress(startRow + n, Math.min(startRow - 1, startRow + n + movedRows), 0, 0);
+            // area is moved up => overwritten area is [startColumn + n, startColumn + n + movedColumns]
+            overwrite = new CellRangeAddress(startColumn + n, Math.min(startColumn - 1, startColumn + n + movedColumns), 0, 0);
         }
 
         // if the merged-region and the overwritten area intersect, we need to remove it
@@ -123,14 +121,6 @@ public abstract class RowShifter extends BaseRowColShifter {
      */
     public abstract void updateFormulas(FormulaShifter formulaShifter);
 
-    /**
-     * Update the formulas in specified row using the formula shifting policy specified by shifter
-     *
-     * @param row the row to update the formulas on
-     * @param formulaShifter the formula shifting policy
-     */
-    @Internal
-    public abstract void updateRowFormulas(Row row, FormulaShifter formulaShifter);
 
     public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
     

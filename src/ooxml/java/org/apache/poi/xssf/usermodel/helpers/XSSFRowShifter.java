@@ -25,11 +25,8 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.ptg.AreaErrPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -41,7 +38,6 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -54,9 +50,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
 /**
  * Helper for shifting rows up or down
- * 
- * When possible, code should be implemented in the RowShifter abstract class to avoid duplication with {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
  */
+// non-Javadoc: When possible, code should be implemented in the RowShifter abstract class to avoid duplication with
+// {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
 public final class XSSFRowShifter extends RowShifter {
     private static final POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
 
@@ -253,40 +249,8 @@ public final class XSSFRowShifter extends RowShifter {
      */
     @Override
     public void updateHyperlinks(FormulaShifter formulaShifter) {
-        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
-        List<? extends Hyperlink> hyperlinkList = sheet.getHyperlinkList();
-        
-        for (Hyperlink hyperlink : hyperlinkList) {
-            XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
-            String cellRef = xhyperlink.getCellRef();
-            CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
-            CellRangeAddress shiftedRange = shiftRange(formulaShifter, cra, sheetIndex);
-            if (shiftedRange != null && shiftedRange != cra) {
-                // shiftedRange should not be null. If shiftedRange is null, that means
-                // that a hyperlink wasn't deleted at the beginning of shiftRows when
-                // identifying rows that should be removed because they will be overwritten
-                xhyperlink.setCellReference(shiftedRange.formatAsString());
-            }
-        }
+        XSSFRowColShifter.updateHyperlinks(sheet, formulaShifter);
     }
 
-    private static CellRangeAddress shiftRange(FormulaShifter formulaShifter, CellRangeAddress cra, int currentExternSheetIx) {
-        // FormulaShifter works well in terms of Ptgs - so convert CellRangeAddress to AreaPtg (and back) here
-        AreaPtg aptg = new AreaPtg(cra.getFirstRow(), cra.getLastRow(), cra.getFirstColumn(), cra.getLastColumn(), false, false, false, false);
-        Ptg[] ptgs = { aptg, };
-
-        if (!formulaShifter.adjustFormula(ptgs, currentExternSheetIx)) {
-            return cra;
-        }
-        Ptg ptg0 = ptgs[0];
-        if (ptg0 instanceof AreaPtg) {
-            AreaPtg bptg = (AreaPtg) ptg0;
-            return new CellRangeAddress(bptg.getFirstRow(), bptg.getLastRow(), bptg.getFirstColumn(), bptg.getLastColumn());
-        }
-        if (ptg0 instanceof AreaErrPtg) {
-            return null;
-        }
-        throw new IllegalStateException("Unexpected shifted ptg class (" + ptg0.getClass().getName() + ")");
-    }
 
 }
