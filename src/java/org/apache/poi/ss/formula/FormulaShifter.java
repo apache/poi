@@ -43,6 +43,7 @@ public final class FormulaShifter {
     private static enum ShiftMode {
         RowMove,
         RowCopy,
+        ColumnMove,
         SheetMove,
     }
 
@@ -116,6 +117,14 @@ public final class FormulaShifter {
         return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowCopy, version);
     }
 
+    /**
+     * @since POI 4.0.0
+     */
+    public static FormulaShifter createForColumnShift(int externSheetIndex, String sheetName, int firstMovedColumnIndex, int lastMovedColumnIndex, int numberOfColumnsToMove,
+            SpreadsheetVersion version) {
+        return new FormulaShifter(externSheetIndex, sheetName, firstMovedColumnIndex, lastMovedColumnIndex, numberOfColumnsToMove, ShiftMode.ColumnMove, version);
+    }
+
     public static FormulaShifter createForSheetShift(int srcSheetIndex, int dstSheetIndex) {
         return new FormulaShifter(srcSheetIndex, dstSheetIndex);
     }
@@ -156,6 +165,8 @@ public final class FormulaShifter {
                 // * row copy on same sheet
                 // * row copy between different sheetsin the same workbook
                 return adjustPtgDueToRowCopy(ptg);
+            case ColumnMove:
+                return adjustPtgDueToColumnMove(ptg, currentExternSheetIx);
             case SheetMove:
                 return adjustPtgDueToSheetMove(ptg);
             default:
@@ -260,6 +271,66 @@ public final class FormulaShifter {
         if(ptg instanceof Area3DPxg) {
             Area3DPxg apxg = (Area3DPxg)ptg;
             return rowCopyAreaPtg(apxg);
+        }
+        return null;
+    }
+
+    /**
+     * @return in-place modified ptg (if column move would cause Ptg to change),
+     * deleted ref ptg (if column move causes an error),
+     * or null (if no Ptg change is needed)
+     */
+    private Ptg adjustPtgDueToColumnMove(Ptg ptg, int currentExternSheetIx) {
+        if(ptg instanceof RefPtg) {
+            if (currentExternSheetIx != _externSheetIndex) {
+                // local refs on other sheets are unaffected
+                return null;
+            }
+            RefPtg rptg = (RefPtg)ptg;
+            return columnMoveRefPtg(rptg);
+        }
+        if(ptg instanceof Ref3DPtg) {
+            Ref3DPtg rptg = (Ref3DPtg)ptg;
+            if (_externSheetIndex != rptg.getExternSheetIndex()) {
+                // only move 3D refs that refer to the sheet with cells being moved
+                // (currentExternSheetIx is irrelevant)
+                return null;
+            }
+            return columnMoveRefPtg(rptg);
+        }
+        if(ptg instanceof Ref3DPxg) {
+            Ref3DPxg rpxg = (Ref3DPxg)ptg;
+            if (rpxg.getExternalWorkbookNumber() > 0 ||
+                    ! _sheetName.equals(rpxg.getSheetName())) {
+                // only move 3D refs that refer to the sheet with cells being moved
+                return null;
+            }
+            return columnMoveRefPtg(rpxg);
+        }
+        if(ptg instanceof Area2DPtgBase) {
+            if (currentExternSheetIx != _externSheetIndex) {
+                // local refs on other sheets are unaffected
+                return ptg;
+            }
+            return columnMoveAreaPtg((Area2DPtgBase)ptg);
+        }
+        if(ptg instanceof Area3DPtg) {
+            Area3DPtg aptg = (Area3DPtg)ptg;
+            if (_externSheetIndex != aptg.getExternSheetIndex()) {
+                // only move 3D refs that refer to the sheet with cells being moved
+                // (currentExternSheetIx is irrelevant)
+                return null;
+            }
+            return columnMoveAreaPtg(aptg);
+        }
+        if(ptg instanceof Area3DPxg) {
+            Area3DPxg apxg = (Area3DPxg)ptg;
+            if (apxg.getExternalWorkbookNumber() > 0 ||
+                    ! _sheetName.equals(apxg.getSheetName())) {
+                // only move 3D refs that refer to the sheet with cells being moved
+                return null;
+            }
+            return columnMoveAreaPtg(apxg);
         }
         return null;
     }
@@ -522,6 +593,161 @@ public final class FormulaShifter {
         return changed ? aptg : null;
     }
 
+
+    private Ptg columnMoveRefPtg(RefPtgBase rptg) {
+        int refColumn = rptg.getColumn();
+        if (_firstMovedIndex <= refColumn && refColumn <= _lastMovedIndex) {
+            // Columns being moved completely enclose the ref.
+            // - move the area ref along with the columns regardless of destination
+            rptg.setColumn(refColumn + _amountToMove);
+            return rptg;
+        }
+        // else rules for adjusting area may also depend on the destination of the moved columns
+
+        int destFirstColumnIndex = _firstMovedIndex + _amountToMove;
+        int destLastColumnIndex = _lastMovedIndex + _amountToMove;
+
+        // ref is outside source columns
+        // check for clashes with destination
+
+        if (destLastColumnIndex < refColumn || refColumn < destFirstColumnIndex) {
+            // destination columns are completely outside ref
+            return null;
+        }
+
+        if (destFirstColumnIndex <= refColumn && refColumn <= destLastColumnIndex) {
+            // destination columns enclose the area (possibly exactly)
+            return createDeletedRef(rptg);
+        }
+        throw new IllegalStateException("Situation not covered: (" + _firstMovedIndex + ", " +
+                _lastMovedIndex + ", " + _amountToMove + ", " + refColumn + ", " + refColumn + ")");
+    }
+
+    private Ptg columnMoveAreaPtg(AreaPtgBase aptg) {
+        int aFirstColumn = aptg.getFirstColumn();
+        int aLastColumn = aptg.getLastColumn();
+        if (_firstMovedIndex <= aFirstColumn && aLastColumn <= _lastMovedIndex) {
+            // Columns being moved completely enclose the area ref.
+            // - move the area ref along with the columns regardless of destination
+            aptg.setFirstColumn(aFirstColumn + _amountToMove);
+            aptg.setLastColumn(aLastColumn + _amountToMove);
+            return aptg;
+        }
+        // else rules for adjusting area may also depend on the destination of the moved columns
+
+        int destFirstColumnIndex = _firstMovedIndex + _amountToMove;
+        int destLastColumnIndex = _lastMovedIndex + _amountToMove;
+
+        if (aFirstColumn < _firstMovedIndex && _lastMovedIndex < aLastColumn) {
+            // Columns moved were originally *completely* within the area ref
+
+            // If the destination of the columns overlaps either the top
+            // or bottom of the area ref there will be a change
+            if (destFirstColumnIndex < aFirstColumn && aFirstColumn <= destLastColumnIndex) {
+                // truncate the top of the area by the moved columns
+                aptg.setFirstColumn(destLastColumnIndex+1);
+                return aptg;
+            } else if (destFirstColumnIndex <= aLastColumn && aLastColumn < destLastColumnIndex) {
+                // truncate the bottom of the area by the moved columns
+                aptg.setLastColumn(destFirstColumnIndex-1);
+                return aptg;
+            }
+            // else - columns have moved completely outside the area ref,
+            // or still remain completely within the area ref
+            return null; // - no change to the area
+        }
+        if (_firstMovedIndex <= aFirstColumn && aFirstColumn <= _lastMovedIndex) {
+            // Columns moved include the first column of the area ref, but not the last column
+            // btw: (aLastColumn > _lastMovedIndex)
+            if (_amountToMove < 0) {
+                // simple case - expand area by shifting top upward
+                aptg.setFirstColumn(aFirstColumn + _amountToMove);
+                return aptg;
+            }
+            if (destFirstColumnIndex > aLastColumn) {
+                // in this case, excel ignores the column move
+                return null;
+            }
+            int newFirstColumnIx = aFirstColumn + _amountToMove;
+            if (destLastColumnIndex < aLastColumn) {
+                // end of area is preserved (will remain exact same column)
+                // the top area column is moved simply
+                aptg.setFirstColumn(newFirstColumnIx);
+                return aptg;
+            }
+            // else - bottom area column has been replaced - both area top and bottom may move now
+            int areaRemainingTopColumnIx = _lastMovedIndex + 1;
+            if (destFirstColumnIndex > areaRemainingTopColumnIx) {
+                // old top column of area has moved deep within the area, and exposed a new top column
+                newFirstColumnIx = areaRemainingTopColumnIx;
+            }
+            aptg.setFirstColumn(newFirstColumnIx);
+            aptg.setLastColumn(Math.max(aLastColumn, destLastColumnIndex));
+            return aptg;
+        }
+        if (_firstMovedIndex <= aLastColumn && aLastColumn <= _lastMovedIndex) {
+            // Columns moved include the last column of the area ref, but not the first
+            // btw: (aFirstColumn < _firstMovedIndex)
+            if (_amountToMove > 0) {
+                // simple case - expand area by shifting bottom downward
+                aptg.setLastColumn(aLastColumn + _amountToMove);
+                return aptg;
+            }
+            if (destLastColumnIndex < aFirstColumn) {
+                // in this case, excel ignores the column move
+                return null;
+            }
+            int newLastColumnIx = aLastColumn + _amountToMove;
+            if (destFirstColumnIndex > aFirstColumn) {
+                // top of area is preserved (will remain exact same column)
+                // the bottom area column is moved simply
+                aptg.setLastColumn(newLastColumnIx);
+                return aptg;
+            }
+            // else - top area column has been replaced - both area top and bottom may move now
+            int areaRemainingBottomColumnIx = _firstMovedIndex - 1;
+            if (destLastColumnIndex < areaRemainingBottomColumnIx) {
+                // old bottom column of area has moved up deep within the area, and exposed a new bottom column
+                newLastColumnIx = areaRemainingBottomColumnIx;
+            }
+            aptg.setFirstColumn(Math.min(aFirstColumn, destFirstColumnIndex));
+            aptg.setLastColumn(newLastColumnIx);
+            return aptg;
+        }
+        // else source columns include none of the columns of the area ref
+        // check for clashes with destination
+
+        if (destLastColumnIndex < aFirstColumn || aLastColumn < destFirstColumnIndex) {
+            // destination columns are completely outside area ref
+            return null;
+        }
+
+        if (destFirstColumnIndex <= aFirstColumn && aLastColumn <= destLastColumnIndex) {
+            // destination columns enclose the area (possibly exactly)
+            return createDeletedRef(aptg);
+        }
+
+        if (aFirstColumn <= destFirstColumnIndex && destLastColumnIndex <= aLastColumn) {
+            // destination columns are within area ref (possibly exact on top or bottom, but not both)
+            return null; // - no change to area
+        }
+
+        if (destFirstColumnIndex < aFirstColumn && aFirstColumn <= destLastColumnIndex) {
+            // dest columns overlap top of area
+            // - truncate the top
+            aptg.setFirstColumn(destLastColumnIndex+1);
+            return aptg;
+        }
+        if (destFirstColumnIndex <= aLastColumn && aLastColumn < destLastColumnIndex) {
+            // dest columns overlap bottom of area
+            // - truncate the bottom
+            aptg.setLastColumn(destFirstColumnIndex-1);
+            return aptg;
+        }
+        throw new IllegalStateException("Situation not covered: (" + _firstMovedIndex + ", " +
+                _lastMovedIndex + ", " + _amountToMove + ", " + aFirstColumn + ", " + aLastColumn + ")");
+    }
+    
     private static Ptg createDeletedRef(Ptg ptg) {
         if (ptg instanceof RefPtg) {
             return new RefErrorPtg();
