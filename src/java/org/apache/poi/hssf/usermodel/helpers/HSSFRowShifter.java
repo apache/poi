@@ -39,29 +39,34 @@ public final class HSSFRowShifter extends RowShifter {
         super(sh);
     }
 
+    @Override
     @NotImplemented
-    public void updateNamedRanges(FormulaShifter shifter) {
+    public void updateNamedRanges(FormulaShifter formulaShifter) {
         throw new NotImplementedException("HSSFRowShifter.updateNamedRanges");
     }
 
+    @Override
     @NotImplemented
-    public void updateFormulas(FormulaShifter shifter) {
+    public void updateFormulas(FormulaShifter formulaShifter) {
         throw new NotImplementedException("updateFormulas");
     }
 
+    @Override
     @Internal
     @NotImplemented
-    public void updateRowFormulas(Row row, FormulaShifter shifter) {
+    public void updateRowFormulas(Row row, FormulaShifter formulaShifter) {
         throw new NotImplementedException("updateRowFormulas");
     }
 
+    @Override
     @NotImplemented
-    public void updateConditionalFormatting(FormulaShifter shifter) {
+    public void updateConditionalFormatting(FormulaShifter formulaShifter) {
         throw new NotImplementedException("updateConditionalFormatting");
     }
-    
+
+    @Override
     @NotImplemented
-    public void updateHyperlinks(FormulaShifter shifter) {
+    public void updateHyperlinks(FormulaShifter formulaShifter) {
         throw new NotImplementedException("updateHyperlinks");
     }
 

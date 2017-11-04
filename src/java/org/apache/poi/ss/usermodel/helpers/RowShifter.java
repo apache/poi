@@ -114,31 +114,31 @@ public abstract class RowShifter {
     /**
      * Updated named ranges
      */
-    public abstract void updateNamedRanges(FormulaShifter shifter);
+    public abstract void updateNamedRanges(FormulaShifter formulaShifter);
 
     /**
      * Update formulas.
      */
-    public abstract void updateFormulas(FormulaShifter shifter);
+    public abstract void updateFormulas(FormulaShifter formulaShifter);
 
     /**
      * Update the formulas in specified row using the formula shifting policy specified by shifter
      *
      * @param row the row to update the formulas on
-     * @param shifter the formula shifting policy
+     * @param formulaShifter the formula shifting policy
      */
     @Internal
-    public abstract void updateRowFormulas(Row row, FormulaShifter shifter);
+    public abstract void updateRowFormulas(Row row, FormulaShifter formulaShifter);
 
-    public abstract void updateConditionalFormatting(FormulaShifter shifter);
+    public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
     
     /**
      * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
      * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
      * do not track the content they point to.
      *
-     * @param shifter the formula shifting policy
+     * @param formulaShifter the formula shifting policy
      */
-    public abstract void updateHyperlinks(FormulaShifter shifter);
+    public abstract void updateHyperlinks(FormulaShifter formulaShifter);
 
 }
