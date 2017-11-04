@@ -35,14 +35,14 @@ import org.apache.poi.util.Internal;
 public abstract class BaseRowColShifter {
 
     /**
-     * Updated named ranges
+     * Update named ranges
      */
-    protected abstract void updateNamedRanges(FormulaShifter formulaShifter);
+    public abstract void updateNamedRanges(FormulaShifter formulaShifter);
 
     /**
      * Update formulas.
      */
-    protected abstract void updateFormulas(FormulaShifter formulaShifter);
+    public abstract void updateFormulas(FormulaShifter formulaShifter);
 
 
     public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
