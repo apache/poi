@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel.helpers;
 
 import org.apache.poi.ss.formula.*;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.helpers.BaseRowColShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -36,6 +37,25 @@ import java.util.List;
     private static final POILogger logger = POILogFactory.getLogger(XSSFRowColShifter.class);
 
     private XSSFRowColShifter() { /*no instances for static classes*/}
+
+    /**
+     * Updated named ranges
+     */
+    /*package*/ static void updateNamedRanges(Sheet sheet, FormulaShifter formulaShifter) {
+        Workbook wb = sheet.getWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
+        for (Name name : wb.getAllNames()) {
+            String formula = name.getRefersToFormula();
+            int sheetIndex = name.getSheetIndex();
+            final int rowIndex = -1; //don't care, named ranges are not allowed to include structured references
+
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex, rowIndex);
+            if (formulaShifter.adjustFormula(ptgs, sheetIndex)) {
+                String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
+                name.setRefersToFormula(shiftedFmla);
+            }
+        }
+    }
 
     /*package*/ static void updateHyperlinks(Sheet sheet, FormulaShifter formulaShifter) {
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);

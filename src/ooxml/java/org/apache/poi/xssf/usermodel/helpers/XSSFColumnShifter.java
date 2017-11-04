@@ -43,10 +43,9 @@ public final class XSSFColumnShifter extends ColumnShifter {
     /**
      * Updated named ranges
      */
-    @NotImplemented
     @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
-        throw new NotImplementedException("updateNamedRanges");
+        XSSFRowColShifter.updateNamedRanges(sheet, formulaShifter);
     }
 
     /**
