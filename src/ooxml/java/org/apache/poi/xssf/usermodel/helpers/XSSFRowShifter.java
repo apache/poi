@@ -47,6 +47,12 @@ public final class XSSFRowShifter extends RowShifter {
         XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
     }
 
+    /**
+     * Update the formulas in specified row using the formula shifting policy specified by shifter
+     *
+     * @param row the row to update the formulas on
+     * @param formulaShifter the formula shifting policy
+     */
     @Internal(since="3.15 beta 2")
     public void updateRowFormulas(XSSFRow row, FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateRowFormulas(row, formulaShifter);

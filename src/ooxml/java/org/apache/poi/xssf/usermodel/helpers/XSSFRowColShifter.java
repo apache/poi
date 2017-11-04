@@ -37,9 +37,11 @@ import java.util.List;
 
 /**
  * Class for code common to {@link XSSFRowShifter} and {@link XSSFColumnShifter}
+ *
+ * @since POI 4.0.0
  */
 @Internal
-/*private*/ final class XSSFRowColShifter extends BaseRowColShifter {
+/*private*/ final class XSSFRowColShifter {
     private static final POILogger logger = POILogFactory.getLogger(XSSFRowColShifter.class);
 
     private XSSFRowColShifter() { /*no instances for static classes*/}
@@ -189,7 +191,7 @@ import java.util.List;
             boolean changed = false;
             List<CellRangeAddress> temp = new ArrayList<>();
             for (CellRangeAddress craOld : cellRanges) {
-                CellRangeAddress craNew = shiftRange(formulaShifter, craOld, sheetIndex);
+                CellRangeAddress craNew = BaseRowColShifter.shiftRange(formulaShifter, craOld, sheetIndex);
                 if (craNew == null) {
                     changed = true;
                     continue;
@@ -234,7 +236,7 @@ import java.util.List;
             XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
             String cellRef = xhyperlink.getCellRef();
             CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
-            CellRangeAddress shiftedRange = shiftRange(formulaShifter, cra, sheetIndex);
+            CellRangeAddress shiftedRange = BaseRowColShifter.shiftRange(formulaShifter, cra, sheetIndex);
             if (shiftedRange != null && shiftedRange != cra) {
                 // shiftedRange should not be null. If shiftedRange is null, that means
                 // that a hyperlink wasn't deleted at the beginning of shiftRows when
