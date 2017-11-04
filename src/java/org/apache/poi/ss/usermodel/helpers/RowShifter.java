@@ -135,11 +135,11 @@ public abstract class RowShifter extends BaseRowColShifter {
      * @param row the row to update the formulas on
      * @param formulaShifter the formula shifting policy
      */
-    @Internal
-    public abstract void updateRowFormulas(Row row, FormulaShifter formulaShifter);
+    //@Internal
+    //public abstract void updateRowFormulas(Row row, FormulaShifter formulaShifter);
 
     public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
-    
+
     /**
      * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
      * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
