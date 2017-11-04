@@ -29,6 +29,8 @@ import org.apache.poi.util.Beta;
 
 /**
  * Helper for shifting columns up or down
+ *
+ * @since POI 4.0.0
  */
 // non-Javadoc: This abstract class exists to consolidate duplicated code between XSSFColumnShifter and HSSFColumnShifter
 // (currently methods sprinkled throughout HSSFSheet)

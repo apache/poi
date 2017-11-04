@@ -28,9 +28,33 @@ import org.apache.poi.util.Internal;
 /**
  * Class for code common to {@link RowShifter} and {@link ColumnShifter}
  * Helper for shifting rows up or down and columns left and right
+ *
+ * @since POI 4.0.0
  */
 @Internal
 public abstract class BaseRowColShifter {
+
+    /**
+     * Updated named ranges
+     */
+    protected abstract void updateNamedRanges(FormulaShifter formulaShifter);
+
+    /**
+     * Update formulas.
+     */
+    protected abstract void updateFormulas(FormulaShifter formulaShifter);
+
+
+    public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
+
+    /**
+     * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
+     * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
+     * do not track the content they point to.
+     *
+     * @param formulaShifter the formula shifting policy
+     */
+    public abstract void updateHyperlinks(FormulaShifter formulaShifter);
 
     public static CellRangeAddress shiftRange(FormulaShifter formulaShifter, CellRangeAddress cra, int currentExternSheetIx) {
         // FormulaShifter works well in terms of Ptgs - so convert CellRangeAddress to AreaPtg (and back) here

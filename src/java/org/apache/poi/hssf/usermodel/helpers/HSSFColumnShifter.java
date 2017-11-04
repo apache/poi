@@ -28,6 +28,8 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Helper for shifting columns up or down
+ *
+ * @since POI 4.0.0
  */
 // non-Javadoc: When possible, code should be implemented in the ColumnShifter abstract class to avoid duplication with
 // {@link org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter}
