@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
@@ -80,8 +79,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
 
     /** 
-     * @param part 
-     * @throws IOException 
+     * @param part The part used to initialize the table
+     * @throws IOException If reading data from the part fails.
      * @since POI 3.14-Beta1
      */
     public XSSFTable(PackagePart part) throws IOException {
@@ -90,9 +89,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
     
     /**
-     * read table XML
-     * @param is
-     * @throws IOException
+     * Read table XML from an {@link InputStream}
+     * @param is The stream which provides the XML data for the table.
+     * @throws IOException If reading from the stream fails
      */
     public void readFrom(InputStream is) throws IOException {
         try {
@@ -111,9 +110,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
 
     /**
-     * write table XML to stream
-     * @param out
-     * @throws IOException
+     * write table XML to an {@link OutputStream}
+     * @param out The stream to write the XML data to
+     * @throws IOException If writing to the stream fails.
      */
     public void writeTo(OutputStream out) throws IOException {
         updateHeaders();
@@ -265,7 +264,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     
     /**
      * Changes the name of the Table
-     * @param newName 
+     * @param newName The name of the table.
      */
     public void setName(String newName) {
         if (newName == null) {
@@ -290,7 +289,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     
     /**
      * Changes the name of the Table
-     * @param newStyleName 
+     * @param newStyleName The name of the style.
      * @since 3.17 beta 1
      */
     public void setStyleName(String newStyleName) {
@@ -431,7 +430,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * The next call to {@link #getStartCellReference()} and
      * {@link #getEndCellReference()} will synchronize the
      * cell references with the underlying <code>CTTable</code>.
-     * Thus, {@link #updateReferences()} is inexpensive.
+     * Thus this method is inexpensive.
      *
      * @since POI 3.15 beta 3
      */
@@ -466,7 +465,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * "Found unreadable content" message on startup.
      * 
      * If calling both {@link #updateReferences()} and
-     * {@link #updateHeaders()}, {@link #updateReferences()}
+     * this method, {@link #updateReferences()}
      * should be called first.
      * 
      * Note that a Table <em>must</em> have a header. To reproduce
@@ -545,7 +544,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * Note: This is misleading.  The Spec indicates this is true if the totals row
      * has <b><i>ever</i></b> been shown, not whether or not it is currently displayed.
-     * Use {@link #getTotalsRowCount()} > 0 to decide whether or not the totals row is visible.
+     * Use {@link #getTotalsRowCount()} &gt; 0 to decide whether or not the totals row is visible.
      * @since 3.15 beta 2
      * @see #getTotalsRowCount()
      */
@@ -555,7 +554,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     
     /**
      * @return 0 for no totals rows, 1 for totals row shown.
-     * Values > 1 are not currently used by Excel up through 2016, and the OOXML spec
+     * Values &gt; 1 are not currently used by Excel up through 2016, and the OOXML spec
      * doesn't define how they would be implemented.
      * @since 3.17 beta 1
      */
@@ -565,7 +564,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     /**
      * @return 0 for no header rows, 1 for table headers shown.
-     * Values > 1 might be used by Excel for pivot tables?
+     * Values &gt; 1 might be used by Excel for pivot tables?
      * @since 3.17 beta 1
      */
     public int getHeaderRowCount() {

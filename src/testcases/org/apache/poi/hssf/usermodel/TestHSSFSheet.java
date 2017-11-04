@@ -98,7 +98,6 @@ public final class TestHSSFSheet extends BaseTestSheet {
         wb.close();
     }
 
-
     @Test
     public void getSetMargin() throws IOException {
         baseTestGetSetMargin(new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3});
@@ -156,7 +155,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
 
     /**
-     * Test WSBboolRecord fields get set in the user model.
+     * Test WSBoolRecord fields get set in the user model.
      */
     @Test
     public void wsBool() throws IOException {
@@ -166,6 +165,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
                 (WSBoolRecord) s.getSheet().findFirstRecordBySid(WSBoolRecord.sid);
 
         // Check defaults
+        assertNotNull(record);
         assertTrue(record.getAlternateExpression());
         assertTrue(record.getAlternateFormula());
         assertFalse(record.getAutobreaks());
@@ -518,7 +518,9 @@ public final class TestHSSFSheet extends BaseTestSheet {
         sheet.setZoom(75);
         assertTrue(sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid) > 0);
         SCLRecord sclRecord = (SCLRecord) sheet.getSheet().findFirstRecordBySid(SCLRecord.sid);
-        assertEquals(75, 100*sclRecord.getNumerator()/sclRecord.getDenominator());
+        assertNotNull(sclRecord);
+        short numerator = sclRecord.getNumerator();
+        assertEquals(75, 100* numerator /sclRecord.getDenominator());
 
         int sclLoc = sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid);
         int window2Loc = sheet.getSheet().findFirstRecordLocBySid(WindowTwoRecord.sid);
@@ -942,6 +944,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
         // Details checks
         HSSFCellStyle bs = wbSimple.getSheetAt(0).getColumnStyle(1);
+        assertNotNull(bs);
         assertEquals(62, bs.getIndex());
         assertEquals("#,##0.0_ ;\\-#,##0.0\\ ", bs.getDataFormatString());
         assertEquals("Calibri", bs.getFont(wbSimple).getFontName());
@@ -952,6 +955,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
 
         HSSFCellStyle cs = wbComplex.getSheetAt(0).getColumnStyle(1);
+        assertNotNull(cs);
         assertEquals(62, cs.getIndex());
         assertEquals("#,##0.0_ ;\\-#,##0.0\\ ", cs.getDataFormatString());
         assertEquals("Arial", cs.getFont(wbComplex).getFontName());
@@ -1023,6 +1027,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         sh = wb2.getSheetAt(0);
         ish = sh.getSheet();
         ObjRecord objRecord = (ObjRecord)ish.findFirstRecordBySid(ObjRecord.sid);
+        assertNotNull(objRecord);
         List<SubRecord> subRecords = objRecord.getSubRecords();
         assertEquals(3, subRecords.size());
         assertTrue(subRecords.get(0) instanceof CommonObjectDataSubRecord );
