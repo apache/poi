@@ -16,12 +16,16 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.apache.poi.ss.usermodel.*;
+import org.junit.Test;
 
-public final class TestHSSFOptimiser extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public final class TestHSSFOptimiser {
+	@Test
 	public void testDoesNoHarmIfNothingToDo() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -60,6 +64,7 @@ public final class TestHSSFOptimiser extends TestCase {
 		assertEquals(f, s.getFont(wb));
 	}
 
+	@Test
 	public void testOptimiseFonts() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -158,6 +163,7 @@ public final class TestHSSFOptimiser extends TestCase {
 		assertEquals(8, r.getCell(1).getRichStringCellValue().getFontAtIndex(7));
 	}
 
+	@Test
 	public void testOptimiseStyles() {
 	    HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -274,6 +280,7 @@ public final class TestHSSFOptimiser extends TestCase {
 	    assertEquals(21, r.getCell(8).getCellValueRecord().getXFIndex());
 	}
 
+	@Test
 	public void testOptimiseStylesCheckActualStyles() {
 	    HSSFWorkbook wb = new HSSFWorkbook();
 	    
@@ -313,4 +320,383 @@ public final class TestHSSFOptimiser extends TestCase {
 	    assertEquals(BorderStyle.DASH_DOT, r.getCell(1).getCellStyle().getBorderBottom());
 	    assertEquals(BorderStyle.THICK, r.getCell(2).getCellStyle().getBorderBottom());
 	}
+
+	@Test
+	public void testColumnAndRowStyles() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
+				21, wb.getNumCellStyles());
+
+		HSSFSheet sheet = wb.createSheet();
+
+		Row row = sheet.createRow(0);
+		row.createCell(0);
+		row.createCell(1);
+		row.setRowStyle(createColorStyle(wb, IndexedColors.RED));
+
+		row = sheet.createRow(1);
+		row.createCell(0);
+		row.createCell(1);
+		row.setRowStyle(createColorStyle(wb, IndexedColors.RED));
+
+		sheet.setDefaultColumnStyle(0, createColorStyle(wb, IndexedColors.RED));
+		sheet.setDefaultColumnStyle(1, createColorStyle(wb, IndexedColors.RED));
+
+		// now the color should be equal for those two columns and rows
+		checkColumnStyles(sheet, 0, 1, false);
+		checkRowStyles(sheet, 0, 1, false);
+
+		// Optimise styles
+		HSSFOptimiser.optimiseCellStyles(wb);
+
+		// We should have the same style-objects for these two columns and rows
+		checkColumnStyles(sheet, 0, 1, true);
+		checkRowStyles(sheet, 0, 1, true);
+	}
+
+	@Test
+	public void testUnusedStyle() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
+				21, wb.getNumCellStyles());
+
+		HSSFSheet sheet = wb.createSheet();
+
+		Row row = sheet.createRow(0);
+		row.createCell(0);
+		row.createCell(1).setCellStyle(
+				createColorStyle(wb, IndexedColors.GREEN));
+
+
+		row = sheet.createRow(1);
+		row.createCell(0);
+		row.createCell(1).setCellStyle(
+				createColorStyle(wb, IndexedColors.RED));
+
+
+		// Create style. But don't use it.
+		for (int i = 0; i < 3; i++) {
+			// Set Cell Color : AQUA
+			createColorStyle(wb, IndexedColors.AQUA);
+		}
+
+		assertEquals(21 + 2 + 3, wb.getNumCellStyles());
+		assertEquals(IndexedColors.GREEN.getIndex(), sheet.getRow(0).getCell(1).getCellStyle().getFillForegroundColor());
+		assertEquals(IndexedColors.RED.getIndex(), sheet.getRow(1).getCell(1).getCellStyle().getFillForegroundColor());
+
+		// Optimise styles
+		HSSFOptimiser.optimiseCellStyles(wb);
+
+		assertEquals(21 + 2, wb.getNumCellStyles());
+		assertEquals(IndexedColors.GREEN.getIndex(), sheet.getRow(0).getCell(1).getCellStyle().getFillForegroundColor());
+		assertEquals(IndexedColors.RED.getIndex(), sheet.getRow(1).getCell(1).getCellStyle().getFillForegroundColor());
+	}
+
+	@Test
+	public void testUnusedStyleOneUsed() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
+				21, wb.getNumCellStyles());
+
+		HSSFSheet sheet = wb.createSheet();
+
+		Row row = sheet.createRow(0);
+		row.createCell(0);
+		row.createCell(1).setCellStyle(
+				createColorStyle(wb, IndexedColors.GREEN));
+
+		// Create style. But don't use it.
+		for (int i = 0; i < 3; i++) {
+			// Set Cell Color : AQUA
+			createColorStyle(wb, IndexedColors.AQUA);
+		}
+
+		row = sheet.createRow(1);
+		row.createCell(0).setCellStyle(createColorStyle(wb, IndexedColors.AQUA));
+		row.createCell(1).setCellStyle(
+				createColorStyle(wb, IndexedColors.RED));
+
+		assertEquals(21 + 3 + 3, wb.getNumCellStyles());
+		assertEquals(IndexedColors.GREEN.getIndex(), sheet.getRow(0).getCell(1).getCellStyle().getFillForegroundColor());
+		assertEquals(IndexedColors.AQUA.getIndex(), sheet.getRow(1).getCell(0).getCellStyle().getFillForegroundColor());
+		assertEquals(IndexedColors.RED.getIndex(), sheet.getRow(1).getCell(1).getCellStyle().getFillForegroundColor());
+
+		// Optimise styles
+		HSSFOptimiser.optimiseCellStyles(wb);
+
+		assertEquals(21 + 3, wb.getNumCellStyles());
+		assertEquals(IndexedColors.GREEN.getIndex(), sheet.getRow(0).getCell(1).getCellStyle().getFillForegroundColor());
+		assertEquals(IndexedColors.AQUA.getIndex(), sheet.getRow(1).getCell(0).getCellStyle().getFillForegroundColor());
+		assertEquals(IndexedColors.RED.getIndex(), sheet.getRow(1).getCell(1).getCellStyle().getFillForegroundColor());
+	}
+
+	@Test
+    public void testDefaultColumnStyleWitoutCell() throws IOException {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
+        		21, wb.getNumCellStyles());
+
+		HSSFSheet sheet = wb.createSheet();
+
+        //Set CellStyle and RowStyle and ColumnStyle
+        for (int i = 0; i < 2; i++) {
+			sheet.createRow(i);
+		}
+
+        // Create a test font and style, and use them
+		int obj_cnt = wb.getNumCellStyles();
+		int cnt = wb.getNumCellStyles();
+
+		// Set Column Color : Red
+		sheet.setDefaultColumnStyle(3,
+				createColorStyle(wb, IndexedColors.RED));
+		obj_cnt++;
+
+		// Set Column Color : Red
+		sheet.setDefaultColumnStyle(4,
+				createColorStyle(wb, IndexedColors.RED));
+		obj_cnt++;
+
+        assertEquals(obj_cnt, wb.getNumCellStyles());
+
+        // now the color should be equal for those two columns and rows
+		checkColumnStyles(sheet, 3, 4, false);
+
+        // Optimise styles
+        HSSFOptimiser.optimiseCellStyles(wb);
+
+		// We should have the same style-objects for these two columns and rows
+		checkColumnStyles(sheet, 3, 4, true);
+
+        // (GREEN + RED + BLUE + CORAL) + YELLOW(2*2)
+        assertEquals(cnt + 1, wb.getNumCellStyles());
+    }
+
+	@Test
+	public void testUserDefinedStylesAreNeverOptimizedAway() throws IOException {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
+				21, wb.getNumCellStyles());
+
+		HSSFSheet sheet = wb.createSheet();
+
+		//Set CellStyle and RowStyle and ColumnStyle
+		for (int i = 0; i < 2; i++) {
+			sheet.createRow(i);
+		}
+
+		// Create a test font and style, and use them
+		int obj_cnt = wb.getNumCellStyles();
+		int cnt = wb.getNumCellStyles();
+		for (int i = 0; i < 3; i++) {
+			HSSFCellStyle s = null;
+			if (i == 0) {
+				// Set cell color : +2(user style + proxy of it)
+				s = (HSSFCellStyle) createColorStyle(wb,
+						IndexedColors.YELLOW);
+				s.setUserStyleName("user define");
+				obj_cnt += 2;
+			}
+
+			HSSFRow row = sheet.getRow(1);
+			row.createCell(i).setCellStyle(s);
+		}
+
+		// Create style. But don't use it.
+		for (int i = 3; i < 6; i++) {
+			// Set Cell Color : AQUA
+			createColorStyle(wb, IndexedColors.AQUA);
+			obj_cnt++;
+		}
+
+		// Set cell color : +2(user style + proxy of it)
+		HSSFCellStyle s = (HSSFCellStyle) createColorStyle(wb,IndexedColors.YELLOW);
+		s.setUserStyleName("user define2");
+		obj_cnt += 2;
+
+		sheet.createRow(10).createCell(0).setCellStyle(s);
+
+		assertEquals(obj_cnt, wb.getNumCellStyles());
+
+		// Confirm user style name
+		checkUserStyles(sheet);
+
+		// Optimise styles
+		HSSFOptimiser.optimiseCellStyles(wb);
+
+		// Confirm user style name
+		checkUserStyles(sheet);
+
+		// (GREEN + RED + BLUE + CORAL) + YELLOW(2*2)
+		assertEquals(cnt + 2 * 2, wb.getNumCellStyles());
+	}
+
+	@Test
+	public void testBug57517() throws IOException {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
+				21, wb.getNumCellStyles());
+
+		HSSFSheet sheet = wb.createSheet();
+
+		//Set CellStyle and RowStyle and ColumnStyle
+		for (int i = 0; i < 2; i++) {
+			sheet.createRow(i);
+		}
+
+		// Create a test font and style, and use them
+		int obj_cnt = wb.getNumCellStyles();
+		int cnt = wb.getNumCellStyles();
+		for (int i = 0; i < 3; i++) {
+			// Set Cell Color : GREEN
+			HSSFRow row = sheet.getRow(0);
+			row.createCell(i).setCellStyle(
+					createColorStyle(wb, IndexedColors.GREEN));
+			obj_cnt++;
+
+			// Set Column Color : Red
+			sheet.setDefaultColumnStyle(i + 3,
+					createColorStyle(wb, IndexedColors.RED));
+			obj_cnt++;
+
+			// Set Row Color : Blue
+			row = sheet.createRow(i + 3);
+			row.setRowStyle(createColorStyle(wb, IndexedColors.BLUE));
+			obj_cnt++;
+
+			HSSFCellStyle s = null;
+			if (i == 0) {
+				// Set cell color : +2(user style + proxy of it)
+				s = (HSSFCellStyle) createColorStyle(wb,
+						IndexedColors.YELLOW);
+				s.setUserStyleName("user define");
+				obj_cnt += 2;
+			}
+
+			row = sheet.getRow(1);
+			row.createCell(i).setCellStyle(s);
+
+		}
+
+		// Create style. But don't use it.
+		for (int i = 3; i < 6; i++) {
+			// Set Cell Color : AQUA
+			createColorStyle(wb, IndexedColors.AQUA);
+			obj_cnt++;
+		}
+
+		// Set CellStyle and RowStyle and ColumnStyle
+		for (int i = 9; i < 11; i++) {
+			sheet.createRow(i);
+		}
+
+		//Set 0 or 255 index of ColumnStyle.
+		HSSFCellStyle s = (HSSFCellStyle) createColorStyle(wb, IndexedColors.CORAL);
+		obj_cnt++;
+		sheet.setDefaultColumnStyle(0, s);
+		sheet.setDefaultColumnStyle(255, s);
+
+		// Create a test font and style, and use them
+		for (int i = 3; i < 6; i++) {
+			// Set Cell Color : GREEN
+			HSSFRow row = sheet.getRow(0 + 9);
+			row.createCell(i - 3).setCellStyle(
+					createColorStyle(wb, IndexedColors.GREEN));
+			obj_cnt++;
+
+			// Set Column Color : Red
+			sheet.setDefaultColumnStyle(i + 3,
+					createColorStyle(wb, IndexedColors.RED));
+			obj_cnt++;
+
+			// Set Row Color : Blue
+			row = sheet.createRow(i + 3);
+			row.setRowStyle(createColorStyle(wb, IndexedColors.BLUE));
+			obj_cnt++;
+
+			if (i == 3) {
+				// Set cell color : +2(user style + proxy of it)
+				s = (HSSFCellStyle) createColorStyle(wb,
+						IndexedColors.YELLOW);
+				s.setUserStyleName("user define2");
+				obj_cnt += 2;
+			}
+
+			row = sheet.getRow(1 + 9);
+			row.createCell(i - 3).setCellStyle(s);
+		}
+
+		assertEquals(obj_cnt, wb.getNumCellStyles());
+
+		// now the color should be equal for those two columns and rows
+		checkColumnStyles(sheet, 3, 4, false);
+		checkRowStyles(sheet, 3, 4, false);
+
+		// Confirm user style name
+		checkUserStyles(sheet);
+
+//        out = new FileOutputStream(new File(tmpDirName, "out.xls"));
+//        wb.write(out);
+//        out.close();
+
+		// Optimise styles
+		HSSFOptimiser.optimiseCellStyles(wb);
+
+//        out = new FileOutputStream(new File(tmpDirName, "out_optimised.xls"));
+//        wb.write(out);
+//        out.close();
+
+		// We should have the same style-objects for these two columns and rows
+		checkColumnStyles(sheet, 3, 4, true);
+		checkRowStyles(sheet, 3, 4, true);
+
+		// Confirm user style name
+		checkUserStyles(sheet);
+
+		// (GREEN + RED + BLUE + CORAL) + YELLOW(2*2)
+		assertEquals(cnt + 4 + 2 * 2, wb.getNumCellStyles());
+	}
+
+	private void checkUserStyles(HSSFSheet sheet) {
+		HSSFCellStyle parentStyle1 = sheet.getRow(1).getCell(0).getCellStyle().getParentStyle();
+		assertNotNull(parentStyle1);
+		assertEquals(parentStyle1.getUserStyleName(), "user define");
+
+		HSSFCellStyle parentStyle10 = sheet.getRow(10).getCell(0).getCellStyle().getParentStyle();
+		assertNotNull(parentStyle10);
+		assertEquals(parentStyle10.getUserStyleName(), "user define2");
+	}
+
+	private void checkColumnStyles(HSSFSheet sheet, int col1, int col2, boolean checkEquals) {
+		// we should have the same color for the column styles
+		HSSFCellStyle columnStyle1 = sheet.getColumnStyle(col1);
+		assertNotNull(columnStyle1);
+		HSSFCellStyle columnStyle2 = sheet.getColumnStyle(col2);
+		assertNotNull(columnStyle2);
+		assertEquals(columnStyle1.getFillForegroundColor(), columnStyle2.getFillForegroundColor());
+		if(checkEquals) {
+			assertEquals(columnStyle1.getIndex(), columnStyle2.getIndex());
+			assertEquals(columnStyle1, columnStyle2);
+		}
+	}
+
+	private void checkRowStyles(HSSFSheet sheet, int row1, int row2, boolean checkEquals) {
+		// we should have the same color for the row styles
+		HSSFCellStyle rowStyle1 = sheet.getRow(row1).getRowStyle();
+		assertNotNull(rowStyle1);
+		HSSFCellStyle rowStyle2 = sheet.getRow(row2).getRowStyle();
+		assertNotNull(rowStyle2);
+		assertEquals(rowStyle1.getFillForegroundColor(), rowStyle2.getFillForegroundColor());
+		if(checkEquals) {
+			assertEquals(rowStyle1.getIndex(), rowStyle2.getIndex());
+			assertEquals(rowStyle1, rowStyle2);
+		}
+	}
+
+	private CellStyle createColorStyle(Workbook wb, IndexedColors c) {
+        CellStyle cs = wb.createCellStyle();
+        cs.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cs.setFillForegroundColor(c.getIndex());
+        return cs;
+    }
 }
