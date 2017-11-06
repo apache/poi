@@ -19,6 +19,7 @@ package org.apache.poi.ss.util;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -32,38 +33,44 @@ public final class TestCellRangeUtil {
     private static final CellRangeAddress B1 = new CellRangeAddress(0, 0, 1, 1);
     private static final CellRangeAddress A2 = new CellRangeAddress(1, 1, 0, 0);
     private static final CellRangeAddress B2 = new CellRangeAddress(1, 1, 1, 1);
+    private static final CellRangeAddress A1_B2 = new CellRangeAddress(0, 1, 0, 1);
+    private static final CellRangeAddress A1_B1 = new CellRangeAddress(0, 0, 0, 1);
+    private static final CellRangeAddress A1_A2 = new CellRangeAddress(0, 1, 0, 0);
     
     @Test
     public void testMergeCellRanges() {
-        testMergeCellRange(asArray(A1, B1, A2, B2), 1);
-        // suboptimal result for permuted arguments (2 ranges instead of one)
-        testMergeCellRange(asArray(A1, B2, A2, A1), 2);
-        
-        testMergeCellRange(asArray(A1, B1, A2), 2);
-        testMergeCellRange(asArray(A2, A1, B1), 2);
-        testMergeCellRange(asArray(B1, A2, A1), 2);
-        
-        testMergeCellRange(asArray(A1, B2), 2);
-        testMergeCellRange(asArray(B2, A1), 2);
+        // Note that the order of the output array elements does not matter
+        // And that there may be more than one valid outputs for a given input. Any valid output is accepted.
+        // POI should use a strategy that is consistent and predictable (it currently is not).
+
+        // Fully mergeable
+        //    A B
+        //  1 x x   A1,A2,B1,B2 --> A1:B2
+        //  2 x x
+        assertArrayEquals(asArray(A1_B2), merge(A1, B1, A2, B2));
+        assertArrayEquals(asArray(A1_B2), merge(A1, B2, A2, B1));
+
+        // Partially mergeable: multiple possible mergings
+        //    A B
+        //  1 x x   A1,A2,B1 --> A1:B1,A2 or A1:A2,B1
+        //  2 x 
+        assertArrayEquals(asArray(A1_B1, A2), merge(A1, B1, A2));
+        assertArrayEquals(asArray(A1_A2, B1), merge(A2, A1, B1));
+        assertArrayEquals(asArray(A1_B1, A2), merge(B1, A2, A1));
+
+        // Not mergeable
+        //    A B
+        //  1 x     A1,B2 --> A1,B2
+        //  2   x
+        assertArrayEquals(asArray(A1, B2), merge(A1, B2));
+        assertArrayEquals(asArray(B2, A1), merge(B2, A1));
     }
-    
-    private void testMergeCellRange(CellRangeAddress[] input, int expectedResultRangeLength) {
-        CellRangeAddress[] result = CellRangeUtil.mergeCellRanges( input );
-        assertEquals( expectedResultRangeLength, result.length );
-        assertResultExactlyContainsInput(result, result);
-    }
-    
-    private static void assertResultExactlyContainsInput(CellRangeAddress[] result, CellRangeAddress[] input) {
-        for(CellRangeAddress inputEntry: input) {
-            boolean isInResultRange = false;
-            for(CellRangeAddress resultEntry: result) {
-                isInResultRange |= resultEntry.intersects(inputEntry);
-            }
-            assumeTrue(isInResultRange);
-        }
-    }
-    
+
     private static <T> T[] asArray(T...ts) {
         return ts;
+    }
+
+    private static CellRangeAddress[] merge(CellRangeAddress... ranges) {
+        return CellRangeUtil.mergeCellRanges(ranges);
     }
 }
