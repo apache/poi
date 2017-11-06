@@ -118,6 +118,7 @@ public final class CellRangeUtil {
                     }
                     somethingGotMerged = true;
                     // overwrite range1 with first result
+                    range1 = mergeResult[0];
                     cellRangeList.set(i, mergeResult[0]);
                     // remove range2
                     cellRangeList.remove(j--);
