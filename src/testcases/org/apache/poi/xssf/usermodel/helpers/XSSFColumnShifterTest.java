@@ -36,19 +36,19 @@ public class XSSFColumnShifterTest {
 
     protected final ITestDataProvider _testDataProvider;
 
-	public XSSFColumnShifterTest(){
+    public XSSFColumnShifterTest(){
         _testDataProvider = XSSFITestDataProvider.instance; 
     }
 
-	@Before
-	public void init() {
-		wb07 = new XSSFWorkbook();
-		sheet1 = (XSSFSheet) wb07.createSheet("sheet1");
-		XSSFRow row = sheet1.createRow(0);
-		row.createCell(0, CellType.NUMERIC).setCellValue(0);
-		row.createCell(1, CellType.NUMERIC).setCellValue(1);
-		XSSFCell c1 = row.createCell(2, CellType.NUMERIC);
-		c1.setCellValue(2);
+    @Before
+    public void init() {
+        wb07 = new XSSFWorkbook();
+        sheet1 = (XSSFSheet) wb07.createSheet("sheet1");
+        XSSFRow row = sheet1.createRow(0);
+        row.createCell(0, CellType.NUMERIC).setCellValue(0);
+        row.createCell(1, CellType.NUMERIC).setCellValue(1);
+        XSSFCell c1 = row.createCell(2, CellType.NUMERIC);
+        c1.setCellValue(2);
 
 		row = sheet1.createRow(1);
 		row.createCell(0, CellType.NUMERIC).setCellValue(0.1);
@@ -86,40 +86,40 @@ public class XSSFColumnShifterTest {
 		// writeSheetToLog(sheet1);
 	}
 
-	@Test
-	public void testInsertOneColumn() {
-		sheet1.shiftColumns(1, 2, 1);
-		writeSheetToLog(sheet1);
-		String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
-		assertEquals("A2*C3", formulaA4);
-		String formulaC4 = sheet1.getRow(3).getCell(3).getCellFormula();
-		assertEquals("C1-C3", formulaC4);
-		String formulaB5 = sheet1.getRow(4).getCell(2).getCellFormula();
-		assertEquals("SUM(A3:D3)", formulaB5);
-		String formulaD5 = sheet1.getRow(4).getCell(3).getCellFormula(); // $C1+C$2
-		assertEquals("$D1+D$2", formulaD5);
+    @Test
+    public void testInsertOneColumn() {
+        sheet1.shiftColumns(1, 2, 1);
+        writeSheetToLog(sheet1);
+        String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
+        assertEquals("A2*C3", formulaA4);
+        String formulaC4 = sheet1.getRow(3).getCell(3).getCellFormula();
+        assertEquals("C1-C3", formulaC4);
+        String formulaB5 = sheet1.getRow(4).getCell(2).getCellFormula();
+        assertEquals("SUM(A3:D3)", formulaB5);
+        String formulaD5 = sheet1.getRow(4).getCell(3).getCellFormula(); // $C1+C$2
+        assertEquals("$D1+D$2", formulaD5);
 
-		String newb5Empty = sheet1.getRow(4).getCell(1).getStringCellValue();
-		assertEquals(newb5Empty, "");
-	}
+        String newb5Empty = sheet1.getRow(4).getCell(1).getStringCellValue();
+        assertEquals(newb5Empty, "");
+    }
 
-	@Test
-	public void testInsertTwoColumns() {
-		sheet1.shiftColumns(1, 2, 2);
-		String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
-		assertEquals("A2*D3", formulaA4);
-		String formulaD4 = sheet1.getRow(3).getCell(4).getCellFormula();
-		assertEquals("D1-D3", formulaD4);
-		String formulaD5 = sheet1.getRow(4).getCell(3).getCellFormula();
-		assertEquals("SUM(A3:E3)", formulaD5);
+    @Test
+    public void testInsertTwoColumns() {
+        sheet1.shiftColumns(1, 2, 2);
+        String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
+        assertEquals("A2*D3", formulaA4);
+        String formulaD4 = sheet1.getRow(3).getCell(4).getCellFormula();
+        assertEquals("D1-D3", formulaD4);
+        String formulaD5 = sheet1.getRow(4).getCell(3).getCellFormula();
+        assertEquals("SUM(A3:E3)", formulaD5);
 
-		String b5Empty = sheet1.getRow(4).getCell(1).getStringCellValue();
-		assertEquals(b5Empty, "");
-		Object c6Null = sheet1.getRow(5).getCell(2); // null cell A5 is shifted
-														// for 2 columns, so now
-														// c5 should be null
-		assertEquals(c6Null, null);
-	}
+        String b5Empty = sheet1.getRow(4).getCell(1).getStringCellValue();
+        assertEquals(b5Empty, "");
+        Object c6Null = sheet1.getRow(5).getCell(2); // null cell A5 is shifted
+                                                        // for 2 columns, so now
+                                                        // c5 should be null
+        assertEquals(c6Null, null);
+    }
 
 	public static void writeSheetToLog(Sheet sheet) {
 		int rowIndex = sheet.getFirstRowNum();
@@ -146,99 +146,99 @@ public class XSSFColumnShifterTest {
 		log.trace("");
 	}
 
-	@Test
-	public void testShiftHyperlinks() throws IOException {
-		Workbook wb = _testDataProvider.createWorkbook();
-		Sheet sheet = wb.createSheet("test");
-		Row row = sheet.createRow(0);
+    @Test
+    public void testShiftHyperlinks() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        Row row = sheet.createRow(0);
 
-		// How to create hyperlinks
-		// https://poi.apache.org/spreadsheet/quick-guide.html#Hyperlinks
-		CreationHelper helper = wb.getCreationHelper();
-		CellStyle hlinkStyle = wb.createCellStyle();
-		Font hlinkFont = wb.createFont();
-		hlinkFont.setUnderline(Font.U_SINGLE);
-		hlinkFont.setColor(IndexedColors.BLUE.getIndex());
-		hlinkStyle.setFont(hlinkFont);
+        // How to create hyperlinks
+        // https://poi.apache.org/spreadsheet/quick-guide.html#Hyperlinks
+        CreationHelper helper = wb.getCreationHelper();
+        CellStyle hlinkStyle = wb.createCellStyle();
+        Font hlinkFont = wb.createFont();
+        hlinkFont.setUnderline(Font.U_SINGLE);
+        hlinkFont.setColor(IndexedColors.BLUE.getIndex());
+        hlinkStyle.setFont(hlinkFont);
 
-		// 3D relative document link
-		// CellAddress=A1, shifted to A4
-		Cell cell = row.createCell(0);
-		cell.setCellStyle(hlinkStyle);
-		createHyperlink(helper, cell, HyperlinkType.DOCUMENT, "test!E1");
+        // 3D relative document link
+        // CellAddress=A1, shifted to A4
+        Cell cell = row.createCell(0);
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, HyperlinkType.DOCUMENT, "test!E1");
 
-		// URL
-		cell = row.createCell(1);
-		// CellAddress=B1, shifted to B4
-		cell.setCellStyle(hlinkStyle);
-		createHyperlink(helper, cell, HyperlinkType.URL, "http://poi.apache.org/");
+        // URL
+        cell = row.createCell(1);
+        // CellAddress=B1, shifted to B4
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, HyperlinkType.URL, "http://poi.apache.org/");
 
-		// row0 will be shifted on top of row1, so this URL should be removed
-		// from the workbook
-		Row overwrittenRow = sheet.createRow(3);
-		cell = overwrittenRow.createCell(2);
-		// CellAddress=C4, will be overwritten (deleted)
-		cell.setCellStyle(hlinkStyle);
-		createHyperlink(helper, cell, HyperlinkType.EMAIL, "mailto:poi@apache.org");
+        // row0 will be shifted on top of row1, so this URL should be removed
+        // from the workbook
+        Row overwrittenRow = sheet.createRow(3);
+        cell = overwrittenRow.createCell(2);
+        // CellAddress=C4, will be overwritten (deleted)
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, HyperlinkType.EMAIL, "mailto:poi@apache.org");
 
-		Row unaffectedRow = sheet.createRow(20);
-		cell = unaffectedRow.createCell(3);
-		// CellAddress=D21, will be unaffected
-		cell.setCellStyle(hlinkStyle);
-		createHyperlink(helper, cell, HyperlinkType.FILE, "54524.xlsx");
+        Row unaffectedRow = sheet.createRow(20);
+        cell = unaffectedRow.createCell(3);
+        // CellAddress=D21, will be unaffected
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, HyperlinkType.FILE, "54524.xlsx");
 
-		cell = wb.createSheet("other").createRow(0).createCell(0);
-		// CellAddress=Other!A1, will be unaffected
-		cell.setCellStyle(hlinkStyle);
-		createHyperlink(helper, cell, HyperlinkType.URL, "http://apache.org/");
+        cell = wb.createSheet("other").createRow(0).createCell(0);
+        // CellAddress=Other!A1, will be unaffected
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, HyperlinkType.URL, "http://apache.org/");
 
-		int startRow = 0;
-		int endRow = 4;
-		int n = 3;
-		writeSheetToLog(sheet);
-		sheet.shiftColumns(startRow, endRow, n);
-		writeSheetToLog(sheet);
+        int startRow = 0;
+        int endRow = 4;
+        int n = 3;
+        writeSheetToLog(sheet);
+        sheet.shiftColumns(startRow, endRow, n);
+        writeSheetToLog(sheet);
 
-		Workbook read = _testDataProvider.writeOutAndReadBack(wb);
-		wb.close();
+        Workbook read = _testDataProvider.writeOutAndReadBack(wb);
+        wb.close();
 
-		Sheet sh = read.getSheet("test");
+        Sheet sh = read.getSheet("test");
 
-		Row shiftedRow = sh.getRow(0);
+        Row shiftedRow = sh.getRow(0);
 
-		// document link anchored on a shifted cell should be moved
-		// Note that hyperlinks do not track what they point to, so this
-		// hyperlink should still refer to test!E1
-		verifyHyperlink(shiftedRow.getCell(3), HyperlinkType.DOCUMENT, "test!E1");
+        // document link anchored on a shifted cell should be moved
+        // Note that hyperlinks do not track what they point to, so this
+        // hyperlink should still refer to test!E1
+        verifyHyperlink(shiftedRow.getCell(3), HyperlinkType.DOCUMENT, "test!E1");
 
-		// URL, EMAIL, and FILE links anchored on a shifted cell should be moved
-		verifyHyperlink(shiftedRow.getCell(4), HyperlinkType.URL, "http://poi.apache.org/");
+        // URL, EMAIL, and FILE links anchored on a shifted cell should be moved
+        verifyHyperlink(shiftedRow.getCell(4), HyperlinkType.URL, "http://poi.apache.org/");
 
-		// Make sure hyperlinks were moved and not copied
-		assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
-		assertNull("URL hyperlink should be moved, not copied", sh.getHyperlink(1, 0));
+        // Make sure hyperlinks were moved and not copied
+        assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
+        assertNull("URL hyperlink should be moved, not copied", sh.getHyperlink(1, 0));
 
-		assertEquals(4, sh.getHyperlinkList().size());
-		read.close();
-	}
+        assertEquals(4, sh.getHyperlinkList().size());
+        read.close();
+    }
 
-	private void createHyperlink(CreationHelper helper, Cell cell, HyperlinkType linkType, String ref) {
-		cell.setCellValue(ref);
-		Hyperlink link = helper.createHyperlink(linkType);
-		link.setAddress(ref);
-		cell.setHyperlink(link);
-	}
+    private void createHyperlink(CreationHelper helper, Cell cell, HyperlinkType linkType, String ref) {
+        cell.setCellValue(ref);
+        Hyperlink link = helper.createHyperlink(linkType);
+        link.setAddress(ref);
+        cell.setHyperlink(link);
+    }
 
-	private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
-		assertTrue(cellHasHyperlink(cell));
-		Hyperlink link = cell.getHyperlink();
-		assertEquals(linkType, link.getTypeEnum());
-		assertEquals(ref, link.getAddress());
-	}
+    private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
+        assertTrue(cellHasHyperlink(cell));
+        Hyperlink link = cell.getHyperlink();
+        assertEquals(linkType, link.getTypeEnum());
+        assertEquals(ref, link.getAddress());
+    }
 
-	private boolean cellHasHyperlink(Cell cell) {
-		return (cell != null) && (cell.getHyperlink() != null);
-	}
+    private boolean cellHasHyperlink(Cell cell) {
+        return (cell != null) && (cell.getHyperlink() != null);
+    }
 
     @Test
     public void shiftMergedColumnsToMergedColumnsRight() throws IOException {
@@ -316,47 +316,47 @@ public class XSSFColumnShifterTest {
         wb.close();
     }
 
-	@Test
-	public void testCommentsShifting() throws IOException {
-		Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56017.xlsx");
+    @Test
+    public void testCommentsShifting() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56017.xlsx");
 
-		Sheet sheet = wb.getSheetAt(0);
-		Comment comment = sheet.getCellComment(new CellAddress(0, 0));
-		assertNotNull(comment);
-		assertEquals("Amdocs", comment.getAuthor());
-		assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        Sheet sheet = wb.getSheetAt(0);
+        Comment comment = sheet.getCellComment(new CellAddress(0, 0));
+        assertNotNull(comment);
+        assertEquals("Amdocs", comment.getAuthor());
+        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
 
-		sheet.shiftColumns(0, 1, 1);
+        sheet.shiftColumns(0, 1, 1);
 
-		// comment in column 0 is gone
-		comment = sheet.getCellComment(new CellAddress(0, 0));
-		assertNull(comment);
+        // comment in column 0 is gone
+        comment = sheet.getCellComment(new CellAddress(0, 0));
+        assertNull(comment);
 
-		// comment is column in column 1
-		comment = sheet.getCellComment(new CellAddress(0, 1));
-		assertNotNull(comment);
-		assertEquals("Amdocs", comment.getAuthor());
-		assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        // comment is column in column 1
+        comment = sheet.getCellComment(new CellAddress(0, 1));
+        assertNotNull(comment);
+        assertEquals("Amdocs", comment.getAuthor());
+        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
 
-		Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-		wb.close();
-		assertNotNull(wbBack);
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        wb.close();
+        assertNotNull(wbBack);
 
-		Sheet sheetBack = wbBack.getSheetAt(0);
+        Sheet sheetBack = wbBack.getSheetAt(0);
 
-		// comment in column 0 is gone
-		comment = sheetBack.getCellComment(new CellAddress(0, 0));
-		assertNull(comment);
+        // comment in column 0 is gone
+        comment = sheetBack.getCellComment(new CellAddress(0, 0));
+        assertNull(comment);
 
-		// comment is now in column 1
-		comment = sheetBack.getCellComment(new CellAddress(0, 1));
-		assertNotNull(comment);
-		assertEquals("Amdocs", comment.getAuthor());
-		assertEquals("Amdocs:\ntest\n", comment.getString().getString());
-		wbBack.close();
-	}
-	
-	// transposed version of TestXSSFSheetShiftRows.testBug54524()
+        // comment is now in column 1
+        comment = sheetBack.getCellComment(new CellAddress(0, 1));
+        assertNotNull(comment);
+        assertEquals("Amdocs", comment.getAuthor());
+        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        wbBack.close();
+    }
+    
+    // transposed version of TestXSSFSheetShiftRows.testBug54524()
     @Test
     public void testBug54524() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
