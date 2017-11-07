@@ -78,15 +78,11 @@ public final class TestCellRangeUtil {
     private static Set<CellAddress> getCellAddresses(CellRangeAddress[] ranges) {
         final Set<CellAddress> set = new HashSet<>();
         for (final CellRangeAddress range : ranges) {
-            set.addAll(asSet(range.iterator()));
+            set.addAll(IteratorUtils.toList(range.iterator()));
         }
         return set;
     }
             
-    private static <T> Set<T> asSet(Iterator<T> iterator) {
-        return new HashSet<T>(IteratorUtils.toList(iterator));
-    }
-
     private static <T> T[] asArray(T...ts) {
         return ts;
     }
