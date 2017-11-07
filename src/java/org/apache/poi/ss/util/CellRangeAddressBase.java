@@ -302,6 +302,10 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress> {
 		return Collections.unmodifiableList(addresses);
 	}
 	
+	/**
+	 * Returns an iterator over the CellAddresses in this cell range in row-major order.
+	 * @since POI 4.0.0
+	 */
 	@Override
 	public Iterator<CellAddress> iterator() {
 		return new RowMajorCellAddressIterator(this);
