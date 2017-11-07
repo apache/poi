@@ -21,6 +21,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assume.assumeTrue;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import org.apache.commons.collections4.IteratorUtils;
 
 /**
  * Tests CellRangeUtil.
@@ -47,23 +51,40 @@ public final class TestCellRangeUtil {
         //    A B
         //  1 x x   A1,A2,B1,B2 --> A1:B2
         //  2 x x
-        assertArrayEquals(asArray(A1_B2), merge(A1, B1, A2, B2));
-        assertArrayEquals(asArray(A1_B2), merge(A1, B2, A2, B1));
+        assertCellRangesEqual(asArray(A1_B2), merge(A1, B1, A2, B2));
+        assertCellRangesEqual(asArray(A1_B2), merge(A1, B2, A2, B1));
 
         // Partially mergeable: multiple possible mergings
         //    A B
         //  1 x x   A1,A2,B1 --> A1:B1,A2 or A1:A2,B1
         //  2 x 
-        assertArrayEquals(asArray(A1_B1, A2), merge(A1, B1, A2));
-        assertArrayEquals(asArray(A1_A2, B1), merge(A2, A1, B1));
-        assertArrayEquals(asArray(A1_B1, A2), merge(B1, A2, A1));
+        assertCellRangesEqual(asArray(A1_B1, A2), merge(A1, B1, A2));
+        assertCellRangesEqual(asArray(A1_A2, B1), merge(A2, A1, B1));
+        assertCellRangesEqual(asArray(A1_B1, A2), merge(B1, A2, A1));
 
         // Not mergeable
         //    A B
         //  1 x     A1,B2 --> A1,B2
         //  2   x
-        assertArrayEquals(asArray(A1, B2), merge(A1, B2));
-        assertArrayEquals(asArray(B2, A1), merge(B2, A1));
+        assertCellRangesEqual(asArray(A1, B2), merge(A1, B2));
+        assertCellRangesEqual(asArray(B2, A1), merge(B2, A1));
+    }
+
+    private void assertCellRangesEqual(CellRangeAddress[] a, CellRangeAddress[] b) {
+        assertEquals(getCellAddresses(a), getCellAddresses(b));
+        assertArrayEquals(a, b);
+    }
+
+    private static Set<CellAddress> getCellAddresses(CellRangeAddress[] ranges) {
+        final Set<CellAddress> set = new HashSet<>();
+        for (final CellRangeAddress range : ranges) {
+            set.addAll(asSet(range.iterator()));
+        }
+        return set;
+    }
+            
+    private static <T> Set<T> asSet(Iterator<T> iterator) {
+        return new HashSet<T>(IteratorUtils.toList(iterator));
     }
 
     private static <T> T[] asArray(T...ts) {
