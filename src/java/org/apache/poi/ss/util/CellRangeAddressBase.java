@@ -282,26 +282,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress> {
 	public int getNumberOfCells() {
 		return (_lastRow - _firstRow + 1) * (_lastCol - _firstCol + 1);
 	}
-	
-	public List<CellAddress> getCellAddresses(boolean rowMajorOrder) {
-		List<CellAddress> addresses = new ArrayList<>();
-		if (rowMajorOrder) {
-			for (int r = _firstRow; r <= _lastRow; r++) {
-				for (int c = _firstCol; c <= _lastCol; c++) {
-					addresses.add(new CellAddress(r, c));
-				}
-			}
-		}
-		else {
-			for (int c = _firstCol; c <= _lastCol; c++) {
-				for (int r = _firstRow; r <= _lastRow; r++) {
-					addresses.add(new CellAddress(r, c));
-				}
-			}
-		}
-		return Collections.unmodifiableList(addresses);
-	}
-	
+
 	/**
 	 * Returns an iterator over the CellAddresses in this cell range in row-major order.
 	 * @since POI 4.0.0
