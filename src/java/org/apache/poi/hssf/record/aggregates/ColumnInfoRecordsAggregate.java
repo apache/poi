@@ -489,6 +489,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 			setColumn(i, null, null, Integer.valueOf(level), null, null);
 		}
 	}
+
 	/**
 	 * Finds the <tt>ColumnInfoRecord</tt> which contains the specified columnIndex
 	 * @param columnIndex index of the column (not the index of the ColumnInfoRecord)
@@ -504,6 +505,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 		}
 		return null;
 	}
+
 	public int getMaxOutlineLevel() {
 		int result = 0;
 		int count=records.size();
@@ -513,6 +515,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 		}
 		return result;
 	}
+
 	public int getOutlineLevel(int columnIndex) {
 	    ColumnInfoRecord ci = findColumnInfo(columnIndex);
 	    if (ci != null) {
@@ -520,5 +523,35 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	    } else {
 	        return 0;
 	    }
+	}
+
+	public int getMinColumnIndex() {
+		if(records.isEmpty()) {
+			return 0;
+		}
+
+		int minIndex = Integer.MAX_VALUE;
+		int nInfos = records.size();
+		for(int i=0; i< nInfos; i++) {
+			ColumnInfoRecord ci = getColInfo(i);
+			minIndex = Math.min(minIndex, ci.getFirstColumn());
+		}
+
+		return minIndex;
+	}
+
+	public int getMaxColumnIndex() {
+		if(records.isEmpty()) {
+			return 0;
+		}
+
+		int maxIndex = 0;
+		int nInfos = records.size();
+		for(int i=0; i< nInfos; i++) {
+			ColumnInfoRecord ci = getColInfo(i);
+			maxIndex = Math.max(maxIndex, ci.getLastColumn());
+		}
+
+		return maxIndex;
 	}
 }

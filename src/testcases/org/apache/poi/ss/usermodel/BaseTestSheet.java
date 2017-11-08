@@ -18,7 +18,6 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellAddress;
@@ -37,8 +36,9 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- * Common superclass for testing {@link HSSFCell}, org.apache.poi.xssf.usermodel.XSSFCell and
- * org.apache.poi.xssf.streaming.SXSSFCell
+ * Common superclass for testing {@link org.apache.poi.hssf.usermodel.HSSFCell},
+ * {@link org.apache.poi.xssf.usermodel.XSSFCell} and
+ * {@link org.apache.poi.xssf.streaming.SXSSFCell}
  */
 public abstract class BaseTestSheet {
     private static final int ROW_COUNT = 40000;

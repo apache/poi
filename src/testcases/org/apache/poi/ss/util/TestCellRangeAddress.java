@@ -20,15 +20,17 @@ package org.apache.poi.ss.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
-
 import org.junit.Test;
 
 public final class TestCellRangeAddress {
@@ -261,6 +263,39 @@ public final class TestCellRangeAddress {
         assertTrue(region.containsColumn(4));
         assertTrue(region.containsColumn(5));
         assertFalse(region.containsColumn(6));
+    }
+    
+    @Test
+    public void iterator() {
+        final CellRangeAddress A1_B2 = new CellRangeAddress(0, 1, 0, 1);
+        
+        // the cell address iterator iterates in row major order
+        final Iterator<CellAddress> iter = A1_B2.iterator();
+        assertEquals("A1", new CellAddress(0, 0), iter.next());
+        assertEquals("B1", new CellAddress(0, 1), iter.next());
+        assertEquals("A2", new CellAddress(1, 0), iter.next());
+        assertEquals("B2", new CellAddress(1, 1), iter.next());
+        assertFalse(iter.hasNext());
+        try {
+            iter.next();
+            fail("Expected NoSuchElementException");
+        } catch (final NoSuchElementException e) {
+            //expected
+        }
+        try {
+            iter.remove();
+            fail("Expected UnsupportedOperationException");
+        } catch (final UnsupportedOperationException e) {
+            //expected
+        }
+        
+        // for each interface
+        int count = 0;
+        for (final CellAddress addr : A1_B2) {
+            assertNotNull(addr);
+            count++;
+        }
+        assertEquals(4, count);
     }
     
     private static void assertIntersects(CellRangeAddress regionA, CellRangeAddress regionB) {

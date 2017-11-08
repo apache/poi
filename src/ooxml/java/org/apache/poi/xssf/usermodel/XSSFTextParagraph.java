@@ -285,8 +285,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * Returns the bullet size that is to be used within a paragraph.
      * This may be specified in two different ways, percentage spacing and font point spacing:
      * <p>
-     * If bulletSize >= 0, then bulletSize is a percentage of the font size.
-     * If bulletSize < 0, then it specifies the size in points
+     * If bulletSize &gt;= 0, then bulletSize is a percentage of the font size.
+     * If bulletSize &lt; 0, then it specifies the size in points
      * </p>
      *
      * @return the bullet size
@@ -313,8 +313,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * Sets the bullet size that is to be used within a paragraph.
      * This may be specified in two different ways, percentage spacing and font point spacing:
      * <p>
-     * If bulletSize >= 0, then bulletSize is a percentage of the font size.
-     * If bulletSize < 0, then it specifies the size in points
+     * If bulletSize &gt;= 0, then bulletSize is a percentage of the font size.
+     * If bulletSize &lt; 0, then it specifies the size in points
      * </p>
      */
     public void setBulletFontSize(double bulletSize){
@@ -497,8 +497,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * This element specifies the vertical line spacing that is to be used within a paragraph.
      * This may be specified in two different ways, percentage spacing and font point spacing:
      * <p>
-     * If linespacing >= 0, then linespacing is a percentage of normal line height
-     * If linespacing < 0, the absolute value of linespacing is the spacing in points
+     * If linespacing &gt;= 0, then linespacing is a percentage of normal line height
+     * If linespacing &lt; 0, the absolute value of linespacing is the spacing in points
      * </p>
      * Examples:
      * <pre><code>
@@ -526,8 +526,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * Returns the vertical line spacing that is to be used within a paragraph.
      * This may be specified in two different ways, percentage spacing and font point spacing:
      * <p>
-     * If linespacing >= 0, then linespacing is a percentage of normal line height.
-     * If linespacing < 0, the absolute value of linespacing is the spacing in points
+     * If linespacing &gt;= 0, then linespacing is a percentage of normal line height.
+     * If linespacing &lt; 0, the absolute value of linespacing is the spacing in points
      * </p>
      *
      * @return the vertical line spacing.
@@ -564,8 +564,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * Set the amount of vertical white space that will be present before the paragraph.
      * This space is specified in either percentage or points:
      * <p>
-     * If spaceBefore >= 0, then space is a percentage of normal line height.
-     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
+     * If spaceBefore &gt;= 0, then space is a percentage of normal line height.
+     * If spaceBefore &lt; 0, the absolute value of linespacing is the spacing in points
      * </p>
      * Examples:
      * <pre><code>
@@ -591,8 +591,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * The amount of vertical white space before the paragraph
      * This may be specified in two different ways, percentage spacing and font point spacing:
      * <p>
-     * If spaceBefore >= 0, then space is a percentage of normal line height.
-     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
+     * If spaceBefore &gt;= 0, then space is a percentage of normal line height.
+     * If spaceBefore &lt; 0, the absolute value of linespacing is the spacing in points
      * </p>
      *
      * @return the vertical white space before the paragraph
@@ -619,8 +619,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * Set the amount of vertical white space that will be present after the paragraph.
      * This space is specified in either percentage or points:
      * <p>
-     * If spaceAfter >= 0, then space is a percentage of normal line height.
-     * If spaceAfter < 0, the absolute value of linespacing is the spacing in points
+     * If spaceAfter &gt;= 0, then space is a percentage of normal line height.
+     * If spaceAfter &lt; 0, the absolute value of linespacing is the spacing in points
      * </p>
      * Examples:
      * <pre><code>
@@ -646,8 +646,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * The amount of vertical white space after the paragraph
      * This may be specified in two different ways, percentage spacing and font point spacing:
      * <p>
-     * If spaceBefore >= 0, then space is a percentage of normal line height.
-     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
+     * If spaceBefore &gt;= 0, then space is a percentage of normal line height.
+     * If spaceBefore &lt; 0, the absolute value of linespacing is the spacing in points
      * </p>
      *
      * @return the vertical white space after the paragraph
@@ -715,11 +715,11 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
                     if (props.isSetBuChar() || props.isSetBuAutoNum()) {
                         setValue(true);
                         return true;
-                    } else {
+                    } /*else {
                         // Excel treats text with buFont but no char/autonum
                         //  as not bulleted
                         // Possibly the font is just used if bullets turned on again?
-                    }
+                    }*/
                 }
                 return false;
             }

@@ -22,18 +22,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Internal;
 
 /**
  * Helper for shifting rows up or down
- * 
- * This abstract class exists to consolidate duplicated code between XSSFRowShifter and HSSFRowShifter (currently methods sprinkled throughout HSSFSheet)
  */
-public abstract class RowShifter {
+// non-Javadoc: This abstract class exists to consolidate duplicated code between
+// {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter} and
+// {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter}
+// (currently methods sprinkled throughout HSSFSheet)
+public abstract class RowShifter extends BaseRowColShifter {
     protected final Sheet sheet;
 
     protected FormulaShifter shifter; 
@@ -55,6 +54,8 @@ public abstract class RowShifter {
      * @param n        the number of rows to shift
      * @return an array of affected merged regions, doesn't contain deleted ones
      */
+    // Keep this code in sync with {@link ColumnShifter#shiftMergedRegions}
+    @Override
     public List<CellRangeAddress> shiftMergedRegions(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<>();
         Set<Integer> removedIndices = new HashSet<>();
@@ -99,6 +100,7 @@ public abstract class RowShifter {
         return shiftedRegions;
     }
 
+    // Keep in sync with {@link ColumnShifter#removalNeeded}
     private boolean removalNeeded(CellRangeAddress merged, int startRow, int endRow, int n) {
         final int movedRows = endRow - startRow + 1;
 
@@ -107,44 +109,17 @@ public abstract class RowShifter {
         final CellRangeAddress overwrite;
         if(n > 0) {
             // area is moved down => overwritten area is [endRow + n - movedRows, endRow + n]
-            overwrite = new CellRangeAddress(Math.max(endRow + 1, endRow + n - movedRows), endRow + n, 0, 0);
+            final int firstRow = Math.max(endRow + 1, endRow + n - movedRows);
+            final int lastRow = endRow + n;
+            overwrite = new CellRangeAddress(firstRow, lastRow, 0, 0);
         } else {
             // area is moved up => overwritten area is [startRow + n, startRow + n + movedRows]
-            overwrite = new CellRangeAddress(startRow + n, Math.min(startRow - 1, startRow + n + movedRows), 0, 0);
+            final int firstRow = startRow + n;
+            final int lastRow = Math.min(startRow - 1, startRow + n + movedRows);
+            overwrite = new CellRangeAddress(firstRow, lastRow, 0, 0);
         }
 
         // if the merged-region and the overwritten area intersect, we need to remove it
         return merged.intersects(overwrite);
     }
-
-    /**
-     * Updated named ranges
-     */
-    public abstract void updateNamedRanges(FormulaShifter shifter);
-
-    /**
-     * Update formulas.
-     */
-    public abstract void updateFormulas(FormulaShifter shifter);
-
-    /**
-     * Update the formulas in specified row using the formula shifting policy specified by shifter
-     *
-     * @param row the row to update the formulas on
-     * @param shifter the formula shifting policy
-     */
-    @Internal
-    public abstract void updateRowFormulas(Row row, FormulaShifter shifter);
-
-    public abstract void updateConditionalFormatting(FormulaShifter shifter);
-    
-    /**
-     * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
-     * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
-     * do not track the content they point to.
-     *
-     * @param shifter the formula shifting policy
-     */
-    public abstract void updateHyperlinks(FormulaShifter shifter);
-
 }
