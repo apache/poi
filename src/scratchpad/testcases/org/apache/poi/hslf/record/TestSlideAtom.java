@@ -89,8 +89,8 @@ public final class TestSlideAtom {
 		HSLFSlideShow ss2 = HSLFTestDataSamples.writeOutAndReadBack(ss1);
 		slide1 = ss2.getSlides().get(0);
 		slide2 = ss2.getSlides().get(1);
-		assertFalse(slide1.getHidden());
-		assertTrue(slide2.getHidden());
+		assertFalse(slide1.isHidden());
+		assertTrue(slide2.isHidden());
 		ss2.close();
 		ss1.close();
 	}

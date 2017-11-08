@@ -536,7 +536,7 @@ public final class NameRecord extends ContinuableRecord {
 
 	@Override
     public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[NAME]\n");
 		sb.append("    .option flags           = ").append(HexDump.shortToHex(field_1_option_flag)).append("\n");
@@ -553,7 +553,7 @@ public final class NameRecord extends ContinuableRecord {
 		Ptg[] ptgs = field_13_name_definition.getTokens();
 		sb.append("    .Formula (nTokens=").append(ptgs.length).append("):") .append("\n");
 		for (Ptg ptg : ptgs) {
-			sb.append("       " + ptg).append(ptg.getRVAType()).append("\n");
+			sb.append("       ").append(ptg).append(ptg.getRVAType()).append("\n");
 		}
 
 		sb.append("    .Menu text       = ").append(field_14_custom_menu_text).append("\n");

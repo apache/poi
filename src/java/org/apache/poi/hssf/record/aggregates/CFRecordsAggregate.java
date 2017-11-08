@@ -29,9 +29,8 @@ import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.ptg.AreaErrPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.helpers.BaseRowColShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -223,7 +222,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
         boolean changed = false;
         List<CellRangeAddress> temp = new ArrayList<>();
         for (CellRangeAddress craOld : cellRanges) {
-            CellRangeAddress craNew = shiftRange(shifter, craOld, currentExternSheetIx);
+            CellRangeAddress craNew = BaseRowColShifter.shiftRange(shifter, craOld, currentExternSheetIx);
             if (craNew == null) {
                 changed = true;
                 continue;
@@ -263,24 +262,5 @@ public final class CFRecordsAggregate extends RecordAggregate {
             }
         }
         return true;
-    }
-
-    private static CellRangeAddress shiftRange(FormulaShifter shifter, CellRangeAddress cra, int currentExternSheetIx) {
-        // FormulaShifter works well in terms of Ptgs - so convert CellRangeAddress to AreaPtg (and back) here
-        AreaPtg aptg = new AreaPtg(cra.getFirstRow(), cra.getLastRow(), cra.getFirstColumn(), cra.getLastColumn(), false, false, false, false);
-        Ptg[] ptgs = { aptg, };
-
-        if (!shifter.adjustFormula(ptgs, currentExternSheetIx)) {
-            return cra;
-        }
-        Ptg ptg0 = ptgs[0];
-        if (ptg0 instanceof AreaPtg) {
-            AreaPtg bptg = (AreaPtg) ptg0;
-            return new CellRangeAddress(bptg.getFirstRow(), bptg.getLastRow(), bptg.getFirstColumn(), bptg.getLastColumn());
-        }
-        if (ptg0 instanceof AreaErrPtg) {
-            return null;
-        }
-        throw new IllegalStateException("Unexpected shifted ptg class (" + ptg0.getClass().getName() + ")");
     }
 }

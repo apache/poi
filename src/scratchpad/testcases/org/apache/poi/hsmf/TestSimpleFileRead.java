@@ -24,16 +24,17 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * Tests to verify that we can read a simple msg file, that is in plain/text
  *  format with no attachments or extra recipents.
  */
-public final class TestSimpleFileRead extends TestCase {
+public final class TestSimpleFileRead {
     private final MAPIMessage mapiMessage;
 
     /**
      * Initialize this test, load up the blank.msg mapi message.
-     * @throws Exception
      */
     public TestSimpleFileRead() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
@@ -42,9 +43,9 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Test to see if we can read the CC Chunk.
-     * @throws ChunkNotFoundException
      *
      */
+    @Test
     public void testReadDisplayCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayCC();
         String expected = "";
@@ -54,9 +55,8 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Test to see if we can read the CC Chunk.
-     * @throws ChunkNotFoundException
-     *
      */
+    @Test
     public void testReadDisplayTo() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayTo();
         String expected = "travis@overwrittenstack.com";
@@ -66,9 +66,8 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Test to see if we can read the From Chunk.
-     * @throws ChunkNotFoundException
-     *
      */
+    @Test
     public void testReadDisplayFrom() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayFrom();
         String expected = "Travis Ferguson";
@@ -78,9 +77,8 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Test to see if we can read the CC Chunk.
-     * @throws ChunkNotFoundException
-     *
      */
+    @Test
     public void testReadDisplayBCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayBCC();
         String expected = "";
@@ -91,9 +89,8 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Check if we can read the body of the blank message, we expect "".
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadBody() throws Exception {
         String obtained = mapiMessage.getTextBody();
         String expected = "This is a test message.";
@@ -103,9 +100,8 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadSubject() throws Exception {
         String obtained = mapiMessage.getSubject();
         String expected = "test message";
@@ -115,9 +111,8 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadConversationTopic() throws Exception {
         String obtained = mapiMessage.getConversationTopic();
         TestCase.assertEquals("test message", obtained);
@@ -126,9 +121,8 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadMessageClass() throws Exception {
         MAPIMessage.MESSAGE_CLASS obtained = mapiMessage.getMessageClassEnum();
         TestCase.assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
@@ -136,8 +130,6 @@ public final class TestSimpleFileRead extends TestCase {
 
     /**
      * Check the various message classes
-     *
-     * @throws Exception
      */
     @Test
     public void testReadMessageClass2() throws Exception {
@@ -147,11 +139,12 @@ public final class TestSimpleFileRead extends TestCase {
         for (String messageClass : new String[]{
                 "Appointment", "Contact", "Post", "StickyNote", "Task"
         }) {
-            MAPIMessage.MESSAGE_CLASS mc = new MAPIMessage(
-                    POIDataSamples.getHSMFInstance().getFile("msgClass"+messageClass+".msg")
-            ).getMessageClassEnum();
-            assertTrue( mc + " but expected " + messageClass,
-                    messageClass.equalsIgnoreCase(mc.toString().replaceAll("_", "")));
+            try (MAPIMessage mapiMessage = new MAPIMessage(
+                    POIDataSamples.getHSMFInstance().getFile("msgClass" + messageClass + ".msg"))) {
+                MAPIMessage.MESSAGE_CLASS mc = mapiMessage.getMessageClassEnum();
+                assertTrue(mc + " but expected " + messageClass,
+                        messageClass.equalsIgnoreCase(mc.toString().replaceAll("_", "")));
+            }
         }
     }
 }

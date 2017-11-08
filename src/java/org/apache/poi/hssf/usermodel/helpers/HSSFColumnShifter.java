@@ -1,102 +1,68 @@
-package org.apache.poi.hssf.usermodel.helpers; 
- 
-import org.apache.poi.hssf.usermodel.HSSFCell; 
-import org.apache.poi.hssf.usermodel.HSSFRow; 
-import org.apache.poi.ss.formula.FormulaShifter; 
-import org.apache.poi.ss.usermodel.Cell; 
-import org.apache.poi.ss.usermodel.CellType; 
-import org.apache.poi.ss.usermodel.Row; 
-import org.apache.poi.ss.usermodel.Sheet; 
-import org.apache.poi.ss.usermodel.helpers.ColumnShifter; 
-import org.apache.poi.util.POILogFactory; 
-import org.apache.poi.util.POILogger; 
-import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter; 
- 
-public class HSSFColumnShifter extends ColumnShifter{ 
-    private static final POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class); 
-     
-    private int firstShiftColumnIndex;  
-    private int lastShiftColumnIndex;  
-    private int shiftStep; 
-     
-    public HSSFColumnShifter(Sheet sh, FormulaShifter shifter) { 
-        super(sh, shifter); 
-    } 
- 
-    public void shiftColumns(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){ 
-        this.firstShiftColumnIndex = firstShiftColumnIndex; 
-        this.lastShiftColumnIndex = lastShiftColumnIndex; 
-        this.shiftStep = step; 
-        if(shiftStep > 0) 
-            shiftColumnsRight(); 
-        else if(shiftStep < 0) 
-            shiftColumnsLeft(); 
-//        formulaShiftingManager.updateFormulas(); 
-    } 
-    /** 
-     * Inserts shiftStep empty columns at firstShiftColumnIndex-th position, and shifts rest columns to the right  
-     * (see constructor for parameters) 
-     */ 
- 
-    private void shiftColumnsRight(){ 
-        for(int rowNo = 0; rowNo <= shiftingSheet.getLastRowNum(); rowNo++) 
-        {    
-            Row row = shiftingSheet.getRow(rowNo); 
-            if(row == null) 
-                continue; 
-            for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting  
-                HSSFCell oldCell = (HSSFCell)row.getCell(columnIndex); 
-                Cell newCell = null; 
-                if(oldCell == null){ 
-                    newCell = row.getCell(columnIndex + shiftStep); 
-                    newCell = null; 
-                    continue; 
-                } 
-                else { 
-                    newCell = row.createCell(columnIndex + shiftStep, oldCell.getCellType()); 
-                    cloneCellValue(oldCell,newCell); 
-                    if(columnIndex <= firstShiftColumnIndex + shiftStep - 1){ // clear existing cells on place of insertion 
-                        oldCell.setCellValue(""); 
-                        oldCell.setCellType(CellType.STRING); 
-                    } 
-                } 
-            } 
-        } 
-    } 
-    private void shiftColumnsLeft(){ 
-        for(int rowNo = 0; rowNo <= shiftingSheet.getLastRowNum(); rowNo++) 
-        {    
-            HSSFRow row = (HSSFRow)shiftingSheet.getRow(rowNo); 
-            if(row == null) 
-                continue; 
-            for (int columnIndex = 0; columnIndex < row.getLastCellNum(); columnIndex++){  
-                HSSFCell oldCell = row.getCell(columnIndex); 
-                if(columnIndex >= firstShiftColumnIndex + shiftStep && columnIndex < row.getLastCellNum() - shiftStep){ // shift existing cell  
-                    org.apache.poi.ss.usermodel.Cell newCell = null; 
-                    newCell = row.getCell(columnIndex - shiftStep); 
-                    if(oldCell != null){ 
-                        if(newCell != null){ 
-                            oldCell.setCellType(newCell.getCellType()); 
-                            cloneCellValue(newCell, oldCell); 
-                        } 
-                        else { 
-                            oldCell.setCellType(CellType.STRING); 
-                            oldCell.setCellValue(""); 
-                        } 
-                    } 
-                    else { 
-                        oldCell = row.createCell(columnIndex); 
-                        if(newCell != null){ 
-                            oldCell.setCellType(newCell.getCellType()); 
-                            cloneCellValue(newCell, oldCell); 
-                        } 
-                        else { 
-                            oldCell.setCellType(CellType.STRING); 
-                            oldCell.setCellValue(""); 
-                        } 
-                    } 
-                } 
-            } 
-        } 
-    } 
-} 
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+package org.apache.poi.hssf.usermodel.helpers;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
+/**
+ * Helper for shifting columns up or down
+ *
+ * @since POI 4.0.0
+ */
+// non-Javadoc: When possible, code should be implemented in the ColumnShifter abstract class to avoid duplication with
+// {@link org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter}
+@Beta
+public final class HSSFColumnShifter extends ColumnShifter {
+    private static final POILogger logger = POILogFactory.getLogger(HSSFColumnShifter.class);
+
+    public HSSFColumnShifter(HSSFSheet sh) {
+        super(sh);
+    }
+
+    @Override
+    @NotImplemented
+    public void updateNamedRanges(FormulaShifter formulaShifter) {
+        throw new NotImplementedException("HSSFColumnShifter.updateNamedRanges");
+    }
+
+    @Override
+    @NotImplemented
+    public void updateFormulas(FormulaShifter formulaShifter) {
+        throw new NotImplementedException("updateFormulas");
+    }
+
+    @Override
+    @NotImplemented
+    public void updateConditionalFormatting(FormulaShifter formulaShifter) {
+        throw new NotImplementedException("updateConditionalFormatting");
+    }
+
+    @Override
+    @NotImplemented
+    public void updateHyperlinks(FormulaShifter formulaShifter) {
+        throw new NotImplementedException("updateHyperlinks");
+    }
+
+}

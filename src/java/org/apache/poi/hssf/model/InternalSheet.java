@@ -1680,4 +1680,12 @@ public final class InternalSheet {
     public int getColumnOutlineLevel(int columnIndex) {
         return _columnInfos.getOutlineLevel(columnIndex);
     }
+
+    public int getMinColumnIndex() {
+        return _columnInfos.getMinColumnIndex();
+    }
+
+    public int getMaxColumnIndex() {
+        return _columnInfos.getMaxColumnIndex();
+    }
 }
