@@ -42,7 +42,7 @@ public final class Chunk {
 	protected CommandDefinition[] commandDefinitions;
 	/** The command+value pairs we hold */
 	private Command[] commands;
-	/** The blocks (if any) we hold */
+	/* The blocks (if any) we hold */
 	//private Block[] blocks
 	/** The name of the chunk, as found from the commandDefinitions */
 	private String name;
@@ -265,7 +265,7 @@ public final class Chunk {
 		public CommandDefinition getDefinition() { return definition; }
 		public Object getValue() { return value; }
 	}
-	/**
+	/*
 	 * A special kind of command that is an artificat of how we
 	 *  process CommandDefinitions, and so doesn't actually exist
 	 *  in the chunk

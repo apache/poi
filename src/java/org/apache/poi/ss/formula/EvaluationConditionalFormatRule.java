@@ -84,7 +84,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     private final String formula2;
     private final OperatorEnum operator;
     private final ConditionType type;
-    // cached for performance, to avoid reading the XMLBean every time a conditinally formatted cell is rendered
+    // cached for performance, to avoid reading the XMLBean every time a conditionally formatted cell is rendered
     private final ExcelNumberFormat numberFormat;
     
     /**

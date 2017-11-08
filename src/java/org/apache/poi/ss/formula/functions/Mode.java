@@ -42,7 +42,7 @@ public final class Mode implements Function {
 	 * Double.NaN. Else returns the value that occurs most times and if there is
 	 * a tie, returns the first such value.
 	 *
-	 * @param v
+	 * @param v An array of values on which the mode is computed.
 	 */
 	public static double evaluate(double[] v) throws EvaluationException {
 		if (v.length < 2) {

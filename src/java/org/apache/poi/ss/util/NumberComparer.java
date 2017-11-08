@@ -131,12 +131,12 @@ public final class NumberComparer {
 	 * If both numbers are subnormal, Excel seems to use standard comparison rules
 	 */
 	private static int compareSubnormalNumbers(long fracA, long fracB, boolean isNegative) {
-		int cmp = Long.compare(fracA, fracB);
-
-		return isNegative ? -cmp : cmp;
+		if(isNegative) {
+			return Long.compare(fracB, fracA);
+		} else {
+			return Long.compare(fracA, fracB);
+		}
 	}
-
-
 
 	/**
 	 * Usually any normal number is greater (in magnitude) than any subnormal number.
@@ -163,8 +163,6 @@ public final class NumberComparer {
 		// else - typical case A and B is not close to threshold
 		return isNegative ? -1 : +1;
 	}
-
-
 
 	/**
 	 * for formatting double values in error messages
