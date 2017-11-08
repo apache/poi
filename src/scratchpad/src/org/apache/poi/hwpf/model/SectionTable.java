@@ -182,7 +182,7 @@ public class SectionTable
     {
 
         int offset = wordDocumentStream.size();
-        int len = _sections.size();
+        //int len = _sections.size();
         PlexOfCps plex = new PlexOfCps(SED_SIZE);
 
         for (SEPX sepx : _sections) {
