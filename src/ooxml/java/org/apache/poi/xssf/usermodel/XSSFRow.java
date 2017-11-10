@@ -553,7 +553,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param n the number of rows to move
      */
-    public void shift(int n) {
+    protected void shift(int n) {
         int rownum = getRowNum() + n;
         String msg = "Row[rownum="+getRowNum()+"] contains cell(s) included in a multi-cell array formula. " +
                 "You cannot change part of an array.";
@@ -615,7 +615,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
             final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
-            rowShifter.updateRowFormulas(this, formulaShifter);
+            final XSSFShiftingManager formulaShiftingManager = new XSSFShiftingManager(_sheet, formulaShifter); 
+            formulaShiftingManager.updateRowFormulas(this);
 
             // Copy merged regions that are fully contained on the row
             // FIXME: is this something that rowShifter could be doing?

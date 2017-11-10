@@ -1,6 +1,11 @@
-
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
        http://www.apache.org/licenses/LICENSE-2.0
-
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -10,8 +15,6 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Area2DPtgBase;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -28,8 +31,6 @@ import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefErrorPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.RefPtgBase;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 /**
@@ -68,9 +69,6 @@ public final class FormulaShifter {
 
     private final ShiftMode _mode;
 
-    private boolean _rowModeElseColumn; 
-
-    
     /**
      * Create an instance for shifting row.
      *
@@ -93,7 +91,6 @@ public final class FormulaShifter {
         _version = version;
 
         _srcSheetIndex = _dstSheetIndex = -1;
-        _rowModeElseColumn = true; // default
     }
 
     /**
@@ -109,33 +106,16 @@ public final class FormulaShifter {
         _srcSheetIndex = srcSheetIndex;
         _dstSheetIndex = dstSheetIndex;
         _mode = ShiftMode.SheetMove;
-        _rowModeElseColumn = true; // default
     }
     
-    public static FormulaShifter createForItemShift(Sheet shiftingSheet, boolean _rowModeElseColumn, int firstShiftItemIndex, int lastShiftItemIndex, int shiftStep){
-        FormulaShifter instance = new FormulaShifter(shiftingSheet.getWorkbook().getSheetIndex(shiftingSheet), shiftingSheet.getSheetName(), 
-                firstShiftItemIndex, lastShiftItemIndex, shiftStep, ShiftMode.RowMove, getSpreadsheetVersion(shiftingSheet));
-        instance._rowModeElseColumn = _rowModeElseColumn;
-        return instance; 
-    }
-    // maybe should be deprecated, and previous one should be used
     public static FormulaShifter createForRowShift(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove,
             SpreadsheetVersion version) {
-        FormulaShifter instance = new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowMove, version);
-        return instance;
+        return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowMove, version);
     }
     
-    public static FormulaShifter createForItemCopy(Sheet shiftingSheet, boolean rowModeElseColumn, int firstMovedItemIndex, int lastMovedItemIndex, int shiftStep){
-        FormulaShifter instance = new FormulaShifter(shiftingSheet.getWorkbook().getSheetIndex(shiftingSheet), shiftingSheet.getSheetName(), 
-                firstMovedItemIndex, lastMovedItemIndex, shiftStep, ShiftMode.RowCopy, getSpreadsheetVersion(shiftingSheet));
-        instance._rowModeElseColumn = rowModeElseColumn;
-        return instance; 
-    }
-    // maybe should be deprecated, and previous one should be used
     public static FormulaShifter createForRowCopy(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove,
             SpreadsheetVersion version) {
-        FormulaShifter instance = new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowCopy, version);
-        return instance;
+        return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowCopy, version);
     }
 
     /**
@@ -166,6 +146,23 @@ public final class FormulaShifter {
                 _lastMovedIndex +
                 _amountToMove +
                 "]";
+    }
+
+    /**
+     * @param ptgs - if necessary, will get modified by this method
+     * @param currentExternSheetIx - the extern sheet index of the sheet that contains the formula being adjusted
+     * @return <code>true</code> if a change was made to the formula tokens
+     */
+    public boolean adjustFormula(Ptg[] ptgs, int currentExternSheetIx) {
+        boolean refsWereChanged = false;
+        for(int i=0; i<ptgs.length; i++) {
+            Ptg newPtg = adjustPtg(ptgs[i], currentExternSheetIx);
+            if (newPtg != null) {
+                refsWereChanged = true;
+                ptgs[i] = newPtg;
+            }
+        }
+        return refsWereChanged;
     }
 
     private Ptg adjustPtg(Ptg ptg, int currentExternSheetIx) {
@@ -839,105 +836,4 @@ public final class FormulaShifter {
 
         throw new IllegalArgumentException("Unexpected ref ptg class (" + ptg.getClass().getName() + ")");
     }
-    
-    
-    // ******** logic which processes columns in same way as row ********
-    
-
-    /**
-     * @param ptgs - if necessary, will get modified by this method
-     * @param currentExternSheetIx - the extern sheet index of the sheet that contains the formula being adjusted
-     * @return <code>true</code> if a change was made to the formula tokens
-     */
-    public boolean adjustFormula(Ptg[] ptgs, int currentExternSheetIx) {
-        boolean refsWereChanged = false;
-        for(int i=0; i<ptgs.length; i++) {
-            Ptg newPtg;
-            if(_rowModeElseColumn){
-                newPtg = adjustPtg(ptgs[i], currentExternSheetIx);
-                if (newPtg != null) {
-                    refsWereChanged = true;
-                       ptgs[i] = newPtg;
-                }
-            }
-            else {
-                Ptg transposedPtg = transpose(ptgs[i]);
-                newPtg = adjustPtg(transposedPtg, currentExternSheetIx);
-                if (newPtg != null) {
-                    refsWereChanged = true;
-                       ptgs[i] = transpose(transposedPtg);
-                }
-            }
-        }
-        return refsWereChanged;
-    }
-
-
-    private Ptg transpose(Ptg ptg){
-            String ptgType = ptg.getClass().getSimpleName();  
-            if(ptgType.equals("Ref3DPtg")){  //3D means (sheetNo, col, row) reference, for example Sheet1!B3; xls version  
-                int oldColumnIndex = ((Ref3DPtg) ptg).getColumn();
-                ((Ref3DPtg) ptg).setColumn(((Ref3DPtg) ptg).getRow());
-                ((Ref3DPtg) ptg).setRow(oldColumnIndex);
-                return ptg;
-            } else if(ptgType.equals("Ref3DPxg")){  //3D means (sheetNo, col, row) reference, for example Sheet1!B3; xlsx version  
-                int oldColumnIndex = ((Ref3DPxg) ptg).getColumn();
-                ((Ref3DPxg) ptg).setColumn(((Ref3DPxg) ptg).getRow());
-                ((Ref3DPxg) ptg).setRow(oldColumnIndex);
-                return ptg;
-            } else if(ptgType.equals("AreaPtg")){  // region for aggregate function, for example A1:B3 or Sheet1!B3:Sheet1!C3
-                    int oldFirstColumnIndex = ((AreaPtg) ptg).getFirstColumn();
-                    ((AreaPtg) ptg).setFirstColumn(((AreaPtg) ptg).getFirstRow());
-                    ((AreaPtg) ptg).setFirstRow(oldFirstColumnIndex);
-                    int oldLastColumnIndex = ((AreaPtg) ptg).getLastColumn();
-                    ((AreaPtg) ptg).setLastColumn(((AreaPtg) ptg).getLastRow());
-                    ((AreaPtg) ptg).setLastRow(oldLastColumnIndex);
-                    return ptg;
-            }
-             else if(ptgType.equals("Area3DPtg")){ //for example SUM(Sheet1!B3:C3); xls version 
-                    int oldFirstColumnIndex = ((Area3DPtg) ptg).getFirstColumn();
-                    ((Area3DPtg) ptg).setFirstColumn(((Area3DPtg) ptg).getFirstRow());
-                    ((Area3DPtg) ptg).setFirstRow(oldFirstColumnIndex);
-                    int oldLastColumnIndex = ((Area3DPtg) ptg).getLastColumn();
-                    ((Area3DPtg) ptg).setLastColumn(((Area3DPtg) ptg).getLastRow());
-                    ((Area3DPtg) ptg).setLastRow(oldLastColumnIndex);
-                    return ptg;
-             }
-             else if(ptgType.equals("Area3DPxg")){ //for example SUM(Sheet1!B3:C3); xlsx version 
-                     int oldFirstColumnIndex = ((Area3DPxg) ptg).getFirstColumn();
-                    ((Area3DPxg) ptg).setFirstColumn(((Area3DPxg) ptg).getFirstRow());
-                    ((Area3DPxg) ptg).setFirstRow(oldFirstColumnIndex);
-                    int oldLastColumnIndex = ((Area3DPxg) ptg).getLastColumn();
-                    ((Area3DPxg) ptg).setLastColumn(((Area3DPxg) ptg).getLastRow());
-                    ((Area3DPxg) ptg).setLastRow(oldLastColumnIndex);
-                    return ptg;
-             }    else if(ptgType.equals("RefPtg")){  // common simple reference, like A2 
-                    RefPtg transponedCellRefToken = new RefPtg(transpose(ptg.toFormulaString()));
-                    return transponedCellRefToken;
-             }
-             else // operators like + or SUM, for example
-                 return ptg;
-    }
-
-    public static String transpose(String cellreference){
-        CellReference original = new CellReference(cellreference);
-        // transpose, calling public CellReference(int *pRow*, int *pCol*) !!!!
-        CellReference transposed = new CellReference(original.getCol(), original.getRow(), original.isColAbsolute(), original.isRowAbsolute());  
-        return transposed.formatAsString();
-    }
-    
-    private int getSheetIndex(Sheet sheet){
-        return sheet.getWorkbook().getSheetIndex(sheet);
-    }
-
-    public static SpreadsheetVersion getSpreadsheetVersion(Sheet sheet){
-        if(sheet.getWorkbook() instanceof XSSFWorkbook)
-            return SpreadsheetVersion.EXCEL2007;
-        else if(sheet.getWorkbook() instanceof HSSFWorkbook)
-            return SpreadsheetVersion.EXCEL97;
-        else return null;
-    }
-    
-    
-    
 }
