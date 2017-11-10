@@ -22,6 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
@@ -119,4 +122,87 @@ public abstract class ColumnShifter extends BaseRowColShifter {
         // if the merged-region and the overwritten area intersect, we need to remove it
         return merged.intersects(overwrite);
     }
+    public void shiftColumns(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        if(step > 0)
+            shiftColumnsRight(firstShiftColumnIndex, lastShiftColumnIndex, step);
+        else if(step < 0)
+            shiftColumnsLeft(firstShiftColumnIndex, lastShiftColumnIndex, -step);
+    }
+    /**
+     * Inserts shiftStep empty columns at firstShiftColumnIndex-th position, and shifts rest columns to the right 
+     * (see constructor for parameters)
+     */
+
+    private void shiftColumnsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        for (Row row : sheet)
+        {    
+            if(row != null){
+                for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
+                    Cell oldCell = row.getCell(columnIndex);
+                    Cell newCell = row.createCell(columnIndex + step);
+                    if(oldCell == null)
+                        nullifyCell(newCell);
+                    else cloneCellValue(oldCell,newCell);
+                }
+                for (int columnIndex = firstShiftColumnIndex; columnIndex <= firstShiftColumnIndex+step-1; columnIndex++)
+                    nullifyCell(row.getCell(columnIndex));
+            }
+        }
+    }
+
+    private void shiftColumnsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        for (Row row : sheet)
+        {    
+            if(row != null){
+                for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
+                    Cell oldCell = row.getCell(columnIndex);
+                    Cell newCell = null;
+                    if(columnIndex - step >= 0){
+                        newCell = row.getCell(columnIndex - step);
+                        if(newCell == null)
+                            newCell = row.createCell(columnIndex - step);
+                        if(oldCell != null)
+                           cloneCellValue(oldCell, newCell);
+                        else nullifyCell(newCell);
+                    }
+                    else throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(columnIndex - step)).toString());
+                }
+                for (int columnIndex = lastShiftColumnIndex-step+1; columnIndex <= lastShiftColumnIndex; columnIndex++)
+                    nullifyCell(row.getCell(columnIndex));
+                }
+        }
+    }
+    
+    private void nullifyCell(Cell cell){
+        // TODO nullify cell somehow!
+        if(cell != null){
+            cell.setCellValue("");
+            cell.setCellType(CellType.STRING);
+        }
+    }
+    public static void cloneCellValue(Cell oldCell, Cell newCell) {
+        newCell.setCellType(oldCell.getCellType());
+        switch (oldCell.getCellType()) {
+            case STRING:
+                newCell.setCellValue(oldCell.getStringCellValue());
+                break;
+            case NUMERIC:
+                newCell.setCellValue(oldCell.getNumericCellValue());
+                break;
+            case BOOLEAN:
+                newCell.setCellValue(oldCell.getBooleanCellValue());
+                break;
+            case FORMULA:
+                newCell.setCellFormula(oldCell.getCellFormula());
+                break;
+            case ERROR:
+                newCell.setCellErrorValue(oldCell.getErrorCellValue());
+            case BLANK:
+            case _NONE:
+                break;
+        }
+    }
+    
+    
+    
 }

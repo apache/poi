@@ -2660,7 +2660,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         _sheet.setActiveCellRow(row);
         _sheet.setActiveCellCol(col);
     }
-
     private void shiftFormulas(int startRow, int endRow, int n, boolean forRowElseColumnShift){ 
         int sheetIndex = _workbook.getSheetIndex(this);
         String sheetName = _workbook.getSheetName(sheetIndex);
@@ -2681,11 +2680,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         _workbook.getWorkbook().updateNamesAfterCellShift(shifter); 
     } 
 
-        public void shiftColumns(int startColumn, int endColumn, int n){ 
-        FormulaShifter shifter = FormulaShifter.createForItemShift(this, false, startColumn, endColumn, n); 
-        HSSFColumnShifter columnShifter = new HSSFColumnShifter(this, shifter); 
+    public void shiftColumns(int startColumn, int endColumn, int n){ 
+        HSSFColumnShifter columnShifter = new HSSFColumnShifter(this); 
         columnShifter.shiftColumns(startColumn, endColumn, n); 
         shiftFormulas(startColumn, endColumn, n, false); 
         // add logic for hyperlinks etc, like in shiftRows() 
-   } 
+    } 
 }

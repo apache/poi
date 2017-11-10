@@ -1,18 +1,10 @@
-package org.apache.poi.xssf.usermodel.helpers;
+package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.POITestCase.skipTest;
-import static org.apache.poi.POITestCase.testPassesNow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.*;
@@ -28,66 +20,66 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XSSFColumnShifterTest {
+public class TestXSSFSheetShiftColumns {
 
-	private static Logger log = LoggerFactory.getLogger(XSSFColumnShifterTest.class + "_T");
+	private static Logger log = LoggerFactory.getLogger(TestXSSFSheetShiftColumns.class);
 	private XSSFSheet sheet1, sheet2;
 	private Workbook wb07;
 
     protected final ITestDataProvider _testDataProvider;
 
-    public XSSFColumnShifterTest(){
+    public TestXSSFSheetShiftColumns(){
         _testDataProvider = XSSFITestDataProvider.instance; 
     }
 
     @Before
     public void init() {
+        int rowIndex = 0;
         wb07 = new XSSFWorkbook();
         sheet1 = (XSSFSheet) wb07.createSheet("sheet1");
-        XSSFRow row = sheet1.createRow(0);
+        XSSFRow row = sheet1.createRow(rowIndex++);
         row.createCell(0, CellType.NUMERIC).setCellValue(0);
         row.createCell(1, CellType.NUMERIC).setCellValue(1);
-        XSSFCell c1 = row.createCell(2, CellType.NUMERIC);
-        c1.setCellValue(2);
+        row.createCell(2, CellType.NUMERIC).setCellValue(2);
 
-		row = sheet1.createRow(1);
-		row.createCell(0, CellType.NUMERIC).setCellValue(0.1);
-		row.createCell(1, CellType.NUMERIC).setCellValue(1.1);
-		row.createCell(2, CellType.NUMERIC).setCellValue(2.1);
-		row = sheet1.createRow(2);
-		row.createCell(0, CellType.NUMERIC).setCellValue(0.2);
-		row.createCell(1, CellType.NUMERIC).setCellValue(1.2);
-		row.createCell(2, CellType.NUMERIC).setCellValue(2.2);
-		row = sheet1.createRow(3);
-		row.createCell(0, CellType.FORMULA).setCellFormula("A2*B3");
-		row.createCell(1, CellType.NUMERIC).setCellValue(1.3);
-		row.createCell(2, CellType.FORMULA).setCellFormula("B1-B3");
-		row = sheet1.createRow(4);
-		row.createCell(0, CellType.FORMULA).setCellFormula("SUM(C1:C4)");
-		row.createCell(1, CellType.FORMULA).setCellFormula("SUM(A3:C3)");
-		row.createCell(2, CellType.FORMULA).setCellFormula("$C1+C$2");
-		row = sheet1.createRow(5);
-		row.createCell(1, CellType.NUMERIC).setCellValue(1.5);
-		
-	  sheet2 = (XSSFSheet)wb07.createSheet("sheet2"); row =
-	  sheet2.createRow(0); row.createCell(0, CellType.NUMERIC).setCellValue(10); 
-	  row.createCell(1, CellType.NUMERIC).setCellValue(11); 
-	  row.createCell(2, CellType.FORMULA).setCellFormula("SUM(Sheet1!B3:C3)"); 
-	  row = sheet2.createRow(1); 
-	  row.createCell(0, CellType.NUMERIC).setCellValue(21); 
-	  row.createCell(1, CellType.NUMERIC).setCellValue(22); 
-	  row.createCell(2, CellType.NUMERIC).setCellValue(23); 
-	  row = sheet2.createRow(2);
-	  row.createCell(0, CellType.FORMULA).setCellFormula("Sheet1!A4+Sheet1!C2+A2");
-	  row.createCell(1, CellType.FORMULA).setCellFormula("SUM(Sheet1!A3:$C3)"); 
-	  row = sheet2.createRow(3); 
-	  row.createCell(0, CellType.STRING).setCellValue("dummy");
-		 
-		// writeSheetToLog(sheet1);
-	}
+        row = sheet1.createRow(rowIndex++);
+        row.createCell(0, CellType.NUMERIC).setCellValue(0.1);
+        row.createCell(1, CellType.NUMERIC).setCellValue(1.1);
+        row.createCell(2, CellType.NUMERIC).setCellValue(2.1);
+        row = sheet1.createRow(rowIndex++);
+        row.createCell(0, CellType.NUMERIC).setCellValue(0.2);
+        row.createCell(1, CellType.NUMERIC).setCellValue(1.2);
+        row.createCell(2, CellType.NUMERIC).setCellValue(2.2);
+        row = sheet1.createRow(rowIndex++);
+        row.createCell(0, CellType.FORMULA).setCellFormula("A2*B3");
+        row.createCell(1, CellType.NUMERIC).setCellValue(1.3);
+        row.createCell(2, CellType.FORMULA).setCellFormula("B1-B3");
+        row = sheet1.createRow(rowIndex++);
+        row.createCell(0, CellType.FORMULA).setCellFormula("SUM(C1:C4)");
+        row.createCell(1, CellType.FORMULA).setCellFormula("SUM(A3:C3)");
+        row.createCell(2, CellType.FORMULA).setCellFormula("$C1+C$2");
+        row = sheet1.createRow(rowIndex++);
+        row.createCell(1, CellType.NUMERIC).setCellValue(1.5);
+
+        sheet2 = (XSSFSheet)wb07.createSheet("sheet2"); 
+        row = sheet2.createRow(0); row.createCell(0, CellType.NUMERIC).setCellValue(10); 
+        row.createCell(1, CellType.NUMERIC).setCellValue(11); 
+        row.createCell(2, CellType.FORMULA).setCellFormula("SUM(Sheet1!B3:C3)"); 
+        row = sheet2.createRow(1); 
+        row.createCell(0, CellType.NUMERIC).setCellValue(21); 
+        row.createCell(1, CellType.NUMERIC).setCellValue(22); 
+        row.createCell(2, CellType.NUMERIC).setCellValue(23); 
+        row = sheet2.createRow(2);
+        row.createCell(0, CellType.FORMULA).setCellFormula("Sheet1!A4+Sheet1!C2+A2");
+        row.createCell(1, CellType.FORMULA).setCellFormula("SUM(Sheet1!A3:$C3)"); 
+        row = sheet2.createRow(3); 
+        row.createCell(0, CellType.STRING).setCellValue("dummy");
+
+        writeSheetToLog(sheet1);
+    }
 
     @Test
-    public void testInsertOneColumn() {
+    public void testShiftOneColumnRight() {
         sheet1.shiftColumns(1, 2, 1);
         writeSheetToLog(sheet1);
         String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
@@ -104,7 +96,7 @@ public class XSSFColumnShifterTest {
     }
 
     @Test
-    public void testInsertTwoColumns() {
+    public void testShiftTwoColumnsRight() {
         sheet1.shiftColumns(1, 2, 2);
         String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
         assertEquals("A2*D3", formulaA4);
@@ -121,32 +113,34 @@ public class XSSFColumnShifterTest {
         assertEquals(c6Null, null);
     }
 
-	public static void writeSheetToLog(Sheet sheet) {
-		int rowIndex = sheet.getFirstRowNum();
-		while (rowIndex <= sheet.getLastRowNum()) {
-			Row row = sheet.getRow(rowIndex);
-			if (row == null)
-				log.trace("null row");
-			else
-				log.trace(String.format(
-						"%1$12s; %2$12s; %3$12s; %4$12s; %5$12s; %6$12s; %7$12s; %8$12s; %9$12s; %10$12s; %11$12s",
-						row.getCell(0) != null ? row.getCell(0).getCellComment() : "null",
-						row.getCell(1) != null ? row.getCell(1).getCellComment() : "null",
-						row.getCell(2) != null ? row.getCell(2).getCellComment() : "null",
-						row.getCell(3) != null ? row.getCell(3).getCellComment() : "null",
-						row.getCell(4) != null ? row.getCell(4).getCellComment() : "null",
-						row.getCell(5) != null ? row.getCell(5).getCellComment() : "null",
-						row.getCell(6) != null ? row.getCell(6).getCellComment() : "null",
-						row.getCell(7) != null ? row.getCell(7).getCellComment() : "null",
-						row.getCell(8) != null ? row.getCell(8).getCellComment() : "null",
-						row.getCell(9) != null ? row.getCell(9).getCellComment() : "null",
-						row.getCell(10) != null ? row.getCell(10).getCellComment() : "null"));
-			rowIndex++;
-		}
-		log.trace("");
-	}
-
     @Test
+    public void testShiftOneColumnLeft() {
+        sheet1.shiftColumns(1, 2, -1);
+        writeSheetToLog(sheet1);
+        
+        String formulaA5 = sheet1.getRow(4).getCell(0).getCellFormula();
+        assertEquals("SUM(A3:B3)", formulaA5);
+        String formulaB4 = sheet1.getRow(3).getCell(1).getCellFormula();
+        assertEquals("A1-A3", formulaB4);
+        String formulaB5 = sheet1.getRow(4).getCell(1).getCellFormula();
+        assertEquals("$B1+B$2", formulaB5);
+        String newb6Empty = sheet1.getRow(5).getCell(1).getStringCellValue();
+        assertEquals(newb6Empty, "");
+    }
+    
+    @Test
+    public void testShiftTwoColumnsLeft() {
+        try {
+            sheet1.shiftColumns(1, 2, -2);
+            writeSheetToLog(sheet1);
+            assertTrue("shiftColumns(1, 2, -2) should raise exception, because 1-2=-1<0", false);
+        }
+        catch (IllegalStateException e) {
+            // this is expected be cause first column tries to be shifted to index -1
+            assertTrue(true);
+        }
+    }
+    
     public void testShiftHyperlinks() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
@@ -325,9 +319,12 @@ public class XSSFColumnShifterTest {
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
-
+        
+        writeSheetToLog(sheet);
+        System.out.println("shifting column...");
         sheet.shiftColumns(0, 1, 1);
-
+        writeSheetToLog(sheet);
+        
         // comment in column 0 is gone
         comment = sheet.getCellComment(new CellAddress(0, 0));
         assertNull(comment);
@@ -379,4 +376,58 @@ public class XSSFColumnShifterTest {
         wb.close();
     }
 
+    // I need these methods for testing. When we finish with project, we can easily remove them. 
+    // Dragan Jovanović
+    public static void writeSheetToLog(Sheet sheet) {
+        int rowIndex = sheet.getFirstRowNum();
+        while (rowIndex <= sheet.getLastRowNum()) {
+            Row row = sheet.getRow(rowIndex);
+            if (row == null)
+                //log.trace("null row");
+                System.out.println("null row");
+            else {
+                String line = "";
+                for(int columnIndex = 0; columnIndex < 5; columnIndex++){
+                    //String comment = sheet.getCellComment(new CellAddress(rowIndex, columnIndex)) == null ? "no comment" : sheet.getCellComment(new CellAddress(rowIndex, columnIndex)).getString().getString();
+                    //line +=  String.format("; %1$12s    %2$20s",  ""/*getValue(row.getCell(columnIndex))*/, comment);
+                    line +=  String.format("; %1$12s",  getValue(row.getCell(columnIndex)));
+                }
+                line = line.substring(2);
+                System.out.println(line);
+                //log.trace(line);
+            }
+            rowIndex++;
+        }
+        //log.trace("");
+        System.out.println("");
+    }
+
+    private static Object getValue(Cell cell) {
+        if (cell == null) {
+            return "null"; 
+        }
+        CellType cellType = cell.getCellType();
+        switch (cellType) {
+        case BLANK: 
+             return "";
+        case STRING:
+             return cell.getRichStringCellValue().getString();
+        case NUMERIC:
+            if (DateUtil.isCellDateFormatted(cell)) {
+                return cell.getDateCellValue();
+            } else {
+                return new Double(cell.getNumericCellValue());
+            }
+        case BOOLEAN:
+            return cell.getBooleanCellValue();
+        case FORMULA:
+            return cell.getCellFormula();
+        case ERROR: 
+             return "ERROR";  
+        default:
+            throw new RuntimeException("Invalid cell type: "+cellType+"(466188)");
+        }
+    }
 }
+
+

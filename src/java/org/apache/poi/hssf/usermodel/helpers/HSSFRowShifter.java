@@ -38,9 +38,6 @@ public final class HSSFRowShifter extends RowShifter {
     public HSSFRowShifter(HSSFSheet sh) {
         super(sh);
     }
-    public HSSFRowShifter(Sheet sh, FormulaShifter shifter) {
-        super(sh, shifter);
-    }
 
     @Override
     @NotImplemented

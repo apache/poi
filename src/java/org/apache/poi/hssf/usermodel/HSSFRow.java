@@ -113,7 +113,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     {
         return this.createCell(column,CellType.BLANK);
     }
-    
+
     /**
      * Use this to create new cells within the row and return it.
      * <p>

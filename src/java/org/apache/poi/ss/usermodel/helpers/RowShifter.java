@@ -35,16 +35,10 @@ import org.apache.poi.ss.util.CellRangeAddress;
 public abstract class RowShifter extends BaseRowColShifter {
     protected final Sheet sheet;
 
-    protected FormulaShifter shifter; 
-    
     public RowShifter(Sheet sh) { 
         sheet = sh; 
     } 
  
-    public RowShifter(Sheet sh, FormulaShifter shifter) { 
-        sheet = sh; 
-        this.shifter = shifter; 
-    } 
   /**
      * Shifts, grows, or shrinks the merged regions due to a row shift.
      * Merged regions that are completely overlaid by shifting will be deleted.

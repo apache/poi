@@ -48,23 +48,6 @@ public final class XSSFRowShifter extends RowShifter {
         XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
     }
     
-    // do the actual moving and also adjust comments/rowHeight
-    // we need to sort it in a way so the shifting does not mess up the structures, 
-    // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
-    public void doShiftingAndProcessComments(XSSFVMLDrawing vml, int startRow, int endRow, final int n, 
-            boolean copyRowHeight, Iterator<Row> rowIterator, CommentsTable sheetComments){
-        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
-            @Override
-            public int compare(XSSFComment o1, XSSFComment o2) {
-                int row1 = o1.getRow();
-                int row2 = o2.getRow();
-                
-                if(row1 == row2) {
-                    // ordering is not important when row is equal, but don't return zero to still 
-                    // get multiple comments per row into the map
-                    return o1.hashCode() - o2.hashCode();
-                }
-
     /**
      * Update the formulas in specified row using the formula shifting policy specified by shifter
      *
