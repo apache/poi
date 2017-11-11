@@ -36,7 +36,7 @@ public class XSSFEvenFooter extends XSSFHeaderFooter implements Footer{
      * @see XSSFSheet#getEvenFooter()
      * @param headerFooter
      */
-    public XSSFEvenFooter(CTHeaderFooter headerFooter) {
+    protected XSSFEvenFooter(CTHeaderFooter headerFooter) {
         super(headerFooter);
         headerFooter.setDifferentOddEven(true);
     }
@@ -57,6 +57,9 @@ public class XSSFEvenFooter extends XSSFHeaderFooter implements Footer{
     public void setText(String text) {
     	if(text == null) {
     		getHeaderFooter().unsetEvenFooter();
+    		if (!getHeaderFooter().isSetEvenHeader()) {
+    		    getHeaderFooter().unsetDifferentOddEven();
+    		}
     	} else {
     		getHeaderFooter().setEvenFooter(text);
     	}

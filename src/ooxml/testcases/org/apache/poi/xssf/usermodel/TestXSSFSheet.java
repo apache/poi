@@ -1990,4 +1990,15 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         
         assertEquals("There should not be any comments left!",  0, sheet.getCellComments().size());
     }
+    
+    @Test
+    public void testGetHeaderFooterProperties() throws IOException {
+         XSSFWorkbook wb = new XSSFWorkbook();
+         XSSFSheet sh = wb.createSheet();
+         
+         XSSFHeaderFooterProperties hfProp = sh.getHeaderFooterProperties();
+         assertNotNull(hfProp);
+         
+         wb.close();
+    }
 }

@@ -42,7 +42,7 @@ import org.junit.runners.Suite;
     TestXSSFDrawing.class,
     TestXSSFFont.class,
     TestXSSFFormulaEvaluation.class,
-    TestXSSFHeaderFooter.class,
+    //TestXSSFHeaderFooter.class, //converted to junit4
     TestXSSFHyperlink.class,
     TestXSSFName.class,
     TestXSSFPicture.class,
