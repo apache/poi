@@ -56,6 +56,9 @@ public class XSSFFirstFooter extends XSSFHeaderFooter implements Footer{
     public void setText(String text) {
     	if(text == null) {
     		getHeaderFooter().unsetFirstFooter();
+    		if (!getHeaderFooter().isSetFirstHeader()) {
+    		    getHeaderFooter().unsetDifferentFirst();
+    		}
     	} else {
     		getHeaderFooter().setFirstFooter(text);
     	}
