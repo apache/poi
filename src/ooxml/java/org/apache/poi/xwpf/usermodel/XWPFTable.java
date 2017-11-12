@@ -74,7 +74,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     protected StringBuilder text = new StringBuilder(64);
-    protected List<XWPFTableRow> tableRows;
+    protected final List<XWPFTableRow> tableRows = new ArrayList<>();
 
     // Unused: UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD
     //protected List<String> styleIDs;
@@ -97,8 +97,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     public XWPFTable(CTTbl table, IBody part) {
         this.part = part;
         this.ctTbl = table;
-
-        tableRows = new ArrayList<>();
 
         // is an empty table: I add one row and one column as default
         if (table.sizeOfTrArray() == 0)
