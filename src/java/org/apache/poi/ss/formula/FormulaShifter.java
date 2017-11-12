@@ -213,7 +213,7 @@ public final class FormulaShifter {
         if(ptg instanceof Ref3DPxg) {
             Ref3DPxg rpxg = (Ref3DPxg)ptg;
             if (rpxg.getExternalWorkbookNumber() > 0 ||
-                    ! _sheetName.equals(rpxg.getSheetName())) {
+                    ! _sheetName.equalsIgnoreCase(rpxg.getSheetName())) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 return null;
             }
@@ -239,7 +239,7 @@ public final class FormulaShifter {
         if(ptg instanceof Area3DPxg) {
             Area3DPxg apxg = (Area3DPxg)ptg;
             if (apxg.getExternalWorkbookNumber() > 0 ||
-                    ! _sheetName.equals(apxg.getSheetName())) {
+                    ! _sheetName.equalsIgnoreCase(apxg.getSheetName())) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 return null;
             }
