@@ -137,7 +137,7 @@ public class DataFormatter implements Observer {
      * A regex to find locale patterns like [$$-1009] and [$?-452].
      * Note that we don't currently process these into locales 
      */
-    private static final Pattern localePatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+\\])");
+    private static final Pattern localePatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+])");
 
     /**
      * A regex to match the colour formattings rules.
