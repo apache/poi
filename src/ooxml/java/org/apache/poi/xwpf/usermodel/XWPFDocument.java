@@ -96,6 +96,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected XWPFFootnotes footnotes;
     private CTDocument1 ctDocument;
     private XWPFSettings settings;
+    protected final List<XWPFChart> charts = new ArrayList<>();
     /**
      * Keeps track on all id-values used in this document and included parts, like headers, footers, etc.
      */
@@ -220,6 +221,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     picData.onDocumentRead();
                     registerPackagePictureData(picData);
                     pictures.add(picData);
+                } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
+                    //now we can use all methods to modify charts in XWPFDocument
+                    XWPFChart chartData = (XWPFChart) p;
+                    chartData.onDocumentRead();
+                    charts.add(chartData);
                 } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
                     // We don't currently process the glossary itself
                     // Until we do, we do need to load the glossary child parts of it
@@ -323,6 +329,12 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return Collections.unmodifiableList(tables);
     }
 
+    /**
+     * @return list of XWPFCharts in this document
+     */
+    public List<XWPFChart> getCharts() {
+        return Collections.unmodifiableList(charts);
+    }
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
