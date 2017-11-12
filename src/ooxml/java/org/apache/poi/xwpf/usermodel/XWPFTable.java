@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Collections;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
@@ -589,7 +590,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     public List<XWPFTableRow> getRows() {
-        return tableRows;
+        return Collections.unmodifiableList(tableRows);
     }
 
     /**
