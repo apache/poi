@@ -719,17 +719,34 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     }
     
     @Override
-    @NotImplemented
     public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
-        /*for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
+        if(lastShiftColumnIndex + step + 1> cells.length)
+            extend(lastShiftColumnIndex + step + 1);
+        for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
             HSSFCell cell = getCell(columnIndex);
+            cells[columnIndex+step] = null;
+            if(cell != null)
+                moveCell(cell, (short)(columnIndex+step));
         }
-*/
-        throw new NotImplementedException("shiftCellsRight");
+    }
+    private void extend(int newLenght){
+        HSSFCell[] temp = cells.clone();
+        cells = new HSSFCell[newLenght];
+        System.arraycopy(temp, 0, cells, 0, temp.length);
     }
     @Override
-    @NotImplemented
     public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
-        throw new NotImplementedException("shiftCellsLeft");
+        if(firstShiftColumnIndex - step < 0) 
+            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(firstShiftColumnIndex + step)).toString());
+        for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
+            HSSFCell cell = getCell(columnIndex);
+            if(cell != null){
+                cells[columnIndex-step] = null;
+                moveCell(cell, (short)(columnIndex-step));
+            }
+            else cells[columnIndex-step] = null;
+        }
+        for (int columnIndex = lastShiftColumnIndex-step+1; columnIndex <= lastShiftColumnIndex; columnIndex++)
+            cells[columnIndex] = null;
     }
 }
