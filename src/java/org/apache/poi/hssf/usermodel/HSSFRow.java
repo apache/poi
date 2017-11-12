@@ -24,11 +24,13 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.Configurator;
+import org.apache.poi.util.NotImplemented;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -714,5 +716,20 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     @Override
     public int hashCode() {
         return row.hashCode();
+    }
+    
+    @Override
+    @NotImplemented
+    public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        /*for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
+            HSSFCell cell = getCell(columnIndex);
+        }
+*/
+        throw new NotImplementedException("shiftCellsRight");
+    }
+    @Override
+    @NotImplemented
+    public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        throw new NotImplementedException("shiftCellsLeft");
     }
 }

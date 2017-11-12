@@ -87,7 +87,6 @@ import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter;
 import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
-import org.apache.poi.xssf.usermodel.helpers.XSSFShiftingManager;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;

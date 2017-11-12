@@ -30,12 +30,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.helpers.XSSFShiftingManager;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
@@ -228,7 +225,6 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         _cells.put(colI, xcell);
         return xcell;
     }
-
     /**
      * Returns the cell at the given (0 based) index,
      *  with the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} from the parent Workbook.
@@ -614,9 +610,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             final int srcRowNum = srcRow.getRowNum();
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
+            
             final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
-            final XSSFShiftingManager formulaShiftingManager = new XSSFShiftingManager(_sheet, formulaShifter); 
-            formulaShiftingManager.updateRowFormulas(this);
+            final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
+            rowShifter.updateRowFormulas(this, formulaShifter);
 
             // Copy merged regions that are fully contained on the row
             // FIXME: is this something that rowShifter could be doing?
@@ -640,5 +637,47 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     @Override
     public int getOutlineLevel() {
         return _row.getOutlineLevel();
+    }
+    
+    @Override
+    public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
+            shiftCell(columnIndex, step);
+        }
+        for (int columnIndex = firstShiftColumnIndex; columnIndex <= firstShiftColumnIndex+step-1; columnIndex++)
+        {
+            _cells.remove(columnIndex);
+            XSSFCell targetCell = getCell(columnIndex);
+            if(targetCell != null)
+                targetCell.getCTCell().set(CTCell.Factory.newInstance());
+        }
+    }
+    @Override
+    public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
+            shiftCell(columnIndex, -step);
+        }
+        for (int columnIndex = lastShiftColumnIndex-step+1; columnIndex <= lastShiftColumnIndex; columnIndex++){
+            _cells.remove(columnIndex);
+            XSSFCell targetCell = getCell(columnIndex);
+            if(targetCell != null)
+                targetCell.getCTCell().set(CTCell.Factory.newInstance());
+        }
+    }
+    private void shiftCell(int columnIndex, int step/*pass negative value for left shift*/){
+        if(columnIndex + step < 0) // only for shifting left
+            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(columnIndex + step)).toString());
+        
+        XSSFCell currentCell = getCell(columnIndex);
+        if(currentCell != null){
+            currentCell.setCellNum(columnIndex+step);
+            _cells.put(columnIndex+step, currentCell);
+        }
+        else {
+            _cells.remove(columnIndex+step);
+            XSSFCell targetCell = getCell(columnIndex+step);
+            if(targetCell != null)
+                targetCell.getCTCell().set(CTCell.Factory.newInstance());
+        }
     }
 }
