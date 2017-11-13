@@ -639,8 +639,18 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         return _row.getOutlineLevel();
     }
     
+    /**
+     * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the right.
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param step length of the shifting step
+     */
     @Override
     public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        if(step < 0)
+            throw new IllegalArgumentException("Shifting step may not be negative ");
+        if(firstShiftColumnIndex > lastShiftColumnIndex)
+            throw new IllegalArgumentException(String.format("Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
         for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
             shiftCell(columnIndex, step);
         }
@@ -652,8 +662,20 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
                 targetCell.getCTCell().set(CTCell.Factory.newInstance());
         }
     }
+    /**
+     * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the left.
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param step length of the shifting step
+     */
     @Override
     public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        if(step < 0)
+            throw new IllegalArgumentException("Shifting step may not be negative ");
+        if(firstShiftColumnIndex > lastShiftColumnIndex)
+            throw new IllegalArgumentException(String.format("Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
+        if(firstShiftColumnIndex - step < 0) 
+            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(firstShiftColumnIndex + step)).toString());
         for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
             shiftCell(columnIndex, -step);
         }

@@ -1,8 +1,8 @@
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ss.usermodel.TestSheetShiftColumns;
+import org.apache.poi.ss.usermodel.BaseTestSheetShiftColumns;
 
-public class TestHSSFSheetShiftColumns extends TestSheetShiftColumns {
+public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     public TestHSSFSheetShiftColumns(){
         super(); 
         wb = new HSSFWorkbook();

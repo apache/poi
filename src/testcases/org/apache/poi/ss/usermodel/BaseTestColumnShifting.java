@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
 
-public class TestColumnShifting {
+public class BaseTestColumnShifting {
     protected Workbook wb;
     protected Sheet sheet1;
     protected ColumnShifter columnShifter;
@@ -36,7 +36,7 @@ public class TestColumnShifting {
         row.createCell(5, CellType.NUMERIC).setCellValue(5.2);
         row.createCell(7, CellType.NUMERIC).setCellValue(7.2);
 
-        TestSheetShiftColumns.writeSheetToLog(sheet1);
+        BaseTestSheetShiftColumns.writeSheetToLog(sheet1);
         initColumnShifter();
     }
     protected void initColumnShifter(){
@@ -47,7 +47,7 @@ public class TestColumnShifting {
     public void testShift3ColumnsRight() {
         columnShifter.shiftColumns(1, 2, 3);
         
-        TestSheetShiftColumns.writeSheetToLog(sheet1);
+        BaseTestSheetShiftColumns.writeSheetToLog(sheet1);
         
         Cell cell = sheet1.getRow(0).getCell(4);
         assertNull(cell);

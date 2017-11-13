@@ -718,8 +718,18 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
         return row.hashCode();
     }
     
+    /**
+     * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the right.
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param step length of the shifting step
+     */
     @Override
     public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        if(step < 0)
+            throw new IllegalArgumentException("Shifting step may not be negative ");
+        if(firstShiftColumnIndex > lastShiftColumnIndex)
+            throw new IllegalArgumentException(String.format("Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
         if(lastShiftColumnIndex + step + 1> cells.length)
             extend(lastShiftColumnIndex + step + 1);
         for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
@@ -728,14 +738,26 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
             if(cell != null)
                 moveCell(cell, (short)(columnIndex+step));
         }
+        for (int columnIndex = firstShiftColumnIndex; columnIndex <= firstShiftColumnIndex+step-1; columnIndex++)
+            cells[columnIndex] = null;
     }
     private void extend(int newLenght){
         HSSFCell[] temp = cells.clone();
         cells = new HSSFCell[newLenght];
         System.arraycopy(temp, 0, cells, 0, temp.length);
     }
+    /**
+     * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the left.
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param step length of the shifting step
+     */
     @Override
     public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        if(step < 0)
+            throw new IllegalArgumentException("Shifting step may not be negative ");
+        if(firstShiftColumnIndex > lastShiftColumnIndex)
+            throw new IllegalArgumentException(String.format("Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
         if(firstShiftColumnIndex - step < 0) 
             throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(firstShiftColumnIndex + step)).toString());
         for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 

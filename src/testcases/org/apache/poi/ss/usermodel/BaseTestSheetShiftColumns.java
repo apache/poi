@@ -12,19 +12,21 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestSheetShiftColumns {
+public class BaseTestSheetShiftColumns {
     protected Sheet sheet1, sheet2;
     protected Workbook wb;
 
     protected final ITestDataProvider _testDataProvider;
 
-    public TestSheetShiftColumns(){
+    public BaseTestSheetShiftColumns(){
         _testDataProvider = XSSFITestDataProvider.instance; 
     }
 
