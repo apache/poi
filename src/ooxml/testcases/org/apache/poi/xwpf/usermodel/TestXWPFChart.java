@@ -67,7 +67,7 @@ public class TestXWPFChart extends TestCase {
         CTRegularTextRun r = p.addNewR();
         r.addNewRPr();
         r.setT("XWPF CHART");
-        assertEquals("XWPF CHART", chart.getCTChart().getTitle().getTx().getRich().getPArray(0).getRArray(0).getT().toString());
+        assertEquals("XWPF CHART", chart.getCTChart().getTitle().getTx().getRich().getPArray(0).getRArray(0).getT());
     }
     /**
      * test method to check relationship
@@ -79,9 +79,9 @@ public class TestXWPFChart extends TestCase {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx");
         List<XWPFChart> charts = sampleDoc.getCharts();
         XWPFChart chart=charts.get(0);
-        assertEquals(XWPFRelation.CHART.getContentType(), chart.getPackagePart().getContentType().toString());
-        assertEquals("/word/document.xml", chart.getParent().getPackagePart().getPartName().toString());
-        assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName().toString());
+        assertEquals(XWPFRelation.CHART.getContentType(), chart.getPackagePart().getContentType());
+        assertEquals("/word/document.xml", chart.getParent().getPackagePart().getPartName());
+        assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName());
     }
 }
 
