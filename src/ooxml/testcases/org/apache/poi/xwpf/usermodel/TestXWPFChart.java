@@ -34,8 +34,6 @@ public class TestXWPFChart extends TestCase {
 
     /**
      * test method to check charts are null
-     *
-     * @throws IOException
      */
     public void testRead() throws IOException
     {
@@ -49,8 +47,6 @@ public class TestXWPFChart extends TestCase {
     
     /**
      * test method to add chart title and check whether it's set
-     *
-     * @throws IOException
      */
     public void testChartTitle() throws IOException
     {
@@ -71,8 +67,6 @@ public class TestXWPFChart extends TestCase {
     }
     /**
      * test method to check relationship
-     *
-     * @throws IOException
      */
     public void testChartRelation() throws IOException
     {
@@ -80,8 +74,7 @@ public class TestXWPFChart extends TestCase {
         List<XWPFChart> charts = sampleDoc.getCharts();
         XWPFChart chart=charts.get(0);
         assertEquals(XWPFRelation.CHART.getContentType(), chart.getPackagePart().getContentType());
-        assertEquals("/word/document.xml", chart.getParent().getPackagePart().getPartName());
-        assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName());
+        assertEquals("/word/document.xml", chart.getParent().getPackagePart().getPartName().getName());
+        assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName().getName());
     }
 }
-
