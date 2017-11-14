@@ -24,12 +24,14 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -545,6 +547,16 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         return _cells.hashCode();
     }
 
+    @Override
+    @NotImplemented
+    public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        throw new NotImplementedException("shiftCellsRight");
+    }
+    @Override
+    @NotImplemented
+    public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        throw new NotImplementedException("shiftCellsLeft");
+    }
 
 }
 

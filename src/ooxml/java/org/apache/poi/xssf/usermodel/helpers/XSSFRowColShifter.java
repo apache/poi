@@ -96,7 +96,7 @@ import java.util.List;
      * @param formulaShifter the formula shifting policy
      */
     /*package*/ static void updateRowFormulas(XSSFRow row, FormulaShifter formulaShifter) {
-        XSSFSheet sheet = (XSSFSheet) row.getSheet();
+        XSSFSheet sheet = row.getSheet();
         for (Cell c : row) {
             XSSFCell cell = (XSSFCell) c;
 

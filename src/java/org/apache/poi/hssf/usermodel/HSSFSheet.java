@@ -51,6 +51,7 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter;
+
 import org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
@@ -74,6 +75,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -1647,16 +1649,18 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         // Re-compute the first and last rows of the sheet as needed
         recomputeFirstAndLastRowsForRowShift(startRow, endRow, n);
 
+        int sheetIndex = _workbook.getSheetIndex(this);
+        short externSheetIndex = _book.checkExternSheet(sheetIndex);
+        String sheetName = _workbook.getSheetName(sheetIndex);
+        FormulaShifter formulaShifter = FormulaShifter.createForRowShift(
+                externSheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL97);
         // Update formulas that refer to rows that have been moved
-        updateFormulasForRowShift(startRow, endRow, n);
+        updateFormulasForShift(formulaShifter);
     }
 
-    private void updateFormulasForRowShift(int startRow, int endRow, int n) {
+    private void updateFormulasForShift(FormulaShifter formulaShifter) {
         int sheetIndex = _workbook.getSheetIndex(this);
-        String sheetName = _workbook.getSheetName(sheetIndex);
         short externSheetIndex = _book.checkExternSheet(sheetIndex);
-        FormulaShifter formulaShifter = FormulaShifter.createForRowShift(
-                         externSheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL97);
         // update formulas on this sheet that point to rows which have been moved
         _sheet.updateFormulasAfterCellShift(formulaShifter, externSheetIndex);
 
@@ -1737,6 +1741,31 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
         }
     }
+    
+    /**
+     * Shifts columns in range [startColumn, endColumn] for n places to the right.
+     * For n < 0, it will shift columns left.
+     * Additionally adjusts formulas.
+     * Probably should also process other features (hyperlinks, comments...) in the way analog to shiftRows method 
+     * @param startRow               the row to start shifting
+     * @param endRow                 the row to end shifting
+     * @param n                      the number of rows to shift
+     */
+
+    @Beta
+    @Override
+    public void shiftColumns(int startColumn, int endColumn, int n){ 
+        HSSFColumnShifter columnShifter = new HSSFColumnShifter(this); 
+        columnShifter.shiftColumns(startColumn, endColumn, n); 
+        
+        int sheetIndex = _workbook.getSheetIndex(this);
+        short externSheetIndex = _book.checkExternSheet(sheetIndex);
+        String sheetName = _workbook.getSheetName(sheetIndex);
+        FormulaShifter formulaShifter = FormulaShifter.createForColumnShift(
+                externSheetIndex, sheetName, startColumn, endColumn, n, SpreadsheetVersion.EXCEL97);
+        updateFormulasForShift(formulaShifter); 
+        // add logic for hyperlinks etc, like in shiftRows() 
+    } 
 
     protected void insertChartRecords(List<Record> records) {
         int window2Loc = _sheet.findFirstRecordLocBySid(WindowTwoRecord.sid);
@@ -2660,30 +2689,4 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         _sheet.setActiveCellRow(row);
         _sheet.setActiveCellCol(col);
     }
-    private void shiftFormulas(int startRow, int endRow, int n, boolean forRowElseColumnShift){ 
-        int sheetIndex = _workbook.getSheetIndex(this);
-        String sheetName = _workbook.getSheetName(sheetIndex);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex);
-        FormulaShifter shifter = FormulaShifter.createForRowShift(
-                         externSheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL97);
-        _sheet.updateFormulasAfterCellShift(shifter, externSheetIndex);
-
-        int nSheets = _workbook.getNumberOfSheets();
-        for (int i = 0; i < nSheets; i++) {
-            InternalSheet otherSheet = _workbook.getSheetAt(i).getSheet();
-            if (otherSheet == this._sheet) {
-                continue;
-            }
-            short otherExtSheetIx = _book.checkExternSheet(i);
-            otherSheet.updateFormulasAfterCellShift(shifter, otherExtSheetIx);
-        }
-        _workbook.getWorkbook().updateNamesAfterCellShift(shifter); 
-    } 
-
-    public void shiftColumns(int startColumn, int endColumn, int n){ 
-        HSSFColumnShifter columnShifter = new HSSFColumnShifter(this); 
-        columnShifter.shiftColumns(startColumn, endColumn, n); 
-        shiftFormulas(startColumn, endColumn, n, false); 
-        // add logic for hyperlinks etc, like in shiftRows() 
-    } 
 }

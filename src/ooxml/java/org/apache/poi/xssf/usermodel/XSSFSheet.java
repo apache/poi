@@ -87,7 +87,6 @@ import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter;
 import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
-import org.apache.poi.xssf.usermodel.helpers.XSSFShiftingManager;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -3019,7 +3018,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param startColumn the column to start shifting
      * @param endColumn the column to end shifting
-     * @param n the number of columns to shift
+     * @param n length of the shifting step
      */    
     @Override
     public void shiftColumns(int startColumn, int endColumn, final int n) {
@@ -3091,7 +3090,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     }
 
-     private void shiftCommentsAndRows(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
+    private void shiftCommentsAndRows(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
          // then do the actual moving and also adjust comments/rowHeight
          // we need to sort it in a way so the shifting does not mess up the structures, 
          // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
@@ -4618,5 +4617,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
     }
 
-
+    public XSSFHeaderFooterProperties getHeaderFooterProperties() {
+        return new XSSFHeaderFooterProperties(getSheetTypeHeaderFooter());
+    }
 }

@@ -33,8 +33,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 public final class XSSFRowShifter extends RowShifter {
     private static final POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
 
-    private XSSFShiftingManager formulaShiftingManager;
-    
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);
     }

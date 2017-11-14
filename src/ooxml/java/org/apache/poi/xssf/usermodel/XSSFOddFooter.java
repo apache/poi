@@ -34,7 +34,7 @@ public class XSSFOddFooter extends XSSFHeaderFooter implements Footer{
      * @see XSSFSheet#getOddFooter()
      * @param headerFooter
      */
-    public XSSFOddFooter(CTHeaderFooter headerFooter) {
+    protected XSSFOddFooter(CTHeaderFooter headerFooter) {
         super(headerFooter);
     }
     

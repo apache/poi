@@ -268,7 +268,7 @@ public interface Sheet extends Iterable<Row> {
      */
     public CellStyle getColumnStyle(int column);
 
-    /**
+    /*
      * Sets the CellStyle that applies to the given
      *  (0 based) column.
      */
@@ -821,7 +821,7 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Removes the page break at the indicated row
-     * @param row
+     * @param row The 0-based index of the row.
      */
     void removeRowBreak(int row);
 
@@ -859,7 +859,7 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Removes a page break at the indicated column
-     * @param column
+     * @param column The 0-based index of the column.
      */
     void removeColumnBreak(int column);
 
@@ -1150,8 +1150,8 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Get a Hyperlink in this sheet anchored at row, column
      *
-     * @param row
-     * @param column
+     * @param row The 0-based index of the row to look at.
+     * @param column The 0-based index of the column to look at.
      * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
      */
     public Hyperlink getHyperlink(int row, int column);
