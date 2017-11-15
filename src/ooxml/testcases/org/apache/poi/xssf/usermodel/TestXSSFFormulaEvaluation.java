@@ -430,6 +430,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
     
     @Test
+    @Ignore // this is from an open bug/discussion over handling localization for number formats
     public void testBug61495() {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61495-test.xlsm");
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
