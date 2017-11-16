@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula;
 
+import java.text.CollationKey;
+import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Abstracted and cached version of a Conditional Format rule for use with a
@@ -86,6 +89,9 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     private final String formula1;
     private final String formula2;
     private final String text;
+    // cached for performance, used with cell text comparisons, which are case insensitive and need to be Locale aware (contains, starts with, etc.) 
+    private final String lowerText;
+
     private final OperatorEnum operator;
     private final ConditionType type;
     // cached for performance, to avoid reading the XMLBean every time a conditionally formatted cell is rendered
@@ -118,12 +124,16 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         this.regions = regions;
         formula1 = rule.getFormula1();
         formula2 = rule.getFormula2();
+        
         text = rule.getText();
+        lowerText = text == null ? null : text.toLowerCase(LocaleUtil.getUserLocale());
+        
         numberFormat = rule.getNumberFormat();
         
         operator = OperatorEnum.values()[rule.getComparisonOperation()];
         type = rule.getConditionType();
         
+//         Excel uses the stored text representation from the XML apparently, in tests done so far
         decimalTextFormat = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
         decimalTextFormat.setMaximumFractionDigits(340); // DecimalFormat.DOUBLE_FRACTION_DIGITS, which is default scoped
     }
@@ -559,16 +569,16 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             return op.isValid(val, comp, null);
         case CONTAINS_TEXT:
             // implemented both by a cfRule "text" attribute and a formula.  Use the text.
-            return cv.toString().toLowerCase().contains(text.toLowerCase());
+            return text == null ? false : cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
         case NOT_CONTAINS_TEXT:
             // implemented both by a cfRule "text" attribute and a formula.  Use the text.
-            return ! cv.toString().toLowerCase().contains(text.toLowerCase());
+            return text == null ? true : ! cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
         case BEGINS_WITH:
             // implemented both by a cfRule "text" attribute and a formula.  Use the text.
-            return cv.toString().toLowerCase().startsWith(text.toLowerCase());
+            return cv.toString().toLowerCase(LocaleUtil.getUserLocale()).startsWith(lowerText);
         case ENDS_WITH:
             // implemented both by a cfRule "text" attribute and a formula.  Use the text.
-            return cv.toString().toLowerCase().endsWith(text.toLowerCase());
+            return cv.toString().toLowerCase(LocaleUtil.getUserLocale()).endsWith(lowerText);
         case CONTAINS_BLANKS:
             try {
                 String v = cv.getString();
