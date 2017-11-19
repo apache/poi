@@ -634,6 +634,9 @@ under the License.
                     <available file="${dsig.sl4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
+
+                    <!-- we had some CI failures when the extracted files for JaCoCo were missing somehow... -->
+                    <available file="${main.lib}/jacocoagent.jar"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
