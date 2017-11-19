@@ -121,6 +121,8 @@ public class XSSFFontFormatting implements FontFormatting {
         XSSFColor xcolor = XSSFColor.toXSSFColor(color);
         if (xcolor == null) {
             _font.getColorList().clear();
+        } else if(_font.sizeOfColorArray() == 0) {
+            _font.addNewColor().setRgb(xcolor.getRGB());
         } else {
             _font.setColorArray(0, xcolor.getCTColor());
         }

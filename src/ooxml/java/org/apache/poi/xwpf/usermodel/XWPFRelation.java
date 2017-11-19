@@ -112,6 +112,12 @@ public final class XWPFRelation extends POIXMLRelation {
             "/word/theme/theme#.xml",
             null
     );
+    public static final XWPFRelation CHART = new XWPFRelation(
+            "application/vnd.openxmlformats-officedocument.drawingml.chart+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart",
+            "/word/charts/chart#.xml",
+            XWPFChart.class
+    );
     public static final XWPFRelation HYPERLINK = new XWPFRelation(
             null,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",

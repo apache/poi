@@ -417,6 +417,10 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         return _cfRule.sizeOfFormulaArray() == 2 ? _cfRule.getFormulaArray(1) : null;
     }
     
+    public String getText() {
+        return _cfRule.getText();
+    }
+    
     /**
      * Conditional format rules don't define stripes, so always 0
      * @see org.apache.poi.ss.usermodel.DifferentialStyleProvider#getStripeSize()

@@ -358,7 +358,7 @@ public class XSSFColor extends ExtendedColor {
         // Currently the only benefit of this method is to throw an IllegalArgumentException
         // instead of a ClassCastException.
         if (color != null && !(color instanceof XSSFColor)) {
-            throw new IllegalArgumentException("Only XSSFColor objects are supported");
+            throw new IllegalArgumentException("Only XSSFColor objects are supported, but had " + color.getClass());
         }
         return (XSSFColor)color;
     }
