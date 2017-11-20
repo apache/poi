@@ -378,6 +378,10 @@ public class DrawTextParagraph implements Drawable {
             Slide<?,?> slide = (Slide<?,?>)graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
             return (slide == null) ? "" : Integer.toString(slide.getSlideNumber());
         }
+        return getRenderableText(tr);
+    }
+
+    String getRenderableText(TextRun tr) {
         String txt = tr.getRawText();
         txt.replace("\t", tab2space(tr)).replace("\u000b", "\n");
 
