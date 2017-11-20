@@ -94,8 +94,10 @@ public class XSLFTextRun implements TextRun {
             return "\n";
         }
 
+        return getRenderableText(((CTRegularTextRun)_r).getT());
+    }
 
-        String txt = ((CTRegularTextRun)_r).getT();
+    String getRenderableText(String txt){
         // TODO: finish support for tabs
         txt.replace("\t", "  ");
 
