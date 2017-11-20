@@ -30,6 +30,7 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlObject;
@@ -95,28 +96,18 @@ public class XSLFTextRun implements TextRun {
 
 
         String txt = ((CTRegularTextRun)_r).getT();
-        TextCap cap = getTextCap();
-        StringBuilder buf = new StringBuilder();
-        for(int i = 0; i < txt.length(); i++) {
-            char c = txt.charAt(i);
-            if(c == '\t') {
-                // TODO: finish support for tabs
-                buf.append("  ");
-            } else {
-                switch (cap){
-                    case ALL:
-                        buf.append(Character.toUpperCase(c));
-                        break;
-                    case SMALL:
-                        buf.append(Character.toLowerCase(c));
-                        break;
-                    default:
-                        buf.append(c);
-                }
-            }
-        }
+        // TODO: finish support for tabs
+        txt.replace("\t", "  ");
 
-        return buf.toString();
+        switch (getTextCap()) {
+            case ALL:
+                txt = txt.toUpperCase(LocaleUtil.getUserLocale());
+                break;
+            case SMALL:
+                txt = txt.toLowerCase(LocaleUtil.getUserLocale());
+                break;
+        }
+        return txt;
     }
 
     @Override
