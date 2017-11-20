@@ -111,10 +111,10 @@ public final class UnknownRecord extends StandardRecord {
         if (biffName == null) {
             biffName = "UNKNOWNRECORD";
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
-        sb.append("[").append(biffName).append("] (0x");
-        sb.append(Integer.toHexString(_sid).toUpperCase(Locale.ROOT) + ")\n");
+        sb.append('[').append(biffName).append("] (0x");
+        sb.append(Integer.toHexString(_sid).toUpperCase(Locale.ROOT)).append(")\n");
         if (_rawData.length > 0) {
             sb.append("  rawData=").append(HexDump.toHex(_rawData)).append("\n");
         }

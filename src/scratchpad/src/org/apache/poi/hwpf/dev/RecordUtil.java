@@ -142,7 +142,7 @@ public class RecordUtil
     public static String getConstName( String parentName, String constName,
             int padTo )
     {
-        StringBuffer fieldName = new StringBuffer();
+        StringBuilder fieldName = new StringBuilder();
         toConstIdentifier( parentName, fieldName );
         fieldName.append( '_' );
         toConstIdentifier( constName, fieldName );
@@ -152,7 +152,7 @@ public class RecordUtil
 
     public static String getFieldName( int position, String name, int padTo )
     {
-        StringBuffer fieldName = new StringBuffer( "field_" + position + "_" );
+        StringBuilder fieldName = new StringBuilder().append("field_").append(position).append('_');
         toIdentifier( name, fieldName );
         pad( fieldName, padTo );
 
@@ -161,7 +161,7 @@ public class RecordUtil
 
     public static String getFieldName( String name, int padTo )
     {
-        StringBuffer fieldName = new StringBuffer();
+        StringBuilder fieldName = new StringBuilder();
         toIdentifier( name, fieldName );
         pad( fieldName, padTo );
 
@@ -170,7 +170,7 @@ public class RecordUtil
 
     public static String getFieldName1stCap( String name, int padTo )
     {
-        StringBuffer fieldName = new StringBuffer();
+        StringBuilder fieldName = new StringBuilder();
         toIdentifier( name, fieldName );
         fieldName.setCharAt( 0, Character.toUpperCase( fieldName.charAt( 0 ) ) );
         pad( fieldName, padTo );
@@ -180,7 +180,7 @@ public class RecordUtil
 
     public static String getType1stCap( String size, String type, int padTo )
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append( type );
         result = pad( result, padTo );
         result.setCharAt( 0, Character.toUpperCase( result.charAt( 0 ) ) );
@@ -188,14 +188,14 @@ public class RecordUtil
         return result.toString();
     }
 
-    protected static StringBuffer pad( StringBuffer fieldName, int padTo )
+    protected static StringBuilder pad( StringBuilder fieldName, int padTo )
     {
         for ( int i = fieldName.length(); i < padTo; i++ )
             fieldName.append( ' ' );
         return fieldName;
     }
 
-    private static void toConstIdentifier( String name, StringBuffer fieldName )
+    private static void toConstIdentifier( String name, StringBuilder fieldName )
     {
         for ( int i = 0; i < name.length(); i++ )
         {
@@ -206,7 +206,7 @@ public class RecordUtil
         }
     }
 
-    private static void toIdentifier( String name, StringBuffer fieldName )
+    private static void toIdentifier( String name, StringBuilder fieldName )
     {
         for ( int i = 0; i < name.length(); i++ )
         {
