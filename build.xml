@@ -553,6 +553,7 @@ under the License.
                 <include name="asm-all-5.0.3*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
+                <include name="commons-codec-1.10*"/>
                 <include name="commons-logging-1.1*.jar"/>
                 <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
