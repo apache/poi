@@ -91,7 +91,7 @@ under the License.
     <property name="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
     <!-- need to override POILogger property before commons logging works -->
     <property name="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Log4JLogger"/>
-
+    <property name="tempdir" value="build/tmp"/>
 
     <!-- Main: -->
     <property name="main.resource1.dir" value="src/resources/main"/>
@@ -1263,6 +1263,7 @@ under the License.
                 <classpath refid="test.classpath"/>
                 <classpath refid="test.jar.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
@@ -1328,6 +1329,7 @@ under the License.
                 <classpath refid="test.scratchpad.classpath"/>
                 <classpath refid="test.jar.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <jvmarg value="${file.leak.detector}" />
@@ -1384,7 +1386,8 @@ under the License.
                       <path refid="test.jar.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="-Xmx768M"/>
+                  <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
@@ -1418,7 +1421,8 @@ under the License.
                       <path refid="ooxml.xmlsec.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="-Xmx768M"/>
+                  <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
@@ -1466,6 +1470,7 @@ under the License.
                    failureproperty="integration.test.failed" showoutput="true">
                 <classpath refid="test.integration.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx1512M"/>
                 <jvmarg value="${java9addmods}" />
@@ -1525,6 +1530,7 @@ under the License.
             <classpath refid="test.ooxml.classpath"/>
             <classpath refid="ooxml.xmlsec.classpath"/>
             <syspropertyset refid="junit.properties"/>
+            <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="${java9addmods}" />
             <jvmarg value="${java9addmodsvalue}" />
@@ -1570,6 +1576,7 @@ under the License.
                    failureproperty="excelant.test.failed">
                 <classpath refid="test.excelant.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
