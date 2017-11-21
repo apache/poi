@@ -181,7 +181,6 @@ public class CellDateFormatter extends CellFormatter {
         boolean doneAm = false;
         boolean doneMillis = false;
 
-        it.first();
         for (char ch = it.first();
              ch != CharacterIterator.DONE;
              ch = it.next()) {
@@ -189,12 +188,9 @@ public class CellDateFormatter extends CellFormatter {
                 if (!doneMillis) {
                     Date dateObj = (Date) value;
                     int pos = toAppendTo.length();
-                    Formatter formatter = new Formatter(toAppendTo, Locale.ROOT);
-                    try {
+                    try (Formatter formatter = new Formatter(toAppendTo, Locale.ROOT)) {
                         long msecs = dateObj.getTime() % 1000;
                         formatter.format(locale, sFmt, msecs / 1000.0);
-                    } finally {
-                        formatter.close();
                     }
                     toAppendTo.delete(pos, pos + 2);
                     doneMillis = true;
@@ -203,11 +199,11 @@ public class CellDateFormatter extends CellFormatter {
                 if (!doneAm) {
                     if (showAmPm) {
                         if (amPmUpper) {
-                            toAppendTo.append(Character.toUpperCase(ch));
+                            toAppendTo.append(Character.toString(ch).toUpperCase(LocaleUtil.getUserLocale()));
                             if (showM)
                                 toAppendTo.append('M');
                         } else {
-                            toAppendTo.append(Character.toLowerCase(ch));
+                            toAppendTo.append(Character.toString(ch).toLowerCase(LocaleUtil.getUserLocale()));
                             if (showM)
                                 toAppendTo.append('m');
                         }
