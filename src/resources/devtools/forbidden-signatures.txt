@@ -102,8 +102,10 @@ java.lang.Character#codePointAt(char[],int) @ Implicit end offset is error-prone
 
 @defaultMessage specify a locale when using toUpperCase / to LowerCase
 
-#java.lang.Character#toLowerCase(char)
-#java.lang.Character#toUpperCase(char)
+java.lang.Character#isLowerCase(char)
+java.lang.Character#isUpperCase(char)
+java.lang.Character#toLowerCase(char)
+java.lang.Character#toUpperCase(char)
 java.lang.String#toLowerCase()
 java.lang.String#toUpperCase()
 

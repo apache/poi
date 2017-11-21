@@ -18,6 +18,7 @@ package org.apache.poi.ss.format;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 
 import javax.swing.*;
 
@@ -341,7 +342,7 @@ public class CellFormatPart {
                 char c1 = repl.charAt(0);
                 char c2 = 0;
                 if (repl.length() > 1)
-                    c2 = Character.toLowerCase(repl.charAt(1));
+                    c2 = StringUtil.toLowerCase(repl.charAt(1)).charAt(0);
                 
                 switch (c1) {
                 case '@':
