@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.dev;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Helper functions for the record transformations. Used during model classes
@@ -172,7 +173,7 @@ public class RecordUtil
     {
         StringBuilder fieldName = new StringBuilder();
         toIdentifier( name, fieldName );
-        fieldName.setCharAt( 0, Character.toUpperCase( fieldName.charAt( 0 ) ) );
+        fieldName.setCharAt( 0, toUpperCase( fieldName.charAt(0) ) );
         pad( fieldName, padTo );
 
         return fieldName.toString();
@@ -183,7 +184,7 @@ public class RecordUtil
         StringBuilder result = new StringBuilder();
         result.append( type );
         result = pad( result, padTo );
-        result.setCharAt( 0, Character.toUpperCase( result.charAt( 0 ) ) );
+        result.setCharAt( 0, toUpperCase( result.charAt( 0 ) ) );
 
         return result.toString();
     }
@@ -202,7 +203,7 @@ public class RecordUtil
             if ( name.charAt( i ) == ' ' )
                 fieldName.append( '_' );
             else
-                fieldName.append( Character.toUpperCase( name.charAt( i ) ) );
+                fieldName.append( toUpperCase( name.charAt( i ) ) );
         }
     }
 
@@ -211,10 +212,14 @@ public class RecordUtil
         for ( int i = 0; i < name.length(); i++ )
         {
             if ( name.charAt( i ) == ' ' )
-                fieldName.append( Character.toUpperCase( name.charAt( ++i ) ) );
+                fieldName.append( toUpperCase( name.charAt( ++i ) ) );
             else
                 fieldName.append( name.charAt( i ) );
         }
+    }
+
+    private static char toUpperCase(char c) {
+        return StringUtil.toUpperCase(c).charAt(0);
     }
 
     public RecordUtil()

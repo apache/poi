@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Formats a date value.
@@ -110,9 +111,9 @@ public class CellDateFormatter extends CellFormatter {
                     // am/pm marker
                     mStart = -1;
                     showAmPm = true;
-                    showM = Character.toLowerCase(part.charAt(1)) == 'm';
+                    showM = StringUtil.toLowerCase(part.charAt(1)).equals("m");
                     // For some reason "am/pm" becomes AM or PM, but "a/p" becomes a or p
-                    amPmUpper = showM || Character.isUpperCase(part.charAt(0));
+                    amPmUpper = showM || StringUtil.isUpperCase(part.charAt(0));
 
                     return "a";
                 }
@@ -199,11 +200,11 @@ public class CellDateFormatter extends CellFormatter {
                 if (!doneAm) {
                     if (showAmPm) {
                         if (amPmUpper) {
-                            toAppendTo.append(Character.toString(ch).toUpperCase(LocaleUtil.getUserLocale()));
+                            toAppendTo.append(StringUtil.toUpperCase(ch));
                             if (showM)
                                 toAppendTo.append('M');
                         } else {
-                            toAppendTo.append(Character.toString(ch).toLowerCase(LocaleUtil.getUserLocale()));
+                            toAppendTo.append(StringUtil.toLowerCase(ch));
                             if (showM)
                                 toAppendTo.append('m');
                         }
