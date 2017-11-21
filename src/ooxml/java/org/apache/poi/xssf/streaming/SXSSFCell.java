@@ -41,6 +41,12 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.*;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.streaming.value.BooleanValue;
+import org.apache.poi.xssf.streaming.value.NumericValue;
+import org.apache.poi.xssf.streaming.value.PlainStringValue;
+import org.apache.poi.xssf.streaming.value.RichTextValue;
+import org.apache.poi.xssf.streaming.value.StringValue;
+import org.apache.poi.xssf.streaming.value.Value;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -1089,74 +1095,6 @@ public class SXSSFCell implements Cell {
             return HYPERLINK;
         }
     }
-    interface Value
-    {
-        CellType getType();
-    }
-    static class NumericValue implements Value
-    {
-        double _value;
-        public CellType getType()
-        {
-            return CellType.NUMERIC;
-        }
-        void setValue(double value)
-        {
-            _value = value;
-        }
-        double getValue()
-        {
-            return _value;
-        }
-    }
-    static abstract class StringValue implements Value
-    {
-        public CellType getType()
-        {
-            return CellType.STRING;
-        }
-//We cannot introduce a new type CellType.RICH_TEXT because the types are public so we have to make rich text as a type of string
-        abstract boolean isRichText(); // using the POI style which seems to avoid "instanceof".
-    }
-    static class PlainStringValue extends StringValue
-    {
-        String _value;
-        void setValue(String value)
-        {
-            _value = value;
-        }
-        String getValue()
-        {
-            return _value;
-        }
-        @Override
-        boolean isRichText()
-        {
-            return false;
-        }
-    }
-    static class RichTextValue extends StringValue
-    {
-        RichTextString _value;
-        @Override
-        public CellType getType()
-        {
-            return CellType.STRING;
-        }
-        void setValue(RichTextString value)
-        {
-            _value = value;
-        }
-        RichTextString getValue()
-        {
-            return _value;
-        }
-        @Override
-        boolean isRichText()
-        {
-            return true;
-        }
-    }
     static abstract class FormulaValue implements Value
     {
         String _value;
@@ -1247,22 +1185,6 @@ public class SXSSFCell implements Cell {
         public CellType getType()
         {
             return CellType.BLANK;
-        }
-    }
-    static class BooleanValue implements Value
-    {
-        boolean _value;
-        public CellType getType()
-        {
-            return CellType.BOOLEAN;
-        }
-        void setValue(boolean value)
-        {
-            _value = value;
-        }
-        boolean getValue()
-        {
-            return _value;
         }
     }
     static class ErrorValue implements Value

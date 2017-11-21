@@ -45,4 +45,7 @@ sonar/*/target
 .ant-targets-build.xml
 build
 dist
+gradle
+gradlew.bat
+gradlew
 lib/
