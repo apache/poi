@@ -20,6 +20,7 @@ package org.apache.poi.util;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -347,18 +348,18 @@ public class StringUtil {
 
     @Internal
     public static String toLowerCase(char c) {
-        return Character.toString(c).toLowerCase(LocaleUtil.getUserLocale());
+        return Character.toString(c).toLowerCase(Locale.ROOT);
     }
 
     @Internal
     public static String toUpperCase(char c) {
-        return Character.toString(c).toUpperCase(LocaleUtil.getUserLocale());
+        return Character.toString(c).toUpperCase(Locale.ROOT);
     }
 
     @Internal
     public static boolean isUpperCase(char c) {
         String s = Character.toString(c);
-        return s.toUpperCase(LocaleUtil.getUserLocale()).equals(s);
+        return s.toUpperCase(Locale.ROOT).equals(s);
     }
 
     /**
