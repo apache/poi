@@ -18,14 +18,14 @@ package org.apache.poi.ss.format;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringCodepointsIterable;
 import org.apache.poi.util.StringUtil;
 
 import javax.swing.*;
 
 import java.awt.*;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -337,47 +337,47 @@ public class CellFormatPart {
         boolean seenZero = false;
         while (m.find()) {
             String repl = m.group(0);
-            
-            if (repl.length() > 0) {
-                char c1 = repl.charAt(0);
-                char c2 = 0;
-                if (repl.length() > 1)
-                    c2 = StringUtil.toLowerCase(repl.charAt(1)).charAt(0);
+            Iterator<String> codePoints = new StringCodepointsIterable(repl).iterator();
+            if (codePoints.hasNext()) {
+                String c1 = codePoints.next();
+                String c2 = null;
+                if (codePoints.hasNext())
+                    c2 = codePoints.next().toLowerCase(Locale.ROOT);
                 
                 switch (c1) {
-                case '@':
+                case "@":
                     return CellFormatType.TEXT;
-                case 'd':
-                case 'D':
-                case 'y':
-                case 'Y':
+                case "d":
+                case "D":
+                case "y":
+                case "Y":
                     return CellFormatType.DATE;
-                case 'h':
-                case 'H':
-                case 'm':
-                case 'M':
-                case 's':
-                case 'S':
+                case "h":
+                case "H":
+                case "m":
+                case "M":
+                case "s":
+                case "S":
                     // These can be part of date, or elapsed
                     couldBeDate = true;
                     break;
-                case '0':
+                case "0":
                     // This can be part of date, elapsed, or number
                     seenZero = true;
                     break;
-                case '[':
-                    if (c2 == 'h' || c2 == 'm' || c2 == 's') {
+                case "[":
+                    if ("h".equals(c2) || "m".equals(c2) || "s".equals(c2)) {
                         return CellFormatType.ELAPSED;
                     }
-                    if (c2 == '$') {
+                    if ("$".equals(c2)) {
                         // Localised currency
                         return CellFormatType.NUMBER;
                     }
                     // Something else inside [] which isn't supported!
                     throw new IllegalArgumentException("Unsupported [] format block '" +
                                                        repl + "' in '" + fdesc + "' with c2: " + c2);
-                case '#':
-                case '?':
+                case "#":
+                case "?":
                     return CellFormatType.NUMBER;
                 }
             }
@@ -405,19 +405,20 @@ public class CellFormatPart {
      */
     static String quoteSpecial(String repl, CellFormatType type) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < repl.length(); i++) {
-            char ch = repl.charAt(i);
-            if (ch == '\'' && type.isSpecial('\'')) {
+        Iterator<String> codePoints = new StringCodepointsIterable(repl).iterator();
+        while (codePoints.hasNext()) {
+            String ch = codePoints.next();
+            if ("\'".equals(ch) && type.isSpecial('\'')) {
                 sb.append('\u0000');
                 continue;
             }
 
-            boolean special = type.isSpecial(ch);
+            boolean special = type.isSpecial(ch.charAt(0));
             if (special)
-                sb.append("'");
+                sb.append("\'");
             sb.append(ch);
             if (special)
-                sb.append("'");
+                sb.append("\'");
         }
         return sb.toString();
     }
@@ -559,10 +560,11 @@ public class CellFormatPart {
      * @return The character repeated three times.
      */
     static String expandChar(String part) {
-        String repl;
-        char ch = part.charAt(1);
-        repl = "" + ch + ch + ch;
-        return repl;
+        List<String> codePoints = new ArrayList<>();
+        new StringCodepointsIterable(part).iterator().forEachRemaining(codePoints::add);
+        if (codePoints.size() < 2) throw new IllegalArgumentException("Expected part string to have at least 2 chars");
+        String ch = codePoints.get(1);
+        return ch + ch + ch;
     }
 
     /**
