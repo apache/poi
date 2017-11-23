@@ -230,14 +230,10 @@ public class HemfText {
 
         String getText(Charset charset) throws IOException {
             StringBuilder sb = new StringBuilder();
-            Reader r = null;
-            try {
-                r = new InputStreamReader(new ByteArrayInputStream(rawTextBytes), charset);
+            try (Reader r = new InputStreamReader(new ByteArrayInputStream(rawTextBytes), charset)) {
                 for (int i = 0; i < numChars; i++) {
                     sb.appendCodePoint(readCodePoint(r));
                 }
-            } finally {
-                IOUtils.closeQuietly(r);
             }
             return sb.toString();
         }

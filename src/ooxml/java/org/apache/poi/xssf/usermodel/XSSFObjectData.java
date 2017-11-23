@@ -171,14 +171,9 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
     }
 
     @Override
-    @SuppressWarnings("resource")
     public DirectoryEntry getDirectory() throws IOException {
-        InputStream is = null;
-        try {
-            is = getObjectPart().getInputStream();
+        try (InputStream is = getObjectPart().getInputStream()) {
             return new POIFSFileSystem(is).getRoot();
-        } finally {
-            IOUtils.closeQuietly(is);
         }
     }
 
