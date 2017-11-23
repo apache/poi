@@ -360,12 +360,12 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
                 XSLFShape newShape;
                 if (shape instanceof XSLFTextBox) {
                     newShape = createTextBox();
+                } else if (shape instanceof XSLFFreeformShape) {
+                    newShape = createFreeform();
                 } else if (shape instanceof XSLFAutoShape) {
                     newShape = createAutoShape();
                 } else if (shape instanceof XSLFConnectorShape) {
                     newShape = createConnector();
-                } else if (shape instanceof XSLFFreeformShape) {
-                    newShape = createFreeform();
                 } else if (shape instanceof XSLFPictureShape) {
                     XSLFPictureShape p = (XSLFPictureShape)shape;
                     XSLFPictureData pd = p.getPictureData();

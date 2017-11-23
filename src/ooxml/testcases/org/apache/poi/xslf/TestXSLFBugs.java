@@ -101,8 +101,8 @@ public class TestXSLFBugs {
         
         assertTrue(shapeToDelete1.isPresent());
         slide1.removeShape(shapeToDelete1.get());
-        slide1.getRelationParts().stream()
-            .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId()) ); 
+        assertTrue(slide1.getRelationParts().stream()
+            .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId()) ));
         
         assertNotNull(ppt1.getPackage().getPart(ppn));
         ppt1.close();
@@ -114,8 +114,8 @@ public class TestXSLFBugs {
             slide2.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).skip(1).findFirst();
         assertTrue(shapeToDelete2.isPresent());
         slide2.removeShape(shapeToDelete2.get());
-        slide2.getRelationParts().stream()
-            .allMatch(rp -> "rId1,rId2".contains(rp.getRelationship().getId()) ); 
+        assertTrue(slide2.getRelationParts().stream()
+            .allMatch(rp -> "rId1,rId2".contains(rp.getRelationship().getId()) ));
         assertNotNull(ppt2.getPackage().getPart(ppn));
         ppt2.close();
 
@@ -124,7 +124,7 @@ public class TestXSLFBugs {
         slide3.getShapes().stream()
             .filter(s -> s instanceof XSLFPictureShape)
             .collect(Collectors.toList())
-            .forEach(s -> slide3.removeShape(s));
+            .forEach(slide3::removeShape);
         assertNull(ppt3.getPackage().getPart(ppn));
         ppt3.close();
     }
@@ -370,16 +370,8 @@ public class TestXSLFBugs {
         }
 
         // Add a few pictures
-        for (int i=0; i<10; i++) {
-            XSLFPictureData data = ss.addPicture(pics[i], PictureType.JPEG);
-            assertEquals(i, data.getIndex());
-            assertEquals(i+1, ss.getPictureData().size());
+        addPictures(ss, slide, pics, 0, 10);
 
-            XSLFPictureShape shape = slide.createPicture(data);
-            assertNotNull(shape.getPictureData());
-            assertArrayEquals(pics[i], shape.getPictureData().getData());
-            assertEquals(i+2, slide.getShapes().size());
-        }
         // Re-fetch the pictures and check
         for (int i=0; i<10; i++) {
             XSLFPictureShape shape = (XSLFPictureShape)slide.getShapes().get(i+1);
@@ -388,16 +380,8 @@ public class TestXSLFBugs {
         }
 
         // Add past 10
-        for (int i=10; i<15; i++) {
-            XSLFPictureData data = ss.addPicture(pics[i], PictureType.JPEG);
-            assertEquals(i, data.getIndex());
-            assertEquals(i+1, ss.getPictureData().size());
+        addPictures(ss, slide, pics, 10, 15);
 
-            XSLFPictureShape shape = slide.createPicture(data);
-            assertNotNull(shape.getPictureData());
-            assertArrayEquals(pics[i], shape.getPictureData().getData());
-            assertEquals(i+2, slide.getShapes().size());
-        }
         // Check all pictures
         for (int i=0; i<15; i++) {
             XSLFPictureShape shape = (XSLFPictureShape)slide.getShapes().get(i+1);
@@ -444,6 +428,19 @@ public class TestXSLFBugs {
 
         ss2.close();
         ss.close();
+    }
+
+    private void addPictures(XMLSlideShow ss, XSLFSlide slide, byte[][] pics, int start, int end) {
+        for (int i = start; i< end; i++) {
+            XSLFPictureData data = ss.addPicture(pics[i], PictureType.JPEG);
+            assertEquals(i, data.getIndex());
+            assertEquals(i+1, ss.getPictureData().size());
+
+            XSLFPictureShape shape = slide.createPicture(data);
+            assertNotNull(shape.getPictureData());
+            assertArrayEquals(pics[i], shape.getPictureData().getData());
+            assertEquals(i+2, slide.getShapes().size());
+        }
     }
 
     private void validateSlides(XMLSlideShow ss, boolean saveAndReload, String... slideTexts) throws IOException {

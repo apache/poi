@@ -481,7 +481,6 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     @Override
     public XSLFPictureData addPicture(byte[] pictureData, PictureType format) {
         XSLFPictureData img = findPictureData(pictureData);
-
         if (img != null) {
             return img;
         }
@@ -491,13 +490,13 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         if (relType == null) {
             throw new IllegalArgumentException("Picture type "+format+" is not supported.");
         }
+
         img = createRelationship(relType, XSLFFactory.getInstance(), imageNumber + 1, true).getDocumentPart();
         img.setIndex(imageNumber);
         _pictures.add(img);
-        try {
-            OutputStream out = img.getPackagePart().getOutputStream();
+
+        try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
-            out.close();
         } catch (IOException e) {
             throw new POIXMLException(e);
         }
@@ -536,11 +535,8 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     {
         int length = (int) pict.length();
         byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
-        FileInputStream is = new FileInputStream(pict);
-        try {
+        try (InputStream is = new FileInputStream(pict)) {
             IOUtils.readFully(is, data);
-        } finally {
-            is.close();
         }
         return addPicture(data, format);
     }
