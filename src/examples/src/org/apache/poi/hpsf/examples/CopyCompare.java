@@ -45,20 +45,19 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
 /**
  * <p>This class copies a POI file system to a new file and compares the copy
  * with the original.</p>
- * 
+ * <p>
  * <p>Property set streams are copied logically, i.e. the application
  * establishes a {@link org.apache.poi.hpsf.PropertySet} of an original property
  * set, creates a {@link org.apache.poi.hpsf.PropertySet} and writes the
  * {@link org.apache.poi.hpsf.PropertySet} to the destination POI file
  * system. - Streams which are no property set streams are copied bit by
  * bit.</p>
- * 
+ * <p>
  * <p>The comparison of the POI file systems is done logically. That means that
  * the two disk files containing the POI file systems do not need to be
  * exactly identical. However, both POI file systems must contain the same
@@ -67,38 +66,36 @@ import org.apache.poi.util.TempFile;
  * with the same attributes, and the sections must contain the same properties.
  * Details like the ordering of the properties do not matter.</p>
  */
-public class CopyCompare
-{
+public class CopyCompare {
     /**
      * <p>Runs the example program. The application expects one or two
      * arguments:</p>
-     * 
+     * <p>
      * <ol>
-     * 
+     * <p>
      * <li><p>The first argument is the disk file name of the POI filesystem to
      * copy.</p></li>
-     * 
+     * <p>
      * <li><p>The second argument is optional. If it is given, it is the name of
      * a disk file the copy of the POI filesystem will be written to. If it is
      * not given, the copy will be written to a temporary file which will be
      * deleted at the end of the program.</p></li>
-     * 
+     * <p>
      * </ol>
      *
      * @param args Command-line arguments.
-     * @exception MarkUnsupportedException if a POI document stream does not
-     * support the mark() operation.
-     * @exception NoPropertySetStreamException if the application tries to
-     * create a property set from a POI document stream that is not a property
-     * set stream.
-     * @exception IOException if any I/O exception occurs.
-     * @exception UnsupportedEncodingException if a character encoding is not
-     * supported.
+     * @throws MarkUnsupportedException     if a POI document stream does not
+     *                                      support the mark() operation.
+     * @throws NoPropertySetStreamException if the application tries to
+     *                                      create a property set from a POI document stream that is not a property
+     *                                      set stream.
+     * @throws IOException                  if any I/O exception occurs.
+     * @throws UnsupportedEncodingException if a character encoding is not
+     *                                      supported.
      */
     public static void main(final String[] args)
-    throws NoPropertySetStreamException, MarkUnsupportedException,
-           UnsupportedEncodingException, IOException
-    {
+            throws NoPropertySetStreamException, MarkUnsupportedException,
+            UnsupportedEncodingException, IOException {
         String originalFileName = null;
         String copyFileName = null;
 
@@ -113,7 +110,7 @@ public class CopyCompare
             copyFileName = args[1];
         } else {
             System.err.println("Usage: " + CopyCompare.class.getName() +
-                               "originPOIFS [copyPOIFS]");
+                    "originPOIFS [copyPOIFS]");
             System.exit(1);
         }
 
@@ -132,25 +129,18 @@ public class CopyCompare
 
         /* Read all documents from the original POI file system and compare them
          * with the equivalent document from the copy. */
-        POIFSFileSystem opfs = null, cpfs = null;
-        try {
-            opfs = new POIFSFileSystem(new File(originalFileName));
-            cpfs = new POIFSFileSystem(new File(copyFileName));
-            
+        try (POIFSFileSystem opfs = new POIFSFileSystem(new File(originalFileName));
+             POIFSFileSystem cpfs = new POIFSFileSystem(new File(copyFileName))) {
             final DirectoryEntry oRoot = opfs.getRoot();
             final DirectoryEntry cRoot = cpfs.getRoot();
             final StringBuffer messages = new StringBuffer();
             if (equal(oRoot, cRoot, messages)) {
                 System.out.println("Equal");
             } else {
-            System.out.println("Not equal: " + messages);
+                System.out.println("Not equal: " + messages);
             }
-        } finally {
-            IOUtils.closeQuietly(cpfs);
-            IOUtils.closeQuietly(opfs);
         }
     }
-
 
 
     /**
@@ -158,25 +148,24 @@ public class CopyCompare
      * The directories must contain the same streams with the same names and
      * contents.</p>
      *
-     * @param d1 The first directory.
-     * @param d2 The second directory.
+     * @param d1  The first directory.
+     * @param d2  The second directory.
      * @param msg The method may append human-readable comparison messages to
-     * this string buffer. 
+     *            this string buffer.
      * @return <code>true</code> if the directories are equal, else
      * <code>false</code>.
-     * @exception MarkUnsupportedException if a POI document stream does not
-     * support the mark() operation.
-     * @exception NoPropertySetStreamException if the application tries to
-     * create a property set from a POI document stream that is not a property
-     * set stream.
-     * @exception IOException if any I/O exception occurs.
+     * @throws MarkUnsupportedException     if a POI document stream does not
+     *                                      support the mark() operation.
+     * @throws NoPropertySetStreamException if the application tries to
+     *                                      create a property set from a POI document stream that is not a property
+     *                                      set stream.
+     * @throws IOException                  if any I/O exception occurs.
      */
     private static boolean equal(final DirectoryEntry d1,
                                  final DirectoryEntry d2,
                                  final StringBuffer msg)
-    throws NoPropertySetStreamException, MarkUnsupportedException,
-           UnsupportedEncodingException, IOException
-    {
+            throws NoPropertySetStreamException, MarkUnsupportedException,
+            UnsupportedEncodingException, IOException {
         boolean equal = true;
         /* Iterate over d1 and compare each entry with its counterpart in d2. */
         for (final Entry e1 : d1) {
@@ -215,30 +204,28 @@ public class CopyCompare
     }
 
 
-
     /**
      * <p>Compares two {@link DocumentEntry} instances of a POI file system.
      * Documents that are not property set streams must be bitwise identical.
      * Property set streams must be logically equal.</p>
      *
-     * @param d1 The first document.
-     * @param d2 The second document.
+     * @param d1  The first document.
+     * @param d2  The second document.
      * @param msg The method may append human-readable comparison messages to
-     * this string buffer. 
+     *            this string buffer.
      * @return <code>true</code> if the documents are equal, else
      * <code>false</code>.
-     * @exception MarkUnsupportedException if a POI document stream does not
-     * support the mark() operation.
-     * @exception NoPropertySetStreamException if the application tries to
-     * create a property set from a POI document stream that is not a property
-     * set stream.
-     * @exception IOException if any I/O exception occurs.
+     * @throws MarkUnsupportedException     if a POI document stream does not
+     *                                      support the mark() operation.
+     * @throws NoPropertySetStreamException if the application tries to
+     *                                      create a property set from a POI document stream that is not a property
+     *                                      set stream.
+     * @throws IOException                  if any I/O exception occurs.
      */
     private static boolean equal(final DocumentEntry d1, final DocumentEntry d2,
                                  final StringBuffer msg)
-    throws NoPropertySetStreamException, MarkUnsupportedException,
-           UnsupportedEncodingException, IOException
-    {
+            throws NoPropertySetStreamException, MarkUnsupportedException,
+            UnsupportedEncodingException, IOException {
         try (DocumentInputStream dis1 = new DocumentInputStream(d1); DocumentInputStream dis2 = new DocumentInputStream(d2)) {
             if (PropertySet.isPropertySetStream(dis1) &&
                     PropertySet.isPropertySetStream(dis2)) {
@@ -264,7 +251,6 @@ public class CopyCompare
     }
 
 
-
     /**
      * <p>This class does all the work. Its method {@link
      * #processPOIFSReaderEvent(POIFSReaderEvent)} is called for each file in
@@ -284,9 +270,9 @@ public class CopyCompare
          * <p>The constructor of a {@link CopyFile} instance creates the target
          * POIFS. It also stores the name of the file the POIFS will be written
          * to once it is complete.</p>
-         * 
+         *
          * @param dstName The name of the disk file the destination POIFS is to
-         * be written to.
+         *                be written to.
          */
         public CopyFile(final String dstName) {
             this.dstName = dstName;
@@ -345,41 +331,39 @@ public class CopyCompare
         }
 
 
-
         /**
          * <p>Writes a {@link PropertySet} to a POI filesystem.</p>
          *
          * @param poiFs The POI filesystem to write to.
-         * @param path The file's path in the POI filesystem.
-         * @param name The file's name in the POI filesystem.
-         * @param ps The property set to write.
+         * @param path  The file's path in the POI filesystem.
+         * @param name  The file's name in the POI filesystem.
+         * @param ps    The property set to write.
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
                          final String name,
                          final PropertySet ps)
-        throws WritingNotSupportedException, IOException {
+                throws WritingNotSupportedException, IOException {
             final DirectoryEntry de = getPath(poiFs, path);
             final PropertySet mps = new PropertySet(ps);
             de.createDocument(name, mps.toInputStream());
         }
 
 
-
         /**
          * <p>Copies the bytes from a {@link DocumentInputStream} to a new
          * stream in a POI filesystem.</p>
          *
-         * @param poiFs The POI filesystem to write to.
-         * @param path The source document's path.
-         * @param name The source document's name.
+         * @param poiFs  The POI filesystem to write to.
+         * @param path   The source document's path.
+         * @param name   The source document's name.
          * @param stream The stream containing the source document.
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
                          final String name,
                          final DocumentInputStream stream)
-        throws IOException {
+                throws IOException {
             // create the directories to the document
             final DirectoryEntry de = getPath(poiFs, path);
             // check the parameters after the directories have been created
@@ -395,7 +379,7 @@ public class CopyCompare
             stream.close();
             out.close();
             final InputStream in =
-                new ByteArrayInputStream(out.toByteArray());
+                    new ByteArrayInputStream(out.toByteArray());
             de.createDocument(name, in);
         }
 
@@ -410,12 +394,12 @@ public class CopyCompare
         }
 
 
-
-        /** Contains the directory paths that have already been created in the
+        /**
+         * Contains the directory paths that have already been created in the
          * output POI filesystem and maps them to their corresponding
-         * {@link org.apache.poi.poifs.filesystem.DirectoryNode}s. */
-        private final Map<String,DirectoryEntry> paths = new HashMap<>();
-
+         * {@link org.apache.poi.poifs.filesystem.DirectoryNode}s.
+         */
+        private final Map<String, DirectoryEntry> paths = new HashMap<>();
 
 
         /**
@@ -424,7 +408,7 @@ public class CopyCompare
          * a POI filesystem its directory must be created first. This method
          * creates all directories between the POI filesystem root and the
          * directory the document should belong to which do not yet exist.</p>
-         * 
+         * <p>
          * <p>Unfortunately POI does not offer a simple method to interrogate
          * the POIFS whether a certain child node (file or directory) exists in
          * a directory. However, since we always start with an empty POIFS which
@@ -435,9 +419,9 @@ public class CopyCompare
          * to the corresponding {@link DirectoryEntry} instances.</p>
          *
          * @param poiFs The POI filesystem the directory hierarchy is created
-         * in, if needed.
-         * @param path The document's path. This method creates those directory
-         * components of this hierarchy which do not yet exist.
+         *              in, if needed.
+         * @param path  The document's path. This method creates those directory
+         *              components of this hierarchy which do not yet exist.
          * @return The directory entry of the document path's parent. The caller
          * should use this {@link DirectoryEntry} to create documents in it.
          */
@@ -464,7 +448,7 @@ public class CopyCompare
                     de = getPath(poiFs, path.getParent());
                     /* Now create the target directory: */
                     de = de.createDirectory(path.getComponent
-                                            (path.length() - 1));
+                            (path.length() - 1));
                 }
                 paths.put(s, de);
                 return de;
