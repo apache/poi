@@ -35,7 +35,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
@@ -73,17 +72,12 @@ public class UpdateEmbeddedDoc {
      */
     public UpdateEmbeddedDoc(String filename) throws FileNotFoundException, IOException {
         this.docFile = new File(filename);
-        FileInputStream fis = null;
         if (!this.docFile.exists()) {
             throw new FileNotFoundException("The Word document " + filename + " does not exist.");
         }
-        try {
-            // Open the Word document file and instantiate the XWPFDocument
-            // class.
-            fis = new FileInputStream(this.docFile);
+        try (FileInputStream fis = new FileInputStream(this.docFile)) {
+            // Open the Word document file and instantiate the XWPFDocument class.
             this.doc = new XWPFDocument(fis);
-        } finally {
-            IOUtils.closeQuietly(fis);
         }
     }
 
@@ -113,30 +107,23 @@ public class UpdateEmbeddedDoc {
                 // to the create method of the WorkbookFactory class. Update
                 // the resulting Workbook and then stream that out again
                 // using an OutputStream obtained from the same PackagePart.
-                InputStream is = pPart.getInputStream();
-                Workbook workbook = null;
-                OutputStream os = null;
-                try {
-                    workbook = WorkbookFactory.create(is);
+                try (InputStream is = pPart.getInputStream();
+                     Workbook workbook = WorkbookFactory.create(is);
+                     OutputStream os = pPart.getOutputStream()) {
                     Sheet sheet = workbook.getSheetAt(SHEET_NUM);
                     Row row = sheet.getRow(ROW_NUM);
                     Cell cell = row.getCell(CELL_NUM);
                     cell.setCellValue(NEW_VALUE);
-                    os = pPart.getOutputStream();
                     workbook.write(os);
-                } finally {
-                    IOUtils.closeQuietly(os);
-                    IOUtils.closeQuietly(workbook);
-                    IOUtils.closeQuietly(is);
                 }
             }
         }
 
         if (!embeddedDocs.isEmpty()) {
             // Finally, write the newly modified Word document out to file.
-            FileOutputStream fos = new FileOutputStream(this.docFile);
-            this.doc.write(fos);
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(this.docFile)) {
+                this.doc.write(fos);
+            }
         }
     }
 
@@ -169,19 +156,14 @@ public class UpdateEmbeddedDoc {
         for (PackagePart pPart : this.doc.getAllEmbedds()) {
             String ext = pPart.getPartName().getExtension();
             if (BINARY_EXTENSION.equals(ext) || OPENXML_EXTENSION.equals(ext)) {
-                InputStream is = pPart.getInputStream();
-                Workbook workbook = null;
-                try {
-                    workbook = WorkbookFactory.create(is);
+                try (InputStream is = pPart.getInputStream();
+                     Workbook workbook = WorkbookFactory.create(is)) {
                     Sheet sheet = workbook.getSheetAt(SHEET_NUM);
                     Row row = sheet.getRow(ROW_NUM);
                     Cell cell = row.getCell(CELL_NUM);
                     if(cell.getNumericCellValue() != NEW_VALUE) {
                         throw new IllegalStateException("Failed to validate document content.");
                     }
-                } finally {
-                    IOUtils.closeQuietly(workbook);
-                    IOUtils.closeQuietly(is);
                 }
             }
         }
