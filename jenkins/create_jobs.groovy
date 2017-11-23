@@ -250,9 +250,11 @@ poijobs.each { poijob ->
                         project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
                     }
                 }
-                archiveJunit('sonar/*/target/surefire-reports/TEST-*.xml') {
-                    testDataPublishers {
-                        publishTestStabilityData()
+                if (!poijob.sonar) {
+                    archiveJunit('sonar/*/target/surefire-reports/TEST-*.xml') {
+                        testDataPublishers {
+                            publishTestStabilityData()
+                        }
                     }
                 }
                 mailer(email, false, false)
