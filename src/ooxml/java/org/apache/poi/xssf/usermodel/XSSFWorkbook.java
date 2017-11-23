@@ -1114,7 +1114,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     /**
      * Get the XSSFSheet object at the given index.
      *
-     * @param index of the sheet number (0-based physical & logical)
+     * @param index of the sheet number (0-based physical &amp; logical)
      * @return XSSFSheet at the provided index
      * @throws IllegalArgumentException if the index is out of range (index
      *            &lt; 0 || index &gt;= getNumberOfSheets()).
@@ -1129,7 +1129,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Returns the index of the sheet by his name (case insensitive match)
      *
      * @param name the sheet name
-     * @return index of the sheet (0 based) or <tt>-1</tt if not found
+     * @return index of the sheet (0 based) or <tt>-1</tt> if not found
      */
     @Override
     public int getSheetIndex(String name) {
