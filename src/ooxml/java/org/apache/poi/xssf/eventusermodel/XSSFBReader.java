@@ -87,14 +87,10 @@ public class XSSFBReader extends XSSFReader {
      * @throws IOException when there's a problem with the workbook part's stream
      */
     public String getAbsPathMetadata() throws IOException {
-        InputStream is = null;
-        try {
-            is = workbookPart.getInputStream();
-            PathExtractor p = new PathExtractor(workbookPart.getInputStream());
+        try (InputStream is = workbookPart.getInputStream()) {
+            PathExtractor p = new PathExtractor(is);
             p.parse();
             return p.getPath();
-        } finally {
-            IOUtils.closeQuietly(is);
         }
     }
 
