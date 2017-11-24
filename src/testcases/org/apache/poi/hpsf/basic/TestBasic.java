@@ -41,7 +41,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -171,13 +171,13 @@ public final class TestBasic {
         final SummaryInformation si = (SummaryInformation)PropertySetFactory.create(is);
         final List<Section> sections = si.getSections();
         final Section s = sections.get(0);
-        assertEquals(s.getFormatID(), SectionIDMap.SUMMARY_INFORMATION_ID);
+        assertEquals(s.getFormatID(), SummaryInformation.FORMAT_ID);
         assertNotNull(s.getProperties());
         assertEquals(17, s.getPropertyCount());
-        assertEquals("Titel", s.getProperty(2));
+        assertEquals("Titel", s.getProperty(PropertyIDMap.PID_TITLE));
         assertEquals(1764, s.getSize());
     }
-    
+
     @Test
     public void bug52117LastPrinted() throws IOException, HPSFException {
         File f = samples.getFile("TestBug52117.doc");
@@ -188,5 +188,21 @@ public final class TestBasic {
         long editTime = si.getEditTime();
         assertTrue(Filetime.isUndefined(lastPrinted));
         assertEquals(1800000000L, editTime);
+    }
+
+    @Test
+    public void bug61809() throws IOException, HPSFException {
+        InputStream is_si = new ByteArrayInputStream(poiFiles.get(0).getBytes());
+        final SummaryInformation si = (SummaryInformation)PropertySetFactory.create(is_si);
+        final Section s_si = si.getSections().get(0);
+
+        assertEquals("PID_TITLE", s_si.getPIDString(PropertyIDMap.PID_TITLE));
+        assertEquals(PropertyIDMap.UNDEFINED, s_si.getPIDString(4711));
+
+        InputStream is_dsi = new ByteArrayInputStream(poiFiles.get(1).getBytes());
+        final DocumentSummaryInformation dsi = (DocumentSummaryInformation)PropertySetFactory.create(is_dsi);
+        final Section s_dsi = dsi.getSections().get(0);
+
+        assertEquals("PID_MANAGER", s_dsi.getPIDString(PropertyIDMap.PID_MANAGER));
     }
 }
