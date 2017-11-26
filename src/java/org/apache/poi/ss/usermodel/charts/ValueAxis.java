@@ -17,12 +17,13 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
 
 /**
- * @author Roman Kashitsyn
+ * @deprecated use XDDFValueAxis instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public interface ValueAxis extends ChartAxis {
 
 	/**

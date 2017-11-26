@@ -19,18 +19,22 @@ package org.apache.poi.xssf.usermodel.charts;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.charts.*;
+import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.AxisTickMark;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import junit.framework.TestCase;
 
 public final class TestXSSFChartAxis extends TestCase {
 
 	private static final double EPSILON = 1E-7;
-	private final XSSFChartAxis axis;
+	private final XDDFChartAxis axis;
 
 	public TestXSSFChartAxis() {
 		super();
@@ -39,9 +43,9 @@ public final class TestXSSFChartAxis extends TestCase {
 		XSSFDrawing drawing = sheet.createDrawingPatriarch();
 		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
 		XSSFChart chart = drawing.createChart(anchor);
-		axis = chart.getChartAxisFactory().createValueAxis(AxisPosition.BOTTOM);
+		axis = chart.createValueAxis(AxisPosition.BOTTOM);
 	}
- 
+
 	public void testLogBaseIllegalArgument() throws Exception {
 		IllegalArgumentException iae = null;
 		try {
@@ -119,13 +123,12 @@ public final class TestXSSFChartAxis extends TestCase {
 
 	public void testGetChartAxisBug57362() {
 	  //Load existing excel with some chart on it having primary and secondary axis.
-	    final Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx");
-        final Sheet sh = workbook.getSheetAt(0);
-        final XSSFSheet xsh = (XSSFSheet) sh;
-        final XSSFDrawing drawing = xsh.createDrawingPatriarch();
+	    final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx");
+        final XSSFSheet sh = workbook.getSheetAt(0);
+        final XSSFDrawing drawing = sh.createDrawingPatriarch();
         final XSSFChart chart = drawing.getCharts().get(0);
 
-        final List<? extends XSSFChartAxis> axisList = chart.getAxis();
+        final List<? extends XDDFChartAxis> axisList = chart.getAxes();
 
         assertEquals(4, axisList.size());
         assertNotNull(axisList.get(0));

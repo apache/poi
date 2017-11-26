@@ -25,7 +25,8 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.LineChartData;
 import org.apache.poi.ss.usermodel.charts.LineChartSeries;
-import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
@@ -36,8 +37,11 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STMarkerStyle;
 
 /**
  * Holds data for a XSSF Line Chart
+ *
+ * @deprecated use {@link XDDFLineChartData} instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public class XSSFLineChartData implements LineChartData {
 
     /**
@@ -46,7 +50,7 @@ public class XSSFLineChartData implements LineChartData {
     private List<Series> series;
 
     public XSSFLineChartData() {
-        series = new ArrayList<>();
+        series = new ArrayList<Series>();
     }
 
     static class Series extends AbstractXSSFChartSeries implements LineChartSeries {
@@ -64,10 +68,12 @@ public class XSSFLineChartData implements LineChartData {
             this.values = values;
         }
 
+        @Override
         public ChartDataSource<?> getCategoryAxisData() {
             return categories;
         }
 
+        @Override
         public ChartDataSource<? extends Number> getValues() {
             return values;
         }
@@ -91,6 +97,7 @@ public class XSSFLineChartData implements LineChartData {
         }
     }
 
+    @Override
     public LineChartSeries addSeries(ChartDataSource<?> categoryAxisData, ChartDataSource<? extends Number> values) {
         if (!values.isNumeric()) {
             throw new IllegalArgumentException("Value data source must be numeric.");
@@ -101,10 +108,12 @@ public class XSSFLineChartData implements LineChartData {
         return newSeries;
     }
 
+    @Override
     public List<? extends LineChartSeries> getSeries() {
         return series;
     }
 
+    @Override
     public void fillChart(Chart chart, ChartAxis... axis) {
         if (!(chart instanceof XSSFChart)) {
             throw new IllegalArgumentException("Chart must be instance of XSSFChart");

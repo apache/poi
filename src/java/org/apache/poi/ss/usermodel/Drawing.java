@@ -40,14 +40,6 @@ public interface Drawing<T extends Shape> extends ShapeContainer<T> {
 	Comment createCellComment(ClientAnchor anchor);
 
 	/**
-	 * Creates a chart.
-	 * @param anchor the client anchor describes how this chart is attached to
-	 *               the sheet.
-	 * @return the newly created chart
-	 */
-	Chart createChart(ClientAnchor anchor);
-
-	/**
 	 * Creates a new client anchor and sets the top-left and bottom-right
 	 * coordinates of the anchor.
 	 *
@@ -62,10 +54,10 @@ public interface Drawing<T extends Shape> extends ShapeContainer<T> {
 	 * @return the newly created client anchor
 	 */
 	ClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2, int col1, int row1, int col2, int row2);
-	
+
     /**
-     * Adds a new OLE Package Shape 
-     * 
+     * Adds a new OLE Package Shape
+     *
      * @param anchor       the client anchor describes how this picture is
      *                     attached to the sheet.
      * @param storageId    the storageId returned by {@link Workbook#addOlePackage(byte[], String, String, String)}

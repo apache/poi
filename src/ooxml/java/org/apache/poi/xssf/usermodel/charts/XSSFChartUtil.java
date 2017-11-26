@@ -20,13 +20,23 @@
 package org.apache.poi.xssf.usermodel.charts;
 
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+import org.apache.poi.util.Removal;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 
 /**
  * Package private class with utility methods.
  *
- * @author Roman Kashitsyn
+ * @deprecated
  */
+@Deprecated
+@Removal(version="4.2")
 class XSSFChartUtil {
 
     private XSSFChartUtil() {}
