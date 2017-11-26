@@ -19,16 +19,21 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
 
 /**
  * Class {@code DataSources} is a factory for {@link ChartDataSource} instances.
  *
- * @author Roman Kashitsyn
+ *@deprecated use XDDFDataSourcesFactory instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public class DataSources {
 
     private DataSources() {

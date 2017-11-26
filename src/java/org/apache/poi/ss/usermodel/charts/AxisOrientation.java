@@ -17,11 +17,15 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Specifies the possible ways to place a picture on a data point, series, wall, or floor.
  *
- * @author Roman Kashitsyn
+ * @deprecated use XDDF AxisOrientation
  */
+@Deprecated
+@Removal(version="4.2")
 public enum AxisOrientation {
 	/**
 	 * Specifies that the values on the axis shall be reversed

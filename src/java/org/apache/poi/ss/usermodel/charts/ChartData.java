@@ -18,14 +18,15 @@
 package org.apache.poi.ss.usermodel.charts;
 
 import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
 
 /**
  * A base for all charts data types.
  *
- * @author Roman Kashitsyn
+ * @deprecated use XDDFChartData instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public interface ChartData {
 
 	/**

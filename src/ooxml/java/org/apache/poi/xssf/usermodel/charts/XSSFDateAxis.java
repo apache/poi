@@ -22,8 +22,9 @@ import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFDateAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -38,8 +39,11 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
  * Date axis type.  Currently only implements the same values as {@link XSSFCategoryAxis}, since the two are nearly identical.
+ *
+ * @deprecated use {@link XDDFDateAxis} instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public class XSSFDateAxis extends XSSFChartAxis {
 
 	private CTDateAx ctDateAx;
@@ -108,7 +112,7 @@ public class XSSFDateAxis extends XSSFChartAxis {
 	public CTChartLines getMajorGridLines() {
 	    return ctDateAx.getMajorGridlines();
 	}
-	
+
 	@Override
 	public void crossAxis(ChartAxis axis) {
 		ctDateAx.getCrossAx().setVal(axis.getId());
