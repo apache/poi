@@ -842,6 +842,11 @@ public final class WorkbookEvaluator {
     
     /**
      * Adjust formula relative references by the offset between the start of the given region and the given target cell.
+     * That is, treat the region top-left cell as "A1" for the purposes of evaluating relative reference components (row and/or column),
+     * and further move references by the position of the target within the region.
+     * <p><pre>formula ref + range top-left + current cell range offset </pre></p>
+     * which simplifies to
+     * <p><pre>formula ref + current cell ref</pre></p>
      * @param ptgs
      * @param target cell within the region to use.
      * @param region containing the cell
@@ -854,22 +859,11 @@ public final class WorkbookEvaluator {
             throw new IllegalArgumentException(target + " is not within " + region);
         }
         
-        return adjustRegionRelativeReference(ptgs, target.getRow() - region.getFirstRow(), target.getCol() - region.getFirstColumn());
-    }
-    
-    /**
-     * Adjust the formula relative cell references by a given delta
-     * @param ptgs
-     * @param deltaRow target row offset from the top left cell of a region
-     * @param deltaColumn target column offset from the top left cell of a region
-     * @return true if any Ptg references were shifted
-     * @throws IndexOutOfBoundsException if the resulting shifted row/column indexes are over the document format limits
-     * @throws IllegalArgumentException if either of the deltas are negative, as the assumption is we are shifting formulas
-     * relative to the top left cell of a region.
-     */
-    protected boolean adjustRegionRelativeReference(Ptg[] ptgs, int deltaRow, int deltaColumn) {
-        if (deltaRow < 0) throw new IllegalArgumentException("offset row must be positive");
-        if (deltaColumn < 0) throw new IllegalArgumentException("offset column must be positive");
+        //return adjustRegionRelativeReference(ptgs, target.getRow() - region.getFirstRow(), target.getCol() - region.getFirstColumn());
+        
+        int deltaRow = target.getRow();
+        int deltaColumn = target.getCol();
+        
         boolean shifted = false;
         for (Ptg ptg : ptgs) {
             // base class for cell reference "things"

@@ -937,6 +937,27 @@ public final class InternalWorkbook {
     }
 
     /**
+     * Update the StyleRecord to point to the new
+     * given index.
+     *
+     * @param oldXf the extended format index that was previously associated with this StyleRecord
+     * @param newXf the extended format index that is now associated with this StyleRecord
+     */
+    public void updateStyleRecord(int oldXf, int newXf) {
+        // Style records always follow after
+        //  the ExtendedFormat records
+        for(int i=records.getXfpos(); i<records.size(); i++) {
+            Record r = records.get(i);
+            if (r instanceof StyleRecord) {
+                StyleRecord sr = (StyleRecord)r;
+                if (sr.getXFIndex() == oldXf) {
+                    sr.setXFIndex(newXf);
+                }
+            }
+        }
+    }
+
+    /**
      * Creates a new StyleRecord, for the given Extended
      *  Format index, and adds it onto the end of the
      *  records collection

@@ -4514,5 +4514,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
     }
 
-
+    public XSSFHeaderFooterProperties getHeaderFooterProperties() {
+        return new XSSFHeaderFooterProperties(getSheetTypeHeaderFooter());
+    }
 }

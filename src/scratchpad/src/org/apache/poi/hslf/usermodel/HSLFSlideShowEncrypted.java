@@ -179,10 +179,8 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
         Decryptor dec = getEncryptionInfo().getDecryptor();
         dec.setChunkSize(-1);
-        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(docstream, offset); // NOSONAR
-        ChunkedCipherInputStream ccis = null;
-        try {
-            ccis = (ChunkedCipherInputStream)dec.getDataStream(lei, docstream.length-offset, 0);
+        try (LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(docstream, offset);
+                ChunkedCipherInputStream ccis = (ChunkedCipherInputStream)dec.getDataStream(lei, docstream.length-offset, 0)) {
             ccis.initCipherForBlock(persistId);
 
             // decrypt header and read length to be decrypted
@@ -193,9 +191,6 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
         } catch (Exception e) {
             throw new EncryptedPowerPointFileException(e);
-        } finally {
-            IOUtils.closeQuietly(ccis);
-            IOUtils.closeQuietly(lei);
         }
     }
 
@@ -288,10 +283,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
             return;
         }
 
-        LittleEndianByteArrayOutputStream los = new LittleEndianByteArrayOutputStream(pictstream, offset); // NOSONAR
         ChunkedCipherOutputStream ccos = null;
 
-        try {
+        try (LittleEndianByteArrayOutputStream los = new LittleEndianByteArrayOutputStream(pictstream, offset)) {
             Encryptor enc = getEncryptionInfo().getEncryptor();
             enc.setChunkSize(-1);
             ccos = enc.getDataStream(los, 0);
@@ -362,7 +356,6 @@ public class HSLFSlideShowEncrypted implements Closeable {
             throw new EncryptedPowerPointFileException(e);
         } finally {
             IOUtils.closeQuietly(ccos);
-            IOUtils.closeQuietly(los);
         }
     }
 

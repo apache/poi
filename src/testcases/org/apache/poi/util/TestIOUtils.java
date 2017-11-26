@@ -19,6 +19,7 @@ package org.apache.poi.util;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,8 +60,7 @@ public final class TestIOUtils {
 
     @AfterClass
     public static void tearDown() throws IOException {
-        //noinspection ResultOfMethodCallIgnored
-        TMP.delete();
+        assertTrue(TMP.delete());
     }
 
     @Test
@@ -112,34 +112,38 @@ public final class TestIOUtils {
 
     @Test
     public void testSkipFully() throws IOException {
-        InputStream is =  new FileInputStream(TMP);
-        long skipped = IOUtils.skipFully(is, 20000L);
-        assertEquals("length: "+LENGTH, LENGTH, skipped);
+        try (InputStream is =  new FileInputStream(TMP)) {
+            long skipped = IOUtils.skipFully(is, 20000L);
+            assertEquals("length: " + LENGTH, LENGTH, skipped);
+        }
     }
 
     @Test
     public void testSkipFullyGtIntMax() throws IOException {
-        InputStream is =  new FileInputStream(TMP);
-        long skipped = IOUtils.skipFully(is, Integer.MAX_VALUE + 20000L);
-        assertEquals("length: "+LENGTH, LENGTH, skipped);
+        try (InputStream is =  new FileInputStream(TMP)) {
+            long skipped = IOUtils.skipFully(is, Integer.MAX_VALUE + 20000L);
+            assertEquals("length: " + LENGTH, LENGTH, skipped);
+        }
     }
 
     @Test
     public void testSkipFullyByteArray() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        InputStream is = new FileInputStream(TMP);
-        IOUtils.copy(is, bos);
-        long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), 20000L);
-        assertEquals("length: "+LENGTH, LENGTH, skipped);
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.copy(is, bos);
+            long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), 20000L);
+            assertEquals("length: " + LENGTH, LENGTH, skipped);
+        }
     }
 
     @Test
     public void testSkipFullyByteArrayGtIntMax() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        InputStream is = new FileInputStream(TMP);
-        IOUtils.copy(is, bos);
-        long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), Integer.MAX_VALUE+ 20000L);
-        assertEquals("length: "+LENGTH, LENGTH, skipped);
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.copy(is, bos);
+            long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), Integer.MAX_VALUE + 20000L);
+            assertEquals("length: " + LENGTH, LENGTH, skipped);
+        }
     }
 
     @Test
@@ -155,14 +159,17 @@ public final class TestIOUtils {
 
     @Test
     public void testSkipZero() throws IOException {
-        InputStream is =  new FileInputStream(TMP);
-        long skipped = IOUtils.skipFully(is, 0);
-        assertEquals("zero length", 0, skipped);
+        try (InputStream is =  new FileInputStream(TMP)) {
+            long skipped = IOUtils.skipFully(is, 0);
+            assertEquals("zero length", 0, skipped);
+        }
     }
+
     @Test(expected = IllegalArgumentException.class)
     public void testSkipNegative() throws IOException {
-        InputStream is =  new FileInputStream(TMP);
-        IOUtils.skipFully(is, -1);
+        try (InputStream is =  new FileInputStream(TMP)) {
+            IOUtils.skipFully(is, -1);
+        }
     }
 
     @Test

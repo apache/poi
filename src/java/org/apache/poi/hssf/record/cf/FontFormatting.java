@@ -452,7 +452,7 @@ public final class FontFormatting implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("    [Font Formatting]\n");
 
         buffer.append("	.font height = ").append(getFontHeight()).append(" twips\n");
@@ -525,7 +525,8 @@ public final class FontFormatting implements Cloneable {
         {
             buffer.append("	.underline type is not modified\n");
         }
-        buffer.append("	.color index = ").append("0x"+Integer.toHexString(getFontColorIndex()).toUpperCase(Locale.ROOT)).append("\n");
+        buffer.append("	.color index = ").append("0x")
+                .append(Integer.toHexString(getFontColorIndex()).toUpperCase(Locale.ROOT)).append('\n');
 
         buffer.append("    [/Font Formatting]\n");
         return buffer.toString();

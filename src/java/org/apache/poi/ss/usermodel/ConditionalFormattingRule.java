@@ -153,6 +153,13 @@ public interface ConditionalFormattingRule extends DifferentialStyleProvider {
     String getFormula2();
 
     /**
+     * XSSF rules store textual condition values as an attribute and also as a formula that needs shifting.  Using the attribute is simpler/faster.
+     * HSSF rules don't have this and return null.  We can fall back on the formula for those (AFAIK).
+     * @return condition text if it exists, or null
+     */
+    String getText();
+    
+    /**
      * The priority of the rule, if defined, otherwise 0.
      * <p>
      * If priority is 0, just use definition order, as that's how older HSSF rules 

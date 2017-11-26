@@ -42,9 +42,23 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hpsf.*;
+import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.HPSFException;
+import org.apache.poi.hpsf.IllegalPropertySetDataException;
+import org.apache.poi.hpsf.NoFormatIDException;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
+import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.ReadingNotSupportedException;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.UnsupportedVariantTypeException;
+import org.apache.poi.hpsf.Variant;
+import org.apache.poi.hpsf.VariantSupport;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
@@ -71,13 +85,6 @@ public class TestWrite {
     private static final int CODEPAGE_DEFAULT = -1;
 
     private static final String POI_FS = "TestHPSFWritingFunctionality.doc";
-
-    private static final int BYTE_ORDER = 0xfffe;
-    private static final int FORMAT     = 0x0000;
-    private static final int OS_VERSION = 0x00020A04;
-    private static final int[] SECTION_COUNT = {1, 2};
-    private static final boolean[] IS_SUMMARY_INFORMATION = {true, false};
-    private static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION = {false, true};
 
     private static final String IMPROPER_DEFAULT_CHARSET_MESSAGE =
         "Your default character set is " + getDefaultCharsetName() +
@@ -147,7 +154,7 @@ public class TestWrite {
         final POIFSFileSystem poiFs = new POIFSFileSystem();
         final PropertySet ps = new PropertySet();
         final Section s = ps.getSections().get(0);
-        s.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+        s.setFormatID(SummaryInformation.FORMAT_ID);
 
         final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
         ps.write(psStream);
@@ -194,7 +201,7 @@ public class TestWrite {
 
         final PropertySet ps = new PropertySet();
         final Section si = new Section();
-        si.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+        si.setFormatID(SummaryInformation.FORMAT_ID);
         ps.clearSections();
         ps.addSection(si);
 
@@ -414,7 +421,7 @@ public class TestWrite {
         final String TITLE = "This is a sample title";
         final PropertySet mps = new PropertySet();
         final Section ms = mps.getSections().get(0);
-        ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+        ms.setFormatID(SummaryInformation.FORMAT_ID);
         final Property p = new Property();
         p.setID(PropertyIDMap.PID_TITLE);
         p.setType(Variant.VT_LPSTR);
@@ -485,7 +492,7 @@ public class TestWrite {
         m.put(Long.valueOf(2), "String 2");
         m.put(Long.valueOf(3), "String 3");
         s.setDictionary(m);
-        s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
+        s.setFormatID(DocumentSummaryInformation.FORMAT_ID[0]);
         int codepage = CodePageUtil.CP_UNICODE;
         s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2, codepage);
         poiFs.createDocument(ps1.toInputStream(), "Test");
@@ -751,7 +758,7 @@ public class TestWrite {
 
         try {
             s.setDictionary(m);
-            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
+            s.setFormatID(DocumentSummaryInformation.FORMAT_ID[0]);
             int codepage = 12345;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
                           Integer.valueOf(codepage));

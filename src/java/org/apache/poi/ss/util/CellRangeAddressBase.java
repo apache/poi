@@ -17,7 +17,12 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -29,7 +34,7 @@ import org.apache.poi.ss.usermodel.Cell;
  *
  * Common superclass of 8-bit and 16-bit versions
  */
-public abstract class CellRangeAddressBase {
+public abstract class CellRangeAddressBase implements Iterable<CellAddress> {
 
     /**
      * Indicates a cell or range is in the given relative position in a range.
@@ -160,6 +165,20 @@ public abstract class CellRangeAddressBase {
 	    return isInRange(ref.getRow(), ref.getCol());
 	}
 	
+    /**
+     * Determines if the given {@link CellAddress} lies within the bounds 
+     * of this range.  
+     * <p>NOTE: It is up to the caller to ensure the reference is 
+     * for the correct sheet, since this instance doesn't have a sheet reference.
+     *
+     * @param ref the CellAddress to check
+     * @return True if the reference lies within the bounds, false otherwise.
+     * @see #intersects(CellRangeAddressBase) for checking if two ranges overlap
+     */
+    public boolean isInRange(CellAddress ref) {
+        return isInRange(ref.getRow(), ref.getColumn());
+    }
+	
 	/**
 	 * Determines if the given {@link Cell} lies within the bounds 
 	 * of this range.  
@@ -264,10 +283,67 @@ public abstract class CellRangeAddressBase {
 		return (_lastRow - _firstRow + 1) * (_lastCol - _firstCol + 1);
 	}
 
+	/**
+	 * Returns an iterator over the CellAddresses in this cell range in row-major order.
+	 * @since POI 4.0.0
+	 */
 	@Override
-    public final String toString() {
-		CellReference crA = new CellReference(_firstRow, _firstCol);
-		CellReference crB = new CellReference(_lastRow, _lastCol);
+	public Iterator<CellAddress> iterator() {
+		return new RowMajorCellAddressIterator(this);
+	}
+	
+	/**
+	 *  Iterates over the cell addresses in a cell range in row major order
+	 *  
+	 *  The iterator is unaffected by changes to the CellRangeAddressBase instance
+	 *  after the iterator is created.
+	 */
+	private static class RowMajorCellAddressIterator implements Iterator<CellAddress> {
+		private final int firstRow, firstCol, lastRow, lastCol;
+		private int r, c;
+		
+		public RowMajorCellAddressIterator(CellRangeAddressBase ref) {
+			r = firstRow = ref.getFirstRow();
+			c = firstCol = ref.getFirstColumn();
+			lastRow = ref.getLastRow();
+			lastCol = ref.getLastColumn();
+			
+			// whole row and whole column ranges currently not supported
+			if (firstRow < 0) throw new IllegalStateException("First row cannot be negative.");
+			if (firstCol < 0) throw new IllegalStateException("First column cannot be negative.");
+			
+			// avoid infinite iteration
+			if (firstRow > lastRow) throw new IllegalStateException("First row cannot be greater than last row.");
+			if (firstCol > lastCol) throw new IllegalStateException("First column cannot be greater than last column.");
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return r <= lastRow && c <= lastCol;
+		}
+		
+		@Override
+		public CellAddress next() {
+			if (hasNext()) {
+				final CellAddress addr = new CellAddress(r, c);
+				// row major order
+				if (c < lastCol) {
+					c++;
+				}
+				else { //c >= lastCol, end of row reached
+					c = firstCol; //CR
+					r++;		  //LF
+				}
+				return addr;
+			}
+			throw new NoSuchElementException();
+		}
+	}
+
+	@Override
+	public final String toString() {
+		CellAddress crA = new CellAddress(_firstRow, _firstCol);
+		CellAddress crB = new CellAddress(_lastRow, _lastCol);
 		return getClass().getName() + " [" + crA.formatAsString() + ":" + crB.formatAsString() +"]";
 	}
 	

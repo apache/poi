@@ -146,7 +146,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     HSSFSheet cloneSheet(HSSFWorkbook workbook) {
-        this.getDrawingPatriarch();/**Aggregate drawing records**/
+        // Aggregate drawing records
+        this.getDrawingPatriarch();
         HSSFSheet sheet = new HSSFSheet(workbook, _sheet.cloneSheet());
         int pos = sheet._sheet.findFirstRecordLocBySid(DrawingRecord.sid);
         DrawingRecord dr = (DrawingRecord) sheet._sheet.findFirstRecordBySid(DrawingRecord.sid);
@@ -1580,17 +1581,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         // comments to the first or last row, rather than moving them out of
         // bounds or deleting them
         if (moveComments) {
-            final HSSFPatriarch patriarch = createDrawingPatriarch();
-            for (final HSSFShape shape : patriarch.getChildren()) {
-                if (!(shape instanceof HSSFComment)) {
-                    continue;
-                }
-                final HSSFComment comment = (HSSFComment) shape;
-                final int r = comment.getRow();
-                if (startRow <= r && r <= endRow) {
-                    comment.setRow(clip(r + n));
-                }
-            }
+            moveCommentsForRowShift(startRow, endRow, n);
         }
 
         // Shift Merged Regions
@@ -1600,17 +1591,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         _sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
         
         // Delete overwritten hyperlinks
-        final int firstOverwrittenRow = startRow + n;
-        final int lastOverwrittenRow = endRow + n;
-        for (HSSFHyperlink link : getHyperlinkList()) {
-            // If hyperlink is fully contained in the rows that will be overwritten, delete the hyperlink
-            final int firstRow = link.getFirstRow();
-            final int lastRow = link.getLastRow();
-            if (firstOverwrittenRow <= firstRow && firstRow <= lastOverwrittenRow &&
-                    lastOverwrittenRow <= lastRow && lastRow <= lastOverwrittenRow) {
-                removeHyperlink(link);
-            }
-        }
+        deleteOverwrittenHyperlinksForRowShift(startRow, endRow, n);
 
         for (int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc) {
             HSSFRow row = getRow(rowNum);
@@ -1664,6 +1645,35 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         // Re-compute the first and last rows of the sheet as needed
+        recomputeFirstAndLastRowsForRowShift(startRow, endRow, n);
+
+        // Update formulas that refer to rows that have been moved
+        updateFormulasForRowShift(startRow, endRow, n);
+    }
+
+    private void updateFormulasForRowShift(int startRow, int endRow, int n) {
+        int sheetIndex = _workbook.getSheetIndex(this);
+        String sheetName = _workbook.getSheetName(sheetIndex);
+        short externSheetIndex = _book.checkExternSheet(sheetIndex);
+        FormulaShifter formulaShifter = FormulaShifter.createForRowShift(
+                         externSheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL97);
+        // update formulas on this sheet that point to rows which have been moved
+        _sheet.updateFormulasAfterCellShift(formulaShifter, externSheetIndex);
+
+        // update formulas on other sheets that point to rows that have been moved on this sheet
+        int nSheets = _workbook.getNumberOfSheets();
+        for (int i = 0; i < nSheets; i++) {
+            InternalSheet otherSheet = _workbook.getSheetAt(i).getSheet();
+            if (otherSheet == this._sheet) {
+                continue;
+            }
+            short otherExtSheetIx = _book.checkExternSheet(i);
+            otherSheet.updateFormulasAfterCellShift(formulaShifter, otherExtSheetIx);
+        }
+        _workbook.getWorkbook().updateNamesAfterCellShift(formulaShifter);
+    }
+
+    private void recomputeFirstAndLastRowsForRowShift(int startRow, int endRow, int n) {
         if (n > 0) {
             // Rows are moving down
             if (startRow == _firstrow) {
@@ -1696,26 +1706,36 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 }
             }
         }
+    }
 
-        // Update any formulas on this sheet that point to
-        //  rows which have been moved
-        int sheetIndex = _workbook.getSheetIndex(this);
-        String sheetName = _workbook.getSheetName(sheetIndex);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex);
-        FormulaShifter shifter = FormulaShifter.createForRowShift(
-                         externSheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL97);
-        _sheet.updateFormulasAfterCellShift(shifter, externSheetIndex);
+    private void deleteOverwrittenHyperlinksForRowShift(int startRow, int endRow, int n) {
+        final int firstOverwrittenRow = startRow + n;
+        final int lastOverwrittenRow = endRow + n;
+        for (HSSFHyperlink link : getHyperlinkList()) {
+            // If hyperlink is fully contained in the rows that will be overwritten, delete the hyperlink
+            final int firstRow = link.getFirstRow();
+            final int lastRow = link.getLastRow();
+            if (firstOverwrittenRow <= firstRow
+                    && firstRow <= lastOverwrittenRow
+                    && lastOverwrittenRow <= lastRow
+                    && lastRow <= lastOverwrittenRow) {
+                removeHyperlink(link);
+            }
+        }
+    }
 
-        int nSheets = _workbook.getNumberOfSheets();
-        for (int i = 0; i < nSheets; i++) {
-            InternalSheet otherSheet = _workbook.getSheetAt(i).getSheet();
-            if (otherSheet == this._sheet) {
+    private void moveCommentsForRowShift(int startRow, int endRow, int n) {
+        final HSSFPatriarch patriarch = createDrawingPatriarch();
+        for (final HSSFShape shape : patriarch.getChildren()) {
+            if (!(shape instanceof HSSFComment)) {
                 continue;
             }
-            short otherExtSheetIx = _book.checkExternSheet(i);
-            otherSheet.updateFormulasAfterCellShift(shifter, otherExtSheetIx);
+            final HSSFComment comment = (HSSFComment) shape;
+            final int r = comment.getRow();
+            if (startRow <= r && r <= endRow) {
+                comment.setRow(clip(r + n));
+            }
         }
-        _workbook.getWorkbook().updateNamesAfterCellShift(shifter);
     }
 
     protected void insertChartRecords(List<Record> records) {

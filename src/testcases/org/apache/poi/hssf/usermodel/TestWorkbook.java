@@ -17,11 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -30,12 +25,11 @@ import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Class to test Workbook functionality
@@ -71,19 +65,8 @@ public final class TestWorkbook {
         HSSFWorkbook wb1  = new HSSFWorkbook();
         HSSFSheet s = wb1.createSheet();
 
-        for (int rownum = 0; rownum < 100; rownum++) {
-            HSSFRow r = s.createRow(rownum);
+        populateSheet(s);
 
-            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                HSSFCell c = r.createCell(cellnum);
-                c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
-                c = r.createCell(cellnum + 1);
-                c.setCellValue(new HSSFRichTextString("TEST"));
-            }
-        }
-        
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         
         sanityChecker.checkHSSFWorkbook(wb1);
@@ -112,18 +95,8 @@ public final class TestWorkbook {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet s = wb1.createSheet();
 
-        for (int rownum = 0; rownum < 100; rownum++) {
-            HSSFRow r = s.createRow(rownum);
+        populateSheet(s);
 
-            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                HSSFCell c = r.createCell(cellnum);
-                c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
-                c = r.createCell(cellnum + 1);
-                c.setCellValue(new HSSFRichTextString("TEST"));
-            }
-        }
         for (int rownum = 0; rownum < 25; rownum++) {
             HSSFRow r = s.getRow(rownum);
             s.removeRow(r);
@@ -411,18 +384,8 @@ public final class TestWorkbook {
         HSSFWorkbook wb1 = new HSSFWorkbook();
         HSSFSheet    s   = wb1.createSheet();
 
-        for (int rownum = 0; rownum < 100; rownum++) {
-            HSSFRow r = s.createRow(rownum);
+        populateSheet(s);
 
-            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                HSSFCell c = r.createCell(cellnum);
-                c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
-                c = r.createCell(cellnum + 1);
-                c.setCellValue(new HSSFRichTextString("TEST"));
-            }
-        }
         s.addMergedRegion(new CellRangeAddress(0, 10, 0, 10));
         s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15));
         sanityChecker.checkHSSFWorkbook(wb1);
@@ -434,9 +397,24 @@ public final class TestWorkbook {
 
         confirmRegion(new CellRangeAddress(0, 10, 0, 10), r1);
         confirmRegion(new CellRangeAddress(30, 40,5, 15), r2);
-        
+
         wb2.close();
         wb1.close();
+    }
+
+    private void populateSheet(Sheet s) {
+        for (int rownum = 0; rownum < 100; rownum++) {
+            Row r = s.createRow(rownum);
+
+            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
+                Cell c = r.createCell(cellnum);
+                c.setCellValue(rownum * 10000 + cellnum
+                        + ((( double ) rownum / 1000)
+                        + (( double ) cellnum / 10000)));
+                c = r.createCell(cellnum + 1);
+                c.setCellValue(new HSSFRichTextString("TEST"));
+            }
+        }
     }
 
     private static void confirmRegion(CellRangeAddress ra, CellRangeAddress rb) {
@@ -448,7 +426,6 @@ public final class TestWorkbook {
 
     /**
      * Test the backup field gets set as expected.
-     * @throws IOException 
      */
     @Test
     public void testBackupRecord() throws IOException {
@@ -490,7 +467,6 @@ public final class TestWorkbook {
      * This tests is for bug [ #506658 ] Repeating output.
      *
      * We need to make sure only one LabelSSTRecord is produced.
-     * @throws IOException 
      */
     @Test
     public void testRepeatingBug() throws IOException {
@@ -501,6 +477,7 @@ public final class TestWorkbook {
 
         cell.setCellValue(new HSSFRichTextString("Class"));
         cell = row.createCell(2);
+        assertNotNull(cell);
 
         RecordCounter rc = new RecordCounter();
         sheet.getSheet().visitContainedRecords(rc, 0);
@@ -584,12 +561,16 @@ public final class TestWorkbook {
         try {
             sheet.setRepeatingColumns(cra);
             fail("invalid start index is ignored");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
         
         try {
             sheet.setRepeatingRows(cra);
             fail("invalid start index is ignored");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
 
         sheet.setRepeatingColumns(null);
         sheet.setRepeatingRows(null);
@@ -597,39 +578,6 @@ public final class TestWorkbook {
         HSSFTestDataSamples.writeOutAndReadBack(workbook).close();
         
         workbook.close();
-    }
-
-    @Test
-    public void testAddMergedRegionWithRegion() throws IOException {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        HSSFSheet    s   = wb1.createSheet();
-
-        for (int rownum = 0; rownum < 100; rownum++) {
-            HSSFRow r = s.createRow(rownum);
-
-            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                HSSFCell c = r.createCell(cellnum);
-                c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
-                c = r.createCell(cellnum + 1);
-                c.setCellValue(new HSSFRichTextString("TEST"));
-            }
-        }
-        s.addMergedRegion(new CellRangeAddress(0, 10, 0, 10));
-        s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15));
-        sanityChecker.checkHSSFWorkbook(wb1);
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-
-        s  = wb2.getSheetAt(0);
-        CellRangeAddress r1 = s.getMergedRegion(0);
-        CellRangeAddress r2 = s.getMergedRegion(1);
-
-        confirmRegion(new CellRangeAddress(0, 10, 0, 10), r1);
-        confirmRegion(new CellRangeAddress(30, 40,5, 15), r2);
-        
-        wb2.close();
-        wb1.close();
     }
 
     @Test

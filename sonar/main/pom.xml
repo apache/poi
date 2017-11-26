@@ -103,7 +103,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
                 <configuration>
-                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -XX:-OmitStackTraceInFastThrow</argLine>
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=target/tmp -XX:-OmitStackTraceInFastThrow</argLine>
                 </configuration>
             </plugin>
 		</plugins>
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
+            <version>1.11</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>

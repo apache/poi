@@ -40,9 +40,13 @@ import org.apache.poi.ss.formula.ptg.RefPtgBase;
  */
 public final class FormulaShifter {
 
-    private static enum ShiftMode {
+    private enum ShiftMode {
         RowMove,
         RowCopy,
+        /** @since POI 4.0.0 */
+        ColumnMove,
+        /** @since POI 4.0.0 */
+        ColumnCopy,
         SheetMove,
     }
 
@@ -116,6 +120,22 @@ public final class FormulaShifter {
         return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowCopy, version);
     }
 
+    /**
+     * @since POI 4.0.0
+     */
+    public static FormulaShifter createForColumnShift(int externSheetIndex, String sheetName, int firstMovedColumnIndex, int lastMovedColumnIndex, int numberOfColumnsToMove,
+            SpreadsheetVersion version) {
+        return new FormulaShifter(externSheetIndex, sheetName, firstMovedColumnIndex, lastMovedColumnIndex, numberOfColumnsToMove, ShiftMode.ColumnMove, version);
+    }
+    
+    /**
+     * @since POI 4.0.0
+     */
+    public static FormulaShifter createForColumnCopy(int externSheetIndex, String sheetName, int firstMovedColumnIndex, int lastMovedColumnIndex, int numberOfColumnsToMove,
+                                                      SpreadsheetVersion version) {
+        return new FormulaShifter(externSheetIndex, sheetName, firstMovedColumnIndex, lastMovedColumnIndex, numberOfColumnsToMove, ShiftMode.ColumnCopy, version);
+    }
+
     public static FormulaShifter createForSheetShift(int srcSheetIndex, int dstSheetIndex) {
         return new FormulaShifter(srcSheetIndex, dstSheetIndex);
     }
@@ -154,27 +174,32 @@ public final class FormulaShifter {
             case RowCopy:
                 // Covered Scenarios:
                 // * row copy on same sheet
-                // * row copy between different sheetsin the same workbook
+                // * row copy between different sheets in the same workbook
                 return adjustPtgDueToRowCopy(ptg);
+            case ColumnMove:
+                return adjustPtgDueToColumnMove(ptg, currentExternSheetIx);
+            case ColumnCopy:
+                return adjustPtgDueToColumnCopy(ptg);
             case SheetMove:
                 return adjustPtgDueToSheetMove(ptg);
             default:
                 throw new IllegalStateException("Unsupported shift mode: " + _mode);
         }
     }
+
     /**
-     * @return in-place modified ptg (if row move would cause Ptg to change),
-     * deleted ref ptg (if row move causes an error),
+     * @return in-place modified ptg (if column move would cause Ptg to change),
+     * deleted ref ptg (if column move causes an error),
      * or null (if no Ptg change is needed)
      */
-    private Ptg adjustPtgDueToRowMove(Ptg ptg, int currentExternSheetIx) {
+    private Ptg adjustPtgDueToMove(Ptg ptg, int currentExternSheetIx, boolean isRowMove) {
         if(ptg instanceof RefPtg) {
             if (currentExternSheetIx != _externSheetIndex) {
                 // local refs on other sheets are unaffected
                 return null;
             }
             RefPtg rptg = (RefPtg)ptg;
-            return rowMoveRefPtg(rptg);
+            return isRowMove ? rowMoveRefPtg(rptg) : columnMoveRefPtg(rptg);
         }
         if(ptg instanceof Ref3DPtg) {
             Ref3DPtg rptg = (Ref3DPtg)ptg;
@@ -183,23 +208,24 @@ public final class FormulaShifter {
                 // (currentExternSheetIx is irrelevant)
                 return null;
             }
-            return rowMoveRefPtg(rptg);
+            return isRowMove ? rowMoveRefPtg(rptg) : columnMoveRefPtg(rptg);
         }
         if(ptg instanceof Ref3DPxg) {
             Ref3DPxg rpxg = (Ref3DPxg)ptg;
             if (rpxg.getExternalWorkbookNumber() > 0 ||
-                   ! _sheetName.equals(rpxg.getSheetName())) {
+                    ! _sheetName.equalsIgnoreCase(rpxg.getSheetName())) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 return null;
             }
-            return rowMoveRefPtg(rpxg);
+            return isRowMove ? rowMoveRefPtg(rpxg) : columnMoveRefPtg(rpxg);
         }
         if(ptg instanceof Area2DPtgBase) {
             if (currentExternSheetIx != _externSheetIndex) {
                 // local refs on other sheets are unaffected
                 return ptg;
             }
-            return rowMoveAreaPtg((Area2DPtgBase)ptg);
+            Area2DPtgBase aptg = (Area2DPtgBase) ptg;
+            return isRowMove ? rowMoveAreaPtg(aptg) : columnMoveAreaPtg(aptg);
         }
         if(ptg instanceof Area3DPtg) {
             Area3DPtg aptg = (Area3DPtg)ptg;
@@ -208,29 +234,82 @@ public final class FormulaShifter {
                 // (currentExternSheetIx is irrelevant)
                 return null;
             }
-            return rowMoveAreaPtg(aptg);
+            return isRowMove ? rowMoveAreaPtg(aptg) : columnMoveAreaPtg(aptg);
         }
         if(ptg instanceof Area3DPxg) {
             Area3DPxg apxg = (Area3DPxg)ptg;
             if (apxg.getExternalWorkbookNumber() > 0 ||
-                    ! _sheetName.equals(apxg.getSheetName())) {
+                    ! _sheetName.equalsIgnoreCase(apxg.getSheetName())) {
                 // only move 3D refs that refer to the sheet with cells being moved
                 return null;
             }
-            return rowMoveAreaPtg(apxg);
+            return isRowMove ? rowMoveAreaPtg(apxg) : columnMoveAreaPtg(apxg);
         }
         return null;
     }
-    
+
+    /**
+     * @return in-place modified ptg (if row move would cause Ptg to change),
+     * deleted ref ptg (if row move causes an error),
+     * or null (if no Ptg change is needed)
+     */
+    private Ptg adjustPtgDueToRowMove(Ptg ptg, int currentExternSheetIx) {
+        return adjustPtgDueToMove(ptg, currentExternSheetIx, true);
+    }
+
+    /**
+     * @return in-place modified ptg (if column move would cause Ptg to change),
+     * deleted ref ptg (if column move causes an error),
+     * or null (if no Ptg change is needed)
+     */
+    private Ptg adjustPtgDueToColumnMove(Ptg ptg, int currentExternSheetIx) {
+        return adjustPtgDueToMove(ptg, currentExternSheetIx, false);
+    }
+
+    /**
+     * Call this on any ptg reference contained in a row or column of cells that was copied.
+     * If the ptg reference is relative, the references will be shifted by the distance
+     * that the rows or columns were copied.
+     *
+     * @param ptg the ptg to shift
+     * @return deleted ref ptg, in-place modified ptg, or null
+     * If Ptg would be shifted off the first or last row or columns of a sheet, return deleted ref
+     * If Ptg needs to be changed, modifies Ptg in-place
+     * If Ptg doesn't need to be changed, returns <code>null</code>
+     */
+    private Ptg adjustPtgDueToCopy(Ptg ptg, boolean isRowCopy) {
+        if(ptg instanceof RefPtg) {
+            RefPtg rptg = (RefPtg)ptg;
+            return isRowCopy ? rowCopyRefPtg(rptg) : columnCopyRefPtg(rptg);
+        }
+        if(ptg instanceof Ref3DPtg) {
+            Ref3DPtg rptg = (Ref3DPtg)ptg;
+            return isRowCopy ? rowCopyRefPtg(rptg) : columnCopyRefPtg(rptg);
+        }
+        if(ptg instanceof Ref3DPxg) {
+            Ref3DPxg rpxg = (Ref3DPxg)ptg;
+            return isRowCopy ? rowCopyRefPtg(rpxg) : columnCopyRefPtg(rpxg);
+        }
+        if(ptg instanceof Area2DPtgBase) {
+            Area2DPtgBase aptg = (Area2DPtgBase) ptg;
+            return isRowCopy ? rowCopyAreaPtg(aptg) : columnCopyAreaPtg(aptg);
+        }
+        if(ptg instanceof Area3DPtg) {
+            Area3DPtg aptg = (Area3DPtg)ptg;
+            return isRowCopy ? rowCopyAreaPtg(aptg) : columnCopyAreaPtg(aptg);
+        }
+        if(ptg instanceof Area3DPxg) {
+            Area3DPxg apxg = (Area3DPxg)ptg;
+            return isRowCopy ? rowCopyAreaPtg(apxg) : columnCopyAreaPtg(apxg);
+        }
+        return null;
+    }
+
     /**
      * Call this on any ptg reference contained in a row of cells that was copied.
      * If the ptg reference is relative, the references will be shifted by the distance
      * that the rows were copied.
-     * In the future similar functions could be written due to column copying or
-     * individual cell copying. Just make sure to only call adjustPtgDueToRowCopy on
-     * formula cells that are copied (unless row shifting, where references outside
-     * of the shifted region need to be updated to reflect the shift, a copy is self-contained).
-     * 
+     *
      * @param ptg the ptg to shift
      * @return deleted ref ptg, in-place modified ptg, or null
      * If Ptg would be shifted off the first or last row of a sheet, return deleted ref
@@ -238,30 +317,22 @@ public final class FormulaShifter {
      * If Ptg doesn't need to be changed, returns <code>null</code>
      */
     private Ptg adjustPtgDueToRowCopy(Ptg ptg) {
-        if(ptg instanceof RefPtg) {
-            RefPtg rptg = (RefPtg)ptg;
-            return rowCopyRefPtg(rptg);
-        }
-        if(ptg instanceof Ref3DPtg) {
-            Ref3DPtg rptg = (Ref3DPtg)ptg;
-            return rowCopyRefPtg(rptg);
-        }
-        if(ptg instanceof Ref3DPxg) {
-            Ref3DPxg rpxg = (Ref3DPxg)ptg;
-            return rowCopyRefPtg(rpxg);
-        }
-        if(ptg instanceof Area2DPtgBase) {
-            return rowCopyAreaPtg((Area2DPtgBase)ptg);
-        }
-        if(ptg instanceof Area3DPtg) {
-            Area3DPtg aptg = (Area3DPtg)ptg;
-            return rowCopyAreaPtg(aptg);
-        }
-        if(ptg instanceof Area3DPxg) {
-            Area3DPxg apxg = (Area3DPxg)ptg;
-            return rowCopyAreaPtg(apxg);
-        }
-        return null;
+        return adjustPtgDueToCopy(ptg, true);
+    }
+
+    /**
+     * Call this on any ptg reference contained in a column of cells that was copied.
+     * If the ptg reference is relative, the references will be shifted by the distance
+     * that the columns were copied.
+     *
+     * @param ptg the ptg to shift
+     * @return deleted ref ptg, in-place modified ptg, or null
+     * If Ptg would be shifted off the first or last column of a sheet, return deleted ref
+     * If Ptg needs to be changed, modifies Ptg in-place
+     * If Ptg doesn't need to be changed, returns <code>null</code>
+     */
+    private Ptg adjustPtgDueToColumnCopy(Ptg ptg) {
+        return adjustPtgDueToCopy(ptg, false);
     }
 
 
@@ -522,6 +593,225 @@ public final class FormulaShifter {
         return changed ? aptg : null;
     }
 
+
+    private Ptg columnMoveRefPtg(RefPtgBase rptg) {
+        int refColumn = rptg.getColumn();
+        if (_firstMovedIndex <= refColumn && refColumn <= _lastMovedIndex) {
+            // Columns being moved completely enclose the ref.
+            // - move the area ref along with the columns regardless of destination
+            rptg.setColumn(refColumn + _amountToMove);
+            return rptg;
+        }
+        // else rules for adjusting area may also depend on the destination of the moved columns
+
+        int destFirstColumnIndex = _firstMovedIndex + _amountToMove;
+        int destLastColumnIndex = _lastMovedIndex + _amountToMove;
+
+        // ref is outside source columns
+        // check for clashes with destination
+
+        if (destLastColumnIndex < refColumn || refColumn < destFirstColumnIndex) {
+            // destination columns are completely outside ref
+            return null;
+        }
+
+        if (destFirstColumnIndex <= refColumn && refColumn <= destLastColumnIndex) {
+            // destination columns enclose the area (possibly exactly)
+            return createDeletedRef(rptg);
+        }
+        throw new IllegalStateException("Situation not covered: (" + _firstMovedIndex + ", " +
+                _lastMovedIndex + ", " + _amountToMove + ", " + refColumn + ", " + refColumn + ")");
+    }
+
+    private Ptg columnMoveAreaPtg(AreaPtgBase aptg) {
+        int aFirstColumn = aptg.getFirstColumn();
+        int aLastColumn = aptg.getLastColumn();
+        if (_firstMovedIndex <= aFirstColumn && aLastColumn <= _lastMovedIndex) {
+            // Columns being moved completely enclose the area ref.
+            // - move the area ref along with the columns regardless of destination
+            aptg.setFirstColumn(aFirstColumn + _amountToMove);
+            aptg.setLastColumn(aLastColumn + _amountToMove);
+            return aptg;
+        }
+        // else rules for adjusting area may also depend on the destination of the moved columns
+
+        int destFirstColumnIndex = _firstMovedIndex + _amountToMove;
+        int destLastColumnIndex = _lastMovedIndex + _amountToMove;
+
+        if (aFirstColumn < _firstMovedIndex && _lastMovedIndex < aLastColumn) {
+            // Columns moved were originally *completely* within the area ref
+
+            // If the destination of the columns overlaps either the top
+            // or bottom of the area ref there will be a change
+            if (destFirstColumnIndex < aFirstColumn && aFirstColumn <= destLastColumnIndex) {
+                // truncate the top of the area by the moved columns
+                aptg.setFirstColumn(destLastColumnIndex+1);
+                return aptg;
+            } else if (destFirstColumnIndex <= aLastColumn && aLastColumn < destLastColumnIndex) {
+                // truncate the bottom of the area by the moved columns
+                aptg.setLastColumn(destFirstColumnIndex-1);
+                return aptg;
+            }
+            // else - columns have moved completely outside the area ref,
+            // or still remain completely within the area ref
+            return null; // - no change to the area
+        }
+        if (_firstMovedIndex <= aFirstColumn && aFirstColumn <= _lastMovedIndex) {
+            // Columns moved include the first column of the area ref, but not the last column
+            // btw: (aLastColumn > _lastMovedIndex)
+            if (_amountToMove < 0) {
+                // simple case - expand area by shifting top upward
+                aptg.setFirstColumn(aFirstColumn + _amountToMove);
+                return aptg;
+            }
+            if (destFirstColumnIndex > aLastColumn) {
+                // in this case, excel ignores the column move
+                return null;
+            }
+            int newFirstColumnIx = aFirstColumn + _amountToMove;
+            if (destLastColumnIndex < aLastColumn) {
+                // end of area is preserved (will remain exact same column)
+                // the top area column is moved simply
+                aptg.setFirstColumn(newFirstColumnIx);
+                return aptg;
+            }
+            // else - bottom area column has been replaced - both area top and bottom may move now
+            int areaRemainingTopColumnIx = _lastMovedIndex + 1;
+            if (destFirstColumnIndex > areaRemainingTopColumnIx) {
+                // old top column of area has moved deep within the area, and exposed a new top column
+                newFirstColumnIx = areaRemainingTopColumnIx;
+            }
+            aptg.setFirstColumn(newFirstColumnIx);
+            aptg.setLastColumn(Math.max(aLastColumn, destLastColumnIndex));
+            return aptg;
+        }
+        if (_firstMovedIndex <= aLastColumn && aLastColumn <= _lastMovedIndex) {
+            // Columns moved include the last column of the area ref, but not the first
+            // btw: (aFirstColumn < _firstMovedIndex)
+            if (_amountToMove > 0) {
+                // simple case - expand area by shifting bottom downward
+                aptg.setLastColumn(aLastColumn + _amountToMove);
+                return aptg;
+            }
+            if (destLastColumnIndex < aFirstColumn) {
+                // in this case, excel ignores the column move
+                return null;
+            }
+            int newLastColumnIx = aLastColumn + _amountToMove;
+            if (destFirstColumnIndex > aFirstColumn) {
+                // top of area is preserved (will remain exact same column)
+                // the bottom area column is moved simply
+                aptg.setLastColumn(newLastColumnIx);
+                return aptg;
+            }
+            // else - top area column has been replaced - both area top and bottom may move now
+            int areaRemainingBottomColumnIx = _firstMovedIndex - 1;
+            if (destLastColumnIndex < areaRemainingBottomColumnIx) {
+                // old bottom column of area has moved up deep within the area, and exposed a new bottom column
+                newLastColumnIx = areaRemainingBottomColumnIx;
+            }
+            aptg.setFirstColumn(Math.min(aFirstColumn, destFirstColumnIndex));
+            aptg.setLastColumn(newLastColumnIx);
+            return aptg;
+        }
+        // else source columns include none of the columns of the area ref
+        // check for clashes with destination
+
+        if (destLastColumnIndex < aFirstColumn || aLastColumn < destFirstColumnIndex) {
+            // destination columns are completely outside area ref
+            return null;
+        }
+
+        if (destFirstColumnIndex <= aFirstColumn && aLastColumn <= destLastColumnIndex) {
+            // destination columns enclose the area (possibly exactly)
+            return createDeletedRef(aptg);
+        }
+
+        if (aFirstColumn <= destFirstColumnIndex && destLastColumnIndex <= aLastColumn) {
+            // destination columns are within area ref (possibly exact on top or bottom, but not both)
+            return null; // - no change to area
+        }
+
+        if (destFirstColumnIndex < aFirstColumn && aFirstColumn <= destLastColumnIndex) {
+            // dest columns overlap top of area
+            // - truncate the top
+            aptg.setFirstColumn(destLastColumnIndex+1);
+            return aptg;
+        }
+        if (destFirstColumnIndex <= aLastColumn && aLastColumn < destLastColumnIndex) {
+            // dest columns overlap bottom of area
+            // - truncate the bottom
+            aptg.setLastColumn(destFirstColumnIndex-1);
+            return aptg;
+        }
+        throw new IllegalStateException("Situation not covered: (" + _firstMovedIndex + ", " +
+                _lastMovedIndex + ", " + _amountToMove + ", " + aFirstColumn + ", " + aLastColumn + ")");
+    }
+
+    /**
+     * Modifies rptg in-place and return a reference to rptg if the cell reference
+     * would move due to a column copy operation
+     * Returns <code>null</code> or {@link RefErrorPtg} if no change was made
+     *
+     * @param rptg The REF that is copied
+     * @return The Ptg reference if the cell would move due to copy, otherwise null
+     */
+    private Ptg columnCopyRefPtg(RefPtgBase rptg) {
+        final int refColumn = rptg.getColumn();
+        if (rptg.isColRelative()) {
+            // check new location where the ref is located
+            final int destColumnIndex = _firstMovedIndex + _amountToMove;
+            if (destColumnIndex < 0 || _version.getLastColumnIndex() < destColumnIndex) {
+                return createDeletedRef(rptg);
+            }
+
+            // check new location where the ref points to
+            final int newColumnIndex = refColumn + _amountToMove;
+            if(newColumnIndex < 0 || _version.getLastColumnIndex() < newColumnIndex) {
+                return createDeletedRef(rptg);
+            }
+
+            rptg.setColumn(newColumnIndex);
+            return rptg;
+        }
+        return null;
+    }
+
+    /**
+     * Modifies aptg in-place and return a reference to aptg if the first or last column of
+     * of the Area reference would move due to a column copy operation
+     * Returns <code>null</code> or {@link AreaErrPtg} if no change was made
+     *
+     * @param aptg The Area that is copied
+     * @return null, AreaErrPtg, or modified aptg
+     */
+    private Ptg columnCopyAreaPtg(AreaPtgBase aptg) {
+        boolean changed = false;
+
+        final int aFirstColumn = aptg.getFirstColumn();
+        final int aLastColumn = aptg.getLastColumn();
+
+        if (aptg.isFirstColRelative()) {
+            final int destFirstColumnIndex = aFirstColumn + _amountToMove;
+            if (destFirstColumnIndex < 0 || _version.getLastColumnIndex() < destFirstColumnIndex)
+                return createDeletedRef(aptg);
+            aptg.setFirstColumn(destFirstColumnIndex);
+            changed = true;
+        }
+        if (aptg.isLastColRelative()) {
+            final int destLastColumnIndex = aLastColumn + _amountToMove;
+            if (destLastColumnIndex < 0 || _version.getLastColumnIndex() < destLastColumnIndex)
+                return createDeletedRef(aptg);
+            aptg.setLastColumn(destLastColumnIndex);
+            changed = true;
+        }
+        if (changed) {
+            aptg.sortTopLeftToBottomRight();
+        }
+
+        return changed ? aptg : null;
+    }
+    
     private static Ptg createDeletedRef(Ptg ptg) {
         if (ptg instanceof RefPtg) {
             return new RefErrorPtg();

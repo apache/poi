@@ -314,6 +314,39 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     }
 
     @Test
+    public void testBug55814() throws IOException {
+		try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55814.xlsx")) {
+
+            int oldsheetIndex = wb.getSheetIndex("example");
+            Sheet oldsheet = wb.getSheetAt(oldsheetIndex);
+
+            Comment comment = oldsheet.getRow(0).getCell(0).getCellComment();
+            assertEquals("Comment Here\n", comment.getString().getString());
+
+            Sheet newsheet = wb.cloneSheet(oldsheetIndex);
+
+            wb.removeSheetAt(oldsheetIndex);
+
+            //wb.write(new FileOutputStream("/tmp/outnocomment.xlsx"));
+
+            comment = newsheet.getRow(0).getCell(0).getCellComment();
+            assertNotNull("Should have a comment on A1 in the new sheet", comment);
+            assertEquals("Comment Here\n", comment.getString().getString());
+
+            Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            assertNotNull(wbBack);
+            wbBack.close();
+        }
+
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55814.xlsx")) {
+            int oldsheetIndex = wb.getSheetIndex("example");
+            Sheet newsheet = wb.getSheetAt(oldsheetIndex);
+            Comment comment = newsheet.getRow(0).getCell(0).getCellComment();
+            assertEquals("Comment Here\n", comment.getString().getString());
+        }
+    }
+
+    @Test
     public void bug57838DeleteRowsWthCommentsBug() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57838.xlsx");
         Sheet sheet=wb.getSheetAt(0);

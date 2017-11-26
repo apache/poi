@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.formula.EvaluationConditionalFormatRule;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -128,6 +129,64 @@ public class ConditionalFormattingEvalTest {
         getRulesFor(9,2);
         assertNotEquals("No rules for " + ref, 0, rules.size());
         assertEquals("wrong bg color for " + ref, "FFFFFF00", getColor(rules.get(0).getRule().getPatternFormatting().getFillBackgroundColorColor()));
+    }
+    
+    @Test
+    public void testRepeatedEval() throws Exception {
+        wb = XSSFTestDataSamples.openSampleWorkbook("test_conditional_formatting.xlsx");
+        formulaEval = new XSSFFormulaEvaluator(wb);
+        cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
+
+        sheet = wb.getSheetAt(0);
+        try {
+            getRulesFor(2, 1);
+            fail("Got rules when an unsupported function error was expected.");
+        } catch (NotImplementedException e) {
+            // expected
+        }
+
+        try {
+            getRulesFor(2, 1);
+            fail("Got rules the second time when an unsupported function error was expected.");
+        } catch (NotImplementedException e) {
+            // expected
+        }
+        
+    }
+    
+    @Test
+    public void testCellValueIsWrongType() throws Exception {
+        wb = XSSFTestDataSamples.openSampleWorkbook("conditional_formatting_cell_is.xlsx");
+        formulaEval = new XSSFFormulaEvaluator(wb);
+        cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
+
+        sheet = wb.getSheetAt(1);
+        
+        assertEquals("wrong # of matching rules", 1, getRulesFor(3, 1).size());
+    }
+    
+    @Test
+    public void testRangeCondition() throws Exception {
+        wb = XSSFTestDataSamples.openSampleWorkbook("conditional_formatting_multiple_ranges.xlsx");
+        formulaEval = new XSSFFormulaEvaluator(wb);
+        cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
+        
+        sheet = wb.getSheetAt(0);
+        
+        assertEquals("wrong # of matching rules", 0, getRulesFor(0, 0).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(1, 0).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(2, 0).size());
+        assertEquals("wrong # of matching rules", 1, getRulesFor(3, 0).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(0, 1).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(1, 1).size());
+        assertEquals("wrong # of matching rules", 1, getRulesFor(2, 1).size());
+        assertEquals("wrong # of matching rules", 1, getRulesFor(3, 1).size());
+        assertEquals("wrong # of matching rules", 1, getRulesFor(0, 3).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(1, 3).size());
+        assertEquals("wrong # of matching rules", 1, getRulesFor(2, 3).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(0, 6).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(3, 6).size());
+        assertEquals("wrong # of matching rules", 0, getRulesFor(2, 6).size());
     }
     
     private List<EvaluationConditionalFormatRule> getRulesFor(int row, int col) {

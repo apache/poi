@@ -428,4 +428,18 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         CellValue value = evaluator.evaluate(cell);
         assertEquals(3750, value.getNumberValue(), 0.001);
     }
+    
+    @Test
+    @Ignore // this is from an open bug/discussion over handling localization for number formats
+    public void testBug61495() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61495-test.xlsm");
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        Cell cell = wb.getSheetAt(0).getRow(0).getCell(1);
+//        assertEquals("D 67.10", cell.getStringCellValue());
+        
+        CellValue value = evaluator.evaluate(cell);
+        assertEquals("D 67.10", value.getStringValue());
+        
+        assertEquals("D 0,068", evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(1)));
+    }
 }

@@ -46,11 +46,8 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
         EncryptedTempData tempData = new EncryptedTempData();
         ZipEntrySource source = null;
         try {
-            OutputStream os = tempData.getOutputStream();
-            try {
+            try (OutputStream os = tempData.getOutputStream()) {
                 getXSSFWorkbook().write(os);
-            } finally {
-                IOUtils.closeQuietly(os);
             }
             // provide ZipEntrySource to poi which decrypts on the fly
             source = AesZipFileZipEntrySource.createZipEntrySource(tempData.getInputStream());

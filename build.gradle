@@ -147,7 +147,7 @@ project('main') {
 	sourceSets.test.java.srcDirs = ['../../src/testcases']
 	
 	dependencies {
-		compile 'commons-codec:commons-codec:1.10'
+		compile 'commons-codec:commons-codec:1.11'
 		compile 'commons-logging:commons-logging:1.2'
 		compile 'org.apache.commons:commons-collections4:4.1'
 		compile 'org.apache.commons:commons-math3:3.6.1'

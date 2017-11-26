@@ -317,6 +317,11 @@ public class PropertyIDMap implements Map<Long,String> {
     public static final int PID_BEHAVIOUR = 0x80000003;
     
     /**
+     * A property without a known name is described by this string.
+     */
+    public static final String UNDEFINED = "[undefined]";
+    
+    /**
      * Contains the summary information property ID values and
      * associated strings. See the overall HPSF documentation for
      * details!
