@@ -22,21 +22,37 @@ package org.apache.poi.xddf.usermodel.chart;
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTRadarChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart {
+
+    protected List<XDDFChartAxis> axes = new ArrayList<>();
 
     /**
      * Root element of the Chart part
@@ -173,6 +189,142 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     public void plot(XDDFChartData data) {
         for (XDDFChartData.Series series : data.getSeries()) {
             series.plot();
+        }
+    }
+
+    public List<XDDFChartData> getChartSeries() {
+        List<XDDFChartData> series = new LinkedList<>();
+        CTPlotArea plotArea = getCTPlotArea();
+        Map<Long, XDDFChartAxis> categories = getCategoryAxes();
+        Map<Long, XDDFValueAxis> values = getValueAxes();
+
+        for (int i = 0; i < plotArea.sizeOfBarChartArray(); i++) {
+            CTBarChart barChart = plotArea.getBarChartArray(i);
+            series.add(new XDDFBarChartData(barChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfLineChartArray(); i++) {
+            CTLineChart lineChart = plotArea.getLineChartArray(i);
+            series.add(new XDDFLineChartData(lineChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfPieChartArray(); i++) {
+            CTPieChart pieChart = plotArea.getPieChartArray(i);
+            series.add(new XDDFPieChartData(pieChart));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfRadarChartArray(); i++) {
+            CTRadarChart radarChart = plotArea.getRadarChartArray(i);
+            series.add(new XDDFRadarChartData(radarChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfScatterChartArray(); i++) {
+            CTScatterChart scatterChart = plotArea.getScatterChartArray(i);
+            series.add(new XDDFScatterChartData(scatterChart, categories, values));
+        }
+
+        // TODO repeat above code for all kind of charts
+        return series;
+    }
+
+    private Map<Long, XDDFChartAxis> getCategoryAxes() {
+        CTPlotArea plotArea = getCTPlotArea();
+        int sizeOfArray = plotArea.sizeOfCatAxArray();
+        Map<Long, XDDFChartAxis> axes = new HashMap<Long, XDDFChartAxis>(sizeOfArray);
+        for (int i = 0; i < sizeOfArray; i++) {
+            CTCatAx category = plotArea.getCatAxArray(i);
+            axes.put(category.getAxId().getVal(), new XDDFCategoryAxis(category));
+        }
+        return axes;
+    }
+
+    private Map<Long, XDDFValueAxis> getValueAxes() {
+        CTPlotArea plotArea = getCTPlotArea();
+        int sizeOfArray = plotArea.sizeOfValAxArray();
+        Map<Long, XDDFValueAxis> axes = new HashMap<>(sizeOfArray);
+        for (int i = 0; i < sizeOfArray; i++) {
+            CTValAx values = plotArea.getValAxArray(i);
+            axes.put(values.getAxId().getVal(), new XDDFValueAxis(values));
+        }
+        return axes;
+    }
+
+    public XDDFValueAxis createValueAxis(AxisPosition pos) {
+        XDDFValueAxis valueAxis = new XDDFValueAxis(chart.getPlotArea(), pos);
+        if (axes.size() == 1) {
+            XDDFChartAxis axis = axes.get(0);
+            axis.crossAxis(valueAxis);
+            valueAxis.crossAxis(axis);
+        }
+        axes.add(valueAxis);
+        return valueAxis;
+    }
+
+    public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
+        XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(chart.getPlotArea(), pos);
+        if (axes.size() == 1) {
+            XDDFChartAxis axis = axes.get(0);
+            axis.crossAxis(categoryAxis);
+            categoryAxis.crossAxis(axis);
+        }
+        axes.add(categoryAxis);
+        return categoryAxis;
+    }
+
+    public XDDFDateAxis createDateAxis(AxisPosition pos) {
+        XDDFDateAxis dateAxis = new XDDFDateAxis(chart.getPlotArea(), pos);
+        if (axes.size() == 1) {
+            XDDFChartAxis axis = axes.get(0);
+            axis.crossAxis(dateAxis);
+            dateAxis.crossAxis(axis);
+        }
+        axes.add(dateAxis);
+        return dateAxis;
+    }
+
+    public XDDFChartData createData(ChartTypes type, XDDFChartAxis category, XDDFValueAxis values) {
+        Map<Long, XDDFChartAxis> categories = Collections.singletonMap(category.getId(), category);
+        Map<Long, XDDFValueAxis> mapValues = Collections.singletonMap(values.getId(), values);
+        final CTPlotArea plotArea = getCTPlotArea();
+        switch (type) {
+        case BAR:
+            return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
+        case LINE:
+            return new XDDFLineChartData(plotArea.addNewLineChart(), categories, mapValues);
+        case PIE:
+            return new XDDFPieChartData(plotArea.addNewPieChart());
+        case RADAR:
+            return new XDDFRadarChartData(plotArea.addNewRadarChart(), categories, mapValues);
+        case SCATTER:
+            return new XDDFScatterChartData(plotArea.addNewScatterChart(), categories, mapValues);
+        default:
+            return null;
+        }
+    }
+
+    public List<? extends XDDFChartAxis> getAxes() {
+        if (axes.isEmpty() && hasAxes()) {
+            parseAxes();
+        }
+        return axes;
+    }
+
+    private boolean hasAxes() {
+        CTPlotArea ctPlotArea = chart.getPlotArea();
+        int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea.sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
+        return totalAxisCount > 0;
+    }
+
+    private void parseAxes() {
+        // TODO: add other axis types
+        for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
+            axes.add(new XDDFCategoryAxis(catAx));
+        }
+        for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
+            axes.add(new XDDFDateAxis(dateAx));
+        }
+        for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
+            axes.add(new XDDFValueAxis(valAx));
         }
     }
 

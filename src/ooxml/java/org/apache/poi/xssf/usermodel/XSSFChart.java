@@ -22,9 +22,7 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -34,19 +32,7 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
 import org.apache.poi.ss.usermodel.charts.ChartData;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xddf.usermodel.chart.AxisPosition;
-import org.apache.poi.xddf.usermodel.chart.ChartTypes;
-import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
-import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
-import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
-import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
-import org.apache.poi.xddf.usermodel.chart.XDDFDateAxis;
-import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
-import org.apache.poi.xddf.usermodel.chart.XDDFPieChartData;
-import org.apache.poi.xddf.usermodel.chart.XDDFRadarChartData;
-import org.apache.poi.xddf.usermodel.chart.XDDFScatterChartData;
-import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
@@ -88,8 +74,6 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	@Deprecated
 	@Removal(version="4.2")
 	List<XSSFChartAxis> axis = new ArrayList<>();
-
-	List<XDDFChartAxis> axes = new ArrayList<>();
 
 	/**
 	 * Create a new SpreadsheetML chart
@@ -234,6 +218,9 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 		return dateAxis;
 	}
 
+    /**
+     * @deprecated use {@link getAxes} instead
+     */
     @Override
     @Deprecated
     @Removal(version="4.2")
@@ -242,66 +229,6 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
             parseAxis();
         }
         return axis;
-    }
-
-    public XDDFValueAxis createValueAxis(AxisPosition pos) {
-        XDDFValueAxis valueAxis = new XDDFValueAxis(chart.getPlotArea(), pos);
-        if (axes.size() == 1) {
-            XDDFChartAxis axis = axes.get(0);
-            axis.crossAxis(valueAxis);
-            valueAxis.crossAxis(axis);
-        }
-        axes.add(valueAxis);
-        return valueAxis;
-    }
-
-    public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
-        XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(chart.getPlotArea(), pos);
-        if (axes.size() == 1) {
-            XDDFChartAxis axis = axes.get(0);
-            axis.crossAxis(categoryAxis);
-            categoryAxis.crossAxis(axis);
-        }
-        axes.add(categoryAxis);
-        return categoryAxis;
-    }
-
-    public XDDFDateAxis createDateAxis(AxisPosition pos) {
-        XDDFDateAxis dateAxis = new XDDFDateAxis(chart.getPlotArea(), pos);
-        if (axes.size() == 1) {
-            XDDFChartAxis axis = axes.get(0);
-            axis.crossAxis(dateAxis);
-            dateAxis.crossAxis(axis);
-        }
-        axes.add(dateAxis);
-        return dateAxis;
-    }
-
-    public List<? extends XDDFChartAxis> getAxes() {
-        if (axes.isEmpty() && hasAxes()) {
-            parseAxes();
-        }
-        return axes;
-    }
-
-    public XDDFChartData createData(ChartTypes type, XDDFChartAxis category, XDDFValueAxis values) {
-        Map<Long, XDDFChartAxis> categories = Collections.singletonMap(category.getId(), category);
-        Map<Long, XDDFValueAxis> mapValues = Collections.singletonMap(values.getId(), values);
-        final CTPlotArea plotArea = getCTPlotArea();
-        switch (type) {
-        case BAR:
-            return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
-        case LINE:
-            return new XDDFLineChartData(plotArea.addNewLineChart(), categories, mapValues);
-        case PIE:
-            return new XDDFPieChartData(plotArea.addNewPieChart());
-        case RADAR:
-            return new XDDFRadarChartData(plotArea.addNewRadarChart(), categories, mapValues);
-        case SCATTER:
-            return new XDDFScatterChartData(plotArea.addNewScatterChart(), categories, mapValues);
-        default:
-            return null;
-        }
     }
 
 	@Override
@@ -483,34 +410,13 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 		return new XSSFChartLegend(this);
 	}
 
-	/**
-	 * @deprecated use {@link hasAxes} instead
-	 * @return hasAxes()
-	 */
 	@Deprecated
 	@Removal(version="4.2")
 	private boolean hasAxis() {
-		return hasAxes();
-	}
-
-    private boolean hasAxes() {
         CTPlotArea ctPlotArea = chart.getPlotArea();
         int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea.sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
         return totalAxisCount > 0;
-    }
-
-    private void parseAxes() {
-        // TODO: add other axis types
-        for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
-            axes.add(new XDDFCategoryAxis(catAx));
-        }
-        for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
-            axes.add(new XDDFDateAxis(dateAx));
-        }
-        for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
-            axes.add(new XDDFValueAxis(valAx));
-        }
-    }
+	}
 
 	@Deprecated
 	@Removal(version="4.2")

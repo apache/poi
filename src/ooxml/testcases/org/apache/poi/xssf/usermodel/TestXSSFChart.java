@@ -70,7 +70,7 @@ public final class TestXSSFChart extends TestCase {
 		assertEquals(1, d1.getCharts().size());
 
 		assertNotNull(c1.getGraphicFrame());
-		assertNotNull(c1.getOrCreateLegend());
+		assertNotNull(c1.getOrAddLegend());
 
 		XSSFClientAnchor a2 = new XSSFClientAnchor(0, 0, 0, 0, 1, 11, 10, 60);
 		XSSFChart c2 = d1.createChart(a2);
