@@ -20,6 +20,11 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 import java.util.List;
 
+<<<<<<< ours
+=======
+import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
+>>>>>>> theirs
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
@@ -33,7 +38,7 @@ import junit.framework.TestCase;
 public class TestXWPFChart extends TestCase {
 
     /**
-     * test method to check charts are null
+     * test method to check charts are not null
      */
     public void testRead() throws IOException
     {
@@ -41,10 +46,18 @@ public class TestXWPFChart extends TestCase {
         List<XWPFChart> charts = sampleDoc.getCharts();
         assertNotNull(charts);
         assertEquals(2, charts.size());
-        assertNotNull(charts.get(0));
-        assertNotNull(charts.get(1));
+        checkData(charts.get(0));
+        checkData(charts.get(1));
     }
-    
+
+    private void checkData(XWPFChart chart) {
+        assertNotNull(chart);
+        assertEquals(1, chart.getChartSeries().size());
+        XDDFChartData data = chart.getChartSeries().get(0);
+        assertEquals(XDDFBarChartData.class, data.getClass());
+        assertEquals(3, data.getSeries().size());
+    }
+
     /**
      * test method to add chart title and check whether it's set
      */

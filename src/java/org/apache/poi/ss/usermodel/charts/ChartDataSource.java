@@ -18,15 +18,16 @@
  */
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
 
 /**
  * Represents data model of the charts.
  *
  * @param <T> type of points the data source contents
- * @author Roman Kashitsyn
+ * @deprecated use XDDFDataSource instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public interface ChartDataSource<T> {
 
     /**

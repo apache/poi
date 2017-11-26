@@ -22,39 +22,23 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
-import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 
 /**
  * Represents a Chart in a .docx file
  */
 @Beta
-public class XWPFChart extends POIXMLDocumentPart {
-
-    /**
-     * Root element of the Chart part
-     */
-    private final CTChartSpace chartSpace;
-
-    /**
-     * The Chart within that
-     */
-    private final CTChart chart;
+public class XWPFChart extends XDDFChart {
 
     // lazy initialization
     private Long checksum;
@@ -64,39 +48,11 @@ public class XWPFChart extends POIXMLDocumentPart {
      *
      * @param part the package part holding the chart data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-     * 
+     *
      * @since POI 4.0.0
      */
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
         super(part);
-
-        chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
-        chart = chartSpace.getChart();
-    }
-      
-    @Override
-    protected void onDocumentRead() throws IOException {
-        super.onDocumentRead();
-    }
-
-    /**
-     * Return the underlying CTChartSpace bean, the root element of the Chart part.
-     *
-     * @return the underlying CTChartSpace bean
-     */
-    @Internal
-    public CTChartSpace getCTChartSpace() {
-        return chartSpace;
-    }
-
-    /**
-     * Return the underlying CTChart bean, within the Chart Space
-     *
-     * @return the underlying CTChart bean
-     */
-    @Internal
-    public CTChart getCTChart() {
-        return chart;
     }
 
     @Override
@@ -108,7 +64,7 @@ public class XWPFChart extends POIXMLDocumentPart {
             chartSpace.save(out, xmlOptions);
         }
     }
-    
+
     public Long getChecksum() {
         if (this.checksum == null) {
             InputStream is = null;
@@ -120,7 +76,9 @@ public class XWPFChart extends POIXMLDocumentPart {
                 throw new POIXMLException(e);
             } finally {
                 try {
-                    if (is != null) is.close();
+                    if (is != null) {
+                        is.close();
+                    }
                 } catch (IOException e) {
                     throw new POIXMLException(e);
                 }
@@ -157,7 +115,7 @@ public class XWPFChart extends POIXMLDocumentPart {
         }
         return false;
     }
-   
+
     @Override
     public int hashCode() {
         return getChecksum().hashCode();

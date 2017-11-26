@@ -17,11 +17,15 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
+import org.apache.poi.util.Removal;
+
 /**
  * Enumeration of all possible axis positions.
  *
- * @author Roman Kashitsyn
+ * @deprecated use XDDF AxisPosition instead
  */
+@Deprecated
+@Removal(version="4.2")
 public enum AxisPosition {
 	BOTTOM,
 	LEFT,

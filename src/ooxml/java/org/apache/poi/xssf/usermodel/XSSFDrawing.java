@@ -239,7 +239,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         return chart;
     }
 
-	@Override
+	/**
+	 * Creates a chart.
+	 * @param anchor the client anchor describes how this chart is attached to
+	 *               the sheet.
+	 * @return the newly created chart
+	 */
     public XSSFChart createChart(ClientAnchor anchor) {
 		return createChart((XSSFClientAnchor)anchor);
 	}
