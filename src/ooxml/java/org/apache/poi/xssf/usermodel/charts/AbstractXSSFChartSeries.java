@@ -21,13 +21,13 @@ import org.apache.poi.ss.usermodel.charts.ChartSeries;
 import org.apache.poi.ss.usermodel.charts.TitleType;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Removal;
-import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartData.Series;;
 
 /**
  * Base of all XSSF Chart Series
  *
- * @deprecated use {@link XDDFChartData.Series} instead
+ * @deprecated use {@link Series} instead
  */
 @Deprecated
 @Removal(version="4.2")

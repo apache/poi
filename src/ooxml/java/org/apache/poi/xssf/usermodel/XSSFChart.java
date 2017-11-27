@@ -219,7 +219,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 	}
 
     /**
-     * @deprecated use {@link getAxes} instead
+     * @deprecated use {@link #getAxes()} instead
      */
     @Override
     @Deprecated
