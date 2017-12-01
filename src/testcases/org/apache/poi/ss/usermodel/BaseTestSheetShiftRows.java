@@ -742,7 +742,7 @@ public abstract class BaseTestSheetShiftRows {
     }
     
     @Test
-    public void test61840_shifting_rows_up_does_not_produce_REF_errors() throws Exception {
+    public void test61840_shifting_rows_up_does_not_produce_REF_errors() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Cell cell = sheet.createRow(4).createCell(0);
@@ -759,6 +759,8 @@ public abstract class BaseTestSheetShiftRows {
         Cell shiftedCell = sheet.getRow(3).getCell(0);
         assertNotNull(shiftedCell);
         assertEquals("(B4-C4)/B4", shiftedCell.getCellFormula());
+        
+        wb.close();
     }
     
     
