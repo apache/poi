@@ -517,10 +517,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
         XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
-        try {
-            OutputStream out = img.getPackagePart().getOutputStream();
+        try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
-            out.close();
         } catch (IOException e){
             throw new POIXMLException(e);
         }
@@ -1745,9 +1743,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        workbook.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            workbook.save(out, xmlOptions);
+        }
     }
     
     /**

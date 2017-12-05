@@ -204,17 +204,16 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         @Override
         public boolean canExtract(DirectoryNode dn) {
             ClassID clsId = dn.getStorageClsid();
-            return (PdfClassID.equals(clsId)
-            || dn.hasEntry("CONTENTS"));
+            return (PdfClassID.equals(clsId) || dn.hasEntry("CONTENTS"));
         }
 
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            InputStream is = dn.createDocumentInputStream("CONTENTS");
-            IOUtils.copy(is, bos);
-            is.close();
-            return new EmbeddedData(dn.getName() + ".pdf", bos.toByteArray(), CONTENT_TYPE_PDF);
+            try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                InputStream is = dn.createDocumentInputStream("CONTENTS")) {
+                IOUtils.copy(is, bos);
+                return new EmbeddedData(dn.getName() + ".pdf", bos.toByteArray(), CONTENT_TYPE_PDF);
+            }
         }
         
         @Override
