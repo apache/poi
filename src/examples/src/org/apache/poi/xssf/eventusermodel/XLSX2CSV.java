@@ -209,12 +209,12 @@ public class XLSX2CSV {
         XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
         int index = 0;
         while (iter.hasNext()) {
-            InputStream stream = iter.next();
-            String sheetName = iter.getSheetName();
-            this.output.println();
-            this.output.println(sheetName + " [index=" + index + "]:");
-            processSheet(styles, strings, new SheetToCSV(), stream);
-            stream.close();
+            try (InputStream stream = iter.next()) {
+                String sheetName = iter.getSheetName();
+                this.output.println();
+                this.output.println(sheetName + " [index=" + index + "]:");
+                processSheet(styles, strings, new SheetToCSV(), stream);
+            }
             ++index;
         }
     }
@@ -237,9 +237,9 @@ public class XLSX2CSV {
             minColumns = Integer.parseInt(args[1]);
 
         // The package open is instantaneous, as it should be.
-        OPCPackage p = OPCPackage.open(xlsxFile.getPath(), PackageAccess.READ);
-		XLSX2CSV xlsx2csv = new XLSX2CSV(p, System.out, minColumns);
-		xlsx2csv.process();
-		p.close();
-	}
+        try (OPCPackage p = OPCPackage.open(xlsxFile.getPath(), PackageAccess.READ)) {
+            XLSX2CSV xlsx2csv = new XLSX2CSV(p, System.out, minColumns);
+            xlsx2csv.process();
+        }
+    }
 }

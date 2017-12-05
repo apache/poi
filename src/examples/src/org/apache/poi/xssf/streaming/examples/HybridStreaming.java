@@ -39,22 +39,24 @@ public class HybridStreaming {
     private static final String SHEET_TO_STREAM = "large sheet";
 
     public static void main(String[] args) throws IOException, SAXException {
-        InputStream sourceBytes = new FileInputStream("workbook.xlsx");
-        XSSFWorkbook workbook = new XSSFWorkbook(sourceBytes) {
-            /** Avoid DOM parse of large sheet */
-            @Override
-            public void parseSheet(java.util.Map<String,XSSFSheet> shIdMap, CTSheet ctSheet) {
-                if (!SHEET_TO_STREAM.equals(ctSheet.getName())) {
-                    super.parseSheet(shIdMap, ctSheet);
+        try (InputStream sourceBytes = new FileInputStream("workbook.xlsx")) {
+            XSSFWorkbook workbook = new XSSFWorkbook(sourceBytes) {
+                /**
+                 * Avoid DOM parse of large sheet
+                 */
+                @Override
+                public void parseSheet(java.util.Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
+                    if (!SHEET_TO_STREAM.equals(ctSheet.getName())) {
+                        super.parseSheet(shIdMap, ctSheet);
+                    }
                 }
-            }
-        };
-        
-        // Having avoided a DOM-based parse of the sheet, we can stream it instead.
-        ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(workbook.getPackage());
-        new XSSFSheetXMLHandler(workbook.getStylesSource(), strings, createSheetContentsHandler(), false);
-        workbook.close();
-        sourceBytes.close();
+            };
+
+            // Having avoided a DOM-based parse of the sheet, we can stream it instead.
+            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(workbook.getPackage());
+            new XSSFSheetXMLHandler(workbook.getStylesSource(), strings, createSheetContentsHandler(), false);
+            workbook.close();
+        }
     }
 
     private static SheetContentsHandler createSheetContentsHandler() {
