@@ -349,16 +349,12 @@ public class SheetDataWriter implements Closeable {
         return false;
     }
 
-    //Taken from jdk1.3/src/javax/swing/text/html/HTMLWriter.java
     protected void outputQuotedString(String s) throws IOException {
         if (s == null || s.length() == 0) {
             return;
         }
 
-        final String xa0 = Character.toString((char)0xa0);
-
-        for (Iterator<String> iter = new StringCodepointsIterable(s).iterator(); iter.hasNext();) {
-            String codepoint = iter.next();
+        for (String codepoint : new StringCodepointsIterable(s)) {
             switch (codepoint) {
                 case "<":
                     _out.write("&lt;");
@@ -402,8 +398,7 @@ public class SheetDataWriter implements Closeable {
             }
         }
     }
-
-
+    
     static boolean replaceWithQuestionMark(char c) {
         return c < ' ' || ('\uFFFE' <= c && c <= '\uFFFF');
     }
