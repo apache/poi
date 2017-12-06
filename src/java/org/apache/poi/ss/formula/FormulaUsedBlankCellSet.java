@@ -183,7 +183,7 @@ final class FormulaUsedBlankCellSet {
 
 		BlankCellSheetGroup result = _sheetGroupsByBookSheet.get(key);
 		if (result == null) {
-			result = new BlankCellSheetGroup(evalWorkbook.getSheet(sheetIndex).getlastRowNum());
+			result = new BlankCellSheetGroup(evalWorkbook.getSheet(sheetIndex).getLastRowNum());
 			_sheetGroupsByBookSheet.put(key, result);
 		}
 		return result;
