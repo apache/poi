@@ -48,5 +48,5 @@ public interface EvaluationSheet {
      * @return last row index referenced on this sheet, for evaluation optimization
      * @since POI 4.0.0
      */
-    public int getlastRowNum();
+    public int getLastRowNum();
 }
