@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Internal;
 
 /**
@@ -42,4 +43,10 @@ public interface EvaluationSheet {
      * @since POI 3.15 beta 3
      */
     public void clearAllCachedResultValues();
+    
+    /**
+     * @return last row index referenced on this sheet, for evaluation optimization
+     * @since POI 4.0.0
+     */
+    public int getlastRowNum();
 }

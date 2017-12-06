@@ -34,25 +34,40 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
 
     private final XSSFSheet _xs;
     private Map<CellKey, EvaluationCell> _cellCache;
+    private int _lastDefinedRow = -1;
 
     public XSSFEvaluationSheet(XSSFSheet sheet) {
         _xs = sheet;
+        _lastDefinedRow = _xs.getLastRowNum();
     }
 
     public XSSFSheet getXSSFSheet() {
         return _xs;
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.poi.ss.formula.EvaluationSheet#getlastRowNum()
+     * @since POI 4.0.0
+     */
+    public int getlastRowNum() {
+        return _lastDefinedRow;
+    }
+    
     /* (non-JavaDoc), inherit JavaDoc from EvaluationWorkbook
      * @since POI 3.15 beta 3
      */
     @Override
     public void clearAllCachedResultValues() {
         _cellCache = null;
+        _lastDefinedRow = _xs.getLastRowNum();
     }
     
     @Override
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
+        // shortcut evaluation if reference is outside the bounds of existing data
+        // see issue #61841 for impact on VLOOKUP in particular
+        if (rowIndex > _lastDefinedRow) return null;
+        
         // cache for performance: ~30% speedup due to caching
         if (_cellCache == null) {
             _cellCache = new HashMap<>(_xs.getLastRowNum() * 3);

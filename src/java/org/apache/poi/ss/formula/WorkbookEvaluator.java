@@ -253,7 +253,7 @@ public final class WorkbookEvaluator {
         if (srcCell == null || srcCell.getCellType() != CellType.FORMULA) {
             ValueEval result = getValueFromNonFormulaCell(srcCell);
             if (shouldCellDependencyBeRecorded) {
-                tracker.acceptPlainValueDependency(_workbookIx, sheetIndex, rowIndex, columnIndex, result);
+                tracker.acceptPlainValueDependency(_workbook, _workbookIx, sheetIndex, rowIndex, columnIndex, result);
             }
             return result;
         }

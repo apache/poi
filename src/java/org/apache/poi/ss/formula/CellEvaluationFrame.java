@@ -64,11 +64,11 @@ final class CellEvaluationFrame {
 		_sensitiveInputCells.toArray(result);
 		return result;
 	}
-	public void addUsedBlankCell(int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
+	public void addUsedBlankCell(EvaluationWorkbook evalWorkbook, int bookIndex, int sheetIndex, int rowIndex, int columnIndex) {
 		if (_usedBlankCellGroup == null) {
 			_usedBlankCellGroup = new FormulaUsedBlankCellSet();
 		}
-		_usedBlankCellGroup.addCell(bookIndex, sheetIndex, rowIndex, columnIndex);
+		_usedBlankCellGroup.addCell(evalWorkbook, bookIndex, sheetIndex, rowIndex, columnIndex);
 	}
 
 	public void updateFormulaResult(ValueEval result) {
