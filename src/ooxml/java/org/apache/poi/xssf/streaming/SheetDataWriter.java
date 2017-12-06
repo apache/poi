@@ -378,7 +378,7 @@ public class SheetDataWriter implements Closeable {
                 case "\t":
                     _out.write("&#x9;");
                     break;
-                case "\u00A0":
+                case "\u00A0": // NO-BREAK SPACE
                     _out.write("&#xa0;");
                     break;
                 default:
@@ -398,7 +398,7 @@ public class SheetDataWriter implements Closeable {
             }
         }
     }
-    
+
     static boolean replaceWithQuestionMark(char c) {
         return c < ' ' || ('\uFFFE' <= c && c <= '\uFFFF');
     }
