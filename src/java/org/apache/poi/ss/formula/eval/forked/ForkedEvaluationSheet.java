@@ -57,6 +57,7 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
      * @see org.apache.poi.ss.formula.EvaluationSheet#getlastRowNum()
      * @since POI 4.0.0
      */
+    @Override
     public int getLastRowNum() {
         return _masterSheet.getLastRowNum();
     }
