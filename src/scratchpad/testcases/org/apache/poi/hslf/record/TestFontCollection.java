@@ -23,9 +23,12 @@ import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFFontInfo;
 import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,6 +37,8 @@ import org.junit.Test;
  * Tests {@code FontCollection} and {@code FontEntityAtom} records
  */
 public final class TestFontCollection {
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    
     // From a real file
     private static byte[] data;
     
@@ -86,5 +91,14 @@ public final class TestFontCollection {
         fonts.writeOut(out);
         byte[] recdata = out.toByteArray();
         assertArrayEquals(recdata, data);
+    }
+    
+    @Test
+    public void bug61881() throws IOException {
+        try (InputStream is = _slTests.openResourceAsStream("bug61881.ppt")) {
+            try (HSLFSlideShow ppt = new HSLFSlideShow(is)) {
+                assertEquals("?imes New Roman",ppt.getFont(3).getTypeface());
+            }
+        }
     }
 }
