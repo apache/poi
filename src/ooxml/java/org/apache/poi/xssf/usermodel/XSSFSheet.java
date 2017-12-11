@@ -4022,7 +4022,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (!pr.isSetTabColor()) {
             return null;
         }
-        return new XSSFColor(pr.getTabColor(), getWorkbook().getStylesSource().getIndexedColors());
+        return XSSFColor.from(pr.getTabColor(), getWorkbook().getStylesSource().getIndexedColors());
     }
     
     /**

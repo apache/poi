@@ -223,7 +223,7 @@ public class TestXSSFDrawing {
         XSSFRichTextString rt = new XSSFRichTextString("Test String");
 
         XSSFFont font = wb.createFont();
-        font.setColor(new XSSFColor(new Color(0, 128, 128)));
+        font.setColor(new XSSFColor(new Color(0, 128, 128), wb.getStylesSource().getIndexedColors()));
         font.setItalic(true);
         font.setBold(true);
         font.setUnderline(FontUnderline.SINGLE);
@@ -297,7 +297,7 @@ public class TestXSSFDrawing {
         XSSFRichTextString rt = new XSSFRichTextString("Test String");
 
         XSSFFont font = wb.createFont();
-        font.setColor(new XSSFColor(new Color(0, 128, 128)));
+        font.setColor(new XSSFColor(new Color(0, 128, 128), wb.getStylesSource().getIndexedColors()));
         font.setFontName("Arial");
         rt.applyFont(font);
 
@@ -328,7 +328,7 @@ public class TestXSSFDrawing {
         XSSFRichTextString rt = new XSSFRichTextString("Test String");
 
         XSSFFont font = wb.createFont();
-        font.setColor(new XSSFColor(new Color(0, 255, 255)));
+        font.setColor(new XSSFColor(new Color(0, 255, 255), wb.getStylesSource().getIndexedColors()));
         font.setFontName("Arial");
         rt.applyFont(font);
 
@@ -389,12 +389,12 @@ public class TestXSSFDrawing {
         XSSFRichTextString rt = new XSSFRichTextString("Test Rich Text String");
 
         XSSFFont font = wb1.createFont();
-        font.setColor(new XSSFColor(new Color(0, 255, 255)));
+        font.setColor(new XSSFColor(new Color(0, 255, 255), wb1.getStylesSource().getIndexedColors()));
         font.setFontName("Arial");
         rt.applyFont(font);
 
         XSSFFont midfont = wb1.createFont();
-        midfont.setColor(new XSSFColor(new Color(0, 255, 0)));
+        midfont.setColor(new XSSFColor(new Color(0, 255, 0), wb1.getStylesSource().getIndexedColors()));
         rt.applyFont(5, 14, midfont);	// set the text "Rich Text" to be green and the default font
 
         XSSFTextParagraph para = shape.addNewTextParagraph(rt);

@@ -70,7 +70,7 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
 
     @Test
     public void testFontFormattingColor() {
-        Workbook wb = XSSFITestDataProvider.instance.createWorkbook();
+        XSSFWorkbook wb = XSSFITestDataProvider.instance.createWorkbook();
         final Sheet sheet = wb.createSheet();
 
         final SheetConditionalFormatting formatting = sheet.getSheetConditionalFormatting();
@@ -101,7 +101,7 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
         assertEquals(-1, fontFmt.getFontColorIndex());
 
         //fontFmt.setFontColorIndex((short)11);
-        final ExtendedColor extendedColor = new XSSFColor(PEAK_ORANGE);
+        final ExtendedColor extendedColor = new XSSFColor(PEAK_ORANGE, wb.getStylesSource().getIndexedColors());
         fontFmt.setFontColor(extendedColor);
 
         PatternFormatting patternFmt = formattingRule.createPatternFormatting();
