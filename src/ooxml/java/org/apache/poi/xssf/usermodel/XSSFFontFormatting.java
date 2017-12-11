@@ -113,7 +113,7 @@ public class XSSFFontFormatting implements FontFormatting {
     public XSSFColor getFontColor() {
         if(_font.sizeOfColorArray() == 0) return null;
 
-        return new XSSFColor(_font.getColorArray(0), _colorMap);
+        return XSSFColor.from(_font.getColorArray(0), _colorMap);
     }
 
     @Override

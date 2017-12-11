@@ -20,12 +20,14 @@ package org.apache.poi.xssf.usermodel.extensions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
@@ -97,5 +99,15 @@ public class TestXSSFCellFill {
         assertEquals(rgbWithTint[1],-111);
         assertEquals(rgbWithTint[2],-80);
         wb.close();
+    }
+    
+    @Test
+    public void testFillWithoutColors() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FillWithoutColor.xlsx");
+        XSSFCell cellWithFill = wb.getSheetAt(0).getRow(5).getCell(1);
+        XSSFCellStyle style = cellWithFill.getCellStyle();
+        assertNotNull(style);
+        assertNull("had an empty background color", style.getFillBackgroundColorColor());
+        assertNull("had an empty background color", style.getFillBackgroundXSSFColor());
     }
 }

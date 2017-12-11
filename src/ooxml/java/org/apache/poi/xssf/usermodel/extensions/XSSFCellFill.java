@@ -60,7 +60,7 @@ public final class XSSFCellFill {
         if (ptrn == null) return null;
 
         CTColor ctColor = ptrn.getBgColor();
-        return ctColor == null ? null : new XSSFColor(ctColor, _indexedColorMap);
+        return XSSFColor.from(ctColor, _indexedColorMap);
     }
 
     /**
@@ -81,7 +81,11 @@ public final class XSSFCellFill {
      */
     public void setFillBackgroundColor(XSSFColor color) {
         CTPatternFill ptrn = ensureCTPatternFill();
-        ptrn.setBgColor(color.getCTColor());
+        if (color == null) {
+            ptrn.unsetBgColor();
+        } else {
+            ptrn.setBgColor(color.getCTColor());
+        }
     }
 
     /**
@@ -94,7 +98,7 @@ public final class XSSFCellFill {
         if (ptrn == null) return null;
 
         CTColor ctColor = ptrn.getFgColor();
-        return ctColor == null ? null : new XSSFColor(ctColor, _indexedColorMap);
+        return XSSFColor.from(ctColor, _indexedColorMap);
     }
 
     /**
@@ -115,7 +119,11 @@ public final class XSSFCellFill {
      */
     public void setFillForegroundColor(XSSFColor color) {
         CTPatternFill ptrn = ensureCTPatternFill();
-        ptrn.setFgColor(color.getCTColor());
+        if (color == null) {
+            ptrn.unsetFgColor();
+        } else {
+            ptrn.setFgColor(color.getCTColor());
+        }
     }
 
     /**

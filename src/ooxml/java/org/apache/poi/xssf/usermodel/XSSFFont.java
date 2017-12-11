@@ -157,7 +157,7 @@ public class XSSFFont implements Font {
     public XSSFColor getXSSFColor() {
         CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? null : _ctFont.getColorArray(0);
         if(ctColor != null) {
-           XSSFColor color = new XSSFColor(ctColor, _indexedColorMap);
+           XSSFColor color = XSSFColor.from(ctColor, _indexedColorMap);
            if(_themes != null) {
               _themes.inheritFromThemeAsRequired(color);
            }

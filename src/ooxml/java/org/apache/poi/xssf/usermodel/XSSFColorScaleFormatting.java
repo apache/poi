@@ -56,7 +56,7 @@ public class XSSFColorScaleFormatting implements ColorScaleFormatting {
         CTColor[] ctcols = _scale.getColorArray();
         XSSFColor[] c = new XSSFColor[ctcols.length];
         for (int i=0; i<ctcols.length; i++) {
-            c[i] = new XSSFColor(ctcols[i], _indexedColorMap);
+            c[i] = XSSFColor.from(ctcols[i], _indexedColorMap);
         }
         return c;
     }
@@ -89,7 +89,7 @@ public class XSSFColorScaleFormatting implements ColorScaleFormatting {
      * @return color from scale
      */
     public XSSFColor createColor() {
-        return new XSSFColor(_scale.addNewColor(), _indexedColorMap);
+        return XSSFColor.from(_scale.addNewColor(), _indexedColorMap);
     }
     public XSSFConditionalFormattingThreshold createThreshold() {
         return new XSSFConditionalFormattingThreshold(_scale.addNewCfvo());

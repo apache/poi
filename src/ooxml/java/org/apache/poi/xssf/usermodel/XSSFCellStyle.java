@@ -39,6 +39,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
@@ -755,7 +756,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setBottomBorderColor(short color) {
-        XSSFColor clr = new XSSFColor();
+        XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(color);
         setBottomBorderColor(clr);
     }
@@ -865,7 +866,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setFillBackgroundColor(short bg) {
-        XSSFColor clr = new XSSFColor();
+        XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(bg);
         setFillBackgroundColor(clr);
     }
@@ -900,7 +901,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setFillForegroundColor(short fg) {
-        XSSFColor clr = new XSSFColor();
+        XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(fg);
         setFillForegroundColor(clr);
     }
@@ -1027,7 +1028,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setLeftBorderColor(short color) {
-        XSSFColor clr = new XSSFColor();
+        XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(color);
         setLeftBorderColor(clr);
     }
@@ -1082,7 +1083,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setRightBorderColor(short color) {
-        XSSFColor clr = new XSSFColor();
+        XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(color);
         setRightBorderColor(clr);
     }
@@ -1139,7 +1140,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setTopBorderColor(short color) {
-        XSSFColor clr = new XSSFColor();
+        XSSFColor clr = XSSFColor.from(CTColor.Factory.newInstance(), _stylesSource.getIndexedColors());
         clr.setIndexed(color);
         setTopBorderColor(clr);
     }
