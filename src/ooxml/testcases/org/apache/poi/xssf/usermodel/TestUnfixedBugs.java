@@ -373,7 +373,6 @@ public final class TestUnfixedBugs {
         long maxSeenRowNum = 0; //1-based
         for (final CTRow ctRow : wb.getSheetAt(0).getCTWorksheet().getSheetData().getRowArray()) {
             final long rowNum = ctRow.getR(); //1-based
-            //final int rowNum = Integer.parseInt(ctRow.getR()); //1-based
             assertTrue("Row " + rowNum + " (1-based) is not in ascending order; previously saw " + maxSeenRowNum,
                        rowNum > maxSeenRowNum);
             maxSeenRowNum = rowNum;
