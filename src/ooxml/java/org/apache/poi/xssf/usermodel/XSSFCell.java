@@ -450,7 +450,7 @@ public final class XSSFCell implements Cell {
                     _cell.setT(STCellType.S);
                     XSSFRichTextString rt = (XSSFRichTextString)str;
                     rt.setStylesTableReference(_stylesSource);
-                    int sRef = _sharedStringSource.addEntry(rt.getCTRst());
+                    int sRef = _sharedStringSource.addSharedStringItem(rt);
                     _cell.setV(Integer.toString(sRef));
                 }
                 break;
@@ -966,7 +966,7 @@ public final class XSSFCell implements Cell {
                     String str = convertCellValueToString();
                     XSSFRichTextString rt = new XSSFRichTextString(str);
                     rt.setStylesTableReference(_stylesSource);
-                    int sRef = _sharedStringSource.addEntry(rt.getCTRst());
+                    int sRef = _sharedStringSource.addSharedStringItem(rt);
                     _cell.setV(Integer.toString(sRef));
                 }
                 _cell.setT(STCellType.S);
