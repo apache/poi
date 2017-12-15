@@ -143,7 +143,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      *
      * @param idx index of item to return.
      * @return the item at the specified position in this Shared String table.
-     * @deprecated use <code>addSharedStringItem(RichTextString string)</code> instead
+     * @deprecated use <code>getItemAt(int idx)</code> instead
      */
     @Removal(version = "4.2")
     public CTRst getEntryAt(int idx) {
