@@ -140,7 +140,7 @@ public class CalendarDemo {
         XSSFCellStyle style;
         XSSFFont titleFont = wb.createFont();
         titleFont.setFontHeightInPoints((short)48);
-        titleFont.setColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        titleFont.setColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -149,12 +149,12 @@ public class CalendarDemo {
 
         XSSFFont monthFont = wb.createFont();
         monthFont.setFontHeightInPoints((short)12);
-        monthFont.setColor(new XSSFColor(new java.awt.Color(255, 255, 255)));
+        monthFont.setColor(new XSSFColor(new java.awt.Color(255, 255, 255), wb.getStylesSource().getIndexedColors()));
         monthFont.setBold(true);
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFont(monthFont);
         styles.put("month", style);
@@ -165,64 +165,64 @@ public class CalendarDemo {
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.LEFT);
         style.setVerticalAlignment(VerticalAlignment.TOP);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(228, 232, 243)));
+        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(228, 232, 243), wb.getStylesSource().getIndexedColors()));
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderLeft(BorderStyle.THIN);
-        style.setLeftBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setLeftBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setFont(dayFont);
         styles.put("weekend_left", style);
 
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.TOP);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(228, 232, 243)));
+        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(228, 232, 243), wb.getStylesSource().getIndexedColors()));
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderRight(BorderStyle.THIN);
-        style.setRightBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setRightBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         styles.put("weekend_right", style);
 
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.LEFT);
         style.setVerticalAlignment(VerticalAlignment.TOP);
         style.setBorderLeft(BorderStyle.THIN);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 255, 255)));
+        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 255, 255), wb.getStylesSource().getIndexedColors()));
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setLeftBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setLeftBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setFont(dayFont);
         styles.put("workday_left", style);
 
         style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.TOP);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 255, 255)));
+        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 255, 255), wb.getStylesSource().getIndexedColors()));
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderRight(BorderStyle.THIN);
-        style.setRightBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setRightBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         styles.put("workday_right", style);
 
         style = wb.createCellStyle();
         style.setBorderLeft(BorderStyle.THIN);
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234)));
+        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234), wb.getStylesSource().getIndexedColors()));
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         styles.put("grey_left", style);
 
         style = wb.createCellStyle();
-        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234)));
+        style.setFillForegroundColor(new XSSFColor(new java.awt.Color(234, 234, 234), wb.getStylesSource().getIndexedColors()));
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderRight(BorderStyle.THIN);
-        style.setRightBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setRightBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         style.setBorderBottom(BorderStyle.THIN);
-        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89)));
+        style.setBottomBorderColor(new XSSFColor(new java.awt.Color(39, 51, 89), wb.getStylesSource().getIndexedColors()));
         styles.put("grey_right", style);
 
         return styles;

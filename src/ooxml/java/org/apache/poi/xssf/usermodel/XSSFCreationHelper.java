@@ -54,7 +54,7 @@ public class XSSFCreationHelper implements CreationHelper {
 
     @Override
     public XSSFColor createExtendedColor() {
-        return new XSSFColor(CTColor.Factory.newInstance(), workbook.getStylesSource().getIndexedColors());
+        return XSSFColor.from(CTColor.Factory.newInstance(), workbook.getStylesSource().getIndexedColors());
     }
     
     /**

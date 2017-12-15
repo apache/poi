@@ -394,7 +394,7 @@ public class TestAllFiles {
             fail("Did not find a handler for file " + file);
         }
 
-        System.out.println("Reading " + file + " with " + handler.getClass());
+        System.out.println("Reading " + file + " with " + handler.getClass().getSimpleName());
         assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
         File inputFile = new File(ROOT_DIR, file);
 

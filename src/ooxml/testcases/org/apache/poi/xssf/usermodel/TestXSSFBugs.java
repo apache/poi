@@ -2921,7 +2921,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFCell cell = workbook.createSheet().createRow(0).createCell(0);
 
-        XSSFColor color = new XSSFColor(java.awt.Color.RED);
+        XSSFColor color = new XSSFColor(java.awt.Color.RED, workbook.getStylesSource().getIndexedColors());
         XSSFCellStyle style = workbook.createCellStyle();
         style.setFillForegroundColor(color);
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -2941,7 +2941,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(workbook);
         workbook.close();
         XSSFCell ncell = nwb.getSheetAt(0).getRow(0).getCell(0);
-        XSSFColor ncolor = new XSSFColor(java.awt.Color.RED);
+        XSSFColor ncolor = new XSSFColor(java.awt.Color.RED, workbook.getStylesSource().getIndexedColors());
 
         // Now the cell is all black
         XSSFColor nactual = ncell.getCellStyle().getFillBackgroundColorColor();

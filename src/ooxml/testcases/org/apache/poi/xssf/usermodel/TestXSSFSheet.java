@@ -71,6 +71,7 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
@@ -1924,7 +1925,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertEquals(expected, wb.getSheet("indexedRed").getTabColor());
 
             // test regular-colored (non-indexed, ARGB) sheet
-            expected = new XSSFColor();
+            expected = XSSFColor.from(CTColor.Factory.newInstance(), wb.getStylesSource().getIndexedColors());
             expected.setARGBHex("FF7F2700");
             assertEquals(expected, wb.getSheet("customOrange").getTabColor());
         }

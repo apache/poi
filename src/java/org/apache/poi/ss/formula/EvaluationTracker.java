@@ -131,7 +131,7 @@ final class EvaluationTracker {
 		}
 	}
 
-	public void acceptPlainValueDependency(int bookIndex, int sheetIndex,
+	public void acceptPlainValueDependency(EvaluationWorkbook evalWorkbook, int bookIndex, int sheetIndex,
 			int rowIndex, int columnIndex, ValueEval value) {
 		// Tell the currently evaluating cell frame that it has a dependency on the specified
 		int prevFrameIndex = _evaluationFrames.size() - 1;
@@ -140,7 +140,7 @@ final class EvaluationTracker {
 		} else {
 			CellEvaluationFrame consumingFrame = _evaluationFrames.get(prevFrameIndex);
 			if (value == BlankEval.instance) {
-				consumingFrame.addUsedBlankCell(bookIndex, sheetIndex, rowIndex, columnIndex);
+				consumingFrame.addUsedBlankCell(evalWorkbook, bookIndex, sheetIndex, rowIndex, columnIndex);
 			} else {
 				PlainValueCellCacheEntry cce = _cache.getPlainValueEntry(bookIndex, sheetIndex,
 						rowIndex, columnIndex, value);

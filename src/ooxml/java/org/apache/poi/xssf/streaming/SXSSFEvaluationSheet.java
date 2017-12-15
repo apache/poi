@@ -27,14 +27,26 @@ import org.apache.poi.util.Internal;
 @Internal
 final class SXSSFEvaluationSheet implements EvaluationSheet {
     private final SXSSFSheet _xs;
+    private int _lastDefinedRow = -1;
 
     public SXSSFEvaluationSheet(SXSSFSheet sheet) {
         _xs = sheet;
+        _lastDefinedRow = _xs.getLastRowNum();
     }
 
     public SXSSFSheet getSXSSFSheet() {
         return _xs;
     }
+
+    /* (non-Javadoc)
+     * @see org.apache.poi.ss.formula.EvaluationSheet#getlastRowNum()
+     * @since POI 4.0.0
+     */
+    @Override
+    public int getLastRowNum() {
+        return _lastDefinedRow;
+    }
+    
     @Override
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         SXSSFRow row = _xs.getRow(rowIndex);
@@ -56,6 +68,6 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
      */
     @Override
     public void clearAllCachedResultValues() {
-        // nothing to do
+        _lastDefinedRow = _xs.getLastRowNum();
     }
 }

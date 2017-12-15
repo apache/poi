@@ -15,37 +15,28 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.util.Internal;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
- * Abstracts a sheet for the purpose of formula evaluation.<br>
- * 
- * For POI internal use only
- * 
- * @author Josh Micich
+ * Test the VLOOKUP function
  */
-@Internal
-public interface EvaluationSheet {
+public class TestVlookup extends TestCase {
 
-    /**
-     * @return <code>null</code> if there is no cell at the specified coordinates
-     */
-    EvaluationCell getCell(int rowIndex, int columnIndex);
-    
-    /**
-     * Propagated from {@link EvaluationWorkbook#clearAllCachedResultValues()} to clear locally cached data.
-     * 
-     * @see WorkbookEvaluator#clearAllCachedResultValues()
-     * @see EvaluationWorkbook#clearAllCachedResultValues()
-     * @since POI 3.15 beta 3
-     */
-    public void clearAllCachedResultValues();
-    
-    /**
-     * @return last row index referenced on this sheet, for evaluation optimization
-     * @since POI 4.0.0
-     */
-    public int getLastRowNum();
+    @Test
+    public void testFullColumnAreaRef61841() {
+        final Workbook wb = XSSFTestDataSamples.openSampleWorkbook("VLookupFullColumn.xlsx");
+        FormulaEvaluator feval = wb.getCreationHelper().createFormulaEvaluator();
+        feval.evaluateAll();
+        assertEquals("Wrong lookup value",  "Value1", feval.evaluate(wb.getSheetAt(0).getRow(3).getCell(1)).getStringValue());
+        assertEquals("Lookup should return #N/A", CellType.ERROR, feval.evaluate(wb.getSheetAt(0).getRow(4).getCell(1)).getCellType());
+    }
+
 }
