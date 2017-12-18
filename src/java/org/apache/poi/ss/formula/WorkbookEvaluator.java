@@ -268,11 +268,12 @@ public final class WorkbookEvaluator {
             if (!tracker.startEvaluate(cce)) {
                 return ErrorEval.CIRCULAR_REF_ERROR;
             }
-            OperationEvaluationContext ec = new OperationEvaluationContext(this, _workbook, sheetIndex, rowIndex, columnIndex, tracker);
 
             try {
 
                 Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
+                OperationEvaluationContext ec = new OperationEvaluationContext
+                        (this, _workbook, sheetIndex, rowIndex, columnIndex, tracker, true, ptgs);
                 if (evalListener == null) {
                     result = evaluateFormula(ec, ptgs);
                 } else {
@@ -779,15 +780,17 @@ public final class WorkbookEvaluator {
         }
         int rowIndex = ref == null ? -1 : ref.getRow();
         short colIndex = ref == null ? -1 : ref.getCol();
+        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, rowIndex);
         final OperationEvaluationContext ec = new OperationEvaluationContext(
                 this, 
                 getWorkbook(), 
                 sheetIndex, 
                 rowIndex, 
                 colIndex, 
-                new EvaluationTracker(_cache)
+                new EvaluationTracker(_cache),
+                true,
+                ptgs
             );
-        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, rowIndex);
         return evaluateNameFormula(ptgs, ec);
     }
     
@@ -836,7 +839,7 @@ public final class WorkbookEvaluator {
 
         adjustRegionRelativeReference(ptgs, target, region);
         
-        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, target.getRow(), target.getCol(), new EvaluationTracker(_cache), formulaType.isSingleValue());
+        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, target.getRow(), target.getCol(), new EvaluationTracker(_cache), formulaType.isSingleValue(), ptgs);
         return evaluateNameFormula(ptgs, ec);
     }
     
