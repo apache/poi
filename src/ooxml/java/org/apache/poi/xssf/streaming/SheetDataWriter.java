@@ -280,7 +280,7 @@ public class SheetDataWriter implements Closeable {
             case STRING: {
                 if (_sharedStringSource != null) {
                     XSSFRichTextString rt = new XSSFRichTextString(cell.getStringCellValue());
-                    int sRef = _sharedStringSource.addEntry(rt.getCTRst());
+                    int sRef = _sharedStringSource.addSharedStringItem(rt);
 
                     writeAttribute("t", STCellType.S.toString());
                     _out.write("><v>");

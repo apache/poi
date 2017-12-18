@@ -193,7 +193,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @return index the index of added entry
      * @deprecated use <code>addSharedStringItem(RichTextString string)</code> instead
      */
-    @Removal(version = "4.2")
+    @Removal(version = "4.2") //make private in 4.2
     public int addEntry(CTRst st) {
         String s = getKey(st);
         count++;
@@ -278,8 +278,8 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        writeTo(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            writeTo(out);
+        }
     }
 }
