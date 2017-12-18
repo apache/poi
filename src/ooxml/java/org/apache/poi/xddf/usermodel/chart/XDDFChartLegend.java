@@ -79,7 +79,9 @@ public final class XDDFChartLegend {
     @Internal  // will later replace with XDDFShapeProperties
     public void setShapeProperties(CTShapeProperties properties) {
         if (properties == null) {
-            legend.unsetSpPr();
+            if (legend.isSetSpPr()) {
+                legend.unsetSpPr();
+            }
         } else {
             legend.setSpPr(properties);
         }
@@ -95,7 +97,9 @@ public final class XDDFChartLegend {
 
     public void setTextBody(XDDFTextBody body) {
         if (body == null) {
-            legend.unsetTxPr();
+            if (legend.isSetTxPr()) {
+                legend.unsetTxPr();
+            }
         } else {
             legend.setTxPr(body.getXmlObject());
         }
@@ -119,7 +123,9 @@ public final class XDDFChartLegend {
 
     public void setExtensionList(XDDFChartExtensionList list) {
         if (list == null) {
-            legend.unsetExtLst();
+            if (legend.isSetExtLst()) {
+                legend.unsetExtLst();
+            }
         } else {
             legend.setExtLst(list.getXmlObject());
         }
@@ -135,7 +141,9 @@ public final class XDDFChartLegend {
 
     public void setLayout(XDDFLayout layout) {
         if (layout == null) {
-            legend.unsetLayout();
+            if (legend.isSetLayout()) {
+                legend.unsetLayout();
+            }
         } else {
             legend.setLayout(layout.getXmlObject());
         }
