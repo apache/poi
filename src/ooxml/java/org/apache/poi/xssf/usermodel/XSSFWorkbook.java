@@ -236,6 +236,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private List<XSSFPivotTable> pivotTables;
     private List<CTPivotCache> pivotCaches;
 
+    private final XSSFFactory xssfFactory;
 
     /**
      * Create a new SpreadsheetML workbook.
@@ -244,12 +245,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         this(XSSFWorkbookType.XLSX);
     }
 
+    @Internal
+    public XSSFWorkbook(XSSFFactory factory) {
+        this(XSSFWorkbookType.XLSX, factory);
+    }
+
     /**
      * Create a new SpreadsheetML workbook.
      * @param workbookType The type of workbook to make (.xlsx or .xlsm).
      */
     public XSSFWorkbook(XSSFWorkbookType workbookType) {
+        this(workbookType, null);
+    }
+
+    private XSSFWorkbook(XSSFWorkbookType workbookType, XSSFFactory factory) {
         super(newPackage(workbookType));
+        this.xssfFactory = (factory == null) ? XSSFFactory.getInstance() : factory;
         onWorkbookCreate();
     }
 
@@ -268,11 +279,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
         super(pkg);
-        
+        this.xssfFactory = XSSFFactory.getInstance();
+
         beforeDocumentRead();
         
         // Build a tree of POIXMLDocumentParts, this workbook being the root
-        load(XSSFFactory.getInstance());
+        load(this.xssfFactory);
         
         // some broken Workbooks miss this...
         setBookViewsIfMissing();
@@ -374,7 +386,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 if (packageReadOnly) {
                     stylesSource = new StylesTable();
                 } else {
-                    stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
+                    stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, this.xssfFactory);
                 }
             }
             stylesSource.setWorkbook(this);
@@ -385,7 +397,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 if (packageReadOnly) {
                     sharedStringSource = new SharedStringsTable();
                 } else {
-                    sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
+                    sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, this.xssfFactory);
                 }
             }
             
@@ -449,8 +461,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
         expProps.getUnderlyingProperties().setApplication(DOCUMENT_CREATOR);
 
-        sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
-        stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
+        sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, this.xssfFactory);
+        stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, this.xssfFactory);
         stylesSource.setWorkbook(this);
 
         namedRanges = new ArrayList<>();
@@ -516,7 +528,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     @Override
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
         } catch (IOException e){
@@ -543,7 +555,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
         OutputStream out = img.getPackagePart().getOutputStream();
         IOUtils.copy(is, out);
         out.close();
@@ -866,7 +878,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             break;
         }
 
-        RelationPart rp = createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber, false);
+        RelationPart rp = createRelationship(XSSFRelation.WORKSHEET, this.xssfFactory, sheetNumber, false);
         XSSFSheet wrapper = rp.getDocumentPart();
         wrapper.sheet = sheet;
         sheet.setId(rp.getRelationship().getId());
@@ -2288,7 +2300,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         OPCPackage opc = getPackage();
         OutputStream outputStream;
         if (!opc.containPart(ppName)) {
-            POIXMLDocumentPart relationship = createRelationship(XSSFRelation.VBA_MACROS, XSSFFactory.getInstance());
+            POIXMLDocumentPart relationship = createRelationship(XSSFRelation.VBA_MACROS, this.xssfFactory);
             outputStream = relationship.getPackagePart().getOutputStream();
         } else {
             PackagePart part = opc.getPart(ppName);

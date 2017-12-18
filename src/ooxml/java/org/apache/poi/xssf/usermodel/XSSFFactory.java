@@ -27,8 +27,8 @@ import org.apache.poi.POIXMLRelation;
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
  */
-public final class XSSFFactory extends POIXMLFactory  {
-    private XSSFFactory() {
+public class XSSFFactory extends POIXMLFactory {
+    protected XSSFFactory() {
     }
 
     private static final XSSFFactory inst = new XSSFFactory();
