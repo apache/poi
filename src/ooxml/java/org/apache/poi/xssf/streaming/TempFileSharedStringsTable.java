@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
@@ -62,27 +61,6 @@ class TempFileSharedStringsTable extends SharedStringsTable {
      */
     private final Map<String, Integer> stmap = new HashMap<>();
 
-    /**
-     * An integer representing the total count of strings in the workbook. This count does not
-     * include any numbers, it counts only the total of text strings in the workbook.
-     */
-    private int count;
-
-    /**
-     * An integer representing the total count of unique strings in the Shared String Table.
-     * A string is unique even if it is a copy of another string, but has different formatting applied
-     * at the character level.
-     */
-    private int uniqueCount;
-
-    private static final XmlOptions options = new XmlOptions();
-    static {
-        options.put( XmlOptions.SAVE_INNER );
-     	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-     	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
-        options.setSaveImplicitNamespaces(Collections.singletonMap("", NS_SPREADSHEETML));
-    }
-
     public TempFileSharedStringsTable() {
         super();
     }
@@ -96,10 +74,6 @@ class TempFileSharedStringsTable extends SharedStringsTable {
     @Override
     public void readFrom(InputStream is) throws IOException {
         throw new UnsupportedOperationException("TempFileSharedStringsTable only supports writing of SXSSF workbooks");
-    }
-
-    private String xmlText(CTRst st) {
-        return st.xmlText(options);
     }
 
     /**

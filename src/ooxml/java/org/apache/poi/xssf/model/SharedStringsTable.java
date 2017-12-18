@@ -77,14 +77,14 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * An integer representing the total count of strings in the workbook. This count does not
      * include any numbers, it counts only the total of text strings in the workbook.
      */
-    private int count;
+    protected int count;
 
     /**
      * An integer representing the total count of unique strings in the Shared String Table.
      * A string is unique even if it is a copy of another string, but has different formatting applied
      * at the character level.
      */
-    private int uniqueCount;
+    protected int uniqueCount;
 
     private SstDocument _sstDoc;
 
@@ -125,7 +125,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             uniqueCount = (int)sst.getUniqueCount();
             //noinspection deprecation
             for (CTRst st : sst.getSiArray()) {
-                stmap.put(getKey(st), cnt);
+                stmap.put(xmlText(st), cnt);
                 strings.add(st);
                 cnt++;
             }
@@ -134,7 +134,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         }
     }
 
-    private String getKey(CTRst st) {
+    protected String xmlText(CTRst st) {
         return st.xmlText(options);
     }
 
@@ -195,7 +195,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      */
     @Removal(version = "4.2") //make private in 4.2
     public int addEntry(CTRst st) {
-        String s = getKey(st);
+        String s = xmlText(st);
         count++;
         if (stmap.containsKey(s)) {
             return stmap.get(s);
