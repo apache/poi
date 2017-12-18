@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.CacheAreaEval;
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.util.NumberComparer;
@@ -26,7 +28,7 @@ import org.apache.poi.ss.util.NumberComparer;
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public abstract class RelationalOperationEval extends Fixed2ArgFunction {
+public abstract class RelationalOperationEval extends Fixed2ArgFunction implements ArrayFunction {
 
 	/**
 	 * Converts a standard compare result (-1, 0, 1) to <code>true</code> or <code>false</code>
@@ -56,6 +58,7 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction {
 	 * Blank < Positive numbers
 	 * </pre>
 	 */
+
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 
 		ValueEval vA;
@@ -69,6 +72,86 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction {
 		int cmpResult = doCompare(vA, vB);
 		boolean result = convertComparisonResult(cmpResult);
 		return BoolEval.valueOf(result);
+	}
+
+	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		ValueEval arg0 = args[0];
+		ValueEval arg1 = args[1];
+
+		int w1, w2, h1, h2;
+		int a1FirstCol = 0, a1FirstRow = 0;
+		if (arg0 instanceof AreaEval) {
+			AreaEval ae = (AreaEval)arg0;
+			w1 = ae.getWidth();
+			h1 = ae.getHeight();
+			a1FirstCol = ae.getFirstColumn();
+			a1FirstRow = ae.getFirstRow();
+		} else if (arg0 instanceof RefEval){
+			RefEval ref = (RefEval)arg0;
+			w1 = 1;
+			h1 = 1;
+			a1FirstCol = ref.getColumn();
+			a1FirstRow = ref.getRow();
+		} else {
+			w1 = 1;
+			h1 = 1;
+		}
+		int a2FirstCol = 0, a2FirstRow = 0;
+		if (arg1 instanceof AreaEval) {
+			AreaEval ae = (AreaEval)arg1;
+			w2 = ae.getWidth();
+			h2 = ae.getHeight();
+			a2FirstCol = ae.getFirstColumn();
+			a2FirstRow = ae.getFirstRow();
+		} else if (arg1 instanceof RefEval){
+			RefEval ref = (RefEval)arg1;
+			w2 = 1;
+			h2 = 1;
+			a2FirstCol = ref.getColumn();
+			a2FirstRow = ref.getRow();
+		} else {
+			w2 = 1;
+			h2 = 1;
+		}
+
+		int width = Math.max(w1, w2);
+		int height = Math.max(h1, h2);
+
+		ValueEval[] vals = new ValueEval[height * width];
+
+		int idx = 0;
+		for(int i = 0; i < height; i++){
+			for(int j = 0; j < width; j++){
+				ValueEval vA;
+				try {
+					vA = OperandResolver.getSingleValue(arg0, a1FirstRow + i, a1FirstCol + j);
+				} catch (EvaluationException e) {
+					vA = e.getErrorEval();
+				}
+				ValueEval vB;
+				try {
+					vB = OperandResolver.getSingleValue(arg1, a2FirstRow + i, a2FirstCol + j);
+				} catch (EvaluationException e) {
+					vB = e.getErrorEval();
+				}
+				if(vA instanceof ErrorEval){
+					vals[idx++] = vA;
+				} else if (vB instanceof ErrorEval) {
+					vals[idx++] = vB;
+				} else {
+					int cmpResult = doCompare(vA, vB);
+					boolean result = convertComparisonResult(cmpResult);
+					vals[idx++] = BoolEval.valueOf(result);
+				}
+
+			}
+		}
+
+		if (vals.length == 1) {
+			return vals[0];
+		}
+
+		return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex + height - 1, srcColumnIndex + width - 1, vals);
 	}
 
 	private static int doCompare(ValueEval va, ValueEval vb) {

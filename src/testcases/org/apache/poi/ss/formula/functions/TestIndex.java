@@ -22,11 +22,17 @@ import java.util.Arrays;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -153,5 +159,146 @@ public final class TestIndex extends TestCase {
 		assertEquals(cra.getLastRow(), ae.getLastRow());
 		assertEquals(cra.getLastColumn(), ae.getLastColumn());
 		return ae;
+	}
+
+	public void test61859(){
+		Workbook wb = HSSFTestDataSamples.openSampleWorkbook("maxindextest.xls");
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+		Sheet example1 = wb.getSheetAt(0);
+		Cell ex1cell1 = example1.getRow(1).getCell(6);
+		assertEquals("MAX(INDEX(($B$2:$B$11=F2)*$A$2:$A$11,0))", ex1cell1.getCellFormula());
+		fe.evaluate(ex1cell1);
+		assertEquals(4.0, ex1cell1.getNumericCellValue());
+
+		Cell ex1cell2 = example1.getRow(2).getCell(6);
+		assertEquals("MAX(INDEX(($B$2:$B$11=F3)*$A$2:$A$11,0))", ex1cell2.getCellFormula());
+		fe.evaluate(ex1cell2);
+		assertEquals(10.0, ex1cell2.getNumericCellValue());
+
+		Cell ex1cell3 = example1.getRow(3).getCell(6);
+		assertEquals("MAX(INDEX(($B$2:$B$11=F4)*$A$2:$A$11,0))", ex1cell3.getCellFormula());
+		fe.evaluate(ex1cell3);
+		assertEquals(20.0, ex1cell3.getNumericCellValue());
+	}
+
+	/**
+	 * If both the Row_num and Column_num arguments are used,
+	 * INDEX returns the value in the cell at the intersection of Row_num and Column_num
+	 */
+	public void testReference2DArea(){
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet();
+		/**
+		 * 1	2	3
+		 * 4	5	6
+		 * 7	8	9
+		 */
+		int val = 0;
+		for(int i = 0; i < 3; i++){
+			Row row = sheet.createRow(i);
+			for(int j = 0; j < 3; j++){
+				row.createCell(j).setCellValue(++val);
+			}
+		}
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+		Cell c1 = sheet.getRow(0).createCell(5);
+		c1.setCellFormula("INDEX(A1:C3,2,2)");
+		Cell c2 = sheet.getRow(0).createCell(6);
+		c2.setCellFormula("INDEX(A1:C3,3,2)");
+
+		assertEquals(5.0, fe.evaluate(c1).getNumberValue());
+		assertEquals(8.0, fe.evaluate(c2).getNumberValue());
+	}
+
+	/**
+	 * If Column_num is 0 (zero), INDEX returns the array of values for the entire row.
+	 */
+	public void testArrayArgument_RowLookup(){
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet();
+		/**
+		 * 1	2	3
+		 * 4	5	6
+		 * 7	8	9
+		 */
+		int val = 0;
+		for(int i = 0; i < 3; i++){
+			Row row = sheet.createRow(i);
+			for(int j = 0; j < 3; j++){
+				row.createCell(j).setCellValue(++val);
+			}
+		}
+		Cell c1 = sheet.getRow(0).createCell(5);
+		c1.setCellFormula("SUM(INDEX(A1:C3,1,0))"); // sum of all values in the 1st row: 1 + 2 + 3 = 6
+
+		Cell c2 = sheet.getRow(0).createCell(6);
+		c2.setCellFormula("SUM(INDEX(A1:C3,2,0))"); // sum of all values in the 2nd row: 4 + 5 + 6 = 15
+
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+		assertEquals(6.0, fe.evaluate(c1).getNumberValue());
+		assertEquals(15.0, fe.evaluate(c2).getNumberValue());
+
+	}
+
+	/**
+	 * If Row_num is 0 (zero), INDEX returns the array of values for the entire column.
+	 */
+	public void testArrayArgument_ColumnLookup(){
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet();
+		/**
+		 * 1	2	3
+		 * 4	5	6
+		 * 7	8	9
+		 */
+		int val = 0;
+		for(int i = 0; i < 3; i++){
+			Row row = sheet.createRow(i);
+			for(int j = 0; j < 3; j++){
+				row.createCell(j).setCellValue(++val);
+			}
+		}
+		Cell c1 = sheet.getRow(0).createCell(5);
+		c1.setCellFormula("SUM(INDEX(A1:C3,0,1))"); // sum of all values in the 1st column: 1 + 4 + 7 = 12
+
+		Cell c2 = sheet.getRow(0).createCell(6);
+		c2.setCellFormula("SUM(INDEX(A1:C3,0,3))"); // sum of all values in the 3rd column: 3 + 6 + 9 = 18
+
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+		assertEquals(12.0, fe.evaluate(c1).getNumberValue());
+		assertEquals(18.0, fe.evaluate(c2).getNumberValue());
+	}
+
+	/**
+	 * =SUM(B1:INDEX(B1:B3,2))
+	 *
+	 * 	 The sum of the range starting at B1, and ending at the intersection of the 2nd row of the range B1:B3,
+	 * 	 which is the sum of B1:B2.
+	 */
+	public void testDynamicReference(){
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet();
+		/**
+		 * 1	2	3
+		 * 4	5	6
+		 * 7	8	9
+		 */
+		int val = 0;
+		for(int i = 0; i < 3; i++){
+			Row row = sheet.createRow(i);
+			for(int j = 0; j < 3; j++){
+				row.createCell(j).setCellValue(++val);
+			}
+		}
+		Cell c1 = sheet.getRow(0).createCell(5);
+		c1.setCellFormula("SUM(B1:INDEX(B1:B3,2))"); // B1:INDEX(B1:B3,2) evaluates to B1:B2
+
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+		assertEquals(7.0, fe.evaluate(c1).getNumberValue());
 	}
 }

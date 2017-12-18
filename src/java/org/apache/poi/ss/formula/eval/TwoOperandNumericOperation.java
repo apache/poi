@@ -64,7 +64,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 	protected abstract double evaluate(double d0, double d1) throws EvaluationException;
 
 	private final class ArrayEval extends TwoArrayArg {
-	    private final MutableValueCollector instance = new MutableValueCollector(false, true);
+	    private final MutableValueCollector instance = new MutableValueCollector(true, true);
         
         protected double[] collectValues(ValueEval arg) throws EvaluationException {
             return instance.collectValues(arg);
