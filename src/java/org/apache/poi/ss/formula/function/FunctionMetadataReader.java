@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,14 +65,7 @@ final class FunctionMetadataReader {
     		}
     
     		try {
-        		BufferedReader br;
-        		try {
-        			br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-        		} catch(UnsupportedEncodingException e) {
-        			throw new RuntimeException(e);
-        		}
-        		
-        		try {
+        		try(BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
         		    FunctionDataBuilder fdb = new FunctionDataBuilder(400);
         
         			while (true) {
@@ -90,8 +84,6 @@ final class FunctionMetadataReader {
         			}
 
         			return fdb.build();
-        		} finally {
-        		    br.close();
         		}
     		} finally {
     		    is.close();
