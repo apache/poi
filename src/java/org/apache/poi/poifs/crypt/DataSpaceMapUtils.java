@@ -18,7 +18,7 @@
 package org.apache.poi.poifs.crypt;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
@@ -352,7 +352,7 @@ public class DataSpaceMapUtils {
             }
         }
 
-        return new String(data, 0, data.length, Charset.forName("UTF-8"));
+        return new String(data, 0, data.length, StandardCharsets.UTF_8);
     }
     
     public static void writeUtf8LPP4(LittleEndianOutput os, String str) {
@@ -360,7 +360,7 @@ public class DataSpaceMapUtils {
             os.writeInt(str == null ? 0 : 4);
             os.writeInt(0);
         } else {
-            byte buf[] = str.getBytes(Charset.forName("UTF-8"));
+            byte buf[] = str.getBytes(StandardCharsets.UTF_8);
             os.writeInt(buf.length);
             os.write(buf);
             int scratchBytes = buf.length%4;

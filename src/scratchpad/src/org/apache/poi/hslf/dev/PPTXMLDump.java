@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -212,7 +212,7 @@ public final class PPTXMLDump {
 
                 if (outFile){
                     FileOutputStream fos = new FileOutputStream(ppt.getName() + ".xml");
-                    OutputStreamWriter out = new OutputStreamWriter(fos, Charset.forName("UTF8"));
+                    OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                     dump.dump(out);
                     out.close();
                 } else {

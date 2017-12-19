@@ -25,8 +25,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-
-import org.apache.commons.codec.CharEncoding;
+import java.nio.charset.StandardCharsets;
 
 /**
  * dump data in hexadecimal format
@@ -34,7 +33,7 @@ import org.apache.commons.codec.CharEncoding;
 @Internal
 public class HexDump {
     public static final String EOL = System.getProperty("line.separator");
-    public static final Charset UTF8 = Charset.forName(CharEncoding.UTF_8);
+    public static final Charset UTF8 = StandardCharsets.UTF_8;
 
     private HexDump() {
         // all static methods, so no need for a public constructor

@@ -18,6 +18,7 @@
 package org.apache.poi.hdgf.chunks;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A chunk header from v11+
@@ -62,6 +63,6 @@ public final class ChunkHeaderV11 extends ChunkHeaderV6 {
 
     @Override
     public Charset getChunkCharset() {
-        return Charset.forName("UTF-16LE");
+        return StandardCharsets.UTF_16LE;
     }
 }
