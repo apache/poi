@@ -20,7 +20,7 @@ package org.apache.poi.openxml4j.opc;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -747,7 +747,7 @@ public final class PackagingURIHelper {
         int n = s.length();
         if (n == 0) return s;
 
-        ByteBuffer bb  = ByteBuffer.wrap(s.getBytes(Charset.forName("UTF-8")));
+        ByteBuffer bb  = ByteBuffer.wrap(s.getBytes(StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         while (bb.hasRemaining()) {
             int b = bb.get() & 0xff;

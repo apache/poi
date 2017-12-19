@@ -22,7 +22,7 @@ import static org.junit.Assert.assertArrayEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.ReplacingInputStream;
@@ -89,6 +89,6 @@ public final class TestEvilUnclosedBRFixingInputStream {
     }
 
     private static byte[] getBytes(String str) {
-        return str.getBytes(Charset.forName("UTF-8"));
+        return str.getBytes(StandardCharsets.UTF_8);
     }
 }

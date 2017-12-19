@@ -23,11 +23,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -86,7 +83,7 @@ public final class TestUnfixedBugs {
     private void verifyBug54084Unicode(Workbook wb) {
         // expected data is stored in UTF-8 in a text-file
         byte data[] = HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt");
-        String testData = new String(data, Charset.forName("UTF-8")).trim();
+        String testData = new String(data, StandardCharsets.UTF_8).trim();
 
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);

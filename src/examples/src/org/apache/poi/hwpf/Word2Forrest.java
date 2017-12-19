@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.hwpf.model.StyleDescription;
 import org.apache.poi.hwpf.model.StyleSheet;
@@ -40,7 +40,7 @@ public final class Word2Forrest
   @SuppressWarnings("unused")
   public Word2Forrest(HWPFDocument doc, OutputStream stream) throws IOException
   {
-      _out = new OutputStreamWriter (stream, Charset.forName("UTF-8"));
+      _out = new OutputStreamWriter (stream, StandardCharsets.UTF_8);
     _doc = doc;
 
     init ();
