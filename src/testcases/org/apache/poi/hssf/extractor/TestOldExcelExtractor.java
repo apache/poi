@@ -345,7 +345,7 @@ public final class TestOldExcelExtractor {
             } finally {
                 out.close();
             }
-            String string = new String(out.toByteArray(), "UTF-8");
+            String string = out.toString("UTF-8");
             assertTrue("Had: " + string,
                     string.contains("Table C-13--Lemons"));
         } finally {
