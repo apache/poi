@@ -195,6 +195,9 @@ under the License.
     <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
     <property name="ooxml.xmlbeans26.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
+    <property name="ooxml.h2.jar" location="${ooxml.lib}/h2-1.4.196.jar"/>
+    <property name="ooxml.h2.url"
+              value="${repository.m2}/maven2/com/h2database/h2/1.4.196/h2-1.4.196.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.9.zip"/>
@@ -339,6 +342,7 @@ under the License.
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.h2.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -387,6 +391,7 @@ under the License.
     <path id="ooxml-lite.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.h2.jar}"/>
         <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -678,6 +683,7 @@ under the License.
             <or>
                 <and>
                     <available file="${ooxml.curvesapi.jar}"/>
+                    <available file="${ooxml.h2.jar}"/>
                     <available file="${ooxml.xmlbeans23.jar}"/>
                     <available file="${ooxml.xmlbeans26.jar}"/>
                 </and>
@@ -688,6 +694,7 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
+        <downloadfile src="${ooxml.h2.url}" dest="${ooxml.h2.jar}"/>
         <downloadfile src="${ooxml.xmlbeans23.url}" dest="${ooxml.xmlbeans23.jar}.orig"/>
         <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
         <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
@@ -2168,6 +2175,7 @@ under the License.
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.security.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
+            <auxClasspath path="${ooxml.h2.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />

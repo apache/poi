@@ -22,8 +22,11 @@ import java.util.*;
 
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.h2.mvstore.MVMap;
+import org.h2.mvstore.MVStore;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
@@ -51,18 +54,35 @@ import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
  */
 class TempFileSharedStringsTable extends SharedStringsTable {
 
+    private File tempFile;
+    private MVStore mvStore;
+
     /**
      *  Array of individual string items in the Shared String table.
      */
-    private final List<CTRst> strings = new ArrayList<>();
+    private final MVMap<Integer, CTRst> strings;
 
     /**
      *  Maps strings and their indexes in the <code>strings</code> arrays
      */
-    private final Map<String, Integer> stmap = new HashMap<>();
+    private final MVMap<String, Integer> stmap;
 
     public TempFileSharedStringsTable() {
         super();
+        try {
+            tempFile = TempFile.createTempFile("poi-shared-strings", ".tmp");
+            mvStore = MVStore.open(tempFile.getAbsolutePath());
+            strings = mvStore.openMap("strings");
+            stmap = mvStore.openMap("stmap");
+        } catch (Error | RuntimeException e) {
+            if (mvStore != null) mvStore.closeImmediately();
+            if (tempFile != null) tempFile.delete();
+            throw e;
+        } catch (Exception e) {
+            if (mvStore != null) mvStore.closeImmediately();
+            if (tempFile != null) tempFile.delete();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -144,10 +164,9 @@ class TempFileSharedStringsTable extends SharedStringsTable {
             return stmap.get(s);
         }
 
-        uniqueCount++;
-        int idx = strings.size();
+        int idx = uniqueCount++;
         stmap.put(s, idx);
-        strings.add(st);
+        strings.put(idx, st);
         return idx;
     }
 
@@ -211,7 +230,7 @@ class TempFileSharedStringsTable extends SharedStringsTable {
             writer.write("\" xmlns=\"");
             writer.write(NS_SPREADSHEETML);
             writer.write("\">");
-            for (CTRst rst : strings) {
+            for (CTRst rst : strings.values()) {
                 writer.write("<si>");
                 writer.write(xmlText(rst));
                 writer.write("</si>");
@@ -220,6 +239,8 @@ class TempFileSharedStringsTable extends SharedStringsTable {
         } finally {
             // do not close; let calling code close the output stream
             writer.flush();
+            mvStore.closeImmediately();
+            tempFile.delete();
         }
     }
 }
