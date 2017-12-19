@@ -18,6 +18,7 @@
 package org.apache.poi.util;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -28,12 +29,12 @@ import java.util.Map;
  */
 @Internal
 public class StringUtil {
-    protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
+    protected static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10000000;
 
-    public static final Charset UTF16LE = Charset.forName("UTF-16LE");
-    public static final Charset UTF8 = Charset.forName("UTF-8");
+    public static final Charset UTF16LE = StandardCharsets.UTF_16LE;
+    public static final Charset UTF8 = StandardCharsets.UTF_8;
     public static final Charset WIN_1252 = Charset.forName("cp1252");
     public static final Charset BIG5 = Charset.forName("Big5");
 

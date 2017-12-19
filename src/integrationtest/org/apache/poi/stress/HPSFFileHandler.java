@@ -24,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -110,7 +110,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
         try {
             System.setOut(psNew);
             CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.getAbsolutePath()});
-            assertEquals("Equal" + NL, new String(bos.toByteArray(), Charset.forName("UTF-8")));
+            assertEquals("Equal" + NL, new String(bos.toByteArray(), StandardCharsets.UTF_8));
         } finally {
             System.setOut(ps);
         }

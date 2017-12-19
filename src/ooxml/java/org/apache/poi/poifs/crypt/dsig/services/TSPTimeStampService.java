@@ -33,7 +33,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -129,7 +129,7 @@ public class TSPTimeStampService implements TimeStampService {
         
         if (signatureConfig.getTspUser() != null) {
             String userPassword = signatureConfig.getTspUser() + ":" + signatureConfig.getTspPass();
-            String encoding = DatatypeConverter.printBase64Binary(userPassword.getBytes(Charset.forName("iso-8859-1")));
+            String encoding = DatatypeConverter.printBase64Binary(userPassword.getBytes(StandardCharsets.ISO_8859_1));
             huc.setRequestProperty("Authorization", "Basic " + encoding);
         }
 

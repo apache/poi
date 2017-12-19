@@ -18,7 +18,7 @@
 package org.apache.poi.xssf.binary;
 
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Internal;
@@ -54,7 +54,7 @@ public class XSSFBUtils {
             throw new XSSFBParseException("trying to read beyond data length:" +
              "offset="+offset+", numBytes="+numBytes+", data.length="+data.length);
         }
-        sb.append(new String(data, offset, numBytes, Charset.forName("UTF-16LE")));
+        sb.append(new String(data, offset, numBytes, StandardCharsets.UTF_16LE));
         numBytes+=4;
         return numBytes;
     }
@@ -80,7 +80,7 @@ public class XSSFBUtils {
         if (offset+numBytes > data.length) {
             throw new XSSFBParseException("trying to read beyond data length");
         }
-        sb.append(new String(data, offset, numBytes, Charset.forName("UTF-16LE")));
+        sb.append(new String(data, offset, numBytes, StandardCharsets.UTF_16LE));
         numBytes+=4;
         return numBytes;
     }

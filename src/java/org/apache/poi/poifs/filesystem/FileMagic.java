@@ -19,11 +19,11 @@ package org.apache.poi.poifs.filesystem;
 
 import static org.apache.poi.poifs.common.POIFSConstants.OOXML_FILE_HEADER;
 import static org.apache.poi.poifs.common.POIFSConstants.RAW_XML_FILE_HEADER;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.util.IOUtils;
@@ -76,7 +76,7 @@ public enum FileMagic {
     /** PDF document */
     PDF("%PDF"),
     /** Some different HTML documents */
-    HTML("<!DOCTYP".getBytes(Charset.forName("UTF-8")), "<html".getBytes(Charset.forName("UTF-8"))),
+    HTML("<!DOCTYP".getBytes(UTF_8), "<html".getBytes(UTF_8)),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hemf.record;
 
+import static java.nio.charset.StandardCharsets.UTF_16LE;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -39,7 +40,6 @@ import org.apache.poi.util.RecordFormatException;
 @Internal
 public class HemfText {
 
-    private static final Charset UTF16LE = Charset.forName("UTF-16LE");
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     public static class ExtCreateFontIndirectW extends UnimplementedHemfRecord {
@@ -162,11 +162,11 @@ public class HemfText {
 
         @Override
         protected Charset getEncodingHint() {
-            return UTF16LE;
+            return UTF_16LE;
         }
 
         public String getText() throws IOException {
-            return getText(UTF16LE);
+            return getText(UTF_16LE);
         }
     }
 
