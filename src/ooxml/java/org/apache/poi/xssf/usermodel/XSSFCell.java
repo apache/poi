@@ -558,21 +558,30 @@ public final class XSSFCell implements Cell {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
         if (formula == null) {
             wb.onDeleteFormula(this);
-            if(_cell.isSetF()) {
+            if (_cell.isSetF()) {
                 _cell.unsetF();
             }
             return;
         }
 
-        if(wb.getCellFormulaValidation()) {
+        if (wb.getCellFormulaValidation()) {
             XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             //validate through the FormulaParser
             FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
         }
 
-        CTCellFormula f = CTCellFormula.Factory.newInstance();
-        f.setStringValue(formula);
-        _cell.setF(f);
+        CTCellFormula f;
+        if (_cell.isSetF()) {
+            f = _cell.getF();
+            f.setStringValue(formula);
+            if(f.getT() == STCellFormulaType.SHARED){
+                getRow().getSheet().onReadCell(this);
+            }
+        } else {
+            f = CTCellFormula.Factory.newInstance();
+            f.setStringValue(formula);
+            _cell.setF(f);
+        }
         if(_cell.isSetV()) {
             _cell.unsetV();
         }
