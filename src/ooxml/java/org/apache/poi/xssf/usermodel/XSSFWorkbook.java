@@ -577,6 +577,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return cloneSheet(sheetNum, null);
     }
 
+    @Override
+    public void close() throws IOException {
+        super.close();
+        sharedStringSource.close();
+    }
+
     /**
      * Create an XSSFSheet from an existing sheet in the XSSFWorkbook.
      *  The cloned sheet is a deep copy of the original but with a new given

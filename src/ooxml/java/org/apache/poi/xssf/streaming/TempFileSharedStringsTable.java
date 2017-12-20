@@ -239,8 +239,12 @@ class TempFileSharedStringsTable extends SharedStringsTable {
         } finally {
             // do not close; let calling code close the output stream
             writer.flush();
-            mvStore.closeImmediately();
-            tempFile.delete();
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        if(mvStore != null) mvStore.closeImmediately();
+        if(tempFile != null) tempFile.delete();
     }
 }

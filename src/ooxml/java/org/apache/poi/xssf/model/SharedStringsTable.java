@@ -20,6 +20,7 @@ package org.apache.poi.xssf.model;
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,7 +62,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
  * properties, and phonetic properties (for East Asian languages).
  * </p>
  */
-public class SharedStringsTable extends POIXMLDocumentPart {
+public class SharedStringsTable extends POIXMLDocumentPart implements Closeable {
 
     /**
      *  Array of individual string items in the Shared String table.
@@ -282,4 +283,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             writeTo(out);
         }
     }
+
+    @Override
+    public void close() throws IOException {}
 }
