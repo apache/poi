@@ -555,7 +555,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             IOUtils.copy(is, out);
         }
