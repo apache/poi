@@ -24,20 +24,18 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 
 class SXSSFFactory extends XSSFFactory {
 
-    private static final SXSSFFactory inst = new SXSSFFactory();
+    private final SXSSFWorkbook.Builder builder;
 
-    public static XSSFFactory getInstance(){
-        return inst;
-    }
 
-    private SXSSFFactory() {
+    SXSSFFactory(SXSSFWorkbook.Builder builder) {
         super();
+        this.builder = builder;
     }
 
     @Override
     public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor) {
         if (XSSFRelation.SHARED_STRINGS.getRelation().equals(descriptor.getRelation())) {
-            return new TempFileSharedStringsTable();
+            return new TempFileSharedStringsTable(builder);
         }
         return super.newDocumentPart(descriptor);
     }

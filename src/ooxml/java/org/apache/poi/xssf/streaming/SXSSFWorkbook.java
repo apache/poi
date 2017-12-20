@@ -53,6 +53,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.*;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFChartSheet;
+import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -114,7 +115,7 @@ public class SXSSFWorkbook implements Workbook {
      * Construct a new workbook with default row window size
      */
     public SXSSFWorkbook(){
-    	this(null /*workbook*/);
+    	this(new Builder());
     }
 
     /**
@@ -178,7 +179,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize){
-    	this(workbook,rowAccessWindowSize, false);
+    	this(workbook, rowAccessWindowSize, false);
     }
 
     /**
@@ -230,19 +231,13 @@ public class SXSSFWorkbook implements Workbook {
      * @param useSharedStringsTable whether to use a shared strings table
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable) {
-        setRandomAccessWindowSize(rowAccessWindowSize);
-        setCompressTempFiles(compressTmpFiles);
-        if (workbook == null) {
-            _wb=new XSSFWorkbook(SXSSFFactory.getInstance());
-            _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
-        } else {
-            _wb=workbook;
-            _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
-            for ( Sheet sheet : _wb ) {
-                createAndRegisterSXSSFSheet( (XSSFSheet)sheet );
-            }
-        }
+        this(new Builder()
+                .xssfWorkbook(workbook)
+                .rowAccessWindowSize(rowAccessWindowSize)
+                .compressTempFiles(compressTmpFiles)
+                .useSharedStringsTable(useSharedStringsTable));
     }
+
     /**
      * Construct an empty workbook and specify the window for row access.
      * <p>
@@ -265,6 +260,22 @@ public class SXSSFWorkbook implements Workbook {
      */
     public SXSSFWorkbook(int rowAccessWindowSize){
     	this(null /*workbook*/, rowAccessWindowSize);
+    }
+
+    SXSSFWorkbook(Builder builder) {
+        setRandomAccessWindowSize(builder.rowAccessWindowSize);
+        setCompressTempFiles(builder.compressTempFiles);
+        if (builder.xssfWorkbook == null) {
+            XSSFFactory factory = builder.useTempFileSharedStringsTable ? new SXSSFFactory(builder) : XSSFFactory.getInstance();
+            _wb = new XSSFWorkbook(factory);
+            _sharedStringSource = builder.useSharedStringsTable ? _wb.getSharedStringSource() : null;
+        } else {
+            _wb = builder.xssfWorkbook;
+            _sharedStringSource = builder.useSharedStringsTable ? _wb.getSharedStringSource() : null;
+            for ( Sheet sheet : _wb ) {
+                createAndRegisterSXSSFSheet( (XSSFSheet)sheet );
+            }
+        }
     }
 
     /**
@@ -1333,4 +1344,47 @@ public class SXSSFWorkbook implements Workbook {
     }
     
 //end of interface implementation
+
+    public static class Builder {
+        XSSFWorkbook xssfWorkbook;
+        int rowAccessWindowSize = DEFAULT_WINDOW_SIZE;
+        boolean compressTempFiles = false;
+        boolean useSharedStringsTable = false;
+        boolean useTempFileSharedStringsTable = false;
+        boolean encryptTempFiles = false;
+
+        public Builder xssfWorkbook(XSSFWorkbook xssfWorkbook) {
+            this.xssfWorkbook = xssfWorkbook;
+            return this;
+        }
+
+        public Builder rowAccessWindowSize(int size) {
+            this.rowAccessWindowSize = size;
+            return this;
+        }
+
+        public Builder encryptTempFiles(boolean encrypt) {
+            this.encryptTempFiles = encrypt;
+            return this;
+        }
+
+        public Builder compressTempFiles(boolean compress) {
+            this.compressTempFiles = compress;
+            return this;
+        }
+
+        public Builder useSharedStringsTable(boolean useSharedStringsTable) {
+            this.useSharedStringsTable = useSharedStringsTable;
+            return this;
+        }
+
+        public Builder useTempFileSharedStringsTable(boolean useTempFileSharedStringsTable) {
+            this.useTempFileSharedStringsTable = useTempFileSharedStringsTable;
+            return this;
+        }
+
+        public SXSSFWorkbook build() {
+            return new SXSSFWorkbook(this);
+        }
+    }
 }

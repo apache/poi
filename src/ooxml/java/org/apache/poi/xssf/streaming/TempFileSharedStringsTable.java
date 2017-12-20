@@ -54,6 +54,7 @@ import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
  */
 class TempFileSharedStringsTable extends SharedStringsTable {
 
+    private static final Random RND = new Random();
     private File tempFile;
     private MVStore mvStore;
 
@@ -67,11 +68,18 @@ class TempFileSharedStringsTable extends SharedStringsTable {
      */
     private final MVMap<String, Integer> stmap;
 
-    public TempFileSharedStringsTable() {
+    public TempFileSharedStringsTable(SXSSFWorkbook.Builder sxssfBuilder) {
         super();
         try {
             tempFile = TempFile.createTempFile("poi-shared-strings", ".tmp");
-            mvStore = MVStore.open(tempFile.getAbsolutePath());
+            MVStore.Builder mvStoreBuilder = new MVStore.Builder();
+            if (sxssfBuilder.encryptTempFiles) {
+                byte[] bytes = new byte[1024];
+                RND.nextBytes(bytes);
+                mvStoreBuilder.encryptionKey(Base64.getEncoder().encodeToString(bytes).toCharArray());
+            }
+            mvStoreBuilder.fileName(tempFile.getAbsolutePath());
+            mvStore = mvStoreBuilder.open();
             strings = mvStore.openMap("strings");
             stmap = mvStore.openMap("stmap");
         } catch (Error | RuntimeException e) {
@@ -127,7 +135,7 @@ class TempFileSharedStringsTable extends SharedStringsTable {
      * @return the total count of strings in the workbook
      */
     @Override
-    public int getCount(){
+    public int getCount() {
         return count;
     }
 
@@ -139,7 +147,7 @@ class TempFileSharedStringsTable extends SharedStringsTable {
      * @return the total count of unique strings in the workbook
      */
     @Override
-    public int getUniqueCount(){
+    public int getUniqueCount() {
         return uniqueCount;
     }
 
