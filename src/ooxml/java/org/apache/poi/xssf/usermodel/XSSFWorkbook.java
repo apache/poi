@@ -635,10 +635,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         
         
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             srcSheet.write(out);
-            clonedSheet.read(new ByteArrayInputStream(out.toByteArray()));
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(out.toByteArray())) {
+                clonedSheet.read(bis);
+            }
         } catch (IOException e){
             throw new POIXMLException("Failed to clone sheet", e);
         }
@@ -2384,18 +2385,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         
         Ole10Native ole10 = new Ole10Native(label, fileName, command, oleData);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500);
-        ole10.writeOut(bos);
-        
-        try (POIFSFileSystem poifs = new POIFSFileSystem()) {
-            DirectoryNode root = poifs.getRoot();
-            root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
-            root.setStorageClsid(ClassID.OLE10_PACKAGE);
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500)) {
+            ole10.writeOut(bos);
 
-            // TODO: generate CombObj stream
+            try (POIFSFileSystem poifs = new POIFSFileSystem()) {
+                DirectoryNode root = poifs.getRoot();
+                root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+                root.setStorageClsid(ClassID.OLE10_PACKAGE);
 
-            try (OutputStream os = pp.getOutputStream()) {
-                poifs.writeFilesystem(os);
+                // TODO: generate CombObj stream
+
+                try (OutputStream os = pp.getOutputStream()) {
+                    poifs.writeFilesystem(os);
+                }
             }
         }
 
