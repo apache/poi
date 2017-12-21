@@ -19,6 +19,7 @@ package org.apache.poi.xssf.streaming;
 
 import java.io.*;
 import java.util.*;
+import java.security.SecureRandom;
 
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Removal;
