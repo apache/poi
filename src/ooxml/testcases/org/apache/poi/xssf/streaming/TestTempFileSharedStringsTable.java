@@ -56,9 +56,9 @@ public class TestTempFileSharedStringsTable {
     @Test
     public void testLargeData() throws Exception {
         java.util.Random rnd = new java.util.Random();
-        byte[] bytes = new byte[640];
+        byte[] bytes = new byte[1028];
         try (TempFileSharedStringsTable sst = new TempFileSharedStringsTable(new SXSSFWorkbook.Builder())) {
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 100000; i++) {
                 rnd.nextBytes(bytes);
                 String rndString = java.util.Base64.getEncoder().encodeToString(bytes);
                 sst.addSharedStringItem(new XSSFRichTextString(rndString));

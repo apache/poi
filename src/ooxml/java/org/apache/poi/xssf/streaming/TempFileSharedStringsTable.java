@@ -54,7 +54,7 @@ import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
  */
 class TempFileSharedStringsTable extends SharedStringsTable {
 
-    private static final Random RND = new Random();
+    private static final SecureRandom RND = new SecureRandom();
     private File tempFile;
     private MVStore mvStore;
 
