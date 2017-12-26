@@ -130,7 +130,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @param column - the column number this cell represents
      * @return Cell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or greate than a maximum number of supported columns
+     * @throws IllegalArgumentException if columnIndex < 0 or greater than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
     @Override
