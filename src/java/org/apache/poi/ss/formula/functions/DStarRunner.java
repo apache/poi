@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -39,13 +41,38 @@ import org.apache.poi.ss.util.NumberComparer;
  * - functions as conditions
  */
 public final class DStarRunner implements Function3Arg {
+    /**
+     * Enum for convenience to identify and source implementations of the D* functions
+     */
     public enum DStarAlgorithmEnum {
-        DGET,
-        DMIN,
-        // DMAX, // DMAX is not yet implemented
+        /** @see DGet */
+        DGET(DGet::new),
+        /** @see DMin */
+        DMIN(DMin::new),
+        /** @see DMax */
+        DMAX(DMax::new),
+        /** @see DSum */
+        DSUM(DSum::new),
+        ;
+        
+        private final Supplier<IDStarAlgorithm> implSupplier;
+
+        private DStarAlgorithmEnum(Supplier<IDStarAlgorithm> implSupplier) {
+            this.implSupplier = implSupplier;
+        }
+        
+        /**
+         * @return a new function implementation instance
+         */
+        public IDStarAlgorithm newInstance() {
+            return implSupplier.get();
+        }
     }
     private final DStarAlgorithmEnum algoType;
 
+    /**
+     * @param algorithm to implement
+     */
     public DStarRunner(DStarAlgorithmEnum algorithm) {
         this.algoType = algorithm;
     }
@@ -86,13 +113,7 @@ public final class DStarRunner implements Function3Arg {
         }
 
         // Create an algorithm runner.
-        IDStarAlgorithm algorithm;
-        switch(algoType) {
-            case DGET: algorithm = new DGet(); break;
-            case DMIN: algorithm = new DMin(); break;
-            default:
-                throw new IllegalStateException("Unexpected algorithm type " + algoType + " encountered.");
-        }
+        IDStarAlgorithm algorithm = algoType.newInstance();
 
         // Iterate over all DB entries.
         final int height = db.getHeight();

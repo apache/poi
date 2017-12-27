@@ -106,10 +106,10 @@ public final class FunctionEval {
         retval[38] = BooleanFunction.NOT;
         retval[39] = NumericFunction.MOD;
         // 40: DCOUNT
-        // 41: DSUM
+        retval[41] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DSUM);
         // 42: DAVERAGE
         retval[43] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DMIN);
-        // 44: DMAX
+        retval[44] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DMAX);
         // 45: DSTDEV
         retval[46] = AggregateFunction.VAR;
         // 47: DVAR
@@ -144,7 +144,6 @@ public final class FunctionEval {
         retval[FunctionID.OFFSET] = new Offset(); //nominally 78
 
         retval[82] = TextFunction.SEARCH;
-        // 83: TRANSPOSE
         retval[83] = MatrixFunction.TRANSPOSE;
 
         // 86: TYPE
