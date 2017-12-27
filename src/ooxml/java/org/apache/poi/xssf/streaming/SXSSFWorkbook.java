@@ -1345,6 +1345,9 @@ public class SXSSFWorkbook implements Workbook {
     
 //end of interface implementation
 
+    /**
+     * Builder for <code>SXSSFWorbook</code> instances.
+     */
     public static class Builder {
         XSSFWorkbook xssfWorkbook;
         int rowAccessWindowSize = DEFAULT_WINDOW_SIZE;
@@ -1353,36 +1356,94 @@ public class SXSSFWorkbook implements Workbook {
         boolean useTempFileSharedStringsTable = false;
         boolean encryptTempFiles = false;
 
+        /**
+         * Configures the parent workbook for SXSSFWorkbooks built using this builder instance.
+         *
+         * @param xssfWorkbook
+         * @return builder
+         */
         public Builder xssfWorkbook(XSSFWorkbook xssfWorkbook) {
             this.xssfWorkbook = xssfWorkbook;
             return this;
         }
 
+        /**
+         * Configures the number of rows that are held in memory by SXSSFWorkbooks
+         * built using this builder.
+         *
+         * @see SXSSFWorkbook#DEFAULT_WINDOW_SIZE
+         * @param size
+         * @return builder
+         */
         public Builder rowAccessWindowSize(int size) {
             this.rowAccessWindowSize = size;
             return this;
         }
 
+        /**
+         * Configures whether SXSSFWorkbooks built with this builder instance will
+         * encrypt their temp files. The default is <code>false</code>.
+         *
+         * @see #compressTempFiles(boolean)
+         * @see #useTempFileSharedStringsTable(boolean)
+         * @param compress
+         * @return builder
+         */
         public Builder encryptTempFiles(boolean encrypt) {
             this.encryptTempFiles = encrypt;
             return this;
         }
 
+        /**
+         * Configures whether SXSSFWorkbooks built with this builder instance will
+         * compress their temp files. The default is <code>false</code>.
+         *
+         * @see #encryptTempFiles(boolean)
+         * @param compress
+         * @return builder
+         */
         public Builder compressTempFiles(boolean compress) {
             this.compressTempFiles = compress;
             return this;
         }
 
+        /**
+         * Configures whether SXSSFWorkbooks built with this builder instance will use
+         * a Shared Strings table. The default is <code>false</code>.
+         *
+         * @see #useTempFileSharedStringsTable(boolean)
+         * @see #encryptTempFiles(boolean)
+         * @param useSharedStringsTable
+         * @return builder
+         */
         public Builder useSharedStringsTable(boolean useSharedStringsTable) {
             this.useSharedStringsTable = useSharedStringsTable;
             return this;
         }
 
+        /**
+         * <p>
+         * Configures whether SXSSFWorkbooks built with this builder instance will use
+         * temp files for the Shared Strings table data. Using temp files will mean less memory is used
+         * but will slow down processing. The default is <code>false</code>.
+         * </p>
+         * <p>
+         * Only has an effect if <code>useSharedStringsTable(true)</code> is used.
+         * </p>
+         *
+         * @see #useSharedStringsTable(boolean)
+         * @see #encryptTempFiles(boolean)
+         * @param useTempFileSharedStringsTable
+         * @return builder
+         */
         public Builder useTempFileSharedStringsTable(boolean useTempFileSharedStringsTable) {
             this.useTempFileSharedStringsTable = useTempFileSharedStringsTable;
             return this;
         }
 
+        /**
+         * @return new SXSSFWorkbook based on the builder configuration
+         */
         public SXSSFWorkbook build() {
             return new SXSSFWorkbook(this);
         }
