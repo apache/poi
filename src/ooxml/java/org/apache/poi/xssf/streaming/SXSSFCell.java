@@ -43,8 +43,8 @@ import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
- * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
-*/
+ * Streaming version of XSSFCell implementing the "BigGridDemo" strategy.
+ */
 public class SXSSFCell implements Cell {
     private static final POILogger logger = POILogFactory.getLogger(SXSSFCell.class);
 
@@ -53,7 +53,7 @@ public class SXSSFCell implements Cell {
     private CellStyle _style;
     private Property _firstProperty;
     
-    public SXSSFCell(SXSSFRow row,CellType cellType)
+    public SXSSFCell(SXSSFRow row, CellType cellType)
     {
         _row=row;
         setType(cellType);
@@ -268,8 +268,8 @@ public class SXSSFCell implements Cell {
     /**
      * Set a rich string value for the cell.
      *
-     * @param value  value to set the cell to.  For formulas we'll set the formula
-     * string, for String cells we'll set its value.  For other types we will
+     * @param value  value to set the cell to.  For formulas: we'll set the formula
+     * string, for String cells: we'll set its value.  For other types we will
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
@@ -284,9 +284,7 @@ public class SXSSFCell implements Cell {
             if (xvalue.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
                 throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
             }
-            if (xvalue.hasFormatting())
-                logger.log(POILogger.WARN, "SXSSF doesn't support Shared Strings, rich text formatting information has be lost");
-            
+
             ((RichTextValue)_value).setValue(xvalue);
         } else {
             setCellType(CellType.BLANK);
