@@ -120,7 +120,7 @@ final class OperationEvaluatorFactory {
 			EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
 		    EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-		    if ((evalCell.isPartOfArrayFormulaGroup() || ec.isInArrayContext()) && result instanceof ArrayFunction)
+		    if (evalCell != null && (evalCell.isPartOfArrayFormulaGroup() || ec.isInArrayContext()) && result instanceof ArrayFunction)
 		        return ((ArrayFunction) result).evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
 		                
 			return  result.evaluate(args, ec.getRowIndex(), (short) ec.getColumnIndex());

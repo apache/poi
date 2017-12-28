@@ -597,7 +597,7 @@ public final class WorkbookEvaluator {
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
  
-        if (evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
+        if (evalCell != null && evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
             value = OperandResolver.getElementFromArray((AreaEval) evaluationResult, evalCell);
         }
         else {
