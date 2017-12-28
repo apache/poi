@@ -38,10 +38,7 @@ import org.apache.poi.hwpf.converter.AbstractWordUtils;
 import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.hwpf.model.FieldsDocumentPart;
-import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.PlexOfField;
-import org.apache.poi.hwpf.model.SubdocumentType;
+import org.apache.poi.hwpf.model.*;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -902,5 +899,18 @@ public class TestBugs{
     public void testCommonCrawlRegression() throws IOException {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("ca.kwsymphony.www_education_School_Concert_Seat_Booking_Form_2011-12.doc");
         document.close();
+    }
+
+    @Test
+    public void test61911() throws IOException {
+        HWPFDocument document = HWPFTestDataSamples.openSampleFile("61911.doc");
+
+        PicturesTable picturesTable = document.getPicturesTable();
+        List<Picture> pictures = picturesTable.getAllPictures();
+        assertNotNull(pictures);
+        assertEquals(0, pictures.size());
+
+        document.close();
+
     }
 }
