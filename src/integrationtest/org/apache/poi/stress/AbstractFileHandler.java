@@ -99,16 +99,13 @@ public abstract class AbstractFileHandler implements FileHandler {
             handleExtractingAsStream(file);
             
             if(extractor instanceof POIOLE2TextExtractor) {
-            	HPSFPropertiesExtractor hpsfExtractor = new HPSFPropertiesExtractor((POIOLE2TextExtractor)extractor);
-            	try {
-                	assertNotNull(hpsfExtractor.getDocumentSummaryInformationText());
-                	assertNotNull(hpsfExtractor.getSummaryInformationText());
-                	String text = hpsfExtractor.getText();
-                	//System.out.println(text);
-                	assertNotNull(text);
-            	} finally {
-            		hpsfExtractor.close();
-            	}
+                try (HPSFPropertiesExtractor hpsfExtractor = new HPSFPropertiesExtractor((POIOLE2TextExtractor) extractor)) {
+                    assertNotNull(hpsfExtractor.getDocumentSummaryInformationText());
+                    assertNotNull(hpsfExtractor.getSummaryInformationText());
+                    String text = hpsfExtractor.getText();
+                    //System.out.println(text);
+                    assertNotNull(text);
+                }
             }
         } catch (IllegalArgumentException e) {
             if(!EXPECTED_EXTRACTOR_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
@@ -124,18 +121,12 @@ public abstract class AbstractFileHandler implements FileHandler {
     }
 
     private void handleExtractingAsStream(File file) throws IOException, OpenXML4JException, XmlException {
-        InputStream stream = new FileInputStream(file);
-        try {
-            POITextExtractor streamExtractor = ExtractorFactory.createExtractor(stream);
-            try {
+        try (InputStream stream = new FileInputStream(file)) {
+            try (POITextExtractor streamExtractor = ExtractorFactory.createExtractor(stream)) {
                 assertNotNull(streamExtractor);
-   
+
                 assertNotNull(streamExtractor.getText());
-            } finally {
-                streamExtractor.close();
             }
-        } finally {
-            stream.close();
         }
     }
 
