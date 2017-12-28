@@ -304,6 +304,10 @@ public final class StyleSheet {
             return NIL_CHP;
         }
 
+        if (styleIndex == -1) {
+            return NIL_CHP;
+        }
+
         return (_styleDescriptions[styleIndex] != null ? _styleDescriptions[styleIndex]
                 .getCHP() : NIL_CHP);
     }
@@ -315,6 +319,10 @@ public final class StyleSheet {
         }
 
         if (styleIndex >= _styleDescriptions.length) {
+            return NIL_PAP;
+        }
+
+        if (styleIndex == -1) {
             return NIL_PAP;
         }
 
@@ -338,6 +346,10 @@ public final class StyleSheet {
             return NIL_CHPX;
         }
 
+        if (styleIndex == -1) {
+            return NIL_CHPX;
+        }
+
         if (_styleDescriptions[styleIndex] == null) {
             return NIL_CHPX;
         }
@@ -355,6 +367,10 @@ public final class StyleSheet {
         }
 
         if (styleIndex >= _styleDescriptions.length) {
+            return NIL_PAPX;
+        }
+
+        if (styleIndex == -1) {
             return NIL_PAPX;
         }
 
