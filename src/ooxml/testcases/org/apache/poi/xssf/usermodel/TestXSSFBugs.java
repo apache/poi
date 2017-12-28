@@ -3102,6 +3102,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Cell cell = row.createCell(1);
         cell.setCellValue("blabla");
 
+        //0 1 2 3 4 5 6 7
+        //A B C D E F G H
         row = sheet.createRow(4);
         cell = row.createCell(7);
         cell.setCellValue("blabla");
@@ -3110,7 +3112,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // to avoid having to iterate all rows/cells in each add/remove of a row or cell
         wb.write(new NullOutputStream());
 
-        assertEquals("B2:I5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
+        assertEquals("B2:H5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
+
+        wb.close();
+    }
+
+    @Test
+    public void test61798() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        Row row = sheet.createRow(1);
+        Cell cell = row.createCell(1);
+        cell.setCellValue("blabla");
+
+        row = sheet.createRow(4);
+        // Allowable column range for EXCEL2007 is (0..16383) or ('A'..'XDF')
+        cell = row.createCell(16383);
+        cell.setCellValue("blabla");
+
+        // we currently only populate the dimension during writing out
+        // to avoid having to iterate all rows/cells in each add/remove of a row or cell
+        wb.write(new NullOutputStream());
+
+        assertEquals("B2:XFD5", ((XSSFSheet)sheet).getCTWorksheet().getDimension().getRef());
 
         wb.close();
     }

@@ -3492,9 +3492,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 // Resetting the hyperlink array seems to break some XML nodes.
                 //worksheet.getHyperlinks().setHyperlinkArray(new CTHyperlink[0]);
                 worksheet.unsetHyperlinks();
-            } else {
+            } /*else {
                 // nothing to do
-            }
+            }*/
         }
 
         int minCell=Integer.MAX_VALUE, maxCell=Integer.MIN_VALUE;
@@ -3507,7 +3507,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 minCell = Math.min(minCell, row.getFirstCellNum());
             }
             if(row.getLastCellNum() != -1) {
-                maxCell = Math.max(maxCell, row.getLastCellNum());
+                maxCell = Math.max(maxCell, row.getLastCellNum()-1);
             }
         }
 
