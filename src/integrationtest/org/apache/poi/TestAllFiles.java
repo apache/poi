@@ -405,13 +405,10 @@ public class TestAllFiles {
         boolean ignoreHPSF = (handler instanceof HPSFFileHandler);
         
         try {
-            InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64*1024);
-            try {
+            try (InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64 * 1024)) {
                 handler.handleFile(stream, file);
-                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-                    OLD_FILES_HWPF.contains(file) && !ignoreHPSF);
-            } finally {
-                stream.close();
+                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!",
+                        OLD_FILES_HWPF.contains(file) && !ignoreHPSF);
             }
 
             handler.handleExtracting(inputFile);
