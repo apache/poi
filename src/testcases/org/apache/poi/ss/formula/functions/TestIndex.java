@@ -34,6 +34,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Tests for the INDEX() function.</p>
@@ -180,6 +181,20 @@ public final class TestIndex extends TestCase {
 		assertEquals("MAX(INDEX(($B$2:$B$11=F4)*$A$2:$A$11,0))", ex1cell3.getCellFormula());
 		fe.evaluate(ex1cell3);
 		assertEquals(20.0, ex1cell3.getNumericCellValue());
+	}
+
+	public void test61116(){
+		Workbook workbook = HSSFTestDataSamples.openSampleWorkbook("61116.xls");
+		FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+		Sheet sheet = workbook.getSheet("sample2");
+
+		Row row = sheet.getRow(1);
+		assertEquals(3.0, evaluator.evaluate(row.getCell(1)).getNumberValue());
+		assertEquals(3.0, evaluator.evaluate(row.getCell(2)).getNumberValue());
+
+		row = sheet.getRow(2);
+		assertEquals(5.0, evaluator.evaluate(row.getCell(1)).getNumberValue());
+		assertEquals(5.0, evaluator.evaluate(row.getCell(2)).getNumberValue());
 	}
 
 	/**

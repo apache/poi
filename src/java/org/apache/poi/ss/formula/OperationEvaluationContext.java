@@ -33,7 +33,6 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
@@ -53,7 +52,7 @@ public final class OperationEvaluationContext {
     private final EvaluationTracker _tracker;
     private final WorkbookEvaluator _bookEvaluator;
     private final boolean _isSingleValue;
-    private final boolean _isInArrayContext;
+    private boolean _isInArrayContext;
 
     public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
             int srcColNum, EvaluationTracker tracker) {
@@ -62,11 +61,6 @@ public final class OperationEvaluationContext {
 
     public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
             int srcColNum, EvaluationTracker tracker, boolean isSingleValue) {
-        this(bookEvaluator, workbook, sheetIndex, srcRowNum, srcColNum, tracker, isSingleValue, null);
-    }
-
-    public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
-                                      int srcColNum, EvaluationTracker tracker, boolean isSingleValue, Ptg[] ptgs) {
         _bookEvaluator = bookEvaluator;
         _workbook = workbook;
         _sheetIndex = sheetIndex;
@@ -74,48 +68,13 @@ public final class OperationEvaluationContext {
         _columnIndex = srcColNum;
         _tracker = tracker;
         _isSingleValue = isSingleValue;
-
-        _isInArrayContext = isInArrayContext(ptgs);
     }
 
-    /**
-     * Check if the given formula should be evaluated in array mode.
-     *
-     * <p>
-     *     Normally, array formulas are recognized from their definition:
-     *     pressing Ctrl+Shift+Enter in Excel marks the input as an array entered formula.
-     *</p>
-     * <p>
-     *     However, in some cases Excel evaluates  tokens in array mode depending on the context.
-     *     The <code>INDEX( area, row_num, [column_num])</code> function is an example:
-     *
-     *     If the array argument includes more than one row and row_num is omitted or set to 0,
-     *     the Excel INDEX function returns an array of the entire column. Similarly, if array
-     *     includes more than one column and the column_num argument is omitted or set to 0,
-     *     the INDEX formula returns the entire row
-     * </p>
-     *
-     * @param ptgs  parsed formula to analyze
-     * @return whether the formula should be evaluated in array mode
-     */
-    private boolean isInArrayContext(Ptg[] ptgs){
-        boolean arrayMode = false;
-        if(ptgs != null) for(int j = ptgs.length - 1; j >= 0; j--){
-            if(ptgs[j] instanceof FuncVarPtg){
-                FuncVarPtg f = (FuncVarPtg)ptgs[j];
-                if(f.getName().equals("INDEX") && f.getNumberOfOperands() <= 3){
-                    // check 2nd and 3rd arguments.
-                    arrayMode = (ptgs[j - 1] instanceof IntPtg && ((IntPtg)ptgs[j - 1]).getValue() == 0)
-                            || (ptgs[j - 2] instanceof IntPtg && ((IntPtg)ptgs[j - 2]).getValue() == 0);
-                    if(arrayMode) break;
-                }
-            }
-        }
-        return arrayMode;
-    }
-
-    public boolean isInArrayContext(){
+    public boolean isArraymode(){
         return _isInArrayContext;
+    }
+    public void setArrayMode(boolean value){
+        _isInArrayContext = value;
     }
 
     public EvaluationWorkbook getWorkbook() {
@@ -521,8 +480,7 @@ public final class OperationEvaluationContext {
                 
                 // Need to evaluate the reference in the context of the other book
                 OperationEvaluationContext refWorkbookContext = new OperationEvaluationContext(
-                        refWorkbookEvaluator, refWorkbookEvaluator.getWorkbook(), -1, -1, -1, _tracker,
-                        true, evaluationName.getNameDefinition());
+                        refWorkbookEvaluator, refWorkbookEvaluator.getWorkbook(), -1, -1, -1, _tracker);
                 
                 Ptg ptg = evaluationName.getNameDefinition()[0];
                 if (ptg instanceof Ref3DPtg){
@@ -544,5 +502,4 @@ public final class OperationEvaluationContext {
             return ErrorEval.REF_INVALID;
         }
    }
-
 }
