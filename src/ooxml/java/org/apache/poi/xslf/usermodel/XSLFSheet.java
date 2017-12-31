@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,13 +46,23 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Sheet;
-import org.apache.poi.util.*;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.openxmlformats.schemas.presentationml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTOleObject;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 @Beta
 public abstract class XSLFSheet extends POIXMLDocumentPart
@@ -255,6 +266,28 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
+
+    @Override
+    public XSLFObjectShape createOleShape(PictureData pictureData) {
+        if (!(pictureData instanceof XSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
+        }
+        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
+        PackagePart pic = xPictureData.getPackagePart();
+
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, new XSLFPictureData(pic));
+        
+        XSLFObjectShape sh = getDrawing().createOleShape(rp.getRelationship().getId());
+        CTOleObject oleObj = sh.getCTOleObject();
+        Dimension dim = pictureData.getImageDimension();
+        oleObj.setImgW(Units.toEMU(dim.getWidth()));
+        oleObj.setImgH(Units.toEMU(dim.getHeight()));
+        
+        
+        getShapes().add(sh);
+        sh.setParent(this);
+        return sh;
+    }
 
     /**
      * Returns an iterator over the shapes in this sheet

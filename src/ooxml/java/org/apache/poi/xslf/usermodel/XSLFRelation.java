@@ -231,6 +231,14 @@ public class XSLFRelation extends POIXMLRelation {
           XSLFTableStyles.class
     );
 
+    public static final XSLFRelation OLE_OBJECT = new XSLFRelation(
+        "application/vnd.openxmlformats-officedocument.oleObject",
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
+        "/ppt/embeddings/oleObject#.bin", 
+        XSLFObjectData.class
+    );
+    
+    
    private XSLFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
       super(type, rel, defaultName, cls);
       _table.put(rel, this);

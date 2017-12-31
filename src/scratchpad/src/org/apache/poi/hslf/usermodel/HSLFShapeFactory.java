@@ -31,7 +31,6 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.model.MovieShape;
-import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.record.ExObjRefAtom;
 import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
 import org.apache.poi.hslf.record.InteractiveInfo;
@@ -134,7 +133,7 @@ public final class HSLFShapeFactory {
         if(info != null && info.getInteractiveInfoAtom() != null){
             switch(info.getInteractiveInfoAtom().getAction()){
                 case InteractiveInfoAtom.ACTION_OLE:
-                    return new OLEShape(spContainer, parent);
+                    return new HSLFObjectShape(spContainer, parent);
                 case InteractiveInfoAtom.ACTION_MEDIA:
                     return new MovieShape(spContainer, parent);
                 default:
@@ -144,7 +143,7 @@ public final class HSLFShapeFactory {
         
         ExObjRefAtom oes = getClientDataRecord(spContainer, RecordTypes.ExObjRefAtom.typeID);
         return (oes != null)
-            ? new OLEShape(spContainer, parent)
+            ? new HSLFObjectShape(spContainer, parent)
             : new HSLFPictureShape(spContainer, parent);
     }
     
