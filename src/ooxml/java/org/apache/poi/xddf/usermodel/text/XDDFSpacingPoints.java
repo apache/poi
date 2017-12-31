@@ -15,26 +15,42 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacingPoint;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFSpacingPoints extends XDDFSpacing {
+    private CTTextSpacingPoint points;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    public XDDFSpacingPoints(double value) {
+        this(CTTextSpacing.Factory.newInstance(), CTTextSpacingPoint.Factory.newInstance());
+        if (spacing.isSetSpcPct()) {
+            spacing.unsetSpcPct();
+        }
+        spacing.setSpcPts(points);
+        setPoints(value);
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected XDDFSpacingPoints(CTTextSpacing parent, CTTextSpacingPoint points) {
+        super(parent);
+        this.points = points;
+    }
+
+    @Override
+    public Kind getType() {
+        return Kind.POINTS;
+    }
+
+    public double getPoints() {
+        return points.getVal() * 0.01;
+    }
+
+    public void setPoints(double value) {
+        points.setVal((int)(100 * value));
     }
 }

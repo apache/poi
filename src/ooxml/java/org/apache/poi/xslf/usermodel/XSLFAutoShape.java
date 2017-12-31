@@ -76,7 +76,7 @@ public class XSLFAutoShape extends XSLFTextShape
         prst.addNewAvLst();
         return ct;
     }
-    
+
     protected static void initTextBody(CTTextBody txBody) {
         CTTextBodyProperties bodypr = txBody.addNewBodyPr();
         bodypr.setAnchor(STTextAnchoringType.T);
@@ -85,7 +85,7 @@ public class XSLFAutoShape extends XSLFTextShape
         p.addNewPPr().setAlgn(STTextAlignType.L);
         CTTextCharacterProperties endPr = p.addNewEndParaRPr();
         endPr.setLang("en-US");
-        endPr.setSz(1100);   
+        endPr.setSz(1100);
         p.addNewR().setT("");
         txBody.addNewLstStyle();
     }
@@ -94,8 +94,10 @@ public class XSLFAutoShape extends XSLFTextShape
         CTShape shape = (CTShape)getXmlObject();
         CTTextBody txBody = shape.getTxBody();
         if (txBody == null && create) {
-            txBody = shape.addNewTxBody();
-            initTextBody(txBody);
+            XDDFTextBody body = new XDDFTextBody(this);
+            initTextBody(body);
+            shape.setTxBody(body.getXmlObject());
+            txBody = shape.getTxBody();
         }
         return txBody;
     }

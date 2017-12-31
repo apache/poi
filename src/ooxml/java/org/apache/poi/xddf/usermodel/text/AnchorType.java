@@ -15,26 +15,33 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import java.util.HashMap;
 
-@Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
+public enum AnchorType {
+    BOTTOM(STTextAnchoringType.B),
+    CENTER(STTextAnchoringType.CTR),
+    DISTRIBUTED(STTextAnchoringType.DIST),
+    JUSTIFIED(STTextAnchoringType.JUST),
+    TOP(STTextAnchoringType.T);
+
+    final STTextAnchoringType.Enum underlying;
+
+    AnchorType(STTextAnchoringType.Enum caps) {
+        this.underlying = caps;
     }
 
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    private final static HashMap<STTextAnchoringType.Enum, AnchorType> reverse = new HashMap<STTextAnchoringType.Enum, AnchorType>();
+    static {
+        for (AnchorType value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
-    @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    static AnchorType valueOf(STTextAnchoringType.Enum caps) {
+        return reverse.get(caps);
     }
 }

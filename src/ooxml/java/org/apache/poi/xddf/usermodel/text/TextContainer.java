@@ -15,26 +15,22 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public interface TextContainer {
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
+    <R> Optional<R> findDefinedParagraphProperty(Function<CTTextParagraphProperties, Boolean> isSet,
+        Function<CTTextParagraphProperties, R> getter);
 
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
-    }
+    <R> Optional<R> findDefinedRunProperty(Function<CTTextCharacterProperties, Boolean> isSet,
+        Function<CTTextCharacterProperties, R> getter);
 
-    @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
-    }
 }

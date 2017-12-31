@@ -15,26 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import java.util.HashMap;
 
-@Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextTabAlignType;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
+public enum TabAlignment {
+    CENTER(STTextTabAlignType.CTR),
+    DECIMAL(STTextTabAlignType.DEC),
+    LEFT(STTextTabAlignType.L),
+    RIGHT(STTextTabAlignType.R);
+
+    final STTextTabAlignType.Enum underlying;
+
+    TabAlignment(STTextTabAlignType.Enum align) {
+        this.underlying = align;
     }
 
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    private final static HashMap<STTextTabAlignType.Enum, TabAlignment> reverse = new HashMap<STTextTabAlignType.Enum, TabAlignment>();
+    static {
+        for (TabAlignment value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
-    @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    static TabAlignment valueOf(STTextTabAlignType.Enum align) {
+        return reverse.get(align);
     }
 }

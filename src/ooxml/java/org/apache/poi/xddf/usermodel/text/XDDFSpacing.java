@@ -15,26 +15,30 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
-
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
+public abstract class XDDFSpacing {
+    public static enum Kind {
+        PERCENT,
+        POINTS;
     }
 
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
-    }
+    protected CTTextSpacing spacing;
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected XDDFSpacing(CTTextSpacing spacing) {
+        this.spacing = spacing;
+    }
+
+    public abstract Kind getType();
+
+    @Internal
+    protected CTTextSpacing getXmlObject() {
+        return spacing;
     }
 }

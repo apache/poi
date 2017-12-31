@@ -17,13 +17,19 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.text.TextContainer;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLegendEntry;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
 @Beta
-public class XDDFLegendEntry {
+public class XDDFLegendEntry implements TextContainer {
     private CTLegendEntry entry;
 
     @Internal
@@ -38,7 +44,7 @@ public class XDDFLegendEntry {
 
     public XDDFTextBody getTextBody() {
         if (entry.isSetTxPr()) {
-            return new XDDFTextBody(entry.getTxPr());
+            return new XDDFTextBody(this, entry.getTxPr());
         } else {
             return null;
         }
@@ -100,5 +106,17 @@ public class XDDFLegendEntry {
         } else {
             return null;
         }
+    }
+
+    public <R> Optional<R> findDefinedParagraphProperty(
+            Function<CTTextParagraphProperties, Boolean> isSet,
+            Function<CTTextParagraphProperties, R> getter) {
+        return Optional.empty(); // legend entry has no (indirect) paragraph properties
+    }
+
+    public <R> Optional<R> findDefinedRunProperty(
+            Function<CTTextCharacterProperties, Boolean> isSet,
+            Function<CTTextCharacterProperties, R> getter) {
+        return Optional.empty(); // legend entry has no (indirect) paragraph properties
     }
 }
