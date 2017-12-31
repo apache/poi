@@ -1448,7 +1448,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param format
      * @return the next free ImageNumber
-     * @throws InvalidFormatException
+     * @throws InvalidFormatException If the format of the picture is not known.
      */
     public int getNextPicNameNumber(int format) throws InvalidFormatException {
         int img = getAllPackagePictures().size() + 1;

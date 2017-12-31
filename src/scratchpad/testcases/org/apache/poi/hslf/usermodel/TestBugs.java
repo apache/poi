@@ -1010,7 +1010,7 @@ public final class TestBugs {
             long persistId = vbaAtom.getPersistIdRef();
             for (HSLFObjectData objData : ppt.getEmbeddedObjects()) {
                 if (objData.getExOleObjStg().getPersistId() == persistId) {
-                    VBAMacroReader mr = new VBAMacroReader(objData.getData());
+                    VBAMacroReader mr = new VBAMacroReader(objData.getInputStream());
                     try {
                         return mr.readMacros();
                     } finally {

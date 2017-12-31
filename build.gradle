@@ -208,7 +208,7 @@ project('ooxml') {
 
 		compile project(':main')
 		compile project(':scratchpad')		// TODO: get rid of this dependency!
-		compile files('../../ooxml-lib/ooxml-schemas-1.3.jar')
+		compile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
 		compile files('../../ooxml-lib/ooxml-security-1.1.jar')
 		
 		testCompile 'junit:junit:4.12'

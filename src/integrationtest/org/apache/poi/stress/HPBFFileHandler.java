@@ -56,11 +56,8 @@ public class HPBFFileHandler extends POIFSFileHandler {
 		
 		stream = new FileInputStream(file);
 		try {
-			PublisherTextExtractor extractor = new PublisherTextExtractor(stream);
-			try {
+			try (PublisherTextExtractor extractor = new PublisherTextExtractor(stream)) {
 				assertNotNull(extractor.getText());
-			} finally {
-				extractor.close();
 			}
 		} finally {
 			stream.close();

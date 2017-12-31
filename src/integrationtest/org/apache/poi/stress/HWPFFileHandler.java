@@ -21,9 +21,12 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.hwpf.model.PicturesTable;
+import org.apache.poi.hwpf.usermodel.Picture;
 import org.junit.Test;
 
 public class HWPFFileHandler extends POIFSFileHandler {
@@ -33,7 +36,11 @@ public class HWPFFileHandler extends POIFSFileHandler {
         assertNotNull(doc.getBookmarks());
         assertNotNull(doc.getCharacterTable());
         assertNotNull(doc.getEndnotes());
-        
+
+        PicturesTable picturesTable = doc.getPicturesTable();
+        List<Picture> pictures = picturesTable.getAllPictures();
+        assertNotNull(pictures);
+
         handlePOIDocument(doc);
     }
 
@@ -54,11 +61,8 @@ public class HWPFFileHandler extends POIFSFileHandler {
         
         stream = new FileInputStream(file);
         try {
-            WordExtractor extractor = new WordExtractor(stream);
-            try {
+            try (WordExtractor extractor = new WordExtractor(stream)) {
                 assertNotNull(extractor.getText());
-            } finally {
-                extractor.close();
             }
         } finally {
             stream.close();

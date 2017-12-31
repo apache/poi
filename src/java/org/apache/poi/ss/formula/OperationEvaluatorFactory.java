@@ -22,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.AddPtg;
 import org.apache.poi.ss.formula.ptg.ConcatPtg;
@@ -115,29 +116,36 @@ final class OperationEvaluatorFactory {
 			throw new IllegalArgumentException("ptg must not be null");
 		}
 		Function result = _instancesByPtgClass.get(ptg);
-
+		FreeRefFunction udfFunc = null;
+		if (result == null) {
+			if (ptg instanceof AbstractFunctionPtg) {
+				AbstractFunctionPtg fptg = (AbstractFunctionPtg)ptg;
+				int functionIndex = fptg.getFunctionIndex();
+				switch (functionIndex) {
+					case FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT:
+						udfFunc = Indirect.instance;
+						break;
+					case FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL:
+						udfFunc = UserDefinedFunction.instance;
+						break;
+					default:
+						result = FunctionEval.getBasicFunction(functionIndex);
+						break;
+				}
+			}
+		}
 		if (result != null) {
 			EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
-		    EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
+			EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-		    if ((evalCell.isPartOfArrayFormulaGroup() || ec.isInArrayContext()) && result instanceof ArrayFunction)
+		    if (evalCell != null && (evalCell.isPartOfArrayFormulaGroup() || ec.isArraymode()) && result instanceof ArrayFunction)
 		        return ((ArrayFunction) result).evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
 		                
-			return  result.evaluate(args, ec.getRowIndex(), (short) ec.getColumnIndex());
+			return  result.evaluate(args, ec.getRowIndex(), ec.getColumnIndex());
+		} else if (udfFunc != null){
+			return  udfFunc.evaluate(args, ec);
 		}
 
-		if (ptg instanceof AbstractFunctionPtg) {
-			AbstractFunctionPtg fptg = (AbstractFunctionPtg)ptg;
-			int functionIndex = fptg.getFunctionIndex();
-			switch (functionIndex) {
-				case FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT:
-					return Indirect.instance.evaluate(args, ec);
-				case FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL:
-					return UserDefinedFunction.instance.evaluate(args, ec);
-			}
-
-			return FunctionEval.getBasicFunction(functionIndex).evaluate(args, ec.getRowIndex(), (short) ec.getColumnIndex());
-		}
 		throw new RuntimeException("Unexpected operation ptg class (" + ptg.getClass().getName() + ")");
 	}
 }

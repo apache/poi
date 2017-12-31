@@ -211,15 +211,18 @@ under the License.
     <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.3.jar"/>
     <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.3/forbiddenapis-2.3.jar"/>
 
-    <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
+    <property name="maven.ooxml.xsds.version.id" value="1.4"/>
+    <property name="maven.ooxml.xsds.jar" value="${maven.ooxml.xsds.version.id}.jar"/>
+	
+	<!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml.xsds.ozip.1" value="OfficeOpenXML-Part4.zip"/>
     <property name="ooxml.xsds.izip.1" value="OfficeOpenXML-XMLSchema.zip"/>
     <property name="ooxml.xsds.url.1"
               value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
-    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-1.3-sources.jar"/>
-    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.3.jar"/>
+    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-${maven.ooxml.xsds.version.id}-sources.jar"/>
+    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
 
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
@@ -236,10 +239,6 @@ under the License.
     <property name="ooxml.security.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
     <property name="ooxml.visio.xsd.dir" location="src/ooxml/resources/org/apache/poi/xdgf"/>
     <property name="ooxml.schema.xsdconfig.dir" location="src/ooxml/resources/org/apache/poi/schemas"/>
-
-
-    <property name="maven.ooxml.xsds.version.id" value="1.3"/>
-    <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
 
     <!-- Coverage -->
     <property name="coverage.dir" value="build/coverage"/>
@@ -597,6 +596,8 @@ under the License.
                 <include name="ooxml-schemas-1.1.jar"/>
                 <include name="ooxml-schemas-1.2-sources.jar"/>
                 <include name="ooxml-schemas-1.2.jar"/>
+                <include name="ooxml-schemas-1.3-sources.jar"/>
+                <include name="ooxml-schemas-1.3.jar"/>
                 <include name="ooxml-security-1.0-sources.jar"/>
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>

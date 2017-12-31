@@ -53,6 +53,7 @@ import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherMetafileBlip;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.OldExcelFormatException;
@@ -2007,9 +2008,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     protected static Map<String,ClassID> getOleMap() {
     	Map<String,ClassID> olemap = new HashMap<>();
-    	olemap.put("PowerPoint Document", ClassID.PPT_SHOW);
+    	olemap.put("PowerPoint Document", ClassIDPredefined.POWERPOINT_V8.getClassID());
     	for (String str : WORKBOOK_DIR_ENTRY_NAMES) {
-    		olemap.put(str, ClassID.XLS_WORKBOOK);
+    		olemap.put(str, ClassIDPredefined.EXCEL_V7_WORKBOOK.getClassID());
     	}
     	// ... to be continued
     	return olemap;
@@ -2056,16 +2057,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             String storageStr = "MBD"+ HexDump.toHex(++storageId);
             if (!getDirectory().hasEntry(storageStr)) {
                 oleDir = getDirectory().createDirectory(storageStr);
-                oleDir.setStorageClsid(ClassID.OLE10_PACKAGE);
+                oleDir.setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
             }
         } while (oleDir == null);
 
-        // the following data was taken from an example libre office document
-        // beside this "\u0001Ole" record there were several other records, e.g. CompObj,
-        // OlePresXXX, but it seems, that they aren't neccessary
-        byte oleBytes[] = { 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        oleDir.createDocument("\u0001Ole", new ByteArrayInputStream(oleBytes));
-
+        Ole10Native.createOleMarkerEntry(oleDir);
+        
         Ole10Native oleNative = new Ole10Native(label, fileName, command, oleData);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         oleNative.writeOut(bos);

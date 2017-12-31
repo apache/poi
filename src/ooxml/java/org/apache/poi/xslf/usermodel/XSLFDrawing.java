@@ -18,20 +18,30 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTOleObject;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 
-/**
- * @author Yegor Kozlov
- */
 @Beta
 public class XSLFDrawing {
     private XSLFSheet _sheet;
@@ -107,6 +117,14 @@ public class XSLFDrawing {
         CTGraphicalObjectFrame obj = _spTree.addNewGraphicFrame();
         obj.set(XSLFTable.prototype(_shapeId++));
         XSLFTable shape = new XSLFTable(obj, _sheet);
+        shape.setAnchor(new Rectangle2D.Double());
+        return shape;
+    }
+
+    public XSLFObjectShape createOleShape(String pictureRel) {
+        CTGraphicalObjectFrame obj = _spTree.addNewGraphicFrame();
+        obj.set(XSLFObjectShape.prototype(_shapeId++, pictureRel));
+        XSLFObjectShape shape = new XSLFObjectShape(obj, _sheet);
         shape.setAnchor(new Rectangle2D.Double());
         return shape;
     }

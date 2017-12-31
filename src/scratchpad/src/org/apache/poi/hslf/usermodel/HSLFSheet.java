@@ -442,4 +442,15 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         addShape(s);
         return s;
     }
+
+    @Override
+    public HSLFObjectShape createOleShape(PictureData pictureData) {
+        if (!(pictureData instanceof HSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
+        }
+        HSLFObjectShape s = new HSLFObjectShape((HSLFPictureData)pictureData);
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
 }

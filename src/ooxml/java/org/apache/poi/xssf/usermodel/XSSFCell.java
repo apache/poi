@@ -559,6 +559,7 @@ public final class XSSFCell implements Cell {
         if (formula == null) {
             wb.onDeleteFormula(this);
             if (_cell.isSetF()) {
+                _row.getSheet().onDeleteFormula(this);
                 _cell.unsetF();
             }
             return;
@@ -963,6 +964,9 @@ public final class XSSFCell implements Cell {
             notifyArrayFormulaChanging();
         }
         if(prevType == CellType.FORMULA && cellType != CellType.FORMULA) {
+            if (_cell.isSetF()) {
+                _row.getSheet().onDeleteFormula(this);
+            }
             getSheet().getWorkbook().onDeleteFormula(this);
         }
 

@@ -47,7 +47,7 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
-import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -2391,7 +2391,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             try (POIFSFileSystem poifs = new POIFSFileSystem()) {
                 DirectoryNode root = poifs.getRoot();
                 root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
-                root.setStorageClsid(ClassID.OLE10_PACKAGE);
+                root.setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
 
                 // TODO: generate CombObj stream
 

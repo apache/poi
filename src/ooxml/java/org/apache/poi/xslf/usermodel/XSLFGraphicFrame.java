@@ -37,6 +37,7 @@ import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
@@ -86,12 +87,23 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
 
     static XSLFGraphicFrame create(CTGraphicalObjectFrame shape, XSLFSheet sheet){
-        String uri = shape.getGraphic().getGraphicData().getUri();
-        if(XSLFTable.TABLE_URI.equals(uri)){
+        switch (getUri(shape)) {
+        case XSLFTable.TABLE_URI:
             return new XSLFTable(shape, sheet);
-        } else {
+        case XSLFObjectShape.OLE_URI:
+            return new XSLFObjectShape(shape, sheet);
+        default:
             return new XSLFGraphicFrame(shape, sheet);
         }
+    }
+    
+    private static String getUri(CTGraphicalObjectFrame shape) {
+        final CTGraphicalObject g = shape.getGraphic();
+        if (g == null) {
+            return null;
+        }
+        CTGraphicalObjectData gd = g.getGraphicData();
+        return (gd == null) ? null : gd.getUri();
     }
 
     /**

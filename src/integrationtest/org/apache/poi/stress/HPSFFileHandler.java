@@ -88,11 +88,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
 	    if (!root.hasEntry(streamName)) {
 	        return false;
 	    }
-	    DocumentInputStream dis = root.createDocumentInputStream(streamName);
-	    try {
-	        return PropertySet.isPropertySetStream(dis);
-	    } finally {
-	        dis.close();
+        try (DocumentInputStream dis = root.createDocumentInputStream(streamName)) {
+            return PropertySet.isPropertySetStream(dis);
         }
 	}
 	
@@ -122,12 +119,9 @@ public class HPSFFileHandler extends POIFSFileHandler {
     @Test
 	public void test() throws Exception {
 	    String path = "test-data/hpsf/Test0313rur.adm";
-		InputStream stream = new FileInputStream(path);
-		try {
-			handleFile(stream, path);
-		} finally {
-			stream.close();
-		}
+        try (InputStream stream = new FileInputStream(path)) {
+            handleFile(stream, path);
+        }
 	}
 
     // a test-case to test this locally without executing the full TestAllFiles

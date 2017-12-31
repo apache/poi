@@ -34,27 +34,21 @@ public class POIFSFileHandler extends AbstractFileHandler {
 
 	@Override
     public void handleFile(InputStream stream, String path) throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(stream);
-		try {
-		    handlePOIFSFileSystem(fs);
-		    handleHPSFProperties(fs);
-		} finally {
-		    fs.close();
-		}
+        try (POIFSFileSystem fs = new POIFSFileSystem(stream)) {
+            handlePOIFSFileSystem(fs);
+            handleHPSFProperties(fs);
+        }
 	}
 
 	private void handleHPSFProperties(POIFSFileSystem fs) throws IOException {
-        HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
-        try {
+        try (HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs)) {
             // can be null
             ext.getDocSummaryInformation();
             ext.getSummaryInformation();
-            
+
             assertNotNull(ext.getDocumentSummaryInformationText());
             assertNotNull(ext.getSummaryInformationText());
             assertNotNull(ext.getText());
-        } finally {
-            ext.close();
         }
     }
 
@@ -78,11 +72,8 @@ public class POIFSFileHandler extends AbstractFileHandler {
     public void test() throws Exception {
         File file = new File("test-data/poifs/Notes.ole2");
 
-        InputStream stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
-        } finally {
-            stream.close();
         }
         
         //handleExtracting(file);

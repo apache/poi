@@ -39,11 +39,8 @@ public class XSSFBFileHandler extends AbstractFileHandler {
         IOUtils.copy(stream, out);
 
         final byte[] bytes = out.toByteArray();
-        OPCPackage opcPackage = OPCPackage.open(new ByteArrayInputStream(bytes));
-        try {
+        try (OPCPackage opcPackage = OPCPackage.open(new ByteArrayInputStream(bytes))) {
             testOne(opcPackage);
-        } finally {
-            opcPackage.close();
         }
 
         testNotHandledByWorkbookException(OPCPackage.open(new ByteArrayInputStream(bytes)));
@@ -86,11 +83,8 @@ public class XSSFBFileHandler extends AbstractFileHandler {
     @Test
     public void testLocal() throws Exception {
         File file = new File("test-data/spreadsheet/Simple.xlsb");
-        FileInputStream stream = new FileInputStream(file);
-        try {
+        try (FileInputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
-        } finally {
-            stream.close();
         }
         handleExtracting(file);
     }

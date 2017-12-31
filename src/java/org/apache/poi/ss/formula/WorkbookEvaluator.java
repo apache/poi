@@ -30,10 +30,7 @@ import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFo
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.Choose;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.formula.functions.IfFunc;
+import org.apache.poi.ss.formula.functions.*;
 import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -273,7 +270,7 @@ public final class WorkbookEvaluator {
 
                 Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
                 OperationEvaluationContext ec = new OperationEvaluationContext
-                        (this, _workbook, sheetIndex, rowIndex, columnIndex, tracker, true, ptgs);
+                        (this, _workbook, sheetIndex, rowIndex, columnIndex, tracker);
                 if (evalListener == null) {
                     result = evaluateFormula(ec, ptgs);
                 } else {
@@ -506,12 +503,38 @@ public final class WorkbookEvaluator {
                 ValueEval[] ops = new ValueEval[numops];
 
                 // storing the ops in reverse order since they are popping
+                boolean areaArg = false; // whether one of the operands is an area
                 for (int j = numops - 1; j >= 0; j--) {
                     ValueEval p = stack.pop();
                     ops[j] = p;
+                    if(p instanceof AreaEval){
+                        areaArg = true;
+                    }
                 }
+
+                boolean arrayMode = false;
+                if(areaArg) for (int ii = i; ii < iSize; ii++) {
+                    if(ptgs[ii] instanceof FuncVarPtg){
+                        FuncVarPtg f = (FuncVarPtg)ptgs[ii];
+                        try {
+                            Function func = FunctionEval.getBasicFunction(f.getFunctionIndex());
+                            if (func != null && func instanceof ArrayMode) {
+                                arrayMode = true;
+                            }
+                        } catch (NotImplementedException ne){
+                            //FunctionEval.getBasicFunction can throw NotImplementedException
+                            // if the fucntion is not yet supported.
+                        }
+                        break;
+                    }
+                }
+                ec.setArrayMode(arrayMode);
+
 //                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
                 opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
+
+                ec.setArrayMode(false);
+
             } else {
                 opResult = getEvalForPtg(ptg, ec);
             }
@@ -597,7 +620,7 @@ public final class WorkbookEvaluator {
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
  
-        if (evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
+        if (evalCell != null && evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
             value = OperandResolver.getElementFromArray((AreaEval) evaluationResult, evalCell);
         }
         else {
@@ -780,17 +803,15 @@ public final class WorkbookEvaluator {
         }
         int rowIndex = ref == null ? -1 : ref.getRow();
         short colIndex = ref == null ? -1 : ref.getCol();
-        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, rowIndex);
         final OperationEvaluationContext ec = new OperationEvaluationContext(
                 this, 
                 getWorkbook(), 
                 sheetIndex, 
                 rowIndex, 
                 colIndex, 
-                new EvaluationTracker(_cache),
-                true,
-                ptgs
+                new EvaluationTracker(_cache)
             );
+        Ptg[] ptgs = FormulaParser.parse(formula, (FormulaParsingWorkbook) getWorkbook(), FormulaType.CELL, sheetIndex, rowIndex);
         return evaluateNameFormula(ptgs, ec);
     }
     
@@ -839,7 +860,7 @@ public final class WorkbookEvaluator {
 
         adjustRegionRelativeReference(ptgs, target, region);
         
-        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, target.getRow(), target.getCol(), new EvaluationTracker(_cache), formulaType.isSingleValue(), ptgs);
+        final OperationEvaluationContext ec = new OperationEvaluationContext(this, getWorkbook(), sheetIndex, target.getRow(), target.getCol(), new EvaluationTracker(_cache), formulaType.isSingleValue());
         return evaluateNameFormula(ptgs, ec);
     }
     
