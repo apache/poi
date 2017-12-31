@@ -571,7 +571,7 @@ public class POIXMLDocumentPart {
      *             equivalent part names and package implementers shall neither
      *             create nor recognize packages with equivalent part names.
      */
-    protected final RelationPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
+    public final RelationPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
         try {
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
             PackageRelationship rel = null;
