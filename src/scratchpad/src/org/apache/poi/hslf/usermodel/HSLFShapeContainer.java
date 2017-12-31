@@ -45,5 +45,6 @@ public interface HSLFShapeContainer extends ShapeContainer<HSLFShape,HSLFTextPar
     @Override
     HSLFPictureShape createPicture(PictureData pictureData);
 
-
+    @Override
+    HSLFObjectShape createOleShape(PictureData pictureData);
 }

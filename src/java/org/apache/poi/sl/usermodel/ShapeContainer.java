@@ -84,4 +84,11 @@ public interface ShapeContainer<
      * @param numCols the number of columns
      */
 	TableShape<S,P> createTable(int numRows, int numCols);
+	
+	/**
+	 * Create a new OLE object shape with the given pictureData as preview image
+	 *
+	 * @param pictureData the preview image
+	 */
+    ObjectShape<?,?> createOleShape(PictureData pictureData);
 }

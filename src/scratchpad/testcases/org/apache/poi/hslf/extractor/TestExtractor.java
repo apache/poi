@@ -33,9 +33,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -206,12 +206,12 @@ public final class TestExtractor {
     @Test
     public void testExtractFromOwnEmbeded() throws IOException {
         PowerPointExtractor ppe = openExtractor("ppt_with_embeded.ppt");
-        List<OLEShape> shapes = ppe.getOLEShapes();
+        List<HSLFObjectShape> shapes = ppe.getOLEShapes();
         assertEquals("Expected 6 ole shapes", 6, shapes.size());
         int num_ppt = 0, num_doc = 0, num_xls = 0;
-        for (OLEShape ole : shapes) {
+        for (HSLFObjectShape ole : shapes) {
             String name = ole.getInstanceName();
-            InputStream data = ole.getObjectData().getData();
+            InputStream data = ole.getObjectData().getInputStream();
             if ("Worksheet".equals(name)) {
                 HSSFWorkbook wb = new HSSFWorkbook(data);
                 num_xls++;
@@ -239,8 +239,8 @@ public final class TestExtractor {
     @Test
     public void test52991() throws IOException {
         PowerPointExtractor ppe = openExtractor("badzip.ppt");
-        for (OLEShape shape : ppe.getOLEShapes()) {
-            IOUtils.copy(shape.getObjectData().getData(), new ByteArrayOutputStream());
+        for (HSLFObjectShape shape : ppe.getOLEShapes()) {
+            IOUtils.copy(shape.getObjectData().getInputStream(), new ByteArrayOutputStream());
         }
         ppe.close();
     }

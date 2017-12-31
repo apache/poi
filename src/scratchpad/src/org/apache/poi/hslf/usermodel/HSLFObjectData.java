@@ -16,17 +16,25 @@
 ==================================================================== */
 package org.apache.poi.hslf.usermodel;
 
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.poi.hslf.record.ExOleObjStg;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.usermodel.ObjectData;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * A class that represents object data embedded in a slide show.
- *
- * @author Daniel Noll
  */
-public class HSLFObjectData {
+public class HSLFObjectData implements ObjectData {
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFObjectData.class);
+    
     /**
      * The record that contains the object data.
      */
@@ -41,13 +49,18 @@ public class HSLFObjectData {
         this.storage = storage;
     }
 
-    /**
-     * Gets an input stream which returns the binary of the embedded data.
-     *
-     * @return the input stream which will contain the binary of the embedded data.
-     */
-    public InputStream getData() {
+    @Override
+    public InputStream getInputStream() {
         return storage.getData();
+    }
+    
+    @Override
+    public OutputStream getOutputStream() throws IOException {
+        return new ByteArrayOutputStream(100000) {
+            public void close() throws IOException {
+                setData(getBytes());
+            }
+        };
     }
 
     /**
@@ -66,5 +79,16 @@ public class HSLFObjectData {
      */
     public ExOleObjStg getExOleObjStg() {
         return storage;
+    }
+
+
+    @Override
+    public String getOLE2ClassName() {
+        return null;
+    }
+
+    @Override
+    public String getFileName() {
+        return null;
     }
 }
