@@ -18,15 +18,22 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -98,5 +105,65 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
                 throw e;
             }
         }
+    }
+
+    @Test
+    public void bug61648() throws Exception {
+        // works as expected
+        writeWorkbook(new XSSFWorkbook(), "/tmp/61648.xlsx", XSSFITestDataProvider.instance);
+
+        // does not work
+        try {
+            writeWorkbook(new SXSSFWorkbook(), "/tmp/61648s.xlsx", SXSSFITestDataProvider.instance);
+            fail("Should catch exception here");
+        } catch (RuntimeException e) {
+            // this is not implemented yet
+        }
+    }
+
+    void writeWorkbook(Workbook wb, String filename, ITestDataProvider testDataProvider) throws IOException {
+        Sheet sheet = wb.createSheet("array formula test");
+
+        int rowIndex = 0;
+        int colIndex = 0;
+        Row row = sheet.createRow(rowIndex++);
+
+        Cell cell = row.createCell(colIndex++);
+        cell.setCellType(CellType.STRING);
+        cell.setCellValue("multiple");
+        cell = row.createCell(colIndex++);
+        cell.setCellType(CellType.STRING);
+        cell.setCellValue("unique");
+
+        writeRow(sheet, rowIndex++, 80d, "INDEX(A2:A7, MATCH(FALSE, ISBLANK(A2:A7), 0))");
+        writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B2, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+        writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B3, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+        writeRow(sheet, rowIndex++, 2d,  "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B4, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+        writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B5, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+        writeRow(sheet, rowIndex++, 2d,  "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B6, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+
+        /*FileOutputStream fileOut = new FileOutputStream(filename);
+        wb.write(fileOut);
+        fileOut.close();*/
+
+        Workbook wbBack = testDataProvider.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        wbBack.close();
+
+        wb.close();
+    }
+
+    void writeRow(Sheet sheet, int rowIndex, Double col0Value, String col1Value) {
+        int colIndex = 0;
+        Row row = sheet.createRow(rowIndex);
+
+        // numeric value cell
+        Cell cell = row.createCell(colIndex++);
+        cell.setCellType(CellType.NUMERIC);
+        cell.setCellValue(col0Value);
+
+        // formula value cell
+        CellRangeAddress range = new CellRangeAddress(rowIndex, rowIndex, colIndex, colIndex);
+        sheet.setArrayFormula(col1Value, range);
     }
 }
