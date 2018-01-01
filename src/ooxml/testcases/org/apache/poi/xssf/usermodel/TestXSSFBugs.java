@@ -65,11 +65,14 @@ import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.ss.formula.EvaluationConditionalFormatRule;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.functions.Function;
@@ -3207,6 +3210,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             CellValue cellValue = evaluator.evaluate(c2);
             assertEquals(1, cellValue.getNumberValue(), 0.0001);
+        }
+    }
+
+    @Test
+    public void test61652() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61652.xlsx")) {
+            Sheet sheet = wb.getSheet("IRPPCalc");
+            Row row = sheet.getRow(11);
+            Cell cell = row.getCell(18);
+            WorkbookEvaluatorProvider fe = (WorkbookEvaluatorProvider) wb.getCreationHelper().createFormulaEvaluator();
+            ConditionalFormattingEvaluator condfmt = new ConditionalFormattingEvaluator(wb, fe);
+
+            assertEquals("Conditional formatting is not triggered for this cell",
+                    "[]", condfmt.getConditionalFormattingForCell(cell).toString());
+
+            // but we can read the conditional formatting itself
+            List<EvaluationConditionalFormatRule> rules = condfmt.getFormatRulesForSheet(sheet);
+            assertEquals(1, rules.size());
+            assertEquals("AND($A1>=EDATE($D$6,3),$B1>0)", rules.get(0).getFormula1());
         }
     }
 }
