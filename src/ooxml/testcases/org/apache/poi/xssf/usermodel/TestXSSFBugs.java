@@ -3231,4 +3231,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals("AND($A1>=EDATE($D$6,3),$B1>0)", rules.get(0).getFormula1());
         }
     }
+
+    @Test
+    public void test61543() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFSheet sheet = wb.createSheet();
+        XSSFTable table1 = sheet.createTable();
+        XSSFTable table2 = sheet.createTable();
+        XSSFTable table3 = sheet.createTable();
+
+        sheet.removeTable(table1);
+
+        sheet.createTable();
+
+        sheet.removeTable(table2);
+        sheet.removeTable(table3);
+
+        sheet.createTable();
+
+        wb.close();
+    }
 }
