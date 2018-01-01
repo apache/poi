@@ -970,8 +970,7 @@ public class SXSSFSheet implements Sheet
      */
     @NotImplemented
     @Override
-    public void shiftRows(int startRow, int endRow, int n)
-    {
+    public void shiftRows(int startRow, int endRow, int n) {
         throw new RuntimeException("NotImplemented");
     }
 
@@ -1730,9 +1729,12 @@ public class SXSSFSheet implements Sheet
      * @return the {@link CellRange} of cells affected by this change
      */
     @Override
-    public CellRange<? extends Cell> setArrayFormula(String formula, CellRangeAddress range)
-    {
-        return _sh.setArrayFormula(formula, range);
+    public CellRange<? extends Cell> setArrayFormula(String formula, CellRangeAddress range) {
+        // the simple approach via _sh does not work as it creates rows in the XSSFSheet and thus causes
+        // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
+        // return _sh.setArrayFormula(formula, range);
+
+        throw new RuntimeException("NotImplemented");
     }
 
     /**
@@ -1742,9 +1744,12 @@ public class SXSSFSheet implements Sheet
      * @return the {@link CellRange} of cells affected by this change
      */
     @Override
-    public CellRange<? extends Cell> removeArrayFormula(Cell cell)
-    {
-        return _sh.removeArrayFormula(cell);
+    public CellRange<? extends Cell> removeArrayFormula(Cell cell) {
+        // the simple approach via _sh does not work as it creates rows in the XSSFSheet and thus causes
+        // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
+        // return _sh.removeArrayFormula(cell);
+
+        throw new RuntimeException("NotImplemented");
     }
     
     @Override
