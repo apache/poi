@@ -81,4 +81,20 @@ public final class TestLittleEndianStreams extends TestCase {
 		assertEquals(0x33, lei.readUByte());
 		assertEquals(0, lei.available());
 	}
+
+	public void testBufferOverrun() {
+		byte[] srcBuf = HexRead.readFromString("99 88 77");
+		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf);
+
+		// do initial read to increment the read index beyond zero
+		assertEquals(0x8899, lei.readUShort());
+
+		// only one byte left, so this should fail
+		try {
+			lei.readFully(new byte[4]);
+			fail("Should catch exception here");
+		} catch (RuntimeException e) {
+			assertTrue(e.getMessage().contains("Buffer overrun"));
+		}
+	}
 }
