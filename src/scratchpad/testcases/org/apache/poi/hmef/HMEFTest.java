@@ -33,18 +33,16 @@ public abstract class HMEFTest extends TestCase {
       assertEquals(filename, attachment.getLongFilename());
       assertContents(filename, attachment.getContents());
    }
+
    protected void assertContents(String filename, byte[] actual) 
          throws IOException {
-      InputStream stream = _samples.openResourceAsStream("quick-contents/" + filename);
-      try {
-          byte[] expected = IOUtils.toByteArray(stream);
-          
-          assertEquals(expected.length, actual.length);
-          for(int i=0; i<expected.length; i++) {
-              assertEquals("Byte " + i + " wrong", expected[i], actual[i]);
-          }
-      } finally {
-          stream.close();
-      }
+       try (InputStream stream = _samples.openResourceAsStream("quick-contents/" + filename)) {
+           byte[] expected = IOUtils.toByteArray(stream);
+
+           assertEquals(expected.length, actual.length);
+           for (int i = 0; i < expected.length; i++) {
+               assertEquals("Byte " + i + " wrong", expected[i], actual[i]);
+           }
+       }
    }
 }

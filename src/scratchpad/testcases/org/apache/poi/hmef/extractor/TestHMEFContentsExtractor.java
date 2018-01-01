@@ -17,6 +17,8 @@
 
 package org.apache.poi.hmef.extractor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
 
@@ -37,7 +39,7 @@ public class TestHMEFContentsExtractor {
         File outputDirectory = TempFile.createTempDirectory("quick-winmail-main");
         String[] args = new String[] { message.getAbsolutePath(), outputDirectory.getAbsolutePath() };
         HMEFContentsExtractor.main(args);
-        
+
         String[] contents = new String[] {
                 "message.rtf", // from extractMessageBody
                 "quick.txt", "quick.pdf", "quick.xml", "quick.doc", "quick.html" // from extractAttachments
@@ -46,11 +48,15 @@ public class TestHMEFContentsExtractor {
         for (String filename : contents) {
             File f = new File(outputDirectory, filename);
             assertTrue(f + " does not exist", f.exists());
+            assertTrue(f.delete());
         }
 
-        outputDirectory.delete();
+        String[] list = outputDirectory.list();
+        assertNotNull(list);
+        assertEquals( "Had: " + Arrays.toString(list), 0, list.length);
+        assertTrue(outputDirectory.delete());
     }
-    
+
     @Test
     public void TestExtractMessageBody_OutputStream() throws IOException {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
@@ -64,7 +70,7 @@ public class TestHMEFContentsExtractor {
         assertArrayEquals("RTF magic number", expectedMagic, magic);
         out.close();
     }
-    
+
     @Test
     public void TestExtractMessageBody_File() throws IOException {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();

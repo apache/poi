@@ -576,8 +576,8 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         */
         workbook.close();
     }
-    
-    @Ignore
+
+    @Ignore("See bug 59728")
     @Test
     public void shouldNotBeAbleToCreateArrayFormulaOnPreexistingMergedRegion() throws IOException {
         /*

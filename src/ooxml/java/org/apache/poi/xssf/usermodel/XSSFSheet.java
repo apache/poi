@@ -3851,7 +3851,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     @Override
     public CellRange<XSSFCell> setArrayFormula(String formula, CellRangeAddress range) {
-
         CellRange<XSSFCell> cr = getCellRange(range);
 
         XSSFCell mainArrayFormulaCell = cr.getTopLeftCell();
