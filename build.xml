@@ -209,7 +209,6 @@ under the License.
     <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.3/forbiddenapis-2.3.jar"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.4"/>
-    <property name="maven.ooxml.xsds.jar" value="${maven.ooxml.xsds.version.id}.jar"/>
 	
 	<!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
