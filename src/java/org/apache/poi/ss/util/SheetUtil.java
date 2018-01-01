@@ -333,20 +333,6 @@ public class SheetUtil {
     }
 
     /**
-     * Check if the cell is in the specified cell range
-     *
-     * @param cr    the cell range to check in
-     * @param rowIx the row to check
-     * @param colIx the column to check
-     * @return true if the range contains the cell [rowIx, colIx]
-     * @deprecated 3.15 beta 2. Use {@link CellRangeAddressBase#isInRange(int, int)}.
-     */
-    @Deprecated
-    public static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
-        return cr.isInRange(rowIx,  colIx);
-    }
-
-    /**
      * Return the cell, without taking account of merged regions.
      * <p>
      * Use {@link #getCellWithMerges(Sheet, int, int)} if you want the top left
