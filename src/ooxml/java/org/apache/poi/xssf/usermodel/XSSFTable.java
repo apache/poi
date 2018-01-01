@@ -330,14 +330,6 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
 
     /**
-     * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
-     * @deprecated 3.15 beta 2. Use {@link #getNumberOfMappedColumns}.
-     */
-    public long getNumerOfMappedColumns() {
-        return getNumberOfMappedColumns();
-    }
-
-    /**
      * @return The reference for the cells of the table
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
      *
