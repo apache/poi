@@ -376,7 +376,7 @@ public class SXSSFSheet implements Sheet
         return _sh.getColumnStyle(column);
     }
 
-    /**
+    /*
      * Sets the CellStyle that applies to the given
      *  (0 based) column.
      */
@@ -1131,8 +1131,8 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Determines if there is a page break at the indicated row
-     * @param row FIXME: Document this!
-     * @return FIXME: Document this!
+     * @param row The row to check
+     * @return true if there is a page-break at the given row, false otherwise
      */
     @Override
     public boolean isRowBroken(int row)
@@ -1142,7 +1142,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Removes the page break at the indicated row
-     * @param row
+     * @param row The row to remove page breaks from
      */
     @Override
     public void removeRowBreak(int row)
@@ -1172,7 +1172,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Sets a page break at the indicated column
-     * @param column
+     * @param column The column to work on
      */
     @Override
     public void setColumnBreak(int column)
@@ -1182,8 +1182,8 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Determines if there is a page break at the indicated column
-     * @param column FIXME: Document this!
-     * @return FIXME: Document this!
+     * @param column The column to check for page breaks
+     * @return true if there is a page break at the given column, false otherwise
      */
     @Override
     public boolean isColumnBroken(int column)
@@ -1193,7 +1193,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Removes a page break at the indicated column
-     * @param column
+     * @param column The column to remove a page break from
      */
     @Override
     public void removeColumnBreak(int column)
@@ -1366,7 +1366,7 @@ public class SXSSFSheet implements Sheet
             int startRow = findStartOfRowOutlineGroup(rowIndex);
 
             // Hide all the columns until the end of the group
-            int lastRow = writeHidden(row, startRow, true);
+            int lastRow = writeHidden(row, startRow);
             SXSSFRow lastRowObj = getRow(lastRow); 
             if (lastRowObj != null) {
                 lastRowObj.setCollapsed(true);
@@ -1397,12 +1397,12 @@ public class SXSSFSheet implements Sheet
         return currentRow + 1;
     }
     
-    private int writeHidden(SXSSFRow xRow, int rowIndex, boolean hidden) {
+    private int writeHidden(SXSSFRow xRow, int rowIndex) {
         int level = xRow.getOutlineLevel();
         SXSSFRow currRow = getRow(rowIndex);
 
         while (currRow != null && currRow.getOutlineLevel() >= level) {
-            currRow.setHidden(hidden);
+            currRow.setHidden(true);
             rowIndex++;
             currRow = getRow(rowIndex);
         }
@@ -1637,8 +1637,8 @@ public class SXSSFSheet implements Sheet
     /**
      * Get a Hyperlink in this sheet anchored at row, column
      *
-     * @param row
-     * @param column
+     * @param row The 0-base row number
+     * @param column The 0-based column number
      * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
      */
     @Override
@@ -1860,7 +1860,7 @@ public class SXSSFSheet implements Sheet
     /**
      * Flush all rows to disk. After this call no rows can be accessed via getRow()
      *
-     * @throws IOException
+     * @throws IOException If an I/O error occurs
      */
     public void flushRows() throws IOException
     {
@@ -1889,13 +1889,12 @@ public class SXSSFSheet implements Sheet
 
     public int getRowNum(SXSSFRow row)
     {
-        for(Iterator<Map.Entry<Integer,SXSSFRow>> iter=_rows.entrySet().iterator();iter.hasNext();)
-        {
-            Map.Entry<Integer,SXSSFRow> entry=iter.next();
-            if(entry.getValue()==row) {
+        for (Map.Entry<Integer, SXSSFRow> entry : _rows.entrySet()) {
+            if (entry.getValue() == row) {
                 return entry.getKey().intValue();
             }
         }
+
         return -1;
     }
 

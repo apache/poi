@@ -191,6 +191,8 @@ public class SheetDataWriter implements Closeable {
      *
      * @param rownum 0-based row number
      * @param row    a row
+     *
+     * @throws IOException If an I/O error occurs
      */
     public void writeRow(int rownum, SXSSFRow row) throws IOException {
         if (_numberOfFlushedRows == 0)

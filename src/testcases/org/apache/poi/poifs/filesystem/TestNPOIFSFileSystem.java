@@ -101,12 +101,9 @@ public final class TestNPOIFSFileSystem {
 
     protected static NPOIFSFileSystem writeOutFileAndReadBack(NPOIFSFileSystem original) throws IOException {
         final File file = TempFile.createTempFile("TestPOIFS", ".ole2");
-        final OutputStream fout = new FileOutputStream(file);
-        try {
-            original.writeFilesystem(fout);
-        } finally {
-            fout.close();
-        }
+       try (OutputStream fout = new FileOutputStream(file)) {
+          original.writeFilesystem(fout);
+       }
         return new NPOIFSFileSystem(file, false);
     }
    
@@ -1717,26 +1714,20 @@ public final class TestNPOIFSFileSystem {
       long start = System.currentTimeMillis();
 
       for (int i = 0; i < iterations; i++) {
-         InputStream inputStream = POIDataSamples.getHSMFInstance().openResourceAsStream("lots-of-recipients.msg");
-         try {
+         try (InputStream inputStream = POIDataSamples.getHSMFInstance().openResourceAsStream("lots-of-recipients.msg")) {
             OPOIFSFileSystem srcFileSystem = new OPOIFSFileSystem(inputStream);
             OPOIFSFileSystem destFileSystem = new OPOIFSFileSystem();
 
             copyAllEntries(srcFileSystem.getRoot(), destFileSystem.getRoot());
 
             File file = File.createTempFile("opoi", ".dat");
-            OutputStream outputStream = new FileOutputStream(file);
-            try {
+            try (OutputStream outputStream = new FileOutputStream(file)) {
                destFileSystem.writeFilesystem(outputStream);
-            } finally {
-               outputStream.close();
             }
 
             assertTrue(file.delete());
             if (i % 10 == 0) System.out.print(".");
             if (i % 800 == 0 && i > 0) System.out.println();
-         } finally {
-            inputStream.close();
          }
       }
 
@@ -1750,26 +1741,20 @@ public final class TestNPOIFSFileSystem {
 
       for (int i = 0; i < iterations; i++) {
 
-         InputStream inputStream = POIDataSamples.getHSMFInstance().openResourceAsStream("lots-of-recipients.msg");
-         try {
+         try (InputStream inputStream = POIDataSamples.getHSMFInstance().openResourceAsStream("lots-of-recipients.msg")) {
             NPOIFSFileSystem srcFileSystem = new NPOIFSFileSystem(inputStream);
             NPOIFSFileSystem destFileSystem = new NPOIFSFileSystem();
 
             copyAllEntries(srcFileSystem.getRoot(), destFileSystem.getRoot());
 
             File file = File.createTempFile("npoi", ".dat");
-            OutputStream outputStream = new FileOutputStream(file);
-            try {
+            try (OutputStream outputStream = new FileOutputStream(file)) {
                destFileSystem.writeFilesystem(outputStream);
-            } finally {
-               outputStream.close();
             }
 
             assertTrue(file.delete());
             if (i % 10 == 0) System.out.print(".");
             if (i % 800 == 0 && i > 0) System.out.println();
-         } finally {
-            inputStream.close();
          }
       }
 
@@ -1793,11 +1778,8 @@ public final class TestNPOIFSFileSystem {
          } else {
             DocumentEntry srcEntry = (DocumentEntry) entry;
 
-            InputStream inputStream = new DocumentInputStream(srcEntry);
-            try {
+            try (InputStream inputStream = new DocumentInputStream(srcEntry)) {
                destDirectory.createDocument(entry.getName(), inputStream);
-            } finally {
-               inputStream.close();
             }
          }
       }
