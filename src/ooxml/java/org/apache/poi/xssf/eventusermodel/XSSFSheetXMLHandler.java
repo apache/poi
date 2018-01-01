@@ -511,7 +511,13 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
       /**
        * A cell, with the given formatted value (may be null), 
-       *  and possibly a comment (may be null), was encountered */
+       * and possibly a comment (may be null), was encountered.
+       *
+       * Sheets that have missing or empty cells may result in
+       * sparse calls to <code>cell</code>. See the code in
+       * <code>src/examples/src/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
+       * for an example of how to handle this scenario.
+       */
       public void cell(String cellReference, String formattedValue, XSSFComment comment);
 
       /** A header or footer has been encountered */
