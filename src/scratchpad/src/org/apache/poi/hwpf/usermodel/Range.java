@@ -479,7 +479,7 @@ public class Range { // TODO -instantiable superclass
      * @deprecated POI 3.8 beta 4. Use code shall not work with {@link ParagraphProperties}
 	 */
     @Deprecated
-	protected Paragraph insertAfter(ParagraphProperties props, int styleIndex)
+	Paragraph insertAfter(ParagraphProperties props, int styleIndex)
 	{
 		return this.insertAfter(props, styleIndex, "\r");
 	}
@@ -501,7 +501,7 @@ public class Range { // TODO -instantiable superclass
      * @deprecated POI 3.8 beta 4. Use code shall not work with {@link ParagraphProperties}
 	 */
     @Deprecated
-	protected Paragraph insertAfter(ParagraphProperties props, int styleIndex, String text)
+	Paragraph insertAfter(ParagraphProperties props, int styleIndex, String text)
 	{
 		initAll();
 		StyleSheet ss = _doc.getStyleSheet();
