@@ -249,6 +249,17 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
+     * Get the language tag associated with this run, if any.
+     *
+     * @return the language tag associated with this run, if any
+     */
+    public String getLang() {
+        CTRPr pr = run.getRPr();
+        Object lang = pr == null || !pr.isSetLang() ? null : pr.getLang().getVal();
+        return (String)lang;
+    }
+
+    /**
      * Whether the bold property shall be applied to all non-complex script
      * characters in the contents of this run when displayed in a document
      *
