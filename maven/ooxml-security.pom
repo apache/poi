@@ -71,7 +71,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.xmlbeans</groupId>
+      <groupId>com.github.pjfanning</groupId>
       <artifactId>xmlbeans</artifactId>
       <version>2.3.0</version>
     </dependency>

@@ -63,7 +63,7 @@
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 
 		<!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
-		<xmlbeans.version>2.6.0</xmlbeans.version>
+		<xmlbeans.version>2.6.3</xmlbeans.version>
 		<junit.version>4.12</junit.version>
 		<maven.plugin.resources.version>3.0.1</maven.plugin.resources.version>
 		<maven.plugin.jar.version>3.0.1</maven.plugin.jar.version>
@@ -269,7 +269,7 @@
 			</build>
       <dependencies>
         <dependency>
-          <groupId>org.apache.xmlbeans</groupId>
+          <groupId>com.github.pjfanning</groupId>
           <artifactId>xmlbeans</artifactId>
           <version>${xmlbeans.version}</version>
         </dependency>

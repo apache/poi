@@ -195,7 +195,7 @@ project('ooxml') {
 	compileJava.dependsOn 'ant-compile-ooxml-xsds'
 	
 	dependencies {
-		compile 'org.apache.xmlbeans:xmlbeans:2.6.0'
+		compile 'com.github.pjfanning:xmlbeans:2.6.3'
 		compile 'org.apache.commons:commons-collections4:4.1'
 		compile 'org.apache.commons:commons-math3:3.6.1'
 		compile 'org.apache.santuario:xmlsec:2.1.0'
