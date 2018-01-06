@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
@@ -130,6 +131,30 @@ public class XDDFBarChartData extends XDDFChartData {
                 series.getDLbls().getShowLeaderLines().setVal(showLeaderLines);
             } else {
                 series.getDLbls().addNewShowLeaderLines().setVal(showLeaderLines);
+            }
+        }
+
+        @Override
+        public XDDFShapeProperties getShapeProperties() {
+            if (series.isSetSpPr()) {
+                return new XDDFShapeProperties(series.getSpPr());
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public void setShapeProperties(XDDFShapeProperties properties) {
+            if (properties == null) {
+                if (series.isSetSpPr()) {
+                    series.unsetSpPr();
+                }
+            } else {
+                if (series.isSetSpPr()) {
+                    series.setSpPr(properties.getXmlObject());
+                } else {
+                    series.addNewSpPr().set(properties.getXmlObject());
+                }
             }
         }
 
