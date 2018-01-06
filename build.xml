@@ -585,6 +585,7 @@ under the License.
             </fileset>
             <fileset dir="${ooxml.lib}">
                 <!-- remove jars from previous versions, but not the current version -->
+                <include name="xmlbeans-2.6.0.jar"/>
                 <include name="ooxml-schemas-src-1.1.jar"/>
                 <include name="ooxml-schemas-1.1-sources.jar"/>
                 <include name="ooxml-schemas-1.1.jar"/>
