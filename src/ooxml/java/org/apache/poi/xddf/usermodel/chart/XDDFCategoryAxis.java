@@ -18,10 +18,11 @@
 package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
@@ -45,21 +46,37 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
     }
 
     @Override
-    @Internal
-    public CTShapeProperties getMajorGridLines() {
-        if (!ctCatAx.isSetMajorGridlines()) {
-            ctCatAx.addNewMajorGridlines();
+    public XDDFShapeProperties getOrAddMajorGridProperties() {
+        CTChartLines majorGridlines;
+        if (ctCatAx.isSetMajorGridlines()) {
+            majorGridlines = ctCatAx.getMajorGridlines();
+        } else {
+            majorGridlines = ctCatAx.addNewMajorGridlines();
         }
-        if (!ctCatAx.getMajorGridlines().isSetSpPr()) {
-            ctCatAx.getMajorGridlines().addNewSpPr();
-        }
-        return ctCatAx.getMajorGridlines().getSpPr();
+        return new XDDFShapeProperties(getOrAddLinesProperties(majorGridlines));
     }
 
     @Override
-    @Internal
-    public CTShapeProperties getLine() {
-        return ctCatAx.getSpPr();
+    public XDDFShapeProperties getOrAddMinorGridProperties() {
+        CTChartLines minorGridlines;
+        if (ctCatAx.isSetMinorGridlines()) {
+            minorGridlines = ctCatAx.getMinorGridlines();
+        } else {
+            minorGridlines = ctCatAx.addNewMinorGridlines();
+        }
+        return new XDDFShapeProperties(getOrAddLinesProperties(minorGridlines));
+    }
+
+    @Override
+    public XDDFShapeProperties getOrAddShapeProperties() {
+        CTShapeProperties properties;
+        if (ctCatAx.isSetSpPr()) {
+            properties = ctCatAx.getSpPr();
+        } else {
+            properties = ctCatAx.addNewSpPr();
+        }
+
+        return new XDDFShapeProperties(properties);
     }
 
     @Override

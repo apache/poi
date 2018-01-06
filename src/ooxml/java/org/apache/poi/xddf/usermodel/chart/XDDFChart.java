@@ -33,6 +33,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -48,6 +49,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart {
@@ -170,6 +172,23 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             chart.setAutoTitleDeleted(CTBoolean.Factory.newInstance());
         }
         chart.getAutoTitleDeleted().setVal(deleted);
+    }
+
+    public XDDFShapeProperties getOrAddShapeProperties() {
+        CTPlotArea plotArea = getCTPlotArea();
+        CTShapeProperties properties;
+        if (plotArea.isSetSpPr()) {
+            properties = plotArea.getSpPr();
+        } else {
+            properties = plotArea.addNewSpPr();
+        }
+        return new XDDFShapeProperties(properties);
+    }
+
+    public void deleteShapeProperties() {
+        if (getCTPlotArea().isSetSpPr()) {
+            getCTPlotArea().unsetSpPr();
+        }
     }
 
     public XDDFChartLegend getOrAddLegend() {
