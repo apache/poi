@@ -18,9 +18,10 @@
 package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
@@ -32,8 +33,8 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 /**
- * Date axis type. Currently only implements the same values as {@link XDDFCategoryAxis}, since the two are nearly
- * identical.
+ * Date axis type. Currently only implements the same values as
+ * {@link XDDFCategoryAxis}, since the two are nearly identical.
  */
 @Beta
 public class XDDFDateAxis extends XDDFChartAxis {
@@ -49,21 +50,36 @@ public class XDDFDateAxis extends XDDFChartAxis {
     }
 
     @Override
-    @Internal
-    public CTShapeProperties getMajorGridLines() {
-        if (!ctDateAx.isSetMajorGridlines()) {
-            ctDateAx.addNewMajorGridlines();
+    public XDDFShapeProperties getOrAddMajorGridProperties() {
+        CTChartLines majorGridlines;
+        if (ctDateAx.isSetMajorGridlines()) {
+            majorGridlines = ctDateAx.getMajorGridlines();
+        } else {
+            majorGridlines = ctDateAx.addNewMajorGridlines();
         }
-        if (!ctDateAx.getMajorGridlines().isSetSpPr()) {
-            ctDateAx.getMajorGridlines().addNewSpPr();
-        }
-        return ctDateAx.getMajorGridlines().getSpPr();
+        return new XDDFShapeProperties(getOrAddLinesProperties(majorGridlines));
     }
 
     @Override
-    @Internal
-    public CTShapeProperties getLine() {
-        return ctDateAx.getSpPr();
+    public XDDFShapeProperties getOrAddMinorGridProperties() {
+        CTChartLines minorGridlines;
+        if (ctDateAx.isSetMinorGridlines()) {
+            minorGridlines = ctDateAx.getMinorGridlines();
+        } else {
+            minorGridlines = ctDateAx.addNewMinorGridlines();
+        }
+        return new XDDFShapeProperties(getOrAddLinesProperties(minorGridlines));
+    }
+
+    @Override
+    public XDDFShapeProperties getOrAddShapeProperties() {
+        CTShapeProperties properties;
+        if (ctDateAx.isSetSpPr()) {
+            properties = ctDateAx.getSpPr();
+        } else {
+            properties = ctDateAx.addNewSpPr();
+        }
+        return new XDDFShapeProperties(properties);
     }
 
     @Override
