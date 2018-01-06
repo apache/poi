@@ -41,7 +41,9 @@ public class XDDFLayout {
 
     public void setExtensionList(XDDFChartExtensionList list) {
         if (list == null) {
-            layout.unsetExtLst();
+            if (layout.isSetExtLst()) {
+                layout.unsetExtLst();
+            }
         } else {
             layout.setExtLst(list.getXmlObject());
         }
@@ -57,7 +59,9 @@ public class XDDFLayout {
 
     public void setManualLayout(XDDFManualLayout manual) {
         if (manual == null) {
-            layout.unsetManualLayout();
+            if (layout.isSetManualLayout()) {
+                layout.unsetManualLayout();
+            }
         } else {
             layout.setManualLayout(manual.getXmlObject());
         }

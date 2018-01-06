@@ -18,9 +18,11 @@
 package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.HasShapeProperties;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
@@ -34,7 +36,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
  * Base class for all axis types.
  */
 @Beta
-public abstract class XDDFChartAxis {
+public abstract class XDDFChartAxis implements HasShapeProperties {
     protected abstract CTUnsignedInt getCTAxId();
 
     protected abstract CTAxPos getCTAxPos();
@@ -51,11 +53,9 @@ public abstract class XDDFChartAxis {
 
     protected abstract CTTickMark getMinorCTTickMark();
 
-    @Internal
-    public abstract CTShapeProperties getMajorGridLines();
+    public abstract XDDFShapeProperties getOrAddMajorGridProperties();
 
-    @Internal
-    public abstract CTShapeProperties getLine();
+    public abstract XDDFShapeProperties getOrAddMinorGridProperties();
 
     /**
      * @return axis id
@@ -80,8 +80,8 @@ public abstract class XDDFChartAxis {
     }
 
     /**
-     * Use this to check before retrieving a number format, as calling {@link #getNumberFormat()} may create a default
-     * one if none exists.
+     * Use this to check before retrieving a number format, as calling
+     * {@link #getNumberFormat()} may create a default one if none exists.
      *
      * @return true if a number format element is defined, false if not
      */
@@ -292,6 +292,16 @@ public abstract class XDDFChartAxis {
      */
     public void setMinorTickMark(AxisTickMark tickMark) {
         getMinorCTTickMark().setVal(tickMark.underlying);
+    }
+
+    protected CTShapeProperties getOrAddLinesProperties(CTChartLines gridlines) {
+        CTShapeProperties properties;
+        if (gridlines.isSetSpPr()) {
+            properties = gridlines.getSpPr();
+        } else {
+            properties = gridlines.addNewSpPr();
+        }
+        return properties;
     }
 
     protected long getNextAxId(CTPlotArea plotArea) {

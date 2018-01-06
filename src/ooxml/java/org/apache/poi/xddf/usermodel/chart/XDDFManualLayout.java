@@ -71,7 +71,9 @@ public final class XDDFManualLayout {
 
     public void setExtensionList(XDDFChartExtensionList list) {
         if (list == null) {
-            layout.unsetExtLst();
+            if (layout.isSetExtLst()) {
+                layout.unsetExtLst();
+            }
         } else {
             layout.setExtLst(list.getXmlObject());
         }
